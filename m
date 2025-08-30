@@ -1,118 +1,69 @@
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F0030CD85;
-	Sat, 30 Aug 2025 17:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC322A4F8;
+	Sat, 30 Aug 2025 19:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756574589; cv=none; b=PdF65bxVPTFAOj0iQ8QClOFg6JkstWFAHzpTnlEPcStKphCSVWle03de/mhuKXFk5qBjDhFfNc1KhvCQtodCpGYmSuylFYpdczD3an8R+oha0NXlSWFb5UVBTNqw62BAU1BuZrmPddl3PLOag5wnFe5A2xPJqMEXi9PX/S74BJA=
+	t=1756581863; cv=none; b=rWNPR7TY60hdkzlRM2zLuxv97aqFGZmz2QsZNl4++8gLWVYyMsQ9LzcdoLq/8hGfSwcI4fDKRwd9LjN9/5D1TAOVCKhgiIZF4Sf2C4ma0mQAIs2ow7gjfaI1gwShoJ0XJ89Kh0yRDWMy5p0784SqR+WO0Q5S2Rdc6ARaaWdz344=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756574589; c=relaxed/simple;
-	bh=GDEf6P2LWJYMs+ydV4s3fgoSHiHRStGgW5xBJ9BGZ7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h/ZyUH7B3cm9a76nxi3Fekqg9Y3y4L7bdQHsc7AZed2kJzrCeAetBskZ1gZ8PzN49a6RePTeoHUl6mWvjlgPFzDVt9JGEbxj9VsZAycKsHschkbSe7YKiKNHVfJYNiNCmbwaIesP1yIii/J6DfLTL/VK5wR4wXbh2EbO9m1mk+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oDY/fJIp; arc=none smtp.client-ip=80.12.242.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1756581863; c=relaxed/simple;
+	bh=KhCrgPypb7PZD7jnU+GsG7IH2u0c8W5XLWTpzPcJeh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMmBL1AEcYEAkfyJAZV61Os1nPEKvmkAuxAFMKwLhN7Zft4S21TgfENFApy8kfhW0fBQMx2r/YJHSg/bFmIr2lp+Qb9M6xv3gdoluHFvfwr6D0To5ZAM3nPJUBGPgaKBa4d33j6wDe9jyxY4gYoGT9lrqTczy8u0RQE5z+QNT+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vmPOc3nP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oDY/fJIp"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id sP9RuuBTkbhcosP9Ru4q4A; Sat, 30 Aug 2025 19:14:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1756574048;
-	bh=7b05OJImVDGdpWr2qdSSpne58sS8juqAprc2DtZui0A=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=oDY/fJIpH3H1fsFHgYEOCEcbhd9w9SXmZbYvUmwERSxAqL0b9AucBKeVrOdkobTmU
-	 MneZF9jVctqBYJig2w6ks8z2aFmyaeM3wgwM+XDlQWrmEeM+eLHpWi2/u0Np7/kmJn
-	 +TGBhuf73RtGuVhCj228GmYEWHtB5CBQVVoGemScz2y5NhUrhsIAHRyUs9/p36tAAn
-	 NPrN2U94bsyYnALZyqusyGY0aiMGSZTgtmuWEuqW4fVWNTx7ir6WIw37L0I095aBSE
-	 EjqezbITzby1Z7b4HjGXhKO5tbN2ch0f33k/DbtPDFEkLCDem7G11bS1SIDKErze3N
-	 1FYplBiaLsQHA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 30 Aug 2025 19:14:08 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vmPOc3nP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+jog82d+9IMz6V10XlVgAfkryK/4rWv5Ffo0C6q9pYU=; b=vmPOc3nPB6vZolLrsJTZjeys3g
+	zc+wYUV+mUPAa854+zJf0/MgBEcgCuxI7tWKpBDNTAwRserbOzbVaxEfQV1QhQU1CmYgKK7FF+i4n
+	g716VgJui3rvYMXdR6lPvAWNKoJWCsA3tpkM+S/JZ4m/7XM+Wi9ffB8RGd70brobQYVw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1usRBD-006bEM-L0; Sat, 30 Aug 2025 21:24:03 +0200
+Date: Sat, 30 Aug 2025 21:24:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Russell King <linux@armlinux.org.uk>,
-	Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Helmut Buchsbaum <helmut.buchsbaum@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: [PATCH net] net: dsa: ks8995: Fix some error handling path in ks8995_probe()
-Date: Sat, 30 Aug 2025 19:13:59 +0200
-Message-ID: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+Subject: Re: [PATCH net] net: dsa: ks8995: Fix some error handling path in
+ ks8995_probe()
+Message-ID: <9c7b0cc7-2bac-474b-a0ee-d24c7954d815@lunn.ch>
+References: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
 
-If an error occurs after calling gpiod_set_value_cansleep(..., 0), it must
-be undone by a corresponding gpiod_set_value_cansleep(..., 1) call as
-already done in the remove function.
+On Sat, Aug 30, 2025 at 07:13:59PM +0200, Christophe JAILLET wrote:
+> If an error occurs after calling gpiod_set_value_cansleep(..., 0), it must
+> be undone by a corresponding gpiod_set_value_cansleep(..., 1) call as
+> already done in the remove function.
+> 
+> In order to easily do the needed clean-up in the probe, add a new
+> devm_add_action_or_reset() call and simplify the remove function
+> accordingly.
+> 
+> Fixes: cd6f288cbaab ("net: phy: spi_ks8995: add support for resetting switch using GPIO")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-In order to easily do the needed clean-up in the probe, add a new
-devm_add_action_or_reset() call and simplify the remove function
-accordingly.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Fixes: cd6f288cbaab ("net: phy: spi_ks8995: add support for resetting switch using GPIO")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/net/dsa/ks8995.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/dsa/ks8995.c b/drivers/net/dsa/ks8995.c
-index 5c4c83e00477..debb2cd7ab61 100644
---- a/drivers/net/dsa/ks8995.c
-+++ b/drivers/net/dsa/ks8995.c
-@@ -742,6 +742,14 @@ static const struct dsa_switch_ops ks8995_ds_ops = {
- 	.phylink_get_caps = ks8995_phylink_get_caps,
- };
- 
-+static void devm_reset_assert(void *data)
-+{
-+	struct ks8995_switch *ks = data;
-+
-+	/* assert reset */
-+	gpiod_set_value_cansleep(ks->reset_gpio, 1);
-+}
-+
- /* ------------------------------------------------------------------------ */
- static int ks8995_probe(struct spi_device *spi)
- {
-@@ -784,6 +792,11 @@ static int ks8995_probe(struct spi_device *spi)
- 		 */
- 		gpiod_set_value_cansleep(ks->reset_gpio, 0);
- 		udelay(100);
-+
-+		err = devm_add_action_or_reset(&spi->dev,
-+					       devm_reset_assert, ks);
-+		if (err)
-+			return err;
- 	}
- 
- 	spi_set_drvdata(spi, ks);
-@@ -834,8 +847,6 @@ static void ks8995_remove(struct spi_device *spi)
- 	struct ks8995_switch *ks = spi_get_drvdata(spi);
- 
- 	dsa_unregister_switch(ks->ds);
--	/* assert reset */
--	gpiod_set_value_cansleep(ks->reset_gpio, 1);
- }
- 
- /* ------------------------------------------------------------------------ */
--- 
-2.51.0
-
+    Andrew
