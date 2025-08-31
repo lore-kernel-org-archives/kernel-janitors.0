@@ -1,69 +1,97 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC322A4F8;
-	Sat, 30 Aug 2025 19:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC0221E0BE
+	for <kernel-janitors@vger.kernel.org>; Sun, 31 Aug 2025 12:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756581863; cv=none; b=rWNPR7TY60hdkzlRM2zLuxv97aqFGZmz2QsZNl4++8gLWVYyMsQ9LzcdoLq/8hGfSwcI4fDKRwd9LjN9/5D1TAOVCKhgiIZF4Sf2C4ma0mQAIs2ow7gjfaI1gwShoJ0XJ89Kh0yRDWMy5p0784SqR+WO0Q5S2Rdc6ARaaWdz344=
+	t=1756642489; cv=none; b=fm+lme4lTylEzstO2HRfLWtJVgSN95tqOWZ+CwfWvTv/XJUo5HC1E/Do5u8eOVXfp2KNROPCISPdtgLVtz2hPVpzJObNUSBzxb0esY87Hz/flGXS/qYGpdOCUGDm9EdcEFpCABQMt+jfthKmdYqNPbWbMvZEj5uHg52uUoJ1iEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756581863; c=relaxed/simple;
-	bh=KhCrgPypb7PZD7jnU+GsG7IH2u0c8W5XLWTpzPcJeh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMmBL1AEcYEAkfyJAZV61Os1nPEKvmkAuxAFMKwLhN7Zft4S21TgfENFApy8kfhW0fBQMx2r/YJHSg/bFmIr2lp+Qb9M6xv3gdoluHFvfwr6D0To5ZAM3nPJUBGPgaKBa4d33j6wDe9jyxY4gYoGT9lrqTczy8u0RQE5z+QNT+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vmPOc3nP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1756642489; c=relaxed/simple;
+	bh=aPuXpq1/3jiBPymNfKQaTwEd8BMMEOqllpEtuaa6v0k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PjwscCqhjX/U6wf43yQ9JxNh1VXLbJPz+1jK3vNV/cd/GU6o2OCyeY4GFYruxJ8hXYxENAUJ7s0Dy/xI2RzzpysJbZSdWAmenK0q/87juWg9oc25A6cMe8DoSlnU7VWrNDYGPc5WI/y31v7XAUe6LkGsP0uN0+IoQJ5pqVlYFqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XOJd5viq; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vmPOc3nP"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+jog82d+9IMz6V10XlVgAfkryK/4rWv5Ffo0C6q9pYU=; b=vmPOc3nPB6vZolLrsJTZjeys3g
-	zc+wYUV+mUPAa854+zJf0/MgBEcgCuxI7tWKpBDNTAwRserbOzbVaxEfQV1QhQU1CmYgKK7FF+i4n
-	g716VgJui3rvYMXdR6lPvAWNKoJWCsA3tpkM+S/JZ4m/7XM+Wi9ffB8RGd70brobQYVw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1usRBD-006bEM-L0; Sat, 30 Aug 2025 21:24:03 +0200
-Date: Sat, 30 Aug 2025 21:24:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Helmut Buchsbaum <helmut.buchsbaum@gmail.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: ks8995: Fix some error handling path in
- ks8995_probe()
-Message-ID: <9c7b0cc7-2bac-474b-a0ee-d24c7954d815@lunn.ch>
-References: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XOJd5viq"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61cbf01e472so645487a12.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 31 Aug 2025 05:14:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756642486; x=1757247286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BTxRKPjZEMrk5xpNJpoGqFecmAtlBpCsUg4LzjTof6w=;
+        b=XOJd5viqS78uHuArUCiY6PYBH8RyLsbWPn6CpVaRJagKkHdwbxFTtguJPOUQefwIh3
+         0Y17YX76aB0+jfqaUJhV9Wrp0BC/pvQAnqBiZslbrPmc8vuKSH8a3yX09idBY/znXL4q
+         AfFzGaU9IgP9ndLhdhxEdRzpOnLOKISzXNkMcOc65IP4OVEg3yV/v41/WTfo0W7d+y65
+         d4SPrgaqfsA/QhZle5YixkLeoucaGOjeOiH/HdIBq5KxUWXIc67TCyCiW7iRWMYsnRXi
+         nQtA5ARxy6aPVPE2BRPriAuHGk/x/tUwG7WfFYOzpZWFsyD7ShDAxFBJymap/nohpsLo
+         ZLVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756642486; x=1757247286;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BTxRKPjZEMrk5xpNJpoGqFecmAtlBpCsUg4LzjTof6w=;
+        b=DAJcJ5bRt4mie3T89ih/jguc/IUA5eSRX23sRZeMTGY48f9s1/wApcsR6GSr9cHxGt
+         C/99YSnMOfCmqE5vrcQ3L7h7M3gveSikyzcOhJacvrdcHy5aHZx0hUMJmbVKvSyTcQK5
+         CPCNjpmlie8x71t+G6PPul6N9AnzcXLxQmp46oXZZrmo+RsWUdpz2UGC1qoHceitJPHh
+         3cxXigWp4T0FjtRmCh9MJrK+a5Sg0wJzop//bCffhDKAjb4BvI95XNDw7LvtPw3AbXdr
+         TtBeAzu++SnCw6x+0hY1q6InKPuaQDuvNqxFJrZNyNhBxyJ405z51dCZEUsXy+im8kLH
+         a46w==
+X-Forwarded-Encrypted: i=1; AJvYcCX9dki1IbAmE9gG3C3iOMkisqRJHZ0FfcNB6iuWKvcYGivJJbAbmJYwBzaVMUjn510HLn48tF4i4GPxH9niikc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0Ga+C6b9A9I/Benf3hBskqGNv6nM8lxYCFfKxEYWm4rQlnVre
+	oaxhY1Vu3cIDzfPHWZOiuS/Pby8aILAM/DeTktYm6J89RIu+UY1clFlTD2kFdxcGC0g=
+X-Gm-Gg: ASbGncsiooaqb+PiYi5goLhKPOYHjOFjscx4c6Tq9V52+H7fwSxsJ6l69H6N0bKPpbG
+	jpIiTQDhx1Q95DbJXo1sZgdVhSgkRcKZJyKfsO9l4DThsfUtvJvRloyGPGsPcGuT+f6PlnB/X+b
+	ffwbGnBNjb0CV9hPjAOhBRXKxrviB8wozonjNjN/M99P8jG18RgcxYR9A3yF2xtAJ1BpJ0/mJev
+	dLuhNFCY+biOdxTfv41rwxIMehE0ii2bayC/KeOLyimDfE9GdLWrCl6sj0BCgU1Uw89gewJzDqo
+	obUi96KKsw3rp/LCfAEi3jMffFqs9f0r/bRnX7bU8BiuNkW+f2WADvtm94sl5xgAPAc4J8ulgDY
+	jMvIWCcKoy80uB17MdcQkDq8Sz8HZAYKvNA+mvUIvOd8zjTjRnQ==
+X-Google-Smtp-Source: AGHT+IFssW74tvTvjz+3fYjfCLUuZKth/+qKSpghRspCt2nEmIjSZt91Zx6O7q+4cCcgww1rczw3Lw==
+X-Received: by 2002:a05:6402:524a:b0:61c:5275:11e0 with SMTP id 4fb4d7f45d1cf-61d0d38e666mr3494780a12.3.1756642486047;
+        Sun, 31 Aug 2025 05:14:46 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5319afsm5194361a12.48.2025.08.31.05.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 05:14:44 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <458641ad2d7a7adf30a03e70038304f0e6a81ff4.1755770484.git.christophe.jaillet@wanadoo.fr>
+References: <458641ad2d7a7adf30a03e70038304f0e6a81ff4.1755770484.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] w1: matrox: Remove some deadcode in matrox_w1_remove()
+Message-Id: <175664248386.48246.8354721667053625504.b4-ty@linaro.org>
+Date: Sun, 31 Aug 2025 14:14:43 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sat, Aug 30, 2025 at 07:13:59PM +0200, Christophe JAILLET wrote:
-> If an error occurs after calling gpiod_set_value_cansleep(..., 0), it must
-> be undone by a corresponding gpiod_set_value_cansleep(..., 1) call as
-> already done in the remove function.
+
+On Thu, 21 Aug 2025 12:02:21 +0200, Christophe JAILLET wrote:
+> The .remove function can only be called if the .probe() succeeds. So there
+> is no need to keep track of a successful probe in 'found'.
 > 
-> In order to easily do the needed clean-up in the probe, add a new
-> devm_add_action_or_reset() call and simplify the remove function
-> accordingly.
+> Simplify code accordingly.
 > 
-> Fixes: cd6f288cbaab ("net: phy: spi_ks8995: add support for resetting switch using GPIO")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Applied, thanks!
 
-    Andrew
+[1/1] w1: matrox: Remove some deadcode in matrox_w1_remove()
+      https://git.kernel.org/krzk/linux-w1/c/25fb0ea986dc10e05f3f4b43cabde4d1853a1fd7
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
