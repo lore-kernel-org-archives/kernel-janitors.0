@@ -1,51 +1,48 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C86331AF08;
-	Mon,  1 Sep 2025 12:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F252D33A033;
+	Mon,  1 Sep 2025 12:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729570; cv=none; b=kS91Nc7QkeGKXvOftipKys+KcbSFFZG1l+ws874EL3IH2Eb6ucIG8F65wCNvPZ1boV49TPUMtc8KUC7/4e6PgbzWee8DJKW0tbVo5RmiSjWF4lCWPPGShgZVRhu0p4aPERVPMc6MOQsxa2sJH91b6opBBKUV6HSALlrOhjTeW6g=
+	t=1756729787; cv=none; b=ouvzxLXivnFHChkg0AiQF1Ql2wYm3TiE0XGWfkL5MjLzTXfsJwwFGI2KU6bUmlgRmvfqU79BcHk4CPvGO7dfEbycCzq5cLcyvOURFXfMdFieSe81x5ET9SJjatqCVOje9leI8Joh6SEQuMxbP9WkOKWH76M3NcllFGA0eR5XR38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729570; c=relaxed/simple;
-	bh=AEAWGm09PNUzOWP6M1l1HBuE2oEYgtQu4SJPrOfx8J8=;
+	s=arc-20240116; t=1756729787; c=relaxed/simple;
+	bh=HNSSy4gLC/9WHWrA6B4/A8MHvyXbz9mhhtWbCBRnPyM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dh/DpYDcBp80p254OQ3Oxqii/GUzYayPMzYwM6g1r4cDTLrXS3XXWadAH4uSFFVq4oy+yViuM8Z5ApJdAojyM0EHqrNY9sk3rYZq7qA+Akvwzu5bhBSUI1XHHKF31UHilchvZjjAF49FRBVPfubzb4TKNy0bKrzWu+gC5YL4Uug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ICva/DOh; arc=none smtp.client-ip=185.171.202.116
+	 MIME-Version:Content-Type; b=q/5p5h85HVgmebjjR2Ax5IjkGmBcORbVmnNt6jsql8imJlOmA2inVz6aI+hIPc69ihdrBxGDb687O1PqfOf8o9YqxFaYx/TaazRnEaURSp/kE26iBXdoI4VeQuLF6mKDX/wIysKbdfYyPe9t+cPR9Ogey7xp6NgW9WB7VxeZZEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=s166XnEY; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ICva/DOh"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="s166XnEY"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 6ABF9C8F1CA;
-	Mon,  1 Sep 2025 12:25:48 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id A7CE54E40C68;
+	Mon,  1 Sep 2025 12:29:44 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 41FBD60699;
-	Mon,  1 Sep 2025 12:26:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2DF91C22D736;
-	Mon,  1 Sep 2025 14:25:50 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8158660699;
+	Mon,  1 Sep 2025 12:29:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 729D61C22D87C;
+	Mon,  1 Sep 2025 14:29:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756729562; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1756729784; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=8hGKL4FKs6i1GHIz+xvbOKSl/l4umvQsOiUCwcWZt3c=;
-	b=ICva/DOhoEqp0sA/6pEKzHDp66jcy4SdmY8zOiDNLM/OAzy2LXngum3o1tpj3CFzbRhWav
-	dSu8CrivVDRGAnuO7HUwM7hJ0u1+5nvI74OY9iDBX2wA4uZ1eoFrjKKo6HX5h5LkQ0SQ2o
-	kfy5behNlzpFHvhiXPnndYs1DvuU+5jLkPpTu98qEhsMv7E7z2ds8pYwloloJUVcpVcHOr
-	V7bbVLfvGGoj108tZnogq9g+yN0rPZxPvUL1sjHC/knOiOujD+aPXCbA5Kf8TPC1MIjN+I
-	GS4y0PiZ8HhRTmqzlW8Qya6sZ/6vnxC5IvXiYhpfmFsVHAhNUbYp2FHOcRdqxA==
+	bh=hzPjYWwkBf4kBKB+qdhiUwv4m8+EB5tTZp+VN+Z62n4=;
+	b=s166XnEYapxNciGn9V5rIDeHThG8ouyPX9jXbkRG54FjA2+7yjcfuJSiiHxneFGocTw2d9
+	UHUsO9Co3DVK/m8BzO4d3Zc62eCActgif96/54bSTGV8r/AWslhKp2TQr6ZWbMWu5X7JBi
+	79vZLgIptVKBsUCEz3lVAS9wFRcmLqJiWarzpGwrGiKURZXe9jkH+F+jPwbONl2euXZES3
+	n55X6WHANTmdWcGKse/6DCHQgHyyJVaUlpA1fV0lFEFirHUv3akhVDFVF0nXF8xc2An29r
+	/kyPqJWMQ+uy5POgd5irVXQzC4Z2l6oTeIfnzy5TpgcuT3wD2GuxBDwRhuQN/Q==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Jacky Huang <ychuang3@nuvoton.com>, 
- Shan-Chun Hung <schung@nuvoton.com>, Hui-Ping Chen <hpchen0nvt@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <a2a4ca2010ac4aa2aee0bec151d2e57e812510a0.1753904852.git.christophe.jaillet@wanadoo.fr>
-References: <a2a4ca2010ac4aa2aee0bec151d2e57e812510a0.1753904852.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] mtd: rawnand: nuvoton: Fix an error handling path in
- ma35_nand_chips_init()
-Message-Id: <175672955080.48300.7085440480114483519.b4-ty@bootlin.com>
-Date: Mon, 01 Sep 2025 14:25:50 +0200
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250731094613.2164604-1-colin.i.king@gmail.com>
+References: <20250731094613.2164604-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] mtd: jedec_probe: Remove space before newline
+Message-Id: <175672978328.48892.14632603085435940884.b4-ty@bootlin.com>
+Date: Mon, 01 Sep 2025 14:29:43 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -57,18 +54,17 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 30 Jul 2025 21:47:46 +0200, Christophe JAILLET wrote:
-> If a ma35_nand_chip_init() call fails, then a reference to 'nand_np' still
-> needs to be released.
-> 
-> Use for_each_child_of_node_scoped() to fix the issue.
+On Thu, 31 Jul 2025 10:46:13 +0100, Colin Ian King wrote:
+> There is a extraneous space before a newline in a pr_debug message.
+> Remove the space and remove a space after ( and before literal string
+> to clean up checkpatch warning.
 > 
 > 
 
-Applied to mtd/fixes, thanks!
+Applied to mtd/next, thanks!
 
-[1/1] mtd: rawnand: nuvoton: Fix an error handling path in ma35_nand_chips_init()
-      commit: 1eae113dd5ff5192cfd3e11b6ab7b96193b42c01
+[1/1] mtd: jedec_probe: Remove space before newline
+      commit: 1371b126ac3d89d911c7b75a753c7d17458a4853
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
