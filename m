@@ -1,118 +1,82 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6126B942;
-	Tue,  2 Sep 2025 08:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16DA2E8B8F;
+	Tue,  2 Sep 2025 08:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801984; cv=none; b=rsX5ycK5szdBjsXA03lc277eX2onJaWHWMP85hRHnimwEU6HjgXX7g3Anj3odFkpwc0XGyZNVT3ktesBPdCYH4K8FvbWbPUbzO2AEiYbNJAr0lhtEdAL9sYTFaPy2P/pvsdM8IqPFlDl78pu1gyN9KvKIsH9CRuC2DHhO4B0lXE=
+	t=1756802612; cv=none; b=mp4bJXD/r/q48E1y9Wp1laeAH26WRlWZEeA//nAsVt+noJ7T+l6FweQx28/Cc4RoQ3poZaT98exbDHBoxhVRPfOAQzn+ANfzfN+WcZzw55qbDddk//kTeUTGG3LyJW7hH1n89+uamKl+omVT5X3kMbccRrg+xU+5f0sPllszW9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801984; c=relaxed/simple;
-	bh=B0Fl8vj47u0ecAJz1JXn3stE8F+V6FoSjW5lbPHNnBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KO+4zTrkLClOxiHDX0XdAg18Qp/W3yynkU2/5KBxIi5FWgTiRVWDAW20OcJCcrSHVE1LKRtdMDvJxO72nH1r6ja09/hdhIT0rufVF9rnF0YKuEic9/B7ElMv1TYpua4147SeLtp2bbF4Rmfup96r8WTxP6cNTUrfYaMR9vgVVwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPjWl4Hu; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756802612; c=relaxed/simple;
+	bh=JOhdePyrldq83s7uzbBWtQrWObepHL7/NVcs8ZomnrY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=dtQx033yhHWpWOUtc0xIts1HX/7IbKDVgGHyzcxX+G10igwMP/gSX1x/U0Ya+hGPYZzBNOtEieiWDZyMa5ioG9ambCh7lA6CQuRLwJIZmNrIOd888JrlFAFvJKQbRRMyu5URoEVJoi1lsLwtZJksyegl8e2xrqRhonsI1Ti0Kis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=USXEe7IO reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPjWl4Hu"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b84367affso26370885e9.3;
-        Tue, 02 Sep 2025 01:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756801981; x=1757406781; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lARVrcDNWMzVHBABZgXnN/vt4515FXELovAHVuLC0IE=;
-        b=DPjWl4HuE6tHtsZwUrKHaNIjI30f3WUsL8eLSqi8srld+EIOiTEVV0XSdY6HLtEVvF
-         tD9vFWC3Zl9CqTrRqbYoT0cstwDSpf3/tuaLENK0w1hEN5ogqBXpbqqXwwZA6Paf3Bdv
-         c9tJVVHJsLsLpBrumHiMzfGrrY+BafT6osHzazoT5EcH6oI/ugn3vtz9xqN8D5/4w3qN
-         ODYBAjsvl5MwDuRsEiF7CUMEJMjNFqx0+ODonpOBNLMIkqIl5+SnOe7+rrwlixAIdGUl
-         78OujXfG9IdJlmVJmJGlcZjP2e73nUxQoDYXsrxstCS3FjzjPBzLyvUvC8EPeUjiQtcu
-         /mMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756801981; x=1757406781;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lARVrcDNWMzVHBABZgXnN/vt4515FXELovAHVuLC0IE=;
-        b=m08l0V+TBMTg09VmabYeDhPwoHoDJuZMC4S74GzKPFdUP932cwKtFM5CUgnApGalJq
-         Jcr53qPE1iRlt++u87MtFwtYGVDtisstGC+d59f4QVcf8L2kzwjvOFD61ZRjddgQGP+G
-         pjVbrr8xtkg2tgMA5LV0uFvXneY0tCdsElCH0xpsrSbtFmEW0zQ0YxM9BvTw5PYVP3bt
-         U7yiGSteSBgW+tDBzblX+F3aNrTonVZKIsggFjPfyNoAWYy3J0dweaTPCHFboY2F3JNK
-         JGuLn2Q5AZmRN+LGs5qb2XAqk/5Kp1025hdj05a/jI77Od/zkMiIx15DdiU68sYoTeLc
-         IU1g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3E1yEDkEKfiicWOARWmp6HmihXXh3xeqKzoAUm+gFU+kNShBMzQDllbiOdiBN0gH9ydTJnDUd2CRS8UY=@vger.kernel.org, AJvYcCX2ROa3Ds51mbcPcQPnaPgn/yFj/2LEAoA5tyocKGbnVTLp14f9aJg6nI0HQNjkc7mZ7+0LCSM/oXkXJks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtjr1XBRVj7LCB9QGXm8I6lS8NDFujEvnv+9zWiPBaPOFWpfC2
-	b1gwjfrFFF6igxrVwpw1qXMm2VPGWP3xuTqg+qhyX/ZDirZ4ANh5x5+w
-X-Gm-Gg: ASbGncs1Gd2ZJ+Q9xr5uBW+MFOYmzPqxkv3t+wQ1O6SoJR0MQp/sR41SH8sFl0xsV6r
-	VKW9zTNymMcjGkvB8TjauFqwIXnmT5ahjdoOizxp1kgHJimSMOZkvP8f5x3BBd3Uik3VuopBsfB
-	sr7jnjBP3u3jfL62zb4xzQkn7KdwXbqne0i967WbapRpQwV7scyPRRpZYBjqXlEMcM5/pKjUQgc
-	tw0g1m+aN4AKpswaryDAdlFpyctrpRxV2oLmKmD/hCqsrYFSh/XTMy51TBmBVvPHM7pIKie3fjV
-	ClgoTK7h5uIaafxgMgs/KPz/YJJ4D67bB74WugJ3Eh/qG2u0ia/txdaaI+Zys6Xg4HLnNQxV1Ky
-	FM0DUPUj1cvFs9el2bmbx
-X-Google-Smtp-Source: AGHT+IGLLe+eOuKvhLSIqXjI0iH/E5Ia9hi1Fv7y0huL5PeDBqPu1gIF7clOX+O3F81I3nF3opjDnQ==
-X-Received: by 2002:a05:600c:1c1f:b0:45b:89ac:b80c with SMTP id 5b1f17b1804b1-45b8d50b914mr44569235e9.18.1756801980813;
-        Tue, 02 Sep 2025 01:33:00 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b8a980011sm58789295e9.0.2025.09.02.01.33.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 01:33:00 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: SOF: ipc4-topology: Fix a less than zero check on a u32
-Date: Tue,  2 Sep 2025 09:32:13 +0100
-Message-ID: <20250902083213.2620124-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="USXEe7IO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=cEoytsRSZ7lw9spftoCa7nl7vw+AKfeCGaB+qA3p5/Q=; b=U
+	SXEe7IOZmhXc24z/WY+QBdZA5G00bzLFSJ+yHcxSUJ4DtRwQgjVAXZMiiJmCdKJF
+	MmYVO265B8XNtf3aViy8zrrmpIj1ofXjN/TH23WnLCjQ1Z6iONNQYuJNZ5ejKwOW
+	6uDywsGBsa7tjaeD06rK3AHIr6aptPO12mHVkeQPso=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-116 (Coremail) ; Tue, 2 Sep 2025 16:42:41 +0800 (CST)
+Date: Tue, 2 Sep 2025 16:42:41 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc: "Andy Yan" <andy.yan@rock-chips.com>,
+	"Andrzej Hajda" <andrzej.hajda@intel.com>,
+	"Neil Armstrong" <neil.armstrong@linaro.org>,
+	"Robert Foss" <rfoss@kernel.org>,
+	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
+	"Jonas Karlman" <jonas@kwiboo.se>,
+	"Jernej Skrabec" <jernej.skrabec@gmail.com>,
+	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+	"Maxime Ripard" <mripard@kernel.org>,
+	"Thomas Zimmermann" <tzimmermann@suse.de>,
+	"David Airlie" <airlied@gmail.com>,
+	"Simona Vetter" <simona@ffwll.ch>,
+	"Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re:[PATCH next] drm/bridge: synopsys: Fix an error return in
+ dw_dp_video_need_vsc_sdp()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <aLaPyJrFsSFuqC1R@stanley.mountain>
+References: <aLaPyJrFsSFuqC1R@stanley.mountain>
+X-NTES-SC: AL_Qu2eBPSbvU0t5yKcZ+kfmUgWjuw/WsG1v/Ul1YBSP556jD3p4zIfY19KDFLO6/uKGTmTvRGeVDJ+2NRqdIdzW58VIsIXS9JjI+R6w8EF2qEi4g==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Message-ID: <5f9e8942.7fec.1990997b4de.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:dCgvCgD33+4BrrZobmwnAA--.2358W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwO8Xmi2pu7zZQABsT
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Currently the error check from the call to sof_ipc4_get_sample_type
-is always false because a u32 variable out_ref_type is being used
-to perform the less than zero check. Fix this by using the int
-variable ret to perform the check.
-
-Fixes: c04c2e829649 ("ASoC: SOF: ipc4-topology: Add support for 8-bit formats")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/sof/ipc4-topology.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-index f5e62cd8fc0c..b6a732d0adb4 100644
---- a/sound/soc/sof/ipc4-topology.c
-+++ b/sound/soc/sof/ipc4-topology.c
-@@ -2191,9 +2191,10 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
- 	case snd_soc_dapm_dai_in:
- 		out_ref_rate = params_rate(fe_params);
- 		out_ref_channels = params_channels(fe_params);
--		out_ref_type = sof_ipc4_get_sample_type(sdev, fe_params);
--		if (out_ref_type < 0)
--			return out_ref_type;
-+		ret = sof_ipc4_get_sample_type(sdev, fe_params);
-+		if (ret < 0)
-+			return ret;
-+		out_ref_type = (u32)ret;
- 
- 		if (!single_output_bitdepth) {
- 			out_ref_valid_bits = sof_ipc4_get_valid_bits(sdev, fe_params);
--- 
-2.51.0
-
+CkhlbGxvIERhbiwKCkF0IDIwMjUtMDktMDIgMTQ6MzM6NDQsICJEYW4gQ2FycGVudGVyIiA8ZGFu
+LmNhcnBlbnRlckBsaW5hcm8ub3JnPiB3cm90ZToKPlRoaXMgZHdfZHBfdmlkZW9fbmVlZF92c2Nf
+c2RwKCkgZnVuY3Rpb24gaXMgdHlwZSBib29sIHNvIHJldHVybmluZwo+LUVJTlZBTCBtZWFucyBy
+ZXR1cm5pbmcgdHJ1ZS4gIFJldHVybiBmYWxzZSBpbnN0ZWFkLgo+Cj5GaXhlczogODZlZWNjM2E5
+YzJlICgiZHJtL2JyaWRnZTogc3lub3BzeXM6IEFkZCBEVyBEUFRYIENvbnRyb2xsZXIgc3VwcG9y
+dCBsaWJyYXJ5IikKPlNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJA
+bGluYXJvLm9yZz4KCgpSZXZpZXdlZC1ieTogQW5keSBZYW4gPGFuZHlzaHJrQDE2My5jb20+CgoK
+Pi0tLQo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYyB8IDIgKy0KPiAx
+IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPgo+ZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYyBiL2RyaXZlcnMvZ3B1
+L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYwo+aW5kZXggOWJiZmU4ZGEzZGUwLi4zM2JlNGVh
+ZTJiMjAgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWRw
+LmMKPisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYwo+QEAgLTEx
+NDksNyArMTE0OSw3IEBAIHN0YXRpYyBib29sIGR3X2RwX3ZpZGVvX25lZWRfdnNjX3NkcChzdHJ1
+Y3QgZHdfZHAgKmRwKQo+IAo+IAlzdGF0ZSA9IGR3X2RwX2dldF9icmlkZ2Vfc3RhdGUoZHApOwo+
+IAlpZiAoIXN0YXRlKQo+LQkJcmV0dXJuIC1FSU5WQUw7Cj4rCQlyZXR1cm4gZmFsc2U7Cj4gCj4g
+CWlmICghbGluay0+dnNjX3NkcF9zdXBwb3J0ZWQpCj4gCQlyZXR1cm4gZmFsc2U7Cj4tLSAKPjIu
+NDcuMgo=
