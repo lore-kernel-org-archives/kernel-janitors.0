@@ -1,131 +1,103 @@
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464BD2F6572;
-	Tue,  2 Sep 2025 11:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310B32F6184;
+	Tue,  2 Sep 2025 11:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811524; cv=none; b=DokDAPTQosGzAywTESLKITSVJgAUBWhOllP3mTLoWwHAvzHd+cyj85ytP4RjNBzgVuLWFJgde4P6dn/0+QLpfEwJnZbLcbBTzb/31AQpy+2nmSWkehvLvuBRAgrfe8p1OpLiBuBT5CFWitf03YdVTEXWsKTzIFAl7z24To6SORU=
+	t=1756813089; cv=none; b=Kc2KA8K72GClkQ1+MheNMWCAF/9B09NJgAvWbWZd2+Zi6j6uTGHftbbZHRGf5nSQiBP4zKcb7p/T84e54BarIfubA1wqiPAhKNpPOSpHpQrIe1R8ynjojCoVug/lCb6DuxVwDfOXN5d/N1j2ui10gPNVx4ex/56wx4h4AvUzegg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756811524; c=relaxed/simple;
-	bh=9gyG1h1hU4t7r1+n8CeUTTfxyM1MciEAa1MhBc0Uq94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DhQjU3qt9ArpeJux1LJDWfzoEq9aR6qxo4O7TiAhK6ZrrtX2XOGMQtzayvujrQiEBnr999RWLf9sDvm7kF3vPOQDdcsdq/NshSbwJbIzuOhFtIoYhJgCKLxgpfQkM3t3TNnwxg1v5K+BewtzVp9q8Vv7enZq3xRrTQyfBlcHh8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=b+tqgRQc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nKRqOp5B; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	s=arc-20240116; t=1756813089; c=relaxed/simple;
+	bh=0BNOk7DnQ2gU2VX2qS4vwjfLRZlRufEDebb3I0x8mRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T+GceuDk87tN62c9uzG5gwaLLhYpuezr4PP0PlYu8AJ7qdj/mHpxfXd89nqPpmzP+u2v28JHk/3OUTxDcDMHZYeleRWZnieTs83W5O3FpRc4kmCJcjj12Jm4vAjC9aRc2cnzbJzR1o5hFa1NFAz70dz/Xeahtnr7omJJIrI2JPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfesF2SB; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="b+tqgRQc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nKRqOp5B"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id EABBD1D003DF;
-	Tue,  2 Sep 2025 07:12:00 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 02 Sep 2025 07:12:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1756811520; x=1756897920; bh=oEo1sWgdkR
-	2fZhoRJGUyuXK1ZJMYy56xS5462AcuqWU=; b=b+tqgRQc4K6gdhWLjoaea7XOUV
-	fAEJdZ2jncRoEbyT/KtenkiFW3+yvGlVljH4Mu9gvVYxna+0Q5Iy9sX4P5daRMA5
-	LAGDMN2Se4eeGrF+psTSFHaG+3uNxiSAUHuxDwDqBVnGL7579uq2i78ZTnw+/DvO
-	cue7x/vO6858r/rWuU2Qu3TLO8qrlS3g2oJH+3M/jzpXrIGudt+cOf5nTnx9bPkF
-	TtYW6WoaySXdMFRE4KMqe7Ocf9RtiYXmmA9ARXFPg27TRpPKVvThRVIONykHdiqq
-	0foLb3U+gp6k0W5tIYP/EiX1mer0o9zG+w175yIzrCf0z3qeOjyugYV5dPEA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756811520; x=1756897920; bh=oEo1sWgdkR2fZhoRJGUyuXK1ZJMYy56xS54
-	62AcuqWU=; b=nKRqOp5BDMmp/mBkMYWZeq+Mi3dyRuAzHrJL/X+os12To1IxPeu
-	SwlrUGWqa3RfjYo1uDHtMVBdMwM+nugDxBeQy1OYLe/BKblrf7Uc3cyEjGIrFJjy
-	5V59Voiysx5krWk73tNj4nq27liArdrMX+s2pX2cKtQ/In26wVtIsm/aD9KtEyfv
-	cBqyj+PmzCbhtkbXUeqIuDWJHSp1tSsnScQBZvG5ocaVaPoVte31R46RSl6uSHIl
-	+mo9s7EjwHdqmFxQalKH+RwW8kySl4c5OVBmqYwpocAVMCVA28lzEUiboZfOx5sj
-	hfZoY/gNGsF21G4NxTxakFKYQtJZ+ZkhhAQ==
-X-ME-Sender: <xms:ANG2aIvmH1oCPeY8AV8SYCOmEqnn6uHhwu4z88T7-OevQhkkuCaGXw>
-    <xme:ANG2aEYQBa9pr3fRW8zzsfGPP5xUJymJ1v0xfyPYrknNtgpKR7DhoR4mnz_97HJZG
-    vIJekvyg3Pokg>
-X-ME-Received: <xmr:ANG2aP1E-flSGOtnCwhz6bUBVBy-2psPYrP46uPDCiOB8mWth4LskB1at3Qelc_tfWiHBaXYA0Iybp3-azTF2oK2j5oSTyiNKw3jUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
-    ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
-    ffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffjuceo
-    ghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeekiedvteegvdejtd
-    elteegleejvddtlefhkeekkeevueevffegudeuueekueejheenucffohhmrghinhepkhgv
-    rhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggp
-    rhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhkuh
-    hsrdgvlhhfrhhinhhgseifvggsrdguvgdprhgtphhtthhopehlihhnmhhqtddtieesghhm
-    rghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheplhhpihgvrhgrlhhishhisehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehnihgtohesfhhluhignhhitgdrnhgvth
-X-ME-Proxy: <xmx:ANG2aOsdPcPpJLHyjT40ro1QXbndF-dr1an_SUjW_Z4rsZo5cDan2g>
-    <xmx:ANG2aLCuHL_3wywpqO0E60ZryZzcJfdeRvpLp64D4jsctfPTCtraTA>
-    <xmx:ANG2aJaLE-k8bHWShoVrOWJri64Q-9PCzUH_A7OF291Lyw0gvoDMpg>
-    <xmx:ANG2aF-StkIaeR7X33OrPcjcr0VH7JbtlHpH8A4UZdgHQDBz8vWPcA>
-    <xmx:ANG2aAssAn3okZJMZz94gWllIqlILfdRUlxYtj2xRu0yEpkiW6IDj275>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Sep 2025 07:11:59 -0400 (EDT)
-Date: Tue, 2 Sep 2025 13:11:58 +0200
-From: Greg KH <greg@kroah.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Miaoqian Lin <linmq006@gmail.com>, kernel-janitors@vger.kernel.org,
-	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Nicolas Pitre <nico@fluxnic.net>
-Subject: Re: [PATCH] drivers: bus: fix device node reference leak in
- __cci_ace_get_port
-Message-ID: <2025090254-taste-december-f544@gregkh>
-References: <20250902074353.2401060-1-linmq006@gmail.com>
- <cbda4163-6211-4c81-be99-634b842a349a@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfesF2SB"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b8b8d45b3so19562775e9.1;
+        Tue, 02 Sep 2025 04:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756813086; x=1757417886; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hif5qXX07CwCuvRH4KJg3lnRIVJYk/NjSXdW5z+Xpyc=;
+        b=nfesF2SBrGrShypW4eqHvhiJOyrPxtVS0EZF1fKKMgBc1Sb6QyZSvokpikRamPc99W
+         HeGHMjDku9OdWQpDJvUVIaKLvTuNp5k55ROvPdJKo0N+hgG2WDMjLe/YB38WncuE9AR8
+         6lzbZX3seQOWgnx/r9GVKYBJgZJgvwqjeDr0YeKd7j4Xga0p2CHl+5srfleWH8ZAL5mm
+         YnOtC2fcbHjA7YingUknC/ay/kQ70OSLZvz8h2FIY2WaijBQaGBiFsF9Qhc6G4Zkppts
+         lHMS1nOCTQow02na/2QR3iaThQL/jd/gPsV9eLg69cJs1hcA+usiKlSv2gHX9Bb65DaO
+         Vg+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756813086; x=1757417886;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hif5qXX07CwCuvRH4KJg3lnRIVJYk/NjSXdW5z+Xpyc=;
+        b=QCTJGRAB1gDLfp+E21iWFTIvScOpAtQ8qu/wHmsXway+ZCIjwGiM3aEzJ3Xvs4cllL
+         Vn07276vkkrUTFPw4WdPfYRLRXlncYR3aZ8bbNUbiW7Fdke18GkftkNglxf0oCTMd0dA
+         6G3QfBH0guf6WDKamC6lke4r6gHtYuUnCJIJmnyHNifE/13yu+tdA7Sx7XsKTLfu8BUc
+         nUwxRvEBIBZPS2HpXOm14VBE6OcQtTbmeIFr3Zs5bMZ5t7jv2ZXMeQO9ufV/Xaf9DrtU
+         dst9AHayG7XZjkW1F1xFHP4Un6GguzkF9bS/UDJkhC8zq3gnp84y8snT/LVPc/MIxDU1
+         ucUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnMMm7CXQ26+kQuoCvqcejO/fpbgKWeR6N2rI9J6+mCS+ujdHqA4Hq8klgvmgpq2XtyzFMOkBABHezMes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyKXxS8DHHudi4UAZvul1gV2OlmZWBkzeSczsUUlezq5ISes0w
+	E2P/CmVSnDHPZVH+KixfMrh50EZhYbRLUtLUUI+ZIb6P+y7hwB3TmFzD
+X-Gm-Gg: ASbGncsc/Fe5jflqxrekHDMBDh4hxU9WaosbZsBjV7yyJz1AwOAPDOzxnq2fIPpSaj2
+	rejnSrm7np3asgFsjRaIVeEm0jphrMhR2LolWo1MHhQitYiFj+4HSuR3U70l8XUmOeDW2PusRh5
+	9IDMy3BFZwadKF8M/6k2fcTfyUjng8KMP+0UZ6NWqKdNTRaHLHwYIedMMG/2y25Z2BzSztHUwFi
+	WA+8ybamXDZH9S1Ey/YPY/rCMWaurCll3qeB/n4sJYc0HN8XSDFIrWXHl5vvOY4i4t2H6h39oL0
+	2sgkeiahUYJ24WB0fOmiC0GdICeh6SICUuYaObXU41lX1PdYYnECIaq/Wg9HRUIgfckMxDg3CZL
+	GHVxVAGeEP4pG+gOmkdQyOCN7qz0k78s=
+X-Google-Smtp-Source: AGHT+IHcV/9faJbkF3oU/t83AxJYwzufI3Tcr6M5GPVjIfyHH0cuQJMiFSAt9b12CujybJnM2GhUTg==
+X-Received: by 2002:a05:600c:1ca8:b0:45b:90fc:1ede with SMTP id 5b1f17b1804b1-45b90fc20bemr33624985e9.6.1756813086184;
+        Tue, 02 Sep 2025 04:38:06 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d9f3c36a78sm3202310f8f.48.2025.09.02.04.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 04:37:59 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Frank Haverkamp <haver@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] misc: genwqe: Fix incorrect cmd field being reported in error
+Date: Tue,  2 Sep 2025 12:37:12 +0100
+Message-ID: <20250902113712.2624743-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbda4163-6211-4c81-be99-634b842a349a@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 02, 2025 at 11:44:10AM +0200, Markus Elfring wrote:
-> > Add missing of_node_put() call to release
-> > the device node reference obtained via of_parse_phandle().
-> 
-> 1. You may occasionally put more than 58 characters into text lines
->    of such a change description.
->    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n638
-> 
-> 2. Would you like to increase the application of scope-based resource management?
->    https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/of.h#L138
-> 
-> 3. How do you think about to append parentheses to the function name
->    in the summary phrase?
-> 
+There is a dev_err message that is reporting the value of
+cmd->asiv_length when it should be reporting cmd->asv_length
+instead. Fix this.
 
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/misc/genwqe/card_ddcb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi,
+diff --git a/drivers/misc/genwqe/card_ddcb.c b/drivers/misc/genwqe/card_ddcb.c
+index 500b1feaf1f6..fd7d5cd50d39 100644
+--- a/drivers/misc/genwqe/card_ddcb.c
++++ b/drivers/misc/genwqe/card_ddcb.c
+@@ -923,7 +923,7 @@ int __genwqe_execute_raw_ddcb(struct genwqe_dev *cd,
+ 	}
+ 	if (cmd->asv_length > DDCB_ASV_LENGTH) {
+ 		dev_err(&pci_dev->dev, "[%s] err: wrong asv_length of %d\n",
+-			__func__, cmd->asiv_length);
++			__func__, cmd->asv_length);
+ 		return -EINVAL;
+ 	}
+ 	rc = __genwqe_enqueue_ddcb(cd, req, f_flags);
+-- 
+2.51.0
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
