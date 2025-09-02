@@ -1,43 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0672FFDF7;
-	Tue,  2 Sep 2025 11:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96933019BA;
+	Tue,  2 Sep 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756813870; cv=none; b=PW4iOMxhLfqj06HykMdTW94o+0aI9miSh89HW1IG45UkCfkK+l7Rofvw+Dci8WbeeVzsRvp2Lo4vdDyYA7Q/mVrtYBY0fMGHt2FI03zoaqCVQFJfrBbLepKjO24GBrQsUG1CNrI7nadJxfJVxKoE7fNkyisAlK0YfhKAay7U9JA=
+	t=1756814850; cv=none; b=tpatGmUShmvXDtAqYPbyCIgoDJe38JEykmOwLP/Ggd49UpSaub+KU7Gw1UKzBvYMxCS2Eh5V5zQWIT+rEoX34l+iVi0LndlVI0N5REuiZthJ09kJ+5NkO/LvPKSln6iefbFsPhkxQjsAUgwoAAtIrQOJUD5RCZPJ2S/NiQgL4Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756813870; c=relaxed/simple;
-	bh=Ug/wWUINd85myksx78WxXPqysEphL175GhQfhSFnuy4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ebAPK4ls9Wl2DIhFjZr2Z5XH8ax3wefgTsWF16QuxVz03hBD3lRXL0eurM2uO0Bpoh5C9g4NZyKAhGtRaIyXF54Gq+ylVpInZqtX9I0S7IdLzPc1A8jqtaPGaFSsWNXEtnOwpYArpP5V6RWpxAbE+eW2aarpnTyiB1I4KVJgDk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EC7JCwXO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756814850; c=relaxed/simple;
+	bh=REVUoomLAJZclmtWiP2XudXja6GJhV9CKjtUpJ+tR9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=njb1QeNQINEhJmCQdSu9/eryFF0InkNobAChLzpG+b/cexzdcuxlax45udLix0bBGaeu6024FU5CwJeVkYY28g8Z4pdvPqOlVw90vGpKtt8AVpQwZM7LWIf4D1tXnTC0GHrbPbSYlHB4hec2aRDpT00raOOsj/7YW1KpD4dTXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPbbPB5i; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EC7JCwXO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73824C4CEF7;
-	Tue,  2 Sep 2025 11:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756813869;
-	bh=Ug/wWUINd85myksx78WxXPqysEphL175GhQfhSFnuy4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=EC7JCwXODM0nM7nuTlj9s4n7nMZ0EMCVMovF5YB1C1Hx7wxZh5PycNCOBK8Q2zdXB
-	 7QFsKI9/YOlqbB+HTmI/gY12fsWx3HYgqOurHbf+N8ab66TXCDy9m0Ykfb1fxufXl8
-	 huyxPCv8pzavRuj1BcZMWbfoDGCku/w2LXpZ4QmGnoCsBNtN/bYyktSBM/qGcZJOgQ
-	 ti5QJ6KSkXyjb9FK5ybi4qx8DEuZooTbm4IHtZr3h+NMQ0NPHEjYAw0Udx501nk8CP
-	 wZezcoOpP95Bc+pArtMq735/OShpDMPPBroySTVEMsKKtYnOnSmYgdEKSpbylgjhhR
-	 7l3G4dOTG9PrA==
-From: Mark Brown <broonie@kernel.org>
-To: Kiseok Jo <kiseok.jo@irondevice.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <aLGjvjpueVstekXP@stanley.mountain>
-References: <aLGjvjpueVstekXP@stanley.mountain>
-Subject: Re: [PATCH] ASoC: codec: sma1307: Fix memory corruption in
- sma1307_setting_loaded()
-Message-Id: <175681386702.70970.9510307338795400264.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 12:51:07 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPbbPB5i"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3dae49b1293so335795f8f.1;
+        Tue, 02 Sep 2025 05:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756814847; x=1757419647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yHi6esc6xWnHBFPt5kmv45QR9np7D0h5gaBaysBxNhw=;
+        b=CPbbPB5iIq86NU539E7cYZ2SxAtxuEzYfleQkhA/2M7Cq4QSMovOg3TAQ0DdUeRaOm
+         JeKses+zfTdoLEX7ziw/UUVRET6F1c8i3TLbWIJmTuFsGDwMF948OGd5pNk3OBtjdi8X
+         4Of0astpWkY74hACjajmdbmCLNEgFNVq2to2/kX777Q6Aa+d65wgHzddGZmS75Y4h2cA
+         CKOMgL3zxseSBpieOu1i9oHud43Thw9dBEOzUdmfAj9JSEOI4cbhzSNyZlSe8BcCEIuL
+         MGphzjVYlPTDyChUCSdls6Bp4RpSeLmC228sxusD/vS2m5H4prQR6cVs/ZIO/AIbIhfm
+         Z6wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756814847; x=1757419647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yHi6esc6xWnHBFPt5kmv45QR9np7D0h5gaBaysBxNhw=;
+        b=Ey1JUprvenBo9yB+j9VHy4zPkxYALSnYkpsoddN2OwiVA3wAsIqd7fZUSI68p+ukmp
+         wab0PG0KEKjfkeuIa74dMYKeGAMJ4bjzTHMG5OG5E0f55pHYXTF1sjpeA1lZxfs+F8ae
+         G0MLfcNW31ximGBJdyNt6IHthCeLGZc3JRmq2ZJKpn0bO55CQssMtHDFDneP3ooTkJpW
+         vNXWAisJe2g2osFpevuxY/I/sYLF8uGrGN8u+uDXTQMh7fcGfchCNwiNtmrjzISznWOr
+         e7sa/j4gk4iLL5dB+GujS7sRSdqqPbT5E4reUZM1CuFQYLATvOOtk99+oDHYKGUBRcC4
+         EYJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoS5kalyOGdhUKR/RYqOfU8bQsj6ai/HlHJCsYxCGruDnTSMwfG+MSjSd59tpoKqqx0dp1rwY90oxWqyk=@vger.kernel.org, AJvYcCXwqXEZiL5g0qZr+J3PN80J5WS+h4wDC10Pw2FXyskOHcvo2W6VE1qUIkjyBrV/fWpuQWoFVKgqQ+emZjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/pg7jtemz6t+Ik0fLjTQLrf5c8P9ECc6ZMwsRl8lSXugfQ9WX
+	ROBX6+JlwGYRH95nLmOS4hItCPgEWX+yPFUzgVSIaFUH3fJAlh90eOR0
+X-Gm-Gg: ASbGncsGhbcTK+Sy2etljKZcqQnEbgcHjmO6kuTrotK5DEsorbwgqLwh02Yyfk55v/t
+	ZRoy0eGGeCRMec0Q+IQ0iGDnq9XEq1jqIMCv0t0RTcbn0UYVnxnSNGuZ02bBVWb1pLHNitLFQf3
+	Ccrpu+SvL1ff/heWrmgT2zx6IlAJ4x5ETguCFxu8AyXzDuADrsD1g7dyv6c06BG705VJ/S7Aj/I
+	Gq5MFgbYInaLmOAnDdSseCeACGQRy0MF8lp5UdPmL32O7NcIazED4Odg1AtE0sMPnpqzAvdm1vH
+	O3ckJFG3d6JWKjuHVh8308PrQQdidnO9cKKOu4Y3lyNoJWXlOsUTqrn5um605or2npubfQhr8tz
+	59/349mEk1KSjCoZ9ek/d
+X-Google-Smtp-Source: AGHT+IEC1qGVZIGdFWWUaDmFj3WEpMRuFaZo0xUy7X1JITS1B2cpohTDvt28I9fETEUvVtQ2zjiNXA==
+X-Received: by 2002:a05:6000:1a8a:b0:3c7:308e:4dff with SMTP id ffacd0b85a97d-3d1e07a9d97mr7395781f8f.57.1756814846650;
+        Tue, 02 Sep 2025 05:07:26 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d701622b92sm8136088f8f.58.2025.09.02.05.07.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 05:07:25 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Keyon Jie <yang.jie@linux.intel.com>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: SOF: Intel: hda-stream: Fix incorrect variable used in error message
+Date: Tue,  2 Sep 2025 13:06:39 +0100
+Message-ID: <20250902120639.2626861-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -45,45 +83,31 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Transfer-Encoding: 8bit
 
-On Fri, 29 Aug 2025 15:57:34 +0300, Dan Carpenter wrote:
-> The sma1307->set.header_size is how many integers are in the header
-> (there are 8 of them) but instead of allocating space of 8 integers
-> we allocate 8 bytes.  This leads to memory corruption when we copy data
-> it on the next line:
-> 
->         memcpy(sma1307->set.header, data,
->                sma1307->set.header_size * sizeof(int));
-> 
-> [...]
+The dev_err message is reporting an error about capture streams however
+it is using the incorrect variable num_playback instead of num_capture.
+Fix this by using the correct variable num_capture.
 
-Applied to
+Fixes: a1d1e266b445 ("ASoC: SOF: Intel: Add Intel specific HDA stream operations")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/sof/intel/hda-stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: codec: sma1307: Fix memory corruption in sma1307_setting_loaded()
-      commit: 78338108b5a856dc98223a335f147846a8a18c51
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/sound/soc/sof/intel/hda-stream.c b/sound/soc/sof/intel/hda-stream.c
+index aa6b0247d5c9..a34f472ef175 100644
+--- a/sound/soc/sof/intel/hda-stream.c
++++ b/sound/soc/sof/intel/hda-stream.c
+@@ -890,7 +890,7 @@ int hda_dsp_stream_init(struct snd_sof_dev *sdev)
+ 
+ 	if (num_capture >= SOF_HDA_CAPTURE_STREAMS) {
+ 		dev_err(sdev->dev, "error: too many capture streams %d\n",
+-			num_playback);
++			num_capture);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.51.0
 
