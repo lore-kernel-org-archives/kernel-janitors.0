@@ -1,62 +1,62 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40212E541F
-	for <kernel-janitors@vger.kernel.org>; Tue,  2 Sep 2025 06:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBE52E2661
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Sep 2025 06:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756794831; cv=none; b=sI3nAvke5xlgNMGKIPLesm+9elFbDVGEShE4v9EWLNB3abvH57J+XWXEcZmQQx44L/qQtYckCCTHThW1DuYhHHGV2C3rNVakPIFUIry8mckgUGBKwR6zF+mFONGNsYIRs60dTvPV5Hjgr1tUCZh8KYLJm++P1WqU5UX18nJQbYY=
+	t=1756794839; cv=none; b=TWi8ZCxId1ENT1WmNZkxXIJkh4emYKAU/GaFQGs2/QKA7jZ093FqXtDGLiDbEIfZOMNRbecQWhfoYwAl0L/7Q8ybmJbQqyUBLFeOFz86Myx1uYSg6N9j9Ns3aPdYBBv5thFIihRnJPJ/AxZz3Q4nuUh9Zpa4XjMaO6W5KhA2aI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756794831; c=relaxed/simple;
-	bh=nc1rQH/rYDotONc1ZBxpg++WUYmfI3UMVOV7TpwVu40=;
+	s=arc-20240116; t=1756794839; c=relaxed/simple;
+	bh=++wXYqYgn9MXRhgojQOCRcAmHUnAXz4lTJ8R4B11SPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cEOn4C53+TiOQg4SiQuGBnY4PuEVZIdVg0f62oe1/F7wHzY7QBeYsSovScRix4JDPlgNwb9N1VW/MVBC3QeX3PxxEtOdlFQVjgIefgXAeSUwvL8oLSKR3ZrNIb27QH6njSSp/BM++sDUL9uZ9AXZM/sU23cMzKDEjt2kvVFFEGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m0/WgrTO; arc=none smtp.client-ip=209.85.221.43
+	 Content-Disposition; b=OBhEG9+cPhWekgdOxPUPhwWUVLXsJ/cY+rgJD2xQuXWR42JrJyzfErzyGzntsL/JqiEAl1qgNV33SqE/jzfcEfp+Ztynho9MOjjctAaJqbdK8GyGCMDxNWFoDKDjRFLoZ7WLEMgM8cVaqCH8GDv72pX6ZsqMrtnoGa0FJ1BXflE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nIef9fJt; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m0/WgrTO"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3cef6debedcso2150731f8f.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 01 Sep 2025 23:33:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nIef9fJt"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so34060185e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 01 Sep 2025 23:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756794828; x=1757399628; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756794836; x=1757399636; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=amLWctIAuH5+/Kdk4fBpM4tmLqupAEviAibXHUsY0lc=;
-        b=m0/WgrTO1BQscX/cyACNxSxbnz/ubCo8FAVm6qRaVJrcwpT4uKGtl2APTSllg54268
-         UK63s4N0eQLgF/8P1JaFAUSoCzilxJylU7z3WQphizthMEfeNhuzKvp0jfVCuUd909PP
-         5tFWKOSPKC40nsASz+NbIynews6SZYetBYwBBdG8Eo2v9z8UcOOf8MRYz+SinSEijcQp
-         tDmTqQP4kNBdD6MptsaPKemt+FzkUG+4vlT77xKk76pzdUxqb+FelP6YcPwnBzttak4e
-         xkFfVIgMo4MgFaicLO4zbMkNn+XmqDQa/rQFWamHEdObndg8WLdH/vH5nqhe8pIrwdiP
-         wiZA==
+        bh=7ympzDmmI8MhfVPuR62lP77gCJMNp5uNIli2mbJ4bZQ=;
+        b=nIef9fJtOuIpNPltP6uf812Mjqtg7avdF+Lgt57i8VoaxmokIaGoec3dznT+LLR3Vb
+         E4VgGDzbxwobGW6fmBYK6Q0WdHSYq4e46MHxI8WZwc9rC+Oj432uJyjifctHjhj2JpdN
+         KyKaR1587TLpeNgywIxm+11FwehteK9M87Jm/Su3jfnOjjTyKruDtJ9r+hS/lZlTrX1k
+         QeRYwPCDrKZ/5eRG1aHnkY0GtSHXScXSJ1/Y8CKA/QeRyUV1pF7G4fzz7o+0UOYD/6Xu
+         23A2sTlvUQ+bU0tQDY6PRBwKgRYR5o952issE/7wQKqUdu7f012eFyRE1TeeKZn3SN2M
+         XUSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756794828; x=1757399628;
+        d=1e100.net; s=20230601; t=1756794836; x=1757399636;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=amLWctIAuH5+/Kdk4fBpM4tmLqupAEviAibXHUsY0lc=;
-        b=fKbZR2kyFEU+BpqQKX+pyLd8eFnQEwRKa21EW0EWTVqHTkdNOqPs8pXbqBqjD5G/U/
-         QwvpEB3G9Fj6HQJkYrZ35rice+Jd3LD7XBlpR8X3sL89s/IvaR5DoB59ik1FNgYCRd2u
-         5UDXhuTAa0uCzP/7sJtGXjNtCTFyINSFgz2IZLSw5PKDWGugWZBcdPLl1/eBhCTn6Dyr
-         Kq/BuraAUFlEduDeQiBbCO+gVg6/M07mZlOEe1tnLMEmcUUJIwUgEhcGHBGdWy7bAUBo
-         PxLZ0kEShK2H4hY3GT3B8KehYFaeTwc42ljT76fYhdkwY/uNyAW/vB7QSLJyz1VIVRGn
-         +iHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHcHddPcXxALyF5XK7nVXB4i5ATyb8mLkMgTkJb+eKFcOmfZReUrRfmTKzgjkddtpxHXdAbMqygHXsKPGXRoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkU8+WjfyIiTZ6YyfwD04JKlGExk0Fiej4nN5tQ7Vs7XNaiCxj
-	CJTGaKN9iESj7hU0Ww89UrMJ1Sp7M0Y4y/cqSCGNPfgY7eL2Y58j76n3Ly1Apz5SrRU=
-X-Gm-Gg: ASbGncuCREFzYztHPfD5c9KnWvjXfDCcp3/Nehr/ULIIIFWTafzL/O+Ob4dqHCBrm+7
-	hYwstOQ+IIZqDWe7RG1vNmKLE7mvJi+yxo/EzgBn/5wxmQ/9gsVAAUtRYfSNA7ACxMTseYjb7dK
-	dVvGPTnMW+97trSU9RDI1UT82IM3IYWYkV8LjsHNnHy6HByNixzufi1QBfrbCpK07lDNuIAL8Tz
-	QodGGuhkjHZUiTtzt8O52RGm0RRFZ6TaSiIj3m8V/3wmYwsmYDCmQZAIWNbTunploPKdSBKuOs/
-	YBRz9br5TMG5Crl0Fu0oSY4+ypJJmO+Y6qXXupsbGckEYJ/7dne7Y7kTKejXLfYk/lgz6jA/7CL
-	cIlgywYDcYJkN5kAA9Lb/toroD4U=
-X-Google-Smtp-Source: AGHT+IHTaBzwQXFABXTkZLj+3H8VXua+1cr4mYcGe2aPMJa4T/6ZSD/WOz5v96oWEJ77tcsJ6WdpaQ==
-X-Received: by 2002:a05:6000:18a3:b0:3ce:ea71:29bc with SMTP id ffacd0b85a97d-3d1de4bb61amr8138742f8f.33.1756794828243;
-        Mon, 01 Sep 2025 23:33:48 -0700 (PDT)
+        bh=7ympzDmmI8MhfVPuR62lP77gCJMNp5uNIli2mbJ4bZQ=;
+        b=Z/kcftXQ+K3i0PVZcdwC6DbRaPNN5qUOAXdIZChQ0Ti14cIT0v0QbrLBdTtBcU3p4B
+         tlf7fabCzyk+OXiSgXMrXA6u0Rr/vL3JfBScpapxpTK3ZaWkDn2WeYPWdEXmBZytYuV3
+         pSdmVpvou+lKf/u7TFWUFlKpgvU5AyhLQcHeOVsfEzPpyVTZ8zQU9iCTVkkSafNIdNt5
+         Lzih+3HYwn49ULiRF/B7gtgqGykFyNLbol4BRjyihvtRX6+BPwiPUciNt/RaHpPf1POP
+         N9IuSg9TUQttpiTgeWSGpzgIa3ojAdoaLOmh6KU1fM7XO7EB+2mAIOTDxELWZLGFt95C
+         5ORA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqLvDXJLIOXoHENLbjrwkcC2Gl6RnXryLbYkouBDa/u2lPVfWdfvTL7ZAa1WSi6Qrbkn8pwD5kvuEKqXNQ6Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBlAMyb+NTMFzUWieScqk18PywAvW065iO5Gbx038jCdk6tzG2
+	KoHKeV8eRbOgv65oqFgaHVLPnPjLD4SMrvWC/gOq5ZFFWs1cbkuBSCwJHc8xbxtFNhk=
+X-Gm-Gg: ASbGncvWXxHl7N4awK/YkZw9V0og6PeICkRJ3FJBMrKbACxfigKAFd0oPH+93YIcjjO
+	ofW++dUODf/MFzDMBc49U7sJ6PjnzBh8ktE7heLkjMchYnkfzs6t9ArwzD0PuBA29LXpX8l1V1v
+	9DqXnWp5KxkEUHzN1mkyK0hcvN6ncHA325kxBzo1uRkwcF1Ffu49edgz/OdlzOt72cKvurAJ5Gz
+	+y4oeZIK/QhpS0vfifHNIjNEfCAfbLcaF52v8uF9rbnV1LPvRXFm9f2Wi1ByyXDYqGHtBqwbOIz
+	db8esqKDPqJbxNPdCvndCd4XOVF6EeBETPsBV56u2o5zggkGNMM+7XB5cdQAO8oIHjJVqjIXxsC
+	4DN43QKEBtfkjkIafHxRNKvGjTW9NvKnKyqe1ESLEsaHJpg7M
+X-Google-Smtp-Source: AGHT+IGczOOV8MWINPPIkYniAwwdymVO48SZpByPT7RWy59E5cu+BCfrp0a+JKywzdS+lIUS1DG3Dw==
+X-Received: by 2002:a05:6000:2112:b0:3d2:6129:5505 with SMTP id ffacd0b85a97d-3d261295a85mr6792091f8f.36.1756794836310;
+        Mon, 01 Sep 2025 23:33:56 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e7d23b7sm183255365e9.1.2025.09.01.23.33.47
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d26f22f5bdsm13043671f8f.37.2025.09.01.23.33.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 23:33:47 -0700 (PDT)
-Date: Tue, 2 Sep 2025 09:33:44 +0300
+        Mon, 01 Sep 2025 23:33:55 -0700 (PDT)
+Date: Tue, 2 Sep 2025 09:33:52 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Andy Yan <andy.yan@rock-chips.com>
 Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -72,9 +72,9 @@ Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/bridge: synopsys: Fix an error return in
- dw_dp_video_need_vsc_sdp()
-Message-ID: <aLaPyJrFsSFuqC1R@stanley.mountain>
+Subject: [PATCH next] drm/bridge: synopsys: Return correct variable in
+ dw_dp_bind()
+Message-ID: <aLaP0JVagRyL0f_O@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -85,8 +85,9 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This dw_dp_video_need_vsc_sdp() function is type bool so returning
--EINVAL means returning true.  Return false instead.
+There is a copy and paste bug here so we accidentally return "ret"
+which is zero instead of "dp->irq" which is an error code.  Return
+the correct variable.
 
 Fixes: 86eecc3a9c2e ("drm/bridge: synopsys: Add DW DPTX Controller support library")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
@@ -95,18 +96,18 @@ Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-index 9bbfe8da3de0..33be4eae2b20 100644
+index 33be4eae2b20..22e8b08ecb74 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-@@ -1149,7 +1149,7 @@ static bool dw_dp_video_need_vsc_sdp(struct dw_dp *dp)
+@@ -2077,7 +2077,7 @@ struct dw_dp *dw_dp_bind(struct device *dev, struct drm_encoder *encoder,
  
- 	state = dw_dp_get_bridge_state(dp);
- 	if (!state)
--		return -EINVAL;
-+		return false;
+ 	dp->irq = platform_get_irq(pdev, 0);
+ 	if (dp->irq < 0)
+-		return ERR_PTR(ret);
++		return ERR_PTR(dp->irq);
  
- 	if (!link->vsc_sdp_supported)
- 		return false;
+ 	ret = devm_request_threaded_irq(dev, dp->irq, NULL, dw_dp_irq,
+ 					IRQF_ONESHOT, dev_name(dev), dp);
 -- 
 2.47.2
 
