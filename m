@@ -1,113 +1,61 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96933019BA;
-	Tue,  2 Sep 2025 12:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D15C2F998B;
+	Tue,  2 Sep 2025 12:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814850; cv=none; b=tpatGmUShmvXDtAqYPbyCIgoDJe38JEykmOwLP/Ggd49UpSaub+KU7Gw1UKzBvYMxCS2Eh5V5zQWIT+rEoX34l+iVi0LndlVI0N5REuiZthJ09kJ+5NkO/LvPKSln6iefbFsPhkxQjsAUgwoAAtIrQOJUD5RCZPJ2S/NiQgL4Gg=
+	t=1756815289; cv=none; b=KMAmwqSFSgoEnYb/rVygMZBWh35PVtNtbGN4Ngec6QRp5ZzK2+54AH6J+4qzRMTnVwDdctWmoGc3wgCgzrsoy8mXVK2EZ8hykrVHX+QXaRdQbuleN5y/Bl9xNBHTpAklcvPY4nZorm2+JtqUVL4+LPI9f26hZKXuAj674n0ylfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814850; c=relaxed/simple;
-	bh=REVUoomLAJZclmtWiP2XudXja6GJhV9CKjtUpJ+tR9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=njb1QeNQINEhJmCQdSu9/eryFF0InkNobAChLzpG+b/cexzdcuxlax45udLix0bBGaeu6024FU5CwJeVkYY28g8Z4pdvPqOlVw90vGpKtt8AVpQwZM7LWIf4D1tXnTC0GHrbPbSYlHB4hec2aRDpT00raOOsj/7YW1KpD4dTXXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPbbPB5i; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756815289; c=relaxed/simple;
+	bh=UoippvnZMyUSR38pwGIqf6cgxIiJi9THmYOSK7Jr/kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HnM3klooS7b9ftwvGWELg4h9CTNT2l1xclxccy1FpnhJuXsoYslEaMYbQPpO++HnCtVJso6ycz8Lhx+tFxmd9jY9T0XdpGw5kP1GsBYQO1EnksvXtikTIHJcTKrxFXwHqhoQSg4QxKXlTiiWfgKwvzS3UqFvnD9lskLLL8kJWAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPznax6T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPbbPB5i"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3dae49b1293so335795f8f.1;
-        Tue, 02 Sep 2025 05:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756814847; x=1757419647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHi6esc6xWnHBFPt5kmv45QR9np7D0h5gaBaysBxNhw=;
-        b=CPbbPB5iIq86NU539E7cYZ2SxAtxuEzYfleQkhA/2M7Cq4QSMovOg3TAQ0DdUeRaOm
-         JeKses+zfTdoLEX7ziw/UUVRET6F1c8i3TLbWIJmTuFsGDwMF948OGd5pNk3OBtjdi8X
-         4Of0astpWkY74hACjajmdbmCLNEgFNVq2to2/kX777Q6Aa+d65wgHzddGZmS75Y4h2cA
-         CKOMgL3zxseSBpieOu1i9oHud43Thw9dBEOzUdmfAj9JSEOI4cbhzSNyZlSe8BcCEIuL
-         MGphzjVYlPTDyChUCSdls6Bp4RpSeLmC228sxusD/vS2m5H4prQR6cVs/ZIO/AIbIhfm
-         Z6wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756814847; x=1757419647;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yHi6esc6xWnHBFPt5kmv45QR9np7D0h5gaBaysBxNhw=;
-        b=Ey1JUprvenBo9yB+j9VHy4zPkxYALSnYkpsoddN2OwiVA3wAsIqd7fZUSI68p+ukmp
-         wab0PG0KEKjfkeuIa74dMYKeGAMJ4bjzTHMG5OG5E0f55pHYXTF1sjpeA1lZxfs+F8ae
-         G0MLfcNW31ximGBJdyNt6IHthCeLGZc3JRmq2ZJKpn0bO55CQssMtHDFDneP3ooTkJpW
-         vNXWAisJe2g2osFpevuxY/I/sYLF8uGrGN8u+uDXTQMh7fcGfchCNwiNtmrjzISznWOr
-         e7sa/j4gk4iLL5dB+GujS7sRSdqqPbT5E4reUZM1CuFQYLATvOOtk99+oDHYKGUBRcC4
-         EYJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoS5kalyOGdhUKR/RYqOfU8bQsj6ai/HlHJCsYxCGruDnTSMwfG+MSjSd59tpoKqqx0dp1rwY90oxWqyk=@vger.kernel.org, AJvYcCXwqXEZiL5g0qZr+J3PN80J5WS+h4wDC10Pw2FXyskOHcvo2W6VE1qUIkjyBrV/fWpuQWoFVKgqQ+emZjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/pg7jtemz6t+Ik0fLjTQLrf5c8P9ECc6ZMwsRl8lSXugfQ9WX
-	ROBX6+JlwGYRH95nLmOS4hItCPgEWX+yPFUzgVSIaFUH3fJAlh90eOR0
-X-Gm-Gg: ASbGncsGhbcTK+Sy2etljKZcqQnEbgcHjmO6kuTrotK5DEsorbwgqLwh02Yyfk55v/t
-	ZRoy0eGGeCRMec0Q+IQ0iGDnq9XEq1jqIMCv0t0RTcbn0UYVnxnSNGuZ02bBVWb1pLHNitLFQf3
-	Ccrpu+SvL1ff/heWrmgT2zx6IlAJ4x5ETguCFxu8AyXzDuADrsD1g7dyv6c06BG705VJ/S7Aj/I
-	Gq5MFgbYInaLmOAnDdSseCeACGQRy0MF8lp5UdPmL32O7NcIazED4Odg1AtE0sMPnpqzAvdm1vH
-	O3ckJFG3d6JWKjuHVh8308PrQQdidnO9cKKOu4Y3lyNoJWXlOsUTqrn5um605or2npubfQhr8tz
-	59/349mEk1KSjCoZ9ek/d
-X-Google-Smtp-Source: AGHT+IEC1qGVZIGdFWWUaDmFj3WEpMRuFaZo0xUy7X1JITS1B2cpohTDvt28I9fETEUvVtQ2zjiNXA==
-X-Received: by 2002:a05:6000:1a8a:b0:3c7:308e:4dff with SMTP id ffacd0b85a97d-3d1e07a9d97mr7395781f8f.57.1756814846650;
-        Tue, 02 Sep 2025 05:07:26 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d701622b92sm8136088f8f.58.2025.09.02.05.07.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:07:25 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Keyon Jie <yang.jie@linux.intel.com>,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: SOF: Intel: hda-stream: Fix incorrect variable used in error message
-Date: Tue,  2 Sep 2025 13:06:39 +0100
-Message-ID: <20250902120639.2626861-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPznax6T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB680C4CEED;
+	Tue,  2 Sep 2025 12:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756815288;
+	bh=UoippvnZMyUSR38pwGIqf6cgxIiJi9THmYOSK7Jr/kw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DPznax6T+tWbpfFfV9SOjX9KcurCoj0YuqIBFLe1XFdPGKVkEqJu0QqdrI5sDGa3M
+	 jnFj+1wB5G+wPBCuX54wRHT2702GxIJDTLfWFg5cZZdCdRoyZ7lTFZqXP+L4Nm5OuV
+	 uwxzPVfymidfJn/T9tuc7ckuw6BMf17iH/nsfchyRa2O0CI+bUko99xZWUWBbpujzD
+	 1R3sW/bXUTyz/0FKg1aMLC3VXMHVaUBoPkXtbJqI2f89dnlDwtSOyEFNCTrmDiJT9b
+	 vTgiJnZ+dUTnlbdMgI5PpsQhfG2vPCF1dCW21wzdySDUbvhJsjMJ5wBAnhlugNkpX5
+	 PHnBHO5AMsygA==
+Date: Tue, 2 Sep 2025 13:14:44 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] ipv4: Fix NULL vs error pointer check in
+ inet_blackhole_dev_init()
+Message-ID: <20250902121444.GE15473@horms.kernel.org>
+References: <aLaQWL9NguWmeM1i@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLaQWL9NguWmeM1i@stanley.mountain>
 
-The dev_err message is reporting an error about capture streams however
-it is using the incorrect variable num_playback instead of num_capture.
-Fix this by using the correct variable num_capture.
+On Tue, Sep 02, 2025 at 09:36:08AM +0300, Dan Carpenter wrote:
+> The inetdev_init() function never returns NULL.  Check for error
+> pointers instead.
+> 
+> Fixes: 22600596b675 ("ipv4: give an IPv4 dev to blackhole_netdev")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: a1d1e266b445 ("ASoC: SOF: Intel: Add Intel specific HDA stream operations")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/sof/intel/hda-stream.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/sof/intel/hda-stream.c b/sound/soc/sof/intel/hda-stream.c
-index aa6b0247d5c9..a34f472ef175 100644
---- a/sound/soc/sof/intel/hda-stream.c
-+++ b/sound/soc/sof/intel/hda-stream.c
-@@ -890,7 +890,7 @@ int hda_dsp_stream_init(struct snd_sof_dev *sdev)
- 
- 	if (num_capture >= SOF_HDA_CAPTURE_STREAMS) {
- 		dev_err(sdev->dev, "error: too many capture streams %d\n",
--			num_playback);
-+			num_capture);
- 		return -EINVAL;
- 	}
- 
--- 
-2.51.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
