@@ -1,49 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACDB307491;
-	Tue,  2 Sep 2025 13:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F3A1E5B7C;
+	Tue,  2 Sep 2025 13:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820944; cv=none; b=D1veWVq+81M/fMdNBfmVW7Rr2T00dyue4v5yYdQpF8DAP1pqvAuLrazpnqt3wCGnkY2iylDAuDdxgw1jmqd6BIczNwOrdMr15fXrxn2Ew3vmbXYIrzzoiU8bWb13cqxJ+i68LuaHS67H5r6GHZR/xzXnLMz1ouRvKrMxyOhOTF0=
+	t=1756821210; cv=none; b=psDweMaaSolQEwDTcxv3XvjjenfGTm76RbfSS9QDUVM4akLAgVk1444jQAisXzrP0YxX7LFFOL5hH+86Iivlg/aClpaXVzc6x37GWJ3RFNzcUfuv7INLuejT2Zn9ObrM+9pFfx2R5Bfsc9ut/42LQopzpzwLg22OEumPVmuFXQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820944; c=relaxed/simple;
-	bh=V1zLEZ4hN381aE4lKsa730pV/g0bYjO1juxY8tem70k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ce37Xh7k1JcDzT/Ue7+eswURWsdM2HRMAFyutw+HyPz5aVcV7Nv90pZJ85TFyYru/8AS7vMiHsqWOh3Zd7fJqZ6kTZ9r26Whm1Qnq5LL8jOqkREVWwXbhIT0vgxifIL8l1mHR2nRPBCFhr6UdfdvUr7RGvEqrqHAfCPoeE8fFuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqzbf9uf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756821210; c=relaxed/simple;
+	bh=vs9eCQ1Eb0i4CZi8Ztof0a8Ckkg4T5YmnfBqkpzPGWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o9fqNDWE7ESTEY7yOIi9IShhksm8QgWdiaXJUCP6piIb3Kjt9F1QxsHcPuZatmA8cRGHZgaQ6ox/4iGkBDgMmixv+B1v7hpDPqh92pFQwnhry9IXESFKt+jIFjHg7ea6W/O1sFJ8N7lxc0RL/s1qa1Jt/yICv0CXG5pF4CfvWMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SUTh9MkL; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqzbf9uf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12345C4CEED;
-	Tue,  2 Sep 2025 13:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756820942;
-	bh=V1zLEZ4hN381aE4lKsa730pV/g0bYjO1juxY8tem70k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=qqzbf9ufGxmR3PVYR/LPBelK7aOXmQMhg4IMCyYnBx2UUJmdZodBtug5Y4k6QB7cg
-	 jde6Cg+sGSNjqGxDkhSjZD8BrgvDtoM1kYPp0tfKSsIMRrp6jYFnkw9uinWoAq8ajc
-	 Ap/kvMWHOk6MidWgMyvbThZswRb0KzPFjRsWPYHuQSor7s7mgZ5i5uVj/+eJqlwku7
-	 /rdTcqTultaBP0/o8IQkVVGNsA2Ri5f3tuxi2ExHjz2vtiDXtm21aDnQ17X84lXfRI
-	 7URxM7NrEQH0P7eTb5iXJfVHCkFKEt6jtKE4jP5XPDztYVeRNDaLGlxqWtYDJRj1yJ
-	 yOIMgdS+MdNXg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250902083213.2620124-1-colin.i.king@gmail.com>
-References: <20250902083213.2620124-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: SOF: ipc4-topology: Fix a less than zero
- check on a u32
-Message-Id: <175682093980.530139.13776765985476213880.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 14:48:59 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUTh9MkL"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b7e69570bso27744695e9.0;
+        Tue, 02 Sep 2025 06:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756821207; x=1757426007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sFT8uhGng5M0xnUvfOPSpBoi9A8zPQ2Ye+1CG2fVnso=;
+        b=SUTh9MkLTXrY1ke9L5up6HP+MZpEC7PzbjdV+SXcdVfLVTqU4Ci1VMg9moEJ6ONbIZ
+         Gaajg75rzDkeRhJFzNWlPQxklssWTLsCjltYWKbcz1zM9LLUIoUd2w6pdW1+zQ45pR7P
+         3mrPk90BFS3dXCexNMqVenhfFE//1laS8mlSCPH+eV35RKieK1P7NmvA93bT0Wf12Grl
+         exBzq+0mpixzq9qT43t+Ac/1GAx2UQk0YiSrS1pPsr3UEQqGNlB2fZewk1Ob8qQHocgY
+         Ldgw67W40ANoe1ltXFIXAaQVh32I9zIrpKBZ1tmxYiYvDTXsLdbdvfM6fMHS1hD7zt/0
+         rRDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756821207; x=1757426007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sFT8uhGng5M0xnUvfOPSpBoi9A8zPQ2Ye+1CG2fVnso=;
+        b=hh9kFVQLpkqIv/gBwu7cvnamiNu/VzJduAqeI3vVcDpkmIVFjHTZciAKPh787TUXJK
+         v+45UtFVRzbzkLPVY6sKJ/r1t0y4gu0+g9S7/2qKJry9ctnXBN9JJCOFN/Jl9E1upQZd
+         DnzpvFZILzdBRCJqoK5wSprWxa+Vt1wa6TFW9npNq0Tk+ru31D3PKA+VuPUQnMqXv9XZ
+         DZrI4UN/Zo1UMzGnCGUqkhX5iFv8Pl8s0zC5TRzHUNYsRcDcV4Xgm1EVSOxfKYe3x3E0
+         y8Z0IePYcskTTzuP1PNBmqEI12a8Cnh4dEsTDbN7GFN1azlJL61WBnGnVSYX5PW9r5sh
+         qwdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYsGN7g7kOfnvHqcy1ocUdl/M7uuPeEZ/RYbzYggUyL3fj9gMFNHGSsxTWLPlJosQMLXa6YMqbWa3CuRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRFJdpE+aoGIucOyo2GwrxgfYu8VCkQrUJEvG3L+FDj8zICmhX
+	uFwY8isKebOUgB9rLfZfCrfoYb8BdqHexhMrYC3tHhb0FsPjPH4u7Rzv
+X-Gm-Gg: ASbGnct9Y8Oql1YrlZKrIWDMPMx/7y3IaPWDs7u2ja6yb1KS/YuYhIQxrWrq4tUZ5VK
+	N6J6f/j02DAKmJWHFJ4ghS6cJXgpjAkUEyRqaqgH7gnKTipABvb/cWSaQU08IBClZLHEVIOTNZS
+	QrK2769GUPiD/1oiGHjDpQM1aEHBtUOKRl4LQ4zMvqzr3oPXOfW9oGIi+IZauGZjPbEeTrgO2wI
+	O1PbBUjR6yraMPILH8GRNdxEA9/4ldZOwe3MwsMyfowodznyyV6Dq1RMSAm7hv/+Dg4iDOsYGsq
+	PiHDxn9jE09O5fCR6m1KM4gX3JG24ZN9Y4KqoVdaJMONahuA+w5MbbPaxooCFIREXCvkgNZDQXI
+	4csK8Mab6SL7V4pL3WO32mJFG/nRbZ1g=
+X-Google-Smtp-Source: AGHT+IHjRrWvopx4QsWSeRb/F70NKN9Z74OQ9n/HQdOFnq8W+nkDSUExmV1RxO1Z1ojlWiFxP1CHOw==
+X-Received: by 2002:a05:600c:1d06:b0:45b:6275:42cc with SMTP id 5b1f17b1804b1-45b8557a3f7mr88649505e9.28.1756821206681;
+        Tue, 02 Sep 2025 06:53:26 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6f306c93sm283628745e9.14.2025.09.02.06.53.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:53:25 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	linux-i3c@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] i3c: master: Remove ternary operator on return statement
+Date: Tue,  2 Sep 2025 14:52:39 +0100
+Message-ID: <20250902135239.2632286-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -51,42 +75,31 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Transfer-Encoding: 8bit
 
-On Tue, 02 Sep 2025 09:32:13 +0100, Colin Ian King wrote:
-> Currently the error check from the call to sof_ipc4_get_sample_type
-> is always false because a u32 variable out_ref_type is being used
-> to perform the less than zero check. Fix this by using the int
-> variable ret to perform the check.
-> 
-> 
+The value of ret at the end of the function renesas_i3c_daa
+is always zero since previous checks for less than zero have already
+exited via return paths. Hence the final ternary operator checking
+for a less than zero value for ret is redundant and can be removed.
 
-Applied to
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/i3c/master/renesas-i3c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: SOF: ipc4-topology: Fix a less than zero check on a u32
-      commit: 3279052eab235bfb7130b1fabc74029c2260ed8d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+index 174d3dc5d276..275f7b924288 100644
+--- a/drivers/i3c/master/renesas-i3c.c
++++ b/drivers/i3c/master/renesas-i3c.c
+@@ -679,7 +679,7 @@ static int renesas_i3c_daa(struct i3c_master_controller *m)
+ 			i3c_master_add_i3c_dev_locked(m, i3c->addrs[pos]);
+ 	}
+ 
+-	return ret < 0 ? ret : 0;
++	return 0;
+ }
+ 
+ static bool renesas_i3c_supports_ccc_cmd(struct i3c_master_controller *m,
+-- 
+2.51.0
 
