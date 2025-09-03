@@ -1,104 +1,97 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98F22DF13B;
-	Wed,  3 Sep 2025 08:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE412ED84F
+	for <kernel-janitors@vger.kernel.org>; Wed,  3 Sep 2025 08:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889106; cv=none; b=EtAKK4VGhaf9myfPkVOdo2PMpBFQIzbSxb8etn74yeYP/HN9IYlyYGcN0tTYFfzQ7QKV+fEWWgp3Iq+7CtQSfBlUOmpzvWCGRKJBck8BdbyTmZCICwI0RY6lzi5qB+evx+Pt+G9vPhO73+DXyjnOsdZdlYvA7F/r9tSrIR+/gj4=
+	t=1756889752; cv=none; b=UPLEfdA5Y+bHjHEh1bYlf6aBxhECKKTn4LIlgzkFfmCjqmHEvmuz9vX9GJfs/EnzAMNELQ8Y+Dv2pwIDHHKZf3D+O9eyAxsr8IDJjo6qmbRM2TS4Bua2MBwSo6eJHfx2jrzgPUfumToGD+ARpUYGEFHYMM3dvc2Sd4DL0+zrrQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889106; c=relaxed/simple;
-	bh=s7Pult1M8a65x3h8QtEBGWYKCQIOKeI7JSXX6UtHa6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IdPWxaMQjmFup7b8KCJ1gad2X6NShd0b//iL4TiTGsZ9KtmLO+k7hU4dc/u4CB91OEHJ0xEJ8N1aywTcvKzUa2Ke3+bbAnelArtpmI52Cp3wPikgDWg4LoKussBs0o08iGKdVNtg6HdYkjnHbmrqluJ5UeCEuaAmNvGQZSDqpw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbVlfp2k; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756889752; c=relaxed/simple;
+	bh=GYN9iaw7rAier/pATCqUnEp3Xj8mNzeugHEcM8SbDPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bk5WXdQsUd3viUJ0HYa85l9uV22MRsozKr1r9PoOD4LTCZyyhp4GKGGvugrTwFje+7QdbFZ9y1jRO0vba584BCCQgiiG5VdVkH4eJoPLN3tPCZjL4ZTgSP6Shfz2MV1FlCV6VCqOOb933q9ZXnGc1YDVzAMHlMnw1aXWUNE9GB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CuL7ZXrT; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbVlfp2k"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3df726ecff3so100214f8f.3;
-        Wed, 03 Sep 2025 01:45:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuL7ZXrT"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b8b2712d8so33765195e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 03 Sep 2025 01:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756889103; x=1757493903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WYHkEns0w6Ce8syGafttWZHPhEvjpwV1bKqCXtix5iQ=;
-        b=LbVlfp2kKDqUAziBvM3J9IdAlKdIEhRoRBuCCs69H4eVvs4lKv/nqVQAN1M5AKS3As
-         upleaLIXzah86hGYVs3PuAoOuuiL1wfGZyYS84ZeWVodVCqORfj2aYyQr+4MboIXo/AR
-         qLsm3FKo1SSC560dYKmGF3p3vSoLsoi5hjA5i95gEJSL72IaDo1ELAaWTgYLMJ27bG1J
-         nkIFeYt0WeZ1YMRjGDzAB3O/e7MrLjZ5/CasdyzyyrOrwq2iEig9FARcWAr2lBjVfmtw
-         fPjE7+Vd4Jj4eIcNEHdO5F5SDyDc2TePRTqJruHihjRBmDZoalZ3kMVQWBt+AZZ+vdB1
-         raPg==
+        d=linaro.org; s=google; t=1756889749; x=1757494549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5cV4mqPmxW1tPyF9dbost7ZwM2Dt79PTTYDkgTZFQBo=;
+        b=CuL7ZXrTmUjw1fvqBh2MDozJxPqXGHzfp42WV0RZO25tFjW6Of4f+cmHZp4G9SNDcw
+         lzQvQWzpjG3WxsaQ3/yBBKhel4crElo1Cuulw5rp2XnPCaYhpTRmW9FVnE6TMNeLHNi5
+         jsnr0DVomD/nC7JMLm/4EtJpx+rrL6qn552W/6qaqteNjNczWV4QKftJz6jGNIUOlwGy
+         JCfVCOvTl8WAhPWpNOhfVcKAk3gRaYfTGk/yOqimqIaUPg1yjRz3ePcDvltIdfAXk38B
+         Xl5QLahdypr3pjj33m+ALNBpNtewEVCx4uhpZZ3+J70HWipFTdvWh3x5y2gdqi5RiGMo
+         UwJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756889103; x=1757493903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WYHkEns0w6Ce8syGafttWZHPhEvjpwV1bKqCXtix5iQ=;
-        b=OShq+80v8yExYp87A9giy947xeE3cFMqybpOa+jX96L9847Q+1zjnHIgsc1DcCKWcL
-         pZsJQmgG4tpOTTbh/pOxUB+Si6Oz2+QO0tFQqUmN+a4fstrh6zm8G6zvxlJAr7Ze9sSC
-         l0mQzK45ilzepu9gxf9EnFkgFCuzZqUh79qYZZD4cNsroEUUCe561awwAMFQ5YWFB1Lb
-         DQE/Ew3k52bu6Lc8leSEZB0Sz8zFcINXd/DKcrRYW9l3nKhLr3w0l2JCa3OU/lJMulza
-         ZTiKcvfdzoQOLk4z7eX3zhyuK1n1Yhn6wfpzpc9bECwnZ70xOxfug5ochYyhLYvIOyIA
-         r+lA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8OC5xLZKqfRi1hCEpEOdraFP7tRX4vBwk2WetvduLCvNsCyMn3NR4BD/eAQ7F/Se5/84Z3PVa/bw1AUE=@vger.kernel.org, AJvYcCWeJ0DkWvos4RSo9uU+TN9TZkEi1r2a7ykGQZJqump51E+UnP8ZRA5zuuYTqozsw1fXzUNjCrYoGXKowiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3i1m5f8DNTe4nkVIzotrUDzsKrbET3tArltkdTIH5m5dOLoij
-	U+uqX8exjwR3zebi6dcGWmQBslBBCYRgf7gfVtdMVgwX3j0pV7rQuo0CzcK6/lsFX40bug==
-X-Gm-Gg: ASbGncvM7Ur6UYDvRjuhwP2lDE8cgmNqm1Xig9psOaXn0BEHHRnQf06IKFwodMJ/nFc
-	ES0mmNxqSboImPGBHHPZwCrS7a8Ummk1+IJu60Rvbn/AtiFRczNMsgMIbVO1eiPf1jNEsZv1Lxg
-	aSK+zOIWCIYdtzx1DQDuKEtn0JYVFZroeiI6RogvQ2XrKW0XNpngO4/nxAi6RpNy1wCixY/z0Wp
-	PNRxbHWUOFefo+jpRVPTtzxLJD4JxomL4KqNZua1MMqqdutlgOl42ZwgaI+XWKx4GZ/HQw0VR9j
-	SwC9DZF3sOnbxekbKxulruJ19a8XVw4sD286VcOStaR0x9fqMkPJf6kckcAO5IfrUx5hXwsDjeP
-	nHoomYfQqM7yQfkjeuQdJh4JtvPj4sdQ=
-X-Google-Smtp-Source: AGHT+IF22nicgiVDiy2hC205APiOr8T+5LxW0W4PlY0AvVydSMsH3eHiETff7xo0Q0o5ffWpxUYGJg==
-X-Received: by 2002:a05:6000:22c4:b0:3ce:5408:3e9b with SMTP id ffacd0b85a97d-3d1de4bc312mr11355432f8f.32.1756889102911;
-        Wed, 03 Sep 2025 01:45:02 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf33fb9431sm22654054f8f.44.2025.09.03.01.45.02
+        d=1e100.net; s=20230601; t=1756889749; x=1757494549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cV4mqPmxW1tPyF9dbost7ZwM2Dt79PTTYDkgTZFQBo=;
+        b=KHfAvVcABrz1o9II0LRDbwsrc8wUmHKjo26JQHdC52uD0Mz0Vk7qUdDjhCG2i71aRr
+         M5LuJF5szWFrqIYtmlCpZ4kf9uRGwfen41ukMuv5pQWB70UggJYV97KOn5mBZgX0JNEa
+         rd+VOJyDyvulmSYFDlc0JfLsmD5CIap+i58E9VOOO74sLJVbh2OIbEe4ZfvDz/pur0Me
+         EqlOABwnEwCFi8VnN98SaLP4nSAxl03EI8TTdZUSPvs4AUuVVe8Ac+PaPJBLNgC6gLh4
+         7Wyc9yY8TeNx1SfJQvgkjtMDQl1pAXSYU9RGaVBDoL2awt/NsWedPASyUylD9hXE7UU1
+         IJgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnbQcywhRBAlfikm7Cuxbv8QAcr66apiB6vkVyudNfeOIwxMhCbz4ygWITq6OgBwFFNrvzcFDVk+JndlOHjVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCrUcJ/+WmW6Eac24VeYc8bvApPiqxrOoVn6VD1iRMAUKa8RYd
+	TsnGSSMTi709JGoeXuncEeSHpQWhlrVJ12uJKkT5hxUI51pzkcM2yofN9e17fk2i8c0=
+X-Gm-Gg: ASbGncvLUkgKChGsHSTrnRO1vN8nbWGXCNaQFFYDLlYjy0HgcKy50XhJvpIuY5XEk0t
+	V2XTqaPmsAD+bjsD5Fg8oIUZn1IIgdVTbbBPHm3GsJGuqdG1ooO/hdiGf8VpNyvYL1I7DYxj5l5
+	pwIMMsXQjJQSNsuV0quNNNOk8HES++wPFnsUKg5QPhDPr7F2046UfSxJSpsJZnQ0vtAVTMBBfDY
+	y7QJIs5TnzeK2IndXc5btt17ht+pMtNKemG2qyMYN6NTvA3de35Yl+JplYwjrbb2dSvQiPRnmPg
+	i5b/xemnIA9wSZuC47QPZMXnJQNvKjbGl70Ze9ZpjZmoZAvW2d9RzMMT710CD/tRdHEPBHsaDLi
+	AdNhKdPUzsck4YDL1gIbOoG40bVJfXZ11/5+rLw==
+X-Google-Smtp-Source: AGHT+IH/I5haMU97rwsp/23eXdJD7jSFORVKYid/zP+DHP9530edfSTunocGOnjSttPgmZD8RbnDJg==
+X-Received: by 2002:a05:600c:1f1a:b0:45b:47e1:ef76 with SMTP id 5b1f17b1804b1-45b8559849bmr123014385e9.37.1756889748976;
+        Wed, 03 Sep 2025 01:55:48 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3decf936324sm1205616f8f.9.2025.09.03.01.55.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 01:45:02 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mike Isely <isely@pobox.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: pvrusb2: Fix incorrect variable used in trace message
-Date: Wed,  3 Sep 2025 09:44:16 +0100
-Message-ID: <20250903084416.2704362-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Wed, 03 Sep 2025 01:55:48 -0700 (PDT)
+Date: Wed, 3 Sep 2025 11:55:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>,
+	Shaoyun Liu <shaoyun.liu@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/amd/amdgpu: Fix a less than zero check on a
+ uint32_t struct field
+Message-ID: <aLgCkRO8jkzwuxW5@stanley.mountain>
+References: <20250903082018.2702769-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903082018.2702769-1-colin.i.king@gmail.com>
 
-The pvr2_trace message is reporting an error about control read
-transfers, however it is using the incorrect variable write_len
-instead of read_lean. Fix this by using the correct variable
-read_len.
+Are you editing your CC list?  The get_maintainer.pl script gives me a
+longer list.  The most important thing is that you've left off Shaoyun Liu
+from the Fixes tag.  Added.
 
-Fixes: d855497edbfb ("V4L/DVB (4228a): pvrusb2 to kernel 2.6.18")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The kbuild-bot did report this bug on Friday so the AMD folks likely have
+a patch kicking around on their end, but just haven't sent it out
+publicly yet?
+https://lore.kernel.org/all/202508290749.ti6u3cLL-lkp@intel.com/
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index f21c2806eb9f..81e87aa8d4de 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -3622,7 +3622,7 @@ static int pvr2_send_request_ex(struct pvr2_hdw *hdw,
- 		pvr2_trace(
- 			PVR2_TRACE_ERROR_LEGS,
- 			"Attempted to execute %d byte control-read transfer (limit=%d)",
--			write_len,PVR2_CTL_BUFFSIZE);
-+			read_len, PVR2_CTL_BUFFSIZE);
- 		return -EINVAL;
- 	}
- 	if ((!write_len) && (!read_len)) {
--- 
-2.51.0
+Anyway, the patch is fine.
 
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
