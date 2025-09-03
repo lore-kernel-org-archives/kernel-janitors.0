@@ -1,74 +1,70 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D5A2E1C64;
-	Wed,  3 Sep 2025 08:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98F22DF13B;
+	Wed,  3 Sep 2025 08:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888316; cv=none; b=q/VTFsMBFY0dcOdbkLToNjRoSs8V+kBXXbYoQ6iqXKZwXckGNO2JqRyucSvoUK3b8A62bevNm8ijxcdKymK19Exh4hABBcgo00TqCt9vIVxpxxM4gPJBY/1fTStgFZBKexxFxRYKYy1L9nMJtUP5RnHZLtvtEgb0KINqL/vLCqE=
+	t=1756889106; cv=none; b=EtAKK4VGhaf9myfPkVOdo2PMpBFQIzbSxb8etn74yeYP/HN9IYlyYGcN0tTYFfzQ7QKV+fEWWgp3Iq+7CtQSfBlUOmpzvWCGRKJBck8BdbyTmZCICwI0RY6lzi5qB+evx+Pt+G9vPhO73+DXyjnOsdZdlYvA7F/r9tSrIR+/gj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888316; c=relaxed/simple;
-	bh=KcHVV4axNshCxvOjQd00KlOruCNlxtn31N+sXiEB6VM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E8IqL2CZFK6Tdk+sY+b3CRMaXUBt50zmFR3ibnKZj9X9eoUWt4i4Wizg7PqkcTht3NJ+Z3nFUc7XXCZKClk/gaApZmv1MGzrkewlX4gkzF5L7Z3Fhec5dzwdLrsoq1kqkx+h9m6nN3w1gLwOZZq7MVKCdCbxZC+8p2Z9OkyXoks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLXqTsoH; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1756889106; c=relaxed/simple;
+	bh=s7Pult1M8a65x3h8QtEBGWYKCQIOKeI7JSXX6UtHa6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IdPWxaMQjmFup7b8KCJ1gad2X6NShd0b//iL4TiTGsZ9KtmLO+k7hU4dc/u4CB91OEHJ0xEJ8N1aywTcvKzUa2Ke3+bbAnelArtpmI52Cp3wPikgDWg4LoKussBs0o08iGKdVNtg6HdYkjnHbmrqluJ5UeCEuaAmNvGQZSDqpw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbVlfp2k; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLXqTsoH"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45cb5e5e71eso2049405e9.2;
-        Wed, 03 Sep 2025 01:31:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbVlfp2k"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3df726ecff3so100214f8f.3;
+        Wed, 03 Sep 2025 01:45:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756888313; x=1757493113; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756889103; x=1757493903; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LzE0Ws9fzpBnIfHQ6kswJP+ItsxGcArI8FqcHSIsRxs=;
-        b=YLXqTsoH7nf2UH36aaP0qbhsJ8TqeqN1U3Osw02opnoelXKGHpLBIHfedzJHtbFG1X
-         iCURpuf7tHnd+13YGxOlt4kr0MTm+g9daLkHA/Ts6nuO7F1vgAXhunmCg/oJkSmWBBUg
-         vNhsZrco6g8BJ4YNFt9nkJ8bo189xjLlLQKvvo/F71doLic8udFiEWr9a2WPbvoh3Z/l
-         cg7d3R8cXRfQJiku9J/DV3Tq9NE2kCWSPscbJSt/fCBMWZ2ON0S0fNhMuea9Kg1YdA/d
-         Dtb5ZIHXc8JGz8ESnQCFltfINRh3Zv067a4+bOHeSrkNA8PMFo6wFm7frZdWw7nlzJff
-         TUtA==
+        bh=WYHkEns0w6Ce8syGafttWZHPhEvjpwV1bKqCXtix5iQ=;
+        b=LbVlfp2kKDqUAziBvM3J9IdAlKdIEhRoRBuCCs69H4eVvs4lKv/nqVQAN1M5AKS3As
+         upleaLIXzah86hGYVs3PuAoOuuiL1wfGZyYS84ZeWVodVCqORfj2aYyQr+4MboIXo/AR
+         qLsm3FKo1SSC560dYKmGF3p3vSoLsoi5hjA5i95gEJSL72IaDo1ELAaWTgYLMJ27bG1J
+         nkIFeYt0WeZ1YMRjGDzAB3O/e7MrLjZ5/CasdyzyyrOrwq2iEig9FARcWAr2lBjVfmtw
+         fPjE7+Vd4Jj4eIcNEHdO5F5SDyDc2TePRTqJruHihjRBmDZoalZ3kMVQWBt+AZZ+vdB1
+         raPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756888313; x=1757493113;
+        d=1e100.net; s=20230601; t=1756889103; x=1757493903;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LzE0Ws9fzpBnIfHQ6kswJP+ItsxGcArI8FqcHSIsRxs=;
-        b=YzxHYMPcQCZO/MRu4lpSncWru6Ngc/sT5HjJdBHDBcV8dNPR1ooAYOtkR4iLDcLCxM
-         4F82Upj49i9AUTGEHuaI4Sv4DM1lxVlc1+FXrVw9DYL1FMkQkaf5hwNqgrxjbzekXqom
-         UTpI+iuY+f0/LAf8Yl+wMl+PwswerN3jTLrmXCvAk7YSJyug9zQ3Wy17mhirHXwR3y8+
-         wRrSOcwIUdDtpDK5Vob4Pxo8GF+WeuF9tHwBFQkScRJoOCS6Z6NYtGLWFO0z/GVAfJ+G
-         1Qm+TP7fU7YFcd9z/k/AW+kFjdKiAElL3SQfgnuOO0MX8uWd1h8bmt9di5IkgzqORAiW
-         WP9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Tpa7GUbRBGDP0OXohQ91BLfH5ZOoDEDhFZGUMyeLL3VTfWQEuxkFoMtXDk44jN2H1nnWUwhfp4Vp96k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZXYgOD2i0nR2rG5m/cQbWucIfrfTxNzSTLqZW2/kAv9JslCm8
-	pEWnUkrmBPYTPxLPkfQcUbpaLa++Di3mSU5qwCavYUIKu7Ej8cIfS3Kj
-X-Gm-Gg: ASbGnctlVzJCNSywsRRvYOM8jwpz64NraDeysJTPp+Q7j07TZ2GplBhMZhAJzVXuP1E
-	ka5kbyvMFaFkD42O+uREyFeXVeMWRVHoQ57ElG0nt88QkCC7/bOkgIJKMnyubrmJh1+dFxuZVA0
-	vvC6cdS0trtj68ggnh338AW9uc3zDDVxPr+EbmHeRIfD03Po3ROFZJESavyMbfYXOPBluL6ubhE
-	Eyh1x06Li3+bmoSBxvKhxzOl1MnQM1DXCUY0Lf+F3Zb7ecdah0QFn+cj2KoSuI0LI0iBE41Mrju
-	RDRZDK5keJWU86EU8LYv8NqpRcdKpCkPg7JCfPlfbXpKbJzUC8MY4ciM08buGTZGTduMalX7EMZ
-	vxeZtVZBQl5k8nx+2ARkS
-X-Google-Smtp-Source: AGHT+IGrZQIc2jiaG8pdcXw+gYZl+BbgX2ehStHEyKgFTJ1z7nC82zfpt9nkS8Xtp2AjuW9GcqmnZA==
-X-Received: by 2002:a05:600c:3143:b0:456:1c4a:82b2 with SMTP id 5b1f17b1804b1-45b8555d6fbmr129315705e9.10.1756888312950;
-        Wed, 03 Sep 2025 01:31:52 -0700 (PDT)
+        bh=WYHkEns0w6Ce8syGafttWZHPhEvjpwV1bKqCXtix5iQ=;
+        b=OShq+80v8yExYp87A9giy947xeE3cFMqybpOa+jX96L9847Q+1zjnHIgsc1DcCKWcL
+         pZsJQmgG4tpOTTbh/pOxUB+Si6Oz2+QO0tFQqUmN+a4fstrh6zm8G6zvxlJAr7Ze9sSC
+         l0mQzK45ilzepu9gxf9EnFkgFCuzZqUh79qYZZD4cNsroEUUCe561awwAMFQ5YWFB1Lb
+         DQE/Ew3k52bu6Lc8leSEZB0Sz8zFcINXd/DKcrRYW9l3nKhLr3w0l2JCa3OU/lJMulza
+         ZTiKcvfdzoQOLk4z7eX3zhyuK1n1Yhn6wfpzpc9bECwnZ70xOxfug5ochYyhLYvIOyIA
+         r+lA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8OC5xLZKqfRi1hCEpEOdraFP7tRX4vBwk2WetvduLCvNsCyMn3NR4BD/eAQ7F/Se5/84Z3PVa/bw1AUE=@vger.kernel.org, AJvYcCWeJ0DkWvos4RSo9uU+TN9TZkEi1r2a7ykGQZJqump51E+UnP8ZRA5zuuYTqozsw1fXzUNjCrYoGXKowiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3i1m5f8DNTe4nkVIzotrUDzsKrbET3tArltkdTIH5m5dOLoij
+	U+uqX8exjwR3zebi6dcGWmQBslBBCYRgf7gfVtdMVgwX3j0pV7rQuo0CzcK6/lsFX40bug==
+X-Gm-Gg: ASbGncvM7Ur6UYDvRjuhwP2lDE8cgmNqm1Xig9psOaXn0BEHHRnQf06IKFwodMJ/nFc
+	ES0mmNxqSboImPGBHHPZwCrS7a8Ummk1+IJu60Rvbn/AtiFRczNMsgMIbVO1eiPf1jNEsZv1Lxg
+	aSK+zOIWCIYdtzx1DQDuKEtn0JYVFZroeiI6RogvQ2XrKW0XNpngO4/nxAi6RpNy1wCixY/z0Wp
+	PNRxbHWUOFefo+jpRVPTtzxLJD4JxomL4KqNZua1MMqqdutlgOl42ZwgaI+XWKx4GZ/HQw0VR9j
+	SwC9DZF3sOnbxekbKxulruJ19a8XVw4sD286VcOStaR0x9fqMkPJf6kckcAO5IfrUx5hXwsDjeP
+	nHoomYfQqM7yQfkjeuQdJh4JtvPj4sdQ=
+X-Google-Smtp-Source: AGHT+IF22nicgiVDiy2hC205APiOr8T+5LxW0W4PlY0AvVydSMsH3eHiETff7xo0Q0o5ffWpxUYGJg==
+X-Received: by 2002:a05:6000:22c4:b0:3ce:5408:3e9b with SMTP id ffacd0b85a97d-3d1de4bc312mr11355432f8f.32.1756889102911;
+        Wed, 03 Sep 2025 01:45:02 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b940bbc0dsm74727175e9.2.2025.09.03.01.31.52
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf33fb9431sm22654054f8f.44.2025.09.03.01.45.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 01:31:52 -0700 (PDT)
+        Wed, 03 Sep 2025 01:45:02 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
+To: Mike Isely <isely@pobox.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/sysfb: Remove double assignment to pointer crtc_state
-Date: Wed,  3 Sep 2025 09:31:06 +0100
-Message-ID: <20250903083106.2703580-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] media: pvrusb2: Fix incorrect variable used in trace message
+Date: Wed,  3 Sep 2025 09:44:16 +0100
+Message-ID: <20250903084416.2704362-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -79,30 +75,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The declaration of pointer crtc_state includes an assignment to
-crtc_state. The double assignment of crtc_state is redundant and
-can be removed.
+The pvr2_trace message is reporting an error about control read
+transfers, however it is using the incorrect variable write_len
+instead of read_lean. Fix this by using the correct variable
+read_len.
 
-Fixes: 061963cd9e5b ("drm/sysfb: Blit to CRTC destination format")
+Fixes: d855497edbfb ("V4L/DVB (4228a): pvrusb2 to kernel 2.6.18")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/sysfb/drm_sysfb_modeset.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-index 963c380fea64..ddb4a7523ee6 100644
---- a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-+++ b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-@@ -238,8 +238,7 @@ void drm_sysfb_plane_helper_atomic_update(struct drm_plane *plane, struct drm_at
- 	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
- 	struct drm_framebuffer *fb = plane_state->fb;
- 	unsigned int dst_pitch = sysfb->fb_pitch;
--	struct drm_crtc_state *crtc_state = crtc_state =
--		drm_atomic_get_new_crtc_state(state, plane_state->crtc);
-+	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state, plane_state->crtc);
- 	struct drm_sysfb_crtc_state *sysfb_crtc_state = to_drm_sysfb_crtc_state(crtc_state);
- 	const struct drm_format_info *dst_format = sysfb_crtc_state->format;
- 	struct drm_atomic_helper_damage_iter iter;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+index f21c2806eb9f..81e87aa8d4de 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -3622,7 +3622,7 @@ static int pvr2_send_request_ex(struct pvr2_hdw *hdw,
+ 		pvr2_trace(
+ 			PVR2_TRACE_ERROR_LEGS,
+ 			"Attempted to execute %d byte control-read transfer (limit=%d)",
+-			write_len,PVR2_CTL_BUFFSIZE);
++			read_len, PVR2_CTL_BUFFSIZE);
+ 		return -EINVAL;
+ 	}
+ 	if ((!write_len) && (!read_len)) {
 -- 
 2.51.0
 
