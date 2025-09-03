@@ -1,97 +1,202 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE412ED84F
-	for <kernel-janitors@vger.kernel.org>; Wed,  3 Sep 2025 08:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC4F2FA0DD
+	for <kernel-janitors@vger.kernel.org>; Wed,  3 Sep 2025 11:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889752; cv=none; b=UPLEfdA5Y+bHjHEh1bYlf6aBxhECKKTn4LIlgzkFfmCjqmHEvmuz9vX9GJfs/EnzAMNELQ8Y+Dv2pwIDHHKZf3D+O9eyAxsr8IDJjo6qmbRM2TS4Bua2MBwSo6eJHfx2jrzgPUfumToGD+ARpUYGEFHYMM3dvc2Sd4DL0+zrrQ4=
+	t=1756898908; cv=none; b=W38X40aIPziGvE0qv6J0uUEyuxN9gBY6JmMnJju4RW6JVfiU6h971socbX6gEbdWqe68r9zWd9MB7KJveWRj1ZtYwiLCRNU6+yrw/wtO0kWPxHwtCwre9dBdXkjpkkWB+mY4C800+cWPTdrtv8AyXBhjz1njtWzCM8/5cR/fYsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889752; c=relaxed/simple;
-	bh=GYN9iaw7rAier/pATCqUnEp3Xj8mNzeugHEcM8SbDPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk5WXdQsUd3viUJ0HYa85l9uV22MRsozKr1r9PoOD4LTCZyyhp4GKGGvugrTwFje+7QdbFZ9y1jRO0vba584BCCQgiiG5VdVkH4eJoPLN3tPCZjL4ZTgSP6Shfz2MV1FlCV6VCqOOb933q9ZXnGc1YDVzAMHlMnw1aXWUNE9GB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CuL7ZXrT; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756898908; c=relaxed/simple;
+	bh=tI7bI8h+HaL0lOuKyj1Ep6H53THPsg4jtuNmiaRgnOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tDWpcSuufJY9AlfQs87MKUM+A/lWMqlbxEHnvi5mTNbV8AxVlDBrLo8Ne9Qbd6xua8y6e5v4ZSglnm0xYvPVS2BCQ6SDhV4jDPMBy37YMKeueYDYFy+FLu7FQKHWzJ08fJq6TKwOJbQk6I1U4MLxkGbKYMif1e/plltIAiKtRsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p51vr1Rf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xeKMd0Ne; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p51vr1Rf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xeKMd0Ne; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuL7ZXrT"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b8b2712d8so33765195e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 Sep 2025 01:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756889749; x=1757494549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5cV4mqPmxW1tPyF9dbost7ZwM2Dt79PTTYDkgTZFQBo=;
-        b=CuL7ZXrTmUjw1fvqBh2MDozJxPqXGHzfp42WV0RZO25tFjW6Of4f+cmHZp4G9SNDcw
-         lzQvQWzpjG3WxsaQ3/yBBKhel4crElo1Cuulw5rp2XnPCaYhpTRmW9FVnE6TMNeLHNi5
-         jsnr0DVomD/nC7JMLm/4EtJpx+rrL6qn552W/6qaqteNjNczWV4QKftJz6jGNIUOlwGy
-         JCfVCOvTl8WAhPWpNOhfVcKAk3gRaYfTGk/yOqimqIaUPg1yjRz3ePcDvltIdfAXk38B
-         Xl5QLahdypr3pjj33m+ALNBpNtewEVCx4uhpZZ3+J70HWipFTdvWh3x5y2gdqi5RiGMo
-         UwJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756889749; x=1757494549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5cV4mqPmxW1tPyF9dbost7ZwM2Dt79PTTYDkgTZFQBo=;
-        b=KHfAvVcABrz1o9II0LRDbwsrc8wUmHKjo26JQHdC52uD0Mz0Vk7qUdDjhCG2i71aRr
-         M5LuJF5szWFrqIYtmlCpZ4kf9uRGwfen41ukMuv5pQWB70UggJYV97KOn5mBZgX0JNEa
-         rd+VOJyDyvulmSYFDlc0JfLsmD5CIap+i58E9VOOO74sLJVbh2OIbEe4ZfvDz/pur0Me
-         EqlOABwnEwCFi8VnN98SaLP4nSAxl03EI8TTdZUSPvs4AUuVVe8Ac+PaPJBLNgC6gLh4
-         7Wyc9yY8TeNx1SfJQvgkjtMDQl1pAXSYU9RGaVBDoL2awt/NsWedPASyUylD9hXE7UU1
-         IJgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnbQcywhRBAlfikm7Cuxbv8QAcr66apiB6vkVyudNfeOIwxMhCbz4ygWITq6OgBwFFNrvzcFDVk+JndlOHjVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCrUcJ/+WmW6Eac24VeYc8bvApPiqxrOoVn6VD1iRMAUKa8RYd
-	TsnGSSMTi709JGoeXuncEeSHpQWhlrVJ12uJKkT5hxUI51pzkcM2yofN9e17fk2i8c0=
-X-Gm-Gg: ASbGncvLUkgKChGsHSTrnRO1vN8nbWGXCNaQFFYDLlYjy0HgcKy50XhJvpIuY5XEk0t
-	V2XTqaPmsAD+bjsD5Fg8oIUZn1IIgdVTbbBPHm3GsJGuqdG1ooO/hdiGf8VpNyvYL1I7DYxj5l5
-	pwIMMsXQjJQSNsuV0quNNNOk8HES++wPFnsUKg5QPhDPr7F2046UfSxJSpsJZnQ0vtAVTMBBfDY
-	y7QJIs5TnzeK2IndXc5btt17ht+pMtNKemG2qyMYN6NTvA3de35Yl+JplYwjrbb2dSvQiPRnmPg
-	i5b/xemnIA9wSZuC47QPZMXnJQNvKjbGl70Ze9ZpjZmoZAvW2d9RzMMT710CD/tRdHEPBHsaDLi
-	AdNhKdPUzsck4YDL1gIbOoG40bVJfXZ11/5+rLw==
-X-Google-Smtp-Source: AGHT+IH/I5haMU97rwsp/23eXdJD7jSFORVKYid/zP+DHP9530edfSTunocGOnjSttPgmZD8RbnDJg==
-X-Received: by 2002:a05:600c:1f1a:b0:45b:47e1:ef76 with SMTP id 5b1f17b1804b1-45b8559849bmr123014385e9.37.1756889748976;
-        Wed, 03 Sep 2025 01:55:48 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3decf936324sm1205616f8f.9.2025.09.03.01.55.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 01:55:48 -0700 (PDT)
-Date: Wed, 3 Sep 2025 11:55:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>,
-	Shaoyun Liu <shaoyun.liu@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/amd/amdgpu: Fix a less than zero check on a
- uint32_t struct field
-Message-ID: <aLgCkRO8jkzwuxW5@stanley.mountain>
-References: <20250903082018.2702769-1-colin.i.king@gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p51vr1Rf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xeKMd0Ne";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p51vr1Rf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xeKMd0Ne"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2263D1F453;
+	Wed,  3 Sep 2025 11:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756898905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eLsa61RJOmvQ0I1jtLr3LZKuSi58Px0qgR+tcdebDag=;
+	b=p51vr1RfejI/smcNs5Mr9P3sEn36mQC1V5us/AQwAWOKddgyMarTvvSO2qGd1SmMKR3t//
+	Yzp4Pej8pnNfzKQdHJyUmoG9o1R8PYEs8TdFGL5kxlfj8BiVDm3zvkISJqq/58MF6Q8orn
+	COMjd6+fL/ny+AldSIERiKOshGCd1SM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756898905;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eLsa61RJOmvQ0I1jtLr3LZKuSi58Px0qgR+tcdebDag=;
+	b=xeKMd0NehKz34to+JPk6Lx4LYoNq6OJUwunDhGtmmCwDf4NVgIjCerVh5NK6mh4foLECd/
+	AmzA32A4g6YGMYDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=p51vr1Rf;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=xeKMd0Ne
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756898905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eLsa61RJOmvQ0I1jtLr3LZKuSi58Px0qgR+tcdebDag=;
+	b=p51vr1RfejI/smcNs5Mr9P3sEn36mQC1V5us/AQwAWOKddgyMarTvvSO2qGd1SmMKR3t//
+	Yzp4Pej8pnNfzKQdHJyUmoG9o1R8PYEs8TdFGL5kxlfj8BiVDm3zvkISJqq/58MF6Q8orn
+	COMjd6+fL/ny+AldSIERiKOshGCd1SM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756898905;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eLsa61RJOmvQ0I1jtLr3LZKuSi58Px0qgR+tcdebDag=;
+	b=xeKMd0NehKz34to+JPk6Lx4LYoNq6OJUwunDhGtmmCwDf4NVgIjCerVh5NK6mh4foLECd/
+	AmzA32A4g6YGMYDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D233B13888;
+	Wed,  3 Sep 2025 11:28:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x3kdMlgmuGgLGgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 03 Sep 2025 11:28:24 +0000
+Message-ID: <be9eb10f-f69e-47fa-a2a3-64c14ed0c9d8@suse.de>
+Date: Wed, 3 Sep 2025 13:28:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903082018.2702769-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/sysfb: Remove double assignment to pointer
+ crtc_state
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250903083106.2703580-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250903083106.2703580-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,redhat.com,linux.intel.com,kernel.org,ffwll.ch,lists.freedesktop.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 2263D1F453
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-Are you editing your CC list?  The get_maintainer.pl script gives me a
-longer list.  The most important thing is that you've left off Shaoyun Liu
-from the Fixes tag.  Added.
+Hi
 
-The kbuild-bot did report this bug on Friday so the AMD folks likely have
-a patch kicking around on their end, but just haven't sent it out
-publicly yet?
-https://lore.kernel.org/all/202508290749.ti6u3cLL-lkp@intel.com/
+Am 03.09.25 um 10:31 schrieb Colin Ian King:
+> The declaration of pointer crtc_state includes an assignment to
+> crtc_state. The double assignment of crtc_state is redundant and
+> can be removed.
+>
+> Fixes: 061963cd9e5b ("drm/sysfb: Blit to CRTC destination format")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Anyway, the patch is fine.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Thanks a lot. I'll merged the patch in the drm-misc.
 
-regards,
-dan carpenter
+Best regards
+Thomas
+
+> ---
+>   drivers/gpu/drm/sysfb/drm_sysfb_modeset.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
+> index 963c380fea64..ddb4a7523ee6 100644
+> --- a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
+> +++ b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
+> @@ -238,8 +238,7 @@ void drm_sysfb_plane_helper_atomic_update(struct drm_plane *plane, struct drm_at
+>   	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
+>   	struct drm_framebuffer *fb = plane_state->fb;
+>   	unsigned int dst_pitch = sysfb->fb_pitch;
+> -	struct drm_crtc_state *crtc_state = crtc_state =
+> -		drm_atomic_get_new_crtc_state(state, plane_state->crtc);
+> +	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state, plane_state->crtc);
+>   	struct drm_sysfb_crtc_state *sysfb_crtc_state = to_drm_sysfb_crtc_state(crtc_state);
+>   	const struct drm_format_info *dst_format = sysfb_crtc_state->format;
+>   	struct drm_atomic_helper_damage_iter iter;
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
