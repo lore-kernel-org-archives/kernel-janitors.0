@@ -1,74 +1,69 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54E82690D9
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 18:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44C82701DA
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 18:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012337; cv=none; b=m7PAVkj6yCmzmKaOBYDdhqVchDhiGIj/ntzejzzt49e2MLq4XO12mKRgCjWl80PtroR+srrGbpRqR8XwYN2thzjKoAfqOwgCFPdct+6p4u+9rcLuuOTOP6QSdSpSV3I+6Lwi2BdmD66oKxWOkezxchE6qGNLMcFI5/OyxGvV23A=
+	t=1757012341; cv=none; b=kQK1BvzDN5jvve0X4Uca50iomos6jEdeLwgVn/J+C1XCo14G2mQ/ysprbnJqLUbL0Hoh/CD/sH55k2QoyQP4c4N+A+KNmpoxlsTHvvUh2jrJN3SscCGIyOE+scgpN7srBxPvH0/yQ2pzRna5RPGp+YPFgYv6casSNqP0eYCA57o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012337; c=relaxed/simple;
-	bh=Pb+xBGuXofkJWty7sR07UV3scv2U/dGsYvGE5Dxp4tU=;
+	s=arc-20240116; t=1757012341; c=relaxed/simple;
+	bh=uivRpA9HtbBawOeMvgjPRCQa2tnswuXo9Y09mOkTMZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EtMt0T2wj16V93jlycH+z61miaQhe39IuqIFn/msyPtuxJFQ2NEZFpOFtsWq9/3rBMV5BdG2OxapgGR5lxl+Vo68wqB0AOzqPNeL+rJ8tUeH27b1+4Qwb9SsM6HxUaRHZYaj3tC1I/87XGQLz/n2pI00bLTZNpt6jYWPBgDQukg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LNSlqO71; arc=none smtp.client-ip=209.85.221.44
+	 Content-Disposition; b=m+H4BIbY4nynLoXOX40S3OXqNAuLe7Is6ePF20oOZ61dgpnPlJD9h8jGWDH1VXh/jqjngU4g/bqhRhUotdY+sx7hwAun5auaAdY8baPPK9i8/w9UJ2hiIOhrwrZQpEWw8h1MXUGKRhxJjwLd3An3g8tb3OkGUuejeKeyaXCwmao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TuOErrJ3; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LNSlqO71"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e2fdddd01dso38897f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Sep 2025 11:58:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TuOErrJ3"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b7d497ab9so13752145e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Sep 2025 11:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757012333; x=1757617133; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757012338; x=1757617138; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=THAARjTe9E517vMG9YGk7Zlz2cjrMzVkQSu/T28Yamo=;
-        b=LNSlqO71VbU2FW0/k9JrBhxLdk9LMfrSs2IGADWBEYSYm6OFPGzDUG4wi0/kFgx2EU
-         JjAAnit+foFy3L/baK3Bq4xFlkQlbdSv3g/8Ojgnk9u3TBq72dtbkpGdTCqLlVcaIm91
-         t2m4eM1CxxtiaU2D7kVHWsnv7YB0Vfu4b6QOMmOjHGorG5P6gdkfNbNIi00iET75ad+0
-         c1orivd4R9Ozk3EqpVcgmecsyinjICPMxASpNZXowooy0hbuov0lojpxS3UEX+ErQtWu
-         86tFE8fzi5EiJEm58rlkNhYOgASBGr+9fCJf+Znq9BzKpHlkg3vDVTIihPUFOn5ujkK0
-         /2ug==
+        bh=H15AtklgMCpkPmsWguobA5odfiBnUJPbrja5Zjg/Sh8=;
+        b=TuOErrJ3evnYIuhusxHIBESgFVMAuU22hDoTk68WV0+cFB8pzYSfu7+CfwVWEUUbqt
+         Ze8JVRodGi8+IGdDP+/UIaTKi2ziSM6bqIjnaKGGRkQXZ4vshj1SS6R+8LjCGy34BLs+
+         n5jWz4LfY4LR4U7k9qtTbFyqg+PYfDgYWBrUz6BEJBJcWI6qnZ29vpBBCjbNtkKwv865
+         vappMPUb6Oo8pMln7+bky3V6q6fTecNN5vtbn4Aj2gRb7m0Zeo+6Itna+OB4oFkP43c6
+         AdLiM/acKjVyIe5ntaC62HVdiqPP/qk5dJyC6ugcaufjDyBw8o6t+FK6/kMhwKnZidiJ
+         enNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757012333; x=1757617133;
+        d=1e100.net; s=20230601; t=1757012338; x=1757617138;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=THAARjTe9E517vMG9YGk7Zlz2cjrMzVkQSu/T28Yamo=;
-        b=s2+S27A9stFGbkOD8QYlt/bVA3o5kY+dsNRUl0MjTBnozyVPhfzJ9auRi65ZPnR8p/
-         L8Y2XgZbibhGR8LLgqXogfBsANeHhhwSOnRsnNo4oDrmTtkjSug+53v7HzzfVFvoasJd
-         el8bxA0mC6yR7GlLzymIMOiHnoDeQl5+uy59b1WtPfVUjdfv94M4ZDwmQf5bXdbpvf0C
-         Ih6MNYB53syt1j18Q602xlQQrtrvwzNrsla/jHGaJw9oaF4OgfpWPPTdeP4X6gTn1JGV
-         oNSN7rc9daxO6GdTODi9AJvnDoTcHDDeGnsfAiV6LCzNLe6yZG0J8DA+twFEq+eDAoS/
-         OSVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeP5RN2qVU791aTy+1nUNf70yR1gnIq937o60A4UcmJL4Yle6eSnhWvTZFQJ8vRJlKjGow3iaQ+JD9rzp6pEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD1b2ZdZ1rVujsEGlpP5m/F4uif6a8H6Fy/2EYagDaMpc5wK6G
-	fkpK05GjW3aF4VTbbxyrLJGoGX5JBaLkfhdJP7FS9Ydppom5EP2HI7mrKvirZEL5ZJQ=
-X-Gm-Gg: ASbGnctLw08CIDl4TK8tXyp0lYxOa1RdqQ8u0x8LfB4u1DCqY0TliosquRPKX7siZ3X
-	PDau17NJvrvl6vtSCTiElnG8VN1LeCBr/RI68yQK+yoCnDqL+qdzMRyl/A5z34hwI+HX5QnglvV
-	pP9TnVnuI9rKrtksXgFzYTr9q957bk7TpWNW0dNQtwPbjunimFbcm5qzIwhIW/HTeV9hXmej6Ve
-	l+ydKpprQ6tcPwMNz7D4ktEJp70yjPNFrKZc0C8Lt0MN1HlXOI6qxVrxHLae4PNc8nykep8wiq3
-	RmmH812qKTctO0bFm2XTsngoSopl9jTgnnU3mBE98S7GgPMOkulv/0ln3U4pTBFvelpOBWwu17/
-	CvPz5Os8XvMFgXn4RS72xWleyqaxj6lj79u59Ig==
-X-Google-Smtp-Source: AGHT+IGHjaQMqzH68th7G1hlLUvy5iZJ7Ftrhmy23VSwVbhKc0VKhfXm8Y3FkmDt97UXGlsf+UOBzQ==
-X-Received: by 2002:a05:6000:2906:b0:3e2:4a3e:d3ee with SMTP id ffacd0b85a97d-3e24a3ef991mr1671892f8f.58.1757012332670;
-        Thu, 04 Sep 2025 11:58:52 -0700 (PDT)
+        bh=H15AtklgMCpkPmsWguobA5odfiBnUJPbrja5Zjg/Sh8=;
+        b=kacGb7K7DPylnID5c7znsWM9hw7nz4blFxo8wWWdo3/lyFevoL2iCBEHcggvWFxL8z
+         8I46iw8ngLC4Ip0Shs/Y3+BgHwntH9GAOSG17zR6YX7zul5jdIQcP7J15Mfb1rCuOdIb
+         DpIuZt8O1hZeRicPPW30q4hHQQnPchz8zj0f7RP8yJer72KiPzcLMo7eOqEf7HXttcCi
+         KZgRtRMUcxUFgH8edbPuD3otWFpWhaAoiRw5quGRD5p7iU7W+mwJBOpzHN5udIhnLHqJ
+         EE4/2EEQjsFr5u2w9QyBKbKoYIKje+qTwCur9hHUglUqe2or+ma1qcx+POk62lwxmZuv
+         Keog==
+X-Forwarded-Encrypted: i=1; AJvYcCUC8UUxPR37uy6BWf3rF1u6o3IcVmlLgCuF++LZJW4MLr7htm9zFUSSvDYsArGYM7fPi1eQk3yMAFDUx5GqbS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpUjhNMqKiwQYAUA7r0Sg5NvfysaIvRuipBCxSlgz2CuE5LIcf
+	LsoC1mMK6KkZnuRA2PniCe/YDRErJNVZAHQRholaZh09VTns4WRXIwgIr3XeS7d228s=
+X-Gm-Gg: ASbGncvGtwd/0TW1z+xIynHpFfVsjPFdDwilYRn2Pn+7DWJ9PFFjv0qDQJVD+0iMZKq
+	5ZCF3iBu9ncv1xbOXA9YzFUxaYAQl5dwirFJKPbp4z9d/apP28MyU9WdP3Kz0DQtN4fogpaJGT5
+	tu8UapcUZWMJpbX+OczPLoMvZPC4ohzeNFobWtcUuQs4vPXb8E3yjBFNho7R2/k4tWlP2JCPgEs
+	aYxeaynTR3375Vc6oaXTqcgS/0mTtuA2FXOYL+HAVmDkVYMQ0dfC5P+zQ9gFaGuHhWXY7BpE+8p
+	VnWcUgU0zFOaW9m+Yab2nDzRJGJWKw2m7P8nDAGChoCcpWcW2IcjamZrNvIVRP8V8TdKFjbSGXS
+	nF5XfNU/mx24iN30l5MsPwgg8XtQ=
+X-Google-Smtp-Source: AGHT+IHv44BQzQPt0SDDcu17yZCqUyKvQjIqrXkJNrOFeUvr/3w7IzlwPeGAssGYkeSJFClhPjyO2w==
+X-Received: by 2002:a05:600c:c4b8:b0:45d:d403:332a with SMTP id 5b1f17b1804b1-45dd53df7e4mr12552345e9.32.1757012338151;
+        Thu, 04 Sep 2025 11:58:58 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3dbead0b247sm9395154f8f.6.2025.09.04.11.58.51
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45dd0aec70dsm22029535e9.0.2025.09.04.11.58.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 11:58:52 -0700 (PDT)
-Date: Thu, 4 Sep 2025 21:58:49 +0300
+        Thu, 04 Sep 2025 11:58:57 -0700 (PDT)
+Date: Thu, 4 Sep 2025 21:58:54 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Francis <David.Francis@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Arvind Yadav <Arvind.Yadav@amd.com>,
-	Shashank Sharma <shashank.sharma@amd.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/amdgpu: Fix error codes if copy_to_user() fails
-Message-ID: <aLnhaU9cLeAdim7J@stanley.mountain>
+Subject: [PATCH next] pinctrl: keembay: fix double free in
+ keembay_build_functions()
+Message-ID: <aLnhbpfeweBI1H4N@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,40 +74,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The copy_to_user() function returns the number of bytes that it wasn't
-able to copy, but we should return -EFAULT to the user.
+This kfree() was accidentally left over when we converted to devm_
+and it would lead to a double free.  Delete it.
 
-Fixes: 4d82724f7f2b ("drm/amdgpu: Add mapping info option for GEM_OP ioctl")
-Fixes: f9db1fc52ceb ("drm/amdgpu: Add ioctl to get all gem handles for a process")
+Fixes: 995bc9f4826e ("pinctrl: keembay: release allocated memory in detach path")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-keembay.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index 63eb75a579ce..2b58bc805374 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -1067,7 +1067,8 @@ int amdgpu_gem_op_ioctl(struct drm_device *dev, void *data,
- 		drm_exec_fini(&exec);
+diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+index 30122ca90cbe..3241d3ae6219 100644
+--- a/drivers/pinctrl/pinctrl-keembay.c
++++ b/drivers/pinctrl/pinctrl-keembay.c
+@@ -1643,10 +1643,8 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
+ 	new_funcs = devm_krealloc_array(kpc->dev, keembay_funcs,
+ 					kpc->nfuncs, sizeof(*new_funcs),
+ 					GFP_KERNEL);
+-	if (!new_funcs) {
+-		kfree(keembay_funcs);
++	if (!new_funcs)
+ 		return -ENOMEM;
+-	}
  
- 		if (num_mappings > 0 && num_mappings <= args->num_entries)
--			r = copy_to_user(u64_to_user_ptr(args->value), vm_entries, num_mappings * sizeof(*vm_entries));
-+			if (copy_to_user(u64_to_user_ptr(args->value), vm_entries, num_mappings * sizeof(*vm_entries)))
-+				r = -EFAULT;
- 
- 		args->num_entries = num_mappings;
- 
-@@ -1159,7 +1160,8 @@ int amdgpu_gem_list_handles_ioctl(struct drm_device *dev, void *data,
- 	args->num_entries = bo_index;
- 
- 	if (!ret)
--		ret = copy_to_user(u64_to_user_ptr(args->entries), bo_entries, num_bos * sizeof(*bo_entries));
-+		if (copy_to_user(u64_to_user_ptr(args->entries), bo_entries, num_bos * sizeof(*bo_entries)))
-+			ret = -EFAULT;
- 
- 	kvfree(bo_entries);
- 
+ 	return keembay_add_functions(kpc, new_funcs);
+ }
 -- 
 2.47.2
 
