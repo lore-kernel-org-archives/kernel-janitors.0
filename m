@@ -1,98 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9134B244690;
-	Thu,  4 Sep 2025 15:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC87828134C
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 15:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756999594; cv=none; b=A7EcWT2dVvassrd+5/Sq9eVrCV6+JL828qYHzhxvnhu6LRsYU1thS4zWdoMRoUKVITUujXbWVVki+zfjlD6lL5n4fXNJKh7EHfFqJbkjK8J+DYm5LcLTTN2QDnS5o1hNtD9QfR8XmcwV/4GxOQnND87WAcUAGgs7/Rg0yc23zQE=
+	t=1757001437; cv=none; b=omUeZRWCYCo0+e2XgIUrufza5uAuFiayvtvBLC1xTtOlGytqtg5YkwlA2bAEU26ptCqtEm42PqwbmAoPns+bLTZNxWpnguTexgL3Qe0O8ZkZtEdQoXMPF1o+/G6H5RF8sSD9ocl0Jx36TdQ7GMj2jYwK5FZIClhLoCYH41v0t5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756999594; c=relaxed/simple;
-	bh=wC8KtLroHY6HeVoIP1n4WQrJA2JwWtEVxeQPQFEVy+0=;
+	s=arc-20240116; t=1757001437; c=relaxed/simple;
+	bh=5bwgftlti0OnS19E8s5I3qUBUN5cb0H7I5hTJs1jaEY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KPmbeDPeFBUw59SjAKd39K0Ga2DcIIJik6cnhH1u2TVs3OsqmBK7MGeXec3KTFbZx5eiGanxdcJv/I6J0ocB9tYVupkc0Vhag+aWRvEoFFKc9B+MiG+IHLo4DKcsx7PXVcfd44zO9z6keIbzeQZjcguAs+GeKoHL2kN5Yzu6cHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiwiCbT7; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=LlEx96AQHsJHvp5WBMcFs3Z96iLW9wqu1K0uUVd7Sm4wSmN1yKsW0QCLBT9KDfIFq6qwqv0ogAef0bvCHU7sfIDVu8Hww3rQ+8Z30uokFNN2ih5wRk5FQLEhRngAi74JK8s1vKkcHjPQFmpoC7/AdR9HqeSSduoyQgrPvHDPyZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wlu9umTu; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiwiCbT7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D1F6C4CEF8;
-	Thu,  4 Sep 2025 15:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756999594;
-	bh=wC8KtLroHY6HeVoIP1n4WQrJA2JwWtEVxeQPQFEVy+0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uiwiCbT7tDybnc6JCMNGYmd8VyWCfkuJquOpTvAeOpIsBWTnk6LcevRXhcoXDbsWY
-	 gTE+Lp+9U1hNeUVN/gKjwXG/Ob7slHdfCUGwgZ3MC4cWBrae/1wXVS1GGF0Qki4gBB
-	 IhmbiFoh4MyaXev/bmCiBE0NzqZkR2iU0BXMYdyXDI5JBH1/adah7O0ycyFgDgbl21
-	 BPzLwR65vCbaH2uzPOC2O9POqEJEn/KNXX81MqDsbjpgA8GwQAIFK/7FJn3YU6cFFw
-	 +yDipSY0zxYNJYo2Q1dVc9nVneE2w/zH+iz0yr9rwRE9JMdqEv8Po7MBaWymVr6xQK
-	 YuWooFSTssOJg==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61e27ee0ae4so166252eaf.0;
-        Thu, 04 Sep 2025 08:26:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURevbm9uT4Uwt/1bSp2I8IcFSg8WxJQrMe7ZJY0uic0dfzliihaJFVPg/PWcVaicVH7my1sMqzHNEBYKu4kxE=@vger.kernel.org, AJvYcCVIs0TMuhTVQEC5MdIPSA60xRbBrrkvkduuFCo9gqV+e8QaiipktB6/VTfeKMi4Zu0eRuXxsKl0er+rmFKU@vger.kernel.org, AJvYcCWf4ijU+Bwr5JA4Zz9He/nUN8n35n46VLUBtHLRoZ1nivBcFRZoOgk+lY7h//KdCGgGZfhrSm0cN4FFtg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9awFwWaUshKq9UJWItx0t6qIe7hKdM7omt4GpkyE5M/K5y5gR
-	hUml0V4RA0/0VqtFujG/craSh4VizJSSiR9rM+/AyJ6JzW3FlvyWwv6VL/EKglxFZ+qq46je4Kj
-	AC7shW18B7tL9sjpgql73I9DnQFs/3v4=
-X-Google-Smtp-Source: AGHT+IH4TIuaj3rlH6hzohb9REICq+MfcRyQItpmQuOhi7hkIA0OW9a770eUyjGII+FElzkYd84asozifkcr7K4oXOc=
-X-Received: by 2002:a05:6808:1a16:b0:438:33fd:3193 with SMTP id
- 5614622812f47-43833fd4474mr2227125b6e.24.1756999593478; Thu, 04 Sep 2025
- 08:26:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wlu9umTu"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24b2d018f92so203235ad.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Sep 2025 08:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757001435; x=1757606235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knBUAJ9UaN+FZLHj0gx+L4m7BuumlipWhHmFcevIGIQ=;
+        b=wlu9umTujnJHZeYWpfX93lNgSOkFLhU4c/fWbrf+hzKIES8J2DN9jQ5vAyAjUrqUtX
+         CjzT9pEIHd/3SPKzuH+gS9UYJxRBwzSoXWs9PuZbTniH/c08yk28M28OoXYx4FYzUbwN
+         o0uR7FYWRTo1hqQvAH2x58rYpuzADKA99YzlxvGy4j/c1kOb+uBTkU0/8LR+N50SWSsy
+         2KfsAqo6H93bFxFC9Ge1rYRMW4dbFv8hgmWuJXpnVMBmA2YgfaNYBYKmJbEJ1+QOJsdf
+         FxDAx5ywNmdXI4tLdcEgaXFSTFEWd92maIEoTY27CoIWgHV91oXvzuX+9ldOIuK/qaHp
+         L+qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757001435; x=1757606235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=knBUAJ9UaN+FZLHj0gx+L4m7BuumlipWhHmFcevIGIQ=;
+        b=BI+tqu8n/XLC2bqzYNMfvyPhMH8tjdy+BCNHH2ZovweEMxYlGjXTk0z71mfGb9Rt4U
+         WuYk4cr43mXxpeKiwlSbIjWlWDXRa1S6/fLNZAFknw6lJo6KQqaFm5o5q6KlpBNGYOrl
+         VlWoysz+SzADtSOMKTmPT+rNFKf7ZEmw6yD5770TAnho9nPjhoykQhnXs/DBYlDEvoO3
+         yrY5i4MW51uOZ+wV2PO6vMeApCKCVTrhjD8/MoX7GQELvgrqsJACdgHaRt0RylGuyELj
+         Hb4PDqvaZr4vCuP0TawWVKkNVJLJqwFZnJ2NGJDrpIPCDqQUF2Sk/9qSsZ4PwulrSyZA
+         sHXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXxuLm/ZgN5kyeoD7VGhUJdL4cY5fDccRj7UEqPOuZlznc6Nee5sVmrqt55FsHmke+NLF8wR67iVSGE5yd4M8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+n/bTZqNniQ+xInEAxYFclovfRjV3dbESZEv7u4uPgruEP74W
+	Wtd0gAHXG8IYUu+0XisExojQNojn2lCIeU/h/H3Za79zJ2RP/go4TjMfUuOM2TFptjeS0L8+Qan
+	VwnUYvgUK6Al1E9HcmrWyRCOb7BMTD56aok+1ITQa
+X-Gm-Gg: ASbGncsYtNQF9etbKpUKfn2v4Z5JuKaXYEW+R6tMi8zkevWM5EGIelusoaO+TPAaLFr
+	jobXGzeQQvaCpDNhRPVNYmYBdUBwzLaXaaMcSsz8GhXTaizMcHFVj7daBaT8LI0Q+Watl9s9kM7
+	VUKVRalMysVDzNjl2mLXRecfVu5BW1lkie2yEnCQq856vr9YSmlWyIw2XTtQ+CL8QVe2Ou0riU9
+	an/97gfkGt7RZzyeaW3AH7Upf534j6ONHCARd9LxgbLnYnVOkg9WdQ=
+X-Google-Smtp-Source: AGHT+IFruwuAGBkh7rKP7RWIUwTJnAWvhVe1xHsgspTlHo9U/RM8g1S8GgdHNUpcy8Rksev/Q7nZoVg7U084PMlX+h0=
+X-Received: by 2002:a17:902:e88c:b0:249:10e8:c866 with SMTP id
+ d9443c01a7336-24ccccc4984mr3559105ad.11.1757001434759; Thu, 04 Sep 2025
+ 08:57:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902114518.2625680-1-colin.i.king@gmail.com>
-In-Reply-To: <20250902114518.2625680-1-colin.i.king@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 17:26:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0je-10aKyA0zeDZbqTXzjxNb7yTfsWkt_-a-7uwqYdmcA@mail.gmail.com>
-X-Gm-Features: Ac12FXysfBvBxpPrwhnHfQCMCaA6rmhjAG40wp_mam7L4JRE-FKaDYponTHdN1c
-Message-ID: <CAJZ5v0je-10aKyA0zeDZbqTXzjxNb7yTfsWkt_-a-7uwqYdmcA@mail.gmail.com>
-Subject: Re: [PATCH][next] ACPI: NFIT: Fix incorrect ndr_desc being reportedin
- dev_err message
-To: Colin Ian King <colin.i.king@gmail.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Len Brown <lenb@kernel.org>, Jia He <justin.he@arm.com>, nvdimm@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+References: <20250904090904.2782814-1-colin.i.king@gmail.com>
+In-Reply-To: <20250904090904.2782814-1-colin.i.king@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 4 Sep 2025 08:57:03 -0700
+X-Gm-Features: Ac12FXwis0ieQjvaJDpAAZ-N5VUsQcVYBE46x0ADT7btZd7ypFajhQSQ5YJpnbk
+Message-ID: <CAP-5=fVZ-mQTRzA2qkW2NjB_W_AvNJJ7mNJj5cBh1jJX7X8Btw@mail.gmail.com>
+Subject: Re: [PATCH][next] perf python: Fix spelling mistake "metics" -> "metrics"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 1:46=E2=80=AFPM Colin Ian King <colin.i.king@gmail.c=
+On Thu, Sep 4, 2025 at 2:09=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
 om> wrote:
 >
-> There appears to be a cut-n-paste error with the incorrect field
-> ndr_desc->numa_node being reported for the target node. Fix this by
-> using ndr_desc->target_node instead.
+> There is a spelling mistake in a Python doc string. Fix it.
 >
-> Fixes: f060db99374e ("ACPI: NFIT: Use fallback node id when numa info in =
-NFIT table is incorrect")
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Thanks Colin you are a star!
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+Fixes: d0550be70f7a ("perf python: Add parse_metrics function")
+
+Ian
+
 > ---
->  drivers/acpi/nfit/core.c | 2 +-
+>  tools/perf/util/python.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index ae035b93da08..3eb56b77cb6d 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -2637,7 +2637,7 @@ static int acpi_nfit_register_region(struct acpi_nf=
-it_desc *acpi_desc,
->         if (ndr_desc->target_node =3D=3D NUMA_NO_NODE) {
->                 ndr_desc->target_node =3D phys_to_target_node(spa->addres=
-s);
->                 dev_info(acpi_desc->dev, "changing target node from %d to=
- %d for nfit region [%pa-%pa]",
-> -                       NUMA_NO_NODE, ndr_desc->numa_node, &res.start, &r=
-es.end);
-> +                       NUMA_NO_NODE, ndr_desc->target_node, &res.start, =
-&res.end);
->         }
->
->         /*
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 47178404802f..779fe1280a56 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -2187,7 +2187,7 @@ static PyMethodDef perf__methods[] =3D {
+>                 .ml_meth  =3D (PyCFunction) pyrf__parse_metrics,
+>                 .ml_flags =3D METH_VARARGS,
+>                 .ml_doc   =3D PyDoc_STR(
+> -                       "Parse a string of metics or metric groups and re=
+turn an evlist.")
+> +                       "Parse a string of metrics or metric groups and r=
+eturn an evlist.")
+>         },
+>         {
+>                 .ml_name  =3D "pmus",
 > --
-
-Dan, Dave, are you guys going to take this one, or should I take care of it=
-?
+> 2.51.0
+>
