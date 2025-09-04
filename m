@@ -1,109 +1,102 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DE92417D4
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 19:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA9225B1D2
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 19:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012898; cv=none; b=txeE2KhzvmUk2NN73XZX/NcViCuxL5D1WWUqETmwQgSaW3bUFYbBn0tf2G7uCQLwMND4Bcpb6p6Sg/6fBY+UmlMnCgfjoW2qO2jTvjEtn74Um8wQugOFxsAUJrxPcRGagk+Y4Wb5yENoSJCPfkwElVNkf4qdgYRU3KwDms6QpVQ=
+	t=1757014004; cv=none; b=YH4oDuCAZV1OGdctm581wLZglPP22qAhJakWH240o2vfZLxjIoLMj52w5h3KrAfw/k8olcY6t8KTJisLOzVY4/S2H74S4PFmGx7c8a+wWfwVAf/ag+yasx3tiSm4r3FVG96liLe3Me0JCwsl5lLb2UzLZMnMZ7HVkwxAYAm+fBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012898; c=relaxed/simple;
-	bh=vAc8GWlbS1dNAlArdFmlz8JV/K5D/zFsXv7QiZpMwiE=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EAE4B54glKBg0+rFYOs/gaOdFh3mxP7t+V0VxUzHIvCK1dkeJnCUuXNyPc1TVb71paEUrGRh27pzTTDUBjW+8iEL5zvFsOFI8w1hHhmEDnk0F6OGhZw8YLwMIODegsq3Msz0cwU6+J66Y2d1mANuNc5SAngE/In7of1qv3fUJcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=buIFpMzW; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1757014004; c=relaxed/simple;
+	bh=zaSNqNWr/ozA6Ijh9En3MDPWxOwBsI+hHrcq5pxJ/mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/MHR4DcUeqanUDbYzI/YjSpyTFXzBhMUFWLUA1s/E+i9Fn0GIyw3HOZ6hgWToG5r9YLw/zczraf4f3H2gVGd+lhqrscEivJs2q+EZcZ78nZVIhbKFpOM4A2DXctmnf3WrASHeB2Hely3YMYFjvjauhQW67PX2SBHWuX4A29iD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KVIeXcQb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="buIFpMzW"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso1390774e87.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Sep 2025 12:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757012891; x=1757617691; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vo5h9zWwGoqlYpJct4FmDo3z+MmmKvsMCfXCdRWbkd0=;
-        b=buIFpMzWhzI1UteyKZo2+nFbuh1svmpvVoAMHuXy03PXBAXPfvBiNAV7T5LFChxUls
-         Re38b2oeGWZ03aUrUSgLgPa5IGhfIb60IRGLbt1XfHWFypykZhIMWi74QeitGdgHbFgx
-         r1IwH5uwiZvqxvMySdOx736Af8+pLyxzl3vmZZcoWv/vWXdn4M6hmjIhZhV+5D3tapY0
-         rvFgj1iuIKpbfNDsIdVkSt1NRZBAbtZHuz9T5n4RqPFZllJzpre8ivLtk+Tnu0nbhW51
-         JnnKq1cCBIJF92uTIAXYWiobXYuuJw2lkldiwINUpQ90SyF+hWqLJ64bh5VBTpXm4uiQ
-         8T3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757012891; x=1757617691;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vo5h9zWwGoqlYpJct4FmDo3z+MmmKvsMCfXCdRWbkd0=;
-        b=eu5oM1Y6b0M6vztNk5YkKv+sl1jEoiqHPzkoWZ+TAzQTYUVCv7pJsXh2SDreejnhk7
-         5pZ6nUTc0radMOLiqoWGrCJzKoJQMD6Y71sUuR5F3MMD976uUjkZENOLkLZUx96EtUBz
-         pohDjPzIWieMZanJQivVtQd+VfjGUmmkBdlJCqP2ukyk7t3L9dv+STZSlyKtpR78dUDg
-         WynxIcj94mQczPZRXQHJD330NQ7R3DQb/gvfa8UCQqhkV4vlumi5XQpQC3mPjOweAP/0
-         1gAaet9QdYW3QjxxPoKtwlpMjtNnifkNtiRh3W1K9ENghNKxdLP/QiEnV06nFYz99RIc
-         dzxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpoNpojT5kaulHMg5gidDi3SjEqBuxm1D8Rd2NkGDP9ZOmR4XwWpEMO5If/36A/0G6IzuiGFbg0jUHkj3lxQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK7dtdS9OFZeb2o7SAVlPk+YfsQN1f5a0fOoD0+bzyWi1HIEFn
-	Q3qEwIjtcxuKakNbMOv745aiSarqsc7tYpx9ME2FoMijPcNT0t6xo5dJwSzAYx57WncoPhY9FKq
-	7TYvlzNm+939PHhhfIZfxmx6vdgjuqNeubtWi5bOFwQ==
-X-Gm-Gg: ASbGnctyNIXdVpnZhuhgfEFYwP8LZFbOOnC++VX/lNmm5IWXJsYxZzrPjoSq/Au6mS3
-	FDg9KjKeYNmWZYRWwAAMFWHe1adv6eKKMHcAYvW32TDD6YlEjajCpVpcfXY+VB9MNA6KziIr08w
-	BCyTEKeQsZnxBHU28+NGkaWLvzIeFeLpGrKb2p7brGjd0a94T79q9jy1VKgJmRQU0aNCbaqgeSu
-	hfQc64dLFFb6gPorXeOPgSIkmROgW4WDNh1UA==
-X-Google-Smtp-Source: AGHT+IEjg25sWuO3bmaj5PHUknGO0S2JXM45w9uKMpw3odRt7dOKB/ZN0eWo0rVVU5lHI6RtH5iDMCEfa3X9yWzPwAE=
-X-Received: by 2002:a05:6512:291a:b0:55f:63f5:747b with SMTP id
- 2adb3069b0e04-55f708b4f88mr6505796e87.16.1757012891026; Thu, 04 Sep 2025
- 12:08:11 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 4 Sep 2025 15:08:10 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 4 Sep 2025 15:08:10 -0400
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <aLnhbpfeweBI1H4N@stanley.mountain>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KVIeXcQb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757014000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dac3Dl60syEmIm3dGi2bHfeTJ2Rbg7LOh3H/HPUT6/U=;
+	b=KVIeXcQbeaTw4rRa6H4vglWRWgFWrLKuWzbG9CExaof+7X1E4mBN8Nl9ipZPRScHS2IRxR
+	3LeQiWtsI3wkfF5q+wy75iPoyW73DxGzQChFLdRk5fTRz+MgicA+YaCKbCZTjVNVUdojKq
+	INu+vkKSgF9GCbkoTf3M3LfDr8tOc2M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-zb8rTkA8O7SfBrtN72BJ9Q-1; Thu,
+ 04 Sep 2025 15:26:37 -0400
+X-MC-Unique: zb8rTkA8O7SfBrtN72BJ9Q-1
+X-Mimecast-MFC-AGG-ID: zb8rTkA8O7SfBrtN72BJ9Q_1757013996
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCFE119560B4;
+	Thu,  4 Sep 2025 19:26:35 +0000 (UTC)
+Received: from aion.redhat.com (unknown [10.22.88.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 618661800452;
+	Thu,  4 Sep 2025 19:26:35 +0000 (UTC)
+Received: by aion.redhat.com (Postfix, from userid 1000)
+	id 9B73B42EE90; Thu, 04 Sep 2025 15:26:33 -0400 (EDT)
+Date: Thu, 4 Sep 2025 15:26:33 -0400
+From: Scott Mayhew <smayhew@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: delete unnecessary NULL check in __fh_verify()
+Message-ID: <aLnn6ZngnxAR8tXW@aion>
+References: <aLnhkm7q1Di0IiIu@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aLnhbpfeweBI1H4N@stanley.mountain>
-Date: Thu, 4 Sep 2025 15:08:10 -0400
-X-Gm-Features: Ac12FXysO6QNdjIEOI33bmHVFPgLJt02PCy8XpvyDgLc8P_ntklQBO8hfnzbYpY
-Message-ID: <CAMRc=MfZuB53p2AMG_=zTzERL8+3cfZdXh+c-UhO9S8_aZJoHg@mail.gmail.com>
-Subject: Re: [PATCH next] pinctrl: keembay: fix double free in keembay_build_functions()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLnhkm7q1Di0IiIu@stanley.mountain>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 4 Sep 2025 20:58:54 +0200, Dan Carpenter
-<dan.carpenter@linaro.org> said:
-> This kfree() was accidentally left over when we converted to devm_
-> and it would lead to a double free.  Delete it.
->
-> Fixes: 995bc9f4826e ("pinctrl: keembay: release allocated memory in detach path")
+On Thu, 04 Sep 2025, Dan Carpenter wrote:
+
+> In commit 4a0de50a44bb ("nfsd: decouple the xprtsec policy check from
+> check_nfsd_access()") we added a NULL check on "rqstp" to earlier in
+> the function.  This check is no longer required so delete it.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/pinctrl/pinctrl-keembay.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
-> index 30122ca90cbe..3241d3ae6219 100644
-> --- a/drivers/pinctrl/pinctrl-keembay.c
-> +++ b/drivers/pinctrl/pinctrl-keembay.c
-> @@ -1643,10 +1643,8 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
->  	new_funcs = devm_krealloc_array(kpc->dev, keembay_funcs,
->  					kpc->nfuncs, sizeof(*new_funcs),
->  					GFP_KERNEL);
-> -	if (!new_funcs) {
-> -		kfree(keembay_funcs);
-> +	if (!new_funcs)
->  		return -ENOMEM;
-> -	}
->
->  	return keembay_add_functions(kpc, new_funcs);
->  }
-> --
-> 2.47.2
->
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Scott Mayhew <smayhew@redhat.com>
+
+-Scott
+> ---
+>  fs/nfsd/nfsfh.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index 062cfc18d8c6..3edccc38db42 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
+> @@ -403,9 +403,7 @@ __fh_verify(struct svc_rqst *rqstp,
+>  	if (error)
+>  		goto out;
+>  
+> -	/* During LOCALIO call to fh_verify will be called with a NULL rqstp */
+> -	if (rqstp)
+> -		svc_xprt_set_valid(rqstp->rq_xprt);
+> +	svc_xprt_set_valid(rqstp->rq_xprt);
+>  
+>  check_permissions:
+>  	/* Finally, check access permissions. */
+> -- 
+> 2.47.2
+> 
+
