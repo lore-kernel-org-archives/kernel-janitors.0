@@ -1,69 +1,72 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44C82701DA
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 18:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D0C263C91
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Sep 2025 18:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012341; cv=none; b=kQK1BvzDN5jvve0X4Uca50iomos6jEdeLwgVn/J+C1XCo14G2mQ/ysprbnJqLUbL0Hoh/CD/sH55k2QoyQP4c4N+A+KNmpoxlsTHvvUh2jrJN3SscCGIyOE+scgpN7srBxPvH0/yQ2pzRna5RPGp+YPFgYv6casSNqP0eYCA57o=
+	t=1757012378; cv=none; b=pvYEOAAMdzpLrbb+HbldZPa+L7QpaUAE1qFVqG2MSUX1L3t4wneX/Gw/BgOZJqPZubwWh8fDwwuCwRRdS+0FGw4s+YnKivhotgYz/z4d2qKlnyOBgpWhXmt/m0AfyCVyjwVsRDj1h8Lht2WP20pazHB9klV9kNtojgeQlBpSr8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012341; c=relaxed/simple;
-	bh=uivRpA9HtbBawOeMvgjPRCQa2tnswuXo9Y09mOkTMZI=;
+	s=arc-20240116; t=1757012378; c=relaxed/simple;
+	bh=hl7UzHlA38V4Bluawkwxwy+Rq2dwVuzKGOkhwZEGe7g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m+H4BIbY4nynLoXOX40S3OXqNAuLe7Is6ePF20oOZ61dgpnPlJD9h8jGWDH1VXh/jqjngU4g/bqhRhUotdY+sx7hwAun5auaAdY8baPPK9i8/w9UJ2hiIOhrwrZQpEWw8h1MXUGKRhxJjwLd3An3g8tb3OkGUuejeKeyaXCwmao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TuOErrJ3; arc=none smtp.client-ip=209.85.128.49
+	 Content-Disposition; b=GqMMxCGcr11pqgyIeozMvVRbPBBY6R0D4Cl9FWLNPvaGETR2b9KwjnbPxy6fxrEnlBhDhyLGBVrJ283yVRdLInuhXQAGJpQz8OWhwIqHmCAS1PDEOijyt8uhkOmmT/lW9e7hSyLShhZ5PYLg1YscttFuHBOiaDcZ6vjplSUpuR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NnEc1ysI; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TuOErrJ3"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b7d497ab9so13752145e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Sep 2025 11:58:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NnEc1ysI"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3df15fdf0caso1069816f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Sep 2025 11:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757012338; x=1757617138; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757012374; x=1757617174; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=H15AtklgMCpkPmsWguobA5odfiBnUJPbrja5Zjg/Sh8=;
-        b=TuOErrJ3evnYIuhusxHIBESgFVMAuU22hDoTk68WV0+cFB8pzYSfu7+CfwVWEUUbqt
-         Ze8JVRodGi8+IGdDP+/UIaTKi2ziSM6bqIjnaKGGRkQXZ4vshj1SS6R+8LjCGy34BLs+
-         n5jWz4LfY4LR4U7k9qtTbFyqg+PYfDgYWBrUz6BEJBJcWI6qnZ29vpBBCjbNtkKwv865
-         vappMPUb6Oo8pMln7+bky3V6q6fTecNN5vtbn4Aj2gRb7m0Zeo+6Itna+OB4oFkP43c6
-         AdLiM/acKjVyIe5ntaC62HVdiqPP/qk5dJyC6ugcaufjDyBw8o6t+FK6/kMhwKnZidiJ
-         enNg==
+        bh=nWB4qwgbKVqfMW1WmVN2/rZ5+FIZKuDCGHJqFvd3HhU=;
+        b=NnEc1ysIVFU8Vkyh5N+4Y0QCfIFALGQjVEJD3HeIOxLPNnGGtg23H6Ez1mKyrbM5jY
+         U9FV8ya6o5MD2QklYYMFVO8LBUC544+VECkAzCvbYjAZxsWTjRamajH1SaYoBd/erAN0
+         Hk8eZ2jk6D3vOry9FasFfwfURSI722amFs/EkbtKRYDycrK0E8THfC4pLj6E6jYQQgc9
+         bkdOiGcub+tAhVb5px4lEzuFco1mnWjiVn1aeG/YW5c+5Zin8joQNAH1SOvaEkFR6Alj
+         p2zj0Msq9rsFvBYnWMxX+g0opHoDxis7xkRS9dPtE1MfaPeMvPn9zQbGkTAzE5GNoFLy
+         II2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757012338; x=1757617138;
+        d=1e100.net; s=20230601; t=1757012374; x=1757617174;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H15AtklgMCpkPmsWguobA5odfiBnUJPbrja5Zjg/Sh8=;
-        b=kacGb7K7DPylnID5c7znsWM9hw7nz4blFxo8wWWdo3/lyFevoL2iCBEHcggvWFxL8z
-         8I46iw8ngLC4Ip0Shs/Y3+BgHwntH9GAOSG17zR6YX7zul5jdIQcP7J15Mfb1rCuOdIb
-         DpIuZt8O1hZeRicPPW30q4hHQQnPchz8zj0f7RP8yJer72KiPzcLMo7eOqEf7HXttcCi
-         KZgRtRMUcxUFgH8edbPuD3otWFpWhaAoiRw5quGRD5p7iU7W+mwJBOpzHN5udIhnLHqJ
-         EE4/2EEQjsFr5u2w9QyBKbKoYIKje+qTwCur9hHUglUqe2or+ma1qcx+POk62lwxmZuv
-         Keog==
-X-Forwarded-Encrypted: i=1; AJvYcCUC8UUxPR37uy6BWf3rF1u6o3IcVmlLgCuF++LZJW4MLr7htm9zFUSSvDYsArGYM7fPi1eQk3yMAFDUx5GqbS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpUjhNMqKiwQYAUA7r0Sg5NvfysaIvRuipBCxSlgz2CuE5LIcf
-	LsoC1mMK6KkZnuRA2PniCe/YDRErJNVZAHQRholaZh09VTns4WRXIwgIr3XeS7d228s=
-X-Gm-Gg: ASbGncvGtwd/0TW1z+xIynHpFfVsjPFdDwilYRn2Pn+7DWJ9PFFjv0qDQJVD+0iMZKq
-	5ZCF3iBu9ncv1xbOXA9YzFUxaYAQl5dwirFJKPbp4z9d/apP28MyU9WdP3Kz0DQtN4fogpaJGT5
-	tu8UapcUZWMJpbX+OczPLoMvZPC4ohzeNFobWtcUuQs4vPXb8E3yjBFNho7R2/k4tWlP2JCPgEs
-	aYxeaynTR3375Vc6oaXTqcgS/0mTtuA2FXOYL+HAVmDkVYMQ0dfC5P+zQ9gFaGuHhWXY7BpE+8p
-	VnWcUgU0zFOaW9m+Yab2nDzRJGJWKw2m7P8nDAGChoCcpWcW2IcjamZrNvIVRP8V8TdKFjbSGXS
-	nF5XfNU/mx24iN30l5MsPwgg8XtQ=
-X-Google-Smtp-Source: AGHT+IHv44BQzQPt0SDDcu17yZCqUyKvQjIqrXkJNrOFeUvr/3w7IzlwPeGAssGYkeSJFClhPjyO2w==
-X-Received: by 2002:a05:600c:c4b8:b0:45d:d403:332a with SMTP id 5b1f17b1804b1-45dd53df7e4mr12552345e9.32.1757012338151;
-        Thu, 04 Sep 2025 11:58:58 -0700 (PDT)
+        bh=nWB4qwgbKVqfMW1WmVN2/rZ5+FIZKuDCGHJqFvd3HhU=;
+        b=rEw7ompgfUIXjgZb4CFhRJkPkK2H7ARIosifxbJhZHY8oeagZiCeF/wb5M0qP+SLln
+         E1H8kudrlF22piqAVV4MP3qxMCjgDmSa3rklu4YSH5u6JheBjF1JSyl+MXy0ku9XFoSr
+         ksHm510/kvKBBCEGza2upziMIKItMsUANWpIxqkZgM7xNfb98Zaf2Xh4F6V96ODRQ46U
+         RbXXA0k2lXdzesVQ71Q2ub76D+75VoADHTsr5Zw0G2C0sZJ1d8qVLN3jabT80Rdo7iKN
+         hzDLNCYM1mt7Ed9GqPdufZeN4hjLds31TtmAWuJ6sN003z9r03CA7NGYuyzue11j0Qjb
+         6XNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQc/AQ4/GJKKbLgD4wIyZ7LbYnLSLER5+VOcrS9k7hCX4wN6D//F+uhcH+iTQ4ofxXwsCyHbaNY3zJbBzBxJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnG24qDCcxnalArNo3ysllI8d/9IhktV6xSU7PV2+UV0YOSdUV
+	ReFNgABbybeuJgQU97hX+9buo5+u1xAfoeyr7uVb0xZbEiL+dAe/QWNKm9DxNi6ckVU=
+X-Gm-Gg: ASbGncvZ4GKf+RG865KK0nIkqS+GlGQztZghaLfjBjUmagqMlxWWV+zGYrfqNCEcg1l
+	1Sdd7uYIff/58f8YGOyeJGo3C5P/seMp8XYrmIuzPAVxKShZ7mHnWEddqNyOlBmAoVJvQqi7IsD
+	A6enG22lGxyhfaD8RtQA6A++nTZdr24uZY1cjNzMUSm/sfSnz7lwkpGAZanIog7sG/OB8+H9yTx
+	XRAmhAiuEegDcXao8ZEIQG4VRy9b5JaqirivoMCNWwco7HxgyYXpuxm99xDq85QLwu1bJmG5WUW
+	UGa8OUd8IgvDt42Vz6Ng4NDUXCs6F+fIQoblyhHsIa8lrHt4irxL8Zr3FVVCWbOWx3j6Scxl80O
+	a42C374rM/19UquOWR2qph8sTEVU=
+X-Google-Smtp-Source: AGHT+IHZZPprzS9mbuO41DYFLAmvIcfpOdVZu+bM1xROID69orUBhGlsV7b4geCS+yXzO5UlL5rZ+Q==
+X-Received: by 2002:a05:6000:178b:b0:3da:d8a1:9b6b with SMTP id ffacd0b85a97d-3dad8a1a85emr7222669f8f.3.1757012374584;
+        Thu, 04 Sep 2025 11:59:34 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45dd0aec70dsm22029535e9.0.2025.09.04.11.58.57
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d1007c0dc8sm27028606f8f.53.2025.09.04.11.59.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 11:58:57 -0700 (PDT)
-Date: Thu, 4 Sep 2025 21:58:54 +0300
+        Thu, 04 Sep 2025 11:59:34 -0700 (PDT)
+Date: Thu, 4 Sep 2025 21:59:30 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] pinctrl: keembay: fix double free in
- keembay_build_functions()
-Message-ID: <aLnhbpfeweBI1H4N@stanley.mountain>
+To: Scott Mayhew <smayhew@redhat.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] nfsd: delete unnecessary NULL check in __fh_verify()
+Message-ID: <aLnhkm7q1Di0IiIu@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,31 +77,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This kfree() was accidentally left over when we converted to devm_
-and it would lead to a double free.  Delete it.
+In commit 4a0de50a44bb ("nfsd: decouple the xprtsec policy check from
+check_nfsd_access()") we added a NULL check on "rqstp" to earlier in
+the function.  This check is no longer required so delete it.
 
-Fixes: 995bc9f4826e ("pinctrl: keembay: release allocated memory in detach path")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pinctrl/pinctrl-keembay.c | 4 +---
+ fs/nfsd/nfsfh.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
-index 30122ca90cbe..3241d3ae6219 100644
---- a/drivers/pinctrl/pinctrl-keembay.c
-+++ b/drivers/pinctrl/pinctrl-keembay.c
-@@ -1643,10 +1643,8 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
- 	new_funcs = devm_krealloc_array(kpc->dev, keembay_funcs,
- 					kpc->nfuncs, sizeof(*new_funcs),
- 					GFP_KERNEL);
--	if (!new_funcs) {
--		kfree(keembay_funcs);
-+	if (!new_funcs)
- 		return -ENOMEM;
--	}
+diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+index 062cfc18d8c6..3edccc38db42 100644
+--- a/fs/nfsd/nfsfh.c
++++ b/fs/nfsd/nfsfh.c
+@@ -403,9 +403,7 @@ __fh_verify(struct svc_rqst *rqstp,
+ 	if (error)
+ 		goto out;
  
- 	return keembay_add_functions(kpc, new_funcs);
- }
+-	/* During LOCALIO call to fh_verify will be called with a NULL rqstp */
+-	if (rqstp)
+-		svc_xprt_set_valid(rqstp->rq_xprt);
++	svc_xprt_set_valid(rqstp->rq_xprt);
+ 
+ check_permissions:
+ 	/* Finally, check access permissions. */
 -- 
 2.47.2
 
