@@ -1,153 +1,72 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F342B2D7;
-	Fri,  5 Sep 2025 14:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF9A36CE0B;
+	Fri,  5 Sep 2025 14:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080933; cv=none; b=PfMdGyKBtsVLlyAhqGBStuiOcVAyE4IQ4/XLt5+dWUmCmMaRFLXzu6d/pfcUEo6fw6ET81pBPkqJzfJ4Ai2+BWZlJ8Zbq8Kgg9JjWvViLOUHoxv4SvoYlEIXTbQkTAlVJqWAUi/+0UPEZhTHMjfrybbPppEY2Wx8kepeVVywk3I=
+	t=1757082413; cv=none; b=lZdqJIXIRH2Ooxyl1Y2okeVm+xlPPJF/gYjTIuVhPyzFqEjhPIa9e4mlzy+sLC91ncF3qO+GdFQF2lgfnqJmRFVVkov0IPAY8TozW+bg3ouKFSgKy8qecsg+AvTwTsnBoPx5D7FCGePVLhpryh0veZaOCQFmG/i0u7YLi9Rnkvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080933; c=relaxed/simple;
-	bh=rdLO+iSC9YCqe675tWrXmT/Mj9ER/EzhNzwbwpiMWYU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JapJSqxnRP1HWZdkKtniFyFyigMCU7dA1QJIdcczGG5NjWScI7gOVPzDxsqPG/kCcI7zo64kUh2M5FKL0Sdz0dkH9GnT9bBQFOKmOR2rbhzp2Pkm6grVSIhbezMsJZJPj3lMLMuKZDFbGVCZCIH/tEQ1QYtMtrfULcpbLb03neg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqONnOoI; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757082413; c=relaxed/simple;
+	bh=LV0JBUG2SwgOJZFlcn56mSQ+ApkXiLxAyOWpCxVcuxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WPkh4O8+9dxyBR26aQfiRnJtCcVU3dRW9t/MterDODPgOJeifeKVkUP/hl+o93sfmGUYoViiiP5klb29hIYtz07j8zDWi5AblEV7GiEv6QncYHlRSX5n+obnzCbnnzKYevvi0aZ2RLHg3/bmkMpLM5ie2SkPezza+XhECjg+b3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKCmQXYV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqONnOoI"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7725d367d44so248243b3a.0;
-        Fri, 05 Sep 2025 07:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757080931; x=1757685731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmzENMw6YNHe2IJ7FAYcIAfnTl3HXJqQlHsorHVRbJc=;
-        b=TqONnOoISU+CcKnRRsPbRbxpUzHIH7BwxKLO8eBZXu8PfjHFTMoonhQp0Gc4vkP+kG
-         iOY/b4aPuJqu168CCmQRfnKnCnuQm6EG2XBCpuuN/x4RvYF8XvWBrcZj5soC44UUJoIj
-         5BHp3vVwONLfr8PSw4mY1inxQOOCrVS/+iQEC7/A47xfyaEOYFVbzFqBHlv83Sqg3NC9
-         gHVdQVX5IBqdnZhFAiddT2LJo9/eaX18kfcS9dTNX2tR7c2Qo1YH4egTyiOfxSUfUwoJ
-         NXfYvUwHgviwLTg/qSHX4dt9W+NBtO/vOIQY7/p+V24njkxscoSeV9Y+BOKmdFJniIqh
-         SlNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757080931; x=1757685731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gmzENMw6YNHe2IJ7FAYcIAfnTl3HXJqQlHsorHVRbJc=;
-        b=H2tGsWvtdS9y1Tox+0co9Bij/OAFuP/pBl/YLNqcYBm/4AH06xsM2q+kWLNMig4kM6
-         hhLMq9GzuaqXLzBCcIhQO9t3QMXz3nJ92laYriI6ZLjII3XJlix6Lu3BWT1m92G2ZHOF
-         2Z1aBiCK3ovRPRU9h/oIYsydorxXuzlQUISra1uIdGObA0gdyfWew2LVLulIiAmRsQMy
-         hNPMzVOZ/rq91c6zYZWAKUCTeypgHQANVoEI5y4sNOL+v1vrWkeXt0k8angb+B2Exx7e
-         N58eweldfXvFNHziZAs5MoFP2YY1ChL88dh7IDdM9Fqq1EcSwsCoBiM6Z9bwcgxvOfY1
-         QpzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkl1kgatfi6TOYW1MQqcIDDrbb29hhuJ/xueHzgy1sNAl9NFiCRFzviN0ZzGZrRffKxIPeenzle5Bcj4VeVMI=@vger.kernel.org, AJvYcCWe9gJt1qQgSY6bTtXQQdPFDu3GaHGAWzNLtIj0kj1jaBJk/XNjUdreQjpjA1wLdWv/3zuRNwLv0G985v/T@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzC/tMZzNdsfUUp5YF1Y+2p1lpi2sCFVdSAG8JtOD89YHI648l
-	lRMIq61M3ixHcnS02Gsk4FDz4HFSLCCf80Id3QOvAj711X/3v+tNOYdm8CDJfGUR/r3QL3kO5ec
-	a8JCjnaLfD/TSJ5zpvtAX4x32CZpVFUA=
-X-Gm-Gg: ASbGncu71AX/rZVajhXyNR+PHEEuzy7KHyFLZ4loyO/EHR8zeBNsk/EFiwjBv/9cwwp
-	q+VbXvHPND5ISWSUk1EPoshEcs8giHjiKw8YNfbQHqOZLGzNNhDAR9BJxo7TfY5j5rmwK329WEi
-	RP0RkqX73IaAjXNazoPhemWhmjhIXhEZD5WdNRMReMg+RHpP90TKm2AwvRSwX/CqyGaerC/tbVD
-	PM+dZnKjbdwPERTNQ==
-X-Google-Smtp-Source: AGHT+IF9rkgtoSMCl0jYFSHVZuyZeCWt9XZMNT1MGcboLMsN9CKxcNZU79FEyRdNtyL0WU9L2+FyKsOgYQInTvQ6ias=
-X-Received: by 2002:a17:902:dac8:b0:24f:8286:9e5a with SMTP id
- d9443c01a7336-24f8286a133mr5036715ad.6.1757080930194; Fri, 05 Sep 2025
- 07:02:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKCmQXYV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F61C4CEF1;
+	Fri,  5 Sep 2025 14:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757082412;
+	bh=LV0JBUG2SwgOJZFlcn56mSQ+ApkXiLxAyOWpCxVcuxo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cKCmQXYVQ4epAASaItp7eI7RtUBWzQTJfFME6Ib9VIZwF5cBdWRtEVBXbxlaug3g7
+	 qRcP4WU7Sv4zq4nFXZLUd5WbFSvKvjBT0a1U2wY/dTX3Zz1PmRkhu/AalFf3JIDssg
+	 8Qo5A3jVWCgOnKAr1H1yQ2P4qooroBy5uW5UVDvKZ5vdwP8LsXAadWny/Zn5+EzoI7
+	 EzIW9lKREY2NSsGCMMIM2geZA7jFpVLAIx0LLdY5UaWVKKCqwcgClXG4PpPf3dLyTE
+	 BeeMnR1qPap8s/g/qGu6GbXYKA6eDz/C+SVmlofo/zsLTTOANcBVqe6DbNpLaybyDw
+	 WjSmbC/XbfYwA==
+From: Chuck Lever <cel@kernel.org>
+To: Scott Mayhew <smayhew@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: delete unnecessary NULL check in __fh_verify()
+Date: Fri,  5 Sep 2025 10:26:49 -0400
+Message-ID: <175708239501.6078.12054846313340172657.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <aLnhkm7q1Di0IiIu@stanley.mountain>
+References: <aLnhkm7q1Di0IiIu@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aLnhaU9cLeAdim7J@stanley.mountain> <SA1PR12MB814473BD381D10C842F30422EF03A@SA1PR12MB8144.namprd12.prod.outlook.com>
-In-Reply-To: <SA1PR12MB814473BD381D10C842F30422EF03A@SA1PR12MB8144.namprd12.prod.outlook.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 5 Sep 2025 10:01:58 -0400
-X-Gm-Features: Ac12FXx-WGJ-F0--XB5dXIw5UpADiQRdi1GA0k5IIwFmngy8mfiqzoc0IpdRJ0c
-Message-ID: <CADnq5_PZgPKjARKaKrxtKOUhuk8KBOOba75SxnFJD_76W8yDKw@mail.gmail.com>
-Subject: Re: [PATCH next] drm/amdgpu: Fix error codes if copy_to_user() fails
-To: "Francis, David" <David.Francis@amd.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-	"Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Arvind Yadav <Arvind.Yadav@amd.com>, 
-	"Sharma, Shashank" <Shashank.Sharma@amd.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+From: Chuck Lever <chuck.lever@oracle.com>
 
-On Fri, Sep 5, 2025 at 8:59=E2=80=AFAM Francis, David <David.Francis@amd.co=
-m> wrote:
->
-> [AMD Official Use Only - AMD Internal Distribution Only]
->
-> Whoops. Yep, story checks out.
->
-> This is
-> Reviewed-By: David Francis <David.Francis@amd.com>
-> ________________________________
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Thursday, September 4, 2025 2:58 PM
-> To: Francis, David <David.Francis@amd.com>
-> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Ch=
-ristian.Koenig@amd.com>; David Airlie <airlied@gmail.com>; Simona Vetter <s=
-imona@ffwll.ch>; Arvind Yadav <Arvind.Yadav@amd.com>; Sharma, Shashank <Sha=
-shank.Sharma@amd.com>; Thomas Zimmermann <tzimmermann@suse.de>; amd-gfx@lis=
-ts.freedesktop.org <amd-gfx@lists.freedesktop.org>; dri-devel@lists.freedes=
-ktop.org <dri-devel@lists.freedesktop.org>; linux-kernel@vger.kernel.org <l=
-inux-kernel@vger.kernel.org>; kernel-janitors@vger.kernel.org <kernel-janit=
-ors@vger.kernel.org>
-> Subject: [PATCH next] drm/amdgpu: Fix error codes if copy_to_user() fails
->
-> The copy_to_user() function returns the number of bytes that it wasn't
-> able to copy, but we should return -EFAULT to the user.
->
-> Fixes: 4d82724f7f2b ("drm/amdgpu: Add mapping info option for GEM_OP ioct=
-l")
-> Fixes: f9db1fc52ceb ("drm/amdgpu: Add ioctl to get all gem handles for a =
-process")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_gem.c
-> index 63eb75a579ce..2b58bc805374 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> @@ -1067,7 +1067,8 @@ int amdgpu_gem_op_ioctl(struct drm_device *dev, voi=
-d *data,
->                  drm_exec_fini(&exec);
->
->                  if (num_mappings > 0 && num_mappings <=3D args->num_entr=
-ies)
-> -                       r =3D copy_to_user(u64_to_user_ptr(args->value), =
-vm_entries, num_mappings * sizeof(*vm_entries));
-> +                       if (copy_to_user(u64_to_user_ptr(args->value), vm=
-_entries, num_mappings * sizeof(*vm_entries)))
-> +                               r =3D -EFAULT;
->
->                  args->num_entries =3D num_mappings;
->
-> @@ -1159,7 +1160,8 @@ int amdgpu_gem_list_handles_ioctl(struct drm_device=
- *dev, void *data,
->          args->num_entries =3D bo_index;
->
->          if (!ret)
-> -               ret =3D copy_to_user(u64_to_user_ptr(args->entries), bo_e=
-ntries, num_bos * sizeof(*bo_entries));
-> +               if (copy_to_user(u64_to_user_ptr(args->entries), bo_entri=
-es, num_bos * sizeof(*bo_entries)))
-> +                       ret =3D -EFAULT;
->
->          kvfree(bo_entries);
->
-> --
-> 2.47.2
->
+On Thu, 04 Sep 2025 21:59:30 +0300, Dan Carpenter wrote:
+> In commit 4a0de50a44bb ("nfsd: decouple the xprtsec policy check from
+> check_nfsd_access()") we added a NULL check on "rqstp" to earlier in
+> the function.  This check is no longer required so delete it.
+> 
+> 
+
+Applied to nfsd-testing, thanks!
+
+[1/1] nfsd: delete unnecessary NULL check in __fh_verify()
+      commit: ec3d9745c6a3f41658d17873e4890b56cc27f9c8
+
+--
+Chuck Lever
+
