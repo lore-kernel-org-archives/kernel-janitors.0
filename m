@@ -1,61 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB5F2949E0;
-	Sat,  6 Sep 2025 21:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EE623ABA1;
+	Sun,  7 Sep 2025 10:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757195110; cv=none; b=HYNxwjFFwA6ZZZ3MkJFbMdXcwHVJKFSo7jM3XN07NVmyUJ6S6LlJv0SyEEoxUpnkC3/GmP6nb5vPNdS9GS9e/68atqsuSsvnrksQthGo2Yh8NMl3FXmEwcP3D8jjnFwzT4//0GKWZfegdRz5C93FwDu4z2Q9DpHZRLWoPwGVXpU=
+	t=1757239571; cv=none; b=mpiQvfM66VsJKKZ0fxwJQOc1aqTq3BJfsuwbrg87tU8i908aauS3FkFxOUuHzQ8sThqxNjJGoFLUX7oHKsHG48nu0Iw4heZz5+QR9uqsY2HbqHKwyx+srqs+1zoXUrlKtMkq5AJbMsWr7OSjDWVkAHR3Pbma3vu2Bgd8Kp+fVkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757195110; c=relaxed/simple;
-	bh=Om2wsWKzfBTumU1uMrWiRYO/VKpdX3KrMlYogK6co3I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=F2b3ExVg/BRw3V+BKI0ZZdoG48JBEQB+U01VJLY4w8Nhp95kqO9I5UMpw7JjNZGuC6YMITK1LYfbX2iMV6KlJmgdKAsQZ8tGlRhyV3nbvOdNCX3hg3kvnDUdtuQcpVEK5OXfEC/18K7PdtsEjartflfW26pD3ZMIGfRtnX6kHm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D20C4CEF5;
-	Sat,  6 Sep 2025 21:45:09 +0000 (UTC)
-Received: by venus (Postfix, from userid 1000)
-	id CB4F2180B28; Sat, 06 Sep 2025 23:45:07 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250807121349.460862-1-colin.i.king@gmail.com>
-References: <20250807121349.460862-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] power: supply: 88pm860x: make fsm_state array
- static const, simplify usage
-Message-Id: <175719510782.45380.3925400276927678009.b4-ty@collabora.com>
-Date: Sat, 06 Sep 2025 23:45:07 +0200
+	s=arc-20240116; t=1757239571; c=relaxed/simple;
+	bh=GHvhM9FlWUM6e6T7HPIc6H001Vx3itz71YXkr7+4R0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4YPs1/57nIn/G9hN4/O4p3uD2H51xgP11RbDXh16hZPhxvHbvyc2UJVg9HLKqIJuZDzDvmwWxgWW97zsBPyyZRExn4UqgYQID31fQDNOoUPEPutA2koY/Zxn7PkjymCDPzwMPE4Lo4uxR6Gjk0/aMxomTtdBF6ikmbFX8drNjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QzaLoyG+; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QzaLoyG+"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id vCGTuurvoWnbbvCGTudBOG; Sun, 07 Sep 2025 12:04:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1757239495;
+	bh=j4wszVsZ5LxEb9ANpI/eE3wRjtrAQfQYbcfmSy7KxFY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=QzaLoyG+qgm965ILkTq9Oesv17nJZFeFb+6/2XfDdLQEH+yXhD1vg9mlKZwyworh7
+	 oRKiXKHKHJR9lhGZm3MqDh5nqg40RBgGcwHEkkwXeqwZoDzot8F+buBynj1ajdNAMy
+	 jEKllGPCy2vsf312zTCTe0CFb5thYiicwq41J5i7cRR9z3d5sP4cYj7ZeDEogbMHGC
+	 gWBpkCGQLpnFNh+cEaO9Ce879Zk/4DOWpzWROP3V65FgIxuSPEn+Nq0/oxDGSk3HFW
+	 rTBA0nSbNxM7V+g+ZZNYqZjT6miW9x1KLs8KkPXkj2AmKT/hbeVYzjTj0SqXBDzJka
+	 +Yag+08hUc7Fg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Sep 2025 12:04:55 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Marius Cristea <marius.cristea@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-iio@vger.kernel.org
+Subject: [PATCH] iio: adc: PAC1934: Use devm_mutex_init()
+Date: Sun,  7 Sep 2025 12:04:48 +0200
+Message-ID: <f92033415f43aa02fe862cb952e62b6ded949056.1757239464.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+Use devm_mutex_init() instead of hand-writing it.
 
-On Thu, 07 Aug 2025 13:13:49 +0100, Colin Ian King wrote:
-> Don't populate the read-only array fsm_state on the stack at run time,
-> instead make it static const, this reduces the object code size as
-> the data is placed on the data segment and this removes the need to
-> have code to set the array up on each call.
-> 
-> Note that making the size of the strings to a more optimal 11 bytes long
-> does not seem to reduce the overall size. Making the array an array of
-> pointers to the strings increases the code size due to the dereferencing
-> overhead.
-> 
-> [...]
+This saves some LoC, improves readability and saves some space in the
+generated .o file.
 
-Applied, thanks!
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  50985	  23992	    192	  75169	  125a1	drivers/iio/adc/pac1934.o
 
-[1/1] power: supply: 88pm860x: make fsm_state array static const, simplify usage
-      commit: cb03556acf83b235dfb2e9f86e14f5e5b8a5f1e7
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  50654	  23920	    192	  74766	  1240e	drivers/iio/adc/pac1934.o
 
-Best regards,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/adc/pac1934.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/iio/adc/pac1934.c b/drivers/iio/adc/pac1934.c
+index 2e442e46f679..48df16509260 100644
+--- a/drivers/iio/adc/pac1934.c
++++ b/drivers/iio/adc/pac1934.c
+@@ -1471,13 +1471,6 @@ static int pac1934_prep_custom_attributes(struct pac1934_chip_info *info,
+ 	return 0;
+ }
+ 
+-static void pac1934_mutex_destroy(void *data)
+-{
+-	struct mutex *lock = data;
+-
+-	mutex_destroy(lock);
+-}
+-
+ static const struct iio_info pac1934_info = {
+ 	.read_raw = pac1934_read_raw,
+ 	.write_raw = pac1934_write_raw,
+@@ -1536,9 +1529,7 @@ static int pac1934_probe(struct i2c_client *client)
+ 		return dev_err_probe(dev, ret,
+ 				     "parameter parsing returned an error\n");
+ 
+-	mutex_init(&info->lock);
+-	ret = devm_add_action_or_reset(dev, pac1934_mutex_destroy,
+-				       &info->lock);
++	ret = devm_mutex_init(dev, &info->lock);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+2.51.0
 
