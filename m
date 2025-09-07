@@ -1,55 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4968918FDAB;
-	Sun,  7 Sep 2025 11:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28EF272E7E;
+	Sun,  7 Sep 2025 13:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757244311; cv=none; b=n6CfAWWZqtsGaHb5QRG9C/MFD+5zzqr/U9PAJuR6Ob8lV5ed5iisBzZ5BRicQM6RaCSNx4WBnwl0pc4DqfqEFMFHtARg4RilEM+tIThDGNv28Ll+ksjtPR3i06PxEre3fQm1OkAp+ebkdbLbe9gKz2QZNVlOzxQi6nYW+G9sy9Y=
+	t=1757251098; cv=none; b=SZcMFlpOz3ZPGvKA4YoBwz4PczsIdhwkkEBa7YeLODHAKtWXYrFD0vHPR10CoZwXqb+b99gLnQka4WOE7zb/Q7rzbT6LyGLEk5L7idww1sJtqDLJSqCldrp7CN6CVgWHjEFFxKusjHdj0sXNOAauG+Xig+z0b1iO1m3IQdu7rGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757244311; c=relaxed/simple;
-	bh=ekVDRngXVS5ba6K8MKRdMT2eQXIh+YNQ4gYcLuGteZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O3daqoGQZKkNySCyjbgjw5ZoS+DMxm3cZ2CWOUdqBOIypDNN6asYueza2Dh8/DM7Rh/hNt1vnjZ4A8E2dYpO/bSzAyPawBEHXQWe8uSK4IxgcAGHh3eu0Sjba1jXrd5l2EzDPh3a4CLQAucmpqLQfDLDSnD8ZYlxr8ypQGfTYJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNI3J4+e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757251098; c=relaxed/simple;
+	bh=lb0Gamf3L9Htxml+MpLO6L958jGJdocBgqKrw8UmFIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2GNLPxXFKNHzdKMTaunVBwGu4V5fchwekjISaJorBNlswOEIhgbsrGsoPZpy3oUllI4TCbuMBZONzPsgEK3OvrS1jO8s2m98ZRppq5xfsqc8HK+lv+phP0r3v3ps8ZIm17qgNk5plUXUVhNny6++K8BFceVxKFssQLqb9c1epc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8MmHjLz; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNI3J4+e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB819C4CEF0;
-	Sun,  7 Sep 2025 11:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757244310;
-	bh=ekVDRngXVS5ba6K8MKRdMT2eQXIh+YNQ4gYcLuGteZM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jNI3J4+e/NjKDQ5PcCUQnPjTQV693RwQto1TAaTLrSa9En0aK5m7xYnsHzrZ6y4Ft
-	 MsI8WylIFbKI225J9LLmv4zaNqcY/z7QT0EtapnoyGgCHvybKhDDRAPf8gq9jmM4uJ
-	 jq9BAtDQRHr0RlG/cTM3Q6JW8Z+rdyx2fpsNr0+jEY0JHdiJ4Myre/bEjJUauvdg70
-	 GXRFMufP/RwXzi+hca4Nfj7KmQ1AFA1OJqb5+bDL1FNE5uSREITsRWC49EJMvOyBI7
-	 vXld8GJ4s7VxFc6bg16/94EwYTsOWgJ2KvRViF7CHTdGO++EeWKg+nAhMS0SUw0lBg
-	 VrWTO52DwDEJg==
-Date: Sun, 7 Sep 2025 12:25:03 +0100
-From: Jonathan Cameron <jic23@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8MmHjLz"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77238cb3cbbso3770646b3a.0;
+        Sun, 07 Sep 2025 06:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757251096; x=1757855896; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RenAXJccVRZykldVMIQVWlzKvm/7Gyr+4s8HFewX4V4=;
+        b=Q8MmHjLz3dU2VDjaWxVLNU4F0CKoMtwqF6NBiXMtt4SzfA/+VtiZbwGjR+RBLp64VA
+         unJ8hJCUxr8XKBYL33CqyrpL72NqQodcB5x4w1bj1hDTDQZvCec7spnszPS9KB/cOhiF
+         yNyOqcz0o+iLg2i4oXrYx9pAg+gVwODLnhX54dMUvykD9Jenl+Tf+Tatqh+mUFP5yaBY
+         hEoF8XlNEG8yMsDIiluCiG+Z7iO55UFR7oPpst9iCpCeo/ucclVlP2jfIgTF3+QqBkrc
+         yKHUySqaSRAB8jvr5OTESkQlfGDknHm21J3GzWEWJvJq0u2fu5c/6h1IrrQ/KSxqHJpV
+         gFsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757251096; x=1757855896;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RenAXJccVRZykldVMIQVWlzKvm/7Gyr+4s8HFewX4V4=;
+        b=nY9jVKsNNjmLqciaSfVFVeP+twJqK5p38GF1gqFWMbAC1gHjSvaRmi27e2axGQbfsE
+         6ocQpNr4YdPMmSxJUEMNvCILIlUXBrCkWXv702CtHqjgTPCJJXK0IbnJtgjn042Abad5
+         xDDgNEIQqkhVwwWdJJfsmvKWNMOtUeP8iRhu1vDs8qwCIufYAFIYXr+67P9nkkgxKKQF
+         s4n4ZkcfAoyL4fgUPrO8EVmR5osbVC9c4AiXqQhW75q/zt4z274YVSZot1uJ/Pgi3xoK
+         T61pRh2EcJ0DJzKno9z7hIFhmmvn8OHrTfs5QHHDAmJL/CR7o5L1jtdMpqvLuPYpoCSX
+         iAhw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+plfVCEkT5qm0D4zWh9zGK164I5vW+Cq7zleqTorpdTlob+W4vcUFwmZNl9lcrly/YjjGm7D8Bul+7sGUMtg=@vger.kernel.org, AJvYcCUQ32MQVAyfrEgK0u8xkm48Qj8FuCbnTIm1g+thpcoh6ivb4yki4zAtue8ivrY5ZanQo2ulKDgNxqIymIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMiyMdEY8qyux0mo6oN1/boarHE1QNNLsBpjfIrThaei1T2Le6
+	LmqZIA++yy2+xdM2n1DvRGF9di5Wham7JcWcUFBiISGZVoa5GMe5TURB
+X-Gm-Gg: ASbGncvfaQ3mq+S9J83HsFU9G2+e95n9DZbAeX/0bBOr7xa5gkTgIIbahfrzv6dalvT
+	2Fgbd5ujRaW5Q8OmNfZOD4Oak86/F4SFK7FXuHrMWHqO6wSMkXOdx9XPZWrLIgcsNaN0XOP7062
+	ZQmTRQnXa7L9xru3PeRnYv4B6aNjaKDZ4Wt38VXHKiy4QZEa1jkLTtD9xWWBlFGoCYVDJuLQMSF
+	GFnT/fubuXc67FHoQFtBsJP0qAxUCteM/NGoxgDwBhCkNx2AlaohMU0P+xft/V1x4Dq1yz/Bh8x
+	mBpyRI6BhknhWjaQdjJmfw/RCgHSj3Lj9f32hsobDfFIwk+3RxByFlULEOeF6fLYgd8kzYQXbVS
+	4nKcnuJeSyghilGH+V66yapDLZEWTlQE9AG8=
+X-Google-Smtp-Source: AGHT+IGCt9IyOrURHk4JApTs7razMOagmxVWgsLPWYBcPYs/hqlhfeymlRccA6IlJCQkwV8MXj0xwg==
+X-Received: by 2002:a05:6a00:21cd:b0:76e:8cf4:7bc4 with SMTP id d2e1a72fcca58-7742df22ee8mr5064345b3a.26.1757251096055;
+        Sun, 07 Sep 2025 06:18:16 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a501a94sm27027949b3a.93.2025.09.07.06.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 06:18:15 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 7 Sep 2025 06:18:14 -0700
+From: Guenter Roeck <linux@roeck-us.net>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Marius Cristea <marius.cristea@microchip.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: PAC1934: Use devm_mutex_init()
-Message-ID: <20250907122503.226b622a@jic23-huawei>
-In-Reply-To: <f92033415f43aa02fe862cb952e62b6ded949056.1757239464.git.christophe.jaillet@wanadoo.fr>
-References: <f92033415f43aa02fe862cb952e62b6ded949056.1757239464.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (nzxt-smart2) Use devm_mutex_init()
+Message-ID: <ec09e583-7a07-4ff1-8682-3ef783dd7dee@roeck-us.net>
+References: <f51fac0871ec7dbe4e28447ee4f774d028a53426.1757240403.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f51fac0871ec7dbe4e28447ee4f774d028a53426.1757240403.git.christophe.jaillet@wanadoo.fr>
 
-On Sun,  7 Sep 2025 12:04:48 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
+On Sun, Sep 07, 2025 at 12:20:20PM +0200, Christophe JAILLET wrote:
 > Use devm_mutex_init() instead of hand-writing it.
 > 
 > This saves some LoC, improves readability and saves some space in the
@@ -58,12 +86,15 @@ Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 > Before:
 > ======
 >    text	   data	    bss	    dec	    hex	filename
->   50985	  23992	    192	  75169	  125a1	drivers/iio/adc/pac1934.o
+>   25878	  11329	    128	  37335	   91d7	drivers/hwmon/nzxt-smart2.o
 > 
 > After:
 > =====
 >    text	   data	    bss	    dec	    hex	filename
->   50654	  23920	    192	  74766	  1240e	drivers/iio/adc/pac1934.o
+>   25551	  11257	    128	  36936	   9048	drivers/hwmon/nzxt-smart2.o
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied. Thanks,
+
+Applied.
+
+Guenter
