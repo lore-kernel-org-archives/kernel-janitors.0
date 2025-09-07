@@ -1,108 +1,122 @@
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDD11B5EC8;
-	Sun,  7 Sep 2025 13:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A7D26E143;
+	Sun,  7 Sep 2025 14:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757252617; cv=none; b=mG9sR27012Ws/dxeahvxv3PWLtVX7jYcoQERiGa3lICk2LTqIAij7nsjkoZ/RFBs0W7BgAx00hAY3bRitXjz3oZjfq/86O934oRHoXCtU6xceISOjwJTqNsBDMHH76HsZUHDyENdwgXS9xfUEmgAgD40CLq45hdCeKWYky/Dqt0=
+	t=1757254206; cv=none; b=ZFnRnsy156ki3z8hROa3DT3UMp4bXe/logQ0douxuBH2Wno0MC4NH88onmpKGuWQB+WmvRKcG0PwuFck82Smpo5TCVKa3VrRjgsyu1I4IJOJIntp9BFnWCi7UuNYzJN11DdZMyFJ9wgX2xYLrcbGmL5JYoxbD+gzo3MJWXHKZSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757252617; c=relaxed/simple;
-	bh=b4YzCrMygyvf3DV8YrwG1raJwNNKisBCLGicZGKPf24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nhLhax+Ia/tnddMjCvv4xytyrGfHljwFcS5HokCGVJa6RZC9nUWncDlV+kolxaJsg6+pkn0YPZd9BkhG+o9uczbkMmLD7HAP4Nen5kIm7VahqfHF5GvnrJ9Pq2I+0t7pzfKSRrVEGeRi+1UqrhKxkyrNAqHYvc99lHS/jB+115U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UcfBxMnd; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1757254206; c=relaxed/simple;
+	bh=xHZKz28P4B9qneJGd4bihS1Kj7knNrpqY00JMu0Xh9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UnkLjUhdJFXz5ve41x9vAnwJ0fBfqSwES1ZbiorOqli166tKmBpOir6VvHxonoeIqQzt9tNCCyWkSuK7sg5MrBzudby3xPrNMflwbN7FuSA/he9Vjfy5mG1W+1Qjr7Lj3y20kcMHcUsuLBY5TzpJrg0Px4StByRbh0RXv27Ir5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kVr6mPH/; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UcfBxMnd"
-Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id vFeuu1DSwECYkvFeuu0Mz1; Sun, 07 Sep 2025 15:42:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757252542;
-	bh=2ap9eqNKHrjb2ikA96D2NiiXoAmBGSsCtA7NlR3rYcM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UcfBxMndMvX+7k9SekCbrbLmxPlAJCfkCfjEloogd0dezlieosh4yEr6+y1JTX9Eb
-	 jUVfJkoqCy40YuUQ9SW6g7NVsGnEPrCJBlKPqwcYZJ+rkRr9Q7pN1c2iZSNG0tWSn6
-	 PBYgR0iA9ygw3glxgQKndaq5F9i+QjOyM8p2GAl1nNfhZ9MPRvaD/KJ0h8suUqKPsB
-	 PgLEicMK1nPj02NKb9DhJdsCLam/w/Cd7JjwK/3SGnbBmL/9yM+vmSsCRVN3bODZtR
-	 ipCD8UVBCC1KG7fwlq/zTcGzQCZW0q71UtNeb087egEliH/0mXQUho17hopVHGShPN
-	 BCxFAljoxZKLA==
-X-ME-Helo: fedora
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Sep 2025 15:42:22 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/xe/hwmon: Use devm_mutex_init()
-Date: Sun,  7 Sep 2025 15:42:17 +0200
-Message-ID: <989e96369e9e1f8a44b816962917ec76877c912d.1757252520.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kVr6mPH/"
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 587E9wak3604398;
+	Sun, 7 Sep 2025 09:09:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757254198;
+	bh=nX2lcggh7Oc1Dcnq24mF2U0nUwjHXRO74W0IGIkMZ0Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=kVr6mPH/q8iuAfPlh3TYm4DW8dlKvn6Hvzr6i7t9faPl+8g1gEcN6VvxqtadvvLX4
+	 n51WMNbCoCBzAoFtNKpBv/2D/j/vkTE6K0djV0dMO6yfHQ6dfjeNlMXeIbtPXZWlWB
+	 rSMAYYBKryVXbzWxbex30vq2czMZYnGuvOCIGHhw=
+Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 587E9wI33076022
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 7 Sep 2025 09:09:58 -0500
+Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE20.ent.ti.com
+ (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 7 Sep
+ 2025 09:09:58 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Sun, 7 Sep
+ 2025 09:09:58 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sun, 7 Sep 2025 09:09:57 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 587E9v3r3610320;
+	Sun, 7 Sep 2025 09:09:57 -0500
+Message-ID: <7dc4da15-28a4-4e1f-b0c9-9115f97edd77@ti.com>
+Date: Sun, 7 Sep 2025 09:09:57 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: pisosr: Use devm_mutex_init()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+References: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Use devm_mutex_init() instead of hand-writing it.
+On 9/7/25 8:25 AM, Christophe JAILLET wrote:
+> Use devm_mutex_init() instead of hand-writing it.
+> 
+> This saves some LoC, improves readability and saves some space in the
+> generated .o file.
+> 
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     8112	   1736	    192	  10040	   2738	drivers/gpio/gpio-pisosr.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-This saves some LoC, improves readability and saves some space in the
-generated .o file.
+Acked-by: Andrew Davis <afd@ti.com>
 
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  36884	  10296	     64	  47244	   b88c	drivers/gpu/drm/xe/xe_hwmon.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  36651	  10224	     64	  46939	   b75b	drivers/gpu/drm/xe/xe_hwmon.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/xe/xe_hwmon.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_hwmon.c b/drivers/gpu/drm/xe/xe_hwmon.c
-index 32a76ae6e9dc..e65382d4426a 100644
---- a/drivers/gpu/drm/xe/xe_hwmon.c
-+++ b/drivers/gpu/drm/xe/xe_hwmon.c
-@@ -1294,13 +1294,6 @@ xe_hwmon_get_preregistration_info(struct xe_hwmon *hwmon)
- 			xe_hwmon_fan_input_read(hwmon, channel, &fan_speed);
- }
- 
--static void xe_hwmon_mutex_destroy(void *arg)
--{
--	struct xe_hwmon *hwmon = arg;
--
--	mutex_destroy(&hwmon->hwmon_lock);
--}
--
- int xe_hwmon_register(struct xe_device *xe)
- {
- 	struct device *dev = xe->drm.dev;
-@@ -1319,8 +1312,7 @@ int xe_hwmon_register(struct xe_device *xe)
- 	if (!hwmon)
- 		return -ENOMEM;
- 
--	mutex_init(&hwmon->hwmon_lock);
--	ret = devm_add_action_or_reset(dev, xe_hwmon_mutex_destroy, hwmon);
-+	ret = devm_mutex_init(dev, &hwmon->hwmon_lock);
- 	if (ret)
- 		return ret;
- 
--- 
-2.51.0
+>   drivers/gpio/gpio-pisosr.c | 8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+> index a69b74866a13..7ec6a46ed600 100644
+> --- a/drivers/gpio/gpio-pisosr.c
+> +++ b/drivers/gpio/gpio-pisosr.c
+> @@ -108,11 +108,6 @@ static const struct gpio_chip template_chip = {
+>   	.can_sleep		= true,
+>   };
+>   
+> -static void pisosr_mutex_destroy(void *lock)
+> -{
+> -	mutex_destroy(lock);
+> -}
+> -
+>   static int pisosr_gpio_probe(struct spi_device *spi)
+>   {
+>   	struct device *dev = &spi->dev;
+> @@ -139,8 +134,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+>   		return dev_err_probe(dev, PTR_ERR(gpio->load_gpio),
+>   				     "Unable to allocate load GPIO\n");
+>   
+> -	mutex_init(&gpio->lock);
+> -	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
+> +	ret = devm_mutex_init(dev, &gpio->lock);
+>   	if (ret)
+>   		return ret;
+>   
 
