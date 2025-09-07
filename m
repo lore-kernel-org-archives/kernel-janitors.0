@@ -1,47 +1,46 @@
-Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8573421CA0D;
-	Sun,  7 Sep 2025 10:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF56A315D45;
+	Sun,  7 Sep 2025 10:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757240247; cv=none; b=ifOcFlOm49wJ6Nz/O3ofFoukSvc8sl9d8KkrasE8seNc+qoCpyAzdecp3ksivK8yaySspjFNl6PW6s0YIN38nIv1UcJ9ZVoCLtMrFseTvUj0OSHKrYxLIqO7Eom1JyJCeuRCGffTxPZrPzcRemEV1IURyWOwZYB/9pHrWZmYmTI=
+	t=1757240497; cv=none; b=Zo88gcCB62YXKstMml8wFC0NVTwaD7WGRzqLZk5oFUa7jE4Tm8os3VTwNgqEdnbmxxHkxkF0FKxqeWjEIGkCcJin63opmfwvJh2KyxUBItQ4DmXi/teCTliLL+sab/G//1Vqh0Y3v7Bpb2vz3b1TeAoP+gdqD1o9ejrqDVMsiCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757240247; c=relaxed/simple;
-	bh=VyLQINgFLxfwpG6Ab3GLfcDxtTMx9J9bYm0a0HSvfNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BL5Q80vPjMdZWQJGcFIvXheqLCKbO3X/D7Jb5Vj1sUY/aQerOLoW3eDS7pvFRthg4uQ4mzmmnHZdXVwf5O3hBYYBfCkXQ5Tvg1ldg5q6etnRBDs04Y5QUINdMvOCIa9YOthwEsBElawT989/ZSmaiVdPS8FCnf9l12YA25O01gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rn8DKKPt; arc=none smtp.client-ip=80.12.242.69
+	s=arc-20240116; t=1757240497; c=relaxed/simple;
+	bh=1FZw3XLBNxWddQWDGiHb6R2oZ1pRTMmG29b8h/Sjv/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tlkJpEMiXG70/V8RwNNftIvHl6ZAPPRPEP1ofAu8I2uIBGt2ffb+mXxf9Gcazf8c3b1aUxMkoDlIjS2XYaOJMbFDCfwxDRinplNsokLFzJP2gL/4MHkmlKhwU1GOOG93YBndyJ2l0Kpk9CjvBSkStEYWJ9giUyhPgQz8AfeVj08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Kvz20WYb; arc=none smtp.client-ip=80.12.242.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rn8DKKPt"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Kvz20WYb"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id vCRRuFMYKVnEZvCRRuvdfD; Sun, 07 Sep 2025 12:16:13 +0200
+	id vCVUufhb0X5N0vCVUuZLQ2; Sun, 07 Sep 2025 12:20:24 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757240173;
-	bh=/8eo79CGIBKMU4I0nlE/+knG5URcycp+FdSO1C7XFNM=;
+	s=t20230301; t=1757240424;
+	bh=ao1u0LK62psCTkohZj0LictkGzMcdgdJRvSyY0Eybc0=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rn8DKKPtX/W8hBMbom+AY6GhwsLKdpzDO4pbxD8GPEUg7CCHvVq/vW28eidYIANYe
-	 EIG9Ow+3n60Q8xeyU+bS698FBWrW28Yilp0UuvTWTJlyzbHmhD7xli5zaibMwwRn6r
-	 AXjcQUgFWCGLRh6IsGx4LjbST9ko/pMt33ICNmjcoxBMx7GXNK8xonucqxxVm3LzRW
-	 znhtLGqRbAAgMzAfngd7bSXU6J0PDpL1hjNFE5tU/V6IekvGx+72kdhSAFH7qAyhfD
-	 24eKgc9EdqcuMwKPbdGZ5tPGu13W7UfRDvj9sIKydcbuFVOWjeKYaqdzh7k//JTkOX
-	 DKiNIBD/3PKcg==
+	b=Kvz20WYbMyXyK/059+yiEhW3kCT/1GphyJw5XRpFbrBEN7Sqyhcl5xc5KPbCOfdQg
+	 Rwz40/+I90trVFPYV0kD0zDMwLbOPDpNAADuAIvaan+f7fO9srhw331SbEjDavvnqx
+	 W13oG7na8Srp4c3Y3OuUZXBw+zHz4v/oOJ4SR8CvXneHy3MNqVD4+WeIXEsPf6hMkB
+	 coVsJ3BS0/a1YkVMzxMCnDE24Qv9CB85kY3azidBSNzlA7gX1OYFfy4zxfTMTU7ANN
+	 647S2qrkE07fZvBsVLaGQWIcCVjdeJeCte95zs/dHdX8+0OygWTtbQaClGHKDG2+bk
+	 WtSwNRK1ZItGQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Sep 2025 12:16:13 +0200
+X-ME-Date: Sun, 07 Sep 2025 12:20:24 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH] leds: is31fl319x: Use devm_mutex_init()
-Date: Sun,  7 Sep 2025 12:16:09 +0200
-Message-ID: <267aba6eab12be67c297fcd52fcf45a0856338bb.1757240150.git.christophe.jaillet@wanadoo.fr>
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: (nzxt-smart2) Use devm_mutex_init()
+Date: Sun,  7 Sep 2025 12:20:20 +0200
+Message-ID: <f51fac0871ec7dbe4e28447ee4f774d028a53426.1757240403.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -59,43 +58,43 @@ generated .o file.
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  20011	   6752	    128	  26891	   690b	drivers/leds/leds-is31fl319x.o
+  25878	  11329	    128	  37335	   91d7	drivers/hwmon/nzxt-smart2.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  19715	   6680	    128	  26523	   679b	drivers/leds/leds-is31fl319x.o
+  25551	  11257	    128	  36936	   9048	drivers/hwmon/nzxt-smart2.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/leds/leds-is31fl319x.c | 8 +-------
+ drivers/hwmon/nzxt-smart2.c | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 27bfab3da479..e411cee06dab 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -483,11 +483,6 @@ static inline int is31fl3196_db_to_gain(u32 dezibel)
- 	return dezibel / IS31FL3196_AUDIO_GAIN_DB_STEP;
+diff --git a/drivers/hwmon/nzxt-smart2.c b/drivers/hwmon/nzxt-smart2.c
+index c2d1173f42fe..58ef9fa0184b 100644
+--- a/drivers/hwmon/nzxt-smart2.c
++++ b/drivers/hwmon/nzxt-smart2.c
+@@ -721,11 +721,6 @@ static int __maybe_unused nzxt_smart2_hid_reset_resume(struct hid_device *hdev)
+ 	return init_device(drvdata, drvdata->update_interval);
  }
  
--static void is31f1319x_mutex_destroy(void *lock)
+-static void mutex_fini(void *lock)
 -{
 -	mutex_destroy(lock);
 -}
 -
- static int is31fl319x_probe(struct i2c_client *client)
+ static int nzxt_smart2_hid_probe(struct hid_device *hdev,
+ 				 const struct hid_device_id *id)
  {
- 	struct is31fl319x_chip *is31;
-@@ -503,8 +498,7 @@ static int is31fl319x_probe(struct i2c_client *client)
- 	if (!is31)
- 		return -ENOMEM;
+@@ -741,8 +736,7 @@ static int nzxt_smart2_hid_probe(struct hid_device *hdev,
  
--	mutex_init(&is31->lock);
--	err = devm_add_action_or_reset(dev, is31f1319x_mutex_destroy, &is31->lock);
-+	err = devm_mutex_init(dev, &is31->lock);
- 	if (err)
- 		return err;
+ 	init_waitqueue_head(&drvdata->wq);
+ 
+-	mutex_init(&drvdata->mutex);
+-	ret = devm_add_action_or_reset(&hdev->dev, mutex_fini, &drvdata->mutex);
++	ret = devm_mutex_init(&hdev->dev, &drvdata->mutex);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.51.0
