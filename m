@@ -1,50 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EE623ABA1;
-	Sun,  7 Sep 2025 10:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067101DFFC;
+	Sun,  7 Sep 2025 10:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757239571; cv=none; b=mpiQvfM66VsJKKZ0fxwJQOc1aqTq3BJfsuwbrg87tU8i908aauS3FkFxOUuHzQ8sThqxNjJGoFLUX7oHKsHG48nu0Iw4heZz5+QR9uqsY2HbqHKwyx+srqs+1zoXUrlKtMkq5AJbMsWr7OSjDWVkAHR3Pbma3vu2Bgd8Kp+fVkQ=
+	t=1757239825; cv=none; b=QaaNMTcBuRC+PC8s223vNCs5SXaMGVH0ymmmk1ym9CXc3C7/OmI4mEYiSy4XvMyGnyIRg7l2iDUvvHaWgM9LoxBBAdUvBikd9tj8FgqvF71TG22/sh6ygdggsP7pq4/3EMuPOqDRZDHP31K1+eey6Itq80ulvP1WcGPnRwPN/NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757239571; c=relaxed/simple;
-	bh=GHvhM9FlWUM6e6T7HPIc6H001Vx3itz71YXkr7+4R0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4YPs1/57nIn/G9hN4/O4p3uD2H51xgP11RbDXh16hZPhxvHbvyc2UJVg9HLKqIJuZDzDvmwWxgWW97zsBPyyZRExn4UqgYQID31fQDNOoUPEPutA2koY/Zxn7PkjymCDPzwMPE4Lo4uxR6Gjk0/aMxomTtdBF6ikmbFX8drNjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QzaLoyG+; arc=none smtp.client-ip=80.12.242.28
+	s=arc-20240116; t=1757239825; c=relaxed/simple;
+	bh=/NGT1Qkl+yYDAgztruIk9vnxR8tINNuLHgUV8TQ9ORU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeRAdr6bxNQTCjQvHKH8LwdEvmfB+MP5BeeaJS91O1oFJF6Sz7WHsjCCVwwPPbQIYoP7zoJuVSVowMa8c7T7QSj93D7vDYVA1T7CQjEx2i3IcxKVvfSYpRm1ufl2F5zlfeAQIT8j7viai+0vEyaJ5t4+qplA3/E76ncblA0WRWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hc03FQYd; arc=none smtp.client-ip=80.12.242.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QzaLoyG+"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hc03FQYd"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id vCGTuurvoWnbbvCGTudBOG; Sun, 07 Sep 2025 12:04:54 +0200
+	id vCKfu08fdECYkvCKfuuyyI; Sun, 07 Sep 2025 12:09:14 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1757239495;
-	bh=j4wszVsZ5LxEb9ANpI/eE3wRjtrAQfQYbcfmSy7KxFY=;
+	s=t20230301; t=1757239754;
+	bh=uA4HeivR6PVwO0g+VXDUo1YMd6lQsA63AuQAC1Ts17w=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QzaLoyG+qgm965ILkTq9Oesv17nJZFeFb+6/2XfDdLQEH+yXhD1vg9mlKZwyworh7
-	 oRKiXKHKHJR9lhGZm3MqDh5nqg40RBgGcwHEkkwXeqwZoDzot8F+buBynj1ajdNAMy
-	 jEKllGPCy2vsf312zTCTe0CFb5thYiicwq41J5i7cRR9z3d5sP4cYj7ZeDEogbMHGC
-	 gWBpkCGQLpnFNh+cEaO9Ce879Zk/4DOWpzWROP3V65FgIxuSPEn+Nq0/oxDGSk3HFW
-	 rTBA0nSbNxM7V+g+ZZNYqZjT6miW9x1KLs8KkPXkj2AmKT/hbeVYzjTj0SqXBDzJka
-	 +Yag+08hUc7Fg==
+	b=hc03FQYd+h7OwC6H/vvKaATLVZczj65zEP7xYfci0Xb6iwFAQBsN6yvDLBntbN5Wc
+	 lsxNvHHR7YHrrfK6fnYoOPWnkehPB+xN1lKnfAr1hbo/RZakTBvKC9EizmohQR95Az
+	 Dt7K6eb8EFDmhs8ub9R8Nv/HUAczEMZD+NBSkz3hJuF9ABag95K5gg7n6NdA9kQcah
+	 D9N2ggCcxZFe1YYuvyl7qPV+A6I9ohKaVKxB13x1PYdO+1irPeuXmK2F8Go5U8S1dT
+	 pkn4izdTl9AgCht1dtv26+db7m2xnb7Bi5AwGPW9PLs96E5y2TZ8jSyfPSWWo1n2wZ
+	 2lZNKHZdAPHBQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Sep 2025 12:04:55 +0200
+X-ME-Date: Sun, 07 Sep 2025 12:09:14 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marius Cristea <marius.cristea@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
+To: Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] iio: adc: PAC1934: Use devm_mutex_init()
-Date: Sun,  7 Sep 2025 12:04:48 +0200
-Message-ID: <f92033415f43aa02fe862cb952e62b6ded949056.1757239464.git.christophe.jaillet@wanadoo.fr>
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86: xiaomi-wmi: Use devm_mutex_init()
+Date: Sun,  7 Sep 2025 12:09:09 +0200
+Message-ID: <bb5d7a57e11eb580f610276a351a01a993341fb8.1757239732.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,44 +59,43 @@ generated .o file.
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  50985	  23992	    192	  75169	  125a1	drivers/iio/adc/pac1934.o
+   3520	   1112	     64	   4696	   1258	drivers/platform/x86/xiaomi-wmi.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  50654	  23920	    192	  74766	  1240e	drivers/iio/adc/pac1934.o
+   3069	   1040	     64	   4173	   104d	drivers/platform/x86/xiaomi-wmi.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/iio/adc/pac1934.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/platform/x86/xiaomi-wmi.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/iio/adc/pac1934.c b/drivers/iio/adc/pac1934.c
-index 2e442e46f679..48df16509260 100644
---- a/drivers/iio/adc/pac1934.c
-+++ b/drivers/iio/adc/pac1934.c
-@@ -1471,13 +1471,6 @@ static int pac1934_prep_custom_attributes(struct pac1934_chip_info *info,
- 	return 0;
- }
+diff --git a/drivers/platform/x86/xiaomi-wmi.c b/drivers/platform/x86/xiaomi-wmi.c
+index cbed29ca502a..b892007b9863 100644
+--- a/drivers/platform/x86/xiaomi-wmi.c
++++ b/drivers/platform/x86/xiaomi-wmi.c
+@@ -26,13 +26,6 @@ struct xiaomi_wmi {
+ 	unsigned int key_code;
+ };
  
--static void pac1934_mutex_destroy(void *data)
+-static void xiaomi_mutex_destroy(void *data)
 -{
 -	struct mutex *lock = data;
 -
 -	mutex_destroy(lock);
 -}
 -
- static const struct iio_info pac1934_info = {
- 	.read_raw = pac1934_read_raw,
- 	.write_raw = pac1934_write_raw,
-@@ -1536,9 +1529,7 @@ static int pac1934_probe(struct i2c_client *client)
- 		return dev_err_probe(dev, ret,
- 				     "parameter parsing returned an error\n");
+ static int xiaomi_wmi_probe(struct wmi_device *wdev, const void *context)
+ {
+ 	struct xiaomi_wmi *data;
+@@ -46,8 +39,7 @@ static int xiaomi_wmi_probe(struct wmi_device *wdev, const void *context)
+ 		return -ENOMEM;
+ 	dev_set_drvdata(&wdev->dev, data);
  
--	mutex_init(&info->lock);
--	ret = devm_add_action_or_reset(dev, pac1934_mutex_destroy,
--				       &info->lock);
-+	ret = devm_mutex_init(dev, &info->lock);
+-	mutex_init(&data->key_lock);
+-	ret = devm_add_action_or_reset(&wdev->dev, xiaomi_mutex_destroy, &data->key_lock);
++	ret = devm_mutex_init(&wdev->dev, &data->key_lock);
  	if (ret < 0)
  		return ret;
  
