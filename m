@@ -1,75 +1,90 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A7D26E143;
-	Sun,  7 Sep 2025 14:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E862A2E8DFE
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Sep 2025 07:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757254206; cv=none; b=ZFnRnsy156ki3z8hROa3DT3UMp4bXe/logQ0douxuBH2Wno0MC4NH88onmpKGuWQB+WmvRKcG0PwuFck82Smpo5TCVKa3VrRjgsyu1I4IJOJIntp9BFnWCi7UuNYzJN11DdZMyFJ9wgX2xYLrcbGmL5JYoxbD+gzo3MJWXHKZSM=
+	t=1757317143; cv=none; b=ODpIkt5r5PfOHzV1rtw+oLK2ykIto/F/F7wana8lFIeSZbm9+kW9WvMl6KcbGWvG9Cmtb0piUcfl8XoTOvEZWKj63mp5Mcm5lxiJgrVKPoAmkHep5RvUEPCK77uKh5Txfmsu8xCX312+4JMkwBNdhwFBAjZa8LN4V9QkVgX1mIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757254206; c=relaxed/simple;
-	bh=xHZKz28P4B9qneJGd4bihS1Kj7knNrpqY00JMu0Xh9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UnkLjUhdJFXz5ve41x9vAnwJ0fBfqSwES1ZbiorOqli166tKmBpOir6VvHxonoeIqQzt9tNCCyWkSuK7sg5MrBzudby3xPrNMflwbN7FuSA/he9Vjfy5mG1W+1Qjr7Lj3y20kcMHcUsuLBY5TzpJrg0Px4StByRbh0RXv27Ir5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kVr6mPH/; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1757317143; c=relaxed/simple;
+	bh=MPT8NiohwpIH2FRM+/GL0Zo9ZEY8NsCZTxRtvHtMSMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RIjjQnbcXKrsDDMt6amJjTQON/0Lyonxcf5BF9kMnkb9vSv3+y7yLbEiBsHICA3mmmcSxhUKMuPFSN0AVpenGwyx1+eYgs6kZMF+ndfhQr+msOuL8+644Y9zg9fxoUS+v5fmPqOWXb3fbbzD1q6QMF1ajSnMbXaT4A/sQ80uGXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bn0+CyOL; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kVr6mPH/"
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 587E9wak3604398;
-	Sun, 7 Sep 2025 09:09:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757254198;
-	bh=nX2lcggh7Oc1Dcnq24mF2U0nUwjHXRO74W0IGIkMZ0Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kVr6mPH/q8iuAfPlh3TYm4DW8dlKvn6Hvzr6i7t9faPl+8g1gEcN6VvxqtadvvLX4
-	 n51WMNbCoCBzAoFtNKpBv/2D/j/vkTE6K0djV0dMO6yfHQ6dfjeNlMXeIbtPXZWlWB
-	 rSMAYYBKryVXbzWxbex30vq2czMZYnGuvOCIGHhw=
-Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 587E9wI33076022
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 7 Sep 2025 09:09:58 -0500
-Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE20.ent.ti.com
- (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 7 Sep
- 2025 09:09:58 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Sun, 7 Sep
- 2025 09:09:58 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 7 Sep 2025 09:09:57 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 587E9v3r3610320;
-	Sun, 7 Sep 2025 09:09:57 -0500
-Message-ID: <7dc4da15-28a4-4e1f-b0c9-9115f97edd77@ti.com>
-Date: Sun, 7 Sep 2025 09:09:57 -0500
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bn0+CyOL"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45de6ab6ce7so3209315e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Sep 2025 00:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757317139; x=1757921939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T6Qgw00JLihNswGsKUrWXq3EQB6PCDyKUk5esdN3dkc=;
+        b=bn0+CyOL4Zht1NuKe0AMRI5SUB8Bvx7QhKI61DOQSyNZ/3KGk4LrAq81gipNoy3EAt
+         T4qffOU7W8jhZg4VQ7vKLmsUgFKgN54Q08KRuxh41lMy7UGr5U7ea8nVZQKN2+PSXAez
+         Ik+7c+UQwiZJ0FxNnRmJS+f/yCvtlKSaijp3u3aYPVjL+cFJfHfP8LM+Wc1eUkjE+Ixx
+         A7cOtsR1/FS470qvoWLvge1W4W+e0q2aE+J7wqKCQvAonu0CUgr4bMwfbtAS3Voy2xOB
+         e/sMW6ggObVlGOlosPPMTo1zGXhOaeYdMwkLsP8eP1HdHEYQ8FcCiquTw9M8Scia+UQm
+         9IKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757317139; x=1757921939;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T6Qgw00JLihNswGsKUrWXq3EQB6PCDyKUk5esdN3dkc=;
+        b=oBgO81+pEPgrk8+AYgu8VGItkqjfNMN3Zo3kHcaC2hCUsEXVvtim86rqmH8QX146ms
+         FdL6HY9q/SHul6+hKk+qeH6yKRjX2WHz9XAseFmVGmjXHZ0k7DbGc0+Z/V0R3372PvMs
+         BAKrDPjGyIqAtvJ+id1lKLmRiFeWPxJmd92oK2DVHa5k3GZOyVAsyStAjQ94+GKN/IfR
+         FG3x8OZomTD9DqcG/0+K9qLngX5dL2LrR2OxmXrmsNIrRwMewx50fodWp9BlkweGVlO1
+         QCQ+h33MlPXJBTLVDcy7RP7WNSyrQ+lf3Vooveu7rd+L/pZJNa2XK/pJH9dGqtXyAlid
+         PQKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjSNRFBRHFOwJtqWye2s55t+NzaHnASQ1oEGFYmQvKCVhzEHOCuvep7KfVIshTxyPbvgq8ri4mxVz/zoVu8+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtDrLxvfPl8UuCOJMf7fPUMPJxEYSFY61veDcDCaUK9vbmxVlz
+	YjJ3VgS5gm3gi31vFbJ0iN0fY5/vS3yJHYwHTpcoUTwnnC+nT5m3wj3WOBZG3k98JDI=
+X-Gm-Gg: ASbGncvfBxrN10dNVyyDQdtG1rCTSPQptvxoJUEF5b+9Hc57PeR/FgOcoBpvhWMDVxx
+	jiRKKm8l2m7sp1nGysPiYwkb3N1w2J2wYseCSJ6uQLnUIZnax/mM1V0ubsrat05ebynljH229mj
+	1yLPc5Pn61OZI6c1zsmiDu10DQl8ipORsn+UH7a5Nw83kOX3B2GbF6G7hAEPSMHcoVV6oMdT1zU
+	KeTjOUPlb1xyR068mgbRNc5qSyvxXpXgWsruHw+f+GCZ7jwuOhj5gPHosnGLztXrsVibfCWEvJI
+	UyA1Suf5xwCyc24G414hAfdPld5EqWuOmda3g8RMB8C/HoSV7HFmjwMx9MPAjLIPQaqvlcIpJEY
+	BFi8vpr6OsYXu+AjFNrQVXoWkz/7VptGkCvk4HaygNQ7USQ==
+X-Google-Smtp-Source: AGHT+IE11TRP6jW/sA1IoRyIuD/EMwHLllVmU+DHqF0PMbyJk/g8CcFlOS/FaP1Ivex22BkhPP0yAA==
+X-Received: by 2002:a05:600c:4e51:b0:459:d645:bff7 with SMTP id 5b1f17b1804b1-45dde66c671mr59265535e9.12.1757317139282;
+        Mon, 08 Sep 2025 00:38:59 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5cdc:d980:b6fb:1eb3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e92a42asm429977665e9.20.2025.09.08.00.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 00:38:57 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpio: pisosr: Use devm_mutex_init()
+Date: Mon,  8 Sep 2025 09:38:52 +0200
+Message-ID: <175731712491.48218.6418145557482787417.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
+References: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: pisosr: Use devm_mutex_init()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-References: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <01910ebdaba7d8d0cdc4ac60eb70da8e29cb85f1.1757251512.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 9/7/25 8:25 AM, Christophe JAILLET wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Sun, 07 Sep 2025 15:25:38 +0200, Christophe JAILLET wrote:
 > Use devm_mutex_init() instead of hand-writing it.
 > 
 > This saves some LoC, improves readability and saves some space in the
@@ -77,46 +92,16 @@ On 9/7/25 8:25 AM, Christophe JAILLET wrote:
 > 
 > Before:
 > ======
->     text	   data	    bss	    dec	    hex	filename
->     8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
+>    text	   data	    bss	    dec	    hex	filename
+>    8431	   1808	    192	  10431	   28bf	drivers/gpio/gpio-pisosr.o
 > 
-> After:
-> =====
->     text	   data	    bss	    dec	    hex	filename
->     8112	   1736	    192	  10040	   2738	drivers/gpio/gpio-pisosr.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+> [...]
 
-Acked-by: Andrew Davis <afd@ti.com>
+Applied, thanks!
 
->   drivers/gpio/gpio-pisosr.c | 8 +-------
->   1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-> index a69b74866a13..7ec6a46ed600 100644
-> --- a/drivers/gpio/gpio-pisosr.c
-> +++ b/drivers/gpio/gpio-pisosr.c
-> @@ -108,11 +108,6 @@ static const struct gpio_chip template_chip = {
->   	.can_sleep		= true,
->   };
->   
-> -static void pisosr_mutex_destroy(void *lock)
-> -{
-> -	mutex_destroy(lock);
-> -}
-> -
->   static int pisosr_gpio_probe(struct spi_device *spi)
->   {
->   	struct device *dev = &spi->dev;
-> @@ -139,8 +134,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
->   		return dev_err_probe(dev, PTR_ERR(gpio->load_gpio),
->   				     "Unable to allocate load GPIO\n");
->   
-> -	mutex_init(&gpio->lock);
-> -	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
-> +	ret = devm_mutex_init(dev, &gpio->lock);
->   	if (ret)
->   		return ret;
->   
+[1/1] gpio: pisosr: Use devm_mutex_init()
+      https://git.kernel.org/brgl/linux/c/474014cdec1758e1802082b94043189e198c58a4
 
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
