@@ -1,94 +1,88 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD2E3431E3;
-	Tue,  9 Sep 2025 13:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA08352FC7;
+	Tue,  9 Sep 2025 14:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425245; cv=none; b=usu+F5lmqCwp0LREkCwMZZRDm7Fv7V/CtYbKvon6hDANBbY0oIOuk/MkYXAOCwGx/s7TkE34uWFuFJUGMqfZ9zc6ZGgusrQEl3hW8M3ctN3OueaL3kM7g6X4GzpyVxWKh8cRsiY8gZTx4I4W4t1OGARGVjUy1K5ejiBX/cuxKAo=
+	t=1757428217; cv=none; b=LOgz/iKrOMe6/jPewcxWajUKHYTY7t2Fe78N4tyilQKKk29ghSNKrt1aXksDvUVuB2czmfG79M/TGhufaMrvwdCUqyUKKrmZBgjcORTjvzWZCbrTKA9KRc/U8F7UY++2xrHirIX3Mp9GmAEr8cLQKoZUUbq9gDyuYXZq6U92EEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425245; c=relaxed/simple;
-	bh=TOKivSYM8AaGjR0sjfOBNZldzL9uNMrmIjNBs/jU5RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnLwaRfUCyPIcnEZQr1cuLxxFc61JvuAmK/8LGkrMr2i3gE9bO8Jsv8r+8r3hGlhQFtawLJ3Zfq8M9SyqLg3kMMLlA4UKOXHvqU5bo1EAfXYjnr3rz3VihSCHq74FlfnIQiFYdvr50c4hmfh7PlvZdR1EgUBCnjTQxshPDK0xUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WW7uhxoV; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1757428217; c=relaxed/simple;
+	bh=oOW/q/nXt3plb1YUm8fTu8X+dc7ZimOQs2RP9TN6Yec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i3Qf3PK59KGhVu1Z9BK1SB9o0ZwvlfKsWpYwyutIkMsrBNmMpm/QP5vTu2cEnTwK/CXCTxC7Hbr3gLG4DC3aHyuR1EyJVVWTKJJdae977rZLkxakva3fbOTTQE+TIIYqd6mNTJdBm1URgEzk/KoC0PyenwcT+iiOEKj6sMf0Jmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfOh/uVn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WW7uhxoV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757425243; x=1788961243;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TOKivSYM8AaGjR0sjfOBNZldzL9uNMrmIjNBs/jU5RA=;
-  b=WW7uhxoVB7QPgwqIb+11dZUg0iX6qtQ0iWtJrvQMt8RIs4+W5NNnxVAV
-   iim+eGH+JPHm3NP8Dghn1kUDSOg+RthFrpvh2wP7pDG80hMi9IZJ7vZce
-   hHLdrNkpyTbZX0rMOQFDyxrNEb5mXwlcAjQOL2F7ppTYlQCqNjczb9YtC
-   jJ6d//FQk+h7u+pl6uK34uE+ZQUCovAKsz94VkddglZt++zp5ea3H7Iyu
-   YvIkfuvYjb2b2Kcn7IH941RifvTznm+6uldur2aMcSFmwsPoE9xjlC2nU
-   B87i3VGKcSgqCb556cuBpVwPDNRpCpR/NRw6n7mlbh5X+d6P291vP29QU
-   Q==;
-X-CSE-ConnectionGUID: E6O9lpPPSUeOCoJzQrf9rQ==
-X-CSE-MsgGUID: 7gNU33OKQP6ZfrrQ3yml8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59854826"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="59854826"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:40:43 -0700
-X-CSE-ConnectionGUID: d5jyn5U6RTqDwtadbZsjtg==
-X-CSE-MsgGUID: 3dTjMfjGQGi/s8TDcuomyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="204075081"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:40:42 -0700
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/xe/hwmon: Use devm_mutex_init()
-Date: Tue,  9 Sep 2025 06:40:26 -0700
-Message-ID: <175742518952.1517056.6092120545087383831.b4-ty@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <989e96369e9e1f8a44b816962917ec76877c912d.1757252520.git.christophe.jaillet@wanadoo.fr>
-References: <989e96369e9e1f8a44b816962917ec76877c912d.1757252520.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfOh/uVn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66AAC4CEFE;
+	Tue,  9 Sep 2025 14:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757428216;
+	bh=oOW/q/nXt3plb1YUm8fTu8X+dc7ZimOQs2RP9TN6Yec=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gfOh/uVnJxQMDBxHVa4QaA+XiK7yWaBbmp9+iWaGTcmFkeFB02wgP6j66f397fuc7
+	 5VN5RqzK8PuWvSdVLwit4X0FAt876HpU1I4PZ2Umcv3kLeRyNGAHl9djOxLNRzSLmc
+	 QNLBqcUMrxPzBhOHMnhERtE0zyLOqSRCKCrq1BvQPD0/b3p8/n9YcWKtcQTNevBWSV
+	 /paTF/5Rb+/iNdM3iFcuobgNfHv3HWBFXqCTtY/fZwu7+YNlZcJQ5zCOXDf2nGjprO
+	 JuXNCFFllglB6Wmv6F1hW6F+Zwmg1skKYolKeg+75q2/6GATUcNjZUC2fYO6yr8ufc
+	 AKB/PP1AvAM9w==
+Message-ID: <c288bc66-e34f-42e6-b2e7-debb8e1415ba@kernel.org>
+Date: Tue, 9 Sep 2025 23:30:13 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] PM / devfreq: Fix double free in
+ devfreq_event_add_edev()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aMABnic3SVnYMvGc@stanley.mountain>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Content-Language: en-US
+In-Reply-To: <aMABnic3SVnYMvGc@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-On Sun, 07 Sep 2025 15:42:17 +0200, Christophe JAILLET wrote:
-> Use devm_mutex_init() instead of hand-writing it.
+25. 9. 9. 19:29에 Dan Carpenter 이(가) 쓴 글:
+> The put_device() function calls devfreq_event_release_edev() which frees
+> "evdev".  Calling kfree() again is a double free.
 > 
-> This saves some LoC, improves readability and saves some space in the
-> generated .o file.
+> Fixes: 430a1845c804 ("PM / devfreq: Fix memory leak in devfreq_event_add_edev()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/devfreq/devfreq-event.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   36884	  10296	     64	  47244	   b88c	drivers/gpu/drm/xe/xe_hwmon.o
-> 
-> [...]
+> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
+> index 34406c52b845..70219099c604 100644
+> --- a/drivers/devfreq/devfreq-event.c
+> +++ b/drivers/devfreq/devfreq-event.c
+> @@ -328,7 +328,6 @@ struct devfreq_event_dev *devfreq_event_add_edev(struct device *dev,
+>  	ret = device_register(&edev->dev);
+>  	if (ret < 0) {
+>  		put_device(&edev->dev);
+> -		kfree(edev);
+>  		return ERR_PTR(ret);
+>  	}
+>  	dev_set_drvdata(&edev->dev, edev);
 
-Applied to drm-xe-next, thanks!
+Firstly, I'm sorry that it my wrong review of patch[1].
+[1] https://patchwork.kernel.org/project/linux-pm/patch/20250907113302.3353584-1-kaushlendra.kumar@intel.com/
 
-[1/1] drm/xe/hwmon: Use devm_mutex_init()
-      commit: 7b77941724628e6171a286edbf04d67a1f1c1459
+As you mentioned, the above patch[1] doesn't be necessary.
 
-Best regards,
+Instead of applying your patch, I'll drop the patch[1].
+I'm sorry to make the confusion.
+
 -- 
-Lucas De Marchi
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
 
