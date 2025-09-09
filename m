@@ -1,102 +1,109 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E6C31770E
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Sep 2025 10:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF14B2882C5;
+	Tue,  9 Sep 2025 10:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757413798; cv=none; b=HrQc16uksaZd95iKavqsDHNVHn/bBLVklt8YwFgv9IufM8HAyplM+v6zRlCkeQ1CpVhKcifTzzt/3fPMRs3zt75erRmnqalgXlta6ip2hM+zPyxOtwrDWGoNFz4l/NBdyR9kHx5nxetGFnx8bYu6Zeq/XzdrqiNDTBg+Os6v5C0=
+	t=1757415168; cv=none; b=DJQyaJ+JCdeYl2uLIHLTXDRKTuU8FTunPozV6G8d77sJl+TnMsFkvh2OtkRa6ysMWA7A3ExLfrcqwHBqjRbMRROjuJ0DaxYujPbg5sGuJ6XLiZ8wHvsnh7vv5UXiLmZhsM9X0VxRZBvprJFMxZgFbJC230gySAlEi318PnRvKNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757413798; c=relaxed/simple;
-	bh=IqiYlfOVbQa/zh50FAoJsm1nVp//uGooPnZlzF1wXek=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=f553eRnIOqHn9JaiHzVCYWyaT8oityprfHXfg/L7HBUlFilsKk/zz7ijOyR2nT59iIZAUhbx1R31b/yCLlQ2qz1hQmVyXSptMcaIdefbu55gqaPByZLkoNmt8eN929XYdP72nVJAuVajTL/9Kmj/STUCcDhKigHMCUMzO9HbCbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gZh306tf; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757415168; c=relaxed/simple;
+	bh=RuzkZqY9TDl0xwHTbArVdSoYhdyCPv5S5kmfGZYTMNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cW26f1pJRNQY9b3J8K0Fd3YSP6BgvRlK6b6Zku7/L37ZLPCEsoqfhMR2QlUdcO1DB9eGZ8KTUHu1pa9WDKjKHcOCs1VSS6lzDrbBDJQDuTS2cANLYobSjfai3OyjlTXCQhSR8GrRoIF7Ka53c6Neh1l3Y0fGNfc1p4o7cAdidBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMJGue0l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gZh306tf"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3df15fdf0caso4169641f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 09 Sep 2025 03:29:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757413794; x=1758018594; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o6DLuZEXjLVaECtCo3C0mHyLZL5DvcGRCHNBQ9l3dvw=;
-        b=gZh306tfVI/Vb6F1+ICCiJ9FJjx0eiFQXdGI4DoGVqLhUwulNgja9VOsQU7+uZfJ9u
-         fzVbWmAW9b2zEVSBiBsYOo7N4R1FpzA60DV6aAVjL3mdXZstwfuZFgUW8spzERjZujH2
-         Y0eRPRLXTc2ftk8i1o/Icd8PncFZ1Jci6cO/626B3PX1BZAMsFj7DISE7mNdFWWdwJSM
-         xOV3b/CmNs77mYv5a5zqtEjo26F+3AkpIuv9Z+renrVnoMS0HTVsre+suwZcpgHMJFuT
-         hgjqSdnFN4ZmoIfcRBwfKsciUqWYSNeoe9OOAxtpSq9X12eu34zZKpB1O4SKAca4vcie
-         ikdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757413794; x=1758018594;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6DLuZEXjLVaECtCo3C0mHyLZL5DvcGRCHNBQ9l3dvw=;
-        b=jbCGEC8AIxBWoe7mALurZNqIn2M+gvLyCdTyFMJWr700775lQoBcRJWZ/aeaLS62P+
-         2cP3H0liHsl510cH4Oq/qhPPcrKZDbkGTD+vg/EBtdOnGw+3n7qjFDYrkShoEh80cNii
-         9pAPwyIU2RFvXsOZ6KGqrNrKH0sPi3/p4CKOaNqYVi7rSoo8IpMcOzwS5/4RTLALe2PF
-         XHN3LbKe6mLkwYdJ+hsR/lXnmXa10bb/d4CI9xt0mi1QjlbogKSngg8ehdklwwA02aW8
-         654eHoljoSD8MrDjZqQ4pPHuzmG0aqsy9JQYE/Yt34BcQnj6AIRAFy1UBOilzJvFMyWZ
-         7wEg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5vA1Uo7UE/x1KPdKOYbZFW7wNen3wj+OP0h4PzkzYE6ynPyRCehVtZdss6p5l5cMIf3w2nOQOJg0fDDuAX7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiAgF1leF4I1f/cfRm4wuaix0C2awWm5X1hkDTJGDqe2c2FaMZ
-	hbtDTFNpUHztnQlqyuGAe/L2OqxTTJjd/2CexqcnVOxkCBrXUHz7EavPSM4hT827hNE=
-X-Gm-Gg: ASbGnct+s7iy+Y5Xlsx88f4i8orvVh6qeEKnlKQv1P/4FkzFJ9xx1qBBQuAj+nkPivC
-	TEjzPECaxyTyyDg0AM7jxXK7jqOyvYWSacC/rsMbeYgPEEGrKLDrny8QXDKLYLLt9nC8hQ9I30F
-	uTc5QwFMNi9tLibQ/QM1RVm37/i3JQ1vOG8f+8CG92q9TqcYAPVPowzMpeUHpFgqkGdlYwPlsXC
-	AXYR4u9HUo9LB2QOMkmgjtXuetTJp2glXhroCOCSrAY3ZCsJs/xhnOEG1BEfIX1uPzUvZgUmWXs
-	ki1m/H5YdPJjsO7hsKF19fFGCgIsymdMtMLHJ64HSiJ2KFX/Zpt4AN3qk37DztisyWEKB11bUnN
-	u7QRJpxLnpw1+AJotzq6ngYII4YE=
-X-Google-Smtp-Source: AGHT+IFdlL+stSgluJu4iHh99463lMmfzZUp75gWa4DtFMccsEMf3Hiqt7K4aEcp6FbjhSixFYzjGg==
-X-Received: by 2002:a05:6000:612:b0:3e7:484a:741b with SMTP id ffacd0b85a97d-3e7484a77efmr5916594f8f.41.1757413793883;
-        Tue, 09 Sep 2025 03:29:53 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45cb5693921sm289899335e9.0.2025.09.09.03.29.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 03:29:53 -0700 (PDT)
-Date: Tue, 9 Sep 2025 13:29:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] PM / devfreq: Fix double free in
- devfreq_event_add_edev()
-Message-ID: <aMABnic3SVnYMvGc@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMJGue0l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B2BC4CEF4;
+	Tue,  9 Sep 2025 10:52:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757415168;
+	bh=RuzkZqY9TDl0xwHTbArVdSoYhdyCPv5S5kmfGZYTMNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GMJGue0lghRR8rLcysCM9hOWVYraYSuvfzRxx82TRj2STvIqqKIGrupZcQDbdAHBJ
+	 f0tlYGW9+I8IZz/Aeq0r0sEM3CC49FVHlwdo/yjnjAB4doBDQqcb9hD0AR9WxEXIgp
+	 odcl+ElIn8G3HXwzbXfF0B4P33mQKNpBwmGc5k1vIDxYOP3KoZH1ZFALysHvdHGiOl
+	 6hRsCUyjl6WHpHoTJLlZB11/wmhHqH2QpkOJAIJv4+XVq/EPCB00ATyeX8rT4cNQ4O
+	 pzroQK5WuZcywWR9TXbC5D4nhn6Aaos3BRHpfsRnTajnb7St6PMgJwgh8ratA4aA58
+	 oe/6g40OtmiIw==
+Date: Tue, 9 Sep 2025 12:52:45 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] pwm: Fix incorrect variable used in error message
+Message-ID: <52u2odvlsut2efemijiewh5gzfkvq6dj347fojrvytrjpxq76z@5isb6opneofo>
+References: <20250902130348.2630053-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t4hwofridi3bqaue"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20250902130348.2630053-1-colin.i.king@gmail.com>
 
-The put_device() function calls devfreq_event_release_edev() which frees
-"evdev".  Calling kfree() again is a double free.
 
-Fixes: 430a1845c804 ("PM / devfreq: Fix memory leak in devfreq_event_add_edev()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/devfreq/devfreq-event.c | 1 -
- 1 file changed, 1 deletion(-)
+--t4hwofridi3bqaue
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH][next] pwm: Fix incorrect variable used in error message
+MIME-Version: 1.0
 
-diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
-index 34406c52b845..70219099c604 100644
---- a/drivers/devfreq/devfreq-event.c
-+++ b/drivers/devfreq/devfreq-event.c
-@@ -328,7 +328,6 @@ struct devfreq_event_dev *devfreq_event_add_edev(struct device *dev,
- 	ret = device_register(&edev->dev);
- 	if (ret < 0) {
- 		put_device(&edev->dev);
--		kfree(edev);
- 		return ERR_PTR(ret);
- 	}
- 	dev_set_drvdata(&edev->dev, edev);
--- 
-2.47.2
+On Tue, Sep 02, 2025 at 02:03:48PM +0100, Colin Ian King wrote:
+> The dev_err message is reporting the incorrect return value ret_tohw,
+> it should be reporting the value in ret_fromhw. Fix this by using
+> ret_fromhw instead of ret_tohw.
+>=20
+> Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for wavefor=
+ms")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/pwm/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> index ec4112e6209a..ea2ccf42e814 100644
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+> @@ -276,7 +276,7 @@ int pwm_round_waveform_might_sleep(struct pwm_device =
+*pwm, struct pwm_waveform *
+> =20
+>  	if (IS_ENABLED(CONFIG_PWM_DEBUG) && ret_fromhw > 0)
+>  		dev_err(&chip->dev, "Unexpected return value from __pwm_round_waveform=
+_fromhw: requested %llu/%llu [+%llu], return value %d\n",
+> -			wf_req.duty_length_ns, wf_req.period_length_ns, wf_req.duty_offset_ns=
+, ret_tohw);
+> +			wf_req.duty_length_ns, wf_req.period_length_ns, wf_req.duty_offset_ns=
+, ret_fromhw);
+> =20
+>  	if (IS_ENABLED(CONFIG_PWM_DEBUG) &&
+>  	    (ret_tohw =3D=3D 0) !=3D pwm_check_rounding(&wf_req, wf))
 
+Indeed, thanks for the fix. I added it to my pwm/fixes branch at
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git. I
+didn't made my mind up yet if the patches contained in there are
+relevant enough to send it to Linus before 6.17.
+
+Best regards
+Uwe
+
+--t4hwofridi3bqaue
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjABvoACgkQj4D7WH0S
+/k6Diwf7BfuMcnZqdITnmfwsZKNhVwHOt65eKj51sa7TnUxPF/aTl/H4dL2LBEZr
+elekmMbX+XmzCwfGNF9MsGFA/4HTzySLLv2Gmmdb1DZEZsVvcn54B+qQIXzF/lsC
+U25y6UQcDSypUPfxnSPzqQ/wOALtH3BTDr8Q/SVmz7Rwb8d8DSssb08dvZXuSHuM
+NDXCohKypnhJ12RDfcsoX6ormIt4QTrKihhOyVB01VshJ6WVcxtCkllFM00t8TrZ
+2B5KO3asVkzaBe4uOK0TRfgiiu/w0nVcEtSg9zmtvUjOO21GvaN65H0QOfiTolNg
+qG4XQMY83UT8aYJ+lV5LOA40Ep3oZw==
+=sm8Q
+-----END PGP SIGNATURE-----
+
+--t4hwofridi3bqaue--
