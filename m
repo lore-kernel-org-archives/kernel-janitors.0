@@ -1,88 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA08352FC7;
-	Tue,  9 Sep 2025 14:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7273009F7;
+	Tue,  9 Sep 2025 19:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428217; cv=none; b=LOgz/iKrOMe6/jPewcxWajUKHYTY7t2Fe78N4tyilQKKk29ghSNKrt1aXksDvUVuB2czmfG79M/TGhufaMrvwdCUqyUKKrmZBgjcORTjvzWZCbrTKA9KRc/U8F7UY++2xrHirIX3Mp9GmAEr8cLQKoZUUbq9gDyuYXZq6U92EEk=
+	t=1757444686; cv=none; b=kwQHy7i3Zmk8wVAa0yVPwyr/E96uacP05qxEsMBhcDUTzRbehxTC7EkrS+NyHxxjxlZG0O0p01L1NsvaDkhXAccsvKXf8E3rCUEEhwxJ51etrsZThi3egu0nG/MmoW72rAqmkKOw02w3fv2BAp0ujU2+91HwlFjrI3QJUMaPQuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428217; c=relaxed/simple;
-	bh=oOW/q/nXt3plb1YUm8fTu8X+dc7ZimOQs2RP9TN6Yec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3Qf3PK59KGhVu1Z9BK1SB9o0ZwvlfKsWpYwyutIkMsrBNmMpm/QP5vTu2cEnTwK/CXCTxC7Hbr3gLG4DC3aHyuR1EyJVVWTKJJdae977rZLkxakva3fbOTTQE+TIIYqd6mNTJdBm1URgEzk/KoC0PyenwcT+iiOEKj6sMf0Jmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfOh/uVn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757444686; c=relaxed/simple;
+	bh=9fXxQpn5wuAg5aR/rkNAmhWdIsYeyhcJcYmeZKN86S8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wg3Z7C0zvPDb9lHp7+f/WKL99gxzjXZyE0breAAHiOPzLhNafKNMx6iEKYUJ7M2MEvqtV5IPC3qBTHknYDXUaBrHk0iOG6/FmcKa+3xEcZpt9E+lBONnB6bWoDHTJReNWUaL/9kwTv46Z7ud+uF+4fxCVKTOX1IrJ1gRAVyCdwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDvXR8Km; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfOh/uVn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66AAC4CEFE;
-	Tue,  9 Sep 2025 14:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757428216;
-	bh=oOW/q/nXt3plb1YUm8fTu8X+dc7ZimOQs2RP9TN6Yec=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gfOh/uVnJxQMDBxHVa4QaA+XiK7yWaBbmp9+iWaGTcmFkeFB02wgP6j66f397fuc7
-	 5VN5RqzK8PuWvSdVLwit4X0FAt876HpU1I4PZ2Umcv3kLeRyNGAHl9djOxLNRzSLmc
-	 QNLBqcUMrxPzBhOHMnhERtE0zyLOqSRCKCrq1BvQPD0/b3p8/n9YcWKtcQTNevBWSV
-	 /paTF/5Rb+/iNdM3iFcuobgNfHv3HWBFXqCTtY/fZwu7+YNlZcJQ5zCOXDf2nGjprO
-	 JuXNCFFllglB6Wmv6F1hW6F+Zwmg1skKYolKeg+75q2/6GATUcNjZUC2fYO6yr8ufc
-	 AKB/PP1AvAM9w==
-Message-ID: <c288bc66-e34f-42e6-b2e7-debb8e1415ba@kernel.org>
-Date: Tue, 9 Sep 2025 23:30:13 +0900
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDvXR8Km"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so38427905e9.0;
+        Tue, 09 Sep 2025 12:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757444683; x=1758049483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GhzB0OEro6C+Ab4zuDnjl2RgZNMG68c3vMDXlukcxy4=;
+        b=hDvXR8KmUmbuyFS4U9dHdhrgbvrwVKuw4b1f+uR4Wl1MLygDTqD8J1ZbzPR252RoJ7
+         xQjndxMagxDQkjjJZBSLOcZ2TEN2ECjqznw2CFbNcqPg6rUy9UdvoTwFwC8uTVrrdQXS
+         bt0GHkTT5LiaOm6KGlOM5qwNPLo3u/82j0+KVuQw+xK2L4SCFyYxdR0W1rctJ0r2mUap
+         x6be1WzWrWZxshAgueL/OO1Ykp06rHPHmFU6uEc+rRlPaRxLzIwlJvJRbgg5BFpsChuw
+         zKFcT9nrkU1p0x4LtZopADVzAYwdxn6m9/1vKGBZkNLvEvPXZ1a6YrRDNzrwDKXZkYG5
+         KNAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757444683; x=1758049483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GhzB0OEro6C+Ab4zuDnjl2RgZNMG68c3vMDXlukcxy4=;
+        b=u5e6etS0HPxi0U2sMwM0OhVLTBBfEiWOK/jnBn94P0lrM41sW6Rr0CNQxgcsFl7eLy
+         UZjZSoZ8rBqNR3Y9t7mlYLBBljVTRUwTZHZjMj5m6d+LWbAvhEX3ug0JemXTpkbX7pkg
+         XGSs1RLz5T+AC0+27shPGJ1u8ayjOXgbDSqsilgMMsYSrT2qW/McG0nrpfnefmo5hdEP
+         KpLSlUwpYz+vSIMmF3Qdmd3BMOYiyPx/3TR7tkFmAhiVSEgC7KckHoI/GEpP3e3HsdF3
+         5EKF0Y7Fa52EzVTCRmpvuh/WEuWt2T0RPSglUtmi93hXHZ0pedHs+HYGvEJi2CvL0fZ2
+         WT9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVZIhtl/uonMNOh9QG5RHpHuamRzYToEx8q7893Hae+7ikmO7bINAHsnZTtulFVim4GFFrhyL1UUAV1CLbq@vger.kernel.org, AJvYcCWtsouv42lXd6eDFMuCRUDo4DRugChsVMs37s9vRqNtn0jN463QKacnr4KiA2+JCzz8jBn5d9I0kOKs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYkXzAh3YyAtvqD5snLYKOdKaiDIZW4y7uHAJxdJjWHuZrrVCv
+	P6UTErLQ37vJ3FkgIsHwApG00NLgg4/1PQvxJKznzPBzq8hF+OxzreIz
+X-Gm-Gg: ASbGncs/IdkEJjh1YlG8VtEAkkLFuJ/e25Gm/K+WCP+vp2x9SoUBDEwgSkLA5eMoWn+
+	LX481/2TFC8PPreap1SoGd5T8u0fJgeAErF+EOzIdmFnnzldQ5URxbCrLqb8YMjSZRI3HkAdlxy
+	wo2wJWWgmCs1cvFrxu6CQsN05qAI9xjYyFKXnXSjCYQjFfedPxw6qmU2BaFu4ouDEm4KFyHtW1b
+	XCbOYlMr5plA+MQI8nwfLJrzsiK3eTgKq4k2XLhTO2t1cXros+Kk5nnHTu4UO6ysSK+H6OCpekc
+	eEmhbw1IEQVxBfaxNLUXj6HwhqY4euBtA6WWBpiSzlrVVUz1xJEZp2aIBviwSmxTLT0Ouar+KXi
+	rCy3ZVyZlze/QDBt//eh3UIclOzP4Q0E=
+X-Google-Smtp-Source: AGHT+IFofAuec90G176pP3cVIJSPBy3FefJKT6bJWv1ZoNX6Vi2TQc94eQQIy9PbJQunocF67lSoYQ==
+X-Received: by 2002:a05:6000:290b:b0:3e7:492f:72b4 with SMTP id ffacd0b85a97d-3e7492f72e0mr7764781f8f.42.1757444682901;
+        Tue, 09 Sep 2025 12:04:42 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45d468dbf48sm259596245e9.11.2025.09.09.12.04.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 12:04:42 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Yao Zi <ziyao@disroot.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] gpio: loongson-64bit: Fix a less than zero check on an unsigned int struct field
+Date: Tue,  9 Sep 2025 20:03:56 +0100
+Message-ID: <20250909190356.870000-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] PM / devfreq: Fix double free in
- devfreq_event_add_edev()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aMABnic3SVnYMvGc@stanley.mountain>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-In-Reply-To: <aMABnic3SVnYMvGc@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-25. 9. 9. 19:29에 Dan Carpenter 이(가) 쓴 글:
-> The put_device() function calls devfreq_event_release_edev() which frees
-> "evdev".  Calling kfree() again is a double free.
-> 
-> Fixes: 430a1845c804 ("PM / devfreq: Fix memory leak in devfreq_event_add_edev()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/devfreq/devfreq-event.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
-> index 34406c52b845..70219099c604 100644
-> --- a/drivers/devfreq/devfreq-event.c
-> +++ b/drivers/devfreq/devfreq-event.c
-> @@ -328,7 +328,6 @@ struct devfreq_event_dev *devfreq_event_add_edev(struct device *dev,
->  	ret = device_register(&edev->dev);
->  	if (ret < 0) {
->  		put_device(&edev->dev);
-> -		kfree(edev);
->  		return ERR_PTR(ret);
->  	}
->  	dev_set_drvdata(&edev->dev, edev);
+Currently the error check from the call to platform_get_irq is always
+false because an unsigned int chip->irq.parents[i] is being used to
+to perform the less than zero error check. Fix this by using the int
+variable ret to perform the check.
 
-Firstly, I'm sorry that it my wrong review of patch[1].
-[1] https://patchwork.kernel.org/project/linux-pm/patch/20250907113302.3353584-1-kaushlendra.kumar@intel.com/
+Fixes: 03c146cb6cd1 ("gpio: loongson-64bit: Add support for Loongson-2K0300 SoC")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpio/gpio-loongson-64bit.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-As you mentioned, the above patch[1] doesn't be necessary.
-
-Instead of applying your patch, I'll drop the patch[1].
-I'm sorry to make the confusion.
-
+diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loongson-64bit.c
+index f84f8c537249..24b7219db34a 100644
+--- a/drivers/gpio/gpio-loongson-64bit.c
++++ b/drivers/gpio/gpio-loongson-64bit.c
+@@ -267,10 +267,13 @@ static int loongson_gpio_init_irqchip(struct platform_device *pdev,
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < data->intr_num; i++) {
+-		chip->irq.parents[i] = platform_get_irq(pdev, i);
+-		if (chip->irq.parents[i] < 0)
+-			return dev_err_probe(&pdev->dev, chip->irq.parents[i],
++		int ret;
++
++		ret = platform_get_irq(pdev, i);
++		if (ret < 0)
++			return dev_err_probe(&pdev->dev, ret,
+ 					     "failed to get IRQ %d\n", i);
++		chip->irq.parents[i] = ret;
+ 	}
+ 
+ 	for (i = 0; i < data->intr_num; i++) {
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+2.51.0
 
