@@ -1,127 +1,89 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3275231D39A
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Sep 2025 08:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686DD2D5951;
+	Wed, 10 Sep 2025 10:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494747; cv=none; b=OG/dDW6WlkrCNs1f8k5liU8Rnl+aweE6QmXlC1hlyecwYYVni+KE2gn6P2Mn0Wq7r1WeU4EPUmnI1pvEDOSJDkk+GpygFrZGUbnBNan//oYj3viLdp/PRGRqOGgM831solj5O3ZH4OAUJ+kq7gN4dshVCTSE+Xzf/guZXpuVU/0=
+	t=1757501498; cv=none; b=XEPUHGEcCS1McH6qhDIkNzjl46pKFn8khcw4lESBI5x+N1QtHAlMT9FyyUWgpQ8OJ/TAW53HmmOXJsmjew/DR2Z/n9gFkaLCBeEdQQG3mO68qIAq+uODDmhZPYynN3ncu0DsbbOzswQ/f+d4p7VXKAK36pHpid8irY6+4Zjte60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494747; c=relaxed/simple;
-	bh=qVUqCiNWKhbm4OJQ/h1GXQ4Ue76QXxYJE1ZLypTGFuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JUPBqdZVrDX0JqAnFuFKPh8sjZbnlO54EVFpGkeLCp2GYFF5zPG4b5FGj/UDXD8X+G2sD29YSHIXPRkR/IfhyvEqckdRZcuNiufMjn/NFlapk/WETkI/bkoLdPobDrAOZfW2OesSrVbw3jIqHiL9jjKWitWpYQ0G5h2jqx2SL+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HeqqGFvx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1757501498; c=relaxed/simple;
+	bh=4/4TPh99l0DgXjNtIiFjYIeCWcK7mTfi6m3iGmYjCH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgSSJT5BulzV23b7uJ1965nxOwXUyNedeVDj7YF1IjJWXXogAkrpwoiNkBWY1fRGAygI/3UqKrMNqanfZ5vKzLKiGhUi+fZeL51C5wRnwSkV/29cdREmPpaUUwV3O8RgGRdgssey/LLLPA1sQjhzw4aLESF3mj1f9pCdevbqfAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dwUGstgs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gkv3pirN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HeqqGFvx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757494745;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dwUGstgs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gkv3pirN"
+Date: Wed, 10 Sep 2025 12:51:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757501494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YbNpi+kDNBgUr3iCBEGx1sOECaER/m1rAGG176HSF7M=;
-	b=HeqqGFvxb84KgnFV5/+PBjLBGDuHkIKMBWGuRiR3yl2dm7ht3qjHY7n5D3u3dqq3L235yT
-	7FWjL2zXnF4ONFgDajA0lXAYaNN+lgyV9GN8YI8l6jOKUXR4vNWMWgwZXTkVLD5tfAsMMx
-	pCnD1YwetWeQ3Hl2bo++EwuZ8dJu0wE=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-60-eQVjWBjRMDauzLQPXfBdcw-1; Wed, 10 Sep 2025 04:59:04 -0400
-X-MC-Unique: eQVjWBjRMDauzLQPXfBdcw-1
-X-Mimecast-MFC-AGG-ID: eQVjWBjRMDauzLQPXfBdcw_1757494743
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-62caf055c95so1374871a12.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Sep 2025 01:59:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757494742; x=1758099542;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YbNpi+kDNBgUr3iCBEGx1sOECaER/m1rAGG176HSF7M=;
-        b=qe3L9DtdPxZ5l36WlvA3TNduqJAfM6OfqgFcqo6YuBbnWqMlCo4Gz6AIDF8tUjS05k
-         IJb7Cz7gOHyjEHTcM1e9OiNee9uWJYrX31ygwgedP/zNwPP3BzW7IH1KALeh62daJ1mJ
-         dczGHIlLD4rmo0gvQkGG35DODutzXkKYxWc7sZ8BIgdmcqCvwDv3wLiP3sFtlYQW8uIf
-         mXgnJo1rFQRAFuTyRpAMlViKPfp64alCO7GgTj0lO5JL95GZil/+7ISAOhA2X1Adl5jm
-         5c1OIX6MlbRw3QCRD8bUtL83BSzwBch1mpfGH8R0divV67g8s8FqnUIJulokMVcWzwuI
-         80tw==
-X-Gm-Message-State: AOJu0YyglMTlRJPcOVHbVnZPnA295FAwXl/AJSnB7cyABFKYxY/57ffL
-	aItv4sqro8rI2/SjdBPFaws5uHq15jrHcqAGhsBi2pTc4C22qNYFYem3t1FLF2dT43zGFL4jZRv
-	b0oOuyMjfjRVe3qo2NCx6jmltAXyCfLwQzwSnoGVHMABBoqPVyuLsTfVp+uLzPRcZPMq6tbiJ4d
-	ZgDA==
-X-Gm-Gg: ASbGnctP6bJY1rAIkQq1ddAv82BTVdiWcQmIbAuhVWPXnkzsNKnSHHFGR6Zh+zkwHy0
-	0cfG0Fzt/FKpOt/G6s+F7H34SAET3APULO8j+sinPlWKSRoI32d4lgk7iwK5NGXfPmN7JbDjfrz
-	LIw/zzIAvR8KWNCglMkzAq9S2qhh1jjQwlQlCvnk2PqPdSKZRkiun5ZlRgTCif9XbW+zgXPSg1a
-	xTcXbJwODxLnAsVS/rsMP0lch+tgywMUCdmWpUDId2ip3QbLqrok6mEpSdEoXDRCavqITwSyirj
-	nVBYtCD4x6gwRcPWPusmqeNiZwUl5WhwJ3D5ljD2JN8siH1ArGO1FLJtx+5Z3Qf7AUyx+u6ZJUr
-	gISHaXEOtv4Lv+A==
-X-Received: by 2002:a05:6402:1d4c:b0:62c:710d:5600 with SMTP id 4fb4d7f45d1cf-62c710d58b3mr3918121a12.5.1757494742441;
-        Wed, 10 Sep 2025 01:59:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIhjF/hQzrKDBiBG++LNsoFWIGNfnxMPAxlcabo5++O/vC/iz8XosvW+jycdz3EyQro8e4TQ==
-X-Received: by 2002:a05:6402:1d4c:b0:62c:710d:5600 with SMTP id 4fb4d7f45d1cf-62c710d58b3mr3918105a12.5.1757494741975;
-        Wed, 10 Sep 2025 01:59:01 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123f35esm2792862a12.32.2025.09.10.01.59.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:59:01 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PS1y10JT/ZWQAxSVC2nHn86zAzD2dArWPn28ZTzQ+Ig=;
+	b=dwUGstgs5sgq8ddBjiH2Tno4uLV8vRbDhUfkhBQoFAz3/ybotKk5zwa4hT8kft91MjVQ6X
+	7L+thLTjABcc/Doq/YY6j7EEw8GLSIB8bZYL64ruKuP1RSqF6LYq4REvJ5kOesoeKEl6FY
+	CCDUMiRnqZuksLnMtlMiWdc5/i1OJmnQHfuqb2ZqmFx7L0I4tG4Gckh9aMDhcWl+k4TE/v
+	beA/xcZQqfhgnvPy21hf2YIeUZUkQvsL0z+rftPKCtuSP+l4G21R2Em113oeRuGYMdoDCs
+	8t6mhDkXFhd9DCMdP15vUo32+UUZ3zHQww71s1vMhFruN1fLL8tGYcXPywri4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757501494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PS1y10JT/ZWQAxSVC2nHn86zAzD2dArWPn28ZTzQ+Ig=;
+	b=Gkv3pirN6os9pzyiCXRWvUl4DQsHVHKCfHMhw6KGtLTTsqsn0Gh+0DPxMd9VWMzb2AY967
+	7UwWpgwaXYZFSWCA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Clark Williams <clrkwllms@kernel.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-rt-devel@lists.linux.dev,
-	linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] Documentation: update config name in real-time architecture support
-Date: Wed, 10 Sep 2025 10:58:59 +0200
-Message-ID: <20250910085859.47818-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+Subject: Re: [PATCH] MAINTAINERS: Add doc files on real-time support to
+ Real-time Linux
+Message-ID: <20250910105133.e3XIjGDn@linutronix.de>
+References: <20250910085635.47724-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250910085635.47724-1-lukas.bulwahn@redhat.com>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 2025-09-10 10:56:35 [+0200], Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit f51fe3b7e48c ("Documentation: Add real-time to core-api") adds new
+> documentation on real-time support, i.e., PREEMPT_RT. So, add a file entry
+> for that directory to the corresponding section in MAINTAINERS.
 
-Commit 14ec35ff5786 ("entry: Rename "kvm" entry code assets to "virt" to
-genericize APIs") renames the config KVM_XFER_TO_GUEST_WORK to
-VIRT_XFER_TO_GUEST_WORK. In a concurrent development work with commit
-f51fe3b7e48c ("Documentation: Add real-time to core-api"), the
-documentation on making an architecture support PREEMPT_RT has been
-included referring to this config with its previous name.
+Guess it makes sense. Who is going to apply this given that neither docs
+nor the tip people are on Cc?
 
-Adjust the documentation to the current situation, and specifically
-refer to the new name of the config.
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d7175c38c6d1..e2782810d0e0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21403,6 +21403,7 @@ M:	Clark Williams <clrkwllms@kernel.org>
+>  M:	Steven Rostedt <rostedt@goodmis.org>
+>  L:	linux-rt-devel@lists.linux.dev
+>  S:	Supported
+> +F:	Documentation/core-api/real-time/
+>  K:	PREEMPT_RT
+>  
+>  REALTEK AUDIO CODECS
 
-Fixes: f51fe3b7e48c ("Documentation: Add real-time to core-api")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- Documentation/core-api/real-time/architecture-porting.rst | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/core-api/real-time/architecture-porting.rst b/Documentation/core-api/real-time/architecture-porting.rst
-index d822fac29922..3062cff0e5a3 100644
---- a/Documentation/core-api/real-time/architecture-porting.rst
-+++ b/Documentation/core-api/real-time/architecture-porting.rst
-@@ -35,9 +35,10 @@ POSIX CPU timers and KVM
-   POSIX CPU timers must expire from thread context rather than directly within
-   the timer interrupt. This behavior is enabled by setting the configuration
-   option CONFIG_HAVE_POSIX_CPU_TIMERS_TASK_WORK.
--  When KVM is enabled, CONFIG_KVM_XFER_TO_GUEST_WORK must also be set to ensure
--  that any pending work, such as POSIX timer expiration, is handled before
--  transitioning into guest mode.
-+  When virtualization support, such as KVM, is enabled,
-+  CONFIG_VIRT_XFER_TO_GUEST_WORK must also be set to ensure that any pending
-+  work, such as POSIX timer expiration, is handled before transitioning into
-+  guest mode.
- 
- Hard-IRQ and Soft-IRQ stacks
-   Soft interrupts are handled in the thread context in which they are raised. If
--- 
-2.51.0
-
+Sebastian
