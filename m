@@ -1,107 +1,92 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EA71D88D0;
-	Wed, 10 Sep 2025 11:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6235E31D73B
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Sep 2025 13:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502042; cv=none; b=gfjS0XezdhM/CWGW4utz7gkWVGjtQOrA23mn656nYvouN30LjwoOKGMb8AeGYRpFCP6CUVCr0SLs+xRP1aoViEMo0HUpFN6KicvZotVOWWbxj/Us1tYuhWbYZVfaYqjt456Ien2D1SD8aXyOVpagYhfqAu6m6cvAG+krh/BF/VU=
+	t=1757509861; cv=none; b=IPTf1q0x11d+Bef3FdPmB70//iG+94Q0cCU8wQVO2wMt/0MHl5boKI5RfSSFOmAV8pnBsVN8yzGqQcqTwhqkTi9IWJXjjsTZTD3NwAirbp6mAXqXEHdcDdq1ATk/ANmg79X69VTBU6TC1Ejuozqq/FrrdxXMUiO+hk65S6sAz4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502042; c=relaxed/simple;
-	bh=3q09RmMkWSHgrLY6p8anzbp6nCFALU1LtrNvIDZ55sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBCABuYJNa4qHojLKV/bv3NOGopXqPXEw/iBewk2+6AB84DoXK70QljSK6n5BdxJOreGckOkLOJciqxOzv9iN2EPHwndFaPIEF8qrUYc2P4B6J7RTKkerXSvAd9H4p7MyLzlBZhdWaiNQe/5u7RAOOwq4rSmD0+hmY5a0Kw5RK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EvJBQClh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CHZFRomI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EvJBQClh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CHZFRomI"
-Date: Wed, 10 Sep 2025 13:00:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757502038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sfzc87QdWgWMMWC+tnsO32jnctjxPw3Hh/HTjNOLmus=;
-	b=EvJBQClh8of271fAFeiBu/IqmIcfIzE3oWxHKBUD1CuTVoKoDrW2B1QSUV6kem5LmRhjpZ
-	Ij24VtscTIeLVjiyQpJQUuMkXwDEmNXKzIZ1sx9dk00G8h/Fv1c3jGKOiDDAG6Umxizrar
-	cDFFdJV3xF9aVDKQSC1L3fAA2Dsf0NABf3oUj7eXP4W3KoC6txs44ixCi+kWfo8awSz6oL
-	2/0GDeqDm1G+/sKRLR6OBDd3SCYRdFqsqAidSM2015CBi1+W34sxFOsv2Uu9kejaAm30XP
-	9UXi3BnugKX7ElAhQralKvYk3uc+tdJJcp2irhekVprLGhEFlKPCjKaTGwjUPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757502038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sfzc87QdWgWMMWC+tnsO32jnctjxPw3Hh/HTjNOLmus=;
-	b=CHZFRomIn7JliWyt+7fTM31EUzmgbLZaVtgtJufg5ZiWQegB81CxSvChfsUGRNHyOAmEkb
-	qjzkpOY1r/qn51Ag==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-rt-devel@lists.linux.dev,
-	linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] Documentation: update config name in real-time
- architecture support
-Message-ID: <20250910110037.-QJ4Esqh@linutronix.de>
-References: <20250910085859.47818-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1757509861; c=relaxed/simple;
+	bh=gO2Ks0VHsePKcc510DSGBUvhSSCMEAo5Wf85gCZL4zA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fdfUEQSQuE82nNumQjfu1l/2RD9isdy3IyuCDEn6l9Ur20HQSMH2FIc/65uAN3MWktEKfvIKMFtRA1rfJJUyLQozeocubF4MlmhDZ2jyFu+vrE0WjAMsaSsJ3cf6BGDDq+ciDs6PhF9i3Rw/cissuRvlUAqK344htm73FPHmMqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	(Exim 4.92)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uwKb0-0006er-EU; Wed, 10 Sep 2025 15:10:46 +0200
+Message-ID: <c3f3370f-1f2c-4e35-81a4-4303aed2d438@pengutronix.de>
+Date: Wed, 10 Sep 2025 15:10:44 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250910085859.47818-1-lukas.bulwahn@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] wifi: mwifiex: fix double free in
+ mwifiex_send_rgpower_table()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Jeff Chen <jeff.chen_1@nxp.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aLqZBh5_dSHUb4AE@stanley.mountain>
+From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Content-Language: en-US, de-DE
+In-Reply-To: <aLqZBh5_dSHUb4AE@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-On 2025-09-10 10:58:59 [+0200], Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 14ec35ff5786 ("entry: Rename "kvm" entry code assets to "virt" to
-> genericize APIs") renames the config KVM_XFER_TO_GUEST_WORK to
+Hi Dan,
 
-This is 4843a45ef9fe8 ("entry: Rename "kvm" entry code assets to "virt" to genericize APIs")
-in -next as of today.
+thanks for spotting and fixing the double free error. I converted the 
+code to use the cleanup helper late in the dev process and forgot to 
+remove the call. I sent a patch for the endianness bug as well.
 
-> VIRT_XFER_TO_GUEST_WORK. In a concurrent development work with commit
-> f51fe3b7e48c ("Documentation: Add real-time to core-api"), the
-> documentation on making an architecture support PREEMPT_RT has been
-> included referring to this config with its previous name.
+On 05.09.25 10:02, Dan Carpenter wrote:
+> The "hostcmd" is freed using cleanup.h, so calling kfree() will lead to
+> a double free.  Delete the kfree().
 > 
-> Adjust the documentation to the current situation, and specifically
-> refer to the new name of the config.
-> 
-> Fixes: f51fe3b7e48c ("Documentation: Add real-time to core-api")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Fixes: 7b6f16a25806 ("wifi: mwifiex: add rgpower table loading support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  Documentation/core-api/real-time/architecture-porting.rst | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>   drivers/net/wireless/marvell/mwifiex/sta_cmd.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/core-api/real-time/architecture-porting.rst b/Documentation/core-api/real-time/architecture-porting.rst
-> index d822fac29922..3062cff0e5a3 100644
-> --- a/Documentation/core-api/real-time/architecture-porting.rst
-> +++ b/Documentation/core-api/real-time/architecture-porting.rst
-> @@ -35,9 +35,10 @@ POSIX CPU timers and KVM
->    POSIX CPU timers must expire from thread context rather than directly within
->    the timer interrupt. This behavior is enabled by setting the configuration
->    option CONFIG_HAVE_POSIX_CPU_TIMERS_TASK_WORK.
-> -  When KVM is enabled, CONFIG_KVM_XFER_TO_GUEST_WORK must also be set to ensure
-> -  that any pending work, such as POSIX timer expiration, is handled before
-> -  transitioning into guest mode.
-> +  When virtualization support, such as KVM, is enabled,
-> +  CONFIG_VIRT_XFER_TO_GUEST_WORK must also be set to ensure that any pending
-> +  work, such as POSIX timer expiration, is handled before transitioning into
-> +  guest mode.
+> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> index 6d9e2af29a69..91d5098081e8 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> @@ -1521,10 +1521,8 @@ int mwifiex_send_rgpower_table(struct mwifiex_private *priv, const u8 *data,
+>   		return -ENOMEM;
+>   
+>   	_data = kmemdup(data, size, GFP_KERNEL);
+> -	if (!_data) {
+> -		kfree(hostcmd);
+> +	if (!_data)
+>   		return -ENOMEM;
+> -	}
+>   
+>   	pos = _data;
+>   	ptr = hostcmd->cmd;
 
-I don't know how this is handled here but if you would start a new line
-after "ensure" then you would end up with smaller diff.
+Thank you,
+Stefan
 
->  Hard-IRQ and Soft-IRQ stacks
->    Soft interrupts are handled in the thread context in which they are raised. If
+-- 
+Pengutronix e.K.                       | Stefan Kerkmann             |
+Steuerwalder Str. 21                   | https://www.pengutronix.de/ |
+31137 Hildesheim, Germany              | Phone: +49-5121-206917-128  |
+Amtsgericht Hildesheim, HRA 2686       | Fax:   +49-5121-206917-9    |
 
-Sebastian
