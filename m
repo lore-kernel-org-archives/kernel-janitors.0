@@ -1,115 +1,96 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7273009F7;
-	Tue,  9 Sep 2025 19:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E38222A4F6;
+	Wed, 10 Sep 2025 03:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757444686; cv=none; b=kwQHy7i3Zmk8wVAa0yVPwyr/E96uacP05qxEsMBhcDUTzRbehxTC7EkrS+NyHxxjxlZG0O0p01L1NsvaDkhXAccsvKXf8E3rCUEEhwxJ51etrsZThi3egu0nG/MmoW72rAqmkKOw02w3fv2BAp0ujU2+91HwlFjrI3QJUMaPQuU=
+	t=1757473802; cv=none; b=RO2PMfp+n33LkqzQApE74Hu1SVRbl03HbvvVBNIXOzpTsODUXkHoXqVWgU+d0F0Oz2mpbzfL0B3aXmGEbVnHq7rgKeLO1jtL28otoiY+97nkLca4LmfozV9Euzxpocobf4WQTF/Pb3utloJkCVHdYDtZ9vCWRZq40rEp1eEVqA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757444686; c=relaxed/simple;
-	bh=9fXxQpn5wuAg5aR/rkNAmhWdIsYeyhcJcYmeZKN86S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wg3Z7C0zvPDb9lHp7+f/WKL99gxzjXZyE0breAAHiOPzLhNafKNMx6iEKYUJ7M2MEvqtV5IPC3qBTHknYDXUaBrHk0iOG6/FmcKa+3xEcZpt9E+lBONnB6bWoDHTJReNWUaL/9kwTv46Z7ud+uF+4fxCVKTOX1IrJ1gRAVyCdwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDvXR8Km; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757473802; c=relaxed/simple;
+	bh=psKh6YmYrpT3IotkiCO2JdSjCWQK4oHdJZwNKIGxbE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=crfnqCuYYbiY5WceBh+ZGVFSgwFCxDflsX1NpUW+HrAVbKk10JOE/yVvVRnaFifz0wafTxvPXLrB4GR+Gwr9HQs/DpAZN3i9TLJqkqyzBY8sq8+MNGeviS29uta5FjfNJasCJMsMz/kZLSaoiUcrWRQv2TAAnevkMQjFuvMuq5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=AT7i8eQE; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDvXR8Km"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so38427905e9.0;
-        Tue, 09 Sep 2025 12:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757444683; x=1758049483; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhzB0OEro6C+Ab4zuDnjl2RgZNMG68c3vMDXlukcxy4=;
-        b=hDvXR8KmUmbuyFS4U9dHdhrgbvrwVKuw4b1f+uR4Wl1MLygDTqD8J1ZbzPR252RoJ7
-         xQjndxMagxDQkjjJZBSLOcZ2TEN2ECjqznw2CFbNcqPg6rUy9UdvoTwFwC8uTVrrdQXS
-         bt0GHkTT5LiaOm6KGlOM5qwNPLo3u/82j0+KVuQw+xK2L4SCFyYxdR0W1rctJ0r2mUap
-         x6be1WzWrWZxshAgueL/OO1Ykp06rHPHmFU6uEc+rRlPaRxLzIwlJvJRbgg5BFpsChuw
-         zKFcT9nrkU1p0x4LtZopADVzAYwdxn6m9/1vKGBZkNLvEvPXZ1a6YrRDNzrwDKXZkYG5
-         KNAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757444683; x=1758049483;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GhzB0OEro6C+Ab4zuDnjl2RgZNMG68c3vMDXlukcxy4=;
-        b=u5e6etS0HPxi0U2sMwM0OhVLTBBfEiWOK/jnBn94P0lrM41sW6Rr0CNQxgcsFl7eLy
-         UZjZSoZ8rBqNR3Y9t7mlYLBBljVTRUwTZHZjMj5m6d+LWbAvhEX3ug0JemXTpkbX7pkg
-         XGSs1RLz5T+AC0+27shPGJ1u8ayjOXgbDSqsilgMMsYSrT2qW/McG0nrpfnefmo5hdEP
-         KpLSlUwpYz+vSIMmF3Qdmd3BMOYiyPx/3TR7tkFmAhiVSEgC7KckHoI/GEpP3e3HsdF3
-         5EKF0Y7Fa52EzVTCRmpvuh/WEuWt2T0RPSglUtmi93hXHZ0pedHs+HYGvEJi2CvL0fZ2
-         WT9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZIhtl/uonMNOh9QG5RHpHuamRzYToEx8q7893Hae+7ikmO7bINAHsnZTtulFVim4GFFrhyL1UUAV1CLbq@vger.kernel.org, AJvYcCWtsouv42lXd6eDFMuCRUDo4DRugChsVMs37s9vRqNtn0jN463QKacnr4KiA2+JCzz8jBn5d9I0kOKs@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYkXzAh3YyAtvqD5snLYKOdKaiDIZW4y7uHAJxdJjWHuZrrVCv
-	P6UTErLQ37vJ3FkgIsHwApG00NLgg4/1PQvxJKznzPBzq8hF+OxzreIz
-X-Gm-Gg: ASbGncs/IdkEJjh1YlG8VtEAkkLFuJ/e25Gm/K+WCP+vp2x9SoUBDEwgSkLA5eMoWn+
-	LX481/2TFC8PPreap1SoGd5T8u0fJgeAErF+EOzIdmFnnzldQ5URxbCrLqb8YMjSZRI3HkAdlxy
-	wo2wJWWgmCs1cvFrxu6CQsN05qAI9xjYyFKXnXSjCYQjFfedPxw6qmU2BaFu4ouDEm4KFyHtW1b
-	XCbOYlMr5plA+MQI8nwfLJrzsiK3eTgKq4k2XLhTO2t1cXros+Kk5nnHTu4UO6ysSK+H6OCpekc
-	eEmhbw1IEQVxBfaxNLUXj6HwhqY4euBtA6WWBpiSzlrVVUz1xJEZp2aIBviwSmxTLT0Ouar+KXi
-	rCy3ZVyZlze/QDBt//eh3UIclOzP4Q0E=
-X-Google-Smtp-Source: AGHT+IFofAuec90G176pP3cVIJSPBy3FefJKT6bJWv1ZoNX6Vi2TQc94eQQIy9PbJQunocF67lSoYQ==
-X-Received: by 2002:a05:6000:290b:b0:3e7:492f:72b4 with SMTP id ffacd0b85a97d-3e7492f72e0mr7764781f8f.42.1757444682901;
-        Tue, 09 Sep 2025 12:04:42 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45d468dbf48sm259596245e9.11.2025.09.09.12.04.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 12:04:42 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="AT7i8eQE"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 763F520665;
+	Wed, 10 Sep 2025 05:09:51 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id rJTq5Z_GPK_y; Wed, 10 Sep 2025 05:09:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1757473790; bh=psKh6YmYrpT3IotkiCO2JdSjCWQK4oHdJZwNKIGxbE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AT7i8eQEsa2UZWIGYhxKz7cTBbEL2I0ZoKEvmRmCHSdC6Q3utEZ7LYOquZD5a2gnG
+	 LEzsLGBkhCsWFGMLNRPeiQVrrBLLijEeHo5tmIzAd/NFL3I7eC0ZvTastEyC6AD5nQ
+	 0pEwdw/y5wF+9XLeokYEZ7QtPUHYJNfW4CrDUd9jGjqFfin6rDgYcnUyG8XVp+hGcM
+	 kDaWLfDjt+NEjXXGS5ZzxrhOpHK3FK0s7woAUHIZLxK6twIE1YPpHCgX4/3YEdm50a
+	 BlnvflMcefhcjr7Aejf2VFm4Qd6S0u0z7rrGXP9rSPvuwPqcp1I87JQZd2qmRL4KmA
+	 bmmSzmpbgFcbw==
+Date: Wed, 10 Sep 2025 03:09:38 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Colin Ian King <colin.i.king@gmail.com>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Yao Zi <ziyao@disroot.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] gpio: loongson-64bit: Fix a less than zero check on an unsigned int struct field
-Date: Tue,  9 Sep 2025 20:03:56 +0100
-Message-ID: <20250909190356.870000-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	Huacai Chen <chenhuacai@kernel.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] gpio: loongson-64bit: Fix a less than zero check
+ on an unsigned int struct field
+Message-ID: <aMDr8pX7MLfIRJny@pie>
+References: <20250909190356.870000-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909190356.870000-1-colin.i.king@gmail.com>
 
-Currently the error check from the call to platform_get_irq is always
-false because an unsigned int chip->irq.parents[i] is being used to
-to perform the less than zero error check. Fix this by using the int
-variable ret to perform the check.
+On Tue, Sep 09, 2025 at 08:03:56PM +0100, Colin Ian King wrote:
+> Currently the error check from the call to platform_get_irq is always
+> false because an unsigned int chip->irq.parents[i] is being used to
+> to perform the less than zero error check. Fix this by using the int
+> variable ret to perform the check.
+> 
+> Fixes: 03c146cb6cd1 ("gpio: loongson-64bit: Add support for Loongson-2K0300 SoC")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpio/gpio-loongson-64bit.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 
-Fixes: 03c146cb6cd1 ("gpio: loongson-64bit: Add support for Loongson-2K0300 SoC")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpio/gpio-loongson-64bit.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Thanks for catching this,
 
-diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loongson-64bit.c
-index f84f8c537249..24b7219db34a 100644
---- a/drivers/gpio/gpio-loongson-64bit.c
-+++ b/drivers/gpio/gpio-loongson-64bit.c
-@@ -267,10 +267,13 @@ static int loongson_gpio_init_irqchip(struct platform_device *pdev,
- 		return -ENOMEM;
- 
- 	for (i = 0; i < data->intr_num; i++) {
--		chip->irq.parents[i] = platform_get_irq(pdev, i);
--		if (chip->irq.parents[i] < 0)
--			return dev_err_probe(&pdev->dev, chip->irq.parents[i],
-+		int ret;
-+
-+		ret = platform_get_irq(pdev, i);
-+		if (ret < 0)
-+			return dev_err_probe(&pdev->dev, ret,
- 					     "failed to get IRQ %d\n", i);
-+		chip->irq.parents[i] = ret;
- 	}
- 
- 	for (i = 0; i < data->intr_num; i++) {
--- 
-2.51.0
+Reviewed-by: Yao Zi <ziyao@disroot.org>
 
+> diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loongson-64bit.c
+> index f84f8c537249..24b7219db34a 100644
+> --- a/drivers/gpio/gpio-loongson-64bit.c
+> +++ b/drivers/gpio/gpio-loongson-64bit.c
+> @@ -267,10 +267,13 @@ static int loongson_gpio_init_irqchip(struct platform_device *pdev,
+>  		return -ENOMEM;
+>  
+>  	for (i = 0; i < data->intr_num; i++) {
+> -		chip->irq.parents[i] = platform_get_irq(pdev, i);
+> -		if (chip->irq.parents[i] < 0)
+> -			return dev_err_probe(&pdev->dev, chip->irq.parents[i],
+> +		int ret;
+> +
+> +		ret = platform_get_irq(pdev, i);
+> +		if (ret < 0)
+> +			return dev_err_probe(&pdev->dev, ret,
+>  					     "failed to get IRQ %d\n", i);
+> +		chip->irq.parents[i] = ret;
+>  	}
+>  
+>  	for (i = 0; i < data->intr_num; i++) {
+> -- 
+> 2.51.0
+> 
