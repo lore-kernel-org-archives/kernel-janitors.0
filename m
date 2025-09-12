@@ -1,172 +1,103 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1CF27FB2A;
-	Fri, 12 Sep 2025 06:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAA02C11C2
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 07:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757656838; cv=none; b=bYrOeMlxrNTbV39Rvx2prXck/OH23ieb56VmCwXVkmT6yrIBPSaR/prENKyA/p9x/fTBrTkfJdXJQd16tohTiYLCAdlqr7HAbxJ4gvjoLFmVFXEKox7R2VK0i8WlDO9oe8Ab953qByYlMUkwg8Yqw5ee32rW93L+z0wf4FNs7PA=
+	t=1757663061; cv=none; b=VrxK9EdTGrGbN8wW+7coxG9sZyTutmO6FB7bywAWLZfY0/oT+D5jaR5FJt0wnM9qGbnFXMYRoV2pUQeDOq8CoZoMqFQ3izcufA2cTZSVQXCwLFYrhQyjWYGo2dcdeboJ6c4uAdggCjjjhu9+dylABj+bR1gMmsoBcXZaQ/115II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757656838; c=relaxed/simple;
-	bh=bRRpWfZkBP84qqR11V7OO0VP/NNBzl15kipJhHZCBZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KXqnyf+/vko87/UdOByPUP+oqnE6O8o4DLdCwF9HZv3toAUjLfgzup23To2pB6+BbaTfRiYqnE1fYh7lhHbOqhEaXaAzFyXkVzFUhAvh9IXTKpQ1SGKlLNl7xEJzWQH2DvuefHb4GbIl/pygmr+LIljJYMKIuq4BE6pcCRCWVns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k+GTp2jT; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1757663061; c=relaxed/simple;
+	bh=LspG41QjRVP1lr4pcJH/eUG6PUt7+aZBW6BR2m0+OFY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lmhk+XwQnAa+vObktkGTs3KSJXPOoAOG1TEPDOC63vPxwRbnGtfiPbwAROsvrqJJi/VpHZTNFrL87E7JoNruKDIC4tirKlSwojOajwEb5E5X9FoATZNoBoy1QuAwispOoiKq0bf1alU9+AQp0ODWATgxeyk9BNB4YFZ7iHk4+no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfsgLo4g; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k+GTp2jT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1757656819; x=1758261619; i=markus.elfring@web.de;
-	bh=PNBRq35TmhAY2KL78JAmIw+p27LY239sDzoMTJ3S5ns=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=k+GTp2jTe0RUkmTTSQGGdH2wuVJ0L5WtA60dx9AA4B6K605HM6XQyuZX7HQgkhhp
-	 tpMJQcnsICPN8ZjZWnGb3y7pBzLJxKRp4S+V+5UdtuX7eIYvS7Co6xd4k51DW55ZQ
-	 8jkedvVNDSU0hMtrp3fuUtic/rKEOMBTlxcA+L40qhhAJEz7Z649qxQLFIR8WXHQJ
-	 VDXem1XDCo58WdAPfmVRoYyddUsUJBmPhwz7pw2LNc748quQ95n50xYWm6dy6nQ/1
-	 /ppALhbddw9jZVw96Owg7E09tmydchZ09v55GXo6bnI0BFRfgNgur/Tl+lpMRB66d
-	 CSAzGAdDUc8aaJFzqg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.219]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MyO0s-1uDlhH1msG-00voTF; Fri, 12
- Sep 2025 08:00:19 +0200
-Message-ID: <b89eda12-c930-43e8-92c0-c2e1699284f7@web.de>
-Date: Fri, 12 Sep 2025 08:00:07 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfsgLo4g"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso10216255e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 00:44:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757663058; x=1758267858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vzS365Y8dpkhAzeZRdnCGhHbPvqCTNi/Gxyj9Ln0+k=;
+        b=kfsgLo4gHsIqnMaeF7pNo80Xz1wvybHoYYJ5h+uma/CjrAskMmsyWxz+ItpLNEFJtY
+         Rb7W0s/dTneRKMXfbW9PVpcd15kDSUukzyHlppxAF3FBsxtLpMZet0iTLHAu3Yk1ItRV
+         w3mHufez57sfYTAswAuEWgC4BnB9Ci0Qv3QgMdQX137109VGbY117mRVzNL27EZgXA0c
+         gljZvG/F1VH4TpM/O/BFp3hO4UuXj5AYA2YLCMgbWPawK4JZ67d7cwBa4lBIKhD4v87b
+         o4JAz2P/L0vDwpRyiiZyPnDA3MQxrgCWoZrC7e/kv6v3IS8A5wu9PVqO/AW2cJMzlVgv
+         Q6jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757663058; x=1758267858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+vzS365Y8dpkhAzeZRdnCGhHbPvqCTNi/Gxyj9Ln0+k=;
+        b=njWTZA0Q+emM9kd8/kx7eFxPPp8B0ZE4Ym5mmYEApDWbMpvxTV2N3GvMS/OManwCgQ
+         yK+hGWrPlAqU65bGjPK2hSpfvoznSkfJegTNXddraC1ubq8G6+S8UzIh0NkKdN2ZuPDG
+         y0GEfno95qCA13WT6aMH4U8IAYtSH1nKpn+NVfpjGnnAvWBKQC2WBCk5JwGCKVHhBSpp
+         kgEcoxA5MMxRBSuZRf8mx5Q57Sv8ztb/c1UIk4VEMbQ+bLxxxznM7M9UnreAGP+QRSYH
+         TYicoiQ6LS8PiMR2W1VO24z+MMWgc8cleGEYe1FZDNBQSx7TroC9nsdTYtdW6aTfKxLg
+         a8+Q==
+X-Gm-Message-State: AOJu0YxPCyb6a8x1moEmggNOfrd2cgbCikrue/UXPTfi0925B3sTRgQf
+	k+3HhQ5SwMzhLYjYrlBFKRjn7Fs1vL1KCVE6z4vLwas1aEsyhRbY/EZ2
+X-Gm-Gg: ASbGnctOpqsq0ay9sL6vrXVd+m7OWmHDwcTwKPQAzhNS9QlCqFIbcDaERSUeFlMp9pp
+	YzwoBIIvtkvNLCeZcROv+lJCguNo+L/PDmYIOVxOrRMpPLydjxbIPEq2zXlSEH/kiD2neAZg4Fh
+	9xMMYeqrLmDVMH+F2Qozz0Mn5ENeuRgH5UIXPNDgqItq9sh6N852mw4ufAm7PzQjo5OdIUa7ld0
+	QgNJtbfWvQ8rkfalefe+344rM7J1GxgPv4yghficqcPq0rWUBzQbqVpHqRFmBY/s3RNzTbBPXoO
+	LEhwGAATqM3cgKhXR7qlRE1tgYxXe53CUv//eQQPyG00j2+zGvm4DMxCKihW47ZoFsg3y8MfCy/
+	cJL8CMOy5wSs2cGAF+KRn
+X-Google-Smtp-Source: AGHT+IGcBRTRyBh6Cwu5iI4hTdWjgTJRmHmc3IyNU0i7I6eC8AyH4njMSzoX7KbtbrF08N3PuQ7bhQ==
+X-Received: by 2002:a05:600c:3209:b0:45c:b55f:466a with SMTP id 5b1f17b1804b1-45f211efac2mr13603635e9.15.1757663058119;
+        Fri, 12 Sep 2025 00:44:18 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e03719235sm51823045e9.1.2025.09.12.00.44.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 00:44:17 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/xe/guc: Fix spelling mistake "sheduling" -> "scheduling"
+Date: Fri, 12 Sep 2025 08:43:30 +0100
+Message-ID: <20250912074330.1275279-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: trbe: Use scope-based resource management in
- arm_trbe_alloc_buffer()
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Leo Yan <leo.yan@arm.com>, Tamas Zsoldos <tamas.zsoldos@arm.com>
-References: <3663eb06-6a98-461b-8fcb-6891165d107f@web.de>
- <3f2137d5-5bfc-44e7-9269-3069e44eda31@arm.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <3f2137d5-5bfc-44e7-9269-3069e44eda31@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0ROLkD4ppWa0eZgi33BI5e1vHecWSXWhdafQxUhhYhyZFT5Iqjv
- 0+qnuQz2XfORRDr5xT+GALBkYxgwKs3GXQRawRhJEu0uxl+SrfKoftQOoVy+UEQ3y8kpZLC
- iiQ89vTdQEN5cSBVXBjFNYDnmSMlusuWDnSxppNTt4m9mxFyW5iABe0RAdUv/WjzWq5xwyN
- VUR0Xl0yy/xOpWZQHLh4w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eGZ9mSanpnY=;lvcCsd+HGDAwvIfSnHYnoX8kGQK
- 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
- cFaN4B4=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> Scope-based resource management became supported for some
->> programming interfaces by contributions of Peter Zijlstra on 2023-05-26=
-.
->> See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
->=20
-> 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->=20
-> SHA ID here just needs first 12 digits not the entire string.
+There is a spelling mistake in a xe_gt_err error message. Fix it.
 
-See also once more:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17-rc5#n109
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/xe/xe_guc_submit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/xe/xe_guc_submit.c b/drivers/gpu/drm/xe/xe_guc_submit.c
+index a465594b61dc..8cb8b93a37a5 100644
+--- a/drivers/gpu/drm/xe/xe_guc_submit.c
++++ b/drivers/gpu/drm/xe/xe_guc_submit.c
+@@ -355,7 +355,7 @@ static int guc_init_global_schedule_policy(struct xe_guc *guc)
+ 		ret = xe_guc_ct_send_block(&guc->ct, data, count);
+ 		if (ret < 0) {
+ 			xe_gt_err(guc_to_gt(guc),
+-				  "failed to enable GuC sheduling policies: %pe\n",
++				  "failed to enable GuC scheduling policies: %pe\n",
+ 				  ERR_PTR(ret));
+ 			return ret;
+ 		}
+-- 
+2.51.0
 
->> Introduce __cleanup() based infrastructure").
->>
->> * Thus use the attribute =E2=80=9C__free(kfree)=E2=80=9D.
->>
->> * Reduce the scopes for the local variables =E2=80=9Cbuf=E2=80=9D and =
-=E2=80=9Cpglist=E2=80=9D.
->=20
-> What is that required ?
-
-The needed variables should be defined in a succinct way.
-
-
->> * Omit four kfree() calls accordingly.
->=20
-> Right.
->=20
-> The commit message should be re-written with little more
-> context from arm_trbe_alloc_buffer(), after describing
-> the new scope-based resource management.
-
-Which background information do you miss so far?
-
-Regards,
-Markus
