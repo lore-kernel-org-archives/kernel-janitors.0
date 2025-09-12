@@ -1,119 +1,67 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from cdmsr1.hinet.net (210-65-1-144.hinet-ip.hinet.net [210.65.1.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230CA2D29C7
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 07:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DD62E62AC
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 10:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.65.1.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757663213; cv=none; b=Ze1XXLQ4+VjeADaZGKMla1i1GGqNiyagHZ80iHMsL3sgnOOwQv86Scw64WKrawvTIV2zk5ueWBtl4Omsr+0ndZOz4Fpz7YUqDs7gWPyogAqY0XbTQJPzHYJFsONGGbXMbs0UpZpZPfxUi5zQx0TbLgMrmbULMdozTYmKgVsXSM8=
+	t=1757672535; cv=none; b=LyXQ++jkO1wAaIKMh+PK05VN4J87PA+K8s6RcyZztsa3yp4v0uQyyAt23SKmvi4mm34J40TwvPVX+bKn++Dukbcf7z/AZ5qFVAUgegO/xSr5nSliVTNk8smg7giFY0LMNccjFJA/CdspuMk661DjUw1I8fg3atZyCJccepWVK74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757663213; c=relaxed/simple;
-	bh=9yoMY6f/O5Kdo0NFe6sZTx5s/b+R/IevS2MD/nCV13s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FD4AHzZ7klSRBI1U2Wypqxk3RQVV5wlvwDwRI90d2l9wiSqKKPgEYEMm8S5S5XGGmRDO37Z7UW/wkYtVhBRs0JgjmLeVGo6GQEzwSke66eycYcrk5VHbTCi0QoLM7jhvFgWHtkG14M52Bi4UEYXISx6aRb7nmyQNPTbMIDoRcEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rf50OEvk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1757672535; c=relaxed/simple;
+	bh=L/gp5djrsVKyV+bMWAPmsk2KEc0GK+ORs0rOPU/8QSM=;
+	h=From:To:Subject:Message-ID:Date:MIME-Version:Content-Type; b=Rhz7S1Pm8oAyzAsWH+Zl1Oscu7nY6hEqBd4ep7KMmIOUD3egB05RqDFmMjHoshrvHZZ8/lUdJmFIXaCm9i2MNzNh7nDA7ESfgiPPpoKLM3CAd9WZpp653brVA+6cUbmWMC5dspfkXe0A0DZ9gcpJ3rnR8hG2VaUNInrj4AipLrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ms29.hinet.net; spf=pass smtp.mailfrom=ms29.hinet.net; dkim=pass (1024-bit key) header.d=ms29.hinet.net header.i=@ms29.hinet.net header.b=GyARpyc+; arc=none smtp.client-ip=210.65.1.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ms29.hinet.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ms29.hinet.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rf50OEvk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757663211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vvaALMZ4+zN7uBMG4oemyZs/dyL2tuTURio8S2qM/9A=;
-	b=Rf50OEvk/8W5RSEYbPLpQyEjscY3cz5YXF5maP1BSkSZnCEN4wvPFnjzWTyULX+mdotbPS
-	Vx9osAXtcvnGeN8mZZd90U8WKmEuvVYmnzHfYX7ETinpzMSiE/UxOpKvqvFA3RN669SK2A
-	I+F5jMp46B8u19lpXLagrjs1wmF/mKE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-264-xUUIP6hnMp2gwkcOuogawA-1; Fri, 12 Sep 2025 03:46:49 -0400
-X-MC-Unique: xUUIP6hnMp2gwkcOuogawA-1
-X-Mimecast-MFC-AGG-ID: xUUIP6hnMp2gwkcOuogawA_1757663208
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e5190bcba1so1081256f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 00:46:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757663208; x=1758268008;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vvaALMZ4+zN7uBMG4oemyZs/dyL2tuTURio8S2qM/9A=;
-        b=wudST2lE8xURa/41ioAmo7gop+CZWpJRkhSUyhC07jhaHW9QlX6+aLp8giItYLxFuK
-         To462iVV5L2nwr/Ex25uZxfTRKKam1poORHCh8+k/dovV+848JqsVVNnAHo48D8Tp/1u
-         aUPXSmxWxBqj1zu1S3LXfu9yvgwLB19GAz/LAIcPMWJnmoRczzyzQb9LocuGukgMKJWH
-         /kcP4r1vFVMbqONmtRcgezfohfWhihJWVK6kotCiTCv1ycVACLQA2afj81TqjvvJC2Hb
-         CMRQiABJkmw0Dfbdvm9IoXzAbHSAPQxYxeoOhYHWPdK6gRH8ZCAPqEX4pn4RyEbpVMF+
-         P3/A==
-X-Gm-Message-State: AOJu0YxiUOsuz4cXPPZ2RDzuVbRPliiOX7PA89+qDTePB0XYK3umvEdo
-	Aie8IjJGstDRxu63HrrB0dZaEWrzK/5ftfiKKfypp0agn5/+ZDsgB639xeFVjqk8oU6WErbiWo/
-	5nBHjYulwNGqtApw1afXGp0N9ZGUili4xucg4vU6p5GOE8OIZoNtWMsvrn0h9dMcu6C9kew==
-X-Gm-Gg: ASbGncuY7ctQyjipREvs7rPsOx3Q8AsHHfbMdn+AAWX9Ga7omYaDG9y/bJCspNbV4gY
-	9e8Crog6HnsjZR75jQgQXgh8GZcBGDb0eAm/uqmu++7aTyRCnBYgtPw8el8FEn6NyhM0esZY3ss
-	tDDsuG9ivGbZZ+A/ness5KCAyF/WPGkfTEIDofcsAjVpJqfYYyTfc6lB2QROl1bJBCHHiqt+TqK
-	WuCupRm0aXyS/nW1INjqbYX9AKq1r8ELEvPkHerS4gLj8be1eej9wBToSMHPrOIFrL7zxyMtvvh
-	Gd8XI12dR9981KalK4nodz4afKFoCOlmyWVvUJu3XG07OAJAs+8heeZXFKESd8/dl3Gu6JV8ijq
-	GZ3QIQYs3jFQHJg==
-X-Received: by 2002:a05:6000:2891:b0:3e7:620e:529e with SMTP id ffacd0b85a97d-3e7659ecaa7mr2028790f8f.43.1757663208166;
-        Fri, 12 Sep 2025 00:46:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFm21ubE8d+dHPSjquWE3BgW1E1TkX8hsLoEa0HPJgLnT8FY+Bw9Zzo9lF6e6QuFVRZXGNdUA==
-X-Received: by 2002:a05:6000:2891:b0:3e7:620e:529e with SMTP id ffacd0b85a97d-3e7659ecaa7mr2028771f8f.43.1757663207787;
-        Fri, 12 Sep 2025 00:46:47 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd424sm5362628f8f.36.2025.09.12.00.46.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 00:46:47 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	linux-crypto@vger.kernel.org,
-	loongarch@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in LOONGSON SECURITY ENGINE DRIVERS
-Date: Fri, 12 Sep 2025 09:46:38 +0200
-Message-ID: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (1024-bit key) header.d=ms29.hinet.net header.i=@ms29.hinet.net header.b="GyARpyc+"
+Received: from cmsr8.hinet.net ([10.199.216.87])
+	by cdmsr1.hinet.net (8.15.2/8.15.2) with ESMTPS id 58CAM9w3861516
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 18:22:12 +0800
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=ms29.hinet.net;
+	s=default; t=1757672532; bh=hJI3fRRGw8AQWF8YRLHqhbfvEGo=;
+	h=From:To:Subject:Date;
+	b=GyARpyc+NDRHG+8sEspWXk6U7ACH3sM1Oyo3ktWiNPXFOwe0oGiifbYtGmpTtYjDg
+	 MtQJxwoR05FJFGX9DcAhuEk6yn48QSq8HcCVb1vpic7E10rmucNgK/v0oDgAbA7aXR
+	 33hOYg7muCG3X1Y3YbAR8w4c+fvXFeTADExW2d9Q=
+Received: from [127.0.0.1] (36-236-12-182.dynamic-ip.hinet.net [36.236.12.182])
+	by cmsr8.hinet.net (8.15.2/8.15.2) with ESMTPS id 58CAFEo0364147
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Sep 2025 18:15:36 +0800
+From: "Info - Albinayah 429" <Kernel-janitors@ms29.hinet.net>
+To: kernel-janitors@vger.kernel.org
+Reply-To: "Info - Albinayah." <europe-sales@albinayah-group.com>
+Subject: =?UTF-8?B?TmV3IFNlcHRlbWJlciBPcmRlci4gMDUzNTMgRnJpZGF5LCBTZXB0ZW1iZXIgMTIsIDIwMjUgYXQgMTI6MTU6MzQgUE0=?=
+Message-ID: <d36c645a-aa9a-be64-968a-f790bb136a26@ms29.hinet.net>
+Content-Transfer-Encoding: 7bit
+Date: Fri, 12 Sep 2025 10:15:35 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+X-HiNet-Brightmail: Spam
+X-CMAE-Score: 100
+X-CMAE-Analysis: v=2.4 cv=KelxshYD c=0 sm=1 tr=0 ts=68c3f2c9
+	p=OrFXhexWvejrBOeqCD4A:9 a=nESGgMvO2jw7tQhjmqxCuQ==:117 a=IkcTkHD0fZMA:10
+	a=5KLPUuaC_9wA:10
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Hi Kernel-janitors,
 
-Commit 5c83b07df9c5 ("tpm: Add a driver for Loongson TPM device") adds a
-driver at drivers/char/tpm/tpm_loongson.c, and commit 74fddd5fbab8
-("MAINTAINERS: Add entry for Loongson Security Engine drivers") adds a new
-section LOONGSON SECURITY ENGINE DRIVERS intending to refer to that driver.
-It however adds the entry drivers/char/tpm_loongson.c; note that it misses
-the tpm subdirectory.
+Please provide a quote for your products:
 
-Adjust the entry to refer to the intended file.
+Include:
+1.Pricing (per unit)
+2.Delivery cost & timeline
+3.Quote expiry date
 
-Fixes: 74fddd5fbab8 ("MAINTAINERS: Add entry for Loongson Security Engine drivers")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Deadline: September
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fa7f80bd7b2f..a1339a8bb705 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14537,7 +14537,7 @@ LOONGSON SECURITY ENGINE DRIVERS
- M:	Qunqin Zhao <zhaoqunqin@loongson.cn>
- L:	linux-crypto@vger.kernel.org
- S:	Maintained
--F:	drivers/char/tpm_loongson.c
-+F:	drivers/char/tpm/tpm_loongson.c
- F:	drivers/crypto/loongson/
- F:	drivers/mfd/loongson-se.c
- F:	include/linux/mfd/loongson-se.h
--- 
-2.51.0
+Thanks!
 
+Kamal Prasad
+
+Albinayah Trading
