@@ -1,74 +1,77 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D2D2D1F44
-	for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64A134BA50
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 09:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758188755; cv=none; b=LWcK+VsMVguslhUMKuqZWfBoWtq8o2FZ/FA8cHxvIDA1jlSs5FDz3XGUXLms1LiZFMJTFGuyoC3Uk2/bSu2qOGTJQznDell6X1c92bihXMQAD7ZGki19jWsgxCBk7q9FOGPs+IpbdJU1bMNSRyiI1KHmbWMBW3yxFM6RMxuRoWI=
+	t=1758188810; cv=none; b=VfhzUurJ2B1CVsASLb03ahSVuw2sG616UtNoF3PmvmRh3rff2WxWgdrecpo0ztUhB64j9EzuAmLJNnkQqjWfkgqvc7omNFLqRrVNwpcFYS9le//L7hWhSfQZO1eKyIIr1odKAxWxIp0C5YCA/whEoSBGQzD5SBFnnt8C9/fbUEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758188755; c=relaxed/simple;
-	bh=JoL6E2/9aXfXnQcGR6Zu0injdoly1JOaaGDXQAf0txc=;
+	s=arc-20240116; t=1758188810; c=relaxed/simple;
+	bh=ad7dUBhWdzfID7qn71J7LfWlieFdmy7vuvrHGqyZGng=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gXv2qmawh/kWQaUpJRIYOmnFRM+jeFFNRwXF9X3p5VmXlJOt0xy1FwRUEHQ15OCbYevlzCXFmcQH9Y46FRHG9gaTTcf9+GaCcjPIoNIaelt9fCN9spZA1d85eVYeTXDpMxX8+HZzg8Ff4NqNybw12zRbxwnhhnOOlASHU8E3Mfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kpIaJive; arc=none smtp.client-ip=209.85.128.49
+	 Content-Disposition; b=bXGYxWnlHbd9i+hGnQZ70neU4BYznnruYB/FgFvvndJKvW61JaeLCwFdqHN1t4gsQD2jCBFdS2ANil5wk6XPlyxMORCN7KDOfGqRx2jbunoJpy++NEGbsoxTQL1eEjQ1zGySsfEcLrkP5nfI4T6SXcRbCDXQBmPIeM+CjUU35ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=exZcVjA3; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kpIaJive"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso4955465e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 02:45:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="exZcVjA3"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45f2fa8a1adso14911065e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 02:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758188752; x=1758793552; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758188806; x=1758793606; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7IBogLcogZtqOzPSFPIn7J8AJq9IuoFrHlKGrmKVoeI=;
-        b=kpIaJiveFjL9cP8DJTNPybUcDI+i0gd/iQV7B0nJuZKzeeEXOcWjAWcvF7gDXw/NC9
-         sQh57aaiAKvjTixO4lTpag/AwR8gh197SE3yyYwH/xRJ5qJ/QVCQ8Q1Y+aEeJP5U2r5M
-         yC9vzjdJurmmObp6WmywgFBl8MtHWBieU/D1gd3MfUD4OtQ3i3qDW04YwUNOs7DVAJJv
-         hxV/ggOe3c6KVlLrNfFu9UTdR1LkcyL5pAP3XDLbSSE/W7IlUzGNx0IwTI7jBTtXiCI/
-         h5ZEOYr5HzFPDHdBhK84H05Cpu+oLR43tYaNwqUonpJhpyOUta5NnlANu5qWyU+Gh03h
-         5eSQ==
+        bh=IJAzy7TZLPpiK0Xxbzu1n/iJ3JX7fhsQtzUstUQDi6k=;
+        b=exZcVjA323G6xMP+DMJYF2bGh9m6nYr93cFoSJ5XJQWr7XOsPxIlCvLTNkllFpYcWf
+         J13CF9gdxP04R1GOExp4eiKh0ZKywwbWZoib4v3i69iXuFTYqCbau5tBTXoY3BlJ5pGd
+         aGt2ZXzGWUZh5dSCzhWVEF4C8SDCiLEb4oHuMyyDnQ3hKTlFADST3DeTeHK+wXQvZQOB
+         /xG6lABtGi0nb6FqtTMxqLH2AsZjl/yYZDXotHGgIMSIZrv+ExUVU4eIIV2CRkHB60Xh
+         MrhPIRyxUZhCs5ViSK7yvNtKbhvK2BAS1nhZUjPhQqxI4AwAxohnODi7UcAkA+w2RZl7
+         B6CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758188752; x=1758793552;
+        d=1e100.net; s=20230601; t=1758188806; x=1758793606;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7IBogLcogZtqOzPSFPIn7J8AJq9IuoFrHlKGrmKVoeI=;
-        b=QtzQc2tVz1KeVgXHFMdR6Ere9EygMQK5ietL5KKDh3YIVTsyDNMC3dp1V2h7nAeNVM
-         Lz6eDgZvDkb43KeHQv2SOvZpQgSj0sxQs9NOJoFN8zpWhfKzMdTFSUnTlUY65cYggk6W
-         amroTseJy7QTCd5+w3HpowWLec1CIlKFZuxYNJya6VBcw8vuP2HAa1y9SZdM+8huYeOx
-         y68bta2XG5KuAwZaSTce4BCjiZB/hAPCavRnEuapWV+izVvZ3/0h9+CHq7tJQQUMp0om
-         e9VKFB+Vs/wn6AnZIucs264sES9AjxmAPlXIjCfLZDkuJOiVf9A/GkQrhChHCAKjjey5
-         vGQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPq24xsAD9C9U37NMYnVkGPckip+cT59b67bkFJG8vtfmcT9sFjgbngq1h12Bi33NuWlb8bBbVcbQJCg6HRSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyddaRfinV6l3Ji5Z5YzXM2PdjVzySPQcT6GrRQWWLPtU2NsM5d
-	JITrMeGVyA8Ln9NFeUvi6L4uzJ5wDrVhufJ1UGebiqXMbOpLSSO+EGpj4MPTi98fyWUKHwRz39p
-	8paB8
-X-Gm-Gg: ASbGnct6TW6IBdlE+Iir+yHHRtUjil7Rv7kk1rrE94SUZfTV8UltrIMFNtenizk/TgR
-	WMI3rz61xOwh+7psX2Km7YveH81BdeGw23ckX9SJKOE8Te+JqniMxVjxIIddCGHH5DQzzCDfyaw
-	Gljc0U6yRxgVyD98PCBGKw0l/vKGtEHi2fxKqtUDvq4OWW4mIT/PyHBJ6EJXZzbAKkXD25BSuiB
-	H1HQA/yIZExLALJs5TbcCU5DWDjqNtAZK9SX8VIIcZxXZOF7FB0ZzXLm0h3mNsUuYoS73akxTAS
-	G6tik/Qz/sC2JFZ5eWuoRgd5BjwhzUiBsPW6/1rUhEW8mx5GCSukbXLOWn8o/fW2sPcim3oI2nu
-	rg1kQ+XSjpGWETNReRbTj9zNE4frrZxGBXGytchTf5D0hMDEeTJjVhgEj
-X-Google-Smtp-Source: AGHT+IHq3gu7gXUOtzXhMpgJNwrndnSsGHz+f4WtVJeNQ1ESDCp+aiPn30y5ccNPJPYcrqJVmUrWTg==
-X-Received: by 2002:a05:600c:1d08:b0:45b:9a7b:66ba with SMTP id 5b1f17b1804b1-46202a0ee42mr49387965e9.14.1758188751408;
-        Thu, 18 Sep 2025 02:45:51 -0700 (PDT)
+        bh=IJAzy7TZLPpiK0Xxbzu1n/iJ3JX7fhsQtzUstUQDi6k=;
+        b=lNC25q08kPPIKreU/LUPGYvEd+iJE2UB9Vkg73OlBTXPTk4nMLS8MBUNa547wEGmgc
+         EZwjtkCGkQempFP2/h91q3nuysfCU2RIiOtg6gmhpc3osmVNDBMkIwmgTUgxw75CWY1y
+         8EV1u2zI5VrSEHHtToJ5vsBLzr0bwIEfSPdIjVWSLeaThLe3IH6erhS3L+mtQD7NtqTU
+         ErTaiLXxJ9Tr1t836UKww1lIVWshfWiJmXpQTqWBbcoBY2t34zqbntHLohXwSSDReefi
+         3uvuiHs37tU0XIi31tHsRPa0SfPg4y/2GW6ynsVj606w6+P/OOVdciwoNOZEcuHFhsmj
+         KaJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcK5KYbbUodtFoWz4zeYoh/DY+oZjegJHk4/u+KW8aNQPnV2pJB7itQ+cMvYeyXAi0HhtZH6JzelzslwhJ5YE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKowSGTGQB5UTV5cdIZdi6N4Hi37gq7oZCm+cZVwv4QcOsVpUf
+	H2iUTYrA81CGl49y/DURzoNUoUaOt7+5FhP4Ej3zqbwM7NDC7KRzCepExr9lik5QPs4=
+X-Gm-Gg: ASbGncs0PqpggspCkjwkyz95KYBizSTVNdgjnCj6xPRN4nkipWINGPIA5t6JygSlVt3
+	Dckt26mB+jEexANGLEkU2eFQhV/fW7hOaJW4Scd650Kec5rpGRD5O4UvF/p6SDHMUoxXEKnFw44
+	1gLPQJaYELfMiL7dQtko0xMHLFuuSXLdU7uKYWSAnrM7lmPJ6KjExWkzX+SpxR2t2MSdGrQVD34
+	TZwIn8QL3hnVxhxPsL1ZPdvbChcSxyQqCg7sWPl66mxyD3ogRdRHNteNP6sVQESp8RycZm6owqz
+	oB77ScRspLWuF1GMTk+xeJSH+1UzsSOFxNx1bFj4Z3xsb1uUzjBs1z5l9Boh//2PSpSjneCDC0C
+	jrhpMCCncFt3E8n+/r6Zci5L5VJd4gBAcFhLa3Ix623IuwQ==
+X-Google-Smtp-Source: AGHT+IH1uv0RIxQ38Bm26GanPvGmDL+dRiH2jf2osh70wH0uYOlhbcgFH9gpcU5WdxVF0lInLAkHNQ==
+X-Received: by 2002:a05:600c:8905:b0:459:d577:bd24 with SMTP id 5b1f17b1804b1-464f79bed6cmr20555095e9.7.1758188805990;
+        Thu, 18 Sep 2025 02:46:45 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4613186e5c7sm83783115e9.0.2025.09.18.02.45.50
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46138694957sm84698395e9.4.2025.09.18.02.46.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 02:45:50 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:45:47 +0300
+        Thu, 18 Sep 2025 02:46:45 -0700 (PDT)
+Date: Thu, 18 Sep 2025 12:46:42 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
+To: Prike Liang <Prike.Liang@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	Arvind Yadav <Arvind.Yadav@amd.com>,
+	Sunil Khatri <sunil.khatri@amd.com>,
+	"Jesse.Zhang" <Jesse.Zhang@amd.com>,
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] hinic3: Fix NULL vs IS_ERR() check in
- hinic3_alloc_rxqs_res()
-Message-ID: <aMvUywhgbmO1kH3Z@stanley.mountain>
+Subject: [PATCH next] drm/amdgpu/userq: Fix error codes in
+ mes_userq_mqd_create()
+Message-ID: <aMvVAsrczM9W2S7P@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,28 +82,55 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The page_pool_create() function never returns NULL, it returns
-error pointers.  Update the check to match.
+Return the error code if amdgpu_userq_input_va_validate() fails.  Don't
+return success.
 
-Fixes: 73f37a7e1993 ("hinic3: Queue pair resource initialization")
+Fixes: 9e46b8bb0539 ("drm/amdgpu: validate userq buffer virtual address and size")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/huawei/hinic3/hinic3_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/mes_userqueue.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-index 6cfe3bdd8ee5..16c00c3bb1ed 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-@@ -414,7 +414,7 @@ int hinic3_alloc_rxqs_res(struct net_device *netdev, u16 num_rq,
- 		pp_params.dma_dir = DMA_FROM_DEVICE;
- 		pp_params.max_len = PAGE_SIZE;
- 		rqres->page_pool = page_pool_create(&pp_params);
--		if (!rqres->page_pool) {
-+		if (IS_ERR(rqres->page_pool)) {
- 			netdev_err(netdev, "Failed to create rxq%d page pool\n",
- 				   idx);
- 			goto err_free_cqe;
+diff --git a/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c b/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c
+index 2db9b2c63693..775b0bd5d6c4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c
++++ b/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c
+@@ -298,8 +298,9 @@ static int mes_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
+ 			goto free_mqd;
+ 		}
+ 
+-		if (amdgpu_userq_input_va_validate(queue->vm, compute_mqd->eop_va,
+-		    max_t(u32, PAGE_SIZE, AMDGPU_GPU_PAGE_SIZE)))
++		r = amdgpu_userq_input_va_validate(queue->vm, compute_mqd->eop_va,
++		    max_t(u32, PAGE_SIZE, AMDGPU_GPU_PAGE_SIZE));
++		if (r)
+ 			goto free_mqd;
+ 
+ 		userq_props->eop_gpu_addr = compute_mqd->eop_va;
+@@ -330,8 +331,9 @@ static int mes_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
+ 		userq_props->tmz_queue =
+ 			mqd_user->flags & AMDGPU_USERQ_CREATE_FLAGS_QUEUE_SECURE;
+ 
+-		if (amdgpu_userq_input_va_validate(queue->vm, mqd_gfx_v11->shadow_va,
+-		    shadow_info.shadow_size))
++		r = amdgpu_userq_input_va_validate(queue->vm, mqd_gfx_v11->shadow_va,
++		    shadow_info.shadow_size);
++		if (r)
+ 			goto free_mqd;
+ 
+ 		kfree(mqd_gfx_v11);
+@@ -351,8 +353,9 @@ static int mes_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
+ 			goto free_mqd;
+ 		}
+ 
+-		if (amdgpu_userq_input_va_validate(queue->vm, mqd_sdma_v11->csa_va,
+-		    shadow_info.csa_size))
++		r = amdgpu_userq_input_va_validate(queue->vm, mqd_sdma_v11->csa_va,
++		    shadow_info.csa_size);
++		if (r)
+ 			goto free_mqd;
+ 
+ 		userq_props->csa_addr = mqd_sdma_v11->csa_va;
 -- 
 2.51.0
 
