@@ -1,77 +1,78 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64A134BA50
-	for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 09:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74922A4E5
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 09:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758188810; cv=none; b=VfhzUurJ2B1CVsASLb03ahSVuw2sG616UtNoF3PmvmRh3rff2WxWgdrecpo0ztUhB64j9EzuAmLJNnkQqjWfkgqvc7omNFLqRrVNwpcFYS9le//L7hWhSfQZO1eKyIIr1odKAxWxIp0C5YCA/whEoSBGQzD5SBFnnt8C9/fbUEM=
+	t=1758188914; cv=none; b=WxFg1vjFZoqM3T2zcPy/d7tqPun/2F95uelB6fVQ3If7iQUqkJx5QhHL2wl8ewjOqvn7MqB9BWjjz3hMgmB3OCM9uKlXl02PK3yvskCg/wViUahNEGf8BBttQErDTePiwFdAY+ZcWzxz2Hgib2KlUKb9d/7E+BRhFoHyO6gMCbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758188810; c=relaxed/simple;
-	bh=ad7dUBhWdzfID7qn71J7LfWlieFdmy7vuvrHGqyZGng=;
+	s=arc-20240116; t=1758188914; c=relaxed/simple;
+	bh=iUOnXzAnIbz12WMKiHCmVwMEY+TGpgiWwPuQO/o7Ofc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bXGYxWnlHbd9i+hGnQZ70neU4BYznnruYB/FgFvvndJKvW61JaeLCwFdqHN1t4gsQD2jCBFdS2ANil5wk6XPlyxMORCN7KDOfGqRx2jbunoJpy++NEGbsoxTQL1eEjQ1zGySsfEcLrkP5nfI4T6SXcRbCDXQBmPIeM+CjUU35ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=exZcVjA3; arc=none smtp.client-ip=209.85.128.51
+	 Content-Disposition; b=NdG2LdISe18G91dmng236fKyCLPYb5BT0PLOFNHuzT8y7lO9qPTlCiTdughz+c+UFflDJvbn+rCfvcmI/gr4Ka6L/VlOpdUN8Y/nOf++EoTsTYT3zQGPp8hS0KwuPCRzhMZZmvk35YCGr50grJDD+fNWlayxTDY+hSYof092ZLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r+arTYz0; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="exZcVjA3"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45f2fa8a1adso14911065e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 02:46:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r+arTYz0"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b9814efbcso12348115e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 02:48:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758188806; x=1758793606; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758188911; x=1758793711; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IJAzy7TZLPpiK0Xxbzu1n/iJ3JX7fhsQtzUstUQDi6k=;
-        b=exZcVjA323G6xMP+DMJYF2bGh9m6nYr93cFoSJ5XJQWr7XOsPxIlCvLTNkllFpYcWf
-         J13CF9gdxP04R1GOExp4eiKh0ZKywwbWZoib4v3i69iXuFTYqCbau5tBTXoY3BlJ5pGd
-         aGt2ZXzGWUZh5dSCzhWVEF4C8SDCiLEb4oHuMyyDnQ3hKTlFADST3DeTeHK+wXQvZQOB
-         /xG6lABtGi0nb6FqtTMxqLH2AsZjl/yYZDXotHGgIMSIZrv+ExUVU4eIIV2CRkHB60Xh
-         MrhPIRyxUZhCs5ViSK7yvNtKbhvK2BAS1nhZUjPhQqxI4AwAxohnODi7UcAkA+w2RZl7
-         B6CA==
+        bh=FRKX/a9t7ARzNjcgVwY27xm/KGPFcrC2ZLWzVexu+GA=;
+        b=r+arTYz0c+clTxfqZjOXw1/NTcn/y+hfsNFHTGQC1Kq17gZkb/R12l2fW4+3DhbVd2
+         h2wxTEsHKs7jtPWRARPpP86AT8S/MF7eH1g1pOcbSuuS7luMcWWA5grRuyfNgxC2/3lm
+         On99ALYgJfokFIbbyVbXPpSnRPcuhJV3A+eGJXLnxf6pWMms5fKR3FIthwfp/m19+wdT
+         +lPJupqSaLbJV2dkTgjOW0s208Geygsm2/tMXyhnpxN/aIUBi7CZjHfMfIKxa52AHdy/
+         nTBu34evmIg8MrNMb8yWtO0XFZf6NK8i7WUnVxt/vbBHbnDb4yDjgzI8gSVQOtDnmr8V
+         VW2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758188806; x=1758793606;
+        d=1e100.net; s=20230601; t=1758188911; x=1758793711;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IJAzy7TZLPpiK0Xxbzu1n/iJ3JX7fhsQtzUstUQDi6k=;
-        b=lNC25q08kPPIKreU/LUPGYvEd+iJE2UB9Vkg73OlBTXPTk4nMLS8MBUNa547wEGmgc
-         EZwjtkCGkQempFP2/h91q3nuysfCU2RIiOtg6gmhpc3osmVNDBMkIwmgTUgxw75CWY1y
-         8EV1u2zI5VrSEHHtToJ5vsBLzr0bwIEfSPdIjVWSLeaThLe3IH6erhS3L+mtQD7NtqTU
-         ErTaiLXxJ9Tr1t836UKww1lIVWshfWiJmXpQTqWBbcoBY2t34zqbntHLohXwSSDReefi
-         3uvuiHs37tU0XIi31tHsRPa0SfPg4y/2GW6ynsVj606w6+P/OOVdciwoNOZEcuHFhsmj
-         KaJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcK5KYbbUodtFoWz4zeYoh/DY+oZjegJHk4/u+KW8aNQPnV2pJB7itQ+cMvYeyXAi0HhtZH6JzelzslwhJ5YE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKowSGTGQB5UTV5cdIZdi6N4Hi37gq7oZCm+cZVwv4QcOsVpUf
-	H2iUTYrA81CGl49y/DURzoNUoUaOt7+5FhP4Ej3zqbwM7NDC7KRzCepExr9lik5QPs4=
-X-Gm-Gg: ASbGncs0PqpggspCkjwkyz95KYBizSTVNdgjnCj6xPRN4nkipWINGPIA5t6JygSlVt3
-	Dckt26mB+jEexANGLEkU2eFQhV/fW7hOaJW4Scd650Kec5rpGRD5O4UvF/p6SDHMUoxXEKnFw44
-	1gLPQJaYELfMiL7dQtko0xMHLFuuSXLdU7uKYWSAnrM7lmPJ6KjExWkzX+SpxR2t2MSdGrQVD34
-	TZwIn8QL3hnVxhxPsL1ZPdvbChcSxyQqCg7sWPl66mxyD3ogRdRHNteNP6sVQESp8RycZm6owqz
-	oB77ScRspLWuF1GMTk+xeJSH+1UzsSOFxNx1bFj4Z3xsb1uUzjBs1z5l9Boh//2PSpSjneCDC0C
-	jrhpMCCncFt3E8n+/r6Zci5L5VJd4gBAcFhLa3Ix623IuwQ==
-X-Google-Smtp-Source: AGHT+IH1uv0RIxQ38Bm26GanPvGmDL+dRiH2jf2osh70wH0uYOlhbcgFH9gpcU5WdxVF0lInLAkHNQ==
-X-Received: by 2002:a05:600c:8905:b0:459:d577:bd24 with SMTP id 5b1f17b1804b1-464f79bed6cmr20555095e9.7.1758188805990;
-        Thu, 18 Sep 2025 02:46:45 -0700 (PDT)
+        bh=FRKX/a9t7ARzNjcgVwY27xm/KGPFcrC2ZLWzVexu+GA=;
+        b=TlpExWdYAK4uozROuzAdcRWm6zXvSNTgjMBkevS8zmizCSPTbPY5/6B+mq4KbHA5Ku
+         UgVANL03yXH+i0hqa7QayME8TdFeCbP/Lu0t/j+jdUgmQIbOSPfqRS0oZ/gc6980+ohL
+         YyEDSFLDcIsZF9pUSy+tvCu57KZ9RrBt+Jn3T2oL20NJM8AkCR8MeLvt2GYv2gU7e7BW
+         oqPjDURt+RZQ2XVMzuMypZT9nQo/nlv3+SXvBdJf14AjduZzLB33QLx2qpGRvfwVTGWw
+         HUp1p9sNzA3W1twxuqUsAFHTzCX+P4e+S0Jo2ccWZrgRhKdsZWCMOsIMwiz1VfxaBu+/
+         WY2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUbLxHOiWIyHHLWaYdCyRsFEI/V4XcUFQt+kk54X2FqN+9VNkzNIIQ4kpdVkJSMD70ADDvbphrWHF00SF/WwTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp1qdZ2cQd8ajAHdaQ0FrToWoEARnb03+HA/HFNXM1ie5d0ba1
+	kH7S3EDlejOlsgaSAkkpnkZudD1mRpL0gFysagwj5drTMcOU3I+eFcYjZriyAkHrH8g=
+X-Gm-Gg: ASbGncv6mrLWfS74Lxjpo/Bb7p9HTlFv2GPKo1CowhC/p9w/IMPotgW9o0kC6srt2kX
+	ZYe4tGkDdB7NxeS5OqjigrcOtqD0Et1CMbBLiAbPBBK2TjHM/m+RzL6EvlznK5Z4J4lw87mASIc
+	8kIm2aD/S2M4l9gwOwCjzJ3etuBTuZVnWViTMh0WHcaQj+UW0Tv76qADtrgwhEEaVIv143WFT/V
+	h2KFLZZNRQP+9d9lU50JaCzxj856CBnVTA5KD9jhCnqyEBmKWM1zDpN2f9t96yoT6jTkqdQP4N+
+	fj/ppkCR1Wni7c8PGda7DnFXByRdmtVHc4HZK83ZK6rwlWj78Ac9n3UGWHkIaXzENUjFF2m3GQ+
+	/0qeieLXypcWZYHoSmORS5KGcQXhlVaP8bjm/WgH06lnIYg==
+X-Google-Smtp-Source: AGHT+IHXja+pZTgNTOTckYTv2vp7ew+2RtTFibAkrz6i7j2uNLlasmLdSudrmUnD6HjK82+q28mc+Q==
+X-Received: by 2002:a05:600c:43c5:b0:45d:d295:fddc with SMTP id 5b1f17b1804b1-464f7027ee6mr16687145e9.4.1758188910448;
+        Thu, 18 Sep 2025 02:48:30 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46138694957sm84698395e9.4.2025.09.18.02.46.45
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-461391232e7sm72907635e9.6.2025.09.18.02.48.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 02:46:45 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:46:42 +0300
+        Thu, 18 Sep 2025 02:48:30 -0700 (PDT)
+Date: Thu, 18 Sep 2025 12:48:26 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Prike Liang <Prike.Liang@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Shashank Sharma <shashank.sharma@amd.com>,
-	Arvind Yadav <Arvind.Yadav@amd.com>,
-	Sunil Khatri <sunil.khatri@amd.com>,
-	"Jesse.Zhang" <Jesse.Zhang@amd.com>,
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+To: Roger Quadros <rogerq@ti.com>
+Cc: MD Danish Anwar <danishanwar@ti.com>,
+	Parvathi Pudi <parvathi@couthit.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Mohan Reddy Putluru <pmohan@couthit.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Basharath Hussain Khaja <basharath@couthit.com>,
+	"Andrew F. Davis" <afd@ti.com>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/amdgpu/userq: Fix error codes in
- mes_userq_mqd_create()
-Message-ID: <aMvVAsrczM9W2S7P@stanley.mountain>
+Subject: [PATCH net-next] net: ti: icssm-prueth: unwind cleanly in probe()
+Message-ID: <aMvVagz8aBRxMvFn@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,55 +83,94 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return the error code if amdgpu_userq_input_va_validate() fails.  Don't
-return success.
+This error handling triggers a Smatch warning:
 
-Fixes: 9e46b8bb0539 ("drm/amdgpu: validate userq buffer virtual address and size")
+    drivers/net/ethernet/ti/icssm/icssm_prueth.c:1574 icssm_prueth_probe()
+    warn: 'prueth->pru1' is an error pointer or valid
+
+The warning is harmless because the pru_rproc_put() function has an
+IS_ERR_OR_NULL() check built in.  However, there is a small bug if
+syscon_regmap_lookup_by_phandle() fails.  In that case we should call
+of_node_put() on eth0_node and eth1_node.
+
+It's a little bit easier to re-write this code to only free things which
+we know have been allocated successfully.
+
+Fixes: 511f6c1ae093 ("net: ti: icssm-prueth: Adds ICSSM Ethernet driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/amdgpu/mes_userqueue.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/ti/icssm/icssm_prueth.c | 30 +++++++++-----------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c b/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c
-index 2db9b2c63693..775b0bd5d6c4 100644
---- a/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mes_userqueue.c
-@@ -298,8 +298,9 @@ static int mes_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
- 			goto free_mqd;
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.c b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+index 65d0b792132d..293b7af04263 100644
+--- a/drivers/net/ethernet/ti/icssm/icssm_prueth.c
++++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+@@ -1390,7 +1390,8 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 	prueth->mii_rt = syscon_regmap_lookup_by_phandle(np, "ti,mii-rt");
+ 	if (IS_ERR(prueth->mii_rt)) {
+ 		dev_err(dev, "couldn't get mii-rt syscon regmap\n");
+-		return -ENODEV;
++		ret = PTR_ERR(prueth->mii_rt);
++		goto put_eth;
+ 	}
+ 
+ 	if (eth0_node) {
+@@ -1398,7 +1399,7 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 		if (IS_ERR(prueth->pru0)) {
+ 			ret = PTR_ERR(prueth->pru0);
+ 			dev_err_probe(dev, ret, "unable to get PRU0");
+-			goto put_pru;
++			goto put_eth;
  		}
+ 	}
  
--		if (amdgpu_userq_input_va_validate(queue->vm, compute_mqd->eop_va,
--		    max_t(u32, PAGE_SIZE, AMDGPU_GPU_PAGE_SIZE)))
-+		r = amdgpu_userq_input_va_validate(queue->vm, compute_mqd->eop_va,
-+		    max_t(u32, PAGE_SIZE, AMDGPU_GPU_PAGE_SIZE));
-+		if (r)
- 			goto free_mqd;
- 
- 		userq_props->eop_gpu_addr = compute_mqd->eop_va;
-@@ -330,8 +331,9 @@ static int mes_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
- 		userq_props->tmz_queue =
- 			mqd_user->flags & AMDGPU_USERQ_CREATE_FLAGS_QUEUE_SECURE;
- 
--		if (amdgpu_userq_input_va_validate(queue->vm, mqd_gfx_v11->shadow_va,
--		    shadow_info.shadow_size))
-+		r = amdgpu_userq_input_va_validate(queue->vm, mqd_gfx_v11->shadow_va,
-+		    shadow_info.shadow_size);
-+		if (r)
- 			goto free_mqd;
- 
- 		kfree(mqd_gfx_v11);
-@@ -351,8 +353,9 @@ static int mes_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
- 			goto free_mqd;
+@@ -1407,7 +1408,7 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 		if (IS_ERR(prueth->pru1)) {
+ 			ret = PTR_ERR(prueth->pru1);
+ 			dev_err_probe(dev, ret, "unable to get PRU1");
+-			goto put_pru;
++			goto put_pru0;
  		}
+ 	}
  
--		if (amdgpu_userq_input_va_validate(queue->vm, mqd_sdma_v11->csa_va,
--		    shadow_info.csa_size))
-+		r = amdgpu_userq_input_va_validate(queue->vm, mqd_sdma_v11->csa_va,
-+		    shadow_info.csa_size);
-+		if (r)
- 			goto free_mqd;
+@@ -1415,7 +1416,7 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pruss)) {
+ 		ret = PTR_ERR(pruss);
+ 		dev_err(dev, "unable to get pruss handle\n");
+-		goto put_pru;
++		goto put_pru1;
+ 	}
+ 	prueth->pruss = pruss;
  
- 		userq_props->csa_addr = mqd_sdma_v11->csa_va;
+@@ -1569,18 +1570,15 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 	}
+ 	pruss_put(prueth->pruss);
+ 
+-put_pru:
+-	if (eth1_node) {
+-		if (prueth->pru1)
+-			pru_rproc_put(prueth->pru1);
+-		of_node_put(eth1_node);
+-	}
+-
+-	if (eth0_node) {
+-		if (prueth->pru0)
+-			pru_rproc_put(prueth->pru0);
+-		of_node_put(eth0_node);
+-	}
++put_pru1:
++	if (eth1_node)
++		pru_rproc_put(prueth->pru1);
++put_pru0:
++	if (eth0_node)
++		pru_rproc_put(prueth->pru0);
++put_eth:
++	of_node_put(eth1_node);
++	of_node_put(eth0_node);
+ 
+ 	return ret;
+ }
 -- 
 2.51.0
 
