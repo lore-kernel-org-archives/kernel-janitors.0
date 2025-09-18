@@ -1,78 +1,81 @@
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54AE302178;
-	Thu, 18 Sep 2025 12:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A43312814;
+	Thu, 18 Sep 2025 16:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200275; cv=none; b=AQrJ8pgLl/kR+sU/e20gkTWfcxlMKWSixyQWVSEyQY0Ersb5nTnD9oCwHSviLKLE4GpoX4RG0t75bQ5IfpNOwCZHn1szBkdCIeD+VTaQzRMcqvFWl6NU2tlWNZ5rv8e8psYAdk8/lSH5TUC5rAhfd6DgKebrMqJMQFndEFQgNmU=
+	t=1758212881; cv=none; b=LgYAaaF01JeBEkcT8H8kN56GAZK0ji9Jj+1aHEc0w2tmapK38jxpaT2tX1UYyEGDes7+vBXIbLEQKM3EAepOLYTzpKLDx/Axy0qu1R6xT9Pqh9N6OUs2+EsUXkFGQESvVeuzoHI1vJKMXCxFJKkFI19hNhtkdRWBGFebja8TgrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200275; c=relaxed/simple;
-	bh=snlZt4lxBXR5SDj0JTQ/2l6XIsrf7LKZYStZkxPiVKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GLplIdpLzFwbzjzFsuSfTxgXpfkiby03ynTQAou/7t/f8MY9c9Hub3LXvuBMNweTVZuCQP5LjaA4M2wTeftqj6wU6D8vUFTzmdX5CKwaQyRcNtzuxreprAbZ+vAXUvNjCq2qqEIrW/pdAaU06ynQjeqB9NRD5yRxuMuZV4Ia/Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o2Ol/ol1; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1758212881; c=relaxed/simple;
+	bh=yGD3rd0ZgCpKN5/ib9YlnwYypPwsbITgq4CSUhmw/FQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LrEuFjhlw4mI842CX1/H1HnUkIJjqEpQ5BAvH1Ucpg5gF7HOwJETFCu/15O+ZsiAXEyQTqKdjnkNUCCdfspXsYDMYKhp1sHhwKb3taKZYdUqBg5flaM4QRdE/TIafe0vz64gy+iRKa5JQzsviR/znjOr6SA7LEMMtu5wMKmx5WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QnarWw3F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o2Ol/ol1"
-Message-ID: <10f0634f-06de-4a35-8341-5e35d4ce6205@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758200270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UjPRCnaKCH7BJUvHwVsP7fUGkzPKceI2zNdVsEjxJRs=;
-	b=o2Ol/ol1rSy11t8Iqv0di2azzfpHHLDdUYMjrvkKsjd2gO4RURpqlWX9zXPJ/vSHxFfII9
-	6YTnUFrucww60SlG6Ge7BXTv895jW19GXWHP1dAwNPT8GaezwksUNgDKiWdiGrMFaPx546
-	hXu8NnaGijeQ61cYZ0LT2GiOyZhc0/U=
-Date: Thu, 18 Sep 2025 13:57:44 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnarWw3F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350C5C4CEE7;
+	Thu, 18 Sep 2025 16:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758212881;
+	bh=yGD3rd0ZgCpKN5/ib9YlnwYypPwsbITgq4CSUhmw/FQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QnarWw3FJUtrtOMP50yvc5UH8uSKNOmSqz96oPjewbjN4GGyf1nK0rJco3NxORKWA
+	 ewrgOof32hIj+7IAMSc6GZr/1ZWAWTcwoRcllf1KW6VOc8NfoYRz60Lul0ZJG+Xv+0
+	 QdBV4J4NTgPF/kM6/16lCvvH08fikSs5zC4QfozCk76r3XWKs+Ah0DE8qseg18A9ev
+	 HJbLQNC5hcof4gBI1qwxKy25wR2ZOjeyXIu51Lgxvv2AHpJ++b8wbP0q6lpMyYyU7d
+	 bXZs9QP7lJIhRCkucua/zIE+iD/ZrvZTSl3sEpdhH6iRmFc8YSeppuMypNSLjveZza
+	 YyNNrS7pHs3OQ==
+Date: Thu, 18 Sep 2025 17:27:56 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Roger Quadros <rogerq@ti.com>, MD Danish Anwar <danishanwar@ti.com>,
+	Parvathi Pudi <parvathi@couthit.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Mohan Reddy Putluru <pmohan@couthit.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Basharath Hussain Khaja <basharath@couthit.com>,
+	"Andrew F. Davis" <afd@ti.com>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: ti: icssm-prueth: unwind cleanly in probe()
+Message-ID: <20250918162756.GA394836@horms.kernel.org>
+References: <aMvVagz8aBRxMvFn@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next] hinic3: Fix NULL vs IS_ERR() check in
- hinic3_alloc_rxqs_res()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Fan Gong <gongfan1@huawei.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aMvUywhgbmO1kH3Z@stanley.mountain>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <aMvUywhgbmO1kH3Z@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMvVagz8aBRxMvFn@stanley.mountain>
 
-On 18/09/2025 10:45, Dan Carpenter wrote:
-> The page_pool_create() function never returns NULL, it returns
-> error pointers.  Update the check to match.
+On Thu, Sep 18, 2025 at 12:48:26PM +0300, Dan Carpenter wrote:
+> This error handling triggers a Smatch warning:
 > 
-> Fixes: 73f37a7e1993 ("hinic3: Queue pair resource initialization")
+>     drivers/net/ethernet/ti/icssm/icssm_prueth.c:1574 icssm_prueth_probe()
+>     warn: 'prueth->pru1' is an error pointer or valid
+> 
+> The warning is harmless because the pru_rproc_put() function has an
+> IS_ERR_OR_NULL() check built in.  However, there is a small bug if
+> syscon_regmap_lookup_by_phandle() fails.  In that case we should call
+> of_node_put() on eth0_node and eth1_node.
+> 
+> It's a little bit easier to re-write this code to only free things which
+> we know have been allocated successfully.
+> 
+> Fixes: 511f6c1ae093 ("net: ti: icssm-prueth: Adds ICSSM Ethernet driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/net/ethernet/huawei/hinic3/hinic3_rx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-> index 6cfe3bdd8ee5..16c00c3bb1ed 100644
-> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
-> @@ -414,7 +414,7 @@ int hinic3_alloc_rxqs_res(struct net_device *netdev, u16 num_rq,
->   		pp_params.dma_dir = DMA_FROM_DEVICE;
->   		pp_params.max_len = PAGE_SIZE;
->   		rqres->page_pool = page_pool_create(&pp_params);
-> -		if (!rqres->page_pool) {
-> +		if (IS_ERR(rqres->page_pool)) {
->   			netdev_err(netdev, "Failed to create rxq%d page pool\n",
->   				   idx);
->   			goto err_free_cqe;
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Thanks Dan.
+
+I'm pretty sure I reviewed this code at some point.
+Sorry for not noticing this problem then.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
