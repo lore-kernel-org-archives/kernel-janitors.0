@@ -1,103 +1,104 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C3216E23;
-	Thu, 18 Sep 2025 01:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638901917ED
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Sep 2025 06:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758159900; cv=none; b=CbHIBjaP7z6vQQC0+ip3VdQ4d44yhfJ83kl+qNzWRTzNeguLHRx7jn+8xwEP9x/DP7oB2UVfyOr/JzReGNx9maWDh+7b7wN++xa9JDAf8WQMRyA4IdA/8rmL2hFY1SBGivbVdceWoqadYSEaAHTaRj2McIFy61k60nJNsVgvQ5A=
+	t=1758178674; cv=none; b=eMpf17dlU5GFCKSTvbuiVJ7Y7dCFO/LMTFYxj5a2MQPbsjFLLdBQ/vRKMIME/HCkD2J6EFoccSRWn0YXoLykD5cWkyH4GgnWNtWkf58RQtLZL6IiXq/5LoO+FvpkV8W0oyKkSslXJY74Q194X3lFNTgkEOjA4HvGv9lsnvASIDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758159900; c=relaxed/simple;
-	bh=yObyqBIvnOk7MzWv7rFUNE1ZAMjFKISL+S39eQDndyg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=h5xxzrIHs82p6KJyAJ3eozLnEps2D0C7vv4yYLSmJzTpe5fSoHxHiTGCC7Nyl5JMmRc6oMJP90PgPodWHKhnG1mbAiMddP3zM5q+m5YCZuwDO86reSuUaUNaKQuHVps6sUk+GqQ3ZJxOWCqlE2X+Sq/4v6Rk7AS6sfbVhiEZVyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8DxO9IWZMto6J0LAA--.25085S3;
-	Thu, 18 Sep 2025 09:44:54 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front1 (Coremail) with SMTP id qMiowJDxK8ETZMtoO6acAA--.7691S2;
-	Thu, 18 Sep 2025 09:44:53 +0800 (CST)
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in LOONGSON SECURITY
- ENGINE DRIVERS
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Lee Jones <lee@kernel.org>,
- linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Message-ID: <f9b0ba8f-b2cc-3a24-3afe-247763d8ad71@loongson.cn>
-Date: Thu, 18 Sep 2025 09:43:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1758178674; c=relaxed/simple;
+	bh=Pj7C6lSwNgTZXom9kMKSotto7rqPi805M8krrGWhdZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SIu/2kGN912F8uzwjvTERVZKzrtmSpGx9ohjP+xPzSQa+Q06ZFqbZBI2elh2ZkpYZQPg51ghSn+NY4uR+s7LX/ucWNHc60SIl6dZgTC+gkucNj2raJykQMSHXzsafbYm37YXk8USBZnIW1vBO0x9qhfecFxMuUgz+VZspvsOYfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IMBaM5eC; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IMBaM5eC"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45f29dd8490so4887965e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 17 Sep 2025 23:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758178671; x=1758783471; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9/nMa0PtV43rgQWcYDMB+PP5kWaFcHHQhI+qUmHdeuI=;
+        b=IMBaM5eCXXkkaM5X/iTM2RP4xSLJSNls5MHlyrEHIEBlRPTxmT1XNvFy5W4Fb1ZeSO
+         n9LLFzZb5EJ3uZSxQReC1uf/hf59lpY49SWHfr1dYy7HPP/0FEgvL0BF1tfg7YxHiyHD
+         encfkTYbZlU/EMfUcVqI/4fRheExYqHp4HTQmTrTiB+432BWCSc7AC+Kmn5nsQKYv+uL
+         DHS7iEMr20ik25cyaw1qZhMxBQRKMtUwYgW33uQOR+VvJi+wM6c6Vo8yo0v+IVEjcmTQ
+         13ofajq84GUhImII2ZgrMGaEGz9Y61JsLeIxulXE6xnvP8Jrrb6QzZ3CNHzJD+rLiFL8
+         ayzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758178671; x=1758783471;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/nMa0PtV43rgQWcYDMB+PP5kWaFcHHQhI+qUmHdeuI=;
+        b=EbWfeTI+gkvtB8NpphNS/7DKoTeg5XnMS0p6bCdaf0fkfRqjnFH99BNbJrZ7uJajVZ
+         NUhAO/1m2w2eA5bGx0pC/7U7Klev7KRFFywQMb933FcEA3+Rpd0XO1XDFObW5t0TgDkm
+         Eu9pC5ylVt6xk/k0bNSqCbfYQQQSlXL1kBGYM5Qgu3pZno+iuHFKhZxw4pfHRRBdX3oz
+         1NztwrZS6r2TjpkKw8MKbJdC8RJZB2wlfFopTDssxhjo1X0Sbol76ibg25Bs0Tr/3p2W
+         3OGi9ftLhjPuScwWHfr3KeB1zXofR3Sptf5zSVbV4xzHc0x6NXLiTchWXYwzWUJbAOok
+         zTOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyIgc0s8pje84EsdR5M0CFctuclCWhdmfpNLPpCMr4BiiYxC6BVowwrzDZVgSqwpVxsEEpVEpb36qJjgMNlZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznSmJDnkr5ohzamMY60Q5NhW7WGECTdNy5UwGU5DHLbAuno4CU
+	xT86ZokU0jlt+zCruMOQs7Bzbecq/JVtSvfMzVZaXNgEfhtfPB+EoX2J9EZh08BwTwQ=
+X-Gm-Gg: ASbGncvi4hCMgE+aXul9AWJIe2ftX13YNxSSU8TpY/rASJ+4DMrmzzTmtyP1rLYka7B
+	podMWE8CyqYEOvPfjDfvr/g7p3ZM6CaPBO7BVYvQZKdfJPJPSSaB1DeLN7YeegFlLAZMDvj7VxL
+	paeewu8U5EfhLP6l9mmFZmwg6bbND8MHILL6h1Zn/GrlH73DyZj5fGLSOuFq14lc8oZB8hR0zST
+	3AWeBapO/gNSBuE/UPbavI3TxszMieilsJaPZgANdGiLLlANtFuH1gMLDQVuzehF211lMUbQmOS
+	LeJNBnSwWF15oRrolS5laGmo+2IQ4Ga/02xSohlEXTv5EMy/v8dYEA5YZLtZJCNoS6vk1HnmsWu
+	ZF6HaFXWc1OhzlpOn444uoidKx1jD7yeIqt9RoK7EhV87/A==
+X-Google-Smtp-Source: AGHT+IGwR8k7r0TQYAu3JvMmJhIKVXCkY8cUsMc5qCPfSU/SkaC0D9hFbJ3u/9HM/gyc79LjqswdEw==
+X-Received: by 2002:a05:600c:190e:b0:45b:47e1:ef68 with SMTP id 5b1f17b1804b1-462076af168mr36954925e9.35.1758178670715;
+        Wed, 17 Sep 2025 23:57:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45f325c3c29sm56657115e9.3.2025.09.17.23.57.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 23:57:50 -0700 (PDT)
+Date: Thu, 18 Sep 2025 09:57:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] EDAC/versalnet: Fix error code in probe()
+Message-ID: <aMuta8vbLUaP_C-R@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowJDxK8ETZMtoO6acAA--.7691S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KFy3KF1xuFyfGFWrtFW8GrX_yoW8Jw4rpF
-	srC3sIkF47Jr4UCwn8AFyYka4rX34furya9Fsrtw1DX3sIy3ZYqrWjkF1Dta1DAr1fGr42
-	vFZ3Cr45WF48uFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUU
-	U
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+This code returns success if devm_kzalloc() fails.  Return -ENOMEM
+instead.
 
-ÔÚ 2025/9/12 ÏÂÎç3:46, Lukas Bulwahn Ð´µÀ:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Commit 5c83b07df9c5 ("tpm: Add a driver for Loongson TPM device") adds a
-> driver at drivers/char/tpm/tpm_loongson.c, and commit 74fddd5fbab8
-> ("MAINTAINERS: Add entry for Loongson Security Engine drivers") adds a new
-> section LOONGSON SECURITY ENGINE DRIVERS intending to refer to that driver.
-> It however adds the entry drivers/char/tpm_loongson.c; note that it misses
-> the tpm subdirectory.
->
-> Adjust the entry to refer to the intended file.
->
-> Fixes: 74fddd5fbab8 ("MAINTAINERS: Add entry for Loongson Security Engine drivers")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fa7f80bd7b2f..a1339a8bb705 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14537,7 +14537,7 @@ LOONGSON SECURITY ENGINE DRIVERS
->   M:	Qunqin Zhao <zhaoqunqin@loongson.cn>
->   L:	linux-crypto@vger.kernel.org
->   S:	Maintained
-> -F:	drivers/char/tpm_loongson.c
+Fixes: d5fe2fec6c40 ("EDAC: Add a driver for the AMD Versal NET DDR controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/edac/versalnet_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-My bad, Thanks
-
-Best regards,
-
-Qunqin.
-
-> +F:	drivers/char/tpm/tpm_loongson.c
->   F:	drivers/crypto/loongson/
->   F:	drivers/mfd/loongson-se.c
->   F:	include/linux/mfd/loongson-se.h
+diff --git a/drivers/edac/versalnet_edac.c b/drivers/edac/versalnet_edac.c
+index 66714fffa591..7c5db8bf0595 100644
+--- a/drivers/edac/versalnet_edac.c
++++ b/drivers/edac/versalnet_edac.c
+@@ -888,8 +888,10 @@ static int mc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
++	if (!priv) {
++		rc = -ENOMEM;
+ 		goto err_alloc;
++	}
+ 
+ 	amd_rpmsg_id_table[0].driver_data = (kernel_ulong_t)priv;
+ 
+-- 
+2.51.0
 
