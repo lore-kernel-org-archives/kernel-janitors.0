@@ -1,78 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED0A3164DA;
-	Fri, 19 Sep 2025 14:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F8831E888;
+	Fri, 19 Sep 2025 16:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292227; cv=none; b=LXtJXOp97/rYF6Vh0mpkoQwjvGHMxunAD+qGvN9W+YCml0Jenm/73nxcidq0sM76HkmJ9ei8yGoJvGNNUxgWvXvaRt4Uqh3gH808EEjpc8TVzW2tFgMc7w1ZMxyWHnnU2+buu1DLa9qtATKE0fCNwGI+TsHwCzNFc4XDzxMiLu4=
+	t=1758300305; cv=none; b=l7rYDmJspzv/IbD7VwZBScZAtGSyHdAzuUg5yzRpg2XoEEU/p6vCedJ2HuXGMkx0eaTMlqMQgmdYgupSsspWaRdDNSvr6wulO3jLK22Z0WVwoGv2aD++DB2pZwRlu6tg9SW2+wSEbzVRmdFJOsvEGhrqsxYfN3LN7+wFmEPb60A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292227; c=relaxed/simple;
-	bh=om7IHFxUqBk57l+hzSxJYXmlW0dohVfqH7wx9gm7LsQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cbYjHR5nFRq35J/xUqMqbm8uVfBBDNV1B85GXpqOTm1JZSHSJBmUPW6sDf0qTnGZaq1RRVGXyRQA5Ovysjstn3nYEzLmD6/Os9wpyfQDOPIVAzbTCmTrmxLVAGW9Rlh7lLXWQkAIVNsm5vV+TSvzsIPeZHFepYyv5JZsiSrIoCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKYidIdo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758300305; c=relaxed/simple;
+	bh=etX8Wl/6aaYgLhuUC5ko9MRsMCqNmTd+JPqfBb6bgzM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ck5EU8dqsM0Ad0/AI2na/iYUvca4RNVbwhOrzBrzWt/laRexxtfgy1NTfBzifoBNH9ADCMDbUVcSUink90lIpFNb0LldZmkUOn7QuBIpMQIKUzWOyXTXBoVNOe6mBAedQzlSADWm4KOJNlF9jOaXWMBI/2qM2w4H1e2U/0wfb/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=aQYQLuf7; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKYidIdo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744CAC4CEF0;
-	Fri, 19 Sep 2025 14:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758292226;
-	bh=om7IHFxUqBk57l+hzSxJYXmlW0dohVfqH7wx9gm7LsQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uKYidIdoOAgpzhd2SpMHR61DatOztYePJmLjsZz71t2b+GYrakR3GDj8Dklln8YDf
-	 5qKtMF35YuwHED5dRGmZJtBoh+9e5u329FdSyIRoZqP1frv79l97ToV7uhyd9apCZA
-	 D20R0nO63su5vqCTqaFLmRViyQ4mIVgN2/lM0MZCN2qC/rwE858PUF5K7tknHc9UJv
-	 9wC96543Bs+GPr1jsazQUQNVivEytVengW4REBZ5bRHycTiV5vhprQjMdJYq3WA+XK
-	 Le8zadwSLkw+HYeSWpGunPgbaks849jnO2NQgj/IKkd519+l3h5uGzLw+Dwn0Y5Qbx
-	 UtDCpn3FtcRFw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B3439D0C20;
-	Fri, 19 Sep 2025 14:30:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="aQYQLuf7"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=XAO+gGxG2+bfA9bUn9PeQDcZUygV2d3WgfnEJdr8asM=; b=aQYQLuf7FC+Ugjcq+akkLzHEWb
+	gnCyLMuj5kMO+VYRn2E7hKCgSKhx6G4GTh7ksinzmqPQz5Lc1wDLWEjV99GORtkou8RJkpVYKpzMY
+	IpkZz9/h7x1hLwsg9iXTR53mkmQtRV4wDiknBzNb6Di/ydOK8PJ6LHdeDQIPSnxq5ujlwipeq2t1f
+	Ux0ycNvS+gm8k6mhwnY2NsmNB8v3P/7nyU513H1pxcvdK9kvLpR2EGPj9Igaq4E+Gso87jRA2VIRn
+	IHuOewkTswSi1O+bF+gaOQGnH3hmzUAQ/IR5IVtYv9ExiH/3ons+XzBy3wFdRaUHayqDaQTKVrTPe
+	0UPmESXA==;
+Received: from [122.175.9.182] (port=43780 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uzdwg-00000008iZx-3eQP;
+	Fri, 19 Sep 2025 12:26:50 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id D708317821F2;
+	Fri, 19 Sep 2025 21:56:45 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id B46BF1783FBE;
+	Fri, 19 Sep 2025 21:56:45 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gwyFsi76Mi5L; Fri, 19 Sep 2025 21:56:45 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 81BB117821F2;
+	Fri, 19 Sep 2025 21:56:45 +0530 (IST)
+Date: Fri, 19 Sep 2025 21:56:45 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: kuba <kuba@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: rogerq <rogerq@ti.com>, danishanwar <danishanwar@ti.com>, 
+	parvathi <parvathi@couthit.com>, rogerq <rogerq@kernel.org>, 
+	pmohan <pmohan@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	pabeni <pabeni@redhat.com>, basharath <basharath@couthit.com>, 
+	afd <afd@ti.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Message-ID: <1112336225.391532.1758299205136.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250919070456.197f3930@kernel.org>
+References: <aMvVagz8aBRxMvFn@stanley.mountain> <20250919070456.197f3930@kernel.org>
+Subject: Re: [PATCH net-next] net: ti: icssm-prueth: unwind cleanly in
+ probe()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] hinic3: Fix NULL vs IS_ERR() check in
- hinic3_alloc_rxqs_res()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175829222574.3219626.8716643732005745835.git-patchwork-notify@kernel.org>
-Date: Fri, 19 Sep 2025 14:30:25 +0000
-References: <aMvUywhgbmO1kH3Z@stanley.mountain>
-In-Reply-To: <aMvUywhgbmO1kH3Z@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gongfan1@huawei.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- zhuyikai1@h-partners.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC139 (Mac)/8.8.15_GA_3968)
+Thread-Topic: icssm-prueth: unwind cleanly in probe()
+Thread-Index: Ig+wyV11vbQ6KkdDAz/IymgNZCtcYw==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hello:
+Hi,
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 18 Sep 2025 12:45:47 +0300 you wrote:
-> The page_pool_create() function never returns NULL, it returns
-> error pointers.  Update the check to match.
+> On Thu, 18 Sep 2025 12:48:26 +0300 Dan Carpenter wrote:
+>> This error handling triggers a Smatch warning:
+>> 
+>>     drivers/net/ethernet/ti/icssm/icssm_prueth.c:1574 icssm_prueth_probe()
+>>     warn: 'prueth->pru1' is an error pointer or valid
+>> 
+>> The warning is harmless because the pru_rproc_put() function has an
+>> IS_ERR_OR_NULL() check built in.  However, there is a small bug if
+>> syscon_regmap_lookup_by_phandle() fails.  In that case we should call
+>> of_node_put() on eth0_node and eth1_node.
+>> 
+>> It's a little bit easier to re-write this code to only free things which
+>> we know have been allocated successfully.
 > 
-> Fixes: 73f37a7e1993 ("hinic3: Queue pair resource initialization")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/huawei/hinic3/hinic3_rx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> icssm maintainers - please review
 
-Here is the summary with links:
-  - [net-next] hinic3: Fix NULL vs IS_ERR() check in hinic3_alloc_rxqs_res()
-    https://git.kernel.org/netdev/net-next/c/c4bdef8b3d2a
+Yes you are correct. This got missed somehow sorry about that.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Now the error return is gracefully exiting by freeing the resources.
+
+Reviewed-by: Parvathi Pudi <parvathi@couthit.com>
 
 
+Thanks and Regards,
+Parvathi.
