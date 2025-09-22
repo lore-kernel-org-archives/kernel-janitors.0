@@ -1,35 +1,54 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E827533D8;
-	Sat, 20 Sep 2025 00:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1D8218AB0;
+	Mon, 22 Sep 2025 08:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758327007; cv=none; b=jJfiTWhKB0ZLoVNFowvGpCBcgN9TB2SUAwOQP2Q5DJ39IQJ5qm8sClqHR85VTjI0yGwjXowWf7A/WVlrTuYTF+Es9qnUuQJSh4ZfgxzA1GLvibKPRgNXrRFiqfLa5xnApuFNhWgln0q5lwKi8kOS6umuqDklP9IkN9IXp8WxW6Q=
+	t=1758529056; cv=none; b=jikHynI3jC4Cp8Hd4yxXDOnHYRcwvskUYDCK8XAe3PxagugnM7C8pQ24H3/LvNgcTB8mY6g5gE3lIBnm+CG41cwukjJQrEa4g+/YDgYxF2CvcSAI4fFRc0rrVBa4gAlu2SPVi590p6D/gwKibKD2umTE3Z95lJ743lmkoXOhOkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758327007; c=relaxed/simple;
-	bh=JkPWbXg69iqhHJ900MWi2o+UGPJDKtEJ6OfUOR2VnvU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=kNrIVM+1SRetFDtTZY62ovV/iYc6Djx1jUVB/966/1HYM/EwxUD5DIp2483Bk4fBHF2KNj2ciDvr51CFol2eILoHp1lUvIKWh7HD9Ri2Y1gPQ8pKzTRrCOLKmTHEU5qFuW2QSNtqhqN9t+20kOgEpWwXxGz8fU84Xo7HG8LuJaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6o/BW0f; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758529056; c=relaxed/simple;
+	bh=9SREZZTyiDqdcLc7xZWTEYKmZReN9A4zVPYLUHALnSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VnOCDDN0aq0E5Juix8lMSbef0s+FgfiO1Vd34RBHOCXwoFW2fsw8/khRxmE0y0v5L6rPglb1AZ3MeUg/56S457BhwB9EF0dpU0HM7cvB5wn4IJHKYUXE3raN7gSAYzGC/XJcdyqDcgiTrUFI8086r+sjieoTxUFXW5C+YO33MEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gKucAK+R; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6o/BW0f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76931C4CEF0;
-	Sat, 20 Sep 2025 00:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758327006;
-	bh=JkPWbXg69iqhHJ900MWi2o+UGPJDKtEJ6OfUOR2VnvU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=O6o/BW0f+45gy85lsSLjU/GGU1Ffl/8HM1Hzm3G6DtcQnrAitBE5cylJWjovMWmd2
-	 wodY0mkQFvBGjUNoXLW1szKmFA7pRRGitzepybn++o8eggPDz610EuRWH/wLDM2xHL
-	 9e24r09owmVp4Y+4zq2ZzETxFMxerIMWbyP6ORsbPndLvZMpiCXim7AnGYyLglEDZF
-	 dw7iDFdcFXT8BKiNelca1APnGtfdKQk8DMW5tXuulsMMw3bSq9wJ7jFK21DWkJZMz1
-	 97ijZXCoES4sZBqRc7NBtVUcMeqg5PD4W4KhC60gv0M502895rRuGZTC6wPklKvEC3
-	 jR8F4T1xEkRVQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB07F39D0C20;
-	Sat, 20 Sep 2025 00:10:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gKucAK+R"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id 0bb6vy5ucvg3e0bb7v1jYX; Mon, 22 Sep 2025 10:08:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1758528516;
+	bh=7pAbNunLZ1TePe1chECcJ/N1WfLPdRA2dzqza0j8kXk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=gKucAK+RFQAiczKiwL2sTCFFg8ui8u+kvyzxkUg6BRmwNV/tJ7rAA1hjxDOSM3MOU
+	 0hifTTRwyA/3eJNgELoqGhhunQaQTItmdabY5cvU9avXHp5jiczGsb4dbC9aR/gGTC
+	 vTyGfp9C8B6if+EmsNGn1g5yCb/YHAM62qu5evFOPfclKO63UzY+p6jDKO9RX3eiyD
+	 JKUyzBM3KKDOz0Npo5xeGBKmZoLoroJVYiw6joj8DcFbrX0itwkzbZoxwDXGJHdc2k
+	 HaSNEHJsgaC2UMtapVoToCpBw9O793BktxsT7QvF8hFocx/qM37Fyrg89rlGuJ0rA4
+	 TJUur9Kv6ROtQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 22 Sep 2025 10:08:36 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Lennert Buytenhek <buytenh@wantstofly.org>,
+	Andy Fleming <afleming@freescale.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net v1] net: mv643xx_eth: Fix an error handling path in mv643xx_eth_probe()
+Date: Mon, 22 Sep 2025 10:08:28 +0200
+Message-ID: <f1175ee9c7ff738474585e2e08bd78f93623216f.1758528456.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,46 +56,32 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: ti: icssm-prueth: unwind cleanly in probe()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175832700584.3744610.12963791321568877888.git-patchwork-notify@kernel.org>
-Date: Sat, 20 Sep 2025 00:10:05 +0000
-References: <aMvVagz8aBRxMvFn@stanley.mountain>
-In-Reply-To: <aMvVagz8aBRxMvFn@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: rogerq@ti.com, danishanwar@ti.com, parvathi@couthit.com,
- rogerq@kernel.org, pmohan@couthit.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- basharath@couthit.com, afd@ti.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
 
-Hello:
+If an error occurs after calling phy_connect_direct(), phy_disconnect()
+should be called, as already done in the remove function.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Fixes: ed94493fb38a ("mv643xx_eth: convert to phylib")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is speculative and compile tested only.
+Review with care.
+---
+ drivers/net/ethernet/marvell/mv643xx_eth.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Thu, 18 Sep 2025 12:48:26 +0300 you wrote:
-> This error handling triggers a Smatch warning:
-> 
->     drivers/net/ethernet/ti/icssm/icssm_prueth.c:1574 icssm_prueth_probe()
->     warn: 'prueth->pru1' is an error pointer or valid
-> 
-> The warning is harmless because the pru_rproc_put() function has an
-> IS_ERR_OR_NULL() check built in.  However, there is a small bug if
-> syscon_regmap_lookup_by_phandle() fails.  In that case we should call
-> of_node_put() on eth0_node and eth1_node.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] net: ti: icssm-prueth: unwind cleanly in probe()
-    https://git.kernel.org/netdev/net-next/c/5fc7fa743dbf
-
-You are awesome, thank you!
+diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
+index 0ab52c57c648..de6a683d7afc 100644
+--- a/drivers/net/ethernet/marvell/mv643xx_eth.c
++++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
+@@ -3263,6 +3263,8 @@ static int mv643xx_eth_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ out:
++	if (dev->phydev)
++		phy_disconnect(dev->phydev);
+ 	if (!IS_ERR(mp->clk))
+ 		clk_disable_unprepare(mp->clk);
+ 	free_netdev(dev);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0
 
