@@ -1,99 +1,91 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006623054D1
-	for <kernel-janitors@vger.kernel.org>; Mon, 22 Sep 2025 12:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B056309EF9;
+	Mon, 22 Sep 2025 12:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758543023; cv=none; b=ceseSgpFJBvht3cuFB/gTQJiUg04tcYVG5CReQk0R2v1YZs7Rq6f9pzfkaHvgARCA402S7Tg5bfqhRqG7v0U7DvPaiZ1s8qGxT/+nWeKT8F/8qBSO8gu26ZL1A2JudL0Rx7u7IQlKXViJpWfRtEgeyzIUV36c4kqRhKuDGMlARI=
+	t=1758545637; cv=none; b=I929xn/kgAi0f9xzlR+VRcGNCpVaVuAIlQIWLNevq11c79V+TrJ31pP3p5Xu5gyULyKNOw8FhacjUAxlSG3PxoL3Jssd9A2waEfdJgaQM2ttTmnMqYP7Rp6agZuVzNua7IzMuI0T9v9TGMq68LSmMGoEj2p8X8BfyedKoZhMcWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758543023; c=relaxed/simple;
-	bh=D/clnD1hIlVnSt9RwqpAPzOANdJ2p5vqoO7F4SHQKHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oC6GsYSPxhhxmANqCBeH7Y+O/JBHyO29G270+XlS9rzt0zU5VIU7vpTXxe85a30sCmKFCCigLdcqeiZ3O/NtCuSCdZX3fBKdIPs8TRnRwgJI64qrjc7XNtxrmgT9L52PdCbaIAtbvEJT/Dr7wJZ7MMT9PiTUNAUpBuwQIcKBlNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWcLntuG; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758545637; c=relaxed/simple;
+	bh=PFDI01a6mct7hksGc4zTTa0XRLZ06Ofqa0ApwFcBc7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exPzYFS/ErkVoNuwEfbJZD1bo3NXVRPQXIJztH/XeQZ28uk6rUsiQ5Q/9IvzZ6viTbqM+fo4GUDU7nxvHmUwRdMZD2abiBvpSzjuRg9/WGabuEgg4bFOh2fsSZnHI9bjjVZ6YB5VwzHffFTWTeDD44I55EbL46tG/4OolVFQmW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wLUvKyMK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWcLntuG"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso3201653f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Sep 2025 05:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758543020; x=1759147820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=71jw5Qy/VkNLzHuH4x3iqTkdWQrjxtig66ummONYtOM=;
-        b=MWcLntuGxb2GSltYe7nmE8qf/7WZA0gETFKw5/s3LjGLiRx8JM5pAHaM02mbQYl3XG
-         1SW6cGtsLhpDL5D/1lUbf8aEv7hxYvo4H7OY3mJMx9TuSAGj7cYzrKdCP94GDLY0hsYd
-         Kx/pVKFVVTZADei1ewDy7QxmN1pXJIGbOp7kjsW1ZdnhF8iE/gWijVcYluG3+DKDISwT
-         KKSXZ13Qa67Rt8b/qM/5WSJyklaPMhgvNgYUaAbhbSlGzQFVs21JG0c3a/R7cRg99d1v
-         /mSiKRzki5VIC6uIKbr328WP4PjOVxkBDSz99ACpvCYs5jTKvK9gC+Vrb/wU7KXPZj5h
-         OXtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758543020; x=1759147820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=71jw5Qy/VkNLzHuH4x3iqTkdWQrjxtig66ummONYtOM=;
-        b=IWho/3PwU4kOsgKSiSSbC1HSct1jRN8fQ9xU6yzQu0AMg42tMtphVfzLaQc+tHLHFE
-         LInVaZRGnlmKdNMkW7PP/fd4BwEG4c992lbehmqLXvtWQ9BuYOTK7PAlrogmCJAq9LQN
-         RCkP4s0FgRyBlnjSrt2Lv384NQKWVaN8Z0N4HCV5ZYl59mpx0hFVz1cF1wxcSS3mDVWt
-         W4/4dMwHPYh16RY13N/+HPsrKPjFj/WIRYi1SejPs/1x9UA+tQv6dWPPct6kyLE/s0uG
-         IiPLDhxobna24VPxNJyCcmYtglnMHDqcrMle0AYK3M2D2YL0AXtauf/kAMh+fA1T+av4
-         dK0A==
-X-Gm-Message-State: AOJu0YzLoIuXPQg5j/A410ik1FGmugneyZ5pOmkvgWm87CeH4ftcM8Hs
-	qQ8/D6oO8pKHUv7y91Wx+tapbpeqHa/J6OwK+01EJQ9EdzLdYfZqN0kH
-X-Gm-Gg: ASbGncvt2n5KYTnblslKD6VeV/02ziJQEVdDer1dZ9jk1BS4LVaEgcQ6sZDISoLRzdM
-	JJ7ep3QTJ9rBC8joyucJIlJaaWxghUaDFZAbhZ7tqE7RRM2RVawEuVwtSE2B10gS7SfZN9TsoS4
-	wQceXlMlSqvVS+9KhYUylbAedetB5LX2mA9OsdTAAaIYgfyb/eWhdMTnPNlqxcsayBkwztdiZPs
-	vsFqA0OMcrXbPtEh+Zmd/x4v0FnQZNgqjtLxbTfqX4W0I54lK/FEw2mIceTAIeztjWu/qzsSAB9
-	e05e13gT/wyQtRZ1PIUrSabhWFhMdGc0hKP1WsByz02I9xSWex7SvxgwOxZBBYvMCHukw9BSdNY
-	+S433TpzUIXkpgnbYfbRncw==
-X-Google-Smtp-Source: AGHT+IGHW9CPoYUliHRmOI9QW83IwXhzxlqJRF4i5x3vsGF8rbB4SFo9J0Y/nPh3bivEr5ReaiyMtA==
-X-Received: by 2002:a05:600c:468a:b0:45d:e326:96e7 with SMTP id 5b1f17b1804b1-467eaa86e42mr112243105e9.29.1758543020076;
-        Mon, 22 Sep 2025 05:10:20 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45f32141ae9sm131846735e9.5.2025.09.22.05.10.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 05:10:19 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Subject: [PATCH][next] selftests/clone3: Fix spelling mistake "supportd" -> "supported"
-Date: Mon, 22 Sep 2025 13:09:30 +0100
-Message-ID: <20250922120931.56786-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wLUvKyMK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=S+6duT8Gy/2mwF0SaEiU9OG0xSITWAhmGxgdnKJqntE=; b=wLUvKyMKiYnKsOVJEloKadZaeD
+	wCKf7RZ0rxFUjkDoKRqDHcOPznhh4DzFzJFZU/zZ49109c41Ae2vKW268IhZkQY0g1mSGsCGWPQWR
+	bUjPGfGVkRbcp3XMoe7rSsdJEyUW8PgzpN8/krKFIcgwEg2zBi6htuYB73qv8OXs/T+I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v0g34-009ABU-2e; Mon, 22 Sep 2025 14:53:42 +0200
+Date: Mon, 22 Sep 2025 14:53:42 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lennert Buytenhek <buytenh@wantstofly.org>,
+	Andy Fleming <afleming@freescale.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net v1] net: mv643xx_eth: Fix an error handling path in
+ mv643xx_eth_probe()
+Message-ID: <efff779e-96e1-473a-8b9c-114b090ff02c@lunn.ch>
+References: <f1175ee9c7ff738474585e2e08bd78f93623216f.1758528456.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1175ee9c7ff738474585e2e08bd78f93623216f.1758528456.git.christophe.jaillet@wanadoo.fr>
 
-There is a spelling mistake in a ksft_print_msg message. Fix it.
+On Mon, Sep 22, 2025 at 10:08:28AM +0200, Christophe JAILLET wrote:
+> If an error occurs after calling phy_connect_direct(), phy_disconnect()
+> should be called, as already done in the remove function.
+> 
+> Fixes: ed94493fb38a ("mv643xx_eth: convert to phylib")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is speculative and compile tested only.
+> Review with care.
+> ---
+>  drivers/net/ethernet/marvell/mv643xx_eth.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
+> index 0ab52c57c648..de6a683d7afc 100644
+> --- a/drivers/net/ethernet/marvell/mv643xx_eth.c
+> +++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
+> @@ -3263,6 +3263,8 @@ static int mv643xx_eth_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  out:
+> +	if (dev->phydev)
+> +		phy_disconnect(dev->phydev);
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/clone3/clone3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is correct, but it is a little bit less obviously correct than it
+could be. Nothing in mv643xx_eth_probe sets dev->phydev. It happens
+deep down in the call chain of of_phy_connect(). Just using:
 
-diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
-index 05c3d2dcbf2a..385cf08f8cf8 100644
---- a/tools/testing/selftests/clone3/clone3.c
-+++ b/tools/testing/selftests/clone3/clone3.c
-@@ -71,7 +71,7 @@ static void test_shadow_stack_supported(void)
- 	} else if ((void *)ret == MAP_FAILED) {
- 		ksft_print_msg("Failed to map shadow stack\n");
- 	} else {
--		ksft_print_msg("Shadow stack supportd\n");
-+		ksft_print_msg("Shadow stack supported\n");
- 		shadow_stack_supported = true;
- 
- 		if (!shadow_stack_enabled)
--- 
-2.51.0
+	if (phydev)
+		phy_disconnect(phydev);
 
+would be more obvious for this probe function.
+
+But since it is correct, Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+and i will leave you to decide if you want to change it.
+
+    Andrew
