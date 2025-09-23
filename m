@@ -1,72 +1,72 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCAA321F32
-	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 11:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD0B1D63F5
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 11:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758626775; cv=none; b=glL/7YOF/q3cp9OyTH2PCFlDApoSvZF7Ft9gPtHWflKu3TK2A11W4uaeGOXQMOZDAqRwUB/RWodIvjmr0jrOan5aJXRPNe4HRrPrdZeFBmgsgX6RMqeVhUY5iTm6aaYwKkUHcJXJGKrPuDtb20hdWsUQPb9TAcVKTe1co5n3l4U=
+	t=1758626926; cv=none; b=HrrW3b6LogdLjELIw7Jt8q3m0AsTCwbrOMrilOxkxyXlbmC+ALThhGhe1ZSFbIcyvqgWQhxflbBY+Pu8LMwZAN0dMS/PW946TT3ZD8+h9Q+9k/s9Ma6WDC+pCa1ftHq+iQfmxAbsDC6xCTnkJPudsR6GGJUV2hQ+J/zfqArd+QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758626775; c=relaxed/simple;
-	bh=vAGOBaNyo7UBOtDtuQKzE88y7AhGcv1FK06g/C72pIc=;
+	s=arc-20240116; t=1758626926; c=relaxed/simple;
+	bh=Fg9loJYTcGYlx0MTZ4vFLQtkph2uQSlIxlL1lZRCrKo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fYptdT9AKbbSQAv3lHw9aPbDhdXQegGgbaVz6G2aIkg7mHMbEtDh+If3LfreHOO/syxIOUEcf5x5wLGGGVGUSVV2AP4DfTFx8gF9MqXXfAUtiVeJFDuP1Z6I82mKpLpjhzjx49M9Ee4jrJ6U/F/dT5Geez/tGiqyyGLvJy23yok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DWRWMGcJ; arc=none smtp.client-ip=209.85.221.46
+	 Content-Disposition; b=t9yjRctDo73I1mnf6Czr/zPXBwO1TdoiWYYutI6N21auA+1ypTFy2LDdFLj+oQaSRDlGC6riiz3hW+kR687HjFHJOcvAA80ZFoalNEVY3lthmqtwAkCKb5cXDLvp+3DTkVtqHXHm7/6uktlyBA4OKxUQ8eo4iymB5hb05ikPv7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=peVkHwHB; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DWRWMGcJ"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3994827f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 04:26:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="peVkHwHB"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f44000626bso2023760f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 04:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758626771; x=1759231571; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758626923; x=1759231723; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ofwUTrC3ZszDdeYuviFmsB1NEgkEhNxkFdaO7tJEVQ=;
-        b=DWRWMGcJsaAgz2NXqLCWHYsnEhhvzIYGuHDphNOrMSqfa2Ijw3vvCuos2AyaH6oOFZ
-         8/PGdGv+EpiNR2Tjh0MWXaVLwMv2D3eg+Whyj6xPIZR++4TjyQm+1FjCVBdyJIn32HQF
-         oif89Y+tfDqwVddtpzV3Dps9jY6/eepcUhDVXgPcOwvzNWqG7rdWX28T4uJUR2F1mJc8
-         mkBjAti77skXaScbv2Jh2dIZZR0BxcICLhL7WW3ABuOK6FTMatl+J3qgoGD2B9ZsEK0J
-         +nD03Erzjv8LUC2JMFD9an8++nVVH+arunqdEMBXzO5AtR881EhJTp6XGQxV/jOLbpF5
-         fOyQ==
+        bh=p3nLbAifVjvlMsTe05tZfwI7NIrolTzFIj3PkRr+oLU=;
+        b=peVkHwHBt0/q22w/jyzHTnWjgKqW6VyEPmt9TnZJT2ZaVvqMTS1bGhHPERAky601YQ
+         f4U7VbynEit/PxiEEatHQw4eQmqfH+5BD1WJkFUEvCHpwBuRJISAa1lSIs/iPDGG9v0Z
+         Z1QIsF7rhKfE1XwSPq9WHnpLjiju1D5s8XmtNeSC9iyAtGOiQRxNf/rcAltnOkhNo1y2
+         S/6yXY2xOyLHLNVSL36ix1pDyxlWtcAfBzkFkJHoU/GqYE1VVot05WF03S7pNrQmrMrc
+         Hz5CgelKN6OW2dkpgCnl+xEg877WipbPuAZ0UjGOzu1CmlZI90u7/iPhbSlGcZ1wBp+F
+         nTiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758626771; x=1759231571;
+        d=1e100.net; s=20230601; t=1758626923; x=1759231723;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ofwUTrC3ZszDdeYuviFmsB1NEgkEhNxkFdaO7tJEVQ=;
-        b=YOisaSW6QYC4M9EzHa0xYB5X0Jcq/z9y2be66zKLkt4JfOgmY4GhpQ9Lab7FHOlWwc
-         fPmOZrjswFyv/CTDgXRnVL/2FO9dW3dcwlQPc6189W0IGdXh0VamrlVMbt0NV0MuXWAA
-         Et3Ft6X5Sq2QSihkDQW0lwdIQ9MHuBIHHQgimv9cvXfVnK91ekHlwMLP8Gp/Q8164haY
-         aze6mf3vqF8aTptoNQZ4wUCJHEEcy+FN9OWX0vfTDk3AUnwdYV6I6uoGpZGD3H6HdyzO
-         El38sIS8oQ4flkMELuncBXoS8DZHKtGF6tATNJaBT2xcxX+VJwnf44J41HnSmYLFUTvr
-         zrnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr3kHXshDf3FH2hEj+mh+KaokbA9cfXOTAHFy29Z9fs5dfDgb6ybAn2LrmUkhSFMpcI6X9h+01pmEyG5t9bCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhB7jNs5uQg8uczJV+sG4t0W7+muFn7zCWH1rpDW7cnNWaW3/A
-	oej0zcuyV3eqmgbDVvW98OgJeLRuxBxqogqbSABQvUQuTZKSIRMgqM8fGCx+HEk1UNHrgOXAxGF
-	R7v1S
-X-Gm-Gg: ASbGncudNr2Vi7AYyUVUiXL7B4bJBHbIILmdJGWbF06tGO0qA9EWhaPQFuuV1Fkon0k
-	PMiCaDo64oKdZmJvTdfSA4SlE1Vrrf+Dl3wgxY7KNG43SAa1zydCXAHMH1gfRr07ykaNm1MpL02
-	Yt/HskVmlZ062D+cDoXJPBpspcPONDeknTjHl7PXUlNxE9tWZQGKpgtRniEDACdt8Zg2b+hmXBQ
-	mAYHP9fxzXLk46n6r5d8FsSt6R5Gn05TklMWoZo9kWWggHkWP8modD6I+IexA9996gM6FSBpVtp
-	DBWsmqWJiz5Bekzd693YuGdo30MhyLWAK4UUC5WKGjqqI8B4q5GAqStZ4hbkrO0xFmrqwRuoUu/
-	d5/gce3kc64/SpaKClRN9S+hDoWZd
-X-Google-Smtp-Source: AGHT+IHhOwn6gj+iEexXiGCoorzJAw/kGenVZRN6xxRPh7vGWAqPpdg4EL4KLpicEj1CiwOETeW/FQ==
-X-Received: by 2002:a05:6000:1aca:b0:3ec:dd16:fc16 with SMTP id ffacd0b85a97d-405ca39d48bmr1912334f8f.43.1758626771359;
-        Tue, 23 Sep 2025 04:26:11 -0700 (PDT)
+        bh=p3nLbAifVjvlMsTe05tZfwI7NIrolTzFIj3PkRr+oLU=;
+        b=FMqgS1XjjuVQOxJVVxi9YX+yx8AbvgoHL6iX2ZvjmcYYiPqZcaydGHfCpkB3lL5MLP
+         C63cH/PIIHdsneomkkEeJFnhRMqjhkPxQLi+ZMUXEodbV1MKzp7YjTHL8dKffs6UqIcX
+         Fr8mvf0O+RxclxvMCO7v/VFUcbuOnW4rwPTDly8EjNFpl68BMKbpg8Try0Xtq+gjKUpV
+         BgDDN1vzQYR5T6VjOR7l7qUB92ht/ZjhVhXu6/JpduWhZYSzI68G8aMiYzsfxoY6sMSU
+         ZwsDPVxWJ24IFxOOWf8ujznk6qE4fxeoMQgSiCofnmN1FH1CTQJibm4jyLdaCvQNus3t
+         duGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhghOLHFR2f4HV5ChMmhfn/YCLPWyG1bAgFYO5v14f4CPU62L20WxKTcuSqv8+jSgv6JlKxh9NWZzlftXMqdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYKfgsXCGWCOYizszvzb5CzHT9Ed+GD7Z+YXTz3lQXPfNikrGH
+	G84nKATRwgXLm4ZggGmoBotPgPgRsq9qYOvx+ckb1ANlsIupDbSnaDv/RJ72baFsfaU=
+X-Gm-Gg: ASbGncuXkT+wZYf7jcfFWgpnTUlgk3nso/mjdeFA4OwJbG248YYIdFTV6zeeJ4F8Bi4
+	b+hXcqM88yhDVgRD2iFn35SfgJTFwwvrJsg4gkcaQRscdyzAU8MVYEqaUK+1mlM+hAbuG4RB4MB
+	xMFIcOyFUajuoAsHsE/+CnK9H6PxsLeOfYIR85H6x8XHnzg3LEKvMerwIH4ZOY89UPkEcAzZOUH
+	6XmHZ/kuofbsDe5qshTwzs5vCmoQIPYftbpyauA2gyzVeGuobu/SPFdZJdOlj+0i4YUBNQB9yH+
+	TjNO6fr6FRugYSzZE+isuAZTb9Is4c8QJGqcGT6poz+d/HtM7SVGjSwW0OuxSTGH+ET6r2reCjC
+	Mh97ZG5XtUWtEFtxGFjkPT0mLt0ij
+X-Google-Smtp-Source: AGHT+IEreieYRZZVcV4W0b1/dif/w7q6qOys4eC2iEOI56szcrpHxrUi/D3jSCJ+aNlIHebwRh6vfA==
+X-Received: by 2002:a5d:5f87:0:b0:3ff:d5c5:6b03 with SMTP id ffacd0b85a97d-405ca770ea6mr1817809f8f.35.1758626922991;
+        Tue, 23 Sep 2025 04:28:42 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-464f64ad1b0sm271511895e9.21.2025.09.23.04.26.10
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee0fbf1d35sm25228491f8f.55.2025.09.23.04.28.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 04:26:10 -0700 (PDT)
-Date: Tue, 23 Sep 2025 14:26:07 +0300
+        Tue, 23 Sep 2025 04:28:42 -0700 (PDT)
+Date: Tue, 23 Sep 2025 14:28:39 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ocfs2: fix double free in user_cluster_connect()
-Message-ID: <aNKDz_7JF7aycZ0k@stanley.mountain>
+Subject: [PATCH next] ASoC: codecs: wcd-common: fix signedness bug in
+ wcd_dt_parse_micbias_info()
+Message-ID: <aNKEZ3VqJ8js208v@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,28 +77,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The user_cluster_disconnect() function frees "conn->cc_private" which is
-"lc" but then the error handling frees "lc" a second time.  Set "lc" to
-NULL on this path to avoid a double free.
+The error handling does not work because common->micb_vout[] is an array
+of u32.  We need a signed variable to store negative error codes.
 
-Fixes: c994c2ebdbbc ("ocfs2: use the new DLM operation callbacks while requesting new lockspace")
+Fixes: 4f16b6351bbf ("ASoC: codecs: wcd: add common helper for wcd codecs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/ocfs2/stack_user.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/wcd-common.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
-index 765105f1ff8a..be0a5758bd40 100644
---- a/fs/ocfs2/stack_user.c
-+++ b/fs/ocfs2/stack_user.c
-@@ -1011,6 +1011,7 @@ static int user_cluster_connect(struct ocfs2_cluster_connection *conn)
- 			printk(KERN_ERR "ocfs2: Could not determine"
- 					" locking version\n");
- 			user_cluster_disconnect(conn);
-+			lc = NULL;
- 			goto out;
- 		}
- 		wait_event(lc->oc_wait, (atomic_read(&lc->oc_this_node) > 0));
+diff --git a/sound/soc/codecs/wcd-common.c b/sound/soc/codecs/wcd-common.c
+index 9bbfda828377..9016e974582f 100644
+--- a/sound/soc/codecs/wcd-common.c
++++ b/sound/soc/codecs/wcd-common.c
+@@ -62,12 +62,13 @@ static int wcd_get_micbias_val(struct device *dev, int micb_num, u32 *micb_mv)
+ 
+ int wcd_dt_parse_micbias_info(struct wcd_common *common)
+ {
+-	int i;
++	int ret, i;
+ 
+ 	for (i = 0; i < common->max_bias; i++) {
+-		common->micb_vout[i] = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
+-		if (common->micb_vout[i] < 0)
+-			return -EINVAL;
++		ret = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
++		if (ret < 0)
++			return ret;
++		common->micb_vout[i] = ret;
+ 	}
+ 
+ 	return 0;
 -- 
 2.51.0
 
