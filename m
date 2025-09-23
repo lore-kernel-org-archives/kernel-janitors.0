@@ -1,68 +1,72 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7C932126B
-	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 11:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCAA321F32
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 11:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758626470; cv=none; b=jQEUpP0s0Wqssj1I8W8bWU2aVTamXh3Wvoet2O8Fd3jCzcsMEtLAfncIF5zThumeLe8PObtpH4niyPGM3nf+QFAobNFglFcFoUg/wc4Is0V+VE/1Md1sPUPmqMg64BlA58cm7uUBjpnoDcugerb/l6VJQt1j5nzX+VjWwA7vo4Q=
+	t=1758626775; cv=none; b=glL/7YOF/q3cp9OyTH2PCFlDApoSvZF7Ft9gPtHWflKu3TK2A11W4uaeGOXQMOZDAqRwUB/RWodIvjmr0jrOan5aJXRPNe4HRrPrdZeFBmgsgX6RMqeVhUY5iTm6aaYwKkUHcJXJGKrPuDtb20hdWsUQPb9TAcVKTe1co5n3l4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758626470; c=relaxed/simple;
-	bh=w/XZDoPBK/WJVL84VUcz2NTNsXiZHgQcwFyJj+vwmJw=;
+	s=arc-20240116; t=1758626775; c=relaxed/simple;
+	bh=vAGOBaNyo7UBOtDtuQKzE88y7AhGcv1FK06g/C72pIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d3BP8xmXdsplyk5b/KL/HTzkPi+XgY3wg0Ht19SyKvSOcyOWSVAgLmxrYG0rZli31kZhgG6gCSvuRXry79++sqsLQ98YVD3wnDfAHo0WDOLkEIVbHPAm7ym4YG+Dx5Pr4CjUpjW2UMW/dAdNeHIzz/gBljue8yT/KK2UKWvLDgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oBUb3EWD; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=fYptdT9AKbbSQAv3lHw9aPbDhdXQegGgbaVz6G2aIkg7mHMbEtDh+If3LfreHOO/syxIOUEcf5x5wLGGGVGUSVV2AP4DfTFx8gF9MqXXfAUtiVeJFDuP1Z6I82mKpLpjhzjx49M9Ee4jrJ6U/F/dT5Geez/tGiqyyGLvJy23yok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DWRWMGcJ; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oBUb3EWD"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso37187775e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 04:21:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DWRWMGcJ"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3994827f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 04:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758626467; x=1759231267; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758626771; x=1759231571; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mAteOi/paOFIQc5xvzYk2U4H8LEUr7AKXD9kXKLmCWI=;
-        b=oBUb3EWDC/Xa9onmEa4Q0hqw/xaB77SoIVHS/AHD/t6/ABOXDQRXx66m6iFlMKyOrx
-         o/STE/a+ohzetbnJNl947azbWxQP0sAWXuU77LLuRbwFPX55M15f1gzXXcimWjYg7H7T
-         86LPN/yQnUqYRu93WtdM/BDb9xW8uEZsGeo1dlM0mwnKGBOu2sGbLE5Se7IhveCAM5uO
-         wLoYWPJjQofwXZVFjbqm7nssjGWwb7GVTfrWknObeorokajdwevufakyeuNms3Hvp24g
-         J8Ar6z4FvADaZhJR8CmqXOoSuBfuUHj5J1pq9GCBtzRNHxbBOissHoAilFMrS03Zc9VO
-         Junw==
+        bh=0ofwUTrC3ZszDdeYuviFmsB1NEgkEhNxkFdaO7tJEVQ=;
+        b=DWRWMGcJsaAgz2NXqLCWHYsnEhhvzIYGuHDphNOrMSqfa2Ijw3vvCuos2AyaH6oOFZ
+         8/PGdGv+EpiNR2Tjh0MWXaVLwMv2D3eg+Whyj6xPIZR++4TjyQm+1FjCVBdyJIn32HQF
+         oif89Y+tfDqwVddtpzV3Dps9jY6/eepcUhDVXgPcOwvzNWqG7rdWX28T4uJUR2F1mJc8
+         mkBjAti77skXaScbv2Jh2dIZZR0BxcICLhL7WW3ABuOK6FTMatl+J3qgoGD2B9ZsEK0J
+         +nD03Erzjv8LUC2JMFD9an8++nVVH+arunqdEMBXzO5AtR881EhJTp6XGQxV/jOLbpF5
+         fOyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758626467; x=1759231267;
+        d=1e100.net; s=20230601; t=1758626771; x=1759231571;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mAteOi/paOFIQc5xvzYk2U4H8LEUr7AKXD9kXKLmCWI=;
-        b=GLOZkJuEw7FBnEbLD82zXwxCVqd7fW0dYvFdfAxw4P9y2gTvzL0Rf+H/b5hoPlAN5p
-         OIDAPII2bzDDfKJqsmh2kYbr0t+TGBjQXbyxUva68EN9s7YPSN3mvbTCzu19b+Hbf0S5
-         E+7/qQu1P/iVZ7L/6aOZxS4BqG7ZP1xR28X/60+aQa0Wxh0bsOYNrmCKQJoolLezsqfS
-         ELK96Muw3KTvaePnh8PVaiLjTJRrfps2vBQVnCiH3gLQKvN8PP1hqNBhLgmGeONUxXKv
-         0l29b2yMJ+Br6YyHe+UWJc1Yl9TeR43NRZ3TtlMLMG2xxIBT3o35pQc1O2qJ1QhoOSdJ
-         3aJw==
-X-Gm-Message-State: AOJu0YxX0IEkG4m0fAYxyOHxEvvCKn769nUc9X3APXgny95+NjnZ2WGd
-	i+6j6URwOpol9hwoIxEIfwnfqsvECu8cdiFNANZWPfBmS6/y1LiPBfZk2XGyj71vYVVJ1W0wcEH
-	qrq1J
-X-Gm-Gg: ASbGncuU8j/zHNtuNZSItiyCxQk+5tI9uFfr9O4zwwbfe5hNEXr7rSQ9BOOMq0NdKb+
-	PxgAYnQdJ91wkrnKiaMRn5cx+GgTtlvwkinneZclwxUL+J6FKsMokLQMDYNoYvWPy7oD9Ju2Nqd
-	YcwNPZnqXEwKrxUC/mJAThkElZfmLBdm7KFVOapi+BGHFkQbsD+gj9dohHsSm/GwACjd2o/Kw6N
-	GFFsn44TJgz5Utp9M0m20zoge018NiCgWeCBxjJKAbnCKIRTDoLcrxUHCzp5U+zBinSmlhxXw+S
-	gfJApHp2AwtDbKBiCcR5Nwr6ysJc+ipBMcEARY42sdkupxmTx4DfUOVhQCjdbTTs2Tujsu8Mvvu
-	8kdhonIusHdLz69bOpWHrUsJ6cWqE
-X-Google-Smtp-Source: AGHT+IFAV6FQ8Ec7WJCLOFuqPKoPf6jZjuoVsKsiedM28XmPGyPGZAXaa2DVPPXseTg5MzHwVkFeBw==
-X-Received: by 2002:a05:600c:3b26:b0:46e:1e31:8d1d with SMTP id 5b1f17b1804b1-46e1e318de7mr24000935e9.17.1758626466733;
-        Tue, 23 Sep 2025 04:21:06 -0700 (PDT)
+        bh=0ofwUTrC3ZszDdeYuviFmsB1NEgkEhNxkFdaO7tJEVQ=;
+        b=YOisaSW6QYC4M9EzHa0xYB5X0Jcq/z9y2be66zKLkt4JfOgmY4GhpQ9Lab7FHOlWwc
+         fPmOZrjswFyv/CTDgXRnVL/2FO9dW3dcwlQPc6189W0IGdXh0VamrlVMbt0NV0MuXWAA
+         Et3Ft6X5Sq2QSihkDQW0lwdIQ9MHuBIHHQgimv9cvXfVnK91ekHlwMLP8Gp/Q8164haY
+         aze6mf3vqF8aTptoNQZ4wUCJHEEcy+FN9OWX0vfTDk3AUnwdYV6I6uoGpZGD3H6HdyzO
+         El38sIS8oQ4flkMELuncBXoS8DZHKtGF6tATNJaBT2xcxX+VJwnf44J41HnSmYLFUTvr
+         zrnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUr3kHXshDf3FH2hEj+mh+KaokbA9cfXOTAHFy29Z9fs5dfDgb6ybAn2LrmUkhSFMpcI6X9h+01pmEyG5t9bCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhB7jNs5uQg8uczJV+sG4t0W7+muFn7zCWH1rpDW7cnNWaW3/A
+	oej0zcuyV3eqmgbDVvW98OgJeLRuxBxqogqbSABQvUQuTZKSIRMgqM8fGCx+HEk1UNHrgOXAxGF
+	R7v1S
+X-Gm-Gg: ASbGncudNr2Vi7AYyUVUiXL7B4bJBHbIILmdJGWbF06tGO0qA9EWhaPQFuuV1Fkon0k
+	PMiCaDo64oKdZmJvTdfSA4SlE1Vrrf+Dl3wgxY7KNG43SAa1zydCXAHMH1gfRr07ykaNm1MpL02
+	Yt/HskVmlZ062D+cDoXJPBpspcPONDeknTjHl7PXUlNxE9tWZQGKpgtRniEDACdt8Zg2b+hmXBQ
+	mAYHP9fxzXLk46n6r5d8FsSt6R5Gn05TklMWoZo9kWWggHkWP8modD6I+IexA9996gM6FSBpVtp
+	DBWsmqWJiz5Bekzd693YuGdo30MhyLWAK4UUC5WKGjqqI8B4q5GAqStZ4hbkrO0xFmrqwRuoUu/
+	d5/gce3kc64/SpaKClRN9S+hDoWZd
+X-Google-Smtp-Source: AGHT+IHhOwn6gj+iEexXiGCoorzJAw/kGenVZRN6xxRPh7vGWAqPpdg4EL4KLpicEj1CiwOETeW/FQ==
+X-Received: by 2002:a05:6000:1aca:b0:3ec:dd16:fc16 with SMTP id ffacd0b85a97d-405ca39d48bmr1912334f8f.43.1758626771359;
+        Tue, 23 Sep 2025 04:26:11 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e23adce1bsm11252245e9.24.2025.09.23.04.21.05
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-464f64ad1b0sm271511895e9.21.2025.09.23.04.26.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 04:21:06 -0700 (PDT)
-Date: Tue, 23 Sep 2025 14:21:03 +0300
+        Tue, 23 Sep 2025 04:26:10 -0700 (PDT)
+Date: Tue, 23 Sep 2025 14:26:07 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: [bug report] net: pse-pd: Avoid setting max_uA in regulator
- constraints
-Message-ID: <aNKCn90htSbZHVsn@stanley.mountain>
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] ocfs2: fix double free in user_cluster_connect()
+Message-ID: <aNKDz_7JF7aycZ0k@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,57 +75,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello Kory Maincent,
+The user_cluster_disconnect() function frees "conn->cc_private" which is
+"lc" but then the error handling frees "lc" a second time.  Set "lc" to
+NULL on this path to avoid a double free.
 
-Commit 675d0e3cacc3 ("net: pse-pd: Avoid setting max_uA in regulator
-constraints") from Jan 10, 2025 (linux-next), leads to the following
-Smatch static checker warning:
+Fixes: c994c2ebdbbc ("ocfs2: use the new DLM operation callbacks while requesting new lockspace")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/ocfs2/stack_user.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	drivers/net/pse-pd/pse_core.c:810 pse_pi_set_current_limit()
-	warn: AAA no lower bound on 'max_uA' rl='s32min-(-1),1-1920000'
+diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
+index 765105f1ff8a..be0a5758bd40 100644
+--- a/fs/ocfs2/stack_user.c
++++ b/fs/ocfs2/stack_user.c
+@@ -1011,6 +1011,7 @@ static int user_cluster_connect(struct ocfs2_cluster_connection *conn)
+ 			printk(KERN_ERR "ocfs2: Could not determine"
+ 					" locking version\n");
+ 			user_cluster_disconnect(conn);
++			lc = NULL;
+ 			goto out;
+ 		}
+ 		wait_event(lc->oc_wait, (atomic_read(&lc->oc_this_node) > 0));
+-- 
+2.51.0
 
-drivers/net/pse-pd/pse_core.c
-    783 static int pse_pi_set_current_limit(struct regulator_dev *rdev, int min_uA,
-    784                                     int max_uA)
-    785 {
-    786         struct pse_controller_dev *pcdev = rdev_get_drvdata(rdev);
-    787         const struct pse_controller_ops *ops;
-    788         int id, mW, ret;
-    789         s64 tmp_64;
-    790 
-    791         ops = pcdev->ops;
-    792         if (!ops->pi_set_pw_limit || !ops->pi_get_voltage)
-    793                 return -EOPNOTSUPP;
-    794 
-    795         if (max_uA > MAX_PI_CURRENT)
-
-Do we need this?  Shouldn't it be checked in regulator_check_current_limit()
-instead?  max_uA is an int.  Do we need to check for negatives?
-
-    796                 return -ERANGE;
-    797 
-    798         id = rdev_get_id(rdev);
-    799         mutex_lock(&pcdev->lock);
-    800         ret = _pse_pi_get_voltage(rdev);
-    801         if (!ret) {
-    802                 dev_err(pcdev->dev, "Voltage null\n");
-    803                 ret = -ERANGE;
-    804                 goto out;
-    805         }
-    806         if (ret < 0)
-    807                 goto out;
-    808 
-    809         tmp_64 = ret;
---> 810         tmp_64 *= max_uA;
-    811         /* mW = uA * uV / 1000000000 */
-    812         mW = DIV_ROUND_CLOSEST_ULL(tmp_64, 1000000000);
-    813         ret = ops->pi_set_pw_limit(pcdev, id, mW);
-    814 out:
-    815         mutex_unlock(&pcdev->lock);
-    816 
-    817         return ret;
-    818 }
-
-regards,
-dan carpenter
