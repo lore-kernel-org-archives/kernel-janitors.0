@@ -1,103 +1,105 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6648530DEAC
-	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 12:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B9D275B16
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 18:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632226; cv=none; b=W8PZXeGO3f7Qng4Baw2rqyBstr+Ymt/q+DRHjt8jqNcwm4kxEauy8SEwJ1qH/grNizk5hbVR6hkbm9CZskFnhb1SHLXxPplAt+Y6c2yYn9KuQbVXm+VsodzcL/x8WAee1KWwGlmcIZ9aeLKlqIw+OVn0c0+OYab3AmZkJv9kjxs=
+	t=1758653459; cv=none; b=mKG1J4QM+boNF72tzj0wd7/FXeqOwDB8rmQ/zp8ugpIxdpkyMtt53iqJDFFI4lwqrvJ+qRsg6gXmaC+Vn++Zxmwg5o9/1I0EJkLtGziG8jRhPkzpEE1CFCjG5aHHdjbTcfg97CmJ+R7T3M/0ETcBf+1j9Vu5jGJ+uKSr2+G0N9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632226; c=relaxed/simple;
-	bh=8hXvBACNKMC6Vka232dL2J2GqL6YlVwCBPS/uafQIRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iE571Cn5RPMGXjzBGYJ4MkBJAS1EC7TnXT6DNYZyAs/pGh6rnAjzLqar0Mve/yUJKMqauz8Ticl8I2lJ7/5XT64PtwyEVxXPcBLyfuKC+TAPYWz2biLz+ggHC0P4/tfVSxS0sthfHYAN4wmm/uDMwtQ5WtcqcXlEbxKV2qPOJbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AEQXYDzq; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1758653459; c=relaxed/simple;
+	bh=qa2NQh9RJDy9WQ+d31yHCVmbVNa2k7cV21sEiSC75R0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ggqA68Q34Klqow/H/1trnETkEC5lKsbfPup/IJSNShNecKzQQ1b6l8XmGqmLxrjmupVbtWIaTbpqYoVAKDGCybhgYuxAb8D/QWcPf3ZbH9okR/fHMOfDG0mXxY7Osk7Nfw2LcNYvEBhr+jm2SR7+1pVYrsLBa1728z4IEZS9LjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1k67Flz; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AEQXYDzq"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 60BDDC01FB4;
-	Tue, 23 Sep 2025 12:56:43 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7751A60690;
-	Tue, 23 Sep 2025 12:57:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A36E1102F17F8;
-	Tue, 23 Sep 2025 14:56:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758632220; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=997DuB0/qTBFekbRo7Y7ij+xLdO1BjvKAhULVSaVRrg=;
-	b=AEQXYDzqrD+7tFfWgFqzTx4qHfizk6cXjKyd0QYnrvqUx3Lb6X9kNeWow/9TEHoIQJxY+w
-	Fi4/xCEKIf9R8hMcv2HHNA+hYlU4FMWpL658CZJZElNcO8Ril7VcMdEh9u3KgqirrWJfmJ
-	P+fXBRWpoovqfM4pBpCnvxAFe3QOsy9ACV+35l0T1MdOJWVxhj0FdezSoKeKEbx5Xk8efy
-	84CdxbAQKVsYwEqdx4Zsbtk2dHQYz/JYsFouaH/05Sz4u78lVjZCaPVvABjbmGBuPsjow/
-	r/JUXi6hroA9uN4zmwC5NyQMGdbSc4GAtv2kXGq91YIZgdxNZkqqBVexTy7Mgw==
-Date: Tue, 23 Sep 2025 14:56:55 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Subject: Re: [bug report] net: pse-pd: Avoid setting max_uA in regulator
- constraints
-Message-ID: <20250923145655.7ab4ea73@kmaincent-XPS-13-7390>
-In-Reply-To: <aNKCn90htSbZHVsn@stanley.mountain>
-References: <aNKCn90htSbZHVsn@stanley.mountain>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1k67Flz"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so2531603f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 11:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758653456; x=1759258256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EizzNWoZUikDV1FxG67Kon1XSkcUmIn52o7zV6bqtSg=;
+        b=h1k67Flz3qUI2TV5NVFwLPnp7skd6mANpk3RMlWkk4kqfMyuEi3MqqKr78hB9ctPap
+         V6E6cJ64lvO+fZJXXcoXN1+xCG6ncst0XCNG4sVkbrC19TNlhUo3knLAu8wV9OhF48gJ
+         aHgIOMtRMeoiMoEoSy7e5mkYgLvUbQAWy4OkDbT7bs3/L1Xn1tf893J0J68OIUudCL9S
+         wLW6yQxB+RWisbHc/Inv75sApkoPPXiFyLnZ/WghICR62UmWIkhbFhhkuANt10KX2WkI
+         9VFWFUGPFLvttj76MOotHFb5wn3giXVBbYC83herd+RppgVTOKJlJuWtbaulUkRO2kz7
+         Kt2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758653456; x=1759258256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EizzNWoZUikDV1FxG67Kon1XSkcUmIn52o7zV6bqtSg=;
+        b=d3R2euALG5uyfrg2eQCf7lrcjEnmiruu8DgCeIDwlKx9Lo0bE9d9kMUFVzeL8LVcsP
+         YL6pxA3G5/zAzKpU/esZcfwW5bk6Y5dVc4GmshqscF/8MGzHvik1XTFwrjyvJOcVjyT7
+         gmMorbllbn8oI7D7m38oFegErWaYlKlutoPZWEKvyoYE79T+fZWvWfgIn3jqe0GrPeHn
+         PPFopM70/3tljDyXMhnhz6bnpIiCSimcmvjHD5MA3eMet1TkOUbv7/zr6tepLzWxkhBD
+         B3K2vP//lYCT3MInaDaVwt+yNdmmjGf3OFpM3p84r5edYDmwoB5D5SvI8saf2/xSwDEe
+         g+QA==
+X-Gm-Message-State: AOJu0YxWgnyAAb8brPTYG1lQxxv+avMysjfQMjJQeDC9qnMqy8DYZPjW
+	FhnI21uGTvlunrZIImzvrw4DuWnYiVAVoMgizkN847Qa3LY/9W8cJkAx
+X-Gm-Gg: ASbGncsMo+D3PdnCAtrRn+GEQCWOSVFMhI2yYR3qCRjfJ8WTfmdhkmwfqTfuOfoE+ib
+	ypmqLLGibZ983YUh2BFX0a8Q+hWiR8vgbNxLog5UFOB6CFG2TuE+gODcZi8AvktkjouuoPXPuD/
+	gfs6zXScZ+sXrgseSneVNIH76u4kjM45EkuYnyscga10xp+YvYtIWfFI8Aygfj1qUk4TjcQheFE
+	Obd7j56aCOWRh4MwQLKZ9gmqi3hxJ61SXjiZGKO7kH8J2i506XohNAyD9S3LRzM6XwickKGsdDA
+	AFPvPD3je1q1+B78s970QLArgCuXU2B893Xm+0ljoFjzmui/jj4cuxEquNdzZndL/pIF/DLUS3m
+	rJpLBsDcc6x3qcRLFDKJ2kg==
+X-Google-Smtp-Source: AGHT+IE2Au0RbnAAqqWNX3SWN53Mr2OlHht3ylbNddwR+2vdZFFql/xTJVTdhHclfhtpTGY9FAw7Jg==
+X-Received: by 2002:a05:6000:615:b0:3d8:3eca:a978 with SMTP id ffacd0b85a97d-405c59e17c0mr2834428f8f.21.1758653455458;
+        Tue, 23 Sep 2025 11:50:55 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e24835b32sm22658075e9.13.2025.09.23.11.50.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 11:50:54 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Niranjan H Y <niranjan.hy@ti.com>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoc: tas2783A: Fix spelling mistake "Perifpheral" -> "Peripheral"
+Date: Tue, 23 Sep 2025 19:50:06 +0100
+Message-ID: <20250923185006.213861-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Sep 2025 14:21:03 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+There is a spelling mistake in a dev_dbg debug message. Fix it.
 
-> Hello Kory Maincent,
->=20
-> Commit 675d0e3cacc3 ("net: pse-pd: Avoid setting max_uA in regulator
-> constraints") from Jan 10, 2025 (linux-next), leads to the following
-> Smatch static checker warning:
->=20
-> 	drivers/net/pse-pd/pse_core.c:810 pse_pi_set_current_limit()
-> 	warn: AAA no lower bound on 'max_uA' rl=3D's32min-(-1),1-1920000'
->
-> drivers/net/pse-pd/pse_core.c
->     783 static int pse_pi_set_current_limit(struct regulator_dev *rdev, i=
-nt
-> min_uA, 784                                     int max_uA)
->     785 {
->     786         struct pse_controller_dev *pcdev =3D rdev_get_drvdata(rde=
-v);
->     787         const struct pse_controller_ops *ops;
->     788         int id, mW, ret;
->     789         s64 tmp_64;
->     790=20
->     791         ops =3D pcdev->ops;
->     792         if (!ops->pi_set_pw_limit || !ops->pi_get_voltage)
->     793                 return -EOPNOTSUPP;
->     794=20
->     795         if (max_uA > MAX_PI_CURRENT)
->=20
-> Do we need this?  Shouldn't it be checked in regulator_check_current_limi=
-t()
-> instead?  max_uA is an int.  Do we need to check for negatives?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/tas2783-sdw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No we can't use max_uA in the regulator constraints as I wrote it in the co=
-mmit
-message:
-"Setting the max_uA constraint in the regulator API imposes a current
-limit during the regulator registration process. This behavior conflicts
-with preserving the maximum PI power budget configuration across reboots."
+diff --git a/sound/soc/codecs/tas2783-sdw.c b/sound/soc/codecs/tas2783-sdw.c
+index 3e03e68932f6..3a869a101844 100644
+--- a/sound/soc/codecs/tas2783-sdw.c
++++ b/sound/soc/codecs/tas2783-sdw.c
+@@ -1229,7 +1229,7 @@ static s32 tas_update_status(struct sdw_slave *slave,
+ 	struct tas2783_prv *tas_dev = dev_get_drvdata(&slave->dev);
+ 	struct device *dev = &slave->dev;
+ 
+-	dev_dbg(dev, "Perifpheral status = %s",
++	dev_dbg(dev, "Peripheral status = %s",
+ 		status == SDW_SLAVE_UNATTACHED ? "unattached" :
+ 		 status == SDW_SLAVE_ATTACHED ? "attached" : "alert");
+ 
+-- 
+2.51.0
 
-Maybe we need to add a negative check to remove this smatch warning.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
