@@ -1,127 +1,103 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B276C27F011
-	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 12:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6648530DEAC
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Sep 2025 12:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758631956; cv=none; b=EqhZ+bw2fPYgpLglb/cCp9BWfGke8kULmiKdD8zKIFixbeanapjQ/NRXP4Qs7GC8e3RKZs8MeCcuDelvJqX9SP976S+e8/Gwhx1++AhtIp6h0dbh07+uL2inHizLyCERUVkTKGRce1gd/X8CiOiXZkgkw8U1otCx5bx2wYG8ZJE=
+	t=1758632226; cv=none; b=W8PZXeGO3f7Qng4Baw2rqyBstr+Ymt/q+DRHjt8jqNcwm4kxEauy8SEwJ1qH/grNizk5hbVR6hkbm9CZskFnhb1SHLXxPplAt+Y6c2yYn9KuQbVXm+VsodzcL/x8WAee1KWwGlmcIZ9aeLKlqIw+OVn0c0+OYab3AmZkJv9kjxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758631956; c=relaxed/simple;
-	bh=sjd61e03hu245OMhoz0cjX9Ejw3BzIg9ilctwtQrfnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlcYuuaG43y/LNBOI1rrriY04flqqDIAc0IV4tFROto/Nn8RVPewgbxzape3uCJgaX/WjVBkzW6ODqhNxMqeLh5xb4u8BUXa3lc0YuHcSS+WjYDOW3Neqyl/SbqkZWrmVLIQKuqIvUZUziMOS8YnvqlOYdSbVwtnxZbL4jyflBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lNPt1ECH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Q44sAhcI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kp/YHQba; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7hkXYKuT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1758632226; c=relaxed/simple;
+	bh=8hXvBACNKMC6Vka232dL2J2GqL6YlVwCBPS/uafQIRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iE571Cn5RPMGXjzBGYJ4MkBJAS1EC7TnXT6DNYZyAs/pGh6rnAjzLqar0Mve/yUJKMqauz8Ticl8I2lJ7/5XT64PtwyEVxXPcBLyfuKC+TAPYWz2biLz+ggHC0P4/tfVSxS0sthfHYAN4wmm/uDMwtQ5WtcqcXlEbxKV2qPOJbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AEQXYDzq; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lNPt1ECH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Q44sAhcI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kp/YHQba";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7hkXYKuT"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DEBF421E41;
-	Tue, 23 Sep 2025 12:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758631952; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fh9T3run12o4CnoDgqW2h2il/sJVahqTey2FZapn6XQ=;
-	b=lNPt1ECHFcOuMueorji+i3QPLW6E6ExiWtc89lNkez2aWJ99W070j+ZQtdLexqSCKVZsEv
-	CwEsihG9x4/Av9eDDTtTneMsm2f58h697b7l0en58nX+9knOdKKs6k3rlBjfEGDFw8en6q
-	c1le8VzLB/D6FNKDlpVeHKhy4FhwQkk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758631952;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fh9T3run12o4CnoDgqW2h2il/sJVahqTey2FZapn6XQ=;
-	b=Q44sAhcIkBhSQMGQ9MyELgJQAWJHmWTHIP3UgPfrbXHYSuutEm0LqcA5xRGmqfGwvv0occ
-	eALj6w3hNBU/6oDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758631951; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fh9T3run12o4CnoDgqW2h2il/sJVahqTey2FZapn6XQ=;
-	b=kp/YHQbaowVgJmfa8jOOXAOm6PEG0VJgTcAYTfKJmwDv2UsGmXASj+CYpOAmNHGdR2/Edd
-	ku1BeoIuN8KKBG03NaFqtk188PgoKVkA7IjLl7krHwqNvxktw2p9ZxgpeFPX2/1KY8loAY
-	HKnM2V2JlEDO71x+pMFBGUS0w4DpK8Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758631951;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fh9T3run12o4CnoDgqW2h2il/sJVahqTey2FZapn6XQ=;
-	b=7hkXYKuTCEzp023kWbutyP8N5+KDfx4MX3e4FVmkrlvJEEPdDpeuXUnO7k+FVYtYNL0H5c
-	yW7H5g/NmHI4uZBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A1AF2132C9;
-	Tue, 23 Sep 2025 12:52:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id STzpIA+Y0mh2IAAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Tue, 23 Sep 2025 12:52:31 +0000
-Date: Tue, 23 Sep 2025 08:52:25 -0400
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AEQXYDzq"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 60BDDC01FB4;
+	Tue, 23 Sep 2025 12:56:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7751A60690;
+	Tue, 23 Sep 2025 12:57:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A36E1102F17F8;
+	Tue, 23 Sep 2025 14:56:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758632220; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=997DuB0/qTBFekbRo7Y7ij+xLdO1BjvKAhULVSaVRrg=;
+	b=AEQXYDzqrD+7tFfWgFqzTx4qHfizk6cXjKyd0QYnrvqUx3Lb6X9kNeWow/9TEHoIQJxY+w
+	Fi4/xCEKIf9R8hMcv2HHNA+hYlU4FMWpL658CZJZElNcO8Ril7VcMdEh9u3KgqirrWJfmJ
+	P+fXBRWpoovqfM4pBpCnvxAFe3QOsy9ACV+35l0T1MdOJWVxhj0FdezSoKeKEbx5Xk8efy
+	84CdxbAQKVsYwEqdx4Zsbtk2dHQYz/JYsFouaH/05Sz4u78lVjZCaPVvABjbmGBuPsjow/
+	r/JUXi6hroA9uN4zmwC5NyQMGdbSc4GAtv2kXGq91YIZgdxNZkqqBVexTy7Mgw==
+Date: Tue, 23 Sep 2025 14:56:55 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ocfs2: fix double free in user_cluster_connect()
-Message-ID: <okxwk7vmbvfxiypz2uvigrlupr3qbiqenzhih2dehjd3hu4mxd@qtqa6oikikrr>
-References: <aNKDz_7JF7aycZ0k@stanley.mountain>
+Cc: kernel-janitors@vger.kernel.org
+Subject: Re: [bug report] net: pse-pd: Avoid setting max_uA in regulator
+ constraints
+Message-ID: <20250923145655.7ab4ea73@kmaincent-XPS-13-7390>
+In-Reply-To: <aNKCn90htSbZHVsn@stanley.mountain>
+References: <aNKCn90htSbZHVsn@stanley.mountain>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNKDz_7JF7aycZ0k@stanley.mountain>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.98%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 14:26 23/09, Dan Carpenter wrote:
-> The user_cluster_disconnect() function frees "conn->cc_private" which is
-> "lc" but then the error handling frees "lc" a second time.  Set "lc" to
-> NULL on this path to avoid a double free.
-> 
-> Fixes: c994c2ebdbbc ("ocfs2: use the new DLM operation callbacks while requesting new lockspace")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Tue, 23 Sep 2025 14:21:03 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Looks good. Thanks!
+> Hello Kory Maincent,
+>=20
+> Commit 675d0e3cacc3 ("net: pse-pd: Avoid setting max_uA in regulator
+> constraints") from Jan 10, 2025 (linux-next), leads to the following
+> Smatch static checker warning:
+>=20
+> 	drivers/net/pse-pd/pse_core.c:810 pse_pi_set_current_limit()
+> 	warn: AAA no lower bound on 'max_uA' rl=3D's32min-(-1),1-1920000'
+>
+> drivers/net/pse-pd/pse_core.c
+>     783 static int pse_pi_set_current_limit(struct regulator_dev *rdev, i=
+nt
+> min_uA, 784                                     int max_uA)
+>     785 {
+>     786         struct pse_controller_dev *pcdev =3D rdev_get_drvdata(rde=
+v);
+>     787         const struct pse_controller_ops *ops;
+>     788         int id, mW, ret;
+>     789         s64 tmp_64;
+>     790=20
+>     791         ops =3D pcdev->ops;
+>     792         if (!ops->pi_set_pw_limit || !ops->pi_get_voltage)
+>     793                 return -EOPNOTSUPP;
+>     794=20
+>     795         if (max_uA > MAX_PI_CURRENT)
+>=20
+> Do we need this?  Shouldn't it be checked in regulator_check_current_limi=
+t()
+> instead?  max_uA is an int.  Do we need to check for negatives?
 
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.de>
+No we can't use max_uA in the regulator constraints as I wrote it in the co=
+mmit
+message:
+"Setting the max_uA constraint in the regulator API imposes a current
+limit during the regulator registration process. This behavior conflicts
+with preserving the maximum PI power budget configuration across reboots."
 
--- 
-Goldwyn
+Maybe we need to add a negative check to remove this smatch warning.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
