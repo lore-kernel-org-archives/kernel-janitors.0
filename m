@@ -1,75 +1,72 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2A42DE6E6
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 10:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0F62DEA7E
+	for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 10:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758709385; cv=none; b=tHVaXTWLyMtjhQivFDmZrcnH6KHdf/9wtPPfXY8yLSAnvhoG5dEQXK0rtAlC6IqcgvSmeqk8nWaKC5CKTKGEjaPwJIW0CICDnygrFn1bDEG4OU8wChr+JVlgKa3JCx/9nMEfaUBCTBXoO7uKsN5V4icdiG1niAA4NZfNrzt3zvc=
+	t=1758710069; cv=none; b=ZjfxCvmbGX2MbjT2zVFihe1nTDuDWjhIKDMyG45nemgx8KegfM4RzpowB18IYf+1ejdgOeA4jFtXElrspVMH5kAilLDwCbCgIzG/shWqka9b07x6P+Jx5arOiiibtmALdHG3fl3uYNUPoG8utzVliL6MgNnUUdqUX8HCx6VSnh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758709385; c=relaxed/simple;
-	bh=70m8hIHxbgOeHMiX7Op2kXSoJJya+09jCQ+CrFquVZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uqCT8ji3eqO3jCzetp4bYmeQ7itTzz1f+VhJNKJwZxajobRzXcszr7C1CNF6o4MJPgZofB8mj5iP2QchFMNcw29rBkXJcydjhLQkqlZ/sp3Ii2tLc93uRxvwGdPCJgbktEqpDV/8fUAuC1oe+tnH/NofPmOKWo6mfibyx+PWI5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvdHD7ii; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1758710069; c=relaxed/simple;
+	bh=iCZecmGO+STxbUbkpqNdKtXsZ7KCXVwG0poykSFvFX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fCu4NHT4Py4DEldvieVPuxIr79ZhuphqyKLrsLLtJcNLgrWWIpomMQ1eeAq2GX0yq6SaStrRUhXBzfLWFoMBWpPTSARZiiFLnjIASpBHLBgBkcOR9VnvsLTzKAx7jceaGGpDjz7LBUUC9U0FzAGS+E7q+CO4vkkdLGL6DrpSU9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LIfdVrrF; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvdHD7ii"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e2562e8cbso10198075e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 03:23:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIfdVrrF"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ef166e625aso3798748f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 03:34:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758709379; x=1759314179; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758710063; x=1759314863; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2SZhlVPPd52n7ONt3JZoUJyYMwjtJvsP+AyT6HZcYJQ=;
-        b=PvdHD7iiom+tbN5R71tFRPm6867+xfycSFIQvMU+rQJDnpGwKk/qIaGTEEBTFmDrnP
-         NRz0t1IGZRMcVkteykENOWj3u2GCNFnzscORO8lCbJYn0MvdGR23OhmddtyJ/yAqqerX
-         D8K0GAowA9q3MfwiZX4BzhHT6qFJM/weg9jpAKXzd2cDEaChyutJ6VlJo+uzEHXnT792
-         7UtWLXk+FbmGdFpATlAQyI53a3GGxPyFQ+Rz13ZvGYxjbxlK41ScNadHxabKB5jigzPA
-         Zy5slThkOoFxaeo2UXVut+I/hUiE47XiAkHuc7eBTbJzuwioVvQIlRIJA5lyrsv1bHFT
-         1QXw==
+        bh=8Dyqsmjj5lpyVJoV+oaHjMaHdvJL32WXjX0ymuQZAuU=;
+        b=LIfdVrrFyzETP/wQuwKKYXe6P8Te4IltzXFRAtw8obSsuQfebLnLSTaQaLJ+IqkWku
+         XFF0zmpYghGY9VJdb7x3AnTERiE3eY9K6m4FxP6M/2niMm5s3+aW+wxQtqcH2iRUHqIT
+         TXnpyspReaZrPf+qZ8I1a+bHVtwYnCwVnwne2pF78iRd4GqvB9AW+0U+X4t1Aur+LtOD
+         Gk6KTcdKFQOFsttqZDuAqfZEvD1wRl1EjnTxK4zoJoDSfNuUk70tSvRXIomcMxHsZWHv
+         o3zvRe6AKrXx+wza5OG6Nc/0M8Kz4DE39LM856FraXNKL47ltHCoRWwEUkgneBwYaS2h
+         ljuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758709379; x=1759314179;
+        d=1e100.net; s=20230601; t=1758710063; x=1759314863;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2SZhlVPPd52n7ONt3JZoUJyYMwjtJvsP+AyT6HZcYJQ=;
-        b=NdsE67JvNfRFqlNgdHX879yZ+kSX0K88X/v8TGDqmJWbeSUe5HToT0hnlhXBlknmer
-         KQ+2KiaHKaQBn3Y8LFZek/aNVnKbFey/NNZPkmpBcI9Dgl/gT10p+fncw8iHC1hU0qA/
-         i+IwWBSDPtPQPamnFqKVzRA5A2fJ1Rw5F0xqNJDvizjU3+L2m0L8296LOOldWdFJPjz9
-         0rcDnN4vVN9G9FA5b3BZqus9bK18TFcLKjX3uJ4aV+NvnFO8pubmwjdiec9lEo67T0xo
-         OEb5I+Lgklo0aHpfIQr1NgEEc9IpkMEumJFkPls773rEswvEAK7zIdju/EHwktdE3dzF
-         jtAA==
-X-Gm-Message-State: AOJu0Yzg9/pWkxiA+E7rmWwHtpJH7d6nBQvDSR0cIM0RWYH0jPagH7x8
-	vs5kZZGl19esxQrsTKnEfqepvDyiT+a98e1tp2y2WHs0lTKZLAhPpXhU
-X-Gm-Gg: ASbGncsEKNR9zYKVsrgPjbH33/BFElZw06CF7/2bL/TbaDzDfj6pmEpt57M80DmEY/8
-	vI1eLgQDupiMs4/Yr4784HLX6gZPulQSFWAT0C44b2iUMalMeXZpUVzJYlbmatQ+R1QFQioPDAQ
-	kjB0DC+7dXPVwPhXtwOvwiGmKuFCLNE2R7esB+AXjSZY9A2ePjXw7oKA65CmiucYJJQQfDQNRZz
-	4Okw6iNCqG5MSxpSF4o9iVWVAYzswI83WCp7WfN7IgBU9fKjlzxVWKqFgJ+wjLAryGaxBq9FPmU
-	jPifHw2brJkU/pmLkKe1l8NwViSOvd/i0HzwiZgCDZjiYXSfrqYxwsVAiv6WLnMAd+eSYYDsSxG
-	olorJ7/OZ4r5kJkdixaTJ43ffoqgma3/Y
-X-Google-Smtp-Source: AGHT+IEaxHf/2iRwwqfoIfQ+Znhm/drcILF6bGn2vT3pOma/+G7W3dJJfRF76aIPViePMXlaIdlZhw==
-X-Received: by 2002:a05:600c:1d0d:b0:46d:fd71:f69 with SMTP id 5b1f17b1804b1-46e1d988de8mr46724395e9.14.1758709378513;
-        Wed, 24 Sep 2025 03:22:58 -0700 (PDT)
+        bh=8Dyqsmjj5lpyVJoV+oaHjMaHdvJL32WXjX0ymuQZAuU=;
+        b=D1d3ntqfKefUNAFs9ujW5HNvdKxNeVVrd33ZGIq7bToYZRqxjv/wXNFZ+zpClWzxI3
+         t4JP/BPSp3xJBW+VjgyDj7CqVz9NHIgMtStsXTnJACB+w7KAx8d9H0eCJKxB/22NKvUA
+         BLImUdbWMDaZzkFBC4O7hbK1nbqKpXCc4PnZs3nqfwIXZQ3hjV3W5XJl40wwUYg/qMM5
+         np4wW33a0k8RwbpQd9zcmpUx4v/YrXeFR/M44IQabkdhyKLf9P/6axAqOlm+cQUciFKp
+         DoudQdwrZaV/xutE17al2/tL102fUnUyZaQHd43iGW1vvfrGSJdbDe8GJABZu9LF2rc3
+         iGpA==
+X-Gm-Message-State: AOJu0Yw8AZyMGhI/Ky56hAhc0NlzQ8570DCNG67eInES1dbRFVMjsrwl
+	qRm2alMMO8n5i+tUyrDpvhlITvr/fT2vrk09hBWXKO+fDokzmluDzJVh
+X-Gm-Gg: ASbGnct2RMqhUNY51ZfWah7eX0Q6I8HkZC2c8M/vSU4SasLqGP7PtoycQTlhku3uVsq
+	JPdRwdm1CTg8KvwpCOFttpBJQkeNujnDuIzzcuL6hYpN8piTVunL1rH2WHEx0Vdd5RLtG+oGCyZ
+	FGi8i5lQhq2yiunjmsjjZC/+vrAO2m3jK+DEmLQ5RIvd9HZfcLv+e3CWRVZI5L6ryvck3vqRgCn
+	Q8/+yAq0acYyMLtBAGL8nkg5GODsadXzSBm+/ZJw+8XEsuKFeA6rsVLWl3GxRnB86TtbUyFQtE0
+	zT9I9t2/e91nGHp6YraRDp3Oc8ZU9jhSLX9vvFoju3ILN8K2gx+pcVwbOZXlYdPLIumzWyJhznw
+	N/wqb/kNAs28pjN+F0d7xGA==
+X-Google-Smtp-Source: AGHT+IEA4Y4Oswnv4lzMacht4nwo2IDihzUjlV2YSxZ6/wz2OAJZ/oXm6ngVsSDWYTRVwUEndg4jVg==
+X-Received: by 2002:a05:6000:1a89:b0:3fe:efa8:7f17 with SMTP id ffacd0b85a97d-405cba9c47amr4576595f8f.61.1758710062608;
+        Wed, 24 Sep 2025 03:34:22 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e2a9b6e1bsm29341975e9.10.2025.09.24.03.22.56
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee1227cc37sm25825584f8f.7.2025.09.24.03.34.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 03:22:56 -0700 (PDT)
+        Wed, 24 Sep 2025 03:34:22 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Badal Nilawar <badal.nilawar@intel.com>,
-	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+	linux-sound@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] drm/xe/xe_late_bind_fw: Fix missing initialization of variable offset
-Date: Wed, 24 Sep 2025 11:22:08 +0100
-Message-ID: <20250924102208.9216-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ASoC: codecs: wcd: Fix a less than zero check on an u32 array element
+Date: Wed, 24 Sep 2025 11:33:34 +0100
+Message-ID: <20250924103334.9832-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -80,44 +77,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable offset is not being initialized, and it is only set inside
-a for-loop if entry->name is the same as manifest_entry. In the case
-where it is not initialized a non-zero check on offset is potentialy checking
-a bogus uninitalized value. Fix this by initializing offset to zero.
+Currently the error check from the call to wcd_get_micbias_val is always
+false because an u32 unsigned int in common->micb_vout[i] is being used to
+to perform the less than zero error check. Fix this by using the int
+variable ret to perform the check.
 
-Fixes: efa29317a553 ("drm/xe/xe_late_bind_fw: Extract and print version info")
+Fixes: 4f16b6351bbf ("ASoC: codecs: wcd: add common helper for wcd codecs")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
+ sound/soc/codecs/wcd-common.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-V2: Fix identical issue in parse_lb_layout that I ommitted in the first
-patch
-
----
- drivers/gpu/drm/xe/xe_late_bind_fw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c b/drivers/gpu/drm/xe/xe_late_bind_fw.c
-index 38f3feb2aecd..8f5082e689dc 100644
---- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
-+++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
-@@ -60,7 +60,7 @@ static int parse_cpd_header(struct xe_late_bind_fw *lb_fw,
- 	const struct gsc_manifest_header *manifest;
- 	const struct gsc_cpd_entry *entry;
- 	size_t min_size = sizeof(*header);
--	u32 offset;
-+	u32 offset = 0;
+diff --git a/sound/soc/codecs/wcd-common.c b/sound/soc/codecs/wcd-common.c
+index 9bbfda828377..9fd3965ed540 100644
+--- a/sound/soc/codecs/wcd-common.c
++++ b/sound/soc/codecs/wcd-common.c
+@@ -65,9 +65,12 @@ int wcd_dt_parse_micbias_info(struct wcd_common *common)
  	int i;
  
- 	/* manifest_entry is mandatory */
-@@ -116,7 +116,7 @@ static int parse_lb_layout(struct xe_late_bind_fw *lb_fw,
- 	const struct csc_fpt_header *header = data;
- 	const struct csc_fpt_entry *entry;
- 	size_t min_size = sizeof(*header);
--	u32 offset;
-+	u32 offset = 0;
- 	int i;
+ 	for (i = 0; i < common->max_bias; i++) {
+-		common->micb_vout[i] = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
+-		if (common->micb_vout[i] < 0)
++		int ret;
++
++		ret = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
++		if (ret < 0)
+ 			return -EINVAL;
++		common->micb_vout[i] = ret;
+ 	}
  
- 	/* fpt_entry is mandatory */
+ 	return 0;
 -- 
 2.51.0
 
