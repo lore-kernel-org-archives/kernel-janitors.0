@@ -1,151 +1,156 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010028.outbound.protection.outlook.com [52.101.201.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7B12DF6FF
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 10:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758710287; cv=none; b=jUXq2o9ZiJfTvk/NOGJB6alEGe9Fo2bXXLsIYbBmm5fVyOC87aqrMlfgyzPRIOg2fPRkoW6CVKLVwD6n3J/ZThgEp5fgIEYcbH/kgKI9YUoIK44e0Vhf7CkdeTXUHKZ1/LDckfuwqx0wURcEpMn7VFr0YeJ8UViOGFDRcW20Pdw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758710287; c=relaxed/simple;
-	bh=Toar0gvp2qJ43aKc+/cW7q0AzANqcXizpPzrPHWXH30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ObGQpNupuzk8tyPEI4R5xUCUC1VjxV5G0CFsnxoHl4PT6c+nY9eJAq2h9dJTjFaXLn7mNtIPNlWKXRTJ9WRYvYNblyiF6wFebMp2w3Pf5usnkx0vJ6ctjq9cpxdkcD/25nASlWcRoVqtvcHNlS+M/wV0NWGOFnHJ105zWMyeN+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KCpFnMCC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C511F303A1E;
+	Wed, 24 Sep 2025 13:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758722191; cv=fail; b=s8AyDoe46dMUWwFr6H9/S4q3mT9skYWya6tvgd+LfG0OU/LygyDRoHZNa1SNn69J5ysREW9WZA94gS3n1aNbz6kiMkePKmOQ/fz4N9pqpdfwsSqRe5Gb+nR02EAcesaZ148KAKQl4kORQAt5k0OfuuwBXZCpVFtmJ/JIiUgJm3g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758722191; c=relaxed/simple;
+	bh=9MPqyE6rwunziAVhzfMnJF+bIMFNG2mPi6F7FNINv9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XCUfdf8yS56evYE4THpqSxW012nZuTDChF59TeslAG194fJ7HdG3uwQF7xssYzpu0EBAfxVkVDk8VF2feZdDx20zpvGwxqWUl1XoCqXnQIPK7WSgtzpM8nwmmVjbTNPexRWZPyekxgoCLSAl/2PiWYN+Sm3CZIfQYTOtn0o1yt0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TdoRMKhi; arc=fail smtp.client-ip=52.101.201.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KCpFnMCC"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O4iJDN025120
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 10:38:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	I9MQAHNRQTDWklM4yOpEwiFV6eCi+r3BJBm1CRNI/Qk=; b=KCpFnMCChEFc3DP8
-	vbHTSH3gLdgpSwVZ5pTgOA7OY9nU10qZuuJJIn8InaFyesIL5rerjjLWWsQAspum
-	ddlvTldnB+CCiUgVcjG2qkF+K0LOgN9qD+ujEhzzB1bdtnH09dAuqXk1gDto/mKV
-	XkHYSf3w2WMM224E2gxYiwGLDFLroUoG97Q9K4GgWoQr2TnEIpko25mS8L8KrwBf
-	0PHd81Rog3BavLMiplfQQqXBI0i32JwA9eAYzPm9ntIg2BJHfT1pcNCSvVwDR3JN
-	7C+zO0sxiqGr/hxNIUHM79q8LUIZQ8nf17eRdiK5f5I1roMM4QzuIJWqpGfdkyCe
-	R8qVTg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kv13yux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 10:38:00 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d38dbc0e29so39873261cf.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 03:38:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758710280; x=1759315080;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9MQAHNRQTDWklM4yOpEwiFV6eCi+r3BJBm1CRNI/Qk=;
-        b=d/hpsEWzLBV2CuWlw0Mqyr8DdqFO1+B+R6X/dVrm/ad6TTfOzRBfWVPRY9LRzMIUJt
-         HJnbBNQXdFFG/wBAzqmkpsqpc0CCW+n6tBAbma76q5CMIvoAQdtQviYeOk93ISDYcmHf
-         6+y+dR/+ETqs25HN9yP4rutGfPkEK99J8zFOvFCRS8NAMc2kcvRytt/9o2aT4MUSqav0
-         nlO6lWY2BilNTcZVZtM1QMkxA5Kbrzjo7ZH+jrSDZGs3Fmcz1miYpcLToJSkTD6QPn72
-         qHO/WbQA5R4Y/1vI2GAqRJbm961lLdl824dtiyte6SxK6Rsw2plq6aEsk2Hpgq9juUTF
-         yrtg==
-X-Gm-Message-State: AOJu0YyDO03DCCgSHXHUSUrhD0RUy80Xg4aQkbyasaAC0EB5eXC5Grxc
-	5AWF5q7k468syW1SusFwEoZgeuvOVkX9GGUmeOz/t7D2ScWM9AietODnQv6ijrPhhoa0unVlFaV
-	z7QyUZArvTAaDqvB9/TcVnnzBlm+DvCryWrd4NugLwuIzxSp9p4CERpNzsQhlMnhaNPcr4T8un2
-	/eymQ=
-X-Gm-Gg: ASbGncsyQxG40LS7OqdwKS6+oCWR5JUwDMgdtFgR0Bqe+N/ksB8lcDpL6WWEvWg22el
-	kgnNOOJZaZ+VdQWR62R1cU55EJ9jI5Ibc97JE51KfHPUEay0A8pK7Xl99Adxd2MOsjPofpH6je1
-	8wshtgvXrNl3FwMFHyA4xmffSOrtm5RoMd9RgW4hCXw26XP8j5bRkE29WbQaBfN9Rd77GEO3Wr7
-	uQfB1twEYXPI+7YouCl3yqy9h5MgoqfECYGJJwzmduQPRukJXplUzBJSwQkcBC8ra7c81xI66oB
-	mXJCamyyfeeNZZWQIpyg8e/x4KqWo/beo1Ojbo11rvsG8Kpq62p5JZiYAK+FpGkCN9c=
-X-Received: by 2002:ac8:5815:0:b0:4cf:fc38:7ff5 with SMTP id d75a77b69052e-4d370d5e68fmr55024811cf.68.1758710279873;
-        Wed, 24 Sep 2025 03:37:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDRyLWKTabJ5qvoph/CIwo2q5r7HvHCVkrkTq6bzN60xam0HeMzsPtDkfzIFyr4t9WVi8Jkw==
-X-Received: by 2002:ac8:5815:0:b0:4cf:fc38:7ff5 with SMTP id d75a77b69052e-4d370d5e68fmr55024641cf.68.1758710279425;
-        Wed, 24 Sep 2025 03:37:59 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3ee0fbf1d35sm29649231f8f.55.2025.09.24.03.37.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 03:37:59 -0700 (PDT)
-Message-ID: <4ec6bf87-f6c8-4080-98c2-e81425c44e4a@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 11:37:58 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TdoRMKhi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hj/6sgGX0JtEg4NLrl6265awWfI2RrpOyH2T9lHN33AD3483d8ZojK7JbSvvNI6wTuJA8Gu/fia5Ilx+APmMlBjg52cKM+IBnj8Ls95Qk7ah6kJg1TFxtTV3u6ow6BgzXnMfZAM7dlOpe4rcE37T4k7QAL1IvCZ6+5iIntKC94HxtTLdlB7zE98h0mtdAxpw1FO7e71Ij7b5KvBCrad7TtLr7khxD5yY/9khMMa4cDU+6+I+Pshyta8tTeeTXTgUW17dbBrdivv7K0USPRGPVCCgK4ikP1hOZLGXvCmK/1F8tIq0VTgkDOsesB8gReaVdyceLqQxzfMndbu6hNV+dQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rFRrSFj4oltXMoN8xd5nWwXwqAMoeQd2Gp7DZ1iN7/g=;
+ b=Blu0q7FKxKDNS61F2I2godaluN1ChfhVMcP8BNIycFGcUiYTbQI1t7X+1Kg1s7OXwBKW/gGEJkLN/lK9r+MbS0GI3l7yqikDE+W7tVNydKq2LnPZ7TSYrRof9pIuMvFlQsRIISdbKkEQ0qULaGbCsRtVWFRqnDXXeq7D1zPgVhmzu/MBWvCCC6Wo/aUkbrfNa0TIWL1VYdOwmxQ4jGqM807LrOZKJZdS2ah/bZ5/gDxuaHKb0pAkWhR4vmyWT4zY2Ard4Ey9874zTI1Mh95X4VYRGcm89D4oiqRqf5AEHnqXcQJbpu/o26BlXNfBUb6dmnBaCj496QysESGbI2NrxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rFRrSFj4oltXMoN8xd5nWwXwqAMoeQd2Gp7DZ1iN7/g=;
+ b=TdoRMKhi1N7zETw3AiKnsXUO2EJem7puZ/+RI+ZD1UtQchSYghtf/UetujCCigK4iOGPcRExBFs1wLfjmsjiGfFGbX94IU8gD/iUu+9hZVA7j0TZJJVpmv51AbKWA4ED+acTbKdIAadPUg+eCWjx2aqb7ulau17CkIR3GGc9nrLPIKFhNUaTBuEOUVah/xna10Yg8yadFvCGkJMdWtjfGoPIPJepseG6l2TxwZiifYPKO9OZKxK5a/YUrARF89Mi25aGnaDpF3+29RTQ+dyS0DBshOxnhRAL+Jp8X+aypydLU+EouiLVmE5ozkIVPBLqhdXRenBzFCdqnWRPcjIiZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
+ 2025 13:56:26 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.021; Wed, 24 Sep 2025
+ 13:56:26 +0000
+Date: Wed, 24 Sep 2025 10:56:24 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Faisal Latif <faisal.latif@intel.com>,
+	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+	Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] RDMA/irdma: Fix positive vs negative error codes in
+ irdma_post_send()
+Message-ID: <20250924135624.GA2674496@nvidia.com>
+References: <aNKCjcD6Nab1jWEV@stanley.mountain>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNKCjcD6Nab1jWEV@stanley.mountain>
+X-ClientProxiedBy: BN8PR04CA0059.namprd04.prod.outlook.com
+ (2603:10b6:408:d4::33) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] ASoC: codecs: wcd: Fix a less than zero check on an
- u32 array element
-To: Colin Ian King <colin.i.king@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250924103334.9832-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20250924103334.9832-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: r8FCGCcEMCoJG7f5GhkPTYswt_IKORHN
-X-Authority-Analysis: v=2.4 cv=RO2zH5i+ c=1 sm=1 tr=0 ts=68d3ca08 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=gChy-ArH425jUgxL:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=OLL_FvSJAAAA:8
- a=pGLkceISAAAA:8 a=bwnp8BXZDZf2W2z4idsA:9 a=QEXdDO2ut3YA:10 a=j9o5Av5NI7AA:10
- a=M_KkFZv0jYEA:10 a=dawVfQjAaf238kedN5IG:22 a=oIrB72frpwYPwTMnlWqB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyNSBTYWx0ZWRfX4U4JO0u3rvqK
- rIYjI+RtNyteA9BzO+q/TaCnv2+xmx9/OT/CYormTMxtWlIK4MeNYK7e1aZK3WrWweUYg8mAzAs
- nIO+N++HDOsj1Tt+NdfSLr7l1eJEu3MzI2YRS+Wz4aSCTqoarvS1qO98i/dBQJGZPq/WIPJrokS
- Nh6/W8QTvtQlx3M7OYIyyuZrFNIMWV45XWa+4nodZh8XTIl0/HfNZu1L07HvkubYLCKovOMxsWY
- guKVc51zQYqNTdS1rRPqaTbu8cfy4CAxDkvd4ecr/q+t2MKEiI20Die1M8J1UnE9cyYaaD3NXhM
- 8w/Kpsw0fofeLVZmewdesKI8CGeqMsuIwkzEnd6P6KReMct1tll1AAxpln/ooTyTz0CFLSY+OVe
- i9RIePxj
-X-Proofpoint-ORIG-GUID: r8FCGCcEMCoJG7f5GhkPTYswt_IKORHN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1011 suspectscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200025
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|LV8PR12MB9620:EE_
+X-MS-Office365-Filtering-Correlation-Id: 114eaba4-efa3-45ef-0c43-08ddfb722726
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lgQntXuontLKL6MP/s3uceE0Yt/IY3MTCftV8ZQTytSW/gLxWWdTA202BnZJ?=
+ =?us-ascii?Q?tqBht6AXemnTjzb6qRtG5nIuKToasvGQgwj+cPFfbQxhyqJM8MIbqluvHJoK?=
+ =?us-ascii?Q?Hdd8YtABHvPpEf+y9MctzZOxK1bVkyUtuMphYLZAP+7SS2CMw8LPgkXo1qQl?=
+ =?us-ascii?Q?aNy88nYIJ1RnGlnOGGpJrcxHVe1kyY8IKX4xbyPljIC26OxvypfSPOXV0pml?=
+ =?us-ascii?Q?96zKmavcQY/v63nhlOSMQRTrUxikXbUW1wZ56PmwK7OsoAoO66aXs261biGF?=
+ =?us-ascii?Q?Z7uSjTdmIJywdMJiBp+hz72VT+cuj/3YeOe0UY+U0OyridkZ0bc7CwXP/+qV?=
+ =?us-ascii?Q?N5s54TtSPdIVdj3JDNRtJsQB9DvnNzm9HUZQ3htQJtV1FUzjS0Z4ju5SMqXX?=
+ =?us-ascii?Q?R7JkOq1DdI5mUfdIiXqYDrh1psR6+lhoZ8zmjntsHw+vekfbuYfYpwNKG5m0?=
+ =?us-ascii?Q?r+SoconY94SHERlUDBtHSTAaJa1F9jQALMvUqRUzgxW4Eknz15XfnrsXH4w4?=
+ =?us-ascii?Q?OTNi8lmLsYLvPh8I1EYpC3cpq3bzgVAiQfxem7Pjc0GLvlFHnzT1+tJBRZrz?=
+ =?us-ascii?Q?96HNjh+8vBlEpzhzM9Ai4jU16rRO1tTxnBYUOCNFJB2mZFBXiVJesSaRObEh?=
+ =?us-ascii?Q?QWyr+TriFVQDqrLXYhQcwbZxqh4j7ezUBa22muD7uVV6fFSLQdRMmoTjPT3k?=
+ =?us-ascii?Q?ONLJI4Yfs+HCZugYnS6qxOLy24OKXn+QgWacyvGAMIN0YiRAEiD0C/44d5rn?=
+ =?us-ascii?Q?yrKVm1fP8ZVV9fPBawrQmzyrQYSayjsg2jMjQNewB2IRFVYfrkvx2RM/QFSg?=
+ =?us-ascii?Q?A7Ok7C4hWjDXHfNoe5lv3mmIxpnq6KdEAzucW4NzrIyfcr6zMHIOjTlGLDKs?=
+ =?us-ascii?Q?wG/mHT65DdwFkppJuqu88wZ4kRhRp0+Yy1fgUvAdnRKlq8/cI7UGmfGnEc5I?=
+ =?us-ascii?Q?SkMOE0Y0NTG6xvWmTPUXEnu+iv63SVmqoFv5AoTiKAKgkMGtyQrSPepW2V0+?=
+ =?us-ascii?Q?+pekm4+6e11UHl2AsZ7b+iHzvuw/Mc74Jq3eNXgN8TD7NqJCncB7AzO1Xapn?=
+ =?us-ascii?Q?ShpmJb6KFLtLc/2jWEJYam1iSlfLnu35TJtTZyf5RKWnFU4MDgIZ+V4p2CFG?=
+ =?us-ascii?Q?z2KxKsHI4x5UXIX5DSJvF6hMnqCVbQdc418AsXvhBtnOZFvU3Iw9DfWD6jBU?=
+ =?us-ascii?Q?vG3WLXoSRiLaSOrTf/zKvJg3R9U0DWPXpyG/al4lV/EAY0ZOMIAxcgTtDqK0?=
+ =?us-ascii?Q?TjAU8etQwY6gJIe7mEmtDBZNIndR8u7lMq5ReaWYJxwDeVIF4CB4agsM7w0N?=
+ =?us-ascii?Q?v1GA46lGy+glgZVUpDCc3n926yOIAXPgbjFTUkC8sa9p65r7Temb7PlPh+u5?=
+ =?us-ascii?Q?W5FnfbzfhAiGcgB4Kx8LNXtBZi5GPWjxhFBTA5QQ9L9mgruPlwOfExrZXLAY?=
+ =?us-ascii?Q?++dU0mX7YNM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JINaOs+12/yhhVKW43ae8S6463CU9/bWliBPn1Dcm6sVsVRLkkWgrNw+su7r?=
+ =?us-ascii?Q?Npjc95ArVyK3kGNJ6hnuOE2IvxFbIM67p45Px1zcGM4rbH7ArSRnQrpWLuzI?=
+ =?us-ascii?Q?BvPTOWNzfDxV+KVlG07AbgQ9yxOpCbN5Gv61QRRtwW80X+Cm6RTZ1H6OzOtu?=
+ =?us-ascii?Q?w7cdatkuUduJ/ofUiZ78f6kNY7RhMt6cKmeVnNxub1z031wbtHms/eAqDLUh?=
+ =?us-ascii?Q?8tc90a9MN8Ptc+m1iIqzXOHwIvjyEAIg58WE9Qr9+kA0h3k6i/UowWpJkd4o?=
+ =?us-ascii?Q?5qIv8gearmvhOkiNQIACakJDcMI7Esc4jtEDlZfVpzU1jFNTULAN0SYO+wOP?=
+ =?us-ascii?Q?hnSZvA9hLZS1pnBd9Y1CHjPlna+Xy67O5njirDsJoeH1+FnVWEIfjSRThVBE?=
+ =?us-ascii?Q?QgSnwa8q9NDeeualbWO8QxlllIYNVInXWhfNEhM/aGVpYIJz5QuU4XmJ2swi?=
+ =?us-ascii?Q?N+jihleOvFRuUUVfIbiR6TJnZFWxdMrnA669uQ2PhNdB+S2LNybQuijZVR+u?=
+ =?us-ascii?Q?+dCXH4F5DkpcTiLStvhUjf+NRP/KVy+NwG7RI7bdAIAIfVpXs4nc/HOLwNgf?=
+ =?us-ascii?Q?Gvnw6wKvJ1ng+4tJJMjJelV4HHr4cPnpY/BtRopoq48KAj+4Q3v4UsWRAQK0?=
+ =?us-ascii?Q?bzyJz42t7GsYv9+ZjJ8JKZLRjP69KpT2dfeIwrpMU/QqcjqCrb4k94ODEVZe?=
+ =?us-ascii?Q?SrefswvQRiHBvanrnjKZzsu9letraRY2FImQWVXjxMX75h8yMtCBZ3JjFx31?=
+ =?us-ascii?Q?vA3H2MEYv0jvNOTMLWRreDXBTOvWY9xX1gPsZzTjFnbImgR0bYwJUQsIk9fZ?=
+ =?us-ascii?Q?5p/T/hob9R4jwD0FQjE6Z9+NPRoO5SFaGWhntBFVemFfpr28S/kW0Ajqceho?=
+ =?us-ascii?Q?IHBsW7vpmiFwkVihnIbgjpy7ci/Nndh3Y9p5eJfzAhnrQE7MiBdWvLKhyeZU?=
+ =?us-ascii?Q?eNMZULkNc/bbgEs+Qif2+iGlg+//lnkb//i+IebYxdw3TsQxf4ejcc+dTXpD?=
+ =?us-ascii?Q?P3ZY3uwhAPfieAa3pTngGGUFx2mgRggLpKCmkabFGt0MNld0tKVWZYPhzI3l?=
+ =?us-ascii?Q?/sDLo6VpOdPAj5T4E8WV+uGaOIocU4w6PXoOCaBOmfXccvflgw1uF/71lK1L?=
+ =?us-ascii?Q?cLh9MRvkhjpJp1wRWu23lU+Biz0Skx8yzwdmdO7Xz+SPQS/wo+GkSu+gEuFg?=
+ =?us-ascii?Q?b7hUVhOcQ9JYVwhxCXfaYbYvAGSblbzTKc6SwOe7hvM/EFL5CtSS/tzRe9t/?=
+ =?us-ascii?Q?B6wn4TGq0nN/NiV4xJhi1fvo+xuqNQ07JOgY4lmsS3+qhygxPsnVFnfxCb/m?=
+ =?us-ascii?Q?bEtbXLPErtKmR/Mohh8AQAZJAjkNWgzERrWNBetHJ/aJd1K5nGOvVzo+p93N?=
+ =?us-ascii?Q?V/ee+OeqgbHQQz5UXonq2pZIiu+qE/D2C39acW3gpxQ7ovevcZWzh9yIdCPF?=
+ =?us-ascii?Q?13QBNaKwG8ODHJVxJBr+By9m1USzyg8BWVp19s1c2gfzuHyUzMnbzP3GXVpm?=
+ =?us-ascii?Q?Ek23pIWVBGHwDHQeVjGmbobUOotJFflSpc6DTI6daTcS2L3UdPXgb0NVNJ+M?=
+ =?us-ascii?Q?pLPIqI/x0+/N5L+c11xQKd4g5iIn73hqJU1k7D6N?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 114eaba4-efa3-45ef-0c43-08ddfb722726
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 13:56:26.0014
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IusmUOS90Sby8Fy4GRib1d2L9qFrPKchFNKRTEzOSweqgz+fT41JwgC0TLywTL25
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9620
 
-On 9/24/25 11:33 AM, Colin Ian King wrote:
-> Currently the error check from the call to wcd_get_micbias_val is always
-> false because an u32 unsigned int in common->micb_vout[i] is being used to
-> to perform the less than zero error check. Fix this by using the int
-> variable ret to perform the check.
+On Tue, Sep 23, 2025 at 02:20:45PM +0300, Dan Carpenter wrote:
+> This code accidentally returns positive EINVAL instead of negative
+> -EINVAL.  Some of the callers treat positive returns as success.
+> Add the missing '-' char.
 > 
-> Fixes: 4f16b6351bbf ("ASoC: codecs: wcd: add common helper for wcd codecs")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: a24a29c8747f ("RDMA/irdma: Add Atomic Operations support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
+>  drivers/infiniband/hw/irdma/verbs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Dan Carpenter sent exactly same fix yesterday:
+Applied to for-next, thanks
 
-https://www.spinics.net/lists/kernel/msg5855359.html
-
---srini
->  sound/soc/codecs/wcd-common.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/wcd-common.c b/sound/soc/codecs/wcd-common.c
-> index 9bbfda828377..9fd3965ed540 100644
-> --- a/sound/soc/codecs/wcd-common.c
-> +++ b/sound/soc/codecs/wcd-common.c
-> @@ -65,9 +65,12 @@ int wcd_dt_parse_micbias_info(struct wcd_common *common)
->  	int i;
->  
->  	for (i = 0; i < common->max_bias; i++) {
-> -		common->micb_vout[i] = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
-> -		if (common->micb_vout[i] < 0)
-> +		int ret;
-> +
-> +		ret = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
-> +		if (ret < 0)
->  			return -EINVAL;
-> +		common->micb_vout[i] = ret;
->  	}
->  
->  	return 0;
-
+Jason
