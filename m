@@ -1,71 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEABD182B4;
-	Wed, 24 Sep 2025 17:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9381A54279
+	for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 01:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733262; cv=none; b=Ib+jQe33ZgL5lehY3GjNaXVmcwFil0+OyHQZ5mBu66Myxo5KKxPAi5UUEqAZf0p4GnVuafCIqOlkxHZV6CwwO24gJHk3TUNvATFiSzVjaBuoYYBtunxL4TsXqgcssUY0L6nZoK53NGzBQmY/4VIyfVo3r6SVZ20bh6kHf23FNVQ=
+	t=1758764789; cv=none; b=fnIhuT2/cej+BLhRZbVdxsXH/VjfC0UmIeDJ5x1OrrE8eJay4JTlST9OFMIa8t0id6ZVHD71LcLsHZ1MJYXVPHlIltl+EnyPXqBkfuSUdA1PFYsZ0wU0LgUju23EDrdupeYPeqKC5FXPrhIWc59c5etnR7nFeX5vexftFsWDAJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733262; c=relaxed/simple;
-	bh=/ha7u5oWJGOwWkBbMsuRTBXKN/a2H7FPYRgxpQ/zK+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFLHjstgaWdY0iaCwF7G/xIcZq0dumg8d5ZNv126WhD4hgfe72jwa9GBgOHkWZoqqYtEGLckOELGwslmvD4Kat2cgNqaqwY8eH/lwfHFPqmOYzcUEqKr9WfHDQ5uv1/8U88fg2oo+LplL4hvrvFXtbnS/JqwOe0p/B6zf2tVp2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeISFgy+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758764789; c=relaxed/simple;
+	bh=u49OwmKzl7uoH8qGSLjjzbww9IPB7agb2Aw94ZJcZTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ccyGbdRSB4duYDt/vTm/WgFGoH6SYSjUUiPw60eLskQJptL4g4nOq7UWAvBMHBm8AkB8keHKrjvBqUOPdJlkCDPsR7TiLad4IRL0WOCi1uUudBCyLqRjkZuJr0udkkbATzOLRqTp6m+h4D846oW9USiLDAEf2MAb6yfgycjhLSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YPKwqz5I; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeISFgy+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713A5C4CEE7;
-	Wed, 24 Sep 2025 17:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758733261;
-	bh=/ha7u5oWJGOwWkBbMsuRTBXKN/a2H7FPYRgxpQ/zK+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HeISFgy+gQd1FWz92qJfJEWmv2WKpELi1nT48aN0sCS0gHMQHOFMROB0sX8j/dbAQ
-	 uLDKtk0lQLthA5smUex5k+ixh5MrS32BRgcZiTkM3Y7lF7ljdOkEBvRtEDT73/n5OS
-	 V/fHjvKiPF4hGuderBGhdCy+6i5Ci0ud6G+rKGR7l5rcfTlyReMeJHBNSlMR+TcOfE
-	 HbMe7qu0vuinCsR6HDAgYvAYOmL5tHz3zpHTIfLE4/z0lH8Xvixi3OK/yxj+5PCwX2
-	 aDdn9+/X6FBnhAzhS+lOHa7MaC8cHf3pkNYeE1knEYBCtZEhlfu0QOiOUlpgXPPU7y
-	 RETuXMlvZojCw==
-Date: Wed, 24 Sep 2025 18:00:57 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ivan Vecera <ivecera@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] dpll: zl3073x: Fix double free in
- zl3073x_devlink_flash_update()
-Message-ID: <20250924170057.GQ836419@horms.kernel.org>
-References: <aNKAvXzRqk_27k7E@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YPKwqz5I"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONr9aS027915
+	for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 01:46:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	z10OZLyPBneNQ93YhoH9EuyJNkxrj7NSBb0ueDONA9o=; b=YPKwqz5Is8V8m0Li
+	ycZ6HnW5uOrnFV3/3ucxzdwRSOYy3kw90cEYCZ/WU3Oz+WQOJRaqoj7SmKdQDixH
+	zOscYBeIJcCpipV7+0KhEhpoViCFId0kJPBcP5+eHyIil6Pac3OrxD7rSrGf6MIB
+	VrmHDxa2lVzZS8sncR4evzL3u5s5b3NDFxJcjkVUrI35NkDhCQ/saPrEojr7mkFz
+	OdH4Jkm3OyxxrVZ7p8D/XDZ1V0JVp+JkuFM4AqN7UOpskjVuuD+9LLqTtcOeZ1cP
+	IZtezERVwahLGxTecBwvHqfTocJAqjMoSvDwL++oNdB+TTwXhMCUt+uzcwuL7spS
+	JKH7TQ==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmnxpc0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 01:46:26 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b5533921eb2so313732a12.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Sep 2025 18:46:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758764785; x=1759369585;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z10OZLyPBneNQ93YhoH9EuyJNkxrj7NSBb0ueDONA9o=;
+        b=LciyB0xEL2sm9CPJS2lNTZ5Wm0kXgKr/tx2/A/smhDbhhk0UfDHIJ3ZodPNfvp8ZMK
+         ZiQuAdgVqJjF+zVwWLLBIcZazAL6t7V+hr3avPHGtAIth75DSaKw9Jbi33q5ovv+9bFV
+         AMYuwakpNfyy3SbWoxr2JtIKVBQVsVw+vlmekrqXh2OhwfCLWOE5XrHLbC/bMBsP41Ej
+         Fe5iWPp1/B7aPgMc2NaeXnL/pBRNchnNF5Qf8bXxx4u8ATDc4aDlWaqYTcILMwf7ozgI
+         55x0eOuPFkS3PxM7gbhJKRaOEGVtJnPlS3/S/tQ8Qml5fpACbesOJf3gDcK4cu7k4SAX
+         AhdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKqVbaNQSH29OI12aVI8uiRAGMQEt/WxjjOt4Gt8N91hhewe50s8gAw+n9bLmnagvm1Dr1CU3nugyPNB8rJVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIl/K+odxPyHB8VhMYZ9ik01+rfT6w8bG5TPqtfuAqOgv5GE7I
+	hmwxfId4L7pyZ/RSVVDuwY+ZJZ7LSMnfFameKyqmB7ibRrcf+LChb6UAbVACmAweONp8vLZEGfY
+	r+cUm/P9GjcXnOiP5SwN941SOi5VxVk1RS1ugUVq+A2ZMxruxnonqBDdTFc3ftwKezFgjAA==
+X-Gm-Gg: ASbGncvPIja8I0jSFrvIyqNRzwNwimQ+XLguJiF+VO2fj6s/XJ5dFOdyZqfuhr4S+tp
+	a9oxNVKBWkdI6EwsqpHf0xKNetP+hjVguYvwd2mCjrCZ7RiyVhCj7m6qi+hSSpQjRxPvw9Nlkz2
+	zPndoBaUlqaELD8B4utt8HhMyjfyi4Xuw70klbygSAB7YOiliRXSvlFYtv752/fktj3682OtYbp
+	VmCCi69HJChGRDnejbxlI8smCG23/97X5sjYoeYf312zO1PB764Rr4XBgQ2TzUCFmLCCUCvRwBX
+	f6lkUdms9iu/lWMczaZgX1ZLuyR//ydcmeyJjXPY3qANBarvDyoGLh2zB4oMWUaplXY7OYUNDX2
+	PoiKdDwfOP3l93+HD3TLaOfxkh+FZX8r9cboD8w==
+X-Received: by 2002:a17:902:d4c1:b0:26a:589b:cf11 with SMTP id d9443c01a7336-27ed4ab31e3mr21067145ad.43.1758764785070;
+        Wed, 24 Sep 2025 18:46:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkWVGsBMaLTmduKHWETBWGp2jxTB4gwYRIKlo2+7MPdlsABDo1JV2x1OEc2s9kaTB1M7uB4A==
+X-Received: by 2002:a17:902:d4c1:b0:26a:589b:cf11 with SMTP id d9443c01a7336-27ed4ab31e3mr21066865ad.43.1758764784645;
+        Wed, 24 Sep 2025 18:46:24 -0700 (PDT)
+Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6adca51sm6355395ad.147.2025.09.24.18.46.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 18:46:24 -0700 (PDT)
+Message-ID: <6a0477dc-2f4a-4a72-85b3-9de42759cdb5@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 11:46:19 +1000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNKAvXzRqk_27k7E@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] tee: qcom: prevent potential off by one read
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Sumit Garg <sumit.garg@kernel.org>, linux-arm-msm@vger.kernel.org,
+        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <aMvV4kK386Sni10i@stanley.mountain>
+ <adbccfc0-0f9c-4b71-9fb5-5582c8180ac7@oss.qualcomm.com>
+ <bb776102-310b-4a84-943a-86d4138592d8@oss.qualcomm.com>
+ <aNOfXlG21HIBR18E@stanley.mountain>
+ <CAHUa44G2yaB28sd0FjkjyCNJKXjx2Jg9j-9HXytyvsmiQ3ThAA@mail.gmail.com>
+ <aNPAT_uf-JFvBvkV@stanley.mountain>
+Content-Language: en-US
+From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+In-Reply-To: <aNPAT_uf-JFvBvkV@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d49ef2 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=BRsQPDxWgBvOXLHaTS8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: 2xdyYmQNC4vbXGHqcQSEiRR7W4N-Dmue
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfXwGDXNmdgvV8g
+ t2KeGjMpafFgKSsFL8B5lfIacnC/YQ6M0TM1yQ4DMJgwXzaUQdQU2OwO6/2H8xgf2yZfAyLxoe+
+ vsWj1IE13Q1/b3JbfrBhL3JvmgBu0BmqjIgE09uwWwdXNi48dGGdcvZp1FHw7RKaE7H9CSL0md+
+ hCxFip4szGM9+lW1BIhBGapSxPN1YCEX48v95njdNsk0sIhzzfFmCvaP87VwTGx5knmKvc0EI/U
+ ODieyym765J3zmNAR2tK4IAW9BzXMQxrji74RIjtHqft+Hv9U36UHGBwrHn0y9nTxKh7OBz7dcX
+ vAoZ7N/TyK0bqcfsddpiHCZzYetX7ElUilm2d6SkNvl3z0GDtOUWp6n55SbcEHMnaQQsafacuLw
+ OD+F9xhS
+X-Proofpoint-GUID: 2xdyYmQNC4vbXGHqcQSEiRR7W4N-Dmue
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
 
-On Tue, Sep 23, 2025 at 02:13:01PM +0300, Dan Carpenter wrote:
-> The zl3073x_devlink_flash_prepare() function calls zl3073x_fw_free()
-> and the caller also calls zl3073x_devlink_flash_update() so it leads
 
-s/zl3073x_devlink_flash_update/zl3073x_fw_free/ ?
 
-> to a double free.  Delete the extra free.
+On 9/24/2025 7:56 PM, Dan Carpenter wrote:
+> On Wed, Sep 24, 2025 at 11:21:34AM +0200, Jens Wiklander wrote:
+>> On Wed, Sep 24, 2025 at 9:36 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>>>
+>>> On Wed, Sep 24, 2025 at 08:58:45AM +1000, Amirreza Zarrabi wrote:
+>>>>
+>>>>
+>>>> On 9/24/2025 8:48 AM, Amirreza Zarrabi wrote:
+>>>>> On 9/18/2025 7:50 PM, Dan Carpenter wrote:
+>>>>>> Re-order these checks to check if "i" is a valid array index before using
+>>>>>> it.  This prevents a potential off by one read access.
+>>>>>>
+>>>>>> Fixes: d6e290837e50 ("tee: add Qualcomm TEE driver")
+>>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>>>>> ---
+>>>>>>  drivers/tee/qcomtee/call.c | 2 +-
+>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/tee/qcomtee/call.c b/drivers/tee/qcomtee/call.c
+>>>>>> index cc17a48d0ab7..ac134452cc9c 100644
+>>>>>> --- a/drivers/tee/qcomtee/call.c
+>>>>>> +++ b/drivers/tee/qcomtee/call.c
+>>>>>> @@ -308,7 +308,7 @@ static int qcomtee_params_from_args(struct tee_param *params,
+>>>>>>    }
+>>>>>>
+>>>>>>    /* Release any IO and OO objects not processed. */
+>>>>>> -  for (; u[i].type && i < num_params; i++) {
+>>>>>> +  for (; i < num_params && u[i].type; i++) {
+>>>>>>            if (u[i].type == QCOMTEE_ARG_TYPE_OO ||
+>>>>>>                u[i].type == QCOMTEE_ARG_TYPE_IO)
+>>>>>>                    qcomtee_object_put(u[i].o);
+>>>>>
+>>>>> This is not required, considering the sequence of clean up, this
+>>>>> would never happen. `i` at least have been accessed once in the
+>>>>> switch above.
+>>>>>
+>>>>> Regards,
+>>>>> Amir
+>>>>>
+>>>>>
+>>>>
+>>>> Also, size of u is always num_params + 1 for the ending 0.
+>>>> (basically means `i < num_params` can be removed).
+>>>>
+>>>
+>>> Yes.  This is true.
+>>
+>> So this patch isn't needed. I'll drop it if no one objects.
 > 
-> Fixes: a1e891fe4ae8 ("dpll: zl3073x: Implement devlink flash callback")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> The patch makes the code better though...  It never really makes sense
+> to use a variable first and then check if it's valid later.  In this
+> case the check isn't required.
+> 
+> Ideally the code would only have one limit.  We could either do:
+> 
+> 	for (; i < num_params; i++) {
+> Or:
+> 	for (; u[i].type != QCOMTEE_ARG_TYPE_INV; i++) {
+> 
+> Either way works...
+> 
+> regards,
+> dan carpenter
+> 
 
-Thanks Dan,
+Originally, it was written as
 
-Aside from the nit above, this looks good to me.
+	for (; u[i].type != QCOMTEE_ARG_TYPE_INV; i++) { ...
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+but changed trough out the review process.	
+I do not have any preference. But if having it as
 
-...
+	for (; i < num_params && u[i].type; i++) { ...
+
+is more readable, let's keep it.
+
+Regards,
+Amir
+
