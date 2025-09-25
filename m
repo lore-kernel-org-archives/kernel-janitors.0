@@ -1,61 +1,97 @@
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA1B288D6
-	for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 13:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E72D35950;
+	Thu, 25 Sep 2025 17:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807887; cv=none; b=i1RdnY0rpbu+AWU7KsTZFVhW92JHVrg0YX1C54PKqn4hhEVqDaGUszxRdVe5iEp6Cwss5YFrmdMFm9FIn5i34hUdzUVERr2DUQD1VIXwobMC54Ae1dJ/s8OJ/22DxAmG20wEZ9Gckf1vytqTwN23Veh1gHZVlXfC0ftqU1Hea6Y=
+	t=1758820719; cv=none; b=uUrU1LywIjsMY77fP2DxfMOEKc648SNULVvwby3nUfqcYEu483sN8UgzNiVbbgDhw/qRRWKVPiH4r5scanbqWOPBeMCw1PvN4aIiy1S8+cxklX0mKvR+Z896FuHRBXN6mde2nqAeBmVj0ZYEgeht4YM8+D0CA6P9VI+5WPOryTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807887; c=relaxed/simple;
-	bh=gRLtCn/9YLyB0zWqN8PZsgBFqGS4K+6T6CbzUaBFmU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FDzVvyTGDlalomIh04+9aNNV9tQfzf/wwRcMgxvw1X+3Q6EhS7zWFFjDTtEZKyaXOZrR92jfnthXbisMLk2KXBjr7BugDzhYnRrnuPnDNshBo+TeFpyND600wERB5Hfrowc2scFfPUupLhqU16F37wdVFDyKypGUNxPVDGcgwxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GzwyHzTU; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1758820719; c=relaxed/simple;
+	bh=jYaGC2W307AcjKp10yv8xV/E7xq8yq9f5BboueFwMME=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pOdEx8PxKbHk4KYM//BfNcwxsV9bpdCf7d+G9D1yEmIWxo8JFgoowi8Mb/SZPtFe8QKXTGR4lw48faBe1Bo43Wa4d0umO1p7fFVmGCqcdZsvGHwfHY+Ebf6/p+4DyTDKka1i8tcuh6ZMv4ow+LphGQtuHsctBawTh2CRB/JS/I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=R0Wn+1ob; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GzwyHzTU"
-Message-ID: <977f1b63-1617-447a-8ef8-775662ad0827@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758807872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PzbRKSk93f9Ztt0ubkW/2QbayTmgWgmgzFIGYPs3WjU=;
-	b=GzwyHzTUM/8PxdEVH2O9dMuKgdnSm+lJ2RwLNb7nrKPh2uLFR17k3nizaOhBcYtWoQJb0v
-	WhUpfEF2kku+dEyhgYUdx1ap358cUvkIQBOXzedxKbc9ImbAwszumhhYyXUTorFUYrwU6k
-	ev5wyE/T8vn5kmN3PRJInKZTiPAL300=
-Date: Thu, 25 Sep 2025 14:44:24 +0100
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="R0Wn+1ob"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A312E406FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758820716; bh=s5E6NQtQfTfIKPQQ0U9jD4/CMTy4US3OKTTLePkEQTI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R0Wn+1obn8KJeQvchJRf2wnbf497DYVq2eKLFn6QktuoOjJ3ybxEAFLi03ACkYszP
+	 aV/OjxtFF+hU4Tsh169FcOQDax4qxVQ9VTRQ5PJJSjch78kboyCe+GLpFs9u3faXwK
+	 sLzdeUNWhiACyJ/ZAjFBZLz6tdfkBQ6C8B7WndqpWsfVcZvxEwMZH1A4qhyV9lZo3Q
+	 b2wTCYQQXw6BYIqMZBrOclNa/e8um3UEGq8N8lfZ1blNtXGR699/rVD18qJIcDrCWL
+	 7pPTqB2KjqyLNniqzC3PcY5nELWvyV6nwZIgjgws1HbGWRaL1WoJz8JVj6dHvLD/SZ
+	 AqCkRcme8WerA==
+Received: from localhost (mi-18-37-83.service.infuturo.it [151.18.37.83])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id A312E406FA;
+	Thu, 25 Sep 2025 17:18:35 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, linux-doc@vger.kernel.org
+Cc: linux-snps-arc@lists.infradead.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-um@lists.infradead.org,
+ linux-openrisc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] Documentation/features: Update feature lists for 6.17-rc7
+In-Reply-To: <20250925073634.112142-1-lukas.bulwahn@redhat.com>
+References: <20250925073634.112142-1-lukas.bulwahn@redhat.com>
+Date: Thu, 25 Sep 2025 11:18:31 -0600
+Message-ID: <87qzvu30yg.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 net-next] dpll: zl3073x: Fix double free in
- zl3073x_devlink_flash_update()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Ivan Vecera <ivecera@redhat.com>
-Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aNVDbcIQq4RmU_fl@stanley.mountain>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <aNVDbcIQq4RmU_fl@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On 25/09/2025 14:28, Dan Carpenter wrote:
-> The zl3073x_devlink_flash_prepare() function calls zl3073x_fw_free() and
-> the caller, zl3073x_devlink_flash_update(), also calls that same free
-> function so it leads to a double free.  Delete the extra free.
-> 
+Lukas Bulwahn <lbulwahn@redhat.com> writes:
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> It seems that ./Documentation/features/scripts/features-refresh.sh was most
+> recently used in December 2022, with the latest kernel release v6.1-rc7 at
+> that time (see commit 7f2e60ff51ca ("Documentation/features: Update feature
+> lists for 6.1") to update the feature lists in this subdirectory. All
+> further changes to Documentation/features/ since then have probably been
+> done manually, without checking for changes in other architectures and
+> features, that missed to update this part of the documentation.
+>
+> Running ./Documentation/features/scripts/features-refresh.sh now showed
+> seven changes of supported features in various architectures (one in arc,
+> two in parisc, one in riscv, one in openrisc, and two in um), which were
+> not reflected yet in the current documentation.
+>
+> To confirm the sanity of this script's suggested changes, I checked if the
+> commit messages confirm that the features have in fact been added in the
+> following commits:
+>
+>   - commit f122668ddcce ("ARC: Add eBPF JIT support")
+>   - commit 4800a6215e33 ("parisc: Wire up eBPF JIT compiler")
+>   - commit a869b8c29f86 ("riscv: enable mseal sysmap for RV64")
+>   - commit 2f681ba4b352 ("um: move thread info into task")
+>   - commit 3f17fed21491 ("um: switch to regset API and depend on XSTATE")
+>   - commit 7ce8716e2769 ("openrisc: Add HAVE_REGS_AND_STACK_ACCESS_API support")
+>   - commit b5ff52be8913 ("parisc: Convert to generic clockevents")
+>
+> So, update all documents to the current state with features-refresh.sh.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  Documentation/features/core/eBPF-JIT/arch-support.txt         | 4 ++--
+>  .../features/core/mseal_sys_mappings/arch-support.txt         | 2 +-
+>  .../features/core/thread-info-in-task/arch-support.txt        | 2 +-
+>  Documentation/features/core/tracehook/arch-support.txt        | 2 +-
+>  Documentation/features/perf/kprobes-event/arch-support.txt    | 2 +-
+>  Documentation/features/time/clockevents/arch-support.txt      | 2 +-
+>  6 files changed, 7 insertions(+), 7 deletions(-)
+
+OK, I went ahead and applied this one, thanks.
+
+jon
