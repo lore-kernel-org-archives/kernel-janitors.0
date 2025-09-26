@@ -1,108 +1,113 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3852727ED
-	for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 04:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758859416; cv=none; b=u8lPDMNFB+24XOhwZNbHEk1lodGYpX3JGzWNoG1oatMZdEFIhffD4uNKNZGMxYNp2Hf2JG/zDjuLFLszwlDfWSDu5Fsf9LBINDlq2iZOsnpH5+2H7qWIm2bt4i5WBBu0+M7y1RryAm/CBiPEpmSQbP1aBFe4z5BMO00IfgaE8Bc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758859416; c=relaxed/simple;
-	bh=aDhxeCkC8fJ1lKK66xBz3OEbwpp7thZqdmHZS7jPnLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m4vvu8a4bace6LMMaEyV7+NqQJUViEZ+D9AOZe6JY/xIvssTiouyZoBu7dkztNG/0TiDJN4yaQisfqGIoSTvo/G2+w8bYXvp+3ChqBvMM21Cku6gF+8FILaBCYFyJ3qvnsBHBBwy3t5JjlW4DVcSYctxbXbzaZ42CYsj9+dalVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uohg4VZy; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D81D27AC37;
+	Fri, 26 Sep 2025 07:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758870016; cv=pass; b=LWPOjqmqqGcfWdnXDiR935G3kwO+sR7V9rxRVOJAOenqN+mfRxqATjXqmmsv1Mdt+UbeYTX1Gz1m5DdLKCmY7w9InkjHO1BQ/zHtdlCf6Vzgkn4MNyIUYQoe253ENfxIw0Z/haC10H3oNr+isuurJPkyf5va0nWGjrUkJA4EIp4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758870016; c=relaxed/simple;
+	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bEN1revlz98PbQYdWqqMHUzLgcXYweeVkgka82L+L07fn+arFMxTph8u7kFNVkftjZ+CM5dpBpBCJtm+ohlaotz3EJE3quolQLm3i6HgTyN7oL03DocOO4SjlB/hFTvJRMTpVP6CTOJAZOir8zcZerVfzKjZ95P5jemHNRm5YOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BLg6SYgb; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uohg4VZy"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso1627742f8f.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 21:03:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758859413; x=1759464213; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jAvxUIgiwZnoN4z0j99g7O5RjAHri0iT1cfvlyji2fc=;
-        b=Uohg4VZySZa6WsDVV2omhDyY2sq4dHlJjpLPnFR0WZ/ZlCPIENZRYFszx7GJUsqNkH
-         0J0Tf3Gv0brDRb8yogpe+WMhJ8tQ8gOCju5mMKuUgN1mAsq7U39It+1dWlZqqTtkT/Bj
-         HRoQVstJHkZGIg3ddBmylNEx+fcgxhJQsIiyKZlhoRFNOc2M1u9u4zQMlUrILkOoX0Mu
-         eV/KnAi9c+ijq3cvvwWoy0dBOWfxcOQ+hqaaP0m4Z0b3+Nv9hJPzaoRcbX+G7/cxDciz
-         7Z2tjZ+6PFPeG2z7SimYbgAssrzbQUFgTJdqWLqbcu9E2YAOVYLm/O8FmukqRl+B/u51
-         zC7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758859413; x=1759464213;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jAvxUIgiwZnoN4z0j99g7O5RjAHri0iT1cfvlyji2fc=;
-        b=D+0QK2gXE0oIAAHvUO9zH1FGFLTQ0Z7rHAqRKnEf9zw5RnJcxKLB+1vdFbuhFPOSZ1
-         JqHCkRGMxYF4z0SYu9nNuLSjxXahuZln+Zt/os04Ff3YkdgdTW/xdXeOYm+jL+XhqMwn
-         +RTfWIjLIEClrMTbLcKO5WBvN4cUzTdQHQF2OkqXyLSBWol0mPlOZo0slMUEbbfQwkQF
-         gseS7BysLXXbZ4ch4MuHHZYtLQYozUBi+7tNkntckfmLDghg0wyZtTdoJ026/UOxdlUE
-         dDJHBSY9M977iiaX996kbp2RTw7jbTFjKbmJWSx50KNCENBLMMj2QDvs9dUy3MwJUwDb
-         F+sA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8p1CV7VfXUf5sRlKqVZ0eXnh7/3nAMkqn37jlIiy415xFW6q7fguCmbV4xD39OJ6flsKd5LjUhtRs7BcrnuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGbUahy5LtUWk1N7wmRdBzrExC+p6lntWqw2OfQeEjTLogKxOw
-	qgTaAJ6jVxqhCZWS1qvZb1plQa3zmxPlibEdEcs8yIKBcRZ2g5WDRfVG2kyOhpZ6Kqo=
-X-Gm-Gg: ASbGncuEqQ0QraEXiPxZIFCrSsX0wfhlj6RhHKlWHF6boJU99/rfCwDzry+tt7qNrYT
-	6e1thg1n/lcfkje6b+XcBH6tW5FbByrQiuASkEieWBYK92vRz72O7p0P8M46lwpymoTgv2FVW3B
-	AzDgyVjAV7WMPt0W04Dto8mBetyoVsVURb1w5pXM9g22xo4SlkxLpUiRw/OoIIJsJB83nQC/tir
-	Vk4kt5rqYa9zov2jsoQbE5KG9YN4C8p8v4Bmb3TrcoYSR9kXDn6TOLorRs8j8ANvNd+cmPly9l7
-	4pfqYO38+s5BGK8nYD0VGjETVJwvb3cyoFRL6rLkm/VAbT6jBxfbS8P3oT4R/320lGEI1x4VelZ
-	aQ1mM2uaiRsmaKlPF3zEYF3QfWuQujBDeRyIHp24+t0VV4TukdQ==
-X-Google-Smtp-Source: AGHT+IG5qSGA+zLmaSVai6Z0wqDL5M4a9N7yHXLm/VuFTKV5wrkMZ8mE7n7IYfhWmV2EMBcPnVktpQ==
-X-Received: by 2002:adf:9bce:0:b0:411:3c14:3aac with SMTP id ffacd0b85a97d-4113c1440f0mr2029219f8f.7.1758859412949;
-        Thu, 25 Sep 2025 21:03:32 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e33bf70b5sm56361345e9.21.2025.09.25.21.03.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 21:03:32 -0700 (PDT)
-Date: Fri, 26 Sep 2025 07:03:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] pmdomain: thead: Fix error pointer vs NULL bug in
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BLg6SYgb"
+ARC-Seal: i=1; a=rsa-sha256; t=1758869995; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QkTOcOfFY4baMchg3LR2JuebeFgUlm+dPMtjYbMgxme/rr0cyHoIpKLTedhQ3bZJ41v65Fzlo1Y1lPvVfNJAMPDWE8rHyj5AoRwoqEnSijU/2duMHGODkLNsHAr4EqpTwjpFJOozY0Pcetc7DHw5ZWRITAS1WJxZ9MUo6Fn1oH0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758869995; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=; 
+	b=Skie3Y2qByPr0+fZ3z+bHHr3qmnDzvCmLMaTyVV4Mlbuk0IYBU8fRslxmqjAgXB3u7EnPV0thbnkePfJqQuf2L+WejXXX2k8x0Co10Hhiyg03UOjZwunMTibAfV2ICnNYmIMx0iZ0a2qEnK0be8Sbd7Nx6/nJ1HPAjUZ79Zkqs0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758869995;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=;
+	b=BLg6SYgbtAdkYngvl718gBszCAox2SMv7/VsoRaT0FLf0L6hiITao+dr/T2W+7A4
+	67Tr3cRdlBcBsMbPha6ZACAGjEh4+0RCXKguBazNW1LBWtaRsXtA0X2QiRGdJhVqz3G
+	PMrZvp2q2PDNLHU9nBYJenPEE0Jmu1u3Ulus3kPpoiPKnRl58CLbUw0FnKotDW8jQYX
+	gHkE9+FSzClOi77oPNpwrDsHifFWhkdBGiPZhJJvROO3bh3Vc7fw5K1C2Ncuthchyxf
+	E0R24scAB2b5AFp54iSCKWXZ0H6K9va4RW1cFvkEPJNkut08cYRfJxR6wNXgrNz50cX
+	ylYzzgIETA==
+Received: by mx.zohomail.com with SMTPS id 17588699937861009.4088550034123;
+	Thu, 25 Sep 2025 23:59:53 -0700 (PDT)
+Message-ID: <6ded068f5c004f8735dca378502b91ccdf56bc21.camel@icenowy.me>
+Subject: Re: [PATCH next] pmdomain: thead: Fix error pointer vs NULL bug in
  th1520_pd_reboot_init()
-Message-ID: <aNYQkVuVpP3Daq7x@stanley.mountain>
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+	 <wefu@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Fri, 26 Sep 2025 14:59:48 +0800
+In-Reply-To: <aNYQkVuVpP3Daq7x@stanley.mountain>
+References: <aNYQkVuVpP3Daq7x@stanley.mountain>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+X-ZohoMailClient: External
 
-The devm_auxiliary_device_create() returns NULL on error.  It never
-returns error pointers.  Using PTR_ERR_OR_ZERO() here means the function
-always returns success.  Replace the PTR_ERR_OR_ZERO() call check with
-a NULL check.
+=E5=9C=A8 2025-09-26=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 07:03 +0300=EF=BC=
+=8CDan Carpenter=E5=86=99=E9=81=93=EF=BC=9A
+> The devm_auxiliary_device_create() returns NULL on error.=C2=A0 It never
+> returns error pointers.=C2=A0 Using PTR_ERR_OR_ZERO() here means the
 
-Fixes: 64581f41f4c4 ("pmdomain: thead: create auxiliary device for rebooting")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pmdomain/thead/th1520-pm-domains.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Checked the implementation of auxiliary devices, and this is true.
 
-diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
-index 5213994101a5..d7cb9633c7c8 100644
---- a/drivers/pmdomain/thead/th1520-pm-domains.c
-+++ b/drivers/pmdomain/thead/th1520-pm-domains.c
-@@ -179,8 +179,10 @@ static int th1520_pd_reboot_init(struct device *dev,
- 	struct auxiliary_device *adev;
- 
- 	adev = devm_auxiliary_device_create(dev, "reboot", aon_chan);
-+	if (!adev)
-+		return -ENODEV;
- 
--	return PTR_ERR_OR_ZERO(adev);
-+	return 0;
- }
- 
- static int th1520_pd_probe(struct platform_device *pdev)
--- 
-2.51.0
+So
+
+```
+Acked-by: Icenowy Zheng <uwu@icenowy.me>
+```
+
+> function
+> always returns success.=C2=A0 Replace the PTR_ERR_OR_ZERO() call check
+> with
+> a NULL check.
+>=20
+> Fixes: 64581f41f4c4 ("pmdomain: thead: create auxiliary device for
+> rebooting")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> =C2=A0drivers/pmdomain/thead/th1520-pm-domains.c | 4 +++-
+> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c
+> b/drivers/pmdomain/thead/th1520-pm-domains.c
+> index 5213994101a5..d7cb9633c7c8 100644
+> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
+> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
+> @@ -179,8 +179,10 @@ static int th1520_pd_reboot_init(struct device
+> *dev,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct auxiliary_device *=
+adev;
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0adev =3D devm_auxiliary_d=
+evice_create(dev, "reboot", aon_chan);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!adev)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0return -ENODEV;
+
+> =C2=A0
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return PTR_ERR_OR_ZERO(adev);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int th1520_pd_probe(struct platform_device *pdev)
 
