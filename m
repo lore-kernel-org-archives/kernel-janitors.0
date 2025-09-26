@@ -1,113 +1,122 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D81D27AC37;
-	Fri, 26 Sep 2025 07:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758870016; cv=pass; b=LWPOjqmqqGcfWdnXDiR935G3kwO+sR7V9rxRVOJAOenqN+mfRxqATjXqmmsv1Mdt+UbeYTX1Gz1m5DdLKCmY7w9InkjHO1BQ/zHtdlCf6Vzgkn4MNyIUYQoe253ENfxIw0Z/haC10H3oNr+isuurJPkyf5va0nWGjrUkJA4EIp4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758870016; c=relaxed/simple;
-	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bEN1revlz98PbQYdWqqMHUzLgcXYweeVkgka82L+L07fn+arFMxTph8u7kFNVkftjZ+CM5dpBpBCJtm+ohlaotz3EJE3quolQLm3i6HgTyN7oL03DocOO4SjlB/hFTvJRMTpVP6CTOJAZOir8zcZerVfzKjZ95P5jemHNRm5YOk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BLg6SYgb; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC40286D53
+	for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 07:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758871152; cv=none; b=rlZvV6PPqj0of4CV5pm9OIL97I6atg6OfQxi9nftVQxych7GXnQukQ4Ktha7/vyvgEIvYzhH8+xjZmnvNQJCX5rhU0CgQIUfJ66CNY0v0t2jHLCdvXnkeXueLUn5iixqORLZqNhRzAy+NNTfWUrL5BrCWrUllWCfy/JRNuhEU3c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758871152; c=relaxed/simple;
+	bh=FDV3uBNAbwFXT+M7fyNWH+HJ349lnbWYLaE+n4S8cdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hrFFVGO8OS0P13SlWptttRUkluMFeAfcAVfovz+quOrPWNyPVpegeh2Hcjh8oCFjnWTJ1ManGZuOsjYcI4ex9RinJvDHdBe0UU3YiS0zUm7h28RvI6h7Cf5LF/1GaQ13qIC+4FXceBrCwOv2j0jzfq6JN+p8dDR0V6GFIwecvXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fEI4CVB5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BLg6SYgb"
-ARC-Seal: i=1; a=rsa-sha256; t=1758869995; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QkTOcOfFY4baMchg3LR2JuebeFgUlm+dPMtjYbMgxme/rr0cyHoIpKLTedhQ3bZJ41v65Fzlo1Y1lPvVfNJAMPDWE8rHyj5AoRwoqEnSijU/2duMHGODkLNsHAr4EqpTwjpFJOozY0Pcetc7DHw5ZWRITAS1WJxZ9MUo6Fn1oH0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758869995; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=; 
-	b=Skie3Y2qByPr0+fZ3z+bHHr3qmnDzvCmLMaTyVV4Mlbuk0IYBU8fRslxmqjAgXB3u7EnPV0thbnkePfJqQuf2L+WejXXX2k8x0Co10Hhiyg03UOjZwunMTibAfV2ICnNYmIMx0iZ0a2qEnK0be8Sbd7Nx6/nJ1HPAjUZ79Zkqs0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758869995;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=;
-	b=BLg6SYgbtAdkYngvl718gBszCAox2SMv7/VsoRaT0FLf0L6hiITao+dr/T2W+7A4
-	67Tr3cRdlBcBsMbPha6ZACAGjEh4+0RCXKguBazNW1LBWtaRsXtA0X2QiRGdJhVqz3G
-	PMrZvp2q2PDNLHU9nBYJenPEE0Jmu1u3Ulus3kPpoiPKnRl58CLbUw0FnKotDW8jQYX
-	gHkE9+FSzClOi77oPNpwrDsHifFWhkdBGiPZhJJvROO3bh3Vc7fw5K1C2Ncuthchyxf
-	E0R24scAB2b5AFp54iSCKWXZ0H6K9va4RW1cFvkEPJNkut08cYRfJxR6wNXgrNz50cX
-	ylYzzgIETA==
-Received: by mx.zohomail.com with SMTPS id 17588699937861009.4088550034123;
-	Thu, 25 Sep 2025 23:59:53 -0700 (PDT)
-Message-ID: <6ded068f5c004f8735dca378502b91ccdf56bc21.camel@icenowy.me>
-Subject: Re: [PATCH next] pmdomain: thead: Fix error pointer vs NULL bug in
- th1520_pd_reboot_init()
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
-	 <wefu@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Fri, 26 Sep 2025 14:59:48 +0800
-In-Reply-To: <aNYQkVuVpP3Daq7x@stanley.mountain>
-References: <aNYQkVuVpP3Daq7x@stanley.mountain>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fEI4CVB5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758871149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tOPngMxA7p4GyjZLW1Z2fZxDxzYAemuo6fVS/hsRC0Y=;
+	b=fEI4CVB5EQ441Y37ZWqAt0zqb8g499CBeBC2fomD/Y3/gCO0yF+so5Uw/+DLtprMI9HhIK
+	W3mUO8h5e5sPbu0lgAk7jS8SlTym/vboLtXHCfqo3neTtPTJeYBm66O6RxB4yv0fgRD6Ko
+	4ffBO4uok4MD/IV4Fmb4EHrgq/gS5bA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-G47w_AYlPhetOk-YZy5CMA-1; Fri, 26 Sep 2025 03:19:05 -0400
+X-MC-Unique: G47w_AYlPhetOk-YZy5CMA-1
+X-Mimecast-MFC-AGG-ID: G47w_AYlPhetOk-YZy5CMA_1758871144
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ece14b9231so1141987f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 00:19:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758871144; x=1759475944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tOPngMxA7p4GyjZLW1Z2fZxDxzYAemuo6fVS/hsRC0Y=;
+        b=XOA5MObIvsG2FcH9VEMYXcURKkOr4IZN3kAflqCshhhuhGCzlqhDfXpvUNA+Hpa2xi
+         XNt0zFtH0CgQFUtJNQTxIHms3SNqWUnopTixkwrpAmBdkwoBH2J1+9/D7wmFtmP6yC6Y
+         tFwOSyPcyoSF55eMavvU/ryuPCrD/ejXO0d4PD9ZRUTcVK1x0yrL3o9mp3kPBA2PSaNW
+         JNExxJF659so9axbJKCnlVfYpS89Bon7qw74voLkw6pDCEXJU5XPonGJMGw7nOF8jjnJ
+         1afz6AgWYk+F7mz5wCWfsrBvmX9EJNME+dl1IevrbDDSB8ktNRpW9Al+mK/wxfQahS8W
+         ouiA==
+X-Gm-Message-State: AOJu0YzglbtzwrTu+mw5/04XIDp8HC8WkXJpX7t40aQCW3JxuLI0BASh
+	ON4htkOpzUvFV85p0C8j0eBor/fTwzGN8VChJ89tjmwT57nxCFaPeXPvsuDuCFfkI4bZeTyFOc2
+	ppms5zsixND70vcShufaCc29uEEjSGcreUTcbl1rdiSt360WxwC/fvs38yh7st1YwHCYN6Q==
+X-Gm-Gg: ASbGncvd7xypPKJCMI5g0e6aSw+jZRAUa60dP8jnd4jTIW/XMf46f0o09Fx98T0IvDV
+	yDCChXv3jQIFGFJ9YQ/9QOYpx9sGu4uqpfnsluOEEmkfpxKZ9K/eC+wjs2o/frVDh95WbPIFAuY
+	aNNUnm/yHbzdiV9EefqVauVNfuZBVcBp5rjZV1hXkEaYoBlP8G9c0/W+y4N1hmjtZFvzpGZ1MEs
+	WEslL9OegJSKznIW3ethUkbBxJLVO9MJJTdbNMemZdbTYzacYNtZS42IuHWVAjr8MjheRIEAZK2
+	3gZTarzRxotXPs4PfxUNSeD/IOQ2DIjm/bc4AWU3g0jcOf2U8JAu1BlXmHWXViHxUO0MN2bjLFi
+	14UzYVneANYjAUw==
+X-Received: by 2002:a05:6000:310b:b0:3e7:1f63:6e81 with SMTP id ffacd0b85a97d-40e4a711565mr5936586f8f.16.1758871143686;
+        Fri, 26 Sep 2025 00:19:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGlb1Wb38trve2rzHq8pOF44+10uFK3uhKPrtJDVZXfjYr23BydS246rnVqWWs+QAxza2wP6g==
+X-Received: by 2002:a05:6000:310b:b0:3e7:1f63:6e81 with SMTP id ffacd0b85a97d-40e4a711565mr5936558f8f.16.1758871143271;
+        Fri, 26 Sep 2025 00:19:03 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc92491efsm5994003f8f.62.2025.09.26.00.19.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 00:19:02 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Sebastian Reichel <sre@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in THINKPAD T14S EMBEDDED CONTROLLER DRIVER
+Date: Fri, 26 Sep 2025 09:18:59 +0200
+Message-ID: <20250926071859.138396-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-=E5=9C=A8 2025-09-26=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 07:03 +0300=EF=BC=
-=8CDan Carpenter=E5=86=99=E9=81=93=EF=BC=9A
-> The devm_auxiliary_device_create() returns NULL on error.=C2=A0 It never
-> returns error pointers.=C2=A0 Using PTR_ERR_OR_ZERO() here means the
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Checked the implementation of auxiliary devices, and this is true.
+In the activity of revising the patch series "platform: arm64:
+thinkpad-t14s-ec: new driver" from v1 to v2, the location of the dt-binding
+for lenovo,thinkpad-t14s-ec.yaml was changed, but the change of that
+location was not reflected in the corresponding MAINTAINERS section.
 
-So
+So, commit bee278e18e64 ("dt-bindings: embedded-controller: Add Lenovo
+Thinkpad T14s EC") adds the file lenovo,thinkpad-t14s-ec.yaml in the
+embedded-controller subdirectory, whereas commit 27221f91b83f ("platform:
+arm64: thinkpad-t14s-ec: new driver") refers for this file to the
+non-existing platform subdirectory.
 
-```
-Acked-by: Icenowy Zheng <uwu@icenowy.me>
-```
+Adjust the file entry to refer to the right location.
 
-> function
-> always returns success.=C2=A0 Replace the PTR_ERR_OR_ZERO() call check
-> with
-> a NULL check.
->=20
-> Fixes: 64581f41f4c4 ("pmdomain: thead: create auxiliary device for
-> rebooting")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0drivers/pmdomain/thead/th1520-pm-domains.c | 4 +++-
-> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c
-> b/drivers/pmdomain/thead/th1520-pm-domains.c
-> index 5213994101a5..d7cb9633c7c8 100644
-> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
-> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
-> @@ -179,8 +179,10 @@ static int th1520_pd_reboot_init(struct device
-> *dev,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct auxiliary_device *=
-adev;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0adev =3D devm_auxiliary_d=
-evice_create(dev, "reboot", aon_chan);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!adev)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0return -ENODEV;
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return PTR_ERR_OR_ZERO(adev);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int th1520_pd_probe(struct platform_device *pdev)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8fcf4e34eaa5..b641b5e60bf5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25466,7 +25466,7 @@ F:	drivers/platform/x86/lenovo/thinkpad_acpi.c
+ THINKPAD T14S EMBEDDED CONTROLLER DRIVER
+ M:	Sebastian Reichel <sre@kernel.org>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
++F:	Documentation/devicetree/bindings/embedded-controller/lenovo,thinkpad-t14s-ec.yaml
+ F:	drivers/platform/arm64/lenovo-thinkpad-t14s.c
+ 
+ THINKPAD LMI DRIVER
+-- 
+2.51.0
 
