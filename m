@@ -1,73 +1,70 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC48F1534EC
-	for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 04:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87261D63CD
+	for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 04:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758859399; cv=none; b=IyIaHG80AP/L5C9cZFdpr2h7NEaHDeNT0eC+HjOmMyOoVBc5LB5KL+zOzzdjLQYOYkqODx7MRTjS2tj33q0bTJCkmijFKTkB0EnM3Sfc2otCc/AC27A0VSZOCg5w2NwOiETitizOoqIYBlDN8ahjAYJoTF0of78us53HrLNuP08=
+	t=1758859408; cv=none; b=iN7jvlE5VqklWbyXV2phnwuIm/EEw2Bq4u/TToDnCRER8QbF8oFVeadzoqZccB1QvZ/TzSmht55n9aKDFuJczvEibogRLTI9hJsMHkPNZLWb9w84KQrKCKhjBymj9vI8WSB2QsfyIdtfGS7oahB7eglr1k5I5O+/Ts3bPqMx5g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758859399; c=relaxed/simple;
-	bh=wvhzxABFdiOg+ADsIFkLjfPZXMEFheR4Ig6WrpOZQwI=;
+	s=arc-20240116; t=1758859408; c=relaxed/simple;
+	bh=CMUvU7Q/eBR+laEBfAb7ZGtG2rKSkDFVZ54Tf8pVcwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RArA+73YE+BWlRFtCszhDILlnpMSSMrtfxT0iMNFjnAF3Y+lZtOHkAYjAC+C7FxSJJC7pU6Zq38CE0yWAtAW1yz0XaUMLT9mCwFmMIjG4h05DhevS3uDldSGLbPxtNja4R8oL0U8uhlyukNFtPIvr1xq8x/bjCugbrt+00NPYN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Em2hV96b; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=A39CCU3hhPRyHt6qNHWCvZl7M93SgOBrOhAkIElTHettG/wYohw3dWIr807H7uCGqZRHG8OrWDtcHfHfuDtGp1rGdX1kFtDN2xCsvadE57yFFFnfQaG0iYkxvrxkMBzLMdBjEeuzGxtBCyGYAjPaxXkyaCczVEnpk5eudacDS8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C5LVsrD7; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Em2hV96b"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-468973c184bso9514085e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 21:03:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C5LVsrD7"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso1369285f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 Sep 2025 21:03:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758859395; x=1759464195; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758859405; x=1759464205; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=SytoPnG5QJz686o335sBi4HCtgv9sYZ8aX3hOtRMKuU=;
-        b=Em2hV96bno6K4j3EiQ4i+vWldVz172Jhassul+IUdwIrwuSktCax0xo/EEMeA7glUz
-         N7rjfp3f1Xm6dwKznrnCoz31TTXrJs7xjXAX//HulS53XAizOxcDv4qL8TwZGgRcWXD2
-         DYmRqH+VbbyP9qx8/29UsGgz6UF4zTr/JzruhLh+qeR7OH5uxB8J8UrNIPc7r+jYinq1
-         Vrtz+W9/A6V/OEo0QDx8C0e5QM1wnda3PpQTt9snHBkozlteFwk1kWVrFYOvBhRTFL6n
-         j+BCcvbGGjbin8Bw7a2OlOrWGMy8Ug3MFbIwV7ywrKjWi6wYE/uiMRDS4OWSotjA5yEB
-         PE4A==
+        bh=P6T43NkvaDj01P2kx1drf+v8B79h0nA8PHSG7DCPm8Q=;
+        b=C5LVsrD7/UCaewr6N0MlOvCA+xFcx0MbNr/0lR/82Q1SJ4hL3z3xYVxdVgDKRlmlU7
+         V5oNniYYrv/Ar5i01vWX/2lTt8/fWEcCcngLuGuYklK35blRSUW9nfutCyJsPBYVkxtA
+         CRbDRw90Z5J6NByc/CUB6w53ONR42xZnVfC6NeCia4bxszPRA+K/wdo2206rRXfqh//S
+         370GJFljHk9oT6iiY0CuKrQDvSXU5sJM4yLGiyGftJGI7fqvVmFLzoPS/iIodMJzWYeY
+         yF4d6fNa4XkpghA/bJzeOXofAISyeLqzIXKSuC4PiB5Y0ZMWURdKIn5JLAmw24ilsn7x
+         WDlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758859395; x=1759464195;
+        d=1e100.net; s=20230601; t=1758859405; x=1759464205;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SytoPnG5QJz686o335sBi4HCtgv9sYZ8aX3hOtRMKuU=;
-        b=S8iNdDNVlm2pMdtzp+cclAkw61QptAmjs1JSAYmPWq+LoiBjTufCo+QCNUQfDxvjfG
-         YJEpqeZs9AmBEex02Ip1liUIXGp4aXjvGPh97dMe7WCVk5N1HDPBcpcVqPbcALKZmP08
-         U4v6i7g12S957Y4NwGrKTXE7a6fnxbuXR7erhH30wUfp24C0QR4CEyFwG8r/IhQ6P/V3
-         jsNhk99TZl3IXK/JKQgGSN/hW+9+QsoRPUYhTqYK0xm5mSeTbwyhz/I8JP/bSg/DgBsm
-         xVqu3hhZt5nmG/y6tx+sYhtgQhyKhah4xSyzKjHGpe6QQBM8bs7enSp8DEihbWqGrPPp
-         8g8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUxRW2WlGJ9ig/v0kHYk6DzY6ZKAM0YfzIFp2MddqE+RGiTE/P3YvYZvSXKaSn3SpdoQ5bJkeay/W999eZvRwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZNDYbhJNhuxakGmgKCNIqc8F4tXkZeYTfMJ/SQMHrdZBt2OR4
-	ld9v+t1Ti1spJX5KCmFBv/5gZAOZxUsjBYBokwQXBJmjU48wUD1Gmb5lSXAz0Ln3peU=
-X-Gm-Gg: ASbGncvs6XVP4whviNU38nDb2POC6DkQPRwBT6zcldjEj/+YgE/U53YGiDao1ZHutfB
-	G4K9QLP4qZnioHVQdykKn3TUz+HqybOsXVZUMBzsgZtSiVCT17xdaYhctOf2sE74JomtLFTxAM8
-	R/iNjR5D0b0aHfw9EzapXfAQe/k9YJs/j+KH1smphKApNspo05vW5zJ3sUTUdxiAIdxkDI17mj9
-	jULaCggQDx968VBwpTDI9gx637CqeQBDKyZPQkOBvMSYqLLym3VO7oyRoJ7v5Jwn15IH/Ly1Wit
-	lAJ1gmZb3cYAM60hO142Mk/7MS9oJbeoSYctxE1nB5Or6egu0fLJ/Gb2UHj5nVj1vMk6HKngsQ5
-	opVSm8oWAKohnO8wnRuJda+NCyH1i/e/5W2PyThQ=
-X-Google-Smtp-Source: AGHT+IHNqzt+aianVVfPntORZwd/WnwppYwAnuoO1k+luridVLwZ4XnvDsMlhkTtJ7/8EeWUMuSP4A==
-X-Received: by 2002:a05:6000:2484:b0:3f0:9bf0:a369 with SMTP id ffacd0b85a97d-40e43b08823mr5542343f8f.14.1758859394949;
-        Thu, 25 Sep 2025 21:03:14 -0700 (PDT)
+        bh=P6T43NkvaDj01P2kx1drf+v8B79h0nA8PHSG7DCPm8Q=;
+        b=HI+m0mMBmcMw6LWrUmjgdifhfoy3/DA1Yt7/cYA1GTSTs+8yce3jPsxxOdC0+Q5zUp
+         01AfU4VQ4g1vXOX5ft7V6cKV4+8DWvxDKfPs85ovGXtXa5t8zxXI8prpF43/bPg2fb50
+         0X1TFHG162eKWhZk7ovUSKaqhSx3EPG4uUjcnH8Na4F9Bi04R0IDVIKaLX/Zzj9PrCw9
+         HGXfWNv2aLhX/4kumGDs2+JLqLzWOgMaWbPkceys0Gh5oNp4hea0k3Vg7kxilWs6Og3o
+         uGq/C4XwqZl2h8JMnIR/T1cFGfLXsXxEwLPrd4BCwqrz6IBX98ThpRqwZz88O86MDgU/
+         C9lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVz4PKrjL62Q8fr2x72RixW56U2b0I49wa7HZuTPH273M8O5AceXPyTCVwzICvj9o86gGKnGPL/gunksfFHX4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGBBBN/h2mKmGIuHJ48wULRy8mWY3u7eAS2IE8VofgmVXbj94s
+	3Xw8/f9Xaeafmr+6QqWyPoyB+EFBRD50t3GHwKhfopR4kfxDG40DDAthM9yDd9HyYHI=
+X-Gm-Gg: ASbGncvU4B2qlvCcTBv3CeoZtOxvyUlP/oDuYo3Us/Pt4AAS1Cbq7VNT4a9qpPwAJRT
+	/6XR7ACr1adg5aILnLaBlwW7CdbjOhmg1MnVK/w3Yn2KoFAW4nfzoA0AprMnzOBORfI+tGLo2iV
+	yzsuJ5vmA4Dh3AULLQQGM8cBqUF/+HzVsjDDuaxTUpr/Fm1o5i7hZlTv+dMIR/wdPL2RP5n8yGI
+	D2tdb5TdTaXX2S9fUit7A5GZ8om6DDH9aH8P3KT7k22F1s5Rg3mUQ+SlrmCXiO1YsBXwOzAiBwg
+	q9dMyLE4+hQ70RRDBQaR4nME0v0wK+G/KyIRbpyCpHXI0vPA3jzxovm85QJVRRJDCLQP+TgSwWC
+	PoMrAw3ONcgoOtawFec600DatGIpW3O9Ei/sBJa4=
+X-Google-Smtp-Source: AGHT+IH8jSZ9cVpDSOMeLWUT/1JDNyhLeRJ9I2gTVKvtZXYra39O++P7RTag+3K6FCsm4O/uhokkGg==
+X-Received: by 2002:a05:6000:1a8c:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-40e4ce4baf5mr4739778f8f.47.1758859404873;
+        Thu, 25 Sep 2025 21:03:24 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fb89fb2fcsm5697497f8f.22.2025.09.25.21.03.14
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fe4237f32sm5197655f8f.63.2025.09.25.21.03.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 21:03:14 -0700 (PDT)
-Date: Fri, 26 Sep 2025 07:03:11 +0300
+        Thu, 25 Sep 2025 21:03:24 -0700 (PDT)
+Date: Fri, 26 Sep 2025 07:03:21 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Niranjan H Y <niranjan.hy@ti.com>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] ASoc: tas2783A: Fix an error code in probe()
-Message-ID: <aNYQf4cyavnku5Nt@stanley.mountain>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] clk: mmp: pxa1908: Fix IS_ERR() vs NULL check in probe()
+Message-ID: <aNYQiRJDmOO0mEWs@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,29 +75,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This code returns the wrong variable "tas_dev->regmap" instead of
-"regmap" so it returns success instead of a negative error code.
-Return the correct variable.
+The devm_auxiliary_device_create() function returns NULL on error, it
+never returns error pointers.  Change the IS_ERR() check to a NULL check.
 
-Fixes: 4cc9bd8d7b32 ("ASoc: tas2783A: Add soundwire based codec driver")
+Fixes: a787ab591c38 ("clk: mmp: pxa1908: Instantiate power driver through auxiliary bus")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- sound/soc/codecs/tas2783-sdw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mmp/clk-pxa1908-apmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tas2783-sdw.c b/sound/soc/codecs/tas2783-sdw.c
-index 3e03e68932f6..21cdcf93bbef 100644
---- a/sound/soc/codecs/tas2783-sdw.c
-+++ b/sound/soc/codecs/tas2783-sdw.c
-@@ -1285,7 +1285,7 @@ static s32 tas_sdw_probe(struct sdw_slave *peripheral,
- 					      &tas_regmap,
- 					      &tas2783_mbq_cfg);
- 	if (IS_ERR(regmap))
--		return dev_err_probe(dev, PTR_ERR(tas_dev->regmap),
-+		return dev_err_probe(dev, PTR_ERR(regmap),
- 				     "Failed devm_regmap_init_sdw.");
+diff --git a/drivers/clk/mmp/clk-pxa1908-apmu.c b/drivers/clk/mmp/clk-pxa1908-apmu.c
+index 7594a495a009..e374d7733f56 100644
+--- a/drivers/clk/mmp/clk-pxa1908-apmu.c
++++ b/drivers/clk/mmp/clk-pxa1908-apmu.c
+@@ -97,8 +97,8 @@ static int pxa1908_apmu_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pxa_unit->base);
  
- 	/* keep in cache until the device is fully initialized */
+ 	adev = devm_auxiliary_device_create(&pdev->dev, "power", NULL);
+-	if (IS_ERR(adev))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(adev),
++	if (!adev)
++		return dev_err_probe(&pdev->dev, -ENODEV,
+ 				     "Failed to register power controller\n");
+ 
+ 	mmp_clk_init(pdev->dev.of_node, &pxa_unit->unit, APMU_NR_CLKS);
 -- 
 2.51.0
 
