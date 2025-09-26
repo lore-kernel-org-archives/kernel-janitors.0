@@ -1,107 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47B272814;
-	Fri, 26 Sep 2025 11:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AD828D830
+	for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 12:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758886123; cv=none; b=XRTS56/LoQBZrTtRw3JFDEzbC3fy9ofEmu3oePrdFkuWDiipfZUDCuCQ5Nw6b958LEhM33BLQKCElXmb1hSFQ8JhXmSnFqhA3xfYx27/Fbti//6icIGFsUSFWpklcEy3Yfe0iKHk7ZObxj6s1jbue8YDGzGwWMd4KbGOZsYWMgw=
+	t=1758891142; cv=none; b=XICp55Z3AnH615qyfQ+ac1uYn5fKnkn6Tsow4QE7v43K8PZHWdk41EtodXYDb7OOtdEEuUXn0jKkmmpDaGQIVuYoM8A5sIJFwO4QANK4u727PaQS51J8TNw9EJ+GIPV6aSKER8xOIyip3V89NI8vMIZaf3MLv2iH53NNgirZlTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758886123; c=relaxed/simple;
-	bh=3Nyy3MLwVUE/jttrn2yTqB+9QvKaNL2/XNV9ReR+Rb0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CqugfzVKhTFLfnjabqzwBFNMowkkeUJVbEhZ4PUAJZBFYsp/97LYfzhhlbxvGc+L6MjG4ZmlqoNQZJO4vw26fnFDT3DcqOEYScB88E58QZsWicbQvGDCPGJzVbsdPYun9KTbzBilBk3yviQ1Mg/Gy7XRdsyNWOa+K/o4o9BYUag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTkv3tQx; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1758891142; c=relaxed/simple;
+	bh=NrPTGUoLWdQsj2LPuD42yQfi3Grjh00Qivq8Q3RDB2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IjTtuCBThJhLijx4iRzeJWIG7HJOToTFzo8kIGet5moXyyrSfSKaPTxwHKsoimED/JESphPPvXZGLafzVRWY/Y9Qf1jyOzCVyqlEabhddtAXOXlJkF3IP4O6YFOOZAdlVWPPFRhuYqdLZf9wxOkSzBiOnO1MQ6xSwUBfHTWh+mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgVB4PFY; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTkv3tQx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758886121; x=1790422121;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=3Nyy3MLwVUE/jttrn2yTqB+9QvKaNL2/XNV9ReR+Rb0=;
-  b=gTkv3tQxgyBnBEr0ARR8roJmM69+FJynxH2oOq9dmwQX0JP13g/dChNz
-   mKq7Dtni+BDq4A1Dub48ZhADnxp4hwYeMQXcAVf+4+eRyevnj+X5Q0DA+
-   7G9poxN/MH2448vJ+ljJ8I+q53H9C7sIj3mu2YMRChfFRkKsVXWhUQsYE
-   HIzUNJSxDWAqxN/O9egj4wWvZwBRYf+6EbvB9RD7j+G1gBYy4mZfle5Cg
-   uMhSShsnQuFyB7D+Ad6wTQusashyAetj0Ew3ag9qfyWfeqH0CcUhriqnM
-   MymS0uT7GMflF1ug48J5TYSLLOL+OEqOG/O4c0/lD7UBvrgi6qYsOyZyr
-   Q==;
-X-CSE-ConnectionGUID: +/xQ+vufRVqBBiujf5pRxg==
-X-CSE-MsgGUID: q0jQAgoQQnSlyrLw6ILpsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="71465957"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="71465957"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:28:41 -0700
-X-CSE-ConnectionGUID: A1DwKmqISTKXyICpOznUCA==
-X-CSE-MsgGUID: EXahYd8MSiWhYvhae86StA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177522293"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.23])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:28:37 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 26 Sep 2025 14:28:33 +0300 (EEST)
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-cc: Sebastian Reichel <sre@kernel.org>, Hans de Goede <hansg@kernel.org>, 
-    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-    platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in THINKPAD T14S EMBEDDED
- CONTROLLER DRIVER
-In-Reply-To: <20250926071859.138396-1-lukas.bulwahn@redhat.com>
-Message-ID: <df7a869f-3ea9-d127-5fce-b62be9a2de63@linux.intel.com>
-References: <20250926071859.138396-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgVB4PFY"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-74625f748a0so23176647b3.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Sep 2025 05:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758891140; x=1759495940; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oeq95/+JFRlc8XyWn/nswZYQ27eu4+ApswNk/R1twrM=;
+        b=KgVB4PFYIFe9nPm9V+YdYHN77n91R8WQ7jFBY0Zmudw/Qn2pTMpGQG6K5jnUIkqojU
+         TrxtExscXuyZHkf/VG1S+4iSiUQWCOTeGm5ZED9w65rliY5q7qZTHMohSMmzRSEAYma1
+         CQXiRcvYfckoKdPOUrFZwAy0AJv9lnbGf2klaExScc338ByqnH+/7LRAfuFBLTlERhl9
+         O9J4M+fdnd0rMKJ2Lsr/+IqsJ/YqJkKsVvxrjG1no5eScUWnMwiT5EQ062f8ri+6akcw
+         0lA+A0U/9ucSCU2/1eGbp+1zuu2KghX9n8H09dZsSQnngGBwZ9ttETBC9QrKEeKN6qE0
+         Xlaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758891140; x=1759495940;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oeq95/+JFRlc8XyWn/nswZYQ27eu4+ApswNk/R1twrM=;
+        b=m5fogrQgew7HBpvi+c1gKvjyFL5c3cKhbHCSTC/blqEoD8/AYAybTov2GKpA/3AlM8
+         egFfw2Dt/tT2GGxTSHO2rX3mn4W4HI9u2lCj22e2NQPsmCIZtdIro0ZhhE3GqwTpWaWA
+         K7z+7Q0gxdtsoKVyRfpwWduo1Nv7f2zJF+EJ+P3TOCwUHZ+YuR/NHrZBRr98YGDatLz3
+         O6kXcFRnMA+Y6YKOJY5us7ac92myrjIzehV+GN8XKH1uJV8/KouAHoYwwaVmTG2q9u6w
+         RelUUpUryBSl2N6F6MtbrtD6JzsA5uQqBTtMRvzdBcTfewOHIvdOURELJuGircfqG9er
+         hxtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXYH2tW6F5aHhyEezRzgp5MHh3lcpkycEi7/5q0IGLdDfJAEsI16V0HSbEouOar0eqFzVI6BpQyT148tKhbK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEBo8Ja1p1DRgEKND714scmQD3X/aEEjfsctCYTerK/6Fv+zVL
+	L1XOWRt2F8dV+qT3Yl2fSpyUJz8UUDHMKl1yNR4tXYdUu2vZb7yENX4AELpcZEU4GKNQzn3w876
+	aMmF3IbKu+yneLqEEp+XYJm9iVyBPG2U/BnR63oCYhw==
+X-Gm-Gg: ASbGnctueWIcYxuqcankpK/sRkTjs5bHGVPdXbbM68fiy258jhmuLASDVVQYpC6sUbJ
+	JJM3oL0WlL+BKYzvH+bAt4y7GBkMCk0E/NWfV4szby7JSvKRUOmiiSokT14J/6U2LulQenYp5Zk
+	LqDGRHPY0cYLiqOo2QC9FYuOdKzG3dGAOk+zAAZUCCQgiMcK6O6Uzh0OfYoACdtENfmutf4Z1Tq
+	gqFYjK2
+X-Google-Smtp-Source: AGHT+IFbegjMBskXETWZWAHtZmLSq0HPSiddGUE92rJmk6oAyCGRgWRczPzi/diLvmOjt/dbfSTu3Ew31MNwwvilOAo=
+X-Received: by 2002:a05:690e:144c:b0:635:4ecd:75a0 with SMTP id
+ 956f58d0204a3-6361a89a815mr5888996d50.46.1758891139937; Fri, 26 Sep 2025
+ 05:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <aNYQkVuVpP3Daq7x@stanley.mountain>
+In-Reply-To: <aNYQkVuVpP3Daq7x@stanley.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 26 Sep 2025 14:51:43 +0200
+X-Gm-Features: AS18NWAJ6VxhUJBeyo9x7sMCxxohCMAJ5raPfUmiVSZRv8RZbBNqJRlbPHJDbI0
+Message-ID: <CAPDyKFq7mwW7ys6_1wnhf+BYBeDcsxgcL5HxGhnpxv1vMO2qaA@mail.gmail.com>
+Subject: Re: [PATCH next] pmdomain: thead: Fix error pointer vs NULL bug in th1520_pd_reboot_init()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 26 Sep 2025, Lukas Bulwahn wrote:
+On Fri, 26 Sept 2025 at 06:03, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> The devm_auxiliary_device_create() returns NULL on error.  It never
+> returns error pointers.  Using PTR_ERR_OR_ZERO() here means the function
+> always returns success.  Replace the PTR_ERR_OR_ZERO() call check with
+> a NULL check.
+>
+> Fixes: 64581f41f4c4 ("pmdomain: thead: create auxiliary device for rebooting")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> In the activity of revising the patch series "platform: arm64:
-> thinkpad-t14s-ec: new driver" from v1 to v2, the location of the dt-binding
-> for lenovo,thinkpad-t14s-ec.yaml was changed, but the change of that
-> location was not reflected in the corresponding MAINTAINERS section.
-> 
-> So, commit bee278e18e64 ("dt-bindings: embedded-controller: Add Lenovo
-> Thinkpad T14s EC") adds the file lenovo,thinkpad-t14s-ec.yaml in the
-> embedded-controller subdirectory, whereas commit 27221f91b83f ("platform:
-> arm64: thinkpad-t14s-ec: new driver") refers for this file to the
-> non-existing platform subdirectory.
-> 
-> Adjust the file entry to refer to the right location.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8fcf4e34eaa5..b641b5e60bf5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25466,7 +25466,7 @@ F:	drivers/platform/x86/lenovo/thinkpad_acpi.c
->  THINKPAD T14S EMBEDDED CONTROLLER DRIVER
->  M:	Sebastian Reichel <sre@kernel.org>
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
-> +F:	Documentation/devicetree/bindings/embedded-controller/lenovo,thinkpad-t14s-ec.yaml
->  F:	drivers/platform/arm64/lenovo-thinkpad-t14s.c
->  
->  THINKPAD LMI DRIVER
-
-Thanks a lot, I've folded this into the original commit.
-
--- 
- i.
-
+>  drivers/pmdomain/thead/th1520-pm-domains.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
+> index 5213994101a5..d7cb9633c7c8 100644
+> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
+> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
+> @@ -179,8 +179,10 @@ static int th1520_pd_reboot_init(struct device *dev,
+>         struct auxiliary_device *adev;
+>
+>         adev = devm_auxiliary_device_create(dev, "reboot", aon_chan);
+> +       if (!adev)
+> +               return -ENODEV;
+>
+> -       return PTR_ERR_OR_ZERO(adev);
+> +       return 0;
+>  }
+>
+>  static int th1520_pd_probe(struct platform_device *pdev)
+> --
+> 2.51.0
+>
