@@ -1,69 +1,78 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05D32BE041
-	for <kernel-janitors@vger.kernel.org>; Sat, 27 Sep 2025 12:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38040284695
+	for <kernel-janitors@vger.kernel.org>; Sat, 27 Sep 2025 12:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758976001; cv=none; b=gXCURLKBq3ak1u8hq8BQzCR7JqkrXgS1He3CzBk6pV36sq51XzQfU7/Tlz9VIyYkLXVpsPLPUFH9ROkAcuIU+MGCmZoxAX5uAaQk4lzkcYe2BDlm37F01AFKoNZten0aQAnC2779UENxHo5Ll4lgxPL1F4fdUgXo3jZ27KGwTlc=
+	t=1758976349; cv=none; b=BQIVS9tjvL3D1mSUjXXA87IVIMPSn8aDbTiXLnAlpPG8AWGNHXI3ge0YLpq5ieP3M7DaBnlDjWlwhuV05ZpmQXu2TBAbL6mpCLyYL5IYnnfuoC3ejV2IBRfIhQjoj8Wft2yLt645xr7aak+6logxgwzhOE6cFv4Wu7L1TXKaxKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758976001; c=relaxed/simple;
-	bh=rEfNw/hjnn2toGEkd2B+EFMnUNcZZBiV2AONtSPpb+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=q74XzC/5NK565C0A4NsWr1FrXF/XEP4rsfVydgz1QJohH0m0tmy8s0LBJIsyslRIUVVSDQhow0MrrAhs6iG1MuUFz548wrO2GmvCBXjv5RMvFLU8P0QkI5+HDkF4YEV55NDHj+0rfyFDqRh0S7Nq2+SEhM2b4izbLzXD3ATOu9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mGu+TwSL; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1758976349; c=relaxed/simple;
+	bh=QXJo14oGqcFFPaCG1vYqjTuy/Ifc9HqL82bjZYd26vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgaxkTzXT9ZJDYzEfQjnT7pIMmsQOByQDPyl75U0fVjJy2TB+7UUMplDiHfKMuo4oK+r2VSGFWrstvwvvmAhnQLd0GISSi8VZ3mizCfslAj8PHOYlXwRgLxQ0LIQc+2DkkJu83XhR2dLX+dbmSxk6gcOuen5SsZ7GcyJqDGke3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eZjSpAQ1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mGu+TwSL"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso16226745e9.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Sep 2025 05:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758975998; x=1759580798; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SBLrdqiq83IjriqT+j/rod7j6tvQbgPiriXKTGAmd18=;
-        b=mGu+TwSLQzam783tObyDcH2rLIFuVGYxNVre9MwoFMsGm0AhR2pZsgD95vGQM2KNwu
-         dApDvVTuvreP1qHmXeHzNJTCapqbjEStu9D5k4cBt73HU1+c8COExHZ8dbYVwMpdTEEO
-         1K+ZUqFXi9XFq5pBpdkRNPqKpZSvw17B66Qn41yT9M99sUpxsb+GeTiHyE/GQ3F78TmN
-         k69Hxq6JsVnpYJHfKkH7NOJaS8KWBUIQJUBfOYQG/2jA5uEQUknDUFtkN7f+t8etLAUD
-         YRTm3Mc4F5nph/YwuA0bTRYs7O7tXbUV8b0kk3FuJd4x1XaEjp3Q+k/5XIrzJxfu0qoW
-         smSQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eZjSpAQ1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758976347;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FvwU/ByFIKVGNfDOxaWsoSUUnpO5CypDPAdcRbhjc68=;
+	b=eZjSpAQ12n9oz9+25HBiyiOLEp1LbS7KiHYV7ZykggsSKZS2N1v1dCNdatBNweJSStClbm
+	4zcHLfPVWtSlfQfH1mUSVzZWDpmpIXcphyBLa7o9RpINC62AcAGmMW7QJ40ji9FrlTGVwQ
+	jVKGLftnswICrowm6mSv/d3vKp5/Dj8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-Ad7H5gQHNOKtqJtBxJKIow-1; Sat, 27 Sep 2025 08:32:25 -0400
+X-MC-Unique: Ad7H5gQHNOKtqJtBxJKIow-1
+X-Mimecast-MFC-AGG-ID: Ad7H5gQHNOKtqJtBxJKIow_1758976344
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e375dab7dso12235895e9.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Sep 2025 05:32:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758975998; x=1759580798;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SBLrdqiq83IjriqT+j/rod7j6tvQbgPiriXKTGAmd18=;
-        b=wcOwTST59L0/6ug7t0UHt4IwONkWZR3kgbl4BwC8XtKfQfsJmQvO1+lQ+YLew3+6+c
-         wVnrZ04PZHtEnfRO+FlKIBRKJtpjRMOoa5omv+sbcgQpL+YZ0RImpkp49pa0rSJzRhz7
-         XG2R2NbdrIx62mmtINsUR6rk4RWmwaKNJFMoTNZcFRLtpm3Kdg9u3c3KTy2pExKIwEYu
-         2RTN4yU8aW6/k6eTRug1DgGS7EeKfNDLGhDBNdhTtmy9LMJuvZPZ9zQSx05FuUsk6v0U
-         VFZ1MFcgTboCPyYQCgDstWDA9ZcGlzmhxSULoGi5VPenhYYuE9Y9H7Yusg91k2ynv/4o
-         cgpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFfBM+uZu7+LFZqxxwczk+ryl7ApDc5eABu1Emhw/anLiZQxe2yWfW4FYX9+BGMTCmevGTc8qbkd5KEapf1xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxapkVmBLd9mER5+/qVj6iVsLM0LitdMzD1CAm4h4G/0ODOFkG1
-	dBYOT85Z1dUSwq6Ec+ePcWi0mH5iLcbaMdWy+8gxUXWLqlYN/InuD45ucQuou3XdrTs=
-X-Gm-Gg: ASbGncuaoGeohJZW8yiu97ITf5HyqWeXBi1gFoQSyWwH66l5GcTCzdSR8vjv6GEhLB2
-	TbpWKu86vzV3KloGJk+TihwH7Zrsw6dhTvXKYMr9JNdNKeBhWpPi9G9seg+gdSjCfYV8HLc/gRN
-	m7Dl5NUapM+z35ozksoknQtlQk1dSvke6GXYz7CI291irgDFkFmP6g2EvcXo/Bpv57jZwOI1vFP
-	IC649IosBH/h+v6vz17OgU+ignI45Z9/A3FFMTpqVkHnZ54PAqnbSWh0YUIW3oLfjs692H3a2VJ
-	cxzS7oNCekPABuTWFYWaD4hpP9swu5tie+KQnhz8oxJSn18FHLe4gT2NVKjbrruzrkAiAm7EChX
-	lsOXuxuY9OGtsJRLt83jDsquqTVD+
-X-Google-Smtp-Source: AGHT+IHAvRpOQmkSxSm6b3328/ZthZojPK7yroebvNA9zjeMtFoBw69S2yXMKcVzb6TG7S93dUplFw==
-X-Received: by 2002:a05:600c:c172:b0:46e:37af:f90e with SMTP id 5b1f17b1804b1-46e37affcc8mr86360625e9.6.1758975997952;
-        Sat, 27 Sep 2025 05:26:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e33b9e8aesm109617595e9.4.2025.09.27.05.26.37
+        d=1e100.net; s=20230601; t=1758976344; x=1759581144;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FvwU/ByFIKVGNfDOxaWsoSUUnpO5CypDPAdcRbhjc68=;
+        b=hqlADwczj/I6xrij/yzPPJYRoyQ3Bq/HiEy2OtCQ5OcoQx4XY5kHoyd1R/rU1RNqK1
+         WTxCBqyEoCskDy1z2YvYBFYR6hIc0WE1AkI53JLIr6dB6WdF63uK25zraZVZ0FW8/pWb
+         OMNX69EQFZaMHqOvWLwH1V1w0BWLkAF7Q0kKuXTAGMjD9EHrMrWjh1IEL9Bd8HK+hvGZ
+         HeiNEHTDJJAzLp8V6ZltkPWjJ/DUvY+HweLmefGvXVK8j7jSeNJ1E7kr5HbcwPorPsuf
+         b+WJs43ZjtSFW5yPuS8sfKhnRCooV7FgD9qDP5DB6BetdgGPw70i4Xukwykhbf7+SSS9
+         jpCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhBc23YWiH3ywgmMUaxAuP9ADHUsMrG0CW5xFwYDrrtbotP+GxccsOFom4ZSCDMewZPBSdIAvklQjw3MSweTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKJTXVVoMJSbkm2wIEWeLw1ARqZY8BoxFftAXEB0aFfw1yPJ+g
+	t3YeJFaAlH0djEOcxvEzxzFjfH2wOK8ZiXaaftx5I61BqqfhEDr/U/Xlqwjfk8UC62UboTwZLZ9
+	xHoMzPeusTZUPuS+X+dzChB6Eh7HmGLS2yViNAuwRwvJ9pLeW/Xl0AN7KcolNL7LBH4ldGg==
+X-Gm-Gg: ASbGncvf9zioe+tc/WmnSyns6Y5difqmUP6zfJejFIt8R4iLNqLua/Xb57haP5NtZRP
+	ybkAZB5mMRoc28ULmsjkx0H7f6a0Fp/RqeN2YeZt2sWsdbFdAIX2u77eTME53zczXieSUNMQII0
+	JsFQb5eP5wYCMyvkIFAe+KZ/OL0aSvNXIhsd8MY6nfXrkek/2uWNswWtmmHidcK0rIt3lrlcgLR
+	1JqXR6izSqXd/UZOT266OOaR4NoCcvIe+0/1OXfHmTEfjwQdLHjhjWUKXt4Bf0gbEgNP0/GAOIj
+	Q+Gk1QD023M/4tfFS/4wRmYaBdpmv2WlCBA=
+X-Received: by 2002:a05:600c:1553:b0:46e:39e4:1721 with SMTP id 5b1f17b1804b1-46e39e41ae1mr61745015e9.12.1758976344223;
+        Sat, 27 Sep 2025 05:32:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTY0fdZdgXRDviUIBptO6FxVugLlKfaDdRO18KVHiVelnbnrO1C0c8G8WlptAx2IChMWMgtw==
+X-Received: by 2002:a05:600c:1553:b0:46e:39e4:1721 with SMTP id 5b1f17b1804b1-46e39e41ae1mr61744795e9.12.1758976343755;
+        Sat, 27 Sep 2025 05:32:23 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33b562d8sm111137435e9.0.2025.09.27.05.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 05:26:37 -0700 (PDT)
-Date: Sat, 27 Sep 2025 15:26:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] EDAC/versalnet: Fix off by one in handle_error()
-Message-ID: <aNfX-qj_KpCrnCUy@stanley.mountain>
+        Sat, 27 Sep 2025 05:32:23 -0700 (PDT)
+Date: Sat, 27 Sep 2025 08:32:20 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vhost-vdpa: Set s.num in GET_VRING_GROUP
+Message-ID: <20250927083043-mutt-send-email-mst@kernel.org>
+References: <aNfXvrK5EWIL3avR@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,30 +81,42 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <aNfXvrK5EWIL3avR@stanley.mountain>
 
-The priv->mci[] array has NUM_CONTROLLERS so this > comparison needs to
-be >= to prevent an out of bounds access.
+On Sat, Sep 27, 2025 at 03:25:34PM +0300, Dan Carpenter wrote:
+> The group is supposed to be copied to the user, but it wasn't assigned
+> until after the copy_to_user().  Move the "s.num = group;" earlier.
+> 
+> Fixes: ffc3634b6696 ("vduse: add vq group support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This goes through the kvm tree I think.
 
-Fixes: d5fe2fec6c40 ("EDAC: Add a driver for the AMD Versal NET DDR controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/edac/versalnet_edac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/versalnet_edac.c b/drivers/edac/versalnet_edac.c
-index 7c5db8bf0595..1ded4c3f0213 100644
---- a/drivers/edac/versalnet_edac.c
-+++ b/drivers/edac/versalnet_edac.c
-@@ -433,7 +433,7 @@ static void handle_error(struct mc_priv  *priv, struct ecc_status *stat,
- 	phys_addr_t pfn;
- 	int err;
- 
--	if (WARN_ON_ONCE(ctl_num > NUM_CONTROLLERS))
-+	if (WARN_ON_ONCE(ctl_num >= NUM_CONTROLLERS))
- 		return;
- 
- 	mci = priv->mci[ctl_num];
--- 
-2.51.0
+Thanks for the patch!
+
+IIUC this was in my tree for next, but more testing
+and review found issues (like this one) so I dropped it for now.
+
+>  drivers/vhost/vdpa.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index 6305382eacbb..25ab4d06e559 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -667,9 +667,9 @@ static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+>  		group = ops->get_vq_group(vdpa, idx);
+>  		if (group >= vdpa->ngroups || group > U32_MAX || group < 0)
+>  			return -EIO;
+> -		else if (copy_to_user(argp, &s, sizeof(s)))
+> -			return -EFAULT;
+>  		s.num = group;
+> +		if (copy_to_user(argp, &s, sizeof(s)))
+> +			return -EFAULT;
+>  		return 0;
+>  	}
+>  	case VHOST_VDPA_GET_VRING_DESC_GROUP:
+> -- 
+> 2.51.0
 
