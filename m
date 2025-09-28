@@ -1,69 +1,69 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4238627280B
-	for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 21:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF961F8AC8
+	for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 21:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759093331; cv=none; b=Pl9ebvTkoC6O3H3zM0/azJ5R+LCVos2VqmG1Jj3BLlhbchJD2INnJfeY2UdtQEGS35cL8wWJ6UVi+ouSR1GgCeO50SCz8tsbTn31xObHr730iehT+g66GkBwfP2t2vwL/9i7aAkZUX4AqmmASl65wWnM54708OoFl87FU41kNX4=
+	t=1759093581; cv=none; b=gDa/wnl1veou8vQ5p9c/Oe2ElngYEVQfBVcusm/O4a8MnqA+FO+jOl51SYJIhbkivsJtMBBuGcXqllV+xQglzkIrl+vhn5PcK9FM8w5B77tMmMax7m6BrLyRi54fjmbbvSqHhhls9UJD/UfCQJMcfFyiIjg765Jf9H1xAC6JIts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759093331; c=relaxed/simple;
-	bh=7gRqA1lzDomVvZ9HdJ5xM3tJEYy4qZM4Tf1HKy4xaKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YsYmCUgsxGQLSTUPJbWiYQJF547x3EMNihmz3zgAzxVkz3TTIBKu/See3+rf/zpikfFx8qlbOdQ8P1aFZaIW7eYxcAaRL2TT4qzsQNZsMY8oKZaCiet16Repea6OnnkuLfz9b+LPvqkHHl32nd/v8HkcX61ljYbn/xicowOp/Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDp6O9gc; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1759093581; c=relaxed/simple;
+	bh=hc97JYJrs85TwiA+5FAaYD0kUVXhjcggsmiNwZw/EdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fz/TPLkUBCLBryyKok2rYpuVz588VIQMkMvK1Pq7GIaoYs6Av8s2enUTBVchYp18NdH/VDqTTVvmp7uFCR2as+uruIFOi2n1M4aoilULIa631sTcbo0BYktZu69+VqpKnccNzGyzRMJEewRaBTs/naLGSTLzVX1YksCJHxF2sqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBCqQKly; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDp6O9gc"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e30ef74b0so27949255e9.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 14:02:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBCqQKly"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e542196c7so144025e9.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 14:06:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759093328; x=1759698128; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759093578; x=1759698378; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sxkm8jE9ToiUS31/wtNowypDOUu8isLYkTQLRPslSVU=;
-        b=MDp6O9gctyCkzhG2JANeh0QornOvlUp1gnGb91FKsoLnB93AVLOQ73QBg47oZKhnlM
-         +G+QHc2RaGPDfZ0WW9RxUnX8fgOT8boLlthN0zCjsaeE7D5W8b4dYBA5PcmY2mCVj4cq
-         bHMw1xiY8ccffu8engHLoR3tBGQNbWZbD0e2CwAAh6jZuO0Q7AgTvSY9moANdqzxQ7DQ
-         m0YfbLsCWXxxzRZnxsUEO6UFfD2AxJFead2y0Ks/koaydi8c8w1RhqjMBkl5Ykd9nCqL
-         TkQAu4QMtI0x9onMWM9uNZuT01TM/NTDoEBLn+EoupWM012lwTVKMzIu0B5zrUeyn5Jg
-         s9yg==
+        bh=7GOZxADKetbNWmP18yfkEj41q2tuf7F+8JZh0ODXm7w=;
+        b=mBCqQKly4slaYiyaaV1gvqckYt4FbLHRi7Zlpsd8ogumnw0Mz58bV/UKsWH4l8Ou5m
+         v5PzQwgLYgy+eXrUWtQgykYpprbfN45WSKZihOia92rtpjxfIX6lrNTTasK6jmnIpR2V
+         SJlnM8/siObN+a3YMWq0rcgSpNlUXi+jOt46jtbXnRmF3KUpfijFxkx/9PyZbWINCl1f
+         qS6P55HyT2v+IXA2pcNCN9WtrzcbnBdg2t1MNypXvBQ0ZJLqqkbPOyvtI9Dja3oU5y/m
+         PVXOQA+OpoWrKzBmxnis5Uzz+MYalkEGWY29PMXDEgKxHKmdA7r7c/B1ufW7+rufZEiN
+         tRxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759093328; x=1759698128;
+        d=1e100.net; s=20230601; t=1759093578; x=1759698378;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sxkm8jE9ToiUS31/wtNowypDOUu8isLYkTQLRPslSVU=;
-        b=Qk4R3zH3T/PE7wxhJ5ZKgKmzjBNlxLlmT8Sz/bT0tteIV+Cotw8XFC8hP+LqTIDxTh
-         HmSoQeVGBH1HR1fYW1zQ/bmQlWgS2SgtxWoclGiixUy+OSUJwps71y2B6o8uyKCXvomE
-         +awdWfKcEQgieYYZNCVVDsue5bKNnW7WlNm8raanhRKGJOd7Sa+vSviKTF6klrqzHNbO
-         UFwFdSkSLLm0OGgbr8xKfV30sdNH/QWrBNp8WRM76+Q6JN1NTxmQxl55f1J3pbX1+3Fl
-         bxlP5Uv6R8TcA/15Y0yr+xPoNf1Y0ts7sVz4Bv3EDs6ruA9SbmtkXoo/UYU7Us6Y3bGD
-         J+8Q==
-X-Gm-Message-State: AOJu0Yw3fQF/MkBMlPtvJhw38ei2fv9c31W2vxTnJ87O/q70k7PbpUoF
-	BezXWiQcFxWSblMVdbxZQEsznrivpE9200cwP6x116m2jXBVxuzpYkXV
-X-Gm-Gg: ASbGnctU9Jt6ad4lwIosfEi1MdoE+EiJFrRXzf3Sn8nZp/vf6/fN7KLhnN1hTn8AhMI
-	cMPa0L0poX1NsRlwM93PptxbNPkK7QyohVxAqDV3uT2738EombFXoJsL1o9VfwG69eZdns5aA+R
-	hWOagM7AtF9jvqO2268UbemQjQk0CJu7BlheOdCvdpNfa8MV/tjDCukceYr8+ZxigJ2FgQZVL7e
-	rBFf+zOJPR+URiM/3lYLrsrsYwyTqb/PY1GeJ5WFogEDky3nFX2alQMx/kOc00RCNpnjV7tgshS
-	iiq/pgNf9QvOpmpabnLCbTipvQ6Q1XdLoNfSY1Ksx6IvI4VfjTZ6Q8h2U7jqutjjSHv9oE/1E0B
-	hxh+OYktya3MphV/SzYzEcw==
-X-Google-Smtp-Source: AGHT+IE9CTRtnxkm6JMDZSimOuYV/5weeNvzrjUJ+0Z0yRZI1GfxssHnK7NaXTSzkYrHfFKdvuTsjw==
-X-Received: by 2002:adf:e6ce:0:b0:411:f07a:67fb with SMTP id ffacd0b85a97d-411f07a6bb4mr7969797f8f.55.1759093328488;
-        Sun, 28 Sep 2025 14:02:08 -0700 (PDT)
+        bh=7GOZxADKetbNWmP18yfkEj41q2tuf7F+8JZh0ODXm7w=;
+        b=JnNj/0hZQoyP6HeVQTWAIUiyblInzyzlDaTvFR4LuZfBXIwjubB5GLRsveoN7aPoDM
+         kL/9RBoBZAfv1lqIg8AvVj+85r6gRhYsv+BhBVgTAvSo+9LF9rJqGU4FrNxM2VXTw2HS
+         7zk8ZEDpcyq43wo/0X8E7GxOAMOY95foHQEoC10h32RFvqQtLxPQ0oV9yHH+1PMyd2u4
+         Ga3m2KyjgVgdfZ4P09uWIs5NtQMtcev7lL8/gsgymESNW3m4NzZjHxBCvL+gkvC56quQ
+         jfHlH8dXiyRH0wB476X9ULiqo6tZVSVmGzfNh4O4eyWsi3VFDGO+S0HFZxKi2xsODlgI
+         RFEA==
+X-Gm-Message-State: AOJu0YzERUcOFAdZ0oIQbI3AsrRfhjREILtoNA2WdZSroCfEsa74Vlkv
+	ieRAKT74GUl7hhVuRD/LzNUGZHoZYWbdsdaRjalj8qvP0NeoD/mI1Hvl
+X-Gm-Gg: ASbGncunWHjgYnxvuuJq77CnY1uJyBS9RpSu6Umu1Oyi++gI2wSPO9d9vddLWIymjZ7
+	3CW6nu51bpIHLKWlsEMAouJVFWRweI0AXkkCiw3zvIJRxhrQZzOieLyD4efyDTaBpz+4p7Gb2SD
+	SNfURMmmnzBASVrzfn5AN6VtD+VG3eS1ameIqmtACQq4ERBk2YH2AjGkwTrxVIBwJnWJ33XqEXK
+	nNThGb1g+8G6Xg4LWAMiNTYGIbX5E1xo+X1OqwjqQjJqUWBLb+TU5Uq1IeIAVdyhrPH8SHJoPL9
+	a7ZhNZg45o7udLzC7elWY9uRroWhMsvSdsVOWBHRw56K3HfFySWzzCikzURmtDzNvlwY11eaIa6
+	k8AvRiufPEnWUcmVZGs/x9Q==
+X-Google-Smtp-Source: AGHT+IHUTJAtPXtQmR3XeP0zOt9RmSQ9hMHtdnuAfVVnI2fiBfQPProKSkthhRtOdJndpA7ra6vBVA==
+X-Received: by 2002:a05:6000:1847:b0:3fc:54ff:edbb with SMTP id ffacd0b85a97d-40f60fdfde1mr13463024f8f.9.1759093577811;
+        Sun, 28 Sep 2025 14:06:17 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fb89fb2fcsm16366786f8f.22.2025.09.28.14.02.07
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fc5602dc2sm15520842f8f.32.2025.09.28.14.06.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 14:02:08 -0700 (PDT)
+        Sun, 28 Sep 2025 14:06:17 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	linux-mtd@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] HID: hid-debug: Fix spelling mistake "Rechargable" -> "Rechargeable"
-Date: Sun, 28 Sep 2025 22:01:18 +0100
-Message-ID: <20250928210118.242631-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] jffs2: Fix spelling mistake "Synching" -> "Syncing"
+Date: Sun, 28 Sep 2025 22:05:28 +0100
+Message-ID: <20250928210528.243027-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,26 +74,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in HID description. Fix it.
+There is a spelling mistake in a jffs2_dbg message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hid/hid-debug.c | 2 +-
+ fs/jffs2/gc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 7107071c7c51..438a12046e86 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -2523,7 +2523,7 @@ static const struct hid_usage_entry hid_usage_table[] = {
- 		{ 0x85, 0x0088, "iDeviceName" },
- 		{ 0x85, 0x0089, "iDeviceChemistry" },
- 		{ 0x85, 0x008a, "ManufacturerData" },
--		{ 0x85, 0x008b, "Rechargable" },
-+		{ 0x85, 0x008b, "Rechargeable" },
- 		{ 0x85, 0x008c, "WarningCapacityLimit" },
- 		{ 0x85, 0x008d, "CapacityGranularity1" },
- 		{ 0x85, 0x008e, "CapacityGranularity2" },
+diff --git a/fs/jffs2/gc.c b/fs/jffs2/gc.c
+index 1b833bbffcf5..116567899e23 100644
+--- a/fs/jffs2/gc.c
++++ b/fs/jffs2/gc.c
+@@ -83,7 +83,7 @@ static struct jffs2_eraseblock *jffs2_find_gc_block(struct jffs2_sb_info *c)
+ 		nextlist = &c->erasable_list;
+ 	} else if (!list_empty(&c->erasable_pending_wbuf_list)) {
+ 		/* There are blocks are waiting for the wbuf sync */
+-		jffs2_dbg(1, "Synching wbuf in order to reuse erasable_pending_wbuf_list blocks\n");
++		jffs2_dbg(1, "Syncing wbuf in order to reuse erasable_pending_wbuf_list blocks\n");
+ 		spin_unlock(&c->erase_completion_lock);
+ 		jffs2_flush_wbuf_pad(c);
+ 		spin_lock(&c->erase_completion_lock);
 -- 
 2.51.0
 
