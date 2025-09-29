@@ -1,99 +1,129 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF961F8AC8
-	for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 21:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A15236435
+	for <kernel-janitors@vger.kernel.org>; Mon, 29 Sep 2025 06:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759093581; cv=none; b=gDa/wnl1veou8vQ5p9c/Oe2ElngYEVQfBVcusm/O4a8MnqA+FO+jOl51SYJIhbkivsJtMBBuGcXqllV+xQglzkIrl+vhn5PcK9FM8w5B77tMmMax7m6BrLyRi54fjmbbvSqHhhls9UJD/UfCQJMcfFyiIjg765Jf9H1xAC6JIts=
+	t=1759125940; cv=none; b=bQhRyMlrCdOt6vx42j39odDSTra7TcBmN/cLO3kTJeFPNslCKdtqVM+33u/MMhiMmhfkuj4+FO70CxEKSL79jowmZ7VYY8vXBljrtxnraDm9CALeWuW9BeWbkpRj+hBQ1/8BOzqajxlBis5OMlD56T/zmEojEuth8LCUMNoXZkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759093581; c=relaxed/simple;
-	bh=hc97JYJrs85TwiA+5FAaYD0kUVXhjcggsmiNwZw/EdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fz/TPLkUBCLBryyKok2rYpuVz588VIQMkMvK1Pq7GIaoYs6Av8s2enUTBVchYp18NdH/VDqTTVvmp7uFCR2as+uruIFOi2n1M4aoilULIa631sTcbo0BYktZu69+VqpKnccNzGyzRMJEewRaBTs/naLGSTLzVX1YksCJHxF2sqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBCqQKly; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1759125940; c=relaxed/simple;
+	bh=9WPqzjmiWMki4xWlLoYtm9WlKZ743i+2Jltc2U63LGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FCY+FRPLDKFH6oc3FfY/NkqgPi37wub5o7mW+gdUNfQbzCLx/L0B05VH/6dyPO9GqsZ+iGkvyCxLqxINgG3SjWIpg2zVKeLi7TiXuFeeV1DFvkAcY9zT7fUTifbjN13/i03KoFe/tJ8LS5dr5WuZtlKG7vHLYI3K0iVLqglmhfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cL048wyP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBCqQKly"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e542196c7so144025e9.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 14:06:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759093578; x=1759698378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7GOZxADKetbNWmP18yfkEj41q2tuf7F+8JZh0ODXm7w=;
-        b=mBCqQKly4slaYiyaaV1gvqckYt4FbLHRi7Zlpsd8ogumnw0Mz58bV/UKsWH4l8Ou5m
-         v5PzQwgLYgy+eXrUWtQgykYpprbfN45WSKZihOia92rtpjxfIX6lrNTTasK6jmnIpR2V
-         SJlnM8/siObN+a3YMWq0rcgSpNlUXi+jOt46jtbXnRmF3KUpfijFxkx/9PyZbWINCl1f
-         qS6P55HyT2v+IXA2pcNCN9WtrzcbnBdg2t1MNypXvBQ0ZJLqqkbPOyvtI9Dja3oU5y/m
-         PVXOQA+OpoWrKzBmxnis5Uzz+MYalkEGWY29PMXDEgKxHKmdA7r7c/B1ufW7+rufZEiN
-         tRxQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cL048wyP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759125938;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aEnOtbURDkBn/yuAWcxy2EnBdqVr8YnzLqFxCwWilb8=;
+	b=cL048wyPGBB/q1YBW5mK9HYGu2gbx3IO7g+XdSUVl+pr25+3Ll0+z53uMmrlFaf8+TfY+K
+	24ck22LhNxhRvAThxSKdIl9bgMvsjEVi42wHLMUPZgRfqjytGx2m/X9vOqXrF+s33sNk/k
+	Fhx1403HdWCcfRo69BISzXCoxJ8FEz4=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-509-3mBYbGZDOY-xhCrEJoFVpw-1; Mon, 29 Sep 2025 02:05:36 -0400
+X-MC-Unique: 3mBYbGZDOY-xhCrEJoFVpw-1
+X-Mimecast-MFC-AGG-ID: 3mBYbGZDOY-xhCrEJoFVpw_1759125936
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-76c144b0706so45780857b3.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 Sep 2025 23:05:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759093578; x=1759698378;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7GOZxADKetbNWmP18yfkEj41q2tuf7F+8JZh0ODXm7w=;
-        b=JnNj/0hZQoyP6HeVQTWAIUiyblInzyzlDaTvFR4LuZfBXIwjubB5GLRsveoN7aPoDM
-         kL/9RBoBZAfv1lqIg8AvVj+85r6gRhYsv+BhBVgTAvSo+9LF9rJqGU4FrNxM2VXTw2HS
-         7zk8ZEDpcyq43wo/0X8E7GxOAMOY95foHQEoC10h32RFvqQtLxPQ0oV9yHH+1PMyd2u4
-         Ga3m2KyjgVgdfZ4P09uWIs5NtQMtcev7lL8/gsgymESNW3m4NzZjHxBCvL+gkvC56quQ
-         jfHlH8dXiyRH0wB476X9ULiqo6tZVSVmGzfNh4O4eyWsi3VFDGO+S0HFZxKi2xsODlgI
-         RFEA==
-X-Gm-Message-State: AOJu0YzERUcOFAdZ0oIQbI3AsrRfhjREILtoNA2WdZSroCfEsa74Vlkv
-	ieRAKT74GUl7hhVuRD/LzNUGZHoZYWbdsdaRjalj8qvP0NeoD/mI1Hvl
-X-Gm-Gg: ASbGncunWHjgYnxvuuJq77CnY1uJyBS9RpSu6Umu1Oyi++gI2wSPO9d9vddLWIymjZ7
-	3CW6nu51bpIHLKWlsEMAouJVFWRweI0AXkkCiw3zvIJRxhrQZzOieLyD4efyDTaBpz+4p7Gb2SD
-	SNfURMmmnzBASVrzfn5AN6VtD+VG3eS1ameIqmtACQq4ERBk2YH2AjGkwTrxVIBwJnWJ33XqEXK
-	nNThGb1g+8G6Xg4LWAMiNTYGIbX5E1xo+X1OqwjqQjJqUWBLb+TU5Uq1IeIAVdyhrPH8SHJoPL9
-	a7ZhNZg45o7udLzC7elWY9uRroWhMsvSdsVOWBHRw56K3HfFySWzzCikzURmtDzNvlwY11eaIa6
-	k8AvRiufPEnWUcmVZGs/x9Q==
-X-Google-Smtp-Source: AGHT+IHUTJAtPXtQmR3XeP0zOt9RmSQ9hMHtdnuAfVVnI2fiBfQPProKSkthhRtOdJndpA7ra6vBVA==
-X-Received: by 2002:a05:6000:1847:b0:3fc:54ff:edbb with SMTP id ffacd0b85a97d-40f60fdfde1mr13463024f8f.9.1759093577811;
-        Sun, 28 Sep 2025 14:06:17 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fc5602dc2sm15520842f8f.32.2025.09.28.14.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 14:06:17 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] jffs2: Fix spelling mistake "Synching" -> "Syncing"
-Date: Sun, 28 Sep 2025 22:05:28 +0100
-Message-ID: <20250928210528.243027-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759125936; x=1759730736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aEnOtbURDkBn/yuAWcxy2EnBdqVr8YnzLqFxCwWilb8=;
+        b=QUq6s4RUozKhg99b1ZmGaaB99xBKSAt8IwmNjqu/Y5YQtTpVwwS4lNQkjKwTKMHXkh
+         aBp2zAJONY38M/T3OuoQybdPDIPZgjBueLkNYN7qK3UQtACvACPMTCgS8/dth1NVohFa
+         qgJ1aqxZpoBy+wSb10nzsg/nWeQbOkhUU1GCI1K5Q9+YxZzOHqz+kruvTnV0T6MgFCGI
+         8Gc0TpZ2iapyPN4cIMEWO4fgmuVlZ6HG/Bwj12SngPWxW/0Y/ZCRw6pO1irzZrJfztDL
+         DVvTj8bUs+0kTptx2CIcLY2iTKpX+0YdG26TQgBHQRwSyAcIzC/Dc8KAfJMuq9u+4CDq
+         fUtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnVdeMAEJ2kh3DxBzA6nnQS6LadVIdBiLiYB1ZUt8Shqe1/xkBNEveVZ4ccfbhhFvllHD8QqvG1tAi7x5H8N0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYY93zy95f8YLD8Bl64Jr9kpirCr2fxaQv0W8BPcjg0sBbwMhE
+	vyEdeIKS8UHVz/JjjecYBphrakfzQ06lnpz6ca+l3TvbUSgnPbMVnwl6cNYqjQUH5GoKRTu+Yax
+	8zWSmnXI+Djgmr9oUWwwvk9CWZsWXMQtb6EqWtvNzUyEXn9Mwb2YvgJLCghRjxmOJ6dSg2+brf7
+	0tAmx6KbVVlnNWW76J/9xMY1U3Hg6xqzqJkLOgWQFWyS3D
+X-Gm-Gg: ASbGncst3cPdg8LfAXYp+28Pf8dHeyFSfPo+yyr9TMaq2XoPFz+M9WX7apYzHUMt+bq
+	vNCElpUgRwiANsmiW98mMYS18eDH79k8sSjXS5FYV11BcI5rSpUPXabteqLcxftkfuSGxJCX5N3
+	cEdOz1HguC/jI+gUzJ29YSKkrnvpphCKuYzeqwB0nFkhNRDjYkMEJI3JLl4OC+SsnOf7Likj9Pg
+	g1mIdr2
+X-Received: by 2002:a05:690e:2497:b0:62a:38ab:fc31 with SMTP id 956f58d0204a3-6361a70fbaamr12442140d50.14.1759125936015;
+        Sun, 28 Sep 2025 23:05:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPkWT0XTYRzHEmtMC1RyCXLhMmcayEELVp/4odWdM3T+vaRsOTnuGwdr4KePk4Rygkx2XQiQoOU0Uftn//F5c=
+X-Received: by 2002:a05:690e:2497:b0:62a:38ab:fc31 with SMTP id
+ 956f58d0204a3-6361a70fbaamr12442116d50.14.1759125935623; Sun, 28 Sep 2025
+ 23:05:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <aNfXvrK5EWIL3avR@stanley.mountain> <20250927083043-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250927083043-mutt-send-email-mst@kernel.org>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 29 Sep 2025 08:04:59 +0200
+X-Gm-Features: AS18NWCNnLHKyzg0qEsFQJWCKx1nz3MigsaubwNAQ8KOkZjUMutEQnjkPj3UxJw
+Message-ID: <CAJaqyWcdQbt=PUG0GKQ8euXVBZMKEURURuHDijPNpzuf2e9xWg@mail.gmail.com>
+Subject: Re: [PATCH] vhost-vdpa: Set s.num in GET_VRING_GROUP
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a jffs2_dbg message. Fix it.
+On Sat, Sep 27, 2025 at 2:32=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Sat, Sep 27, 2025 at 03:25:34PM +0300, Dan Carpenter wrote:
+> > The group is supposed to be copied to the user, but it wasn't assigned
+> > until after the copy_to_user().  Move the "s.num =3D group;" earlier.
+> >
+> > Fixes: ffc3634b6696 ("vduse: add vq group support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > This goes through the kvm tree I think.
+>
+>
+> Thanks for the patch!
+>
+> IIUC this was in my tree for next, but more testing
+> and review found issues (like this one) so I dropped it for now.
+>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/jffs2/gc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, that's fixed in v5.
 
-diff --git a/fs/jffs2/gc.c b/fs/jffs2/gc.c
-index 1b833bbffcf5..116567899e23 100644
---- a/fs/jffs2/gc.c
-+++ b/fs/jffs2/gc.c
-@@ -83,7 +83,7 @@ static struct jffs2_eraseblock *jffs2_find_gc_block(struct jffs2_sb_info *c)
- 		nextlist = &c->erasable_list;
- 	} else if (!list_empty(&c->erasable_pending_wbuf_list)) {
- 		/* There are blocks are waiting for the wbuf sync */
--		jffs2_dbg(1, "Synching wbuf in order to reuse erasable_pending_wbuf_list blocks\n");
-+		jffs2_dbg(1, "Syncing wbuf in order to reuse erasable_pending_wbuf_list blocks\n");
- 		spin_unlock(&c->erase_completion_lock);
- 		jffs2_flush_wbuf_pad(c);
- 		spin_lock(&c->erase_completion_lock);
--- 
-2.51.0
+> >  drivers/vhost/vdpa.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> > index 6305382eacbb..25ab4d06e559 100644
+> > --- a/drivers/vhost/vdpa.c
+> > +++ b/drivers/vhost/vdpa.c
+> > @@ -667,9 +667,9 @@ static long vhost_vdpa_vring_ioctl(struct vhost_vdp=
+a *v, unsigned int cmd,
+> >               group =3D ops->get_vq_group(vdpa, idx);
+> >               if (group >=3D vdpa->ngroups || group > U32_MAX || group =
+< 0)
+> >                       return -EIO;
+> > -             else if (copy_to_user(argp, &s, sizeof(s)))
+> > -                     return -EFAULT;
+> >               s.num =3D group;
+> > +             if (copy_to_user(argp, &s, sizeof(s)))
+> > +                     return -EFAULT;
+> >               return 0;
+> >       }
+> >       case VHOST_VDPA_GET_VRING_DESC_GROUP:
+> > --
+> > 2.51.0
+>
 
