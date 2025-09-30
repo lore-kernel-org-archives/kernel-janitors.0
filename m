@@ -1,95 +1,89 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CD11B4236
-	for <kernel-janitors@vger.kernel.org>; Tue, 30 Sep 2025 12:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4371B4236
+	for <kernel-janitors@vger.kernel.org>; Tue, 30 Sep 2025 12:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759236896; cv=none; b=WyoUmjoJ5NgCCSrlXKt0X1T2LxJTts+k8h6RbfSgMbjrlzlmVfrtShhb03TD8L2eBw0monUakwMk0dvX10wMtUyffyKN5Rpt66QBldmA69cGZ5sbEWh/qxcPbr9El20kReimrDoR++P1cyux3b+mbKTcEcjBTOerSlACW/pYYHQ=
+	t=1759237068; cv=none; b=LE0noj2B/76ZLpIP+zTg616iKgnB1dC8vQONQ6zMsC+cHjGjezAY2JBO9CopHs6huqA5g97loSno3fMuvhpK0m96ttraGpGn94TiNV/FMsvKremHc8Z6cHAui84S+bsgssYQI5dkdW9eFgJbyM6L4IT2ro3pctjCmRjqpua0cOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759236896; c=relaxed/simple;
-	bh=MKBeHyv3NY02Jpy+fPZVna1bcBZA3eyBmrzzBsDs3WI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Evh9uQqkkaFPBdsXhKAJEsuBpCa0jQSjqKZeNrD2fqt1sGAg9H4IflIEUUwTWb+EHPGohETp2Jxr3+fomQHkybYmkH2PJHnkS4KcurYQeDKvF7i7Obi0z9CiObu0jankPVgeu6y2aP/m2DA46iClKKenu0cRdJ6Uvg8iFW9ejYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NJ8zUw/Y; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1759237068; c=relaxed/simple;
+	bh=kWzPIJSCPvZuJ5cTivFa/QO51QpD2ze2aD7rllOzFEA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eKDwOjcmgttiLwks2IfxzOn1Kz97PxoxOsbnkvJ7YytqDOdoAlqxLgOi1MdyVd/c8GK6sdTq8mU1VP0JiIuK6BW9bqusHTcsrTrIUy0KuQnTVKZ8ueiv2pWwkTKkdhm6s0dOJ/+6Ng2Dm6zmzSlueB0bzd3PBZwQDBrmA59e4+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kK0lApBs; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NJ8zUw/Y"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7f04816589bso624752885a.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 Sep 2025 05:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759236893; x=1759841693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bn+6mTGWkxBQjLUsqN+kSoojzIgnAUXBIQNu61nSFyA=;
-        b=NJ8zUw/YFvPcns2AUEJYyaWVwULIa56MoUXScGr+Sk5YzBTCeSdcb6OxCDmSc9i6Fy
-         GudI/jNafm09ikmSneic/LEzQnGVc5flqxTN9E6Z47sFcVkySk1zczMx0OTmYOu9H23j
-         boHCfthhnDr2jEvNotN4uB5EOjcR5L7LvwpT9tzB/1gRIIBlkhISuqZvsnNk17dTjlSX
-         boiB/NAgX9ROEDZg4O0tpmnxSxSybo86CYzm0SJnMluFJZNitVd5+idt3c7jvt6jS1tF
-         xg7/HQeRnLh2dpw3+4ZoYawnAuGJ0zmqwiW9eu3Jhtfdvg3DdcsICDTMnXtVcVAINwd4
-         WaVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759236893; x=1759841693;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bn+6mTGWkxBQjLUsqN+kSoojzIgnAUXBIQNu61nSFyA=;
-        b=BjNWpip7qLkdJKGa8rPW8nfdFLB+qaRGLndMvJqEisL+RYE34U9jpa5RuhD50cUTRZ
-         gJMW5x7FCIAu6OfuoD3hNwNejfDAcVOQWBdZKzXLnnL8qk1G+q8AE8mhrVXZNQjAn+4b
-         W9Z0cqCUVqWe38FVmgYMPmhjm95sZo+GZDMXsRKX/S7bTIIlMXB0tBorgtrExHJMnWNN
-         YuzEIkFG5mFW7h5c9Pz4U8c7is/tUfH/Un2NPfhylrzmzNAaz1Sxj304yUWce73IkaOe
-         Y1ZwFykdIqUy0nWsMWVKOs2qjw8dFQ15nVIkuJoXWlBZB5cCUjH1k9ls6d/JVjP8MlDx
-         8Q4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfElCwsyCz7B/xnxCtnuK2MQVKLLtVTvo8oCcpssuSDFNSLsDC3IOmHNw1IdQH647JAjLRscq+Wlwybk+/Suw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4huITgvPZe+qoXum8EnfN526PG64FyXOs8neTwnSmHXiLN3xN
-	u2imAkltJIewmAL5+IF5TpuozjpFnOsufPMxjStxp/zFdQWctyx6qEvzuIpmmPPUZNs=
-X-Gm-Gg: ASbGnctRRhppm9cnmDCbzkgrkLU26WQM2Jp+sjLUJkAZwsQq5Y7IRPr46JJgvPP/rl3
-	oG2P8ywdZcFCjOJGoa63QE28qbUVqpgudFC9re4+x5G9vFF+jFDovwDrY3HLN1ewoFAjZ3WcPMA
-	XOB2mv8BMo3i0ODaqurOvcAMtx69tvYlG+DdNbQe2SlbfO+1BD73xbwbcdRqRwmPIb+Htu/Q5/j
-	YXjhjD5mhxjojj0q3mIsd9jD50sLULkF1ky9TctzRhRvJNAazmBI81YmyIj4OhR+MI2hitdaQZp
-	JAbZ3pNKd5d/rXmvQlaGAvV6m31JCW8o8Cke4GAM0yCw0nl+uJ0yYfPf+PaAeH8xPd2r8WSqPBs
-	eBefx20G7M8j3FhMGevMfDbnvqiQBYHw=
-X-Google-Smtp-Source: AGHT+IH8Xq1xzvsa5atQWy4L0N+927va19nw9h/INxGPOCjMGegHFYwwzd+J5W1A0Dfgpb/gIfdZBw==
-X-Received: by 2002:a05:620a:6281:b0:842:6a7e:52ed with SMTP id af79cd13be357-85ae7bdfb4dmr1889933485a.45.1759236892962;
-        Tue, 30 Sep 2025 05:54:52 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c33b73f99sm1035322385a.63.2025.09.30.05.54.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 05:54:52 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v3ZsZ-0000000CX6a-1f52;
-	Tue, 30 Sep 2025 09:54:51 -0300
-Date: Tue, 30 Sep 2025 09:54:51 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kK0lApBs"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 701CBC02468;
+	Tue, 30 Sep 2025 12:57:24 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 100E1606E4;
+	Tue, 30 Sep 2025 12:57:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EABD4102F17DB;
+	Tue, 30 Sep 2025 14:57:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759237061; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=nVa13gnqEbh0OZfVTb62Mape7gGdjtHA5pEICJOEZkQ=;
+	b=kK0lApBsvgRTKrjnu2IL+FRxEyR7mnsh3RP0I7hz5/8rfbhRiS/M1SmGvCx98qkRn50S40
+	DUuy6VU71VExjQDcGAojP8+opuH+Ak3vE7hk+5v7Ua5MzDtTQ9Y+P1E82gPRCP2QFiJWiv
+	D23lVXQomE6b7XxqCYXDQT1snVJVZ6UpdrOS8YDH0D5kCPM6RMt21PyqGlpbt38Qm78oN2
+	vKLpRgvc2AEBNZxk7Y7ls2cI3pLo0ue9PBGwgs1z3xAdPxKvAohA+FyomgAYUoi/YQrrts
+	8qK0EOOPxIrYpGj3rjSXo9pFMyKBm4ndIRpT49dhsMT8Bn7Q0rgikBt90Dt3pg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Guixin Liu <kanie@linux.alibaba.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] iommufd: Fix error code in
- iommu_device_register_bus()
-Message-ID: <20250930125451.GM2695987@ziepe.ca>
-References: <aNvMULgt6s7-3ceR@stanley.mountain>
+Cc: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,  Richard
+ Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 resend] mtdchar: fix integer overflow in read/write
+ ioctls
+In-Reply-To: <aNvN4kfJ2ROB353Q@stanley.mountain> (Dan Carpenter's message of
+	"Tue, 30 Sep 2025 15:32:34 +0300")
+References: <aNvN4kfJ2ROB353Q@stanley.mountain>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Tue, 30 Sep 2025 14:57:19 +0200
+Message-ID: <87qzvogksw.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNvMULgt6s7-3ceR@stanley.mountain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Sep 30, 2025 at 03:25:52PM +0300, Dan Carpenter wrote:
->  	iommu->fwnode = fwnode_create_software_node(NULL, NULL);
->  	if (IS_ERR(iommu->fwnode)) {
->  		bus_unregister_notifier(bus, nb);
-> -		return err;
-> +		return PTR_ERR(iommu->fwnode);
->  	}
+Hi Dan,
 
-Thanks Dan I fixed the commit
+On 30/09/2025 at 15:32:34 +03, Dan Carpenter <dan.carpenter@linaro.org> wro=
+te:
 
-Jason
+> The "req.start" and "req.len" variables are u64 values that come from the
+> user at the start of the function.  We mask away the high 32 bits of
+> "req.len" so that's capped at U32_MAX but the "req.start" variable can go
+> up to U64_MAX which means that the addition can still integer overflow.
+>
+> Use check_add_overflow() to fix this bug.
+>
+> Fixes: 095bb6e44eb1 ("mtdchar: add MEMREAD ioctl")
+> Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE i=
+octl")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: fix the tags.
+> RESEND: I sent this last year but it wasn't applied.
+> https://lore.kernel.org/all/Z1ax3K3-zSJExPNV@stanley.mountain/
+
+I don't know why, perhaps it got filtered as SPAM, I don't know, but I'm
+sorry about that.
+
+I've just "closed" next, so I'll queue this in a fixes PR on top of
+v5.18-rc1.
+
+Thanks,
+Miqu=C3=A8l
