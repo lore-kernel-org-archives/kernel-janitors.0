@@ -1,72 +1,70 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD182820A3
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Oct 2025 09:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C2326C39E
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 Oct 2025 09:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759483818; cv=none; b=VpT0gJaM2aT/XQ2EcOGasIFY+4wbw+NgkA2+WvWnijok2HFy4MwPj0M3/s+6ZsRUaWIeK1gT8Pr/T2Kl52Z/WIZOcbhTEgTF+10XPCTCCLq+TkbbxloXZGeGzsagSg8IYqIrvry6nj5QKSulhypLfoa6rkf2mEs177JoHJfD8ug=
+	t=1759483851; cv=none; b=oksHNrkBmZ90m8RS2QoIOAYSw9Zhooj488DUiS5SREYgqGCSjqGt4IbR2zu5Pj2ismj6vkFO3GEg7ltCd4N6ewzbECzXRQqINA+m4LDD51VJS8U98WLqQiShevWrW1mRXDwb0RfvDtkq6L2W3q+LuWAfCozV+S1fz1/8M/wYBIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759483818; c=relaxed/simple;
-	bh=XI/qi6Okuo9kJdiQntzZ1a9/oDWTMJdYxZI4E72cdcc=;
+	s=arc-20240116; t=1759483851; c=relaxed/simple;
+	bh=DAoVlV27WWlmXjiBC9nMRy5Zf/pHsEoBLiOFORFTr2s=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KOXD+BCghLfClwhOkb49AhZROE6n0jnCIYZlm1mgc5qjHbtNNz+Q2bVHXsdkJ+SqcvOlgXI7rrDPXDQ3e9Rt9OtBsF8ai64h0vee6BeOIKGmAAg4fuoSqFeITCcUqrkKlehZlwokFZ1ztxI6mD2X0sJ9jp9UIs0FdREaaB8cPZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=htj7KhcW; arc=none smtp.client-ip=209.85.221.51
+	 Content-Disposition; b=fzknwOB1QrT3p0ZxW5F5KeE6RjI16GFsK3XOuoppgSWlkf1YJ62Z0rTjMDjoDwCzOT6Mf1HELWXrzbUdaVX2GMKrn9O0/6qGJpTKlP7RLFIWwOJ3KKxXNVU13Bbk4Ln86xprg+Nj0HzEFEE2OZpaAp3IruxaGsI1/NZa/ri3I7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tl0AS49R; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="htj7KhcW"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ee130237a8so1361466f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 03 Oct 2025 02:30:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tl0AS49R"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so1334223f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 Oct 2025 02:30:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759483815; x=1760088615; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759483847; x=1760088647; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GhgLDi6NThV7CDsUpk/weXQLRMerlf2Ax6eN1eI2x/g=;
-        b=htj7KhcWtAJ6kzxA8KHsMV5wCKGtv4xfMrGsiKmaf0TAW4pHDlrrTcG5JSacJYA2FE
-         +Xjrxg5A/SxwnbyzJxddxaEQC3q8/0A1ZpN758o74QqzH3vR0vLv0hJLjbVujp2jrIAN
-         eaou4vHCMY3fApdX3L556bg0W3CUubGc3tVFBCSO05ongOg/gMidRMflrMkIBGenTgU+
-         +d2StVoMoiwdP3b1jWuE6naY7SH8HA1U6zdedbcxp7xFUWHcnCtmbXYXalIX1wCg5JGF
-         D1tTtC+n6cCWnk0lDAPaPoe/HZhbd+K47dVLW0peIdtAYt/9S2YUHWFjaLGqWCgTRpJS
-         wboQ==
+        bh=PBt9sQ3D35nPjr/0RJe6RkWlXbYt10tG/bFkTZQxvEs=;
+        b=Tl0AS49RuMil2112GCILDBTccy4PdAEkp0aIIlAcukl+8DcBeFEUOl2Pw3cb+7nyGg
+         6iLtxAdBgOUhYe5ts8T4N7HKdU4wC7s1BP1snIPJULJ0oSEXlc2lK0VEgkx+fyxi+zLt
+         6hauQZsAs2RMTT7zhaYyZvuA1O7mqzexAMgrjkcOtfV0qUJE8o6d5F3Su39VpD7s8P76
+         qgU+Sl2aOL0q5OAFkixN/9BEwBbuygjcN6fZAEyy5Kr2uPu68NMch7dQhZtLE/w+EljE
+         gpDE9v9cRBeZpHaBedBGLd/no5sxkYPLj2uactpgay74bvo83WA6gWXJIT3P7ZC0+xnU
+         jxQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759483815; x=1760088615;
+        d=1e100.net; s=20230601; t=1759483847; x=1760088647;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhgLDi6NThV7CDsUpk/weXQLRMerlf2Ax6eN1eI2x/g=;
-        b=jEsNEp5mypi5jZOog+IAHWFcSH3DZX6o947VfOVVFrKLyLFsu2srGdNGBaKiNTn7tu
-         WpLJFBkrlpzViwcjG7cCp9V79XaavBE+MLQSU/iHxl4o4dWcyErCbUh1ufp7j/wDpJVj
-         7J1ZFQvdzgACWJSnuU1VG9yEH9HLfp7fpZoKtlOr9KdotUpdfw5JK8wjkngxX2bQv1Fa
-         K+ogdT47+5GOSaq2agl69mNPEeZTxHhIf0I60zBSFhklYdDw0sD5XfSEvMwmCeNDs4w+
-         4+3rbzKCUDkggJBr2LRIl8yW1wpBJfQi7qvunOChK2djnLo89dqFLkmMQABIPVJHh1qj
-         lX/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXx93efhktd+vuKjEvoFIDgjo0XHPUURGVBuy4d6MWJHWB+5k1d6dxwgC/AxDGLejIZeS/4U92MbQUgmkPuJm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4UOkN0YBeJozV9NX1nNnH1Mc2aCAv7P0l3i1VWsXO2LeI4AD3
-	RrYIz98GAlpGHpPwbpYFWKhUHaeRYt/GHmIsEdTMT0uwAePRd1dGzcn2X8rTC+jhSTM=
-X-Gm-Gg: ASbGncvnquUnWPWq45ZFcOFGGTq6MiI96OodI7UqpzfwMS2FE+gScSHeClFkCA1arMU
-	0SBP4LrQBHiy/ZEzQAtlJV9kpAZzDLs5A1Lpc694cv0n5pbnZA2iLtWmyhXq2CuTYPIlH7BCSe1
-	+81RuhOBkoRNiptdbaYUonAhSMN9BENswdaWpI9o/OVawQy6sa/aT+EhOw0fscqsHEvBCvPxeod
-	oUQuuQm1/IkNVOORjsM2wFta1HUN4ivjjT6VweO5N/qplAyPZJt8+UytohQQMMST2UJgn8PP3oG
-	gHxAssCev7fpmzdOP1PDh42JOMt9RZ9XCwM2H1VbuTLhyL9coyX94E7ntj1y4ne1jSOuv4fL1Av
-	U4IfPg/rdyQc0EcjZaHg30HW3UFq6KQFe4btX94c5bx+PEs8j/KRJyoro
-X-Google-Smtp-Source: AGHT+IHx8gWCZHt+AQN+RQlxboRGMUkamgU3aSxPItSzubRdggN8p2qx6XItQb7Bkrq5pYJJkn1S/w==
-X-Received: by 2002:a05:6000:2283:b0:40f:288e:996f with SMTP id ffacd0b85a97d-425671c2f8fmr1476726f8f.63.1759483814628;
-        Fri, 03 Oct 2025 02:30:14 -0700 (PDT)
+        bh=PBt9sQ3D35nPjr/0RJe6RkWlXbYt10tG/bFkTZQxvEs=;
+        b=VzQIsrRqukFzCfO/fz0LFvbIckB+aUV2JVraG4x3Y/g8BMrdXSlLN7gYIaXwf/oUqu
+         iYcx0i6rBUN/N0rmpx/udbMWgZCLT+Hh2wFISopy/D7+qQbZl0SYHX84oosaTqt/HkKe
+         IfmDBjoVAAuDFCA7jPaKC1aDdD5yeOksW/nmCzoSmuC9i4990axve7i7TLKsC291eQvK
+         Gh7Wn0gARCi6y6oxXCeokEeNh6blVxapVQGInnJcgF0Ba1on6x42Oed8Du1mx5TivUqN
+         e9S+D9UxU24YyGhVNf1auC5Q+/PX/2lJmd3PVv1rBGMHtjTu6+21aOleM1igQZmzFMm3
+         gKpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEseMu7JsH03+cOn9gkMXJ0xkmw6JruekMTWuL3AlLyot+Kz1K38/cdVM8pcv0+gn29b9cxG2tnSWHlceVRm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYinIOObVlgwp2O/zkymN9mRQwkwSMBI65iCFQ2HL5ZugBaK7x
+	LkSkWcf38pWlR7hrBYYa0bqREwZ/CUPdOMJliU+P+9AP9HKO2a74+fkqQLyBF1UY+EA=
+X-Gm-Gg: ASbGncs4DXF27bbK+i8F2dG/jv2/m5QRTbT8BFp/IpKF6SdJKnKiJs9wVYTJ+rqYG5X
+	+RS3IuCXethMuKPk4H6xop3tjyX3G8ZLsgYhYwRuDBlPak+sWS8fMPWKWXdLmRr5C+4gvqN5+Hb
+	Bl3yrIZxMB0kI9KVayiKgacLqiABQuGwYUloy20uBrmwatP9mSzAl4TbrN7pyAoZbcgZzw/bUv+
+	9jrW9ekIWgp1FvaOB1tvCc1McaqijUDHL69lQatvdwAFh4Jkyi2izYGude0RuP3MlZoco7H3EqW
+	gry2nyhK/QaKAo7175RnSPOE9O5pVxpP4h3UmWzFomKFViybPqOAaSQs+mdW71L6q3ErZ0rHQki
+	QgEgzHMZE9I2CrDBBQHX0L/H21gIX7J+B5XIdZLyeuJgnV8O8weIaBp5e
+X-Google-Smtp-Source: AGHT+IEiUMPA8MqxUGgCJF3dzR9jrj4sZakAlaFbxrDTR/05ZU6XCC1uwI5Zc+1AT4pSlne8f2foMg==
+X-Received: by 2002:a05:6000:2012:b0:3ed:f690:a390 with SMTP id ffacd0b85a97d-4256719e3c4mr1507845f8f.40.1759483846850;
+        Fri, 03 Oct 2025 02:30:46 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8f01absm7082890f8f.44.2025.10.03.02.30.13
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8a6b77sm7143523f8f.6.2025.10.03.02.30.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 02:30:14 -0700 (PDT)
-Date: Fri, 3 Oct 2025 12:30:10 +0300
+        Fri, 03 Oct 2025 02:30:46 -0700 (PDT)
+Date: Fri, 3 Oct 2025 12:30:43 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Stockhausen <markus.stockhausen@gmx.de>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mtd: nand: realtek-ecc: Fix a IS_ERR() vs NULL bug in
- probe
-Message-ID: <aN-XoqpP2Jz75pjj@stanley.mountain>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] hfs: fix potential use after free in
+ hfs_correct_next_unused_CNID()
+Message-ID: <aN-Xw8KnbSnuIcLk@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,30 +75,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The dma_alloc_noncoherent() function doesn't return error pointers, it
-returns NULL on error.  Fix the error checking to match.
+This code calls hfs_bnode_put(node) which drops the refcount and then
+dreferences "node" on the next line.  It's only safe to use "node"
+when we're holding a reference so flip these two lines around.
 
-Fixes: 3148d0e5b1c5 ("mtd: nand: realtek-ecc: Add Realtek external ECC engine support")
+Fixes: a06ec283e125 ("hfs: add logic of correcting a next unused CNID")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mtd/nand/ecc-realtek.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hfs/catalog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/ecc-realtek.c b/drivers/mtd/nand/ecc-realtek.c
-index 7d718934c909..7c275f1eb4a7 100644
---- a/drivers/mtd/nand/ecc-realtek.c
-+++ b/drivers/mtd/nand/ecc-realtek.c
-@@ -418,8 +418,8 @@ static int rtl_ecc_probe(struct platform_device *pdev)
+diff --git a/fs/hfs/catalog.c b/fs/hfs/catalog.c
+index caebabb6642f..b80ba40e3877 100644
+--- a/fs/hfs/catalog.c
++++ b/fs/hfs/catalog.c
+@@ -322,9 +322,9 @@ int hfs_correct_next_unused_CNID(struct super_block *sb, u32 cnid)
+ 			}
+ 		}
  
- 	rtlc->buf = dma_alloc_noncoherent(dev, RTL_ECC_DMA_SIZE, &rtlc->buf_dma,
- 					  DMA_BIDIRECTIONAL, GFP_KERNEL);
--	if (IS_ERR(rtlc->buf))
--		return PTR_ERR(rtlc->buf);
-+	if (!rtlc->buf)
-+		return -ENOMEM;
++		node_id = node->prev;
+ 		hfs_bnode_put(node);
  
- 	rtlc->dev = dev;
- 	rtlc->engine.dev = dev;
+-		node_id = node->prev;
+ 	} while (node_id >= leaf_head);
+ 
+ 	return -ENOENT;
 -- 
 2.51.0
 
