@@ -1,90 +1,78 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BBF2D77EF
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Oct 2025 17:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F912DCF71;
+	Fri,  3 Oct 2025 18:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510970; cv=none; b=OmW0SAKlGqJx9thMYhszNTJWfhCEKvml/kKztGPp7QgMFo3oKJWgAQpJVaeGgcX/ILYVdhEtlKA68AxCGhdwgDTe45p4h+Kt0DPn4WGDALtO0HVQA2NZReCX6UK4JDcCx6+L+/erD9VOPiyHlBLDHn9UvOpvdXZ0SwfuKjhG2Yk=
+	t=1759514421; cv=none; b=osF6IXCrSEGGr7nlq7TQRfaVbptrnzaErM9EeAUAuIyb2bZLOCYfnYxXAxQiDEaXK3akmFAE0Iam437deW/d4UQkVmZGO1Sy9+8QjsdtlQmHVLm73hlE+aAL6Xy7h0t4lzDgQUfBZI6TEOdqGnY9wcZaQY0hpcZXqC1qEhIgwyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510970; c=relaxed/simple;
-	bh=uUL4M6USjXif7+Zg4JLkgLeVCj1yxgT886bmk0gM+/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D91m/fRphCR7Iy85fMG4KbjxNXLLOSRt0F+bVlDCeGDBTF+wwVIfkugA0rw/CYyDEmIKJfv1Wg8lLsOHJBmpegEVjkkHZFAUqP/b2VrBwQyCln+8dmUJKceowBlhH1xl58ZjZQVEY40AN92NHDVxf2upFy9b9mCwZrCocetnMDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eyO2G74h; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1759514421; c=relaxed/simple;
+	bh=yfWkw1eJRdgMFAVUHp1HPAsHB8VP3RjWjRR3B4uC/OY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=d5lqUqJJAMHEiDzeGyJRGOfRdOdf/lNS+zmQPSAYGdKKT7FmdZaBha+TXBPsEIhEnkodHhUZZWzw9WKN9F6XusV3E7N+4Ednv79734s8UgdphWYCOuKIDgENKHgJDbuY1xjOce9ZQJr6g19Es3eFJc8MNSyMVq6guDbcw+6l4FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrGBwjGL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eyO2G74h"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-267f0fe72a1so19496135ad.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 03 Oct 2025 10:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759510967; x=1760115767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRMekBaFzTjIb38gYN8i89LXzPK5ha2Znw032LPsVsM=;
-        b=eyO2G74hdIrYrldzJIgP12opx7vwCRt1H4fwH+AheW/DnOCQBazSiSHKzNI6QMTYmG
-         ZmUd9pu1SFT5BIhgI+OIkkE6fXj/6wGa+dpme9oB/nJEBojBpQXaN2UCWYdLw8orAYNL
-         1idvVfBTPxIkq8NH4Q9ATxZmrp3hYWwt1kDsc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759510967; x=1760115767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRMekBaFzTjIb38gYN8i89LXzPK5ha2Znw032LPsVsM=;
-        b=GkD6EcoBKaBSAmb+/zhg+cMpNufW6kowddizGr48xV28Nm2vK0wjQ8WMouv7D4Yhcf
-         KSZOZg+JhV/MBAEak/T4LbsSaMwnaiA2zU76J5sRPwV/e9WsQ4g8EfPlEX7jpzc5VVYP
-         nR/7tQ6OrXjLJMMKRWxg28G4DO0j1xIiyqFN3BBk5EFSS4JJOVeco5o947hmKt+amrrL
-         GDSc0aVwtOsRaiDuJn5dPnJqDc+OIsdwKxVCgJBBbP3MDHHJjbrpN2rsHmzikIN8idfl
-         pa6TcnRuzWh5lIJztbmOYzZxpnGJ7UYB0d0Wyj2lUyqfRZeD0G9qgfYbt8bIGg6V8Bw4
-         K/sA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTxbkkg59zVyZbHfpr9GeJsH4oWBa+ZlhkMxeSiuR1dmGK6xo8RHCcH9Cm+jIc0hA+Se/ShSu0I/DFyCBFBHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvYR5k4M7dBellLaQW3oN+8uJlrpttHOS/akv5SOpOFy7pPbdu
-	9KpDrgljZiXJVYsIVCVPbvT/Mlz6wvnaTU/c3/khz3uusRdQ04CdiQISGw8VKgk+mA==
-X-Gm-Gg: ASbGncsftEsK/hPktbxBScJQX3ei3Etz69dXFa6w9l1LGtUEqXwENDE/5HB+qf2vndR
-	uQZuotEgun2VleNX2es1HgoHMkHwjTpHk6i/TkTtfoN+9gTvRyjckjogEV1zdU4faUHCSXkK9um
-	zf8xzHlQ1Nvio4L1VKn0IXon5fsQG5iqLNdMBorXmLU8lQ5BPYxrJbedYbn+yozS4I4ni1JovHq
-	PGBd7FZCM+nMiERPWRXRBh6N7UxRF9vBZuErEPcb+CnNRbbnwKuuSezlYcNc0voaZqYCNt+gZyC
-	DCHNC7pxS2ztphTWiwsZekLdaYU7nfQI0swnviKIrnjyffA/L0acGqs/zrnxhdV7rkLpvV16LEQ
-	6uly7AqPwIP4j2YW/TFll1XVQrGmU7+jfv7NFbBWVXPjAmIILMkXILir8PMNHNxyZ3KXMZ/8NUz
-	R7EMfwQL6OHkBdrbKTZOHdFTEJVTmF
-X-Google-Smtp-Source: AGHT+IGw+xASGD5iDLfdgpAflDlmLL0c/ls7XDKeDwt3g+ZHIWOjmN0GPr8i61t/oBD1yS/q76AXeA==
-X-Received: by 2002:a17:902:f602:b0:24e:3cf2:2450 with SMTP id d9443c01a7336-28e9a5cdadbmr43162355ad.2.1759510967432;
-        Fri, 03 Oct 2025 10:02:47 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:9212:ce9:ffd0:9173])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-28e8d1d5358sm54712665ad.103.2025.10.03.10.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 10:02:46 -0700 (PDT)
-Date: Fri, 3 Oct 2025 10:02:45 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] PM: runtime: Fix error checking for
- kunit_device_register()
-Message-ID: <aOABtRxgm7maMsy_@google.com>
-References: <aN-Xe4lgox1cCAaR@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrGBwjGL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1908C4CEFB;
+	Fri,  3 Oct 2025 18:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759514420;
+	bh=yfWkw1eJRdgMFAVUHp1HPAsHB8VP3RjWjRR3B4uC/OY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MrGBwjGLfR4uMhLcJU9FA7rJWOo9z+BxdF32WHyKTnoLKpGJqPnqQCovQJHJqiL8l
+	 rODHXEI/2yZ7f8KNY9PL3c4QJWmOoXZIDxZPRnOxUVyqF7sdTKN4F0nZFNIH9NusAk
+	 RZ1qNUJZLT3Xwmlg5T/0VOulGeVvN8EiP3Q5r5SCGGIBB7P7C3amviTLyoDZWxR9Wx
+	 i2YKAgqFuuiAK5f7DS2kH6noWdN9djKA2eeMWVVme1NFRn17xT4ox1aN57HaGxnwc2
+	 B+CE/80W4LEXoteTY62N1Y0MS4g//4fcJ43DFbmTLn3mQE48rD4n3FkZKJgMVVtsJ6
+	 YIaUpilhEHBTQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E1F39D0C1A;
+	Fri,  3 Oct 2025 18:00:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aN-Xe4lgox1cCAaR@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net/mlx4: prevent potential use after free in
+ mlx4_en_do_uc_filter()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175951441174.20895.398410972294228091.git-patchwork-notify@kernel.org>
+Date: Fri, 03 Oct 2025 18:00:11 +0000
+References: <aNvMHX4g8RksFFvV@stanley.mountain>
+In-Reply-To: <aNvMHX4g8RksFFvV@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: yanb@mellanox.com, tariqt@nvidia.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ amirv@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 03, 2025 at 12:29:31PM +0300, Dan Carpenter wrote:
-> The kunit_device_register() function never returns NULL, it returns
-> error pointers.  Update the assertions to use
-> KUNIT_ASSERT_NOT_ERR_OR_NULL() instead of checking for NULL.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 30 Sep 2025 15:25:01 +0300 you wrote:
+> Print "entry->mac" before freeing "entry".  The "entry" pointer is
+> freed with kfree_rcu() so it's unlikely that we would trigger this
+> in real life, but it's safer to re-order it.
 > 
-> Fixes: 7f7acd193ba8 ("PM: runtime: Add basic kunit tests for API contracts")
+> Fixes: cc5387f7346a ("net/mlx4_en: Add unicast MAC filtering")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
 
-Thanks for the catch:
+Here is the summary with links:
+  - [net] net/mlx4: prevent potential use after free in mlx4_en_do_uc_filter()
+    https://git.kernel.org/netdev/net/c/4f0d91ba7281
 
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
