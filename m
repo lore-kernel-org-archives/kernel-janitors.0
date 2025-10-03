@@ -1,107 +1,150 @@
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C831898F2
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Oct 2025 15:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B1428850E
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 Oct 2025 09:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418092; cv=none; b=Nz2JSzVQkP+SHTDLYfvg0WAP5ugHvUWaar3apeGQ91hndH0aoYUksTxWzwhIpoXQL4PXUfdJfjYjx/Zzw1gU+m8P7YDmxRgKj0Nordc+UW2slsVXQaKMUXO3ZNy8HymANPuJRPzBjAiTsW1oYhS38Rett6SL9ZrbaILFXYnep8Q=
+	t=1759483778; cv=none; b=Yq55KdVqK8A8RcAYwRAWIieaDwNj8AJHs/gvjVlgQfBQt1GhiukUsqobSfGn6TQsOLgaFAcA7k21gfKyebJ2bN4naiF7YC2dGPh0gR/cgDSSTcsKZigEVQXWCNh0gGngnvZAw4lDHfIXll46nHpBXwZfu7Okfm0Cs+sDybOowTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418092; c=relaxed/simple;
-	bh=PduUZoikr8LnqAZaTzWf0aljgdXphuwsyDaOnjpUC5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5Dh0BOMDhWcup30mAIF9v9H3UrTCMPfYQqq+0H+1YCXKmda1xUSamVcZ31sIYQ0Q4AMB2NaZ4ChnQhTsYa1laUW/K331fjhFVygqWkCP9BplgYrU7FL3d4wLgJLD9lFr6cCfpVwa0jArZ9ppS8oACLVj/9c11nHBU2rY7iniXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6O3BzEL; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1759483778; c=relaxed/simple;
+	bh=+vdEmMVTHZadaETHiL90NT3fUNKGtrfQcPtzSKVtkLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GMdwoVXs4Ft+8NvJZ6c99O3CjUk38ntOpkMeONB2bGBTQh4ARvhrVu4KTr46Zm1lXw3E4vVyMlTi9K8LcieXBqPTQhWw8T5GJ0yv/ggpLzzsk1lKh8GfzE+1O7Yq7oWCnsNWdvLyf3O9E+LeLbQYi8GhN74BDi0wbEfKDDpHSbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yui/FdC/; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6O3BzEL"
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-78e9f48da30so10886126d6.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 02 Oct 2025 08:14:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yui/FdC/"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so18309375e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 Oct 2025 02:29:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759418090; x=1760022890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PduUZoikr8LnqAZaTzWf0aljgdXphuwsyDaOnjpUC5o=;
-        b=X6O3BzEL7gA/laF1um/c7axpZUmmp+wVsQtWPa5nsLsmmCwh1m4ALhXJmbA8+cblby
-         4888/pG1pDgUXY6e1NDvYWhRNUTqpfnL6To5Z26rQA6eFoTCWig83HXDoEEDDkTui+/z
-         LAiQOwG03S2ABLV2rCOtpa88UKRCEWjt1Q4ul2crynEhj04Jde3PSiOp2CNt8gsgEzin
-         gLI3Wumy0R/qEo04RYJkl8D3jNWhZZQXQubCv0L9U9oZyZaf4EDH+2JH+ah/Bk9GKM2A
-         Xw7HZVJbyoIktiuZVKII2Hjrn0EiTDj8d50jKWdfMIQ85LY8aj52PNPHYpVpExMPrl0V
-         TXQg==
+        d=linaro.org; s=google; t=1759483775; x=1760088575; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mrdVcJnH0ez8wntENTM0uG2XQe2LXopmlQUtIl/gs2g=;
+        b=yui/FdC/d8hgGYvQPlc1DfSmXawI1bxx08nHGYm2+n8ZWgG5qg1W535jwmx/1W25B0
+         pSwnkCE2fS4TxpTHiyhIs/4CW4jXiq1BofZzs81sG2a75ZZF/KGXYNlbxh9OFxoBboSC
+         ATNJR9s7K8ohq3LhjthY7BI5RRnrcX+jdYPNmNgggU7YVcO8QRPn5c+RWFxoKHARs4EZ
+         vSJoO/53S5XkRmH6jz2I/ttZE/lVToeB62ziIKFbNf5HXLWqinJIKy+r+JyPEGOickyg
+         EgnMJzMv8i7uJafMX8H15SnCNrfIs12n1jYSmb4+kPW3+PT9ZgK83Fm5qm6vz5gU73DE
+         7UYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759418090; x=1760022890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PduUZoikr8LnqAZaTzWf0aljgdXphuwsyDaOnjpUC5o=;
-        b=TAhbEIJWxd/SOBFMM7a241PRJX608q0Bq55vXJzk90GWlPFlnD2YXWiTsSURR91Yr0
-         cz7JYWlrrfWW9+Qdbn1X82a0ckNPuqmIQSz6LVAnUYCb4VskXqnh4W0OqN0kDXpoRO35
-         jPzmkcimOXSB+cev/uMnJJoaKQgMVjfpEWTXz6+rTA3law6XcZ4J3TeZIpJg8C39OJD4
-         gy9erfQEaQNv5bap3PzY4VXqL0QwiunL3mMamVkpJS7wYAoImoC6JPaVHTSt+GP/6uoG
-         8A/tmBMewIM8dJK5BjgS5boJqmGd9/Ru0z4ccPpxi5FLaz/Wfybd1PIjY4y07GBGsN4I
-         AkUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH8vKPqN4L3dyKeM9SOm8o0l38eoCnJ5m0N3ZRnEAvExpPlV8+wTAIADRlrTBcgv5XzLDupgcm3tCoP8EqmH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4GP7xItxoPMo1eGB/vHfdYLY730y7GqLTnQTIyv1j/TUrw465
-	y2mZsQPK7WIcobqOY9stx26OS/c+n34o7+D/XZwa/6V4JPIS9jIRtKM7W1vYHBnMAbGWWmpZnt9
-	dy1U43XNJ/lSpcAc2jiaWfoBP5cGbBUA=
-X-Gm-Gg: ASbGncvGNXsR+S1iCsnHibN0HTubvxNkIgDYmeFn96PGDXAfylRVFG8xHXP7bAbF/z0
-	JIAcYxgOCRc/Bt2MOM2rh09R6Ryd4pakZTMz/Zd/dmvxWqFDrIqJIIC9GMrVL0vhwI2W5yHEoaW
-	Qy5hRWCA/QB+vaDEf2d8Wded2Sdj4OQrxNUDfjqFPk3PCsZbi9op5VbKqprtJIMn7/L+PoGXZY4
-	epAAuZ5DcugAqDCB0j60bFEgN8YXDN1xf5vT2R+hdGRugJXo+BgpILqSG9vqlUck1XKFljpAJ5B
-	42Adm3k3Rnu2dXK0aFxLMs6fCDjqHbMvnu+fXwyJfEAlVprQekRc8/gzRKgV06cc180SS2a3ney
-	CvBh/IYYn2Q==
-X-Google-Smtp-Source: AGHT+IGyfzn10GjCw6AbrHIRNFIF7sVwOU2PmWXcEbIdO80lNgoAtt7bNshbrMBB5VQ0QLFvb0YDQlUlMexok3l/HTg=
-X-Received: by 2002:a0c:f088:0:20b0:786:d65c:1c3e with SMTP id
- 6a1803df08f44-873a06edb4dmr97474656d6.30.1759418089626; Thu, 02 Oct 2025
- 08:14:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759483775; x=1760088575;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrdVcJnH0ez8wntENTM0uG2XQe2LXopmlQUtIl/gs2g=;
+        b=R71lAfqXjyHBZ5bKUkHDQzc/sJp/FwjJws++TsmymGUMUNf10zPiw6KpXVw9PQe6fK
+         jlwYXHFVsUWPu5Tn12OLQ+1D46SYT2dSnFS5/Zu4FI6VxzULWhZyqW7MXpcdu0fQFwUr
+         HFaQ0IURLIEATjYN45cEHXRfaoYEWkNHe1s4z1ujVpKBRGAbLNbvY/mBFcLOIrl8sTnB
+         b4KTLIl+67ehw5t80hzwp7qtlHkm7UctUlndDNlxG6Rhxpgi53KSqa/y3ld2WFhSvOyF
+         JtE/kFNkjJVmfuOd9alcOERXiIvN4FqdjZ9dPXSIvmKbvuUbeKzaF0jD94pcKImOkoi4
+         g5oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUr5q1Vy5WuMRRo5MdDiQ3mW/7EUgZ0ZeTXFS25rlZpNGOFz01LWf5bn1GGxEoPguvrFLfPv3Pg205SZXKjPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaJtKMUMv3ncA5SHcbhJ1Ut0uRKrLLtVZSHIaQbdlfg4qSOpzd
+	aIaaT5/ghp9r14+bZUqi7cBqNtCdOrp7VFCWUf3nDICgnsGjH8POVcInZqTkhcsnKRo=
+X-Gm-Gg: ASbGncu4Tn+gck5NqYlR3sNezM7kIbAWI2h1keu8VF8m1Ko8ErdH1WF1YT+bECCUFn4
+	U+W+epNMM4soKdF71GuUGMHOpYhbCbvsSmEy2ec3YfvYJq0ukEG3PgMT2RTAj0msHhSdvIwz7ey
+	ADsRxL/vWiEIFkJRYjCDl8JZALKl7d7PLmW1vTiESi+xgFRO9PC2gwYCTel/+oBv8EaGW5kJiWM
+	jnlbP5NX4y1N5RfZZmdantWnIJAGbJnOguQ6TTj4VZTrGkkV/ciT/zKNCcR574OIOL9XckahPhY
+	z/CMDYe3f6L6sJwWDqwyvMDQPNlRw0L1+lbUApEJoyxlgwm/tuMaUIO1iAD71aDR8TA5BYbSfTY
+	MbZP+0EpeFKhuEhTtGKx/5+AAjlwNoyRR4XJQZPy2rGhqef+rdVJgXRcm
+X-Google-Smtp-Source: AGHT+IG6tX4ZZBiVIKE1UgKL2V7cxAUZvSbg/e0yGhSGsaSkg/4tX6nLO26JEwdqDcT0Cju2Zjht+w==
+X-Received: by 2002:a05:600c:354a:b0:46e:1a07:7bd5 with SMTP id 5b1f17b1804b1-46e7114e5aamr15201675e9.29.1759483775243;
+        Fri, 03 Oct 2025 02:29:35 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e72359e2bsm23175955e9.13.2025.10.03.02.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 02:29:34 -0700 (PDT)
+Date: Fri, 3 Oct 2025 12:29:31 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] PM: runtime: Fix error checking for
+ kunit_device_register()
+Message-ID: <aN-Xe4lgox1cCAaR@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7f956b3b-853b-4150-b2e0-ccd430adf9ac@web.de> <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
-In-Reply-To: <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 2 Oct 2025 10:14:37 -0500
-X-Gm-Features: AS18NWDp3jCCqFOTgwnnq5szZSBZZh9XBeoSBG6yvmFg9Zc70t7XgYEAJdiinjo
-Message-ID: <CAH2r5muh7GCAdNmiF4YjJrP5p9wVeU+OLC_41um2_Yr9G8mhnQ@mail.gmail.com>
-Subject: Re: [PATCH] smb: server: Use common error handling code in smb_direct_rdma_xmit()
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Added to ksmbd-for-next
+The kunit_device_register() function never returns NULL, it returns
+error pointers.  Update the assertions to use
+KUNIT_ASSERT_NOT_ERR_OR_NULL() instead of checking for NULL.
 
-On Thu, Oct 2, 2025 at 7:31=E2=80=AFAM Stefan Metzmacher <metze@samba.org> =
-wrote:
->
-> Hi Markus,
->
-> > Add two jump targets so that a bit of exception handling can be better
-> > reused at the end of this function implementation.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->
-> Reviewed-by: Stefan Metzmacher <metze@samba.org>
->
-> I'll add this to my for-6.19/fs-smb branch and rebase on top
-> of it as this function will move to another file there.
->
-> Namjae, Steve: this can also be pushed to 6.18 if you want.
->
-> Thanks!
-> metze
->
+Fixes: 7f7acd193ba8 ("PM: runtime: Add basic kunit tests for API contracts")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/base/power/runtime-test.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/base/power/runtime-test.c b/drivers/base/power/runtime-test.c
+index eca9885e807d..477feca804c7 100644
+--- a/drivers/base/power/runtime-test.c
++++ b/drivers/base/power/runtime-test.c
+@@ -14,7 +14,7 @@ static void pm_runtime_depth_test(struct kunit *test)
+ {
+ 	struct device *dev = kunit_device_register(test, DEVICE_NAME);
+ 
+-	KUNIT_ASSERT_PTR_NE(test, NULL, dev);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+ 	pm_runtime_enable(dev);
+ 
+@@ -32,7 +32,7 @@ static void pm_runtime_already_suspended_test(struct kunit *test)
+ {
+ 	struct device *dev = kunit_device_register(test, DEVICE_NAME);
+ 
+-	KUNIT_ASSERT_PTR_NE(test, NULL, dev);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+ 	pm_runtime_enable(dev);
+ 	KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
+@@ -70,7 +70,7 @@ static void pm_runtime_idle_test(struct kunit *test)
+ {
+ 	struct device *dev = kunit_device_register(test, DEVICE_NAME);
+ 
+-	KUNIT_ASSERT_PTR_NE(test, NULL, dev);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+ 	pm_runtime_enable(dev);
+ 
+@@ -91,7 +91,7 @@ static void pm_runtime_disabled_test(struct kunit *test)
+ {
+ 	struct device *dev = kunit_device_register(test, DEVICE_NAME);
+ 
+-	KUNIT_ASSERT_PTR_NE(test, NULL, dev);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+ 	/* Never called pm_runtime_enable() */
+ 	KUNIT_EXPECT_FALSE(test, pm_runtime_enabled(dev));
+@@ -131,7 +131,7 @@ static void pm_runtime_error_test(struct kunit *test)
+ {
+ 	struct device *dev = kunit_device_register(test, DEVICE_NAME);
+ 
+-	KUNIT_ASSERT_PTR_NE(test, NULL, dev);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+ 	pm_runtime_enable(dev);
+ 	KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
+@@ -214,7 +214,7 @@ static void pm_runtime_probe_active_test(struct kunit *test)
+ {
+ 	struct device *dev = kunit_device_register(test, DEVICE_NAME);
+ 
+-	KUNIT_ASSERT_PTR_NE(test, NULL, dev);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+ 	KUNIT_EXPECT_TRUE(test, pm_runtime_status_suspended(dev));
+ 
+-- 
+2.51.0
 
---=20
-Thanks,
-
-Steve
