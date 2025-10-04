@@ -1,208 +1,150 @@
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6EF218AAD;
-	Fri,  3 Oct 2025 22:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7886342;
+	Sat,  4 Oct 2025 08:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759530661; cv=none; b=WLhxldNlj48is80aU5b/upAv3kbnAJD4zs74fTol4j7SpL0v+bYSh5XBapn/WMYkb4uVlrT+XaLkHQ+UpBvEoVNW76p49lBrGxE52A/3zcwuorTKqquptJyg64l3FFmLpl7uAti8bvpGidB1aG1f6iv9Uvx9CBCQkEWspIkHWZ0=
+	t=1759567561; cv=none; b=WDMBTEgy4Qz/ESbiGfAjTmfKOpXPESwZUXDLCgUtwh4OBOeWxtQkFIwbIjDC53AO3BspgYzIH67ixMvgQvZBJukdackvVnm9ddfh59FS1jo9W6bzL1ljqg7D5dEp6lX1i2UbmnAzrcTiQGwGV+5W7SZnzeuGg4ehBC+ryst+kNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759530661; c=relaxed/simple;
-	bh=Ga65cQuMN6v2JBd0z0s5Gfk4vp6QmhfHtou9in1ENNk=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Mvq+e35oXUKOCJVyRBwMomE0z8IzOFh12Nsu6NMsVcpejYksFY7KQxICrN9hH/uzWpB9TqnHbXKIV5xx+bxYa8bpagksOkMf11mvn3TfIj/uqzMpKFiiZbyGR9/nKkjzzllKcCI1/h/nWZWrcd6H9F+6mNsytIIgjGF5C1erll0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=aIT3lOSs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ki0oJkGb; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+	s=arc-20240116; t=1759567561; c=relaxed/simple;
+	bh=KE2PBqgtr1R2voBioWIHbwel/ej2jMYwTDhpJHHh2cU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PlnLL9xYTtaDEJgkMzpeeZt48ZoEA9sCsyNQ3oHcMf4v7wNeAExPYcwf0KXT77O99kJ1swbLw3WBgdZdNXOiqOrAKx0NH9k18VUKr4ef8pVr+xJv9I9v6XxLBSZSn/cth9lgTamlTQREVNRkwVDBBCzwawJMTkG2oLVeppMB6KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vLapQ71f; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="aIT3lOSs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ki0oJkGb"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 4AEB6EC0696;
-	Fri,  3 Oct 2025 18:30:57 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Fri, 03 Oct 2025 18:30:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1759530657; x=1759617057; bh=di2ncAb64xtFyI0H9TnTutKfL8cfkb1esKp
-	tKpUfeWk=; b=aIT3lOSsHGzGY5+egmvjNs1jfbQNbu9Kb++35Up5/00pyiL8vu6
-	npB5ln9vfki76Bf5fXlOfHhc8miS9nTloyMETHq8//MsXPwpagLVn96onlDe2OPX
-	SBGYvFZfamcdBWW2U1VYxZH4lFb7EMlIBhwwnu45Eh+ftJh9ulqbmpZ6rAuDCEHp
-	MIa0YGSX8sw+Q5rB8r4n/ZcKKQlV1M2PQx/LAOzGI332Xm+zf3hWTB+xrropZvfS
-	PGsTFHiW/DqlOLUL4qa7aMROdz7kjVm7Dy8a9cIEBuOChzuma2b47mkjFa5XY9Gr
-	9p9eMOOYvRojJQ0zAjQXn37bxncLIaKmxYQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759530657; x=
-	1759617057; bh=di2ncAb64xtFyI0H9TnTutKfL8cfkb1esKptKpUfeWk=; b=k
-	i0oJkGbbtluYelUqV2PzPon1mBGNHLjhJEHAqmFZeawmsssWDeos4i3E/T0UOQ86
-	hC8m1wDwwGKfSFEJbmm8VbBZPD9phOXo9dLGdFkyb39fjrDpQGx5lgs2aCGtC4wc
-	3XXe46znhqF3UJuCjGBKYN6xVt7OdIPwd4sCUredQNx1gQog3ojactAwA6XQDyAr
-	EXzIGtfS86ZJwF+ZcnNlz/gNKGfcPuh6D8Rt8m44speFo3WK/Qn7KVzZrBu/+JWp
-	zVgyz976Euyj1fTZkMp0cssLoWhGsu+ohWHmJ8DHfs89TAb+yTBdw4Q8I4eGb2uD
-	V1CNrSDliHBnMyALK/aMg==
-X-ME-Sender: <xms:oE7gaDxWQTYLZCkpyPi6S7IGswbP2bSdp4XNQkhBEN4rzXwpdsqStQ>
-    <xme:oE7gaLtVPWZGhwbIQybxLOgRSdGsUCDWCMCs3TAclmQHJzdQu4ea4RFxT3gJmJI8j
-    oVHcppQm7ll6XlQpduXTH2hdxlFQhQxZMPoP73qHAcnlzCN4w>
-X-ME-Received: <xmr:oE7gaOB-jp7nzj1sFefYoDo7i-BJltig9UYNi1EMKiRHANmFYadd-hsUicz8yNL0Y7HKkUY-tm8fDEmFg1y6xhbTzqOTnyJAxIvxEaqDhOBd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeltddutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehmrghrkhhushdrvghlfhhrihhnghesfigvsgdruggvpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehtohhmsehtrghlphgvhidrtghomhdprhgtphhtthhopehmvghtiigvse
-    hsrghmsggrrdhorhhgpdhrtghpthhtoheplhhinhhkihhnjhgvohhnsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehsmhhfrhgvnhgthhesghhmrghilhdrtghomhdprhgtphhtth
-    hopehsvghnohiihhgrthhskhihsegthhhrohhmihhumhdrohhrgh
-X-ME-Proxy: <xmx:oE7gaFEs9TZiKXg4VevMAoBe03qVROSfsBVW7Y_CgTsD3cUODSKMHw>
-    <xmx:oU7gaGDdhjjSxbWj0zKdplZm2VOuZxsV1XYiFlZtSeGQbJZnvt1FjA>
-    <xmx:oU7gaDmDRcGgVIegfuTeluIld7MNiBpzlgCjLhl8ko2Cw9IKBSFgVQ>
-    <xmx:oU7gaEPtJ4GIO5rjiZeye1RDbgzlf2RCwYD0dWcz9Z7iMj5CWc1sZg>
-    <xmx:oU7gaC8juepaD63j511jZkPLE9jXly_rXeAQslz0NbP0uQfna35MHeCG>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Oct 2025 18:30:54 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vLapQ71f"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759567537; x=1760172337; i=markus.elfring@web.de;
+	bh=oiFWZwgE13+/heK3BtOCRly+uNdxnMzI7j9JbRtvT04=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=vLapQ71fd89ucYuy1t/EvLFhEg2NkXpPHMnA2sNBgivtQxMEjwxALluXjgzq2iiS
+	 tw2gSk8a2TnETsJAK16EW9dSICeqo/uzg+ptHdw7U+CjfxqULIdL3Gjc1ukOijG25
+	 HMRs2/Wt9v3alZ2nShAFwyCeIUwFK0AnF/0MVF8cc5IXRoNn88ulpzFtNqeAdxJDT
+	 WbO6TuhhXL2loT3mXrSmkw61COWCibb7PPZmHK9nfQUaWt9Ex+YxyiiiXpohbPdyQ
+	 pwIOC62+duEZTvR1M4IL4yf1rnZto+Z5sTD0f/4n+JpFeHJIe9jUauX/uOqctWBpI
+	 Oz1ro7rcTgbFk5NlQA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.173]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqIFD-1uS4Qc2qnL-00ptZd; Sat, 04
+ Oct 2025 10:45:37 +0200
+Message-ID: <2d533e64-8543-402d-9295-5fd2f314f35d@web.de>
+Date: Sat, 4 Oct 2025 10:45:22 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Markus Elfring" <Markus.Elfring@web.de>
-Cc: linux-cifs@vger.kernel.org, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Steve French" <smfrench@gmail.com>, "Tom Talpey" <tom@talpey.com>,
- "LKML" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- "Stefan Metzmacher" <metze@samba.org>
-Subject:
- Re: [PATCH] ksmbd: Use common error handling code in ksmbd_vfs_path_lookup()
-In-reply-to: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: ksmbd: Use common error handling code in ksmbd_vfs_path_lookup()
+To: Neil Brown <neil@brown.name>, linux-cifs@vger.kernel.org
+Cc: Neil Brown <neilb@ownmail.net>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Stefan Metzmacher <metze@samba.org>, Steve French <smfrench@gmail.com>,
+ Tom Talpey <tom@talpey.com>
 References: <6d759211-79e7-4d86-b22e-2ae46d209622@web.de>
-Date: Sat, 04 Oct 2025 08:30:46 +1000
-Message-id: <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+ <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <175953064635.1793333.2429881029964457140@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GtmNObrEe2RGJ/TFAqKx+TLt+80qxeC7jspZaOsWDb+YuzXznUx
+ B6xf2InLNW0SpT//CR3/WBuSoNinUtfTzMQbxJHTmZt03GwbWAgW9wevFvrzVHiwmUdDwfm
+ ttcXlLnOEeK+Z3IQNR/NdBHlfLPVxLLG8bq//ZHjuCj4zbO4/P+7fbgH0iLDK3uqX2VyvKh
+ vRgaEwa7UMl8fcG3MUuLw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RnESL/q2QzY=;/xFdurcqhgIvh5lWB9Ub3C6u2Wg
+ 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
+ LUfwAfMtKeWyMHTy1namkmGfldpj9S15AKM=
 
-On Sat, 04 Oct 2025, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 3 Oct 2025 20:26:56 +0200
+=E2=80=A6> - declare  struct path path __free(path_-put) =3D {};
+=E2=80=A6>    return_path->dentry =3D no_free_ptr(path.dentry);
+>    return_path->mnt =3D no_free_ptr(path.mnt);
+>    return 0;
 >=20
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function implementation.
+> This is based on the pattern in kern_path_parent() and
+> __start_removing_path().
 
-I think this is a good cleanup - thanks.  But I think it could be even
-better.
+Do you propose that affected software components may benefit more from
+the application of scope-based resource management?
+https://elixir.bootlin.com/linux/v6.17/source/include/linux/path.h#L22-L28
 
-- rename the "path" parameter to "return_path" or similar.
-- declare  struct path path __free(path_-put) =3D {};
-- change all "path->" instances to "path."
-- remove all those path_put() calls, but leave the "return xxx"
-- at the point of successful return, use
-
-   return_path->dentry =3D no_free_ptr(path.dentry);
-   return_path->mnt =3D no_free_ptr(path.mnt);
-   return 0;
-
-This is based on the pattern in kern_path_parent() and
-__start_removing_path().
-
-Thanks,
-NeilBrown
-
-
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/smb/server/vfs.c | 32 ++++++++++++++------------------
->  1 file changed, 14 insertions(+), 18 deletions(-)
->=20
-> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-> index 891ed2dc2b73..3535655b4d86 100644
-> --- a/fs/smb/server/vfs.c
-> +++ b/fs/smb/server/vfs.c
-> @@ -94,17 +94,13 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_con=
-fig *share_conf,
->  	if (err)
->  		return err;
-> =20
-> -	if (unlikely(type !=3D LAST_NORM)) {
-> -		path_put(path);
-> -		return -ENOENT;
-> -	}
-> +	if (unlikely(type !=3D LAST_NORM))
-> +		goto put_path;
-> =20
->  	if (do_lock) {
->  		err =3D mnt_want_write(path->mnt);
-> -		if (err) {
-> -			path_put(path);
-> -			return -ENOENT;
-> -		}
-> +		if (err)
-> +			goto put_path;
-> =20
->  		inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
->  		d =3D lookup_one_qstr_excl(&last, path->dentry, 0);
-> @@ -116,8 +112,7 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_con=
-fig *share_conf,
->  		}
->  		inode_unlock(path->dentry->d_inode);
->  		mnt_drop_write(path->mnt);
-> -		path_put(path);
-> -		return -ENOENT;
-> +		goto put_path;
->  	}
-> =20
->  	d =3D lookup_noperm_unlocked(&last, path->dentry);
-> @@ -125,21 +120,22 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_c=
-onfig *share_conf,
->  		dput(d);
->  		d =3D ERR_PTR(-ENOENT);
->  	}
-> -	if (IS_ERR(d)) {
-> -		path_put(path);
-> -		return -ENOENT;
-> -	}
-> +	if (IS_ERR(d))
-> +		goto put_path;
-> +
->  	dput(path->dentry);
->  	path->dentry =3D d;
-> =20
->  	if (test_share_config_flag(share_conf, KSMBD_SHARE_FLAG_CROSSMNT)) {
->  		err =3D follow_down(path, 0);
-> -		if (err < 0) {
-> -			path_put(path);
-> -			return -ENOENT;
-> -		}
-> +		if (err < 0)
-> +			goto put_path;
->  	}
->  	return 0;
-> +
-> +put_path:
-> +	path_put(path);
-> +	return -ENOENT;
->  }
-> =20
->  void ksmbd_vfs_query_maximal_access(struct mnt_idmap *idmap,
-> --=20
-> 2.51.0
->=20
->=20
->=20
-
+Regards,
+Markus
