@@ -1,163 +1,178 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5751B5EC8
-	for <kernel-janitors@vger.kernel.org>; Mon,  6 Oct 2025 14:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8981C221FDC
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Oct 2025 17:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759881; cv=none; b=CnTNVG7/pGr9fDGEy9S3Jy6DqrQwF/ENpsxf4MD7Ikg1dozXamcV/sjzfF6ZvyNuh0yK2qYW4CkUQC7KgP31WiSNALJU8rvPzqCcmqZpfeR28tT/RDhQd41EnrAMGjxLKlUZuMKIyE22yThZmPZTkVhEvlx/28WevqyZGoOyx90=
+	t=1759770453; cv=none; b=Dwhbk/B6Jni8XCoOMHJendjD1bUHKlv7aYbVbR4yosv5EMtE5GkzEksf3f+ai/pZYVxDRltbuVaW9C+xC/72JvImUk3Lynnv7aka9jkQNP55tqk2+8sXBGxsFS5emvMGT/o40UcbPTrgXih736HGc5fc2Vfvv9ORe/K5rU9zQCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759881; c=relaxed/simple;
-	bh=6KX20FQd1Uo1sLjzECcx7oev8zJiTnNJjFoFDUGykpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=katslK1FmTA8zrlQ2xw2av0B95hO8Js9DbJF8FcVcV23L983HnhXKOgG+S1uZk9cZfmf+2d7ukTunFuj2V4A1HmhJroFLpJdUnbabe8e74gR0ydd1frORHWJf9krobzoR/mma9V/gxZd+G1tKKXxUzjBWN1z+1TiUdmd2B6pGIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BU5qEbUC; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1759770453; c=relaxed/simple;
+	bh=rlFixZbJvnpPw6lVlYW5Kt3QbvdLM3zAzGBrPPHtZ1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vC17Refchb1p+ZCXdi2aOGL/nIfA+6fri7JgnGzM9UjwOC9Wy77jwZwdy3WHTxI7dKojpmpGJXheUwmg7K1Rn4Fr+Mr0UAgbx7Gi+wm4mr9knfkmZOqXE07LXaaei0eT/gFU8n+6c/IlEI/B8rESkiFunxaFgJczeXX/tvrBy5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LM2ba2ZQ; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BU5qEbUC"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso4355055f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 06 Oct 2025 07:11:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LM2ba2ZQ"
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-85d02580a07so519047085a.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 06 Oct 2025 10:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759759878; x=1760364678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4elTS5fxSiSlcbJrOu3/EQIYqhoiCF3SWgVxpKWdawI=;
-        b=BU5qEbUC5jt61szkz8QGfDfN+BuXIBOtoGhaedEWqh7+3OwK2w/AsFWpzQW1P8MoUS
-         7dqXmZ1zJDFsAI4FwQIm1g0HcQqOmfVpoNoA+GAwFiXqZkcugVoSVW7JWClcI6tZo//t
-         uE+QXfPT4ZbNsGvGo6nStGjyG1KyuEZwPF9u/RZfGx6gpXr5MaPGb8bzcJQ+KlQ9kiE5
-         4cKBoyiJyFnUxbh4ygdO9KgXXM/OgXlJIZWH7tSsih6EdaXbaQjPVWBVHtLLrZ/bV1Y1
-         u3zmR8BW/F9JP2leFfVKAPZy2eMQxQnmzmjswXM7hsi9WrBX20YO1lmqOfk/hl63mMAz
-         /Qvg==
+        d=gmail.com; s=20230601; t=1759770450; x=1760375250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zKKNkmcBQxnFeZkKNYdKplHNGJ08onMcowwhJIAvhnQ=;
+        b=LM2ba2ZQs/uZ2xGopms6MOc8QJQ6lP48Wc7WS393kjHNQR5SPLGB27f/xBrdAzi4GU
+         Mp7TMTcLynLGdanXOorYaBQS/lvuP44tuTkd8JFZizHJ1hfMIuswz8eqCO1blWh/fNe+
+         1VI/Aq35OhvEK/9knf5qPUQ9DXwdG4aYxbh9chGJ42NH5WGyZ6Pa4+NFmm5VHGhZzR72
+         tueeYbJN4vHOhMXN9s+ddvw0kTL8HOkNq7Ojk6tuL4GXPgTVXvopBgH5nOq8WzU4getL
+         skrgIm6Zykhianx3zDQi55vfEomsVX7Qrxgcmn++7UWLwSo2/tIYw/LuGSH1LTc921qx
+         tR7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759759878; x=1760364678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4elTS5fxSiSlcbJrOu3/EQIYqhoiCF3SWgVxpKWdawI=;
-        b=RQLdbhvxHxQU/CgBCY1aLHqNOM8Dx6cTIWJWBf4SpEcRGSDzTUYqYzfFLQDpg7GGUl
-         zypm2lOG833XHoF+ClabOEFaAyig3987+MjRfAdSdH6xNl775Q6MH5q4PNTPiQjrQAAx
-         T8QCkN2qnVJyvLLW0IlF8OuVvyrScfeG5qnLyURgbWZDaKJTEiASEginBL0aKZ6QK0dV
-         Yee89UsqPh6cj+xWWZSRZn2CajGeMTEMRQ+t1wbvLUALxqA0infDgXMBMczJte663T1U
-         oMsIOOO27TbMnfcwVn0jGbrAwpCcAPrTd5p7iTcqHT+FdZBs3RwPSxGDtUDtPLFUhnOF
-         TZaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRjlGCdaVaO7ddjXUXR2OueXmrt+ce9HD0uFQBSoLMHHIfUTdW6YYJGLYXm+2z4HNxHUUGe9QWFIbrKtpRhPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLRrdd4wjAAlQUIIth8SiniKe5kdRLgrPo5xqdfPCH5UWie1mk
-	l0ikxRjSRWVIruyyymfP+fx/xgrqnYB363PGjgI9Dw3Ks6/TOGKkP3V4c6mcfJf23EI=
-X-Gm-Gg: ASbGncuro/RWKhN/c6KDolIkG8WnRN4gEXSng8TFvN++dLFORQTsX9XKBkNonztQU4u
-	0SmiDTL42CJ5V6DZcKopkx2MJbbRiLqDC7qQ0joy8WEs5fRekQtyU2lZHqQhlDmNqWB3eGU4gEg
-	o6XBm1/SXEDDCMvvEzbHIxu5jHcF81OgR79OULYbccEd24Io3gEh44pg0rfdGFoQrS51L0FSZJZ
-	5opgl/8uemT6mDBDZ4hqW9HUYqGi5XEJ10kKkt7KiyMB9hWaACU+VvS6/V+V+ey44vJCht8z6IE
-	8DoLG0KX8SpnlASvpUN5+ia0a3SRHU2SulvC2BU8Kk/n8Xy7RIsysmNlyjk33CrzS2jYKU2NJFX
-	ePksJiF8zYls+j8VHY9LTxgH88VPl8U8GhK91KQkNjU+HHq2+7wTue1SqhcGDRcTm2JdZ53ohSa
-	+VYNiKle7UDlxQe5rqTZBCrgOBd7OUFqHF0GfS3Q==
-X-Google-Smtp-Source: AGHT+IEM2L1wWYPT5u1TbIMvltisCAwxrpRriHBP3NHzwPBECHbb42VTLW67CPPTPF2hjKNFBgKsJQ==
-X-Received: by 2002:a05:6000:310c:b0:425:7f10:e79b with SMTP id ffacd0b85a97d-4257f10eaa1mr1731307f8f.44.1759759877557;
-        Mon, 06 Oct 2025 07:11:17 -0700 (PDT)
-Received: from ?IPV6:2804:7f0:bc01:231a:db87:72a2:aec1:dfe2? ([2804:7f0:bc01:231a:db87:72a2:aec1:dfe2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b62e121e0afsm9126319a12.25.2025.10.06.07.11.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 07:11:17 -0700 (PDT)
-Message-ID: <8e79516d-ad82-46bd-af00-3a8594a0baee@suse.com>
-Date: Mon, 6 Oct 2025 11:09:06 -0300
+        d=1e100.net; s=20230601; t=1759770450; x=1760375250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zKKNkmcBQxnFeZkKNYdKplHNGJ08onMcowwhJIAvhnQ=;
+        b=HCt0aKCeh0rb6aQa9TiUyUVMbDVrjvFNrGCGoRcsYlrD0SD/op7qri2Qp1JoqJatAs
+         jZfbGz3WcOIydyTcFsPTBUKaD7Uv9Wndsh7WLRmCaxxxqRwNXMTHDVkG9JqGcHHl6Dj2
+         KCfrfOviRO0CtilwxeSNcqcVOzIzBYL5hFsQO80ciojgZdy9/zZf1YGAa8dSGc/s5UZa
+         f9l9SP/wbSCRca5Ybal5nfQM2XNQ0KfPyU9oD6/t4mRcqvo7rI/YBrB1aOYybnaV9fvK
+         sdQlzla9I65f4FnAL8wjLXlJ0Co2UMwZqEEOmriMQpTZ1eTSS+9xd5SelUIU2vUCshxg
+         0NLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWn8YX69LMO4K/frIwfvNAiNtj0yRQDXcaXnhgAgTgAU50ZjksBOUDX9Bv4E/kTKTJwG8Afs+5+QpLDziiqWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPECLUVSW8lRtet7S2PKeTTue9XcNwoQ27wo1VW7mJkBPo4vXL
+	FOy3y7MauHkuxoJkAb3NrAFlnUnzkVL+koYywDUn1OUEsOQWN4gT0/ATlc43dtA2cgU1zkMdz91
+	mkBq/Vbp7jywsR75c6IldBEUF9qQLlS8=
+X-Gm-Gg: ASbGncvQ/wNCAxen73LaWXTG5n3U6dyll1SXZRBYYjniBYzM1cEdH+1c9h8695w3oAr
+	B1Plqblh8W3pnXGORRhbf1Rdg3I+t2peopCF03IFSI4WitTCILv5QXopfRnu5A86UesUysvF1ga
+	28BRaPD59bONxxLbGovqH6Vr7ya5t7HE/nY6HvdUZd3rraJj0XMDSxEBpVzNJpiqHt5JKtyK6jW
+	s/tGuk8pKA2gBhKD/rnenFvbl6S86lG9yeGJEltSH+b/dwsEw32Fkjc0RMO8TxaHM6awYKrJsrt
+	SXh1BohKL8cZRuxqEVzmB/bpNEasmO2BMRcZsoHbp4dtrd8DmNGDDSe7+3lW7bqGcfvFqXVHIrb
+	i9Y+wW823SZQYzCjAjCqsE7YxL21im21vHbx7CE/+AUQWaQ==
+X-Google-Smtp-Source: AGHT+IEPISwSCtFAAyFwofIFOPnmbMbF4JyOJ066gMSsxLm13Rxv+HKDa92QBeQD2yMdtcQya1taGWfxC/jbAWm/jgE=
+X-Received: by 2002:a05:6214:d02:b0:875:2636:4bd5 with SMTP id
+ 6a1803df08f44-87a052412damr4657666d6.20.1759770450151; Mon, 06 Oct 2025
+ 10:07:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smb: client: Reduce the scopes for a few variables in two
- functions
-To: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, Bharath SM <bharathsm@microsoft.com>,
- Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French
- <stfrench@microsoft.com>, Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <468cf96a-5dd9-4aa5-a8ce-930cf16952b3@web.de>
-Content-Language: en-US
-From: Henrique Carvalho <henrique.carvalho@suse.com>
-In-Reply-To: <468cf96a-5dd9-4aa5-a8ce-930cf16952b3@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <468cf96a-5dd9-4aa5-a8ce-930cf16952b3@web.de> <8e79516d-ad82-46bd-af00-3a8594a0baee@suse.com>
+In-Reply-To: <8e79516d-ad82-46bd-af00-3a8594a0baee@suse.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 6 Oct 2025 12:07:18 -0500
+X-Gm-Features: AS18NWCiMwnwOYL0R_azJWeM_ATvaFnKnhpK_Wr3r0REf2iO_ANzlxxIqrNli6g
+Message-ID: <CAH2r5mvNM+z6re5toyNOJXewE0=9u2f+xxPXO5xTsMCj5nUWTw@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: Reduce the scopes for a few variables in two functions
+To: Henrique Carvalho <henrique.carvalho@suse.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
+	Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>, 
+	Shyam Prasad N <sprasad@microsoft.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Henrique Carvalho <henrique.carvalho@suse.com>
+merged into cifs-2.6.git for-next
 
-On 10/5/25 2:10 PM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Oct 2025 19:01:48 +0200
-> 
-> * cifs_lookup():
->   Move the definition for the local variable “cfid” into an else branch
->   so that the corresponding setting will only be performed if a NULL inode
->   was detected during lookup by this function.
-> 
-> * cifs_d_revalidate():
->   Move the definition for the local variables “inode” and “rc” into
->   an if branch so that the corresponding setting will only be performed
->   after a d_really_is_positive() call.
-> 
->   Move the definition for the local variable “cfid” into an else branch
->   so that the corresponding setting will only be performed if further data
->   processing will be needed for an open_cached_dir_by_dentry() call.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/smb/client/dir.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-> index fc67a6441c96..7472fddadd4f 100644
-> --- a/fs/smb/client/dir.c
-> +++ b/fs/smb/client/dir.c
-> @@ -678,7 +678,6 @@ cifs_lookup(struct inode *parent_dir_inode, struct dentry *direntry,
->  	const char *full_path;
->  	void *page;
->  	int retry_count = 0;
-> -	struct cached_fid *cfid = NULL;
->  
->  	xid = get_xid();
->  
-> @@ -717,6 +716,8 @@ cifs_lookup(struct inode *parent_dir_inode, struct dentry *direntry,
->  	if (d_really_is_positive(direntry)) {
->  		cifs_dbg(FYI, "non-NULL inode in lookup\n");
->  	} else {
-> +		struct cached_fid *cfid = NULL;
-> +
->  		cifs_dbg(FYI, "NULL inode in lookup\n");
->  
->  		/*
-> @@ -785,15 +786,13 @@ static int
->  cifs_d_revalidate(struct inode *dir, const struct qstr *name,
->  		  struct dentry *direntry, unsigned int flags)
->  {
-> -	struct inode *inode = NULL;
-> -	struct cached_fid *cfid;
-> -	int rc;
-> -
->  	if (flags & LOOKUP_RCU)
->  		return -ECHILD;
->  
->  	if (d_really_is_positive(direntry)) {
-> -		inode = d_inode(direntry);
-> +		int rc;
-> +		struct inode *inode = d_inode(direntry);
-> +
->  		if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(inode)))
->  			CIFS_I(inode)->time = 0; /* force reval */
->  
-> @@ -836,6 +835,7 @@ cifs_d_revalidate(struct inode *dir, const struct qstr *name,
->  	} else {
->  		struct cifs_sb_info *cifs_sb = CIFS_SB(dir->i_sb);
->  		struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
-> +		struct cached_fid *cfid;
->  
->  		if (!open_cached_dir_by_dentry(tcon, direntry->d_parent, &cfid)) {
->  			/*
+On Mon, Oct 6, 2025 at 9:11=E2=80=AFAM Henrique Carvalho
+<henrique.carvalho@suse.com> wrote:
+>
+> Acked-by: Henrique Carvalho <henrique.carvalho@suse.com>
+>
+> On 10/5/25 2:10 PM, Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sun, 5 Oct 2025 19:01:48 +0200
+> >
+> > * cifs_lookup():
+> >   Move the definition for the local variable =E2=80=9Ccfid=E2=80=9D int=
+o an else branch
+> >   so that the corresponding setting will only be performed if a NULL in=
+ode
+> >   was detected during lookup by this function.
+> >
+> > * cifs_d_revalidate():
+> >   Move the definition for the local variables =E2=80=9Cinode=E2=80=9D a=
+nd =E2=80=9Crc=E2=80=9D into
+> >   an if branch so that the corresponding setting will only be performed
+> >   after a d_really_is_positive() call.
+> >
+> >   Move the definition for the local variable =E2=80=9Ccfid=E2=80=9D int=
+o an else branch
+> >   so that the corresponding setting will only be performed if further d=
+ata
+> >   processing will be needed for an open_cached_dir_by_dentry() call.
+> >
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >  fs/smb/client/dir.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
+> > index fc67a6441c96..7472fddadd4f 100644
+> > --- a/fs/smb/client/dir.c
+> > +++ b/fs/smb/client/dir.c
+> > @@ -678,7 +678,6 @@ cifs_lookup(struct inode *parent_dir_inode, struct =
+dentry *direntry,
+> >       const char *full_path;
+> >       void *page;
+> >       int retry_count =3D 0;
+> > -     struct cached_fid *cfid =3D NULL;
+> >
+> >       xid =3D get_xid();
+> >
+> > @@ -717,6 +716,8 @@ cifs_lookup(struct inode *parent_dir_inode, struct =
+dentry *direntry,
+> >       if (d_really_is_positive(direntry)) {
+> >               cifs_dbg(FYI, "non-NULL inode in lookup\n");
+> >       } else {
+> > +             struct cached_fid *cfid =3D NULL;
+> > +
+> >               cifs_dbg(FYI, "NULL inode in lookup\n");
+> >
+> >               /*
+> > @@ -785,15 +786,13 @@ static int
+> >  cifs_d_revalidate(struct inode *dir, const struct qstr *name,
+> >                 struct dentry *direntry, unsigned int flags)
+> >  {
+> > -     struct inode *inode =3D NULL;
+> > -     struct cached_fid *cfid;
+> > -     int rc;
+> > -
+> >       if (flags & LOOKUP_RCU)
+> >               return -ECHILD;
+> >
+> >       if (d_really_is_positive(direntry)) {
+> > -             inode =3D d_inode(direntry);
+> > +             int rc;
+> > +             struct inode *inode =3D d_inode(direntry);
+> > +
+> >               if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(ino=
+de)))
+> >                       CIFS_I(inode)->time =3D 0; /* force reval */
+> >
+> > @@ -836,6 +835,7 @@ cifs_d_revalidate(struct inode *dir, const struct q=
+str *name,
+> >       } else {
+> >               struct cifs_sb_info *cifs_sb =3D CIFS_SB(dir->i_sb);
+> >               struct cifs_tcon *tcon =3D cifs_sb_master_tcon(cifs_sb);
+> > +             struct cached_fid *cfid;
+> >
+> >               if (!open_cached_dir_by_dentry(tcon, direntry->d_parent, =
+&cfid)) {
+> >                       /*
+>
+> --
+> Henrique
+> SUSE Labs
+>
 
--- 
-Henrique
-SUSE Labs
+
+--=20
+Thanks,
+
+Steve
