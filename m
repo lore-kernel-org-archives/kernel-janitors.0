@@ -1,39 +1,39 @@
 Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBB145C0B;
-	Tue,  7 Oct 2025 18:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33C71A267;
+	Tue,  7 Oct 2025 19:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759860626; cv=none; b=ewHBPyOIye1ohmzxw2CKGYMdUbSjeIFFgV+dYmSulB71pG4chR9mzOamJzm50tezf7zqdh3+6eaV5FeefwIQBiwKwnmVMIZNc2/SCn1jDAUvfQyeMIKKuMb6VwbAgYFr7cDc2bkbeMeaBf/8LznNPfBAIMkrQkuGbJvL2pDGtuQ=
+	t=1759866344; cv=none; b=AZlA3pj30kvfVtlih/l5ozdgfhYUOCuuCTwiPclaE1tI2mR9BFTDQeOMy29cKoqHlteVnf2cmlwtNnJ282t+h+yeqxBlp0CCmQu1/10bkxVQZrN8nZ5Lu4BL80pbUvlba/c7XnlVmeK/0ddH3Mf+9RHAmE44UYS1jyFvm+BH9G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759860626; c=relaxed/simple;
-	bh=PU1UcClLwbar1Zk/rbgFgXIjPB2mQdwsCi6FEpoHdV8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cbsK/CJZoWP/NqChexFnalmGi/i2vcqr/mEIdFMivwY5I3LSShJzwuW1scB3lBPfu2IbvxQ1EJf0APx2qnlJDONHy6QBvmfMCj8X8L7PBHujkQy6Vh6imap7KSvH3WNWdhvFowouNaP9HBUGH8+kpEC6Bcr6aEUc/aHMMD49phY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=etPuZK4R; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1759866344; c=relaxed/simple;
+	bh=kq/+ai7eaI+xs+SQ3Kpvylx9911pdxsqYTHch4jeCzw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=g/8HY67PxHl8NPOCEK/wBVFl7PCUhbmUL3zrpupJQejVqJ4hTHYmptqSJu/yYwPChzpTw0TnbrfRgZCu+my5DYswfC9KshouZIqCGZ6Vy6iJmS3nOKOuu1NT6LflVKcDUtFL9X/eIQX9/FYgdnKe7sqmijbm2iARPm4TAaOMMc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=N2gXkEaU; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="etPuZK4R"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="N2gXkEaU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759860612; x=1760465412; i=markus.elfring@web.de;
-	bh=SZob4jle2xeFF73UScJ33u2dZTmyY6LJz873tKKHCX4=;
+	s=s29768273; t=1759866335; x=1760471135; i=markus.elfring@web.de;
+	bh=nHxGcVyoMz80gSBeu065Qiu4WFZZoPGdHL0N5KXsfk8=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=etPuZK4Rsm6+AEA7+ifqGuNi0cinBqQTvoQTsbv+O7zUoOcfa84tyczo+jmCYM41
-	 Kt/1uAHhMEPTGPgPcyfAbPBsnb5IuQON9QsOwEHBDLmLQKCD1uOadkEKeoJc8W2tP
-	 ItbntD9BxR59AHm9AoVv9waQvSSwvXimMgkO0gJyTk5Q+BD7P9jPGDGU07gcLQoiE
-	 jE+7Bx6TLuk3VK1Q1F9+AZpW3ZZGZ+Rc6OaOgKPyPfaKI/OPfBLxciGcGzxp/TiNi
-	 fJ97/+m+gRbiuFDofDyzIzDwJ6uV43FF4boK8U96WqcL+QXbjemyWD9wGIOX/itIf
-	 2XiFUVHGUKBLWCcPaw==
+	b=N2gXkEaUhryE+YiHJBDnxi0dZqCXeyUewDlj6iGW5Ph+SYRpLLfnAH9ZuTmqgjHl
+	 0d/4iPiNbdxdsUkGnWekfqqhzPOBo4KfOKxSGtzaNd9jL7LJqOPlK51apH+cbbpVz
+	 p/o17vvST2rAzjlrOGSc3PbTDsJjtPzfyLuzpTVug3YY8GwKdxJhU44hWlP4gfOiR
+	 4ti3QDr/qQa4LlL2MMWBEkXyXoo6LsRCuyW4dlsjV1mznHcQ85FvY0qFVQQ3lEsal
+	 xBXJ3Ehfb+KXLtRq88UMMtSeKMuZN9+ZDfZbnI/xPcDWcxa80G3O/DgN6mb3uS0kZ
+	 Mo9OrrVgQ40xu1cPbw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.29] ([94.31.69.202]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MJFhX-1ur0XI2kRP-00KNLq; Tue, 07
- Oct 2025 20:10:11 +0200
-Message-ID: <94f70136-c57c-4c4c-9e5d-5044e7e01b67@web.de>
-Date: Tue, 7 Oct 2025 20:10:10 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1uMNGO0WDr-00y5uI; Tue, 07
+ Oct 2025 21:45:35 +0200
+Message-ID: <6396d7d3-ef88-4b81-8d8e-f7f81a80ca0f@web.de>
+Date: Tue, 7 Oct 2025 21:45:33 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,124 +49,133 @@ To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
  Tom Talpey <tom@talpey.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] smb: client: Use common code in cifs_acl_to_fattr()
+Subject: [PATCH] smb: client: Use common code in smb2_push_mandatory_locks()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:s1D/5YgA3K4NY7KAYljGwc71olT/uwj2exOW68vK95JtC5jbRV8
- IfJIRvTnu7788jvO8iexmVDcaArhGKgWMzwQbWajj0/HSSsNqTCPggoOWrHH36SzbyXiXyE
- Nyab+MpAJOXncrZk94FIgMQNqJli7469hySQR+NBBMsdFqIqsFBs0q820fkNtYYfE9P99dh
- 4U++Gft4VnY8buuT14PXw==
+X-Provags-ID: V03:K1:O+PfjrkT0ZySx22WnxF5wIK3HQiRQZ5zbkCL1wbjyW764zaqJkM
+ YPb3546q/faBo6x/3qe7DbbuPc2DRHGfR9AWF3L6/uRxBgYxl2Zenyn0a2dONTJwyVlbnfR
+ G36Iy9fBtTu8O6+ENqnQegpSmUfQLfg1irdmNxK1GiNE4bl2elgC3DZJtrCDC8QCcYqdEQm
+ c8xkF+O9lRNaX2FoyUzKw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3kFh9P619KU=;VBxxE5BpJV872eo7AX+5sQqm1MH
- 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
- TurKhzJP2YuPqAo7bCk1/24MAM=
+UI-OutboundReport: notjunk:1;M01:P0:mWzMGXDE9Xg=;2jSzE7ZhCPY74/0pVGPEXhiLdtI
+ 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
+ YZsBwtx7/jysvJRgw=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Oct 2025 20:00:18 +0200
+Date: Tue, 7 Oct 2025 21:37:18 +0200
 
 Use an additional label so that a bit of common code can be better reused
 at the end of this function implementation.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- fs/smb/client/cifsacl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/smb/client/smb2file.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
-index 63b3b1290bed..ca89f22a72c4 100644
-=2D-- a/fs/smb/client/cifsacl.c
-+++ b/fs/smb/client/cifsacl.c
-@@ -1579,8 +1579,8 @@ cifs_acl_to_fattr(struct cifs_sb_info *cifs_sb, stru=
-ct cifs_fattr *fattr,
- 	else if (ops->get_acl)
- 		pntsd =3D ops->get_acl(cifs_sb, inode, path, &acllen, info);
- 	else {
--		cifs_put_tlink(tlink);
--		return -EOPNOTSUPP;
-+		rc =3D -EOPNOTSUPP;
-+		goto put_tlink;
+diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+index a7f629238830..42ac00f7e728 100644
+=2D-- a/fs/smb/client/smb2file.c
++++ b/fs/smb/client/smb2file.c
+@@ -413,8 +413,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	 */
+ 	max_buf =3D tlink_tcon(cfile->tlink)->ses->server->maxBuf;
+ 	if (max_buf < sizeof(struct smb2_lock_element)) {
+-		free_xid(xid);
+-		return -EINVAL;
++		rc =3D -EINVAL;
++		goto free_xid;
  	}
- 	/* if we can retrieve the ACL, now parse Access Control Entries, ACEs */
- 	if (IS_ERR(pntsd)) {
-@@ -1596,7 +1596,7 @@ cifs_acl_to_fattr(struct cifs_sb_info *cifs_sb, stru=
-ct cifs_fattr *fattr,
- 		if (rc)
- 			cifs_dbg(VFS, "parse sec desc failed rc =3D %d\n", rc);
- 	}
--
-+put_tlink:
- 	cifs_put_tlink(tlink);
 =20
+ 	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
+@@ -422,8 +422,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	max_num =3D max_buf / sizeof(struct smb2_lock_element);
+ 	buf =3D kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf) {
+-		free_xid(xid);
+-		return -ENOMEM;
++		rc =3D -ENOMEM;
++		goto free_xid;
+ 	}
+=20
+ 	list_for_each_entry(fdlocks, &cinode->llist, llist) {
+@@ -433,6 +433,7 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	}
+=20
+ 	kfree(buf);
++free_xid:
+ 	free_xid(xid);
  	return rc;
+ }
 =2D-=20
 2.51.0
 
