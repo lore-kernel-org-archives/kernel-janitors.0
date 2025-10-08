@@ -1,106 +1,102 @@
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8712EB850
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Oct 2025 14:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15FB298CDE
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Oct 2025 15:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759934334; cv=none; b=EEG8OZ26MnM8jdoqkrn7BU49FohM1ecgthddaLRpYAslUhybChEDfQu3Omnc04ygRiHToPd+5Zmdtj9jCNck1XiHDrG0yobXWTuRzR2BkiJazCDzSaQGcILHjbs+Ou6+jxyuM1wFho6JESCTUVW6uxrc7iBw+B5TfmWSO6lWbag=
+	t=1759936146; cv=none; b=Flg7BUOaeGSyF5b7U8OEuHnozQfWYxJ9v3Eg/D2286W7uY9esaV1Bng13l/kj4ZuCm81GIhPZGgZR4qmYie+ksEviYcHSjLZsN5iW2H/LhLMtgZB48AwbOx7zQS9z6mTZB3wshN5jq7vtpyBPtdtkSlsVlzGWxatYXToo35MB8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759934334; c=relaxed/simple;
-	bh=vW4d+KASjVLRQlxmTYNHQnLbNq8BFQheGBjMK0J3LZI=;
-	h=From:MIME-Version:Date:Message-ID:Subject:To:Content-Type; b=PX3Qcj6r9IkxZ6sPkZrys5cpfnGsB/Mf1jU29Wfe3Hde3UGazAWh/tgeauKq8V7I+LHSwBikUA706mT8/GlosfU+fLDiS6GLn1Wf4asbI2l14eeLYh15MNDnuWm8VGAemACIn64SiLMsLyZ205fWckCqaVtf8ziCsV6wtmLZNDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2p60BvE; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1759936146; c=relaxed/simple;
+	bh=1K+mZHhUUT08Buqc1WIo7B/dy9RfBBDC35AAmiVX12c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m4Mj1DtpobVe20j5V0tjSHQS+yB+t3V49WNWPq8DX5uIeGe2+k5+JsgRTabk2K8oebzT6Ah+EBQq2TrtnMh1binc+X2g0OW8y34ulXlgi9xhLHB4+mesZUBDltMdhixW7jVkw2PmCIusVzBTeL07Xd74lcA+MNpZp3YtjkQ/21I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mI03c5Fy; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2p60BvE"
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-863fa984ef5so907332385a.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 07:38:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mI03c5Fy"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso15117f8f.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 08:09:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759934332; x=1760539132; darn=vger.kernel.org;
-        h=to:subject:message-id:date:mime-version:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iJLXoDWYgAmog44Pm7ibdOmWHzVIeuqL1A8vf/ARX2o=;
-        b=D2p60BvEDpcgVJo44a6cGxM9QIus/o0uKY3LO3A2Cz4kWDIbIlZ3sam1JeUuxSFOba
-         AMZZW5mah+j2goULUUzM4AOJusVrSh/ZeRUra57X1Yi2imNUvXrY6cuo4+ksJud3uGkF
-         zMNszWjFNhOI4bkct3vHHW4RJ+QQdmzZrhFHisE3z0la6ZHEKF0fE40qvP1BN6S0DNxP
-         OS32eMVUJSBFLWcqThNMwt47wln6Bdk2H0hSqI2phUNtwToF69uZkFX607lb2LCkyNwB
-         38fz4q631Jjw7+KllDCTdyzJUPRIxMGeqTSg9oLgBHcgSFxs0NuwjiQP6/E+xXWHoJhM
-         QrlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759934332; x=1760539132;
-        h=to:subject:message-id:date:mime-version:from:x-gm-message-state
+        d=linaro.org; s=google; t=1759936142; x=1760540942; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=iJLXoDWYgAmog44Pm7ibdOmWHzVIeuqL1A8vf/ARX2o=;
-        b=sYW7yn+EpXwzy6EBLPvWDbkqIwd7jQXyF2JSczlwxYDSb1+hHrFAg4XU/81JLdnmBn
-         XtMbmbXZQP5iZauqKjFFNqtjMvYqgNaQNmUfzJvSBsiXiy/6lkzS/p0a69esb1JfKkoi
-         xIsQl4HoKw4H22mZJeMcleQP2Vt+Fz3fdJwqFUTs11N7g8AsfGvlMuEmMBWvyfBT/LaZ
-         iSK38n2Cd5L1OxPUNZbn35TD1xo6rXv0/gl2xkY9Jtwca4p7NRFfQAqwIDpKWged0gKc
-         PW9U5sMCuKtunrKe+nF4LzIEanoWL5VjRho0oDsDyi8Q0xpC8iVOKyUMfnpJcQYgYZ/F
-         gu2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWWd8bbBh5nuPXTIrWaYMtY15YgFJL2MW0EIsVfBv+Cn8vefEkddJByTiH8vSYV2FHgf0RPUV5h9wSzD5ZyT1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOOD6RTt4M9/S/W2uukLv0N1qohZIzmGrSKRJh0h8KHl+0NnMh
-	CnWoMmb3vAiIeja97krrkfJ4yd+a7f24nTd/Pgw/PJhwCdd7uv+nneVw4oxcJ73GnaVsTY+nwcy
-	Gxka8BR/u21xH3r4q+ecEGfpFtYkx3/0=
-X-Gm-Gg: ASbGncthhaeI7bEFNxYAM5JJ4ho6g50eLC1anrJlFjXVMU0w+Pf5PYSjjaiW+/DEhU1
-	snFi8MX3a2C9prHj4TH31pX8I+ZC3IbquECp4UZc8Ee+YfdxZnx80mFp/gOiomzzbyYZQJP1at4
-	RhMPr3kFa7FIITZj8rQrkvIJNI99tAAvrlWBpmOdrvaAtjvOnYHAjJbX3PhV18ylAsrsh5KdC3T
-	9q51ZzQeVIqsjxfuEcZROTlo9iU3OLLTKVt/YU=
-X-Google-Smtp-Source: AGHT+IF+it1OcBxPz0VsB/IdgmRpXcmiUKEzYN63Nr6odezkJwkdhC21LZw9Rqe4nPvESEy+tDLg5BBsdUxS47vIkLM=
-X-Received: by 2002:a05:620a:2548:b0:875:79b2:13bc with SMTP id
- af79cd13be357-883523d6f26mr540921885a.21.1759934331479; Wed, 08 Oct 2025
- 07:38:51 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 8 Oct 2025 07:38:50 -0700
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 8 Oct 2025 07:38:50 -0700
-From: Amit Dhingra <mechanicalamit@gmail.com>
+        bh=6Lsv/v4r6+foGJWr+qrH8p2k9rjZsdGH+FPsXAlrkVQ=;
+        b=mI03c5FyBkiUk2gVEx+fgak9+cVGldj/HtkrA540CoKE3m0m5NRX5kvSbwN80sGbAf
+         KhvWqYI0G4Qax0E4sqGApnMAXK9MTQaV4BjDztbMPtt3dtdvby/pda4dPBbgitisniPC
+         3qXXO2tQC5uufYxsSrnsCe1Iu4MR2NJCUj/sE/vPxci4lbxiBWDtvBD0H8iUajnYQOoA
+         wshAese0+/HFGjHL9kiBi6MV9BkRXKR7WfJGNQ3dgjsflrOxNCa5eRvNFDPfcMb0Jb97
+         UsOdPYWkSmSwev9urvcwEQrbTAncqCr0k8nELaAq9ozoUB4gSM2WwOAW/2g3EAT57235
+         Jt2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759936142; x=1760540942;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Lsv/v4r6+foGJWr+qrH8p2k9rjZsdGH+FPsXAlrkVQ=;
+        b=icNt6sLPaC9jcw3Z2U7rdKIQsR1DK3UZDv4UgS3e8CqZo1zH4dTpZB3Y51QxKCpAF0
+         YOlDxr/WLfVCH++MAk4wLHfcxuswQokRG0SsBwM/ZYm3lguQF3zD31jP2CRQfijWZO3x
+         mBpMPWesFxB4NCEkIxh73sE9nmmedHG+5eudcV02xuVnjBs+DpOSzL5dZ8//q5HJd1lt
+         bKgJ/qpBe2pD/N5mffR59neGkmPBHWj0+/Xce0cZP34PcyM6G7Q56Xwjkl79oo3qaRz1
+         0jHml2vJsP6/0H5zEOOWbIl+5tSQmKmv0g0i+cYhgGLUFf2XFhlXc0HY4rl/VqRTZMk0
+         hNHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWep7p10u3CPLNfV7GUM1Ulux9HJfxDiPSV7BYhbossrrWarb8X7JxI7lRjinPejXxZLOAcxHX2rO5X7YrfLpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzanHZOmRreOK+s6Ww12C3lUHWTjX+/PVFXuPf2561VX2YQ697D
+	LajLUjARTgECIodIfNvlk9+3kVwiV0n961PJ2Zpy2kqo2QgEzG8D1F8TrfqQ5H1EpsU=
+X-Gm-Gg: ASbGncsojauPSR+VVRZ58j/z3sVQePuhWuEkYf/ii33u4WbvOOYqbaW2hqUZhRXIBI0
+	nikxdtNtzQkmp9pwCP6WEVL3qy6gHAgxtp+dtsyPbgKp7tXgfBLlHv+GaR+tJWCk0w0alKyAQUa
+	3PquhaXKSYuBaoUrhfXMEZGfyPlFk3CRHsw6Yrnw9RQFIKzxNNWYHiwv3yDDUA27mI9i2NM0OJ7
+	8Xe5JJs1my8pbHcHhEZOb1vwaT6KIgyrLjskoBPhVKnNl31s5iBrEsIDEV4hfNkkGtAktpGB6TA
+	0xEvNk2FtOE29LOdjWhrZ8DWxwnyCAb5/RGpABD5jgzq21seyKIPUaZN8Iwee47oJRu82UZbRGy
+	GHPuDl/QESXbfBR47OmrpntGwue+Nk55Ou8QzraaCeI71aBJI4AN9qcbd
+X-Google-Smtp-Source: AGHT+IHYVsHAe0/w87MtOEqTgFE1mT/tsUBsMdlVHgFGbcOBnMrbBTOagFPDRArfyaH2aIEMb5EBvA==
+X-Received: by 2002:a05:6000:2c0c:b0:3f1:5bdd:190a with SMTP id ffacd0b85a97d-42666ac3a16mr2508780f8f.3.1759936142001;
+        Wed, 08 Oct 2025 08:09:02 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d869d50sm31248166f8f.0.2025.10.08.08.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 08:09:01 -0700 (PDT)
+Date: Wed, 8 Oct 2025 18:08:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	Filipe Manana <fdmanana@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] btrfs: tree-checker: Fix bounds check in check_inode_extref()
+Message-ID: <aOZ-inc8o7T63QHT@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 8 Oct 2025 07:38:50 -0700
-X-Gm-Features: AS18NWAAD0Ld_hK9Lnl2mXC1VttH3a6opSMyMypTfNMv1gG0_fwBqVnAVW12AtI
-Message-ID: <CAO=gReGixJuoovC4C5Gyx2G-1MTGPjFq2TwC3jxy1jQ1w1RmDg@mail.gmail.com>
-Subject: [PATCH] [PATCH next] : Fix a NULL vs IS_ERR() check in mt7915_init_debugfs()
-To: Ryder Lee <ryder.lee@mediatek.com>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Shayne Chen <shayne.chen@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	StanleyYP Wang <StanleyYP.Wang@mediatek.com>, 
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Razvan Grigore <razvan.grigore@vampirebyte.ro>, 
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-The mt76_register_debugfs_fops() function doesn't return NULL pointers,
-it returns error pointers. Update the error checking to match.
+The parentheses for the unlikely() annotation were put in the wrong
+place so it means that the condition is basically never true and the
+bounds checking is skipped.
 
-Fixes: e57b7901469fc ("mt76: add mac80211 driver for MT7915 PCIe-based
-chipsets")
-Signed-off-by: Amit Dhingra <mechanicalamit@gmail.com>
-
+Fixes: aab9458b9f00 ("btrfs: tree-checker: add inode extref checks")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Compile tested only
----
- drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c | 2 +-
+ fs/btrfs/tree-checker.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
-b/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
-index b287b7d9394e..cb9ad05db9d4 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
-@@ -1232,7 +1232,7 @@ int mt7915_init_debugfs(struct mt7915_phy *phy)
- 	struct dentry *dir;
-
- 	dir = mt76_register_debugfs_fops(phy->mt76, NULL);
--	if (!dir)
-+	if (IS_ERR(dir))
- 		return -ENOMEM;
- 	debugfs_create_file("muru_debug", 0600, dir, dev, &fops_muru_debug);
- 	debugfs_create_file("muru_stats", 0400, dir, phy,
+diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
+index ca30b15ea452..c10b4c242acf 100644
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -1797,7 +1797,7 @@ static int check_inode_extref(struct extent_buffer *leaf,
+ 		struct btrfs_inode_extref *extref = (struct btrfs_inode_extref *)ptr;
+ 		u16 namelen;
+ 
+-		if (unlikely(ptr + sizeof(*extref)) > end) {
++		if (unlikely(ptr + sizeof(*extref) > end)) {
+ 			inode_ref_err(leaf, slot,
+ 			"inode extref overflow, ptr %lu end %lu inode_extref size %zu",
+ 				      ptr, end, sizeof(*extref));
 -- 
 2.51.0
+
