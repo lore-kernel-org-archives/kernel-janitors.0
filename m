@@ -1,94 +1,128 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4442EC0B5
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Oct 2025 09:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78325785F
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Oct 2025 09:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759916302; cv=none; b=lDzgbPd93MJzY5PeDJdEyIfdCQoefrH85m80yvxg1z8Fr+nWSkIuiyTTgdL6gJ3KSu8G4WsvRMbQ1ZnY+kJ2WaDp+yJCuaRLOW6ddwzUAjZ3niD9SF/p5jRoE7eB8Gz0EscBKY4BkehnKhSmMegYWmxJNC5jzW/KRWVfLD6CUNc=
+	t=1759917081; cv=none; b=SfyqKThc09MRDTCz3+gcEolI2CWb6q1dUc7Qirpy1lv6QRjwColUnDjBUa22VEbL4ivhfnS7PLsv9eoqJ41//vPQ/NgF3usSmkVS8XSbWVjkFIb0aE0C4lCPH7q/2qlps4ULKT5lLzHXoMW7UArxgrWU6GV4zQ4p1citRsfWSis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759916302; c=relaxed/simple;
-	bh=QZNWWheMYqQzuuKISvLeOiDECD6lMhoLTkQ8WAFFFfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXBGgoBhLZ9PSZuGMqjn8FBrCGGYVPl11/5H5d+W59eVyZPA7FezUK3NLuXVb6sXkhMlTaG5A0AmvDenapp+hnO04lrg+WTa31WaXuAU43fSNsqsE/48177LRkYgz834qXZolz2H9mQCgXhspYXMCHpohTrBwp//yRuWHbhJP7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-54bc6356624so496972e0c.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 02:38:20 -0700 (PDT)
+	s=arc-20240116; t=1759917081; c=relaxed/simple;
+	bh=x5nbI9AkIsrsiz0hS/4vrtpxaRXtMX8vw+zw9R23U8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKMgSU3xbDBUkPQSNsFcORSNpedTS+gboaP8zvU61YgYo3lQF074zP1b8z3UsQ46Rrw/5j/Q5QSbrDeQyg5uHuoxAOu4jfvaItpEaLQbY+JFOepCip6S8h4VqPeug20hdvfMx/IAVPi8Sab/p4BRKpog4YWkdDNmOhgjaXPxfVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D4Bjr0Fi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D4Bjr0Fi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759917078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EYv27Cm4bmfghZ2+pFJmEaAynMMJr8WvQrLSP3odbZQ=;
+	b=D4Bjr0Fi3pbhSAtY2vyv/oKsnA/w6Nvw2K57Y0IAWZ/PjGzNs/RKY/Xm92Zg9NlVNshsjt
+	voAdw211IX4QZFGoDyvJN3mhs6+PKKZRHM4EuIwPfur9QMy8Cc78Un0MldKpeHBlPq0CTA
+	TbmSx4KvDxI7eKjxS7DpbDZt7UE5GRM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-563-eIbaFJ66M5amdk9BCuAZtA-1; Wed, 08 Oct 2025 05:51:17 -0400
+X-MC-Unique: eIbaFJ66M5amdk9BCuAZtA-1
+X-Mimecast-MFC-AGG-ID: eIbaFJ66M5amdk9BCuAZtA_1759917077
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f4fbdf144dso3795977f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 02:51:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759916299; x=1760521099;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759917076; x=1760521876;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g6l+B9owPtIKrCSeyTE4F8NmW+PJqEJv1NByjt8yVUI=;
-        b=pohxHm7Wtwh4mm5BSjyCdpSRzarh0vQAz1AVZQOJQGIqV5SQeSGLsYkYGj/hnA3CH2
-         dZeAs24A/O84MYNDWzfD89ohzKTIK6v6zvj3CkTqrUi5W4Fh5dWn275NA4uryqdoGeNb
-         YIYF6bsb+nwbgH+DFWLMT0C2htSI0eMllJnHIOR1KCOKWPrPy+SFu85R5DUZGtXBtODP
-         oR2+T1fSNHqrhxFfBMPjBIZ/i9I2fgqqKJWIJ1HQxwaDjhHk4XrVJ4CvtlDTEruIAUQv
-         Zx56mnLZ5JuydGWFxzQXpK5wWwvx/UWmlTz/cz41MxSiuPVUP0V5ImB0w+LExX/7FnGC
-         OKuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUARSyVKAbbPgfPlsPQOkLtOUAq1UW6TPGnCs4QpOmen5CQDVaaYyKHd2k2grrbXptTjkYaOForNLN/WUV8gw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNSkq3gmM6aUlUfz4shEtQxCLEVc7WruLfgRJNZGnCCk5eUgkN
-	Te9vBguhZgaeAt/OomaZ7WbHNVBfkpFJueppl6ghd0F1F3gfoK4RqQ+icnJrK76x
-X-Gm-Gg: ASbGncuy83wN3g5AdwAfW8zFyKgBf6sw4jhcgthcYlqmCOIBiRXx9phULhGz2E3+Jr9
-	ec+XhWAJC+cQM7wIwub2ypU0TECP/2LeUhPxvShTo4Ht+R+gNzh0Amir/vWOXVvpjCEqMPEJtFf
-	b4SeaIOB2r1SYbsFYCCI3H+nW4sCSFRz5iEr8QqxxgF9c4oQ/ZyYUs2v+Ci1Bjy22JFALp5Bus3
-	TYHWREQ7YmPGc7DZUwxPciOfsfDRp3N77ydA1YIJqvs79H8yI127ecBtUQSZmJ//BRPUSen6DaR
-	9c36z9UGQrv1ti+anKgtSzzXVc3HoR5LDJ+fHUpjwMhZIE1I6Ay+GH1dS4kLuxhGDaXcRO8OH+X
-	JSY9+c24CiT0hG/NDw6YazaQUCGUYI4Y5jhUy/yRfJ6MXkFaguAbbDyKX5j2n1y1EnBsTnPgdKT
-	ZqJxMv3L70pM74su3U3WWErDw=
-X-Google-Smtp-Source: AGHT+IFBj+XsSFpIW+wRG5Zh5AF4DZdPuBCSCzfn3fuxU1mrUBlIoQAXbrZ0xPsIlrH5Whrx47hhXg==
-X-Received: by 2002:a05:6122:3110:b0:54a:1ec6:b1ab with SMTP id 71dfb90a1353d-554b8f3e2b3mr1044971e0c.0.1759916298909;
-        Wed, 08 Oct 2025 02:38:18 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5523cf3e0fcsm4372065e0c.17.2025.10.08.02.38.17
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 02:38:17 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54bc6356624so496937e0c.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 02:38:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHRsZfKkg/DEi/e9JEh6+3Bx49uOly2Tu4TGmYGZOXSxFSTIxbM2OR33izPLzriBUhM5SZCJ8nzQuwqmVJwrQ=@vger.kernel.org
-X-Received: by 2002:a05:6122:e011:20b0:54a:8ad3:7b5 with SMTP id
- 71dfb90a1353d-554a8c9b568mr2813894e0c.1.1759916297008; Wed, 08 Oct 2025
- 02:38:17 -0700 (PDT)
+        bh=EYv27Cm4bmfghZ2+pFJmEaAynMMJr8WvQrLSP3odbZQ=;
+        b=cPlmabnXiM6FWvtFDrvykcIvycdeBMtqdEOLZYUqd8SPd9ZkEj17MDP6/vSi8lHXkL
+         0uggsa04zO0dHsaqNMbMkwQ00axKAcHba8sqmx/7qnaG9WA3MF9vsaJusM7sTXVYDAJR
+         7fijM2IXshJ3W+M8PNk95KWz5ljT2zNZXmd/zik8kgF3mgHYHkVmfz/A8STjwiillB6z
+         QFtXuMeFCHKJWcubUSa8UxzAF6yU1pJjttQ7xOgGMX1OdNYZmcThtGF7fb56MkjrJtxX
+         Az8TaM/z/D1+Xnzo5HfrGIPxmIzb5WT0l3SoVq3vZnJfsx4IPpf8/h6HO8zq4z4E1Xr3
+         sgGQ==
+X-Gm-Message-State: AOJu0Yw1MeiGq4leur+YrVSpuhCj9/QiHhzHQd9NEdMlny4AfegdlTYH
+	8jJKwQT4WZ1m8kBkE95+lz5N8+f/W24dNVLrwsnUObmplRRaparM+T9KS6Cb0/9mPrP+5FKTCz/
+	Q3RuNeqbNPzDj0oq9VeD36hJumxvbZmih8DMZ93xZaSizzEtKXU2Sm2A3MtQXKap9Pe6ACFVNO+
+	B3+A==
+X-Gm-Gg: ASbGncuCTfpIbMDm5QeHseWi8AZRpiLuGhLBEqJYnEKuImr5MUxI/sDzkOa0QCGggGL
+	9eKBxNdX914tT6Th/Izf5yJiOFpMHUnbZ24ov4l7S/FfYGynRbAvXDzqqIvxO5MqKuBSHoILpbK
+	Gj1hioLlyQPxu6kbYL/fc0cKfedHXUJHaHXeEXSvseCvZ9rRKInPtDvKKJX89vom3/NCs/uMky/
+	Yg6xnBSDR7CMd87kBVtK+eezQ+cVI56/C9PFVvxAMgE3CLCYI5T2Nd/nmTc5QU7cof9K/3Ito2Y
+	Y45keJFBgQykQ3JdZ0Tc+2dTt7iumMP6FXmiJuoku8rBf8xE6u8T1ngV2w52MeRhHF9yM2OM420
+	1/owszgkI3/EH1bAs50g=
+X-Received: by 2002:a05:6000:2409:b0:3ec:b384:322b with SMTP id ffacd0b85a97d-4266e8e0802mr1458703f8f.46.1759917076086;
+        Wed, 08 Oct 2025 02:51:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENsEzpnWwGCU/M0XivwrkdfnYW40qXyMKMvxtHr7XN7VKUUIvpOrhP5t58nBFFuiZGWfQk5g==
+X-Received: by 2002:a05:6000:2409:b0:3ec:b384:322b with SMTP id ffacd0b85a97d-4266e8e0802mr1458678f8f.46.1759917075663;
+        Wed, 08 Oct 2025 02:51:15 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8b005dsm28753409f8f.25.2025.10.08.02.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 02:51:15 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Lukasz Majewski <lukma@denx.de>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: update entries in ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+Date: Wed,  8 Oct 2025 11:51:12 +0200
+Message-ID: <20251008095112.104995-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aN-XoqpP2Jz75pjj@stanley.mountain>
-In-Reply-To: <aN-XoqpP2Jz75pjj@stanley.mountain>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Oct 2025 11:38:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVwpWLvnAWhHqPUL1Cg7dq3rX8wzptHrWC954T0sh9bEw@mail.gmail.com>
-X-Gm-Features: AS18NWBegczPMChD6JEBf2DL6C5D4h1G1LphqBzffcl9ZraTnd023jN3u5ksKbg
-Message-ID: <CAMuHMdVwpWLvnAWhHqPUL1Cg7dq3rX8wzptHrWC954T0sh9bEw@mail.gmail.com>
-Subject: Re: [PATCH next] mtd: nand: realtek-ecc: Fix a IS_ERR() vs NULL bug
- in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Markus Stockhausen <markus.stockhausen@gmx.de>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 3 Oct 2025 at 11:30, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> The dma_alloc_noncoherent() function doesn't return error pointers, it
-> returns NULL on error.  Fix the error checking to match.
->
-> Fixes: 3148d0e5b1c5 ("mtd: nand: realtek-ecc: Add Realtek external ECC engine support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Commit e5ef574dda70 ("ARM: ep93xx: delete all boardfiles") removes
+ts72xx.c, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+section, which is referring to this file.
+The BK3 machine support is now provided by the device tree source files in
+arch/arm/boot/dts/cirrus/, as pointed out by Arnd Bergmann (see Link).
+Update the file entries accordingly. Also add Nikita Shubin as maintainer,
+which is proposed in that mail thread as well.
 
-Gr{oetje,eeting}s,
+Link: https://lore.kernel.org/lkml/d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com/
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+Arnd, please pick this quick administrative fix. Thanks.
 
-                        Geert
+I noted a year ago, I will sent a quick v2, but this got onto a pile of work
+and I only now got back to this. Sorry.
 
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f41dbfecec91..e6e615954c6a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2558,9 +2558,11 @@ F:	drivers/net/ethernet/cavium/thunder/
+ 
+ ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+ M:	Lukasz Majewski <lukma@denx.de>
++M:	Nikita Shubin <nikita.shubin@maquefel.me>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	arch/arm/mach-ep93xx/ts72xx.c
++F:	arch/arm/boot/dts/cirrus/ep93xx-bk3.dts
++F:	arch/arm/boot/dts/cirrus/ep93xx-ts7250.dts
+ 
+ ARM/CIRRUS LOGIC EP93XX ARM ARCHITECTURE
+ M:	Hartley Sweeten <hsweeten@visionengravers.com>
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.51.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
