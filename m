@@ -1,143 +1,121 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2567247280
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Oct 2025 21:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221FCEEA6
+	for <kernel-janitors@vger.kernel.org>; Thu,  9 Oct 2025 00:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759958887; cv=none; b=RzxDNHnDTn0ekCpJ7l2RGBFhRkOb58xDm7q5d0Os7L9RQVQ/y8W9vQd4mQe9rN/urKqCzQ/BhCcDgF7i+vcD2mg8Quru9n/JopKgu7yhbp+hSXFamymkCFurWcjnc/xzB8bK1cBMp5ITK0AK1SgrGBeQ31g8YSPM/A4MHq3A+1o=
+	t=1759968758; cv=none; b=Hp4ee5tbH5z4OI6ED+zmiEYtCCi8fbF3tti0L5UA10SnfSlyAYy7QU1b+h7YgRsUK4a7NaGDGIqgc3bFSEudtA3G6aXLGkIZE3qBxNfPSTTWNkIY3J5G0ScNZ1/GOlXXauYIAf+40LKABi4//zy418BS+6BEgQoLgy0O2IrI7ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759958887; c=relaxed/simple;
-	bh=E5N2Fgy9mJ0mvj1n6CWlymPq/Ag30DuQ861RwNTamHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=suHuWEXO2zMOZxjwWxgl03/SHLmwtHwsX015yuPTcXcpm18ir3fyTfZwl22dfqDE6cA/WD8xJlJX78NueD8xjvEjY6PMuLp5byf3G+6FF6fPlU+9h5bdCFT+ZMaplYwnT9NTD2xwlNdKn6lR3SSLdnKa6nB2ASSJClk2Wq2tYxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ccvz4eac; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1759968758; c=relaxed/simple;
+	bh=Z0JF/h8mBUCqcPAR13Gn4OPXCm3qaHZYWJB6uhLvJtA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D8oggi9b0qjxeQ5yAelcvLKBCsxDXn2qBnV0gPmvdwkF0o+JLuBhjCfttw1cj2wFpx7W2g1sBKyGybqMgX6eMvfBn7bw1KUEuP8TUoN8tYIkRogmPjUfUEVxxBHa2hbmp1+nfO+twIIlAXjJ/ifDcmFgpbSbBzgAe4D2ps8HvVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLDVNUOk; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ccvz4eac"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42557c5cedcso243032f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 14:28:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLDVNUOk"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4db385e046dso3250421cf.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Oct 2025 17:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759958882; x=1760563682; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6D3EUCRhmhoMUd045LVIlT60xGnWKT3phek8gUNMDC4=;
-        b=ccvz4eacBoXB5hmIFxrybCA+MYrhv1C6RrbKlKEBgy1SxB8Wj42EXCInZYK0MZWZBv
-         GYt60iIqxKRFoAr1LBx0M8rxlYreHJkjq20eKALxXBY1AP5/eEFdxBJ50KU5UI9mzqHF
-         ACu9Kq5vE7o/9IN8XUlZdJJvYU0OsbGOCTC0FDakQTz/1wo87h4yLuRqgInKQQVR9Fw+
-         zOYtF4tZ8pXZmigi+X5jo1nvOUMS5NPWiqXGH33BviAZiRMU1skRiJGsa3KESiM5vxNn
-         eK2MDBkSs6KupaXJg3Jb9cNEZs0Td4BP6aa2ocYxKmEaBSe0Il0S5ZZcO2zSf7mD9YDA
-         PSWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759958882; x=1760563682;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759968756; x=1760573556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6D3EUCRhmhoMUd045LVIlT60xGnWKT3phek8gUNMDC4=;
-        b=KRArUO75PN1nzsM4BjO/0pEG0L4cRAw2Su4LhdYdIV1x0m9i2Skob9eboBuVHMCvy0
-         piLGi/7E4Pw5xBecHFiWB6D4PdC8LCs1xx8bae9vX2KQDfacP4kK68UNx5++WqTOiOAE
-         lQ7M76yi2QLKDnrIVpM9WIN1rjFPELYQuKA7MoYVPysRmn7gWlaYLh2RWg7t+5n3LjW6
-         uxrB1wXrdEmq2z+D0lOnE9w18kXJODrQm0mcW5QVa8aJfiKgiHJ43DNdrc3XUN3CymhB
-         oxZ2AXVV3w7AT7VtXv26JiQzNjH5qg0GXpPb7h4v6apV1zA5ELWOJMQgLiu0H+pPZ4mm
-         MEyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgRU1OPc1Kurqr/MmV9662lSmGWzTJDbmKl629QO1CIomaR2pzhfLFUBAn4z4Y6TjcCwRVu+TmxYtuR2LrsiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1qub2wNP6cFkPPptQGl4jS4FWB7nDSx1UCOS7/Yi+aSLtXqX1
-	UKYyfLlZ3TWfmmjramHw56ZcVdx1NafN0yj1Fx5beM2ZF1NdyG5PyLOaWq/11GGXRLg=
-X-Gm-Gg: ASbGncsLELiGykAwmOnJyJj/TkqQp5rQ9ytVpsBfH2vCyLOwptyjozONShROeUvll5P
-	EYm9iL//VAvk73X8xKU4Iu1BmbKjFpQPXIbigC7hSOM0x+z6cs2ZzbKMZw5U7fsL9kpzNS5hESM
-	e/qkhrX53NBT2ro357aw+3jffsACz4Mc+D2v8/RAG2V0NwSdL2DMgRUhLB3Xjw7Js1aYEkTuPD2
-	1Kv5U5G59ic+qkXqdEVarxnnrUfa0v+qh/u7cpE0DgPFbz2JW5a0DyNheVqZT4el90jaDZhTQGt
-	CRO9Dg3JSgmwrNdSgrqiSKf0WDDRCCRSRKSMI5H6rV032Owbu31vqB9V0oc1U2OAPD1TKXQR9ZJ
-	4+kn8tBdkhIHvPn4LWC/k6Kfak84LtPFMCZxby4Ky4bYrjlUkUCnQJYZRg1fHsnfHKeQLOcXsKV
-	o=
-X-Google-Smtp-Source: AGHT+IFeqI/ZwivgLiNFVO4l3oOVEHmh6kuhLEznUX/5OJiNg1nVk/Ecd7EB2BNW+Jn42ULb498vFg==
-X-Received: by 2002:a05:6000:2087:b0:3ee:1563:a78b with SMTP id ffacd0b85a97d-42667177dc7mr3205640f8f.20.1759958882005;
-        Wed, 08 Oct 2025 14:28:02 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b63201d6996sm5644011a12.2.2025.10.08.14.27.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 14:28:01 -0700 (PDT)
-Message-ID: <34156b7a-b8b4-4f0a-8379-f212951b8d57@suse.com>
-Date: Thu, 9 Oct 2025 07:57:56 +1030
+        bh=iLOs0m+C5vy8eU1JuQcMkicCaJKpraCdPB1zIalrqqQ=;
+        b=DLDVNUOkky4k1sok6w7IfZN1sYj1GMmOaLvooxszPDdZn8YxmOwoNqgnOjAiH4AQ+2
+         0Gg0nnLNt90ImTl0WeO7iuuVQnxwXl3pAnbusMS9TxlfPhILRqRqLBFGhCjxLiJ11mou
+         9gWxK/JMEcxZK2qysIR8oB5yB/CRC0QfPkzvRD+X4pyUEJR4b0SIEctQRUME+mVZ2Ocz
+         /hReImJNenpbKGAlmv5KOvkWsARcHHS+AFkIw+tiZoppOcFoieVtFTzHwB83Tq2Z2vib
+         PCuG8RpKWOjfwl5mJho2MlY/9XMfRFAPMI8TX56OQQgfg8S5hdKQwWIiMZRTdUiQjLBa
+         48Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759968756; x=1760573556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iLOs0m+C5vy8eU1JuQcMkicCaJKpraCdPB1zIalrqqQ=;
+        b=KFb1ZQeE8UG3EJXD6kDcU6vT2/Fy9gZt7TZMi+AJ/OOv44d+QFyuzhUySgdvqzq/rU
+         gn/Gd86rubATaWV+s46XnW13mH8AFJvx6ggEL2ong5MKkOvjpilFnePjpIXeFiDh4Pig
+         jBGh+j46+wjJ6vhja3tQYKGDMjALDqPZ4nNdV5Z+VJ38vFUCuO3u13mzJlx6Xv2NQ3N5
+         tjF8IJCPslfFlWZYGjlEt9wocbGEmY1Be3jmQZubHBiZybahxWwOPB6sZTE70j0pJqUC
+         Zuzcws3X2J7X0kOy2ihuIHpliDH52JYOd47Imwqqw6i1zJaDGtyoXaSE1ZjasK++8KRH
+         VD4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ8xeozDdfITEyr3ZKlPpIoTw54MhsepUWDy6s2YNBDAWE+Uq1lMw2V/SihQvtP0pD8KrsCiyMi08ZQLr+2eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjvFJgJmOCLTLDxuzoN0LwSl5GUqvzCwV6IYjYtlG6J1kbWyFo
+	w4GW1CIDsY9KDKsLdTTciTetw1FD+lVXtwnwgG0DYB2iI0Njeud5Ur9geK3YPyg2PmduEOp5Lfw
+	RZWuvAZvqzIoUdw72VWfyZgsRwxvmQoo=
+X-Gm-Gg: ASbGnctYHeMsmqQ4HOPi9eOc9jtb80NWcWb6RcW4+AXTMG+GGgqr3UPac726aO25OHX
+	jgI6Te3HPkShsxaOYZKIvQP+68CVmgHFKUrYXIQReYL9b5ChX3d7hOa66N+c/EavdvMCBjJNtIG
+	EuaQN60a+eLebk8s1qJ0PURZhi8EfzDFmwYdhXatLYLRRCpgX2Gne7skTaTOXsMtu1wf0iKDZtx
+	lwCxFsukEoOXltbjZ1CXB5u8JJ0cajcL/hl2aG+03DoYNyrgfE9FH1TKgzV11FC67DdhSjU9aOC
+	3YY8F+jxWonnkqzRAbtPDeXgyvJJ6xKQMQPvYfN5cLb37II2eckPgxiPyJ3qftMYDEobSDmTLZW
+	O9tbEjylMawlW7O5cyQR0htW9cwEXMYk6JIGTC3occdxgKA==
+X-Google-Smtp-Source: AGHT+IGTMJxEUzyjJOaL0+NNwHEI9UfsX87q17OQxRmhejzUvwBxmkwB9k17auDXhJE1cMaLG7jkj1CnKy1ELrzjvrA=
+X-Received: by 2002:a05:622a:6a42:b0:4e6:ee71:ee96 with SMTP id
+ d75a77b69052e-4e6ee71f26cmr35134331cf.25.1759968756008; Wed, 08 Oct 2025
+ 17:12:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: tree-checker: Fix bounds check in
- check_inode_extref()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- Filipe Manana <fdmanana@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aOZ-inc8o7T63QHT@stanley.mountain>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <aOZ-inc8o7T63QHT@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
+In-Reply-To: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 8 Oct 2025 19:12:24 -0500
+X-Gm-Features: AS18NWBDO6yK69iSBzCC-3F6icpJXqhtpmdffwn6wWQE7dyQKytMaHCk49ryAxs
+Message-ID: <CAH2r5mtrT7m71i2928akVarmQ0FTKzaEOu2q4781U8a-_w__ZA@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: Simplify a return statement in get_smb2_acl_by_path()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+merged into cifs-2.6.git for-next
 
-
-在 2025/10/9 01:38, Dan Carpenter 写道:
-> The parentheses for the unlikely() annotation were put in the wrong
-> place so it means that the condition is basically never true and the
-> bounds checking is skipped.
-> 
-> Fixes: aab9458b9f00 ("btrfs: tree-checker: add inode extref checks")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Nice catch.
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-
-Thanks,
-Qu
-
+On Wed, Oct 8, 2025 at 3:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 8 Oct 2025 21:56:34 +0200
+>
+> Return an error pointer without referencing another local variable
+> in an if branch of this function implementation.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->   fs/btrfs/tree-checker.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-> index ca30b15ea452..c10b4c242acf 100644
-> --- a/fs/btrfs/tree-checker.c
-> +++ b/fs/btrfs/tree-checker.c
-> @@ -1797,7 +1797,7 @@ static int check_inode_extref(struct extent_buffer *leaf,
->   		struct btrfs_inode_extref *extref = (struct btrfs_inode_extref *)ptr;
->   		u16 namelen;
->   
-> -		if (unlikely(ptr + sizeof(*extref)) > end) {
-> +		if (unlikely(ptr + sizeof(*extref) > end)) {
->   			inode_ref_err(leaf, slot,
->   			"inode extref overflow, ptr %lu end %lu inode_extref size %zu",
->   				      ptr, end, sizeof(*extref));
+>  fs/smb/client/smb2ops.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> index 7c3e96260fd4..bb5eda032aa4 100644
+> --- a/fs/smb/client/smb2ops.c
+> +++ b/fs/smb/client/smb2ops.c
+> @@ -3216,9 +3216,8 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+>
+>         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
+>         if (!utf16_path) {
+> -               rc =3D -ENOMEM;
+>                 free_xid(xid);
+> -               return ERR_PTR(rc);
+> +               return ERR_PTR(-ENOMEM);
+>         }
+>
+>         oparms =3D (struct cifs_open_parms) {
+> --
+> 2.51.0
+>
+>
 
+
+--=20
+Thanks,
+
+Steve
