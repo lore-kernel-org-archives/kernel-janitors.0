@@ -1,125 +1,118 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAB0301713
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 19:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53FD1DDC33;
+	Fri, 10 Oct 2025 20:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760126149; cv=none; b=KAgQWJ9oT7z6xcECT0Jp8wYONUK63V3Tboylwzpxhg37i3veTjbraFEOPC1dnhCts4/vyXfoYlEbpGITGV4+7Kxh6sgdtoazNV6yHcd+buhZzj+yUcEmtu6jPXw+MXQp2FoTBX1lGNA9CLVoI7Vq5c4+FFO+7BSFoiq8Ve7AD0g=
+	t=1760128982; cv=none; b=ZQYAfhefrJyjp+P0QEwbqdeDXztDF2uqiykfMSXtEYnaGv0kWIJBjkDCnqkyDi6KMDNR6AgwQ9pfSVfKL8rLlYPLwZjzg1GlpGopt2cOIur11MSjCZHxTWgjLQt8WA4vj45+ND+FB6RkV+KwbGVONNRfGOaQ6jA4bBckEY9QCF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760126149; c=relaxed/simple;
-	bh=9PS7F/m4n1uAkBYWPryVi2hX01WNFFT8P5czGODVaI0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A8hkTRF623Szyax12iRGJrXpfC24QmvzBIYJ5/6dkj/0XM4Z7BZguxZ9TpQN6UXdZFPD7d7Rft0EZYpm080L5bsiwOxQzk6YjRV6ziJzne+Z4qawdS1ogLjNCZaxTrL4SuozuepP8PjWEOkGmcf+nvDI4tp3E6DjtZmUpYzOhf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoOTehJ8; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760128982; c=relaxed/simple;
+	bh=SWmyU8vAfJAl7JM7RoIxG/43ALVz3UYnrZXUQvZIby4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ivzi92cbt3wu0mSpm1Bo+2Mtus6T+pEaGJSDRmidYtG0mbY7X5BQrG4p7evMzP8ohFDqNQowTmUNQ2JztvvTDnZ6QYeDc/z7KYEjGF+JUTNsUQbJkdjAQMfTyu53IMxoLU+Ua0CIKcnbs0UZWHpXs6ffC6HpDxxUpbllEpRQwRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UNcupHq9; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoOTehJ8"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so11782015e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 12:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760126146; x=1760730946; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WlPTxxGqUeSR2lZkjJtan7WE7z8YmM6/O314vANG+hE=;
-        b=WoOTehJ8ZIkVn5KybLL1WjDwxXHekgqlHfszjSWVfabSv6MMLS1rkll9MqiUPO62bF
-         YG+3c036NgWKmyj2Dh/1XJ+bMuTXoPEKAil+YyNqz9+xH6CLrKa+iSgYVtTKkuCdVRSG
-         99iEMe61IxbDPdpm/6FoQpcMygsb6AF/PicxL501BSRH0oNAgmcfhHF9cq3whuG9s4WW
-         KOUozpokXZlfF4QsWKgehZ/7JW/TnhKvL3uFcCYDsiOXC2wZD4z1HODQbSwHiuA4SqG7
-         wzs+KDzRFKQA8dIwE6gy3JGtuHsDibXGtghO9Iaex8q+V5LKIoslO95B0vtKvMrtMYHa
-         68uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760126146; x=1760730946;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WlPTxxGqUeSR2lZkjJtan7WE7z8YmM6/O314vANG+hE=;
-        b=wT5SPDhzgS01TGVMW5own0c4Si6KFLazMdIQiaBdy2VflsyJ6eEIrcKZmqK8cgnAKf
-         A8JQiYgCXk9fx/YHgo984b+1CgEOJopeBSC8AXVm7udo1hlnj+lG5KYfOkS4Kifd3yH2
-         ckvqP711z0qYAlnvecH3azon+vXaOZBJyebVOuZ05LPo2G+g/nRmmyTGpfUnEpCBGMDu
-         fLWI+Pjvica1A+WWhFhY0ahtg/klfW4YL/rIMCa80iXqG8P1jPuEb3T1zJ/nQjQgr3Xx
-         5y3VC2tWUvB4NXQhWPOSne9YwPHgGuA4YiFURTG8e7587GGSyhfCaPnGzl8wVvCTVy7u
-         510w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGrEIAnMN1B4HuCS2BxTor/0NrJvqnRyaeE2oA7Ivn+Q0X/9gwFAwgLBIljo102T/Wa3Ds8NwVlLt2fOWqhMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUsgiD4vTY3Pwnp4/Fb5iD4dYeNjw8Iszty6+bDijVpNvYhn/e
-	res/sVEC4gbmnzVsVpt5j82VxZ0Tx1CUCyRZuu156OU7eURXTPNF8kyoA3rvReEs
-X-Gm-Gg: ASbGncuM6IzA+VVI/JeDhp55CenaLepQYt+ZrNH0jazco69AIDLJcoASZMJcTX/VlQT
-	S0pZlTL01+H3w+NPd4EPFevde30mcrdTIXs59YYXrjFvnQh2U5Ar9adfebBXLKeQUQE+417Svrq
-	ixRNws2sShzJbt3JYe3IIhhRljiILH2BWq73uivUkS4aWtBzRTVq7s2V7pDLwsVmrdDC1JcyH4t
-	p5QJ9HAx8V/Hy9VBDV1BXLzhWUT3aLx+lGZdHBi8CX7uYQ1t8DYUInjci9b49NQTzNU8yVpHU2t
-	V8eSZKXiuGV3974SfUdUR6wuH06Qseb+BUUDzliaQayG30AULFCCWRZhStv4G+Gunw76O15dKOC
-	pp+g857Nm5s9uKGmlzeCWEd9kKkNHXdfR9MNq7ioVHFZe6YvlDgEnoX1pEKuEPrLWrHDHKCxFgs
-	j6U6Ks9ARj1Y9J9ri7VWx+8Yma
-X-Google-Smtp-Source: AGHT+IHaWYI9QvKReNHkAaSbov4hjc2gUESetJC4TFK/yM1c7gn97K56ZqGizY/MOi2ZOYx+SBgt6w==
-X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr92408175e9.19.1760126145632;
-        Fri, 10 Oct 2025 12:55:45 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:94c4:fb0e:28f:2a8d? ([2001:818:ea56:d000:94c4:fb0e:28f:2a8d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489af92sm70551775e9.17.2025.10.10.12.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 12:55:45 -0700 (PDT)
-Message-ID: <3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
-Subject: Re: [PATCH] iio:common:ssp_sensors: Fix an error handling path
- ssp_probe()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Jonathan Cameron
-	 <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Kyungmin Park
-	 <kyungmin.park@samsung.com>, Karol Wrona <k.wrona@samsung.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Fri, 10 Oct 2025 19:56:41 +0100
-In-Reply-To: <6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UNcupHq9"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59AFtvgB029883;
+	Fri, 10 Oct 2025 20:42:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=FpmfnMx50Z89hypFinEnXSu9g7XfG
+	ZrN+jAIv/id1rA=; b=UNcupHq9aPF/yPFzxkM1VMnFwxSZEMS0+OrQ0OBidkvMK
+	d633Lj9K2S13lz/okyjVooFc0RFnE1V3CMwWKuMldI+1pVWShjhQzKJHPKOLOiFU
+	uhn87pWtppzGwk7rUu3emLptHMYk90konnU0SSuo0IjNZ6OLF6qVgar2lSnq4WoR
+	rNsF2bT9UaGkShR08F4mV5JFnV4WVbp6PL/jSv1LdGo8BkampkWKwThHEB7DJJ2e
+	QeRA4zU05aBEKj+zhPgihWoa38xKOaZVgW0lpJQ87II8FEpnJlT3nuoMHisbbI51
+	PKLZXLhaNM14brA7MRXkE02caEW4Sa6wc2P4kWm5g==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49nv69ve5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 Oct 2025 20:42:46 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59AIkL7M036952;
+	Fri, 10 Oct 2025 20:42:45 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49nv65q2fe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 Oct 2025 20:42:45 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59AKgink008014;
+	Fri, 10 Oct 2025 20:42:44 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49nv65q2eu-1;
+	Fri, 10 Oct 2025 20:42:44 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] Octeontx2-af: Fix missing error code in cgx_probe()
+Date: Fri, 10 Oct 2025 13:42:39 -0700
+Message-ID: <20251010204239.94237-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510100119
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8qpiAakia7C1
+ GKaPqawfZyo/SM1nhpguFTX6zgl9y45RHf0FJdB9fMZdd2PLNuiX5OhogiiijldRzv+O+5PgS7f
+ 2//ND0DWE5aGTeLHRJJMdM9uGQ0H39IWQC1XCcrJU6ME6BtTCPqyE7SX7D9vy2eYcuT/XEiDkSX
+ JT5PFtjmiNZpBaJrxq8kC1YJJ44J2tdVgkcnGRgikFTOgvOCNYsh/dY6RilDC2iCWmdxlMMrmzG
+ n2/zRd9Vecd2Tgaz8lTYXWedKA9thgXXXgFD8YryKtf3BSsBynGREBsSPlIxEgbCsXQRSY/Vu99
+ 5GwMWy1HDjaX++RhPVu5HEIV0urelEyhj9wzcAOHhdJMuS7Oh9aswTwE1fpWqB+JfUBq6tX8Bxr
+ oiLDrRKOsKTQF+aXbLvg5WG3GEU/XaVa9TiSaFJNMHYMX5QCn9M=
+X-Authority-Analysis: v=2.4 cv=dtrWylg4 c=1 sm=1 tr=0 ts=68e96fc6 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=yPCof4ZbAAAA:8
+ a=Yqazk3itAgfi9cqaz0UA:9 a=cvBusfyB2V15izCimMoJ:22 cc=ntf awl=host:13624
+X-Proofpoint-GUID: _hdJsDoazvxcdO1wPW9vHgV-x98ip4Mf
+X-Proofpoint-ORIG-GUID: _hdJsDoazvxcdO1wPW9vHgV-x98ip4Mf
 
-On Fri, 2025-10-10 at 20:58 +0200, Christophe JAILLET wrote:
-> If an error occurs after a successful mfd_add_devices() call, it should b=
-e
-> undone by a corresponding mfd_remove_devices() call, as already done in t=
-he
-> remove function.
->=20
-> Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+When CGX fails mapping to NIX, set the error code to -ENODEV, currently
+err is zero and that is treated as success path.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aLAdlCg2_Yv7Y-3h@stanley.mountain/
+Fixes: d280233fc866 ("Octeontx2-af: Fix NIX X2P calibration failures")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis with smatch and only compile tested.
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> =C2=A0drivers/iio/common/ssp_sensors/ssp_dev.c | 4 +++-
-> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/common/ssp_sensors/ssp_dev.c
-> b/drivers/iio/common/ssp_sensors/ssp_dev.c
-> index 1e167dc673ca..da09c9f3ceb6 100644
-> --- a/drivers/iio/common/ssp_sensors/ssp_dev.c
-> +++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
-> @@ -503,7 +503,7 @@ static int ssp_probe(struct spi_device *spi)
-> =C2=A0	ret =3D spi_setup(spi);
-> =C2=A0	if (ret < 0) {
-> =C2=A0		dev_err(&spi->dev, "Failed to setup spi\n");
-> -		return ret;
-> +		goto err_setup_spi;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	data->fw_dl_state =3D SSP_FW_DL_STATE_NONE;
-> @@ -568,6 +568,8 @@ static int ssp_probe(struct spi_device *spi)
-> =C2=A0err_setup_irq:
-> =C2=A0	mutex_destroy(&data->pending_lock);
-> =C2=A0	mutex_destroy(&data->comm_lock);
-> +err_setup_spi:
-> +	mfd_remove_devices(&spi->dev);
-> =C2=A0
-> =C2=A0	dev_err(&spi->dev, "Probe failed!\n");
-> =C2=A0
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index d374a4454836..ec0e11c77cbf 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -1981,6 +1981,7 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	    !is_cgx_mapped_to_nix(pdev->subsystem_device, cgx->cgx_id)) {
+ 		dev_notice(dev, "CGX %d not mapped to NIX, skipping probe\n",
+ 			   cgx->cgx_id);
++		err = -ENODEV;
+ 		goto err_release_regions;
+ 	}
+ 
+-- 
+2.39.3
+
