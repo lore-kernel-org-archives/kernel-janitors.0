@@ -1,122 +1,127 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2771142E83;
-	Fri, 10 Oct 2025 20:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551E430217C
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 21:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760129109; cv=none; b=YE/qid8a/oMrbynpgSci3lUyhYbc1NAVI4NeWGYZU2ua7HSFecvAJmf2eNV7xtIwBr4irow+UtbGWDTK8dGGphiteJNIqn6svGCSiT6jbHwAnwavRDNWcgvipVWQ65/wz7fOhIPEAh1yi32FF+BAhI5TGE0VZ9UPoT4b7qWgoAU=
+	t=1760132873; cv=none; b=Fj4DNfzw8aM/2OOy4mQxX90J+/uCgwDOG48l1GfcXSOPWbzqa7w7UhJpBdddyCLYjI+6sJdKslB1GeUUWD/Tr1rVB6kXKHbwTVDvOJCZNC3v3cdfZ1JQc5xpSSBkNXhfHdet/a3e5pLplwaW51aJnwYYzB0hD4Zi2V+nNfjKEB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760129109; c=relaxed/simple;
-	bh=Mt15IM7GW0j4CLPKG7zaCYm3wL9NawpjzSf872S2qmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zt3ue0fQa/xWzCi5Dg/v3YBivnjA+pGEfTykFvYfV+WPuDxXzS8f08ps5c8RWXDCK+AxSZLm+Vqc46RLoc/11dw52d7tQwxT4Yw+Xuag/lWPzlG7x+ENwZLDRnIbrNEAk+78ObhAYjJQROUu3OuI8yBxEkSEm1anV3lkbU4b56M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WD8HOpA4; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1760132873; c=relaxed/simple;
+	bh=mIpoIuiWbWTkQzK3YQSho5nZUTLiqCNHcBr5TymQZzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T62XiegAaLH4gnwbjvyuMoODVXy3mDXTsbzfd0wkYxhkj9F0Ette6yZl63dJLt0KdDC/mQHu4qNMSG1vXD86mKH5fIklwv+476g2SrblwDoisbrrDrokJAgZFBByiIVYnRGZs5yM+Y/Ja1jqLM2EySIokb4tOrHy9140FrQM1Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3ijQDaD; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WD8HOpA4"
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59AFuINg025383;
-	Fri, 10 Oct 2025 20:44:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=976nOAc7s6H7MRD/aQvTBJGOi6XfW
-	tjS4WQSSBpWEGI=; b=WD8HOpA4QEptVCbzwn4D848OvPaH/yRy5rX+tt2rFuI0x
-	0a2IjK4F+tpZiXm54QwlkYkIqQqZpojfxvzOleSfiafZ0f/J7yEJZRcG+sSIaNOw
-	A6Un5FeGtp4+J+YUPvWOtmXK4EiIAuKw5zq4ZBKppysN34WlE8jgVHuVSqHWfBjH
-	nAsabhBZvtAb/P8MayLpDLZs6AJAgeRSmAZW5AoKdMIP3sSLflQ43jIzVWaPyNOn
-	ZrWS/jElz1QxfdxNLvK0KW3WZiyEPC4SvOYbbn2WOl9fDa1Au3uwdF3U+KfEnG2e
-	76Rcr6jH2hQJONdERMz+wAasTtIpnkrdVPfEDZUFg==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49nv8pvhd7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Oct 2025 20:44:50 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59AK0fYZ036698;
-	Fri, 10 Oct 2025 20:44:50 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49nv69enbs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Oct 2025 20:44:49 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59AKintn003774;
-	Fri, 10 Oct 2025 20:44:49 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 49nv69enbn-1;
-	Fri, 10 Oct 2025 20:44:49 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Cryolitia PukNgae <cryolitia@uniontech.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] hwmon: gpd-fan: Fix error handling in gpd_fan_probe()
-Date: Fri, 10 Oct 2025 13:44:46 -0700
-Message-ID: <20251010204447.94343-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3ijQDaD"
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-7960d69f14bso16112536d6.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 14:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760132871; x=1760737671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3CR2CWtGpIxQ0lSsR8U+87pwlo1Y1um+ZQFcDhfvovw=;
+        b=Q3ijQDaD2AHW/EG7DDiHVpxv+hIqECbLvbhJ0KXspevceWzPdqD1ATxDCYTDUim7Ab
+         EGdz743vlKt8lwcrvYb5m+WNnwRxOxmlO0LJLumBaXVqMdHmrk6crAlidfCCZOiUc/BY
+         GH2+ehwaSMIvkUUljndO68sF6AERxteYABlX6oBsk/I85s7EmGBcYoTFN7HzY7ARwReq
+         vusdQpT56ODQnjNQCDYjuB5BoGDJb5E+MJnrlWgOAN47N6xUm6SbMcICux37lAoUTMwB
+         jv1+gx6aqNH3aZ9bNq9ogje5CZpGGJA9jv8mGmaLvnHZn8izkmN7TZRIQxQl6rbkoEVI
+         Hhyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760132871; x=1760737671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3CR2CWtGpIxQ0lSsR8U+87pwlo1Y1um+ZQFcDhfvovw=;
+        b=WoCywPDBmWYKQkBe+pZWlKLA674tf2J2YwvpfWr9Qot6lARd85HIDUdz1zBtxqPDKl
+         LW66TJU3gvg3pSDuMaU32iH+Zc7wQd7/qwJAUN5ihpwvpYw22Y1OdgUyznXiMNrSUTQv
+         DGXBL2/fqnF5mbu0owlOQVdFnozzHbIaLy0rTfa8Fjh92drC36817F/1hu17jMpLVIrI
+         biM0fRL/rirc4vvzfQs64b8d6MrNYJ1Do4VX/kE35IsszXm3skbFJKU3fkB5pbGtD1pX
+         UyfAN9fIsfhfMiVFUITILj1MJhbhoQA977QqFQm/wwrsUGXG6th9ztCx1axcqJR+82Kz
+         AgZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVntm+O/XEkNj4Qs9CreKuY5O9qBijKNvbwlp3kN3VO6uceVbodn6rFoUHIkprfQI2E0k7oUJjZdaK9HZeTG7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjiWQI+5dRDuuJR+pa6bAi8boSABXyVhkihG9kUr5kzCz/e2R/
+	sJ+5J0fy9APbh87qBW3KQlllhU4qy6irJVSmd5sM810DpjL2i7igtCt8z37+Hu36l61BhDl1eQN
+	H8UYWFGMY60t5QDiBJVYJoZFFhzsOrpY=
+X-Gm-Gg: ASbGnctJpSmz+etPFPU0B6+KpkzdAzrP3dn5z3Q7WQXduTUfoNO2DGe7LxFUbh/FFDk
+	Em3McMf9DpD75p3BWgkTmYQyVJkz5vazaNbBJm/9B1b6ln7EsITRfLZ5tcUge9QL2mSmo9fdx7S
+	Cly6e++jycuA/l2eF9NKrRVQD/9b4dnr+dCIxNXHg/pOnMICcDxbnRF6OjaK6qjTmXDAjBJ0Wv/
+	rRDw9vg/lAB2jpbhuTPuYpyqte89kQlWTdJrvDMJyvp+Ku+5bntjg/AxNmVK7yhRJ/iVTnXCevT
+	IplD9CjOUM7/KNYqQoL6lJWGe/5EEG7YdoeSZqeGEo3mPHHLsF2Lk4J1zpUXKe1oLkxmP4Jcxbb
+	92UW9VeiVMeK5XYJ2JLoRQmUlZGhqfSacA6CgJkgoySa4wBKw408=
+X-Google-Smtp-Source: AGHT+IEKPVwEdU4o07u55ueyk8vUy2UzmXDdxkCxRSLFg22YsdbJNI49WIX6CJNsbf/SmtfBMyBAU8Q57eqBkexOrMk=
+X-Received: by 2002:a05:6214:d4e:b0:879:dc43:6334 with SMTP id
+ 6a1803df08f44-87b2101ea49mr216502996d6.25.1760132870981; Fri, 10 Oct 2025
+ 14:47:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- phishscore=0 spamscore=0 bulkscore=0 mlxscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510100119
-X-Proofpoint-GUID: VLJqjperGGul7HTR3A8WbdflLpXMiyiS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMiBTYWx0ZWRfX7uAZeJkTIO6E
- pjMZjuN5f85z1kVPP7CkP4faRktcOrcclfyZ5KtYFvuDnoBkyH1pr5YN4/2rgMjtm8A8OB7+pDb
- 5YpFXxKShoyy9EIVH5mYeUn8Xh+lhAeQB0nie+rmCy56TrE1pDLZclcKMAy1UGJP35gqezOScXn
- sPmgy+G1+NUyp8KL99gwbOYovis5nGb06EEdJ8Xzstl3gfvTXRoB3z2Ihz67yB6cFUQDj8WOXky
- b99Lu/sQDfvtkfd1PO0WP9UjtCxLM1jjktRszAJ2H/U5MbA+rv0quxELtwQIif6abij02EuIgJ+
- UBp0cv0hIh/Lxs+qbVF70OJrqLTmf/Z0R9nRKu1YkKRaBiul8FcANQGcERIqy6PZD6V53quLd2C
- ZiaO+e65qNykjElaKCn4DYZqe3ziPA==
-X-Proofpoint-ORIG-GUID: VLJqjperGGul7HTR3A8WbdflLpXMiyiS
-X-Authority-Analysis: v=2.4 cv=U6SfzOru c=1 sm=1 tr=0 ts=68e97042 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=x6icFKpwvdMA:10 a=yPCof4ZbAAAA:8 a=3FsyAyFuyTR6OhSxi1EA:9
+References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de> <8f7ac740-e6a8-4c37-a0aa-e0572c87fe9e@web.de>
+In-Reply-To: <8f7ac740-e6a8-4c37-a0aa-e0572c87fe9e@web.de>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 10 Oct 2025 16:47:39 -0500
+X-Gm-Features: AS18NWDpFATkfplY4kQV4nikbT2tj78bFi9hHJ8bS3alHy0nVzf3BOr0-aoJg40
+Message-ID: <CAH2r5msRAejKX=vo7xGxMZDG_s++zZyHTazoFomd6GKOSt1XQA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] smb: client: Omit a variable initialisation in smb311_crypto_shash_allocate()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When devm_request_region(0 fails to get a region regrion would be NULL
-and devm_hwmon_device_register_with_info() fails, best to propagate
-the hwmon dev to PTR_ERR() as opposed to region.
+merged into cifs-2.6.git for-next
 
-Fixes: 0ab88e239439 ("hwmon: add GPD devices sensor driver")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with Smatch, only compile tested.
----
- drivers/hwmon/gpd-fan.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, Oct 10, 2025 at 1:52=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 10 Oct 2025 08:05:21 +0200
+> Subject: [PATCH 3/3] smb: client: Omit a variable initialisation in smb31=
+1_crypto_shash_allocate()
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>
+> The local variable =E2=80=9Crc=E2=80=9D is immediately reassigned. Thus o=
+mit the explicit
+> initialisation at the beginning.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/smb/client/smb2transport.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.=
+c
+> index b790f6b970a9..3f8b0509f8c8 100644
+> --- a/fs/smb/client/smb2transport.c
+> +++ b/fs/smb/client/smb2transport.c
+> @@ -50,7 +50,7 @@ int
+>  smb311_crypto_shash_allocate(struct TCP_Server_Info *server)
+>  {
+>         struct cifs_secmech *p =3D &server->secmech;
+> -       int rc =3D 0;
+> +       int rc;
+>
+>         rc =3D cifs_alloc_hash("hmac(sha256)", &p->hmacsha256);
+>         if (rc)
+> --
+> 2.51.0
+>
+>
+>
 
-diff --git a/drivers/hwmon/gpd-fan.c b/drivers/hwmon/gpd-fan.c
-index eebe39ef9677..321794807e8d 100644
---- a/drivers/hwmon/gpd-fan.c
-+++ b/drivers/hwmon/gpd-fan.c
-@@ -621,8 +621,8 @@ static int gpd_fan_probe(struct platform_device *pdev)
- 
- 	region = devm_request_region(dev, res->start,
- 				     resource_size(res), DRIVER_NAME);
--	if (IS_ERR(region))
--		return dev_err_probe(dev, PTR_ERR(region),
-+	if (!region)
-+		return dev_err_probe(dev, -EBUSY,
- 				     "Failed to request region\n");
- 
- 	hwdev = devm_hwmon_device_register_with_info(dev,
-@@ -631,7 +631,7 @@ static int gpd_fan_probe(struct platform_device *pdev)
- 						     &gpd_fan_chip_info,
- 						     NULL);
- 	if (IS_ERR(hwdev))
--		return dev_err_probe(dev, PTR_ERR(region),
-+		return dev_err_probe(dev, PTR_ERR(hwdev),
- 				     "Failed to register hwmon device\n");
- 
- 	return 0;
--- 
-2.39.3
 
+--=20
+Thanks,
+
+Steve
