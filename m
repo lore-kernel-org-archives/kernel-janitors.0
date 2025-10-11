@@ -1,127 +1,130 @@
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551E430217C
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 21:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA5D1DF252
+	for <kernel-janitors@vger.kernel.org>; Sat, 11 Oct 2025 06:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760132873; cv=none; b=Fj4DNfzw8aM/2OOy4mQxX90J+/uCgwDOG48l1GfcXSOPWbzqa7w7UhJpBdddyCLYjI+6sJdKslB1GeUUWD/Tr1rVB6kXKHbwTVDvOJCZNC3v3cdfZ1JQc5xpSSBkNXhfHdet/a3e5pLplwaW51aJnwYYzB0hD4Zi2V+nNfjKEB0=
+	t=1760163040; cv=none; b=H2n/FNmItaI9yKA6+m+4C61UuMOR0aZUNqSn90mSHhYWP74b5LT3e4JjH3sDPhY2Wt0N8wUeVnOwagYFe3GX7jvXRkDuoHTXIQmM65iYYiaYemA8a2dlgySNIOH3WAveC6RyTm12nQoFGyGS5Dzm8wclO7iTsYJG4huFEGaA4bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760132873; c=relaxed/simple;
-	bh=mIpoIuiWbWTkQzK3YQSho5nZUTLiqCNHcBr5TymQZzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T62XiegAaLH4gnwbjvyuMoODVXy3mDXTsbzfd0wkYxhkj9F0Ette6yZl63dJLt0KdDC/mQHu4qNMSG1vXD86mKH5fIklwv+476g2SrblwDoisbrrDrokJAgZFBByiIVYnRGZs5yM+Y/Ja1jqLM2EySIokb4tOrHy9140FrQM1Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3ijQDaD; arc=none smtp.client-ip=209.85.219.52
+	s=arc-20240116; t=1760163040; c=relaxed/simple;
+	bh=2p+amGVVgrGjR7T5iXx7r5yyISJ2EeCii+Sp44vNGMw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WIpMvOcPER/5AnCkeBdoGx8owN05WmSr/3iV4KnKQU2y2iW3jcWRBrym1Es/vQBu75xO5KK7OpY5PnrRRyijxqOMbFC8MlSdDb8pNQkx0S8dC1FN7p6O4/c8dp0g8z+G+ezWYo3tcUO9MFPwfC/I70NfEOV8YF4XghTYM5oYoxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJ5HdD3a; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3ijQDaD"
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-7960d69f14bso16112536d6.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 14:47:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJ5HdD3a"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3f5e0e2bf7so495110266b.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 23:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760132871; x=1760737671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3CR2CWtGpIxQ0lSsR8U+87pwlo1Y1um+ZQFcDhfvovw=;
-        b=Q3ijQDaD2AHW/EG7DDiHVpxv+hIqECbLvbhJ0KXspevceWzPdqD1ATxDCYTDUim7Ab
-         EGdz743vlKt8lwcrvYb5m+WNnwRxOxmlO0LJLumBaXVqMdHmrk6crAlidfCCZOiUc/BY
-         GH2+ehwaSMIvkUUljndO68sF6AERxteYABlX6oBsk/I85s7EmGBcYoTFN7HzY7ARwReq
-         vusdQpT56ODQnjNQCDYjuB5BoGDJb5E+MJnrlWgOAN47N6xUm6SbMcICux37lAoUTMwB
-         jv1+gx6aqNH3aZ9bNq9ogje5CZpGGJA9jv8mGmaLvnHZn8izkmN7TZRIQxQl6rbkoEVI
-         Hhyg==
+        d=gmail.com; s=20230601; t=1760163036; x=1760767836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ys56ihfHd4N+YA1C7C0dMZozeal+vxhpAq3e/Yrq9co=;
+        b=OJ5HdD3a0fZZbpKyoqZxKNa6Ma2r3Pob7qKsFdh8d9h4YwLQwBmAuO1Z7s9b59eATF
+         UqtFE2ex4OmU5/My2yvAibC/DJbcWj++bfav5eSanGpfnOzw4CVs8cUSYQCLfreFQV3J
+         DbZ0A4XkJxrIw1UfkdlKulH7Y/5UsdU7L9BhO/B3wlWTgFuBs7CPe6Q0OxyPhtWVHgCZ
+         m83yPRZnENQSUajgeQAiWQMUzMleS9/BZ885dJ2AdKL4w0zRSiSgFdwLoowo71YZFDp2
+         Qz7tNGWidUyYgVY+S5X8ZOUsWvdonY26Wi4rfrsYspamLMedZF8JOXVmrsgnu6pxmv2U
+         K0xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760132871; x=1760737671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3CR2CWtGpIxQ0lSsR8U+87pwlo1Y1um+ZQFcDhfvovw=;
-        b=WoCywPDBmWYKQkBe+pZWlKLA674tf2J2YwvpfWr9Qot6lARd85HIDUdz1zBtxqPDKl
-         LW66TJU3gvg3pSDuMaU32iH+Zc7wQd7/qwJAUN5ihpwvpYw22Y1OdgUyznXiMNrSUTQv
-         DGXBL2/fqnF5mbu0owlOQVdFnozzHbIaLy0rTfa8Fjh92drC36817F/1hu17jMpLVIrI
-         biM0fRL/rirc4vvzfQs64b8d6MrNYJ1Do4VX/kE35IsszXm3skbFJKU3fkB5pbGtD1pX
-         UyfAN9fIsfhfMiVFUITILj1MJhbhoQA977QqFQm/wwrsUGXG6th9ztCx1axcqJR+82Kz
-         AgZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVntm+O/XEkNj4Qs9CreKuY5O9qBijKNvbwlp3kN3VO6uceVbodn6rFoUHIkprfQI2E0k7oUJjZdaK9HZeTG7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjiWQI+5dRDuuJR+pa6bAi8boSABXyVhkihG9kUr5kzCz/e2R/
-	sJ+5J0fy9APbh87qBW3KQlllhU4qy6irJVSmd5sM810DpjL2i7igtCt8z37+Hu36l61BhDl1eQN
-	H8UYWFGMY60t5QDiBJVYJoZFFhzsOrpY=
-X-Gm-Gg: ASbGnctJpSmz+etPFPU0B6+KpkzdAzrP3dn5z3Q7WQXduTUfoNO2DGe7LxFUbh/FFDk
-	Em3McMf9DpD75p3BWgkTmYQyVJkz5vazaNbBJm/9B1b6ln7EsITRfLZ5tcUge9QL2mSmo9fdx7S
-	Cly6e++jycuA/l2eF9NKrRVQD/9b4dnr+dCIxNXHg/pOnMICcDxbnRF6OjaK6qjTmXDAjBJ0Wv/
-	rRDw9vg/lAB2jpbhuTPuYpyqte89kQlWTdJrvDMJyvp+Ku+5bntjg/AxNmVK7yhRJ/iVTnXCevT
-	IplD9CjOUM7/KNYqQoL6lJWGe/5EEG7YdoeSZqeGEo3mPHHLsF2Lk4J1zpUXKe1oLkxmP4Jcxbb
-	92UW9VeiVMeK5XYJ2JLoRQmUlZGhqfSacA6CgJkgoySa4wBKw408=
-X-Google-Smtp-Source: AGHT+IEKPVwEdU4o07u55ueyk8vUy2UzmXDdxkCxRSLFg22YsdbJNI49WIX6CJNsbf/SmtfBMyBAU8Q57eqBkexOrMk=
-X-Received: by 2002:a05:6214:d4e:b0:879:dc43:6334 with SMTP id
- 6a1803df08f44-87b2101ea49mr216502996d6.25.1760132870981; Fri, 10 Oct 2025
- 14:47:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760163036; x=1760767836;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ys56ihfHd4N+YA1C7C0dMZozeal+vxhpAq3e/Yrq9co=;
+        b=Zwngw4QPRHloVE1G47sgKMfhaKUnvEY/0XFwQaIEi/fT+Qf0+Gx8GTL42DGp3GMs3T
+         wU+CiBCEH1kgf6D5h9f6oFqFXNjRDmt2/FR2PtiekwBtz90Bor2lecNfph3EoaXXjeC8
+         zF9EgWLw5prp0TYP2ytvB9Ur4fFud5WZtZIcXt+6f9WEC2v9DUYsfYBy9MzTdAjvST1N
+         4CKFbQht9dXjqEJDch8ScQDVG8AWkPvmiHfOydnIeMIXEhgubks8rkq0l++cFrFqr42L
+         OnUVmLLf02agoAqM5IJgDi27rct1Za1Kn0KZF8z8Ph8vUdeYbSGwqhhDz3YMz1YsnDTV
+         80Vw==
+X-Gm-Message-State: AOJu0YyT2wWEP1ZrnrzIJYF3d3itwBH2WNGA/Tnlct1XhXdjNj3VjrRZ
+	p0M3oJHfKB5eC6QPGrfiPCZHBiYfB3t4VPFZu1nwMx8+wByK2Vc9Z7gL
+X-Gm-Gg: ASbGncuGbwXWOjsgdIbIj3WN4yaPZpknkdPv1C4H3gytDbZdWCF34JitsVVUrHbWKz2
+	torNlDI9RY6PKvkmjBLlX7oJV4xGBytldIBsPqt6F+WwWPqqa8K0vl/MeVsUAheuTmUHLv/VmKj
+	gzAAZjx9YUAwRWzaiGP5K+lLhQR3TIemTh45gV4va31faIKu+Il905XAokt5QfH5Gqtxkauekbm
+	WTOhR8uL9RDXEddDWjNb6g8JaXApvXjHA4QgnrmDL701ztEq5HukGHsC9WaHdDrjcLfoJrNz32c
+	ouBNh4XAr6F+t81OjlkMpLpdA3IB6jV9cixQBLi0aU8AUz+N/JiLy6g35K2rB2ShN+33HvoBNd/
+	Dsd0koc57Bvp9EPghK5FWYznGaS48Tpu80kXdI7AAZAaMf0fXSRWpCWgdbhqmmICsq/+BbNP6
+X-Google-Smtp-Source: AGHT+IFlXvGm/JVkQJIR7wHjuMbbVNDorvAS5E7Ic1ASbNZlryaphTiSRh+vYp+gWuP/x6lbjhiQOg==
+X-Received: by 2002:a17:906:730a:b0:b0b:20e5:89f6 with SMTP id a640c23a62f3a-b50ac5d07b5mr1353198566b.60.1760163036070;
+        Fri, 10 Oct 2025 23:10:36 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([91.187.204.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900cb5esm403487166b.61.2025.10.10.23.10.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Oct 2025 23:10:35 -0700 (PDT)
+Date: Sat, 11 Oct 2025 08:10:33 +0200
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Lukasz Majewski <lukma@denx.de>,
+ Nikita Shubin <nikita.shubin@maquefel.me>,
+ Hartley Sweeten <hsweeten@visionengravers.com>,
+ Arnd Bergmann <arnd@arndb.de>
+CC: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_MAINTAINERS=3A_update_entries?=
+ =?US-ASCII?Q?_in_ARM/CIRRUS_LOGIC_BK3_MACHINE_SUPPORT?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20251008095112.104995-1-lukas.bulwahn@redhat.com>
+References: <20251008095112.104995-1-lukas.bulwahn@redhat.com>
+Message-ID: <ECE2E37B-5A1A-493E-872F-B3543B40142B@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de> <8f7ac740-e6a8-4c37-a0aa-e0572c87fe9e@web.de>
-In-Reply-To: <8f7ac740-e6a8-4c37-a0aa-e0572c87fe9e@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 10 Oct 2025 16:47:39 -0500
-X-Gm-Features: AS18NWDpFATkfplY4kQV4nikbT2tj78bFi9hHJ8bS3alHy0nVzf3BOr0-aoJg40
-Message-ID: <CAH2r5msRAejKX=vo7xGxMZDG_s++zZyHTazoFomd6GKOSt1XQA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] smb: client: Omit a variable initialisation in smb311_crypto_shash_allocate()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-merged into cifs-2.6.git for-next
+On 8 October 2025 11:51:12 CEST, Lukas Bulwahn <lbulwahn@redhat=2Ecom> wrot=
+e:
+>From: Lukas Bulwahn <lukas=2Ebulwahn@redhat=2Ecom>
+>
+>Commit e5ef574dda70 ("ARM: ep93xx: delete all boardfiles") removes
+>ts72xx=2Ec, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+>section, which is referring to this file=2E
+>The BK3 machine support is now provided by the device tree source files i=
+n
+>arch/arm/boot/dts/cirrus/, as pointed out by Arnd Bergmann (see Link)=2E
+>Update the file entries accordingly=2E Also add Nikita Shubin as maintain=
+er,
+>which is proposed in that mail thread as well=2E
+>
+>Link: https://lore=2Ekernel=2Eorg/lkml/d125b5a5-8118-48ec-8af4-243a217170=
+df@app=2Efastmail=2Ecom/
+>Signed-off-by: Lukas Bulwahn <lukas=2Ebulwahn@redhat=2Ecom>
+>---
+>Arnd, please pick this quick administrative fix=2E Thanks=2E
+>
+>I noted a year ago, I will sent a quick v2, but this got onto a pile of w=
+ork
+>and I only now got back to this=2E Sorry=2E
+>
+> MAINTAINERS | 4 +++-
+> 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+>diff --git a/MAINTAINERS b/MAINTAINERS
+>index f41dbfecec91=2E=2Ee6e615954c6a 100644
+>--- a/MAINTAINERS
+>+++ b/MAINTAINERS
+>@@ -2558,9 +2558,11 @@ F:	drivers/net/ethernet/cavium/thunder/
+>=20
+> ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+> M:	Lukasz Majewski <lukma@denx=2Ede>
+>+M:	Nikita Shubin <nikita=2Eshubin@maquefel=2Eme>
+> L:	linux-arm-kernel@lists=2Einfradead=2Eorg (moderated for non-subscribe=
+rs)
+> S:	Maintained
+>-F:	arch/arm/mach-ep93xx/ts72xx=2Ec
+>+F:	arch/arm/boot/dts/cirrus/ep93xx-bk3=2Edts
+>+F:	arch/arm/boot/dts/cirrus/ep93xx-ts7250=2Edts
+>=20
+> ARM/CIRRUS LOGIC EP93XX ARM ARCHITECTURE
+> M:	Hartley Sweeten <hsweeten@visionengravers=2Ecom>
 
-On Fri, Oct 10, 2025 at 1:52=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 10 Oct 2025 08:05:21 +0200
-> Subject: [PATCH 3/3] smb: client: Omit a variable initialisation in smb31=
-1_crypto_shash_allocate()
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->
-> The local variable =E2=80=9Crc=E2=80=9D is immediately reassigned. Thus o=
-mit the explicit
-> initialisation at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/smb/client/smb2transport.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.=
-c
-> index b790f6b970a9..3f8b0509f8c8 100644
-> --- a/fs/smb/client/smb2transport.c
-> +++ b/fs/smb/client/smb2transport.c
-> @@ -50,7 +50,7 @@ int
->  smb311_crypto_shash_allocate(struct TCP_Server_Info *server)
->  {
->         struct cifs_secmech *p =3D &server->secmech;
-> -       int rc =3D 0;
-> +       int rc;
->
->         rc =3D cifs_alloc_hash("hmac(sha256)", &p->hmacsha256);
->         if (rc)
-> --
-> 2.51.0
->
->
->
-
-
---=20
-Thanks,
-
-Steve
+Acked-by: Alexander Sverdlin <alexander=2Esverdlin@gmail=2Ecom>
