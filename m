@@ -1,130 +1,113 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA5D1DF252
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Oct 2025 06:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1D61F8AC8;
+	Sat, 11 Oct 2025 06:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760163040; cv=none; b=H2n/FNmItaI9yKA6+m+4C61UuMOR0aZUNqSn90mSHhYWP74b5LT3e4JjH3sDPhY2Wt0N8wUeVnOwagYFe3GX7jvXRkDuoHTXIQmM65iYYiaYemA8a2dlgySNIOH3WAveC6RyTm12nQoFGyGS5Dzm8wclO7iTsYJG4huFEGaA4bc=
+	t=1760163212; cv=none; b=TAqp+exc09yQnDnIqcq1IUL8oRUvJdMXiQhTSY/wqe9JKEYSybp9Zno5xSEX/QirlkdHt7u8+jQde4UNL20FSDn5ydpn2AGwJ53S7AFVQB/5yJQFfZbzykTFoDHranYQ+sycIniQYl/VPcI652ybApaJEKUJthTyhWZ71oAJEAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760163040; c=relaxed/simple;
-	bh=2p+amGVVgrGjR7T5iXx7r5yyISJ2EeCii+Sp44vNGMw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=WIpMvOcPER/5AnCkeBdoGx8owN05WmSr/3iV4KnKQU2y2iW3jcWRBrym1Es/vQBu75xO5KK7OpY5PnrRRyijxqOMbFC8MlSdDb8pNQkx0S8dC1FN7p6O4/c8dp0g8z+G+ezWYo3tcUO9MFPwfC/I70NfEOV8YF4XghTYM5oYoxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJ5HdD3a; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760163212; c=relaxed/simple;
+	bh=D2nkZBQylP5y+svVwC/erAfGoYRQtT4cezymsTwjrPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBjvrFS3WCfF+YcPTxFFrBmf8+t7sZRYWomZfZPSpLqIna84Id1DnGkWIjGllPy2qGf72AENjJWOzzm/CV3VZnXhq27d8BUPas0VxcKAqh16vNY6gJ4loiZgxcxQMdTiz3NilDtvlobQF90v+wep4TZt8KoTEQS0/vdA/jsC5F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mrQsZsN7; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJ5HdD3a"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3f5e0e2bf7so495110266b.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Oct 2025 23:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760163036; x=1760767836; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ys56ihfHd4N+YA1C7C0dMZozeal+vxhpAq3e/Yrq9co=;
-        b=OJ5HdD3a0fZZbpKyoqZxKNa6Ma2r3Pob7qKsFdh8d9h4YwLQwBmAuO1Z7s9b59eATF
-         UqtFE2ex4OmU5/My2yvAibC/DJbcWj++bfav5eSanGpfnOzw4CVs8cUSYQCLfreFQV3J
-         DbZ0A4XkJxrIw1UfkdlKulH7Y/5UsdU7L9BhO/B3wlWTgFuBs7CPe6Q0OxyPhtWVHgCZ
-         m83yPRZnENQSUajgeQAiWQMUzMleS9/BZ885dJ2AdKL4w0zRSiSgFdwLoowo71YZFDp2
-         Qz7tNGWidUyYgVY+S5X8ZOUsWvdonY26Wi4rfrsYspamLMedZF8JOXVmrsgnu6pxmv2U
-         K0xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760163036; x=1760767836;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ys56ihfHd4N+YA1C7C0dMZozeal+vxhpAq3e/Yrq9co=;
-        b=Zwngw4QPRHloVE1G47sgKMfhaKUnvEY/0XFwQaIEi/fT+Qf0+Gx8GTL42DGp3GMs3T
-         wU+CiBCEH1kgf6D5h9f6oFqFXNjRDmt2/FR2PtiekwBtz90Bor2lecNfph3EoaXXjeC8
-         zF9EgWLw5prp0TYP2ytvB9Ur4fFud5WZtZIcXt+6f9WEC2v9DUYsfYBy9MzTdAjvST1N
-         4CKFbQht9dXjqEJDch8ScQDVG8AWkPvmiHfOydnIeMIXEhgubks8rkq0l++cFrFqr42L
-         OnUVmLLf02agoAqM5IJgDi27rct1Za1Kn0KZF8z8Ph8vUdeYbSGwqhhDz3YMz1YsnDTV
-         80Vw==
-X-Gm-Message-State: AOJu0YyT2wWEP1ZrnrzIJYF3d3itwBH2WNGA/Tnlct1XhXdjNj3VjrRZ
-	p0M3oJHfKB5eC6QPGrfiPCZHBiYfB3t4VPFZu1nwMx8+wByK2Vc9Z7gL
-X-Gm-Gg: ASbGncuGbwXWOjsgdIbIj3WN4yaPZpknkdPv1C4H3gytDbZdWCF34JitsVVUrHbWKz2
-	torNlDI9RY6PKvkmjBLlX7oJV4xGBytldIBsPqt6F+WwWPqqa8K0vl/MeVsUAheuTmUHLv/VmKj
-	gzAAZjx9YUAwRWzaiGP5K+lLhQR3TIemTh45gV4va31faIKu+Il905XAokt5QfH5Gqtxkauekbm
-	WTOhR8uL9RDXEddDWjNb6g8JaXApvXjHA4QgnrmDL701ztEq5HukGHsC9WaHdDrjcLfoJrNz32c
-	ouBNh4XAr6F+t81OjlkMpLpdA3IB6jV9cixQBLi0aU8AUz+N/JiLy6g35K2rB2ShN+33HvoBNd/
-	Dsd0koc57Bvp9EPghK5FWYznGaS48Tpu80kXdI7AAZAaMf0fXSRWpCWgdbhqmmICsq/+BbNP6
-X-Google-Smtp-Source: AGHT+IFlXvGm/JVkQJIR7wHjuMbbVNDorvAS5E7Ic1ASbNZlryaphTiSRh+vYp+gWuP/x6lbjhiQOg==
-X-Received: by 2002:a17:906:730a:b0:b0b:20e5:89f6 with SMTP id a640c23a62f3a-b50ac5d07b5mr1353198566b.60.1760163036070;
-        Fri, 10 Oct 2025 23:10:36 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([91.187.204.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900cb5esm403487166b.61.2025.10.10.23.10.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Oct 2025 23:10:35 -0700 (PDT)
-Date: Sat, 11 Oct 2025 08:10:33 +0200
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Lukasz Majewski <lukma@denx.de>,
- Nikita Shubin <nikita.shubin@maquefel.me>,
- Hartley Sweeten <hsweeten@visionengravers.com>,
- Arnd Bergmann <arnd@arndb.de>
-CC: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_MAINTAINERS=3A_update_entries?=
- =?US-ASCII?Q?_in_ARM/CIRRUS_LOGIC_BK3_MACHINE_SUPPORT?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20251008095112.104995-1-lukas.bulwahn@redhat.com>
-References: <20251008095112.104995-1-lukas.bulwahn@redhat.com>
-Message-ID: <ECE2E37B-5A1A-493E-872F-B3543B40142B@gmail.com>
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mrQsZsN7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1760163155;
+	bh=/MpGzKiWig3rlUwKo8566Az2AQWoChttbUIeRoxnY7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=mrQsZsN7P8Od42Wlgwki84atuoTZI9PixKdgNwh7gU+8R71pbgrABSPwKpO/B1jMD
+	 SJFoeXNecp7yFTp1cFq1+6uCblvL8Hy+rpAS+yUGQ8OIeqts9F/n1TW8tLChvbccrP
+	 ip2x8ss5kIy9YEva4+Xcucb5QUHzExpXF+BX1AEI=
+X-QQ-mid: esmtpgz13t1760163152t12cdbeb8
+X-QQ-Originating-IP: k3Aex82XueJVZzZA1m6lkaegak1UG33C0uEFU9ouByw=
+Received: from [198.18.0.1] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 11 Oct 2025 14:12:31 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8219753754503333157
+Message-ID: <5FD7E8DCAC61F6BB+8248b939-e3b1-4966-9e6c-3189dd64029c@uniontech.com>
+Date: Sat, 11 Oct 2025 14:12:31 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: gpd-fan: Fix return value when
+ platform_get_resource() fails
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ error27@gmail.com
+References: <20251010204359.94300-1-harshit.m.mogalapalli@oracle.com>
+Content-Language: en-US
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
+In-Reply-To: <20251010204359.94300-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: MROgHB6HJdZRO0wQdm9Z0lblYeY6ueKaQgiq24pztULaKpkq1/1xGEAB
+	HVkfMzbGRmyMKAt/TTq2EDkZ6/viDMOZo3c6o95DeeNESzZW9G1xioZwU8xr//5IFMTMqws
+	tkKNs+6w4EtglQW4jAhoSUo+gceBkDGbr3QRFs+HaMstzXZek/FS7CCKvn90cTJ0GNjB46U
+	eWO/iKi6iAN1EvZZFnoC46lBIV2sVEN0xr82BfJCzYn3Q5aQs2AOMgHgfpaifvVya+sjE9k
+	8QNU0Pw9kbZntTTpGhTCnWefefbXW1VAdiNyajFCFa1ySq2sHtvpP9TufIDhvvSFX6/9fch
+	L33IQbumdD/nf+OcGz/G2a8hQf9wO9QlET3MkRpFpidpzFqvb3qdhVls3fFLIED9OAuDYED
+	IexnSAiNj228YBGzpAe4OMlSnQ+gWJTP4Fkpmhz1fviOuXREmd88cYZVxNQmUdLevz/sTI/
+	fvsUeFLAeLS550FNdt7amKJB3imrAyfrVSBB9GcVknX1RBxMY3FEsaZOxMdQop5GKKC/TcD
+	acaDoemsyGduQjqwR0a24/1AIDIMzivz23uXy+mBEk/4EbbCjVzs5Sjq2/uKSgoJnVJPOUP
+	HDB2zAqEThs+KY9EW7F5TXthMXJTNAfd9ptRzNIYg+uU9/PFBEbVD/EmO3FKmQO32bqast1
+	7U0ucPPODOkWYsWYh+A3+9rtK2yI6y0u1hd86uZhTRDOB8pucGYYGmxCMxGGVrpcoGCZRZl
+	p72Wlf6IDLDMdlTPXp15ggbNT8X8dCKlwl1DgHjGqv+yPDrDiyEEeb/rLN9JrRhZgeZnads
+	zwEdr7llswnwOMJkgdZRbqqk8Xw5MQcRiE3wN4GZy1r6pbNnb3TCheHR+4JGnAaohVOrpUK
+	xOqXEWgZrdg1OSaZQ1PWWxwrJbVkSIZedw5Yrw1xiZ2qf5Gkw0LGKC1SbdtMbqsQTUpDBIl
+	9fuxkLCFKN6upBcCsA/ZPr4zHmHUeZ01uHw1ugJ06NUGJy6hIzVgjp8f03n2XDoTmNw4jPu
+	GkHPmIFz/SKbHi0NHN4c0+8MN5omZUp6yUizvpVQ==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On 8 October 2025 11:51:12 CEST, Lukas Bulwahn <lbulwahn@redhat=2Ecom> wrot=
-e:
->From: Lukas Bulwahn <lukas=2Ebulwahn@redhat=2Ecom>
->
->Commit e5ef574dda70 ("ARM: ep93xx: delete all boardfiles") removes
->ts72xx=2Ec, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
->section, which is referring to this file=2E
->The BK3 machine support is now provided by the device tree source files i=
-n
->arch/arm/boot/dts/cirrus/, as pointed out by Arnd Bergmann (see Link)=2E
->Update the file entries accordingly=2E Also add Nikita Shubin as maintain=
-er,
->which is proposed in that mail thread as well=2E
->
->Link: https://lore=2Ekernel=2Eorg/lkml/d125b5a5-8118-48ec-8af4-243a217170=
-df@app=2Efastmail=2Ecom/
->Signed-off-by: Lukas Bulwahn <lukas=2Ebulwahn@redhat=2Ecom>
->---
->Arnd, please pick this quick administrative fix=2E Thanks=2E
->
->I noted a year ago, I will sent a quick v2, but this got onto a pile of w=
-ork
->and I only now got back to this=2E Sorry=2E
->
-> MAINTAINERS | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
->
->diff --git a/MAINTAINERS b/MAINTAINERS
->index f41dbfecec91=2E=2Ee6e615954c6a 100644
->--- a/MAINTAINERS
->+++ b/MAINTAINERS
->@@ -2558,9 +2558,11 @@ F:	drivers/net/ethernet/cavium/thunder/
->=20
-> ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
-> M:	Lukasz Majewski <lukma@denx=2Ede>
->+M:	Nikita Shubin <nikita=2Eshubin@maquefel=2Eme>
-> L:	linux-arm-kernel@lists=2Einfradead=2Eorg (moderated for non-subscribe=
-rs)
-> S:	Maintained
->-F:	arch/arm/mach-ep93xx/ts72xx=2Ec
->+F:	arch/arm/boot/dts/cirrus/ep93xx-bk3=2Edts
->+F:	arch/arm/boot/dts/cirrus/ep93xx-ts7250=2Edts
->=20
-> ARM/CIRRUS LOGIC EP93XX ARM ARCHITECTURE
-> M:	Hartley Sweeten <hsweeten@visionengravers=2Ecom>
+On 11/10/2025 04.43, Harshit Mogalapalli wrote:
+> When platform_get_resource() fails it returns NULL and not an error
+> pointer, accordingly change the error handling.
+> 
+> Fixes: 0ab88e239439 ("hwmon: add GPD devices sensor driver")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with Smatch, only compile tested.
+> ---
+>  drivers/hwmon/gpd-fan.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/gpd-fan.c b/drivers/hwmon/gpd-fan.c
+> index 644dc3ca9df7..eebe39ef9677 100644
+> --- a/drivers/hwmon/gpd-fan.c
+> +++ b/drivers/hwmon/gpd-fan.c
+> @@ -615,8 +615,8 @@ static int gpd_fan_probe(struct platform_device *pdev)
+>  	const struct device *hwdev;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+> -	if (IS_ERR(res))
+> -		return dev_err_probe(dev, PTR_ERR(res),
+> +	if (!res)
+> +		return dev_err_probe(dev, -EINVAL,
+>  				     "Failed to get platform resource\n");
+>  
+>  	region = devm_request_region(dev, res->start,
 
-Acked-by: Alexander Sverdlin <alexander=2Esverdlin@gmail=2Ecom>
+Has it already been replaced by hwmon: gpd-fan: Fix error handling in gpd_fan_probe() ?
+
+thx
+
+Link: https://lore.kernel.org/all/20251010204447.94343-1-harshit.m.mogalapalli@oracle.com/
+
+Best regards,
+Cryolitia PukNgae
+
