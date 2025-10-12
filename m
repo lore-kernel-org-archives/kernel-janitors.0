@@ -1,96 +1,102 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F102ED15F
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Oct 2025 17:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32A41A275;
+	Sun, 12 Oct 2025 19:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760291911; cv=none; b=ihZ57mgzc9sHNULbT0jxceqjVgYHuOlmTXhleqXIrxA6J5a47QMR3desYcbVXlZlzPXQad4CVwIq6UDx5zaf6rV5Gn2PZwr/TJ8cg+nOeShVDsjSr4YfJlJ2XFUTlQf/0RzJ+9y/uskJ7iP//h4NCR891Lq5dGkkpMu0uzSoER0=
+	t=1760295740; cv=none; b=PAJqARc87u8iPltMM0PShGtxL51wnvzQuTWgTJfJIZ2xL1tiQ2GZE2qo9z+ASDJxIvIwjADTDnViylU6uvuKfk+7W7TwgOZKWRDgjf+noSPEJnf/UGeToSA9wUBc2gyIZO94VOoV+Xqrl5YGWbHpW4R4cU1J4n7HezEpZwNOrDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760291911; c=relaxed/simple;
-	bh=4s+gF/J790Cn9pggWv1hmT2wDXmwcmgRyJfiSqUlECI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYCaWBEJETG8VqhWA7l883ZcHi7FvD24iHGehUly6omKG0LrOijMhfxCk+xVavAtoFkH2nkixssg6yVFv4e8d8Rucd+J7Qi0WE1WgZk515qw4iZPrVhmmd07g6cGZWYJMl6AX+xjjTq4lnWXklCblxH/Le1MB5+oRP+6JZa8vQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3uv7OS8; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760295740; c=relaxed/simple;
+	bh=T2d7uJPk5zDWBAlwmh0QUxrkKWoRtML4gbEucNeFsIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YP6TgHkiJKMfeZDORHRsT2ob55gbfuaz+Ielb79E/CL/GUHH0IoGd+Oev0bWac6+NeURdAO2e/oVs6KI2aR7edt65PxbSgaRuefGNMjfA9PXunMmRFWalkaqr8ieZ+3Q7/SAxLgk9tFPdojUeHw9MxT+9P8Vi5Cz7n4tDVanZt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDPpBt+b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3uv7OS8"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7810289cd4bso3457334b3a.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 12 Oct 2025 10:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760291909; x=1760896709; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=64F5r2tOG3BpkRMdKwJdv92rwanay9eWarkctmegkS8=;
-        b=m3uv7OS8tyvmcio1IQhE6HcbyqDd82AHvFcQ2y87b59LVvf556zgrnJ0QquQjw/f2B
-         E+04CMUPLw8bf5OXMyDb4C70ChEhRwQiM9lwAaUs80b+kSJgUUqhaDli1MUh0w2R7n8H
-         J7QNKlqiHzpiawBvSJ7qs0tojcmE1D1Y3nXEafdNnfuFe+yTygXgQeMujn2wLFICEjaM
-         s+RUiOZbx9QMCc9zVhsr929WlbV8b0T7d795D66F47XCOxAQ9A+m2jfc18SCHvnXtWo7
-         rAc5y0ESHSRS2NhfTSdjBKz3sR4I8ftj8FsX1E8NDiMNqBGpQnV/ZiGMVtg5XMreo+YS
-         DcGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760291909; x=1760896709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=64F5r2tOG3BpkRMdKwJdv92rwanay9eWarkctmegkS8=;
-        b=dnVwQnfaInL/xwhtbL4t2cToZhHlMlF8dcP4XZ6bTP2THtiLpYfZdCFLo8VF4nX23l
-         z3aNxBD+AvBZjQ3vfCExVnPz0FFtplxuEefvqg01Rvsq/7+Q6u6udWcM+nA3ow/NWkWk
-         W1Wjdra0pDK/MzfBOhOjMd2PGWgAc/aPP2wH++Dre03twYUCSD99l9LDPEw7HTVeLm6I
-         E2NnbDVyehuqKZeh/zCUyUlZ51vFnHVLUbE2lkUg76hR85WooXEkCjdMixIs+U/oj70f
-         i3uFOLWbSUTaaAoffay7INy9bUE/Zz6hSMIzqYgb3ruNHuJFkndzFX//t8AERRF5EFpC
-         Nkjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWjNBfNMgFNTgx/FdaGatRGaQTgLNgHfXQ3iq6damI+jrAeazrF0QVzefDIq00d8w6zwdAJAJ+ohgNjMm9OuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOXUH8XH64c2ZtMQ0e5iyI90MYct9A4hX03BXrdmhr776Fk9CM
-	/QE8aPlROjGUlcghnrc+/JM/dhlI+5+SRVtJM/qKG4MXFrZXt14rlL7q
-X-Gm-Gg: ASbGnctF+GMo54LgCO4oixLMbnDwMAYSu9/s8iH4OoiS+9a7Lylpsx/N3Qpp0C0F5Gn
-	dKavkQBFylecGn57MeBUlvYo4Z7hEklj+JBitg0gAjZvMnTa2o7cchUQBukkjbtpnLM2xKQNmd9
-	Qi4M02fvK8mNiqhITgBe53iGBeP2+4FVMx8s3n9BH0c1/a3zqNCZDRQldUcVcXHh6SkkeyAAAs5
-	mVaEcHaY9s1srI435DmmGO8abB3GrDK4e1CXEJv0u2jd464YsVoq4fjmDo70f/UFvY55cAGprMm
-	3+cyI4qPpzcTw/loC0+o83K6R1UIm/rfURKy1HmUamuB5vPqM848nFx0wvq2KcoQyr8+SdhCfL1
-	D8hodC0xkREyCTEQf7+wXnaXn+He+GO3JcNTBpBTBImrBMz97Gkoo+y+X7LP72QBO8JSvdEUBEe
-	Q=
-X-Google-Smtp-Source: AGHT+IG8nnQxDxsBVYzafksaEJPul0aKzanbkeJ7dpfTmGPVKK73tgD+8/uxJvZAtfTfdi4C6RIOcA==
-X-Received: by 2002:a05:6a00:1954:b0:772:2e09:bfcc with SMTP id d2e1a72fcca58-79387c191e4mr21395603b3a.30.1760291909038;
-        Sun, 12 Oct 2025 10:58:29 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2c6csm8959672b3a.57.2025.10.12.10.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 10:58:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 12 Oct 2025 10:58:27 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Cryolitia PukNgae <cryolitia@uniontech.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH] hwmon: gpd-fan: Fix error handling in gpd_fan_probe()
-Message-ID: <f66fc8e9-1564-4c65-ad27-a7525a081aa3@roeck-us.net>
-References: <20251010204447.94343-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDPpBt+b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA45C4CEE7;
+	Sun, 12 Oct 2025 19:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760295740;
+	bh=T2d7uJPk5zDWBAlwmh0QUxrkKWoRtML4gbEucNeFsIU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cDPpBt+bCtMeJ4arqW/DvhpHGMZb6nFtLSToteoLUjbniz/GOrIOj62plxvXFW2RJ
+	 s3t23i6Z0iI75B3f5UrYMOnLfjB0kbq6RldcuvcLJaAN32mve6JEV1FCP6xmw+w4mu
+	 gcUoOtjks5pQc6+yG/0zt2vWSR6gP2EgqLJypjnOTBKr0T7YwTu8qnLU9ifV8NWn3U
+	 Hwgsm5cn9W8ZDNokPKLbQklbA5CSLAlYU+gvH3m69xdWUtPOrGefYG+aIp81NYsx9F
+	 ssi36Uz/cdl3PolexNSVA3syEHRQPeSTMqat8jj+fUTPUF6SDrzYR77YLJooh+tpYC
+	 HS99D73qfHC/g==
+Date: Sun, 12 Oct 2025 20:02:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=  <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Kyungmin Park  <kyungmin.park@samsung.com>,
+ Karol Wrona <k.wrona@samsung.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio:common:ssp_sensors: Fix an error handling path
+ ssp_probe()
+Message-ID: <20251012200211.19170a6f@jic23-huawei>
+In-Reply-To: <3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
+References: <6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
+	<3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010204447.94343-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 01:44:46PM -0700, Harshit Mogalapalli wrote:
-> When devm_request_region(0 fails to get a region regrion would be NULL
-> and devm_hwmon_device_register_with_info() fails, best to propagate
-> the hwmon dev to PTR_ERR() as opposed to region.
-> 
-> Fixes: 0ab88e239439 ("hwmon: add GPD devices sensor driver")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> Reviewed-by: Cryolitia PukNgae <cryolitia@uniontech.com>
-> ---
+On Fri, 10 Oct 2025 19:56:41 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Appied after updating the subject.
+> On Fri, 2025-10-10 at 20:58 +0200, Christophe JAILLET wrote:
+> > If an error occurs after a successful mfd_add_devices() call, it should=
+ be
+> > undone by a corresponding mfd_remove_devices() call, as already done in=
+ the
+> > remove function.
+> >=20
+> > Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied to my temporary fixes branch (I'll rebase on rc1) and marked
+for stable.
 
 Thanks,
-Guenter
+
+Jonathan
+
+>=20
+> > =C2=A0drivers/iio/common/ssp_sensors/ssp_dev.c | 4 +++-
+> > =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > b/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > index 1e167dc673ca..da09c9f3ceb6 100644
+> > --- a/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > +++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > @@ -503,7 +503,7 @@ static int ssp_probe(struct spi_device *spi)
+> > =C2=A0	ret =3D spi_setup(spi);
+> > =C2=A0	if (ret < 0) {
+> > =C2=A0		dev_err(&spi->dev, "Failed to setup spi\n");
+> > -		return ret;
+> > +		goto err_setup_spi;
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	data->fw_dl_state =3D SSP_FW_DL_STATE_NONE;
+> > @@ -568,6 +568,8 @@ static int ssp_probe(struct spi_device *spi)
+> > =C2=A0err_setup_irq:
+> > =C2=A0	mutex_destroy(&data->pending_lock);
+> > =C2=A0	mutex_destroy(&data->comm_lock);
+> > +err_setup_spi:
+> > +	mfd_remove_devices(&spi->dev);
+> > =C2=A0
+> > =C2=A0	dev_err(&spi->dev, "Probe failed!\n");
+> > =C2=A0 =20
+
