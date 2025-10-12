@@ -1,121 +1,147 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988E6224B04
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Oct 2025 20:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A723F15687D;
+	Sun, 12 Oct 2025 09:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760212973; cv=none; b=HkIyPxKIqkR2Inp96ziTfyY9NO2EX2wSyBhNWwVbsgOLEcugq3gkybXVgappFyDo5HgIzJV2zY116xABPYwYWBpYKeEyGLc9MqTOiRelJZ8BM8yWrvA9oa1Ht7cqPuJKbJE87zaXMXv/6OJ3315jCVTdcl09/fnXy4KxMBpMdkg=
+	t=1760262290; cv=none; b=WGRbYo9rDLikuvvW1m0E1/ErYQkrdmcIDCfJ5Cj0BBdhy4EQP7hNMZOyt/6vjvhUHp5YGZhU0/n4/EoEkUuaa2DTOYNxSe52JssvS4SkLlJJyBhJ68Lyoxv0+cwcGB+fAYWT8LOQU4AXlCje/mJoteZabG55QVk6FX6BvtrJCT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760212973; c=relaxed/simple;
-	bh=uKELvK+Pabr7Cacwb8UIBERYWif8VOC/Fn/heHRHgdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m6+ud+4yLAYFoA5gZfm3rHHvhPKCXgLLz9PcnHUNUxMmDrWkTH93TgI1DSK3WS0OoRfx0F+fjUw93viQTBZDKtakpv7N5AFwPC2/yQ8SNU2Y2waHSOJeaebs/05iQF3UASGnm2uGTIofcFN4I/UJyCZDmXWGkzvpYkcUypTqLE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yw7pWgLa; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760262290; c=relaxed/simple;
+	bh=9C9xfIVLIeJOgs/BNgZkXg7n9LRkgsh6vUgoctG8FC0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jxO93o41LfLpaRX/VQ62gVLdUqHfz2wrvhFuapYCrwZRoqzH3ucYeiGlrjvk8LVJaHnypYgZ6hPKTzHD3P67hhobgCAR5cV9jB0EBg2SEjtwVqF68dtWVAa/kJih4SSrBuWI8yQ4ghdrfqKijL40VlCn5s8c3vigTPjZBYy1dZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HAZN9G1a; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yw7pWgLa"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-79390b83c7dso31743646d6.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Oct 2025 13:02:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760212970; x=1760817770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xkr5Es7W1sfU77GvysO3I+d49t0a9ilRQJudJAibtUM=;
-        b=Yw7pWgLaQoD10kVLOmX/9Hr2IE20ZUZMQINXnfAqf5653lRq2V/QNH2DGzWXiwbq2z
-         1D9CmNHRS4gLUc+L8MMIsQy5uVN+eTob1v9MzQlj9IGc4DQCkrOy3Oz3WiWGCKGDZxjV
-         qqPloWwMeWiH1Bhy5BI/n9kh9HUJ7aOvVPf5WMcgcCmR60MDp1jZ1MkfswXv0vWxSMyl
-         RLxTN4zTqlnlIe/WBSgLHJR9xOh+H4iswlDnS0gV44stp7Auvs9hvad4Sp/55dbbrME4
-         vX6FqlNv4wClzVt99z9CJE2JAIC/MY+ao2B7P8qIWa7oGCFPTZXuWuJagfXOPPoFXTkR
-         2nbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760212970; x=1760817770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xkr5Es7W1sfU77GvysO3I+d49t0a9ilRQJudJAibtUM=;
-        b=Gfuna7DJ6+rnIyI4SWiO/4x81fCxC+WEiibSpNFsnyMQmldVYDYCFk8rq492tfyclf
-         P7THiRlyaCTuguMBgNonSiUs5o2lb+1Fn9LQh/pvtE4c78EWYd6eMaA3zsSYWfDhNRU2
-         aW8NjiFCiU4ajKiCGmh/OYB4gCAu1LD776Fzf+B/xLILmghTdHsj934rDCPXkvavh9pw
-         I3SaN1iz/GVasWM3Dckc8DfUfoXVETyRHs6/vwSG7/qDFgwO3dkHJMmzfGLpwLTdbvRT
-         i202wN38V38elrH7edzqLTLnzbyF8X9XlUDXggtNSU2k5EWZcA7pA6xV1mFRt5JSW8sI
-         dIvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxjzMrpZQ6z3fUDpgzgPucyeqP51kuVTYmweeTEcQr432yVYWfoAXfUkl4tQmN+fWavqIai5eWDTvoNDbF5jI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfST0OUbicf5Oz53sgykxq4t5tbSyYWD6+1wdgFmjdC35pvM8C
-	bUpAylqY+/+RlSH+PKL5RBlW35wgNeYgL5JsiDN+QP558jgws5Yw/jtndwaAdD0GONTcm/s/asA
-	nEVtDCscJg842GA06EsNx0BVxo2cl2UY=
-X-Gm-Gg: ASbGnctGNMKOUWdvLUecne2DCkK437YHh/yJ3uFlkd9sD6lWB17IeRSaTHFSjTIRCLy
-	fS4wHXQJ9NPsa2pnpyLQuQOIF9oRsclBgExX1pa6YAOViEPdMLFUsFl2XL8o/StUu1OeBcUI+Ab
-	HuXtGIIBg2JVXHajlSeWnFu3gHeCaxCuYCeOCX8kpx5pYVqZ8ean/mXgifE5vHuXtKCtWmPEV3n
-	NBn3ZN+3NOMSzgiN2ImlMmA3oMOgJx+0qJJHivUqASyCo2FiQm/PzxMtp8RrLVzZoM2oWYCSe6G
-	BgZ1mrPuZCvSNrLMGe88lQHHTavALh9VbBEB7fZMQmQpTGHJpJn1FeDuqdQ/rET0New7yn90bG1
-	Z7i6bh8MHSzv7a75xAdyEsIxCCbF/czQi0rwpVUYVw0xNluele9g=
-X-Google-Smtp-Source: AGHT+IG9ZCiwfq5KyR/1TeCl3i0cP2OQ4leD6REdC5/3Qk1b9iGVKiA0Gxr/3psvpoZZ40crdSe1lNPJ/iiBnZaSH1U=
-X-Received: by 2002:ac8:7e96:0:b0:4e0:a9d6:d554 with SMTP id
- d75a77b69052e-4e6ead5427emr236273121cf.38.1760212970368; Sat, 11 Oct 2025
- 13:02:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HAZN9G1a"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760262274; x=1760867074; i=markus.elfring@web.de;
+	bh=9C9xfIVLIeJOgs/BNgZkXg7n9LRkgsh6vUgoctG8FC0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HAZN9G1aI86g+DsGvvxRSIB0kUSj1UglOfqKmz8iXRXZsrtIWZKbVzMcQmJ+PhRd
+	 WH4L0RKY1Q7eYJeWyFMnQOlG+9MfFL8+B5qDS1b6kvGWQnGU0TG7CKvNTCMzt4oCd
+	 QT1WLOrrig94AIg9gOwKsZYYSqUPaeSSm0Xny4ccMWVUxmhWt+p86jVUTh2enjf1G
+	 M1ZagqVwd7vJ4CGs7wrrS2X724gTIDCVPNM5rD1K5KZJNBg1iOQEccfq6XQQBg85l
+	 +kvCHJDYpGefi3Y1HHHb4eLttpsWVorxNJbvcjH+h1cetyedzEn0zuWnptNK3Enee
+	 TArVsAwF2iyuYCoDhA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N5CQh-1u99HD1wfN-00ubqF; Sun, 12
+ Oct 2025 11:44:34 +0200
+Message-ID: <287946c3-488b-4fa5-a634-41d4e9d4245a@web.de>
+Date: Sun, 12 Oct 2025 11:44:16 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10e2a3a5-e109-44b5-ba3c-3e8c40d76361@web.de>
-In-Reply-To: <10e2a3a5-e109-44b5-ba3c-3e8c40d76361@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 11 Oct 2025 15:02:38 -0500
-X-Gm-Features: AS18NWDvFK4gyGSPs9eyGmSKOV3bV8TQqhZdaEEWV_hSRnuKNvbTBU9D0yth8t4
-Message-ID: <CAH2r5muxz0q6E+8NQiAxDRgWRfbwjsRN9fnoQXjyV_u9WXFh-w@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Omit one redundant variable assignment in cifs_xattr_set()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	Bharath SM <bharathsm@microsoft.com>, Boris Protopopov <bprotopopov@hotmail.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [0/3] smb: client: Better exception handling for SMB3 hash
+ allocations
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Bharath SM <bharathsm@microsoft.com>, Eric Biggers <ebiggers@kernel.org>,
+ Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:eHnFKBfzovhtU/y1SJT7Kkie7NBgc0BxJUU3BaJ7+0cDWK0nmf2
+ QtBZjVoPfnA/stUwcu2Y44IzNmSvn0GG7RKs9DNCUj2NHz/5bQ5AMQhT9NMw3bQi1aRHl4g
+ rpM//PQDv4P85trGU5SjSPvqSIBMusZ2hEiBRmmOaQciPIEDTAXe4r3yqPZmRnVG5LNpYJp
+ lP6cXDtbObVEkYq44Gb+g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:y6Oxl/FBjT4=;E1I2gzlNVKGnzHv3kygrUbkDBu1
+ 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
 
-merged into cifs-2.6.git for-next
+> Refine a few implementation details for further development considerations.
 
-On Fri, Oct 10, 2025 at 7:56=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 10 Oct 2025 14:48:13 +0200
->
-> The local variable =E2=80=9Crc=E2=80=9D is assigned a value in an if bran=
-ch without
-> using it before it is reassigned there.
-> Thus delete this assignment statement.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/smb/client/xattr.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/fs/smb/client/xattr.c b/fs/smb/client/xattr.c
-> index b88fa04f5792..029910d56c22 100644
-> --- a/fs/smb/client/xattr.c
-> +++ b/fs/smb/client/xattr.c
-> @@ -178,7 +178,6 @@ static int cifs_xattr_set(const struct xattr_handler =
-*handler,
->                         memcpy(pacl, value, size);
->                         if (pTcon->ses->server->ops->set_acl) {
->                                 int aclflags =3D 0;
-> -                               rc =3D 0;
->
->                                 switch (handler->flags) {
->                                 case XATTR_CIFS_NTSD_FULL:
-> --
-> 2.51.0
->
->
+Software components are evolving further somehow.
 
+See also:
+[PATCH 7/8] smb: client: Remove obsolete crypto_shash allocations
+https://lore.kernel.org/linux-cifs/20251012015738.244315-8-ebiggers@kernel.org/
+https://lkml.org/lkml/2025/10/11/443
 
---=20
-Thanks,
-
-Steve
+Regards,
+Markus
