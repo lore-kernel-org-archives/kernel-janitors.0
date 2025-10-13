@@ -1,102 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32A41A275;
-	Sun, 12 Oct 2025 19:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DDC169AE6;
+	Mon, 13 Oct 2025 02:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760295740; cv=none; b=PAJqARc87u8iPltMM0PShGtxL51wnvzQuTWgTJfJIZ2xL1tiQ2GZE2qo9z+ASDJxIvIwjADTDnViylU6uvuKfk+7W7TwgOZKWRDgjf+noSPEJnf/UGeToSA9wUBc2gyIZO94VOoV+Xqrl5YGWbHpW4R4cU1J4n7HezEpZwNOrDE=
+	t=1760321950; cv=none; b=h8Pq/sEDezJzCSiMN2YL+IY41U+jY77VJhTNfwmYygXIEiO1OXTEWl/f9QNmMvklY903XoAWP+WsDkLG69eRt6DtvlqArzaQvOXYwSVBWxDL8DZbgIUWQVXOwWmJwLZ2E2D4hO3tRWMm9Tnjl2nC7hBSbtvlvP66DZ8rK7k/vRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760295740; c=relaxed/simple;
-	bh=T2d7uJPk5zDWBAlwmh0QUxrkKWoRtML4gbEucNeFsIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YP6TgHkiJKMfeZDORHRsT2ob55gbfuaz+Ielb79E/CL/GUHH0IoGd+Oev0bWac6+NeURdAO2e/oVs6KI2aR7edt65PxbSgaRuefGNMjfA9PXunMmRFWalkaqr8ieZ+3Q7/SAxLgk9tFPdojUeHw9MxT+9P8Vi5Cz7n4tDVanZt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDPpBt+b; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDPpBt+b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA45C4CEE7;
-	Sun, 12 Oct 2025 19:02:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760295740;
-	bh=T2d7uJPk5zDWBAlwmh0QUxrkKWoRtML4gbEucNeFsIU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cDPpBt+bCtMeJ4arqW/DvhpHGMZb6nFtLSToteoLUjbniz/GOrIOj62plxvXFW2RJ
-	 s3t23i6Z0iI75B3f5UrYMOnLfjB0kbq6RldcuvcLJaAN32mve6JEV1FCP6xmw+w4mu
-	 gcUoOtjks5pQc6+yG/0zt2vWSR6gP2EgqLJypjnOTBKr0T7YwTu8qnLU9ifV8NWn3U
-	 Hwgsm5cn9W8ZDNokPKLbQklbA5CSLAlYU+gvH3m69xdWUtPOrGefYG+aIp81NYsx9F
-	 ssi36Uz/cdl3PolexNSVA3syEHRQPeSTMqat8jj+fUTPUF6SDrzYR77YLJooh+tpYC
-	 HS99D73qfHC/g==
-Date: Sun, 12 Oct 2025 20:02:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=  <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Kyungmin Park  <kyungmin.park@samsung.com>,
- Karol Wrona <k.wrona@samsung.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio:common:ssp_sensors: Fix an error handling path
- ssp_probe()
-Message-ID: <20251012200211.19170a6f@jic23-huawei>
-In-Reply-To: <3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
-References: <6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
-	<3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760321950; c=relaxed/simple;
+	bh=wckOwuj24Ij1V2m401eRdyD2GopDhpl7foF6Yjx/7Fk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ECUIfhaOSJ9cn8W4cV1nwFaKHQPSaY5LIJYe1pJAuuhBY0Ez4lfamf8X5GP1E5dDAdtHeO8QeD2b+5QxeQsu31LYqOWZ8Pib9nwnW8h5C5qgC4rUbuYSBra38FCvoFWbjrVocq4zma3LPl6O2HbrrWe1UMPH0GKdNhgfphMoIjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Markus Elfring <Markus.Elfring@web.de>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "wireguard@lists.zx2c4.com"
+	<wireguard@lists.zx2c4.com>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual
+	<anshuman.khandual@arm.com>, Arnd Bergmann <arnd@arndb.de>, David Hildenbrand
+	<david@redhat.com>, Feng Tang <feng.tang@linux.alibaba.com>, Florian Westphal
+	<fw@strlen.de>, Jakub Kicinski <kuba@kernel.org>, "Jason A . Donenfeld"
+	<Jason@zx2c4.com>, Joel Granados <joel.granados@kernel.org>, Joel Stanley
+	<joel@jms.id.au>, Jonathan Corbet <corbet@lwn.net>, Kees Cook
+	<kees@kernel.org>, Lance Yang <lance.yang@linux.dev>, "Liam R . Howlett"
+	<Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, "Petr
+ Mladek" <pmladek@suse.com>, Phil Auld <pauld@redhat.com>, Randy Dunlap
+	<rdunlap@infradead.org>, Russell King <linux@armlinux.org.uk>, Shuah Khan
+	<shuah@kernel.org>, Simon Horman <horms@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Steven Rostedt <rostedt@goodmis.org>
+CC: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: =?utf-8?B?UkU6IFvlpJbpg6jpgq7ku7ZdIFJlOiBbUEFUQ0ggdjNdIGh1bmdfdGFzazog?=
+ =?utf-8?Q?Panic_after_fixed_number_of_hung_tasks?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSCB2M10gaHVuZ190YXNrOiBQYW5p?=
+ =?utf-8?Q?c_after_fixed_number_of_hung_tasks?=
+Thread-Index: AQHcO3v66ZG2hk4PtE6ORt/xqoKtirS/VpVw
+Date: Mon, 13 Oct 2025 02:14:58 +0000
+Message-ID: <2b19bac7de174fe6baa07234b88c8156@baidu.com>
+References: <20251012115035.2169-1-lirongqing@baidu.com>
+ <0aea408f-f6d7-4e2d-8cee-1801ad7f3139@web.de>
+In-Reply-To: <0aea408f-f6d7-4e2d-8cee-1801ad7f3139@web.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-FEAS-Client-IP: 172.31.50.45
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Fri, 10 Oct 2025 19:56:41 +0100
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
-
-> On Fri, 2025-10-10 at 20:58 +0200, Christophe JAILLET wrote:
-> > If an error occurs after a successful mfd_add_devices() call, it should=
- be
-> > undone by a corresponding mfd_remove_devices() call, as already done in=
- the
-> > remove function.
-> >=20
-> > Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > --- =20
->=20
-> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-Applied to my temporary fixes branch (I'll rebase on rc1) and marked
-for stable.
-
-Thanks,
-
-Jonathan
-
->=20
-> > =C2=A0drivers/iio/common/ssp_sensors/ssp_dev.c | 4 +++-
-> > =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/iio/common/ssp_sensors/ssp_dev.c
-> > b/drivers/iio/common/ssp_sensors/ssp_dev.c
-> > index 1e167dc673ca..da09c9f3ceb6 100644
-> > --- a/drivers/iio/common/ssp_sensors/ssp_dev.c
-> > +++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
-> > @@ -503,7 +503,7 @@ static int ssp_probe(struct spi_device *spi)
-> > =C2=A0	ret =3D spi_setup(spi);
-> > =C2=A0	if (ret < 0) {
-> > =C2=A0		dev_err(&spi->dev, "Failed to setup spi\n");
-> > -		return ret;
-> > +		goto err_setup_spi;
-> > =C2=A0	}
-> > =C2=A0
-> > =C2=A0	data->fw_dl_state =3D SSP_FW_DL_STATE_NONE;
-> > @@ -568,6 +568,8 @@ static int ssp_probe(struct spi_device *spi)
-> > =C2=A0err_setup_irq:
-> > =C2=A0	mutex_destroy(&data->pending_lock);
-> > =C2=A0	mutex_destroy(&data->comm_lock);
-> > +err_setup_spi:
-> > +	mfd_remove_devices(&spi->dev);
-> > =C2=A0
-> > =C2=A0	dev_err(&spi->dev, "Probe failed!\n");
-> > =C2=A0 =20
-
+PiDigKYNCj4gPiBUaGlzIHBhdGNoIGV4dGVuZHMgdGhlIOKApg0KPiANCj4gV2lsbCBhbm90aGVy
+IGltcGVyYXRpdmUgd29yZGluZyBhcHByb2FjaCBiZWNvbWUgbW9yZSBoZWxwZnVsIGZvciBhbg0K
+PiBpbXByb3ZlZCBjaGFuZ2UgZGVzY3JpcHRpb24/DQo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
+cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtDQo+
+IGVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdD9oPXY2LjE3I245NA0KPiAN
+Cg0Kd2lsbCBmaXggaW4gbmV4dCB2ZXJzaW9uDQo+IA0KPiDigKYNCj4gPiArKysgYi9rZXJuZWwv
+aHVuZ190YXNrLmMNCj4g4oCmDQo+IEBAIC0yMjksOSArMjMyLDExIEBAIHN0YXRpYyB2b2lkIGNo
+ZWNrX2h1bmdfdGFzayhzdHJ1Y3QgdGFza19zdHJ1Y3QgKnQsDQo+IHVuc2lnbmVkIGxvbmcgdGlt
+ZW91dCkg4oCmDQo+ID4gIAl0cmFjZV9zY2hlZF9wcm9jZXNzX2hhbmcodCk7DQo+ID4NCj4gPiAt
+CWlmIChzeXNjdGxfaHVuZ190YXNrX3BhbmljKSB7DQo+ID4gKwlpZiAoc3lzY3RsX2h1bmdfdGFz
+a19wYW5pYyAmJg0KPiA+ICsJCQkodG90YWxfaHVuZ190YXNrID49IHN5c2N0bF9odW5nX3Rhc2tf
+cGFuaWMpKSB7DQo+IOKApg0KPiANCj4gSSBzdWdnZXN0IHRvIHVzZSB0aGUgZm9sbG93aW5nIHNv
+dXJjZSBjb2RlIHZhcmlhbnQgaW5zdGVhZC4NCj4gDQo+IAlpZiAoc3lzY3RsX2h1bmdfdGFza19w
+YW5pYyAmJiB0b3RhbF9odW5nX3Rhc2sgPj0gc3lzY3RsX2h1bmdfdGFza19wYW5pYykNCj4gew0K
+PiANCg0Kd2lsbCBmaXggaW4gbmV4dCB2ZXJzaW9uDQoNCnRoYW5rcw0KDQotTGkNCg0KPiANCj4g
+UmVnYXJkcywNCj4gTWFya3VzDQoNCg==
