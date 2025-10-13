@@ -1,72 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222E22FD1B6;
-	Mon, 13 Oct 2025 09:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148D12C0287;
+	Mon, 13 Oct 2025 17:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347412; cv=none; b=sE42F5Pef7+Od4L6IvFMRrsTDkuIHk7SqmGxI67SPRDi7oxlmbPcmQiXVCvW3qgyYS/HE2vLuOJ0IU7cXAik9gLYO5sBwOer1w66DkF//NtpVcJH2b51b4BDuFu6vOr2WYd0TP9eQjVIfoz4995kcGFWxsj0mD9YjofjuROAuvE=
+	t=1760375086; cv=none; b=i7sS4kVWOjyKTPrH7PBff8nuOocFaDa49D+X1tvCmxXZSpYwlNM9zUync7ih4ctKDmP3JVRYo5CWgdfoeEnGA7yH5aPX8Xw1m4eKEC97JRIT8md0UC2FnjudoD7mfUlGsGkcFy2KmMBRMbWZmpqda8cKRR8wASEBU14jBgFz0RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347412; c=relaxed/simple;
-	bh=/36+Ikatw9hbWAnqgZkVSbwFjnpdePCvnaZYml0SVtA=;
+	s=arc-20240116; t=1760375086; c=relaxed/simple;
+	bh=b6/behIC0N9AYnyWJQO3b/gaZ6ZVWKaYugQpKexdV3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8PA5DAPMzq9f2XmseaDvQdpxI2m5cxEAkgxfefR/2HVIfUPBXYBZqhqKjprRZkoEE1HGcKVbJaxDfk4oE1UH/5QZCaukOeBAfoP8/slxsZz8GHQK9ZrvFryi/drD6mdvt0C8uQUugZVn1HarC5mIsImZhXCXka9Xgz6prpJAcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvaMVf8N; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3zri5NHV96Sxuy4evXuEyMcxgqpUEIMk/YKlDm/N9XfILBPGHZd/qwsuVf96C9XQGlS3dX9uPzAZtCsL2nDOWLUMl4eF+Adaryt0ulAQrGjU7WXPbvQdDMxa3IpWBnoCcs9gaIt2GliOTZCtTz6gsuoVKILS+M5F3mj8U6Bllk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OCpbmHRC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvaMVf8N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC31C116D0;
-	Mon, 13 Oct 2025 09:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760347411;
-	bh=/36+Ikatw9hbWAnqgZkVSbwFjnpdePCvnaZYml0SVtA=;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OCpbmHRC"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5C2B440E01AB;
+	Mon, 13 Oct 2025 17:04:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SI2MVTdOG49B; Mon, 13 Oct 2025 17:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760375075; bh=ONlzIiZek01uXKZ8RYgShEp2LZyBnZc0grZS16TouzI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cvaMVf8NTF8dbJhLetqkNmIr52n68E+TIXLBMejQF61vZQWebA8eYF6/DjcHVOuqs
-	 WRGJJYJXD/y1dDWtGOzvklOLEDpox7Z+spfqENVDdskgL+XkbHfG9Q0xFFMQFOE+7V
-	 0U6GJwOag2tt9sgUFelUBA9hD+U9EP2I+cipUdXB03xIC6I9Sz71lRaPz9/w84uyIk
-	 w94+YnjK6TqrQypvlQW8iHeh979L+u7CQe7+Kwlue/j6hf0Zz/mw9ZjK5ydEm9H4y1
-	 BD99+4hxl0TptJgjm478qSWzdbCe7Il1hvJPtoD7O+I9h+/PGEueK7Twllce8AdcNp
-	 LXB2XQlASSF1Q==
-Date: Mon, 13 Oct 2025 10:23:26 +0100
-From: Simon Horman <horms@kernel.org>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH] Octeontx2-af: Fix missing error code in cgx_probe()
-Message-ID: <aOzFDncvwZAMhZeA@horms.kernel.org>
-References: <20251010204239.94237-1-harshit.m.mogalapalli@oracle.com>
+	b=OCpbmHRCP1v5Ov6JEJ/uky9mIEixLfJSZ8g4gWUuLyGS1xUhGe8cYQGOZJbubbfFU
+	 ZNu77UkgDPt57JHBTRe5u0IOHnRa4tWsQ50y752dgn8+cUbF/CM8EFKIHWxUIEMSIZ
+	 8ZIXI5IdWnbyAy+6Kv6VkmZKbU9w1VwJrLctY/kgrNaJkiLrrYq+9cjZ/+Jd9Z7ykq
+	 ienyg3TFaYpliRR0CSxsC1uv937i/9u12x1zJBMDKaNOs9BG3cgVOCrhS7osdRAzWc
+	 Sdx1QENj4HMMo+nZaCAQ7q0RX8Ot9+ibovlT+7mkRYkyBxxF+qddbWYZ2LgiCWNPxf
+	 Zqt4AtliiWkETW03GRyXrd4Ipnl0bk22xIw+Dlh/baHEgDi/hOdA59zlCa0Ygina3L
+	 nE8sbM/OBwzYwynTX7pUrxmYZbo4yuCGQHULu0ffo9kMhzwKGNgfjJc9HE2IFLdTAF
+	 v11IB9SCCWYFQ2BccAnLMHllDA55kGhW+HNe92PiWpc7r2eL3ROl9GAyEbRxToQuaY
+	 gVbtpvoeROk1F1hUlebQRVaHJb4weVbRAXjEGfsvwPBwZZcZLrx/3La3P4b2IPJF8H
+	 ZAD/nWw/fO1855WzBMMN9xjEeZgnR9TvOfVlofa017wX+cGTPFEQ+iJh6KlR41kWHF
+	 OruJuM8TttnHuibrqSb7Q8Wc=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 37B6240E019B;
+	Mon, 13 Oct 2025 17:04:29 +0000 (UTC)
+Date: Mon, 13 Oct 2025 19:04:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] EDAC/versalnet: Fix off by one in handle_error()
+Message-ID: <20251013170423.GEaO0xF48HklVENi05@fat_crate.local>
+References: <aNfX-qj_KpCrnCUy@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251010204239.94237-1-harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <aNfX-qj_KpCrnCUy@stanley.mountain>
 
-On Fri, Oct 10, 2025 at 01:42:39PM -0700, Harshit Mogalapalli wrote:
-> When CGX fails mapping to NIX, set the error code to -ENODEV, currently
-> err is zero and that is treated as success path.
+On Sat, Sep 27, 2025 at 03:26:34PM +0300, Dan Carpenter wrote:
+> The priv->mci[] array has NUM_CONTROLLERS so this > comparison needs to
+> be >= to prevent an out of bounds access.
 > 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aLAdlCg2_Yv7Y-3h@stanley.mountain/
-> Fixes: d280233fc866 ("Octeontx2-af: Fix NIX X2P calibration failures")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> Fixes: d5fe2fec6c40 ("EDAC: Add a driver for the AMD Versal NET DDR controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> This is based on static analysis with smatch and only compile tested.
+>  drivers/edac/versalnet_edac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/edac/versalnet_edac.c b/drivers/edac/versalnet_edac.c
+> index 7c5db8bf0595..1ded4c3f0213 100644
+> --- a/drivers/edac/versalnet_edac.c
+> +++ b/drivers/edac/versalnet_edac.c
+> @@ -433,7 +433,7 @@ static void handle_error(struct mc_priv  *priv, struct ecc_status *stat,
+>  	phys_addr_t pfn;
+>  	int err;
+>  
+> -	if (WARN_ON_ONCE(ctl_num > NUM_CONTROLLERS))
+> +	if (WARN_ON_ONCE(ctl_num >= NUM_CONTROLLERS))
+>  		return;
+>  
+>  	mci = priv->mci[ctl_num];
+> -- 
 
-Thanks,
+Applied, thanks.
 
-I agree that Smatch is onto something here.
+-- 
+Regards/Gruss,
+    Boris.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+https://people.kernel.org/tglx/notes-about-netiquette
