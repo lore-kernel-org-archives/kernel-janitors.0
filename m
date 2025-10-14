@@ -1,164 +1,131 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0182D2495
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Oct 2025 06:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C86C30F81D
+	for <kernel-janitors@vger.kernel.org>; Tue, 14 Oct 2025 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760424091; cv=none; b=HqAyaMGRQDd+GTqJnEC7N/vhS9lCNBJL2FhKVR87jaHQdkACosJj6yqWt6rBIsDNVE2Tc4ccv2KddeQlNVOK9CjbfSlCc5Btq2EXPQeWx9pubEc2iWjhoqnvSUJq6lelVdBDiGcncYsHR9I4kV7DoUukUMwsrZM2WOfYDSpk8B0=
+	t=1760429603; cv=none; b=ceynz0sy1ZNDf81FH/z3llpecI9TSoa05IUX9TBUHh6PnINURbCHARWndzAGKN8whO8pJaO7aJbNuN21ajglzzZF/7Duof7zwaRtCzkID+ce2XIWBgkgTf0G3wMH0oflZJhyLiTniRuJeOqYKkcgcw3VmxxO6CrDlUAiNnkxu2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760424091; c=relaxed/simple;
-	bh=2bp7b8xMX3lCsqrOtDwzTcWHekQK/ojdxzFCW5PavL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DsaSwSyzaehA+kA15BUdFOORudoZE1H9j2M5UJluLAJ6I02qe/44HMB85wYKaZCIzHWUxC/hg1cvcwef8pSHRObGFeecG85pfePwH5/i6U8GQfTGcuXSPQjri+f2nMWK0kILymCls8hZ3CaqCDP9XrzEgwt9SB/rihx+lsG4uek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VxH+jrR+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1760429603; c=relaxed/simple;
+	bh=Qjf5s9p3okVSF/8iwSV6tY3wMOMvdfYVeDRDYwN+sNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpfW1OqxxqRbYO/ItDgI2oiWcRi3OXsdRXI9MYrsGVJdUasHTlpjQkYUrwCDkXA6OnstcM4yK/ei8WpJ8zoUFwxaCgUHzrLqNcz7lfHada02Sgtp+hXR6oXimBE44mrdZzAcu4qicGujk6iziUNwXm0qZvKTwu7Kq3p3L8aKXIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=doLUHXZu; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxH+jrR+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760424088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8eo0rdDzh07ckiTBotN/0G7m7UlosQASIFmbI9q9Ybw=;
-	b=VxH+jrR+LRXwH/yuKDqGlQNaW4WkgeJu5NYPsuemIuRK5m+I7xy4tHUMwst1+phoLIHeaU
-	6RoqEdHBfSwTwcSzELiqSuQ4zngTRKVIpwDF0t76ecMdEAbHa5e273RWhTyrQMx2Ux5/vA
-	ZepaIl+iDkWd/cRUFxVsYxaG72XHo6c=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-158-6Vd3S-mcNcCNFU25dRXrdw-1; Tue, 14 Oct 2025 02:41:27 -0400
-X-MC-Unique: 6Vd3S-mcNcCNFU25dRXrdw-1
-X-Mimecast-MFC-AGG-ID: 6Vd3S-mcNcCNFU25dRXrdw_1760424086
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3f42b54d159so5203999f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 13 Oct 2025 23:41:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="doLUHXZu"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e52279279so35620325e9.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Oct 2025 01:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760429599; x=1761034399; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=77ONa64qN0g6cheWy5Vrvof/4mmnbDRUL6LLOyJY7B4=;
+        b=doLUHXZu3judS3oaLBhy4XJmeVmfP7nCAhSaUxdP+39fLYRcDGswKLkThmvppzErej
+         uN06Zxw8Q5eXyBC4H7RqFFn3xXQCYvWZ3whC+WArZ9moN34cQFXMuqQnLPNkF/PUUbuZ
+         gLEAOcaiSDfqMIBh1aZL8estrXdq6KgwmzHyuXgTzHolaNFLNj48VnDHX18Q/MzC06m4
+         e3pshSCYSp/jmpvZJMmnfZeD/swnMmoENxRHBCPLcEQPv4yxol0wRbdLuhuVHHzIeDU9
+         reloLlypAVss18H6wPSoAciB9+0UL7yiLl/HsXUMhCiGoN0EGuvYyDNjq7rWNQC1VEWK
+         Ceuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760424086; x=1761028886;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8eo0rdDzh07ckiTBotN/0G7m7UlosQASIFmbI9q9Ybw=;
-        b=jLDyMrA/jH6tyy6EAKla3ga+jMzH9966a0tntBeAHYVHAvBdE0fylaWaBVMixgb8e5
-         c+cMhvi4VqJbXMXa5S46b6xFO+Af6GC/y3PZe6vQJuN4QbYyED+kp9EMiTsrrR+WKt8Y
-         AVK7MGalk2XqvrLGjC11yl6NjqDX3B9Lru747Wf2rjAc3WotIwXkvlaRj/+B6gNd1Hp9
-         EiHukEGCqwsP1hhaUA2Afz8yifsd3OuHTSEi1n/1jj1LwW+fCDw6ckrbzJApka74Mh4r
-         1r+RKLlSrp3g0OzIYP2xDY6OnOcyU1jTN8ei2/KgTRD5BcQCTx2U3Gssw1ni6kDKNjGb
-         3MGQ==
-X-Gm-Message-State: AOJu0YwhVZ5Jj5gDlLhR+NFeoRdJE0lbxacDuOAw3gfnOaHra92Lep46
-	tiMKZ6D8YgeevC5et5Qp4nlB96QZNfSyUJepIuhXTH83V1/MPgDjEePlav2Gt51BuaD/V7uxwtw
-	CPMlILv8JcRsiJ2dNDHE4VNAp/ZP9l/fd6J+rYrp26b79UYesCkBU7rgsRpiwH2v5plEq2oM9he
-	wrQw==
-X-Gm-Gg: ASbGnct8QduRwWYENXhmdTTFY7oPxr1eIZEWkl5lsDEOyKPTIzZKE6N6W8YitsGKHKe
-	a5fmNu/Sr0U2U2VPN4kcUGc0uAVLpGIR2ry631n447dLctb9PlWT2MCc7v+qN6UvAYj1Ol1nZhi
-	m5ZVbr43tn9IfKFo6ffAOirhrxUjolR5zz2uR+EfvTj/i4Rub2CxCIHcYwxBKmIxm7tywIlo9bJ
-	YnPfIMwWMXyT7+6zWvHqyLoJQG917lratQYcNj2Ej5lN2V58+PiUqKu7GFcG3ajVlsTTwegygMP
-	/kZTQVRN/KHeTyYNHGKscZwtUysXf4xMj+lIDz+DqnK0Dfo6sddL3rzA4qe+CYcKyDJQP6lrXzv
-	WfhftcdPb0W2sNw==
-X-Received: by 2002:a5d:5d86:0:b0:3eb:4e88:585 with SMTP id ffacd0b85a97d-4266e8f7f58mr14331632f8f.29.1760424085627;
-        Mon, 13 Oct 2025 23:41:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVQ04e7UfQsRRayb/A53UoKDUPQdS7WxAqx3NLzVujqatyY5Y+mwqkqiVt78YRvyiQ00wF5w==
-X-Received: by 2002:a5d:5d86:0:b0:3eb:4e88:585 with SMTP id ffacd0b85a97d-4266e8f7f58mr14331606f8f.29.1760424085157;
-        Mon, 13 Oct 2025 23:41:25 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb4982c10sm217369235e9.5.2025.10.13.23.41.23
+        d=1e100.net; s=20230601; t=1760429599; x=1761034399;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=77ONa64qN0g6cheWy5Vrvof/4mmnbDRUL6LLOyJY7B4=;
+        b=KcKbtj82JLC7I4S9WyExR55RZnRGA6LI4KzIZTAejG/VIUo/erKGfRfjyXZUHpauh/
+         jateCiXrYJ7EpUrlR0eopl7gTKHPMF4hjzlPYdFK0IQPQiDrBjUUyFUAtAW9vkmcFlri
+         zeA8TMhzcqOFzgp+qZGHMaLG0KGkZXW1Ti5tDaLRvX9E0xB/H1nJrfRI2SMZ0pT3dSAq
+         UQ01SiVahTyID3L0n0ybOHbDItygczqBgR/fAYIgy63uG2oTnQLJteXx8xxhAZzw17iD
+         6g7Tki2i42yhl3ZLunHkZuV4k8syvFCY0iq4fANtBOJGJUtVs9vh3KLz5c3FwwvAkijW
+         JGpA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8qA5n6P8OzaisBD9wQl1FEuVyChVKbxAiy70G/d11KP7aXj2zI8bhTNIz67X24ItrVXQ7513cIk0FT+gFf8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztqosBv8gZ8ZnVs4IJAbqjyMElU5l5VJ7zEMEiYeYy//n1ADtw
+	i0x47WFd+K4TbSsUs/f3ziS6TiKVVCekrW33Z/SXl0XuDKDDxsBT1gTQEhhplp/LPoo=
+X-Gm-Gg: ASbGnctbhORyYO3RvX2HzWOp3OL/oehY4g052QmqGeKTv1oMcgji0oV4392sAFg4QaY
+	QT2BE9T6pUKLBFr3iX1nmtj5ZqHKaUrelgXD1iN01wkptzQi3UVi9m9DOwq3bu+vtaH4l62bjIb
+	QovKsg53ZMA0WwqoRc+plejJUBE5FRIO9emKralFlxjJ+zUhXhvoKzLBxw4JC+8zLbEAZA/7X99
+	SWI9wiIi70Z8xeRBzYLDuPrr82RFKrUOWr+FM9rbpC3lwqUQKbGyqmA7Q6ekdKsuw2/aLPEJLt+
+	dtJfi5N6F6yzWDLAlw2ciCjQ2eRbagK2pokd99n8k6+RUDuCerbMyDqv/RJRUacC/K8zHMuqfvH
+	4ZT1JehOP+wBgdXLMNrpAj6rMl6ZR5Agc+TIAi+3gpl2cC1ahz5xn6Ap3uZZ4yA==
+X-Google-Smtp-Source: AGHT+IFbab0I6IbunJxw9DMnNGmlNTMAcT5O1ylJxmLdoG5nQ5JswxZUKVkCCcAgGghuYeWd5vIj3w==
+X-Received: by 2002:a05:600c:46d1:b0:46e:45fd:946e with SMTP id 5b1f17b1804b1-46fa9b078e2mr170662745e9.31.1760429599330;
+        Tue, 14 Oct 2025 01:13:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb49c3eeasm225967545e9.14.2025.10.14.01.13.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 23:41:24 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	dri-devel@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] rust: drm: remove unneeded handling for config DRM_LEGACY
-Date: Tue, 14 Oct 2025 08:41:20 +0200
-Message-ID: <20251014064120.263455-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+        Tue, 14 Oct 2025 01:13:18 -0700 (PDT)
+Date: Tue, 14 Oct 2025 11:13:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/bridge: synopsys: Fix an error return in
+ dw_dp_video_need_vsc_sdp()
+Message-ID: <aO4GGyJLCZEwFYL4@stanley.mountain>
+References: <aLaPyJrFsSFuqC1R@stanley.mountain>
+ <5f9e8942.7fec.1990997b4de.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f9e8942.7fec.1990997b4de.Coremail.andyshrk@163.com>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, Sep 02, 2025 at 04:42:41PM +0800, Andy Yan wrote:
+> 
+> Hello Dan,
+> 
+> At 2025-09-02 14:33:44, "Dan Carpenter" <dan.carpenter@linaro.org> wrote:
+> >This dw_dp_video_need_vsc_sdp() function is type bool so returning
+> >-EINVAL means returning true.  Return false instead.
+> >
+> >Fixes: 86eecc3a9c2e ("drm/bridge: synopsys: Add DW DPTX Controller support library")
+> >Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> 
+> Reviewed-by: Andy Yan <andyshrk@163.com>
+> 
 
-Since commit 94f8f319cbcb ("drm: Remove Kconfig option for legacy support
-(CONFIG_DRM_LEGACY)"), the special handling in the rust drm code for the
-config DRM_LEGACY is not needed.
+Ping?
 
-Remove the drm_legacy_fields macro and simply use bindings::drm_driver
-unconditionally.
+regards,
+dan carpenter
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- rust/kernel/drm/device.rs | 33 +--------------------------------
- 1 file changed, 1 insertion(+), 32 deletions(-)
-
-diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-index 3ce8f62a0056..a1d92d8922a4 100644
---- a/rust/kernel/drm/device.rs
-+++ b/rust/kernel/drm/device.rs
-@@ -16,37 +16,6 @@
- };
- use core::{alloc::Layout, mem, ops::Deref, ptr, ptr::NonNull};
- 
--#[cfg(CONFIG_DRM_LEGACY)]
--macro_rules! drm_legacy_fields {
--    ( $($field:ident: $val:expr),* $(,)? ) => {
--        bindings::drm_driver {
--            $( $field: $val ),*,
--            firstopen: None,
--            preclose: None,
--            dma_ioctl: None,
--            dma_quiescent: None,
--            context_dtor: None,
--            irq_handler: None,
--            irq_preinstall: None,
--            irq_postinstall: None,
--            irq_uninstall: None,
--            get_vblank_counter: None,
--            enable_vblank: None,
--            disable_vblank: None,
--            dev_priv_size: 0,
--        }
--    }
--}
--
--#[cfg(not(CONFIG_DRM_LEGACY))]
--macro_rules! drm_legacy_fields {
--    ( $($field:ident: $val:expr),* $(,)? ) => {
--        bindings::drm_driver {
--            $( $field: $val ),*
--        }
--    }
--}
--
- /// A typed DRM device with a specific `drm::Driver` implementation.
- ///
- /// The device is always reference-counted.
-@@ -61,7 +30,7 @@ pub struct Device<T: drm::Driver> {
- }
- 
- impl<T: drm::Driver> Device<T> {
--    const VTABLE: bindings::drm_driver = drm_legacy_fields! {
-+    const VTABLE: bindings::drm_driver = bindings::drm_driver {
-         load: None,
-         open: Some(drm::File::<T::File>::open_callback),
-         postclose: Some(drm::File::<T::File>::postclose_callback),
--- 
-2.51.0
-
+> 
+> >---
+> > drivers/gpu/drm/bridge/synopsys/dw-dp.c | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> >diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> >index 9bbfe8da3de0..33be4eae2b20 100644
+> >--- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> >+++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> >@@ -1149,7 +1149,7 @@ static bool dw_dp_video_need_vsc_sdp(struct dw_dp *dp)
+> > 
+> > 	state = dw_dp_get_bridge_state(dp);
+> > 	if (!state)
+> >-		return -EINVAL;
+> >+		return false;
+> > 
+> > 	if (!link->vsc_sdp_supported)
+> > 		return false;
+> >-- 
+> >2.47.2
