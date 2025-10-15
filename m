@@ -1,128 +1,109 @@
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653FC2FF168
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Oct 2025 14:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546C62D5419;
+	Wed, 15 Oct 2025 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452894; cv=none; b=LQfmRgAx0pwzjf5RXa5Uy0WMlXPUu/INQ9KpBu9MkdC8BQVDqUk6MwIzeHZEY0bfRexz4Qz8wmLwPbTNevEJ4CyS4x41KP9YfohqywgVz6irD92u+6s7BXEjpewheGAHXCxDhz08TzxqoG/g9Ac6NaZy7YZabkHzcY/kpRFlamE=
+	t=1760517393; cv=none; b=oo65LF19JIGaCb+Xnb7QNWANwEhQXHsrdBpKjeyujbAhYCqbUIOW55mea68nzGOj3qWEZIBuSJxoVo8WghO7rfB1MNV6eOTCpiGSZlcl96+KoijAaOQSWCGvFpGJ1ZJLG189Lm+xWyGY+TQ6eJtJxjOM29TlqLBVY0VnLVEARuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452894; c=relaxed/simple;
-	bh=EnFd3hKLw7xglwwAfM0zsnf/4D4i4YLszNYTMx7pwrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JxkvrECPWJGmFMNY1lkfT044ayeUMz9W9B9xpTu7G/gQMeu7U+bSw7vWwFrvDV9vU0ZFRU8KkdvsBwnrve8YDTKYblOailaOQppcHZxIziFBOZsVoAK6ezMORFRGA70jRKPdLg26SVp3uCk7IeyS7hKgFZwLTALzViPSDPNpdhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wcBR3W7A; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1760517393; c=relaxed/simple;
+	bh=sOQyGjCqvYO/zzApnSRjFBnx7hjLIIizKGWS/lzHaFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELxkOZRtT0AmaV627B+JG7uPa4UMqzQ2hjkujVkL9phKzP512MDIbypxjnU7X0hMmshY0YpiWMbYdQwdbzGgzOrmSbjDJi+HjsIbL08Bat5W0LdzAn6YehV5OcFMRYjyzo5HBBrz9JWg3BkbrdRCxFZp4KxYu/7pUwcVE0/ioyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaFkkTkh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wcBR3W7A"
-Message-ID: <c9f46ef5-b7fe-4592-b458-ecb91652d2ed@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760452880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CYEZcyD6SgizdudERHV1+QQWcWpelGTwNBq9Zz7nboU=;
-	b=wcBR3W7A1MLjmuD0laWyZl/i3lVq1YSI3HECA4D2THldQYOuCm4+vWkIYMAGRIUiODD2sx
-	ht7jOzaToTsV1Qh7H/vEAnMHu5gYDS5D67TalwIuwTBLiwnY65frzmmUliYJUpMW04/QOl
-	Pl8jMP7IM0kCl+qOHXDAtwWxcylNYCw=
-Date: Tue, 14 Oct 2025 07:41:15 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaFkkTkh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72514C4CEF8;
+	Wed, 15 Oct 2025 08:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760517391;
+	bh=sOQyGjCqvYO/zzApnSRjFBnx7hjLIIizKGWS/lzHaFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eaFkkTkhdK9MKeBGqReNQv8acZU1mWF3MHshYB9C4WFFdEy7Jt+llNIlrbm+4NweR
+	 cmFG2tolIw2xPWNCihXg1lWTQN+qiyYfAVXcJKDc/SfJSUpY7lldaw85SRW0jBe/w7
+	 b6bTy9lZnxSyt8NqHtvThq+YnL0hcobWP52MRpLIJ3ZtP/mCz6SSO99mZ366TAohFP
+	 nDuT3LpJc+Xely+EzlcAEx/3eFI6GQIlai+XYMeAPeMiD8AHFzts5zSbcMu99SDedz
+	 YhvB9vIuKSDRSKb0BUVPsA992lA9FnI1bdiGkTnBIZD+GRHoq7DmvSZ+QifcpRzfMq
+	 wMoER1hDC3D/Q==
+Date: Wed, 15 Oct 2025 09:36:26 +0100
+From: Simon Horman <horms@kernel.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nithya Mani <nmani@marvell.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+	kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH] Octeontx2-af: Fix pci_alloc_irq_vectors() return value
+ check
+Message-ID: <aO9dClea18rk9Kdx@horms.kernel.org>
+References: <20251014101442.1111734-1-harshit.m.mogalapalli@oracle.com>
+ <ec88f0a0-12ee-4c16-bb0a-fb572d6e020b@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] RDMA/rxe: remove redundant assignment to variable
- page_offset
-To: Colin Ian King <coking@nvidia.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251014120343.2528608-1-coking@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20251014120343.2528608-1-coking@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec88f0a0-12ee-4c16-bb0a-fb572d6e020b@oracle.com>
 
-在 2025/10/14 5:03, Colin Ian King 写道:
-> The variable page_offset is being assigned a value at the start of
-> a loop and being redundantly zero'd at the end of the loop, there
-> is no code that reads the zero'd value. The assignment is redundant
-> and can be removed.
+On Tue, Oct 14, 2025 at 03:50:47PM +0530, Harshit Mogalapalli wrote:
+> Hi,
 > 
-> Signed-off-by: Colin Ian King <coking@nvidia.com>
-> ---
->   drivers/infiniband/sw/rxe/rxe_mr.c  | 1 -
->   drivers/infiniband/sw/rxe/rxe_odp.c | 1 -
->   2 files changed, 2 deletions(-)
+> On 14/10/25 15:44, Harshit Mogalapalli wrote:
+> > In cgx_probe() when pci_alloc_irq_vectors() fails the error value will
+> > be negative and that check is sufficient.
+> > 
+> > 	err = pci_alloc_irq_vectors(pdev, nvec, nvec, PCI_IRQ_MSIX);
+> >          if (err < 0 || err != nvec) {
+> >          	...
+> > 	}
+> > 
+> > Remove the check which compares err with nvec.
+> > 
+> > Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+> > Suggested-by: Paolo Abeni <pabeni@redhat.com>
+> > Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> > ---
+> > Only compile tested.
+> > ---
+> >   drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+> > index d374a4454836..f4d5a3c05fa4 100644
+> > --- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+> > +++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+> > @@ -1993,7 +1993,7 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >   	nvec = pci_msix_vec_count(cgx->pdev);
+> >   	err = pci_alloc_irq_vectors(pdev, nvec, nvec, PCI_IRQ_MSIX);
+> > -	if (err < 0 || err != nvec) {
+> > +	if (err < 0) {
+> >   		dev_err(dev, "Request for %d msix vectors failed, err %d\n",
+> >   			nvec, err);
 > 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
-> index bcb97b3ea58a..b1df05238848 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_mr.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_mr.c
-> @@ -452,7 +452,6 @@ static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned int leng
->   
->   		length -= bytes;
->   		iova += bytes;
-> -		page_offset = 0;
->   	}
-static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned 
-int length)
-{
-	unsigned int page_offset;
-	...
-	while (length > 0) {
-		index = rxe_mr_iova_to_index(mr, iova);
-		page = xa_load(&mr->page_list, index);
-		page_offset = rxe_mr_iova_to_page_offset(mr, iova);
-	...
-		page_offset = 0;
-	}
+> 
+> Now that I think about it more, maybe we want to error out when err != nvec
+> as well ? In that case maybe the right thing to do is leave the check as is
+> and set err = -EXYZ before goto ?
+> 
+> Thanks,
+> Harshit>   		goto err_release_regions;
 
-	return 0;
-}>
->   	return 0;
-> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-> index f58e3ec6252f..ae71812bea82 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-> @@ -358,7 +358,6 @@ int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
->   
->   		length -= bytes;
->   		iova += bytes;
-> -		page_offset = 0;
->   	}
-int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
-			    unsigned int length)
-{
-	unsigned int page_offset;
-...
-	while (length > 0) {
-		index = rxe_odp_iova_to_index(umem_odp, iova);
-		page_offset = rxe_odp_iova_to_page_offset(umem_odp, iova);
-...
-		page_offset = 0;
-	}
+Hi Harshit,
 
-	mutex_unlock(&umem_odp->umem_mutex);
+My reading of the documentation of pci_alloc_irq_vectors() is that
+Because nvec is passed as both the min and max desired vectors,
+either nvecs will be allocated, or -ENOSPC will be returned.
 
-	return 0;
-}
- From the above, in the functions rxe_mr_flush_pmem_iova and 
-rxe_odp_flush_pmem_iova, within the while loop, the variable page_offset 
-is assigned a value. At the end of the loop, page_offset is set to 0. 
-However, this assignment at the end of the loop is actually unnecessary.
-
-Thanks,
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-
-Zhu Yanjun
-
->   
->   	mutex_unlock(&umem_odp->umem_mutex);
-
-
+Maybe it is worth adding a comment about that to patch description
+or the code. But I think the code in this patch is correct.
