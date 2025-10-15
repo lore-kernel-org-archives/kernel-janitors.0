@@ -1,142 +1,142 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2651A320CD5;
-	Wed, 15 Oct 2025 15:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760543011; cv=none; b=jEMhn/jhy7HNxyk5mbbz6FmFGsum08upp755z1SC0N+UcZQpvFoLaGjp0XtZ8WSGQY5kVIy8b11BpOR1Ocwpc1Li5K3AH9Qki4RlGJszfrwU354hPtBdSWrIC8WFoYxZCsWJRFrmFVak65kem44Jk1arr18P/Xcyu1AAEsgaZOc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760543011; c=relaxed/simple;
-	bh=QZDoFK1NTUD8QdgGwQHs+Dk1cuLqUd4RxSwfnfLWmMw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=lhUUAVPW8e+hdvOVCOp0Dsf5Ae/tgZ4phbfk/+EuXkWWxz/sxihoVJtGDgjII0nAR4xcMJ4KcL9yKkxCYl5+cdYMeiDDXdN/Hp7LSkuegJ7upGqOCS+zKuGRm1yOTX9ivwqDd4XdVz7tfa5L0b15TAtuZ8sygyzX9b+6LCYIF0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aWUO9EWi; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FCF30BF67;
+	Wed, 15 Oct 2025 15:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760543622; cv=pass; b=ljO1h8iGvpHwpzEuiKjoLOXOlJ9aS4MEovEFfa2tCnag7ANSqme+5GT3tOS7DqOmYK6rJO9+snpFpU4ZD6w0+KYwpDuIoJD21BGy2pdN9IzFboTxtSg3Hrq7Rp9fHWCrQTdMUXINczR/8a9r280NoRiDHD4uCd4p8DlLb/Me/Oo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760543622; c=relaxed/simple;
+	bh=5Nc2LKagltXHEwEK+nSZyh6mH4us6mxrpatvyGL5Opg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DflgrbcGlMWlxrLVZQijCeX5EwqCUn5JfvDN+dNEeh3RyL+5qLi5ocFk8hR7g63Ij/Xy6pzBoWG5tO0kr6GTML8zr4kHF9Gv38A5/NNDHWSy9imAMLK6H1w9deDRcNtFuCYCUtLbjVfD5krj77Cv+y87XYdNdNOSPmXPPWJTRcQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=Sc6iP+g7; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aWUO9EWi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760542982; x=1761147782; i=markus.elfring@web.de;
-	bh=QZDoFK1NTUD8QdgGwQHs+Dk1cuLqUd4RxSwfnfLWmMw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aWUO9EWijy/42Cluu+MwUSm9X4UeasL3OpWLgrCZGZbS/ZSkaM+NwoV1WR491fOV
-	 WuFAhFN0VN4H3NwN6W+ImnZ2vnMt8yESs/NTF9TfxLESOLX3KCSB6+wp595nw750Y
-	 yLQlHjtlRX+d7TIp6ZvU3xlpag8bFhj1mYbCCsjdmi0IoyZlZh7A4b2sGm7/YOfdD
-	 FJ8Pwif9nV8AjgTlGNy8BGFXlohh224hTYQj3xMbXg5FzB4zRtC+dnxthwiz6GEGG
-	 8XwxHdSyIIQMpJWOk+tt2zBThhbhfib7GBjSlxq39xQRBZ+ifd/tp9Z1Wz/hRrX7y
-	 Tobq4txcMUe/+YJU2w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.181]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsJP4-1uFJhk1CyQ-00tz9C; Wed, 15
- Oct 2025 17:43:02 +0200
-Message-ID: <af3b4b18-ab6d-4d6c-8a1f-1c90c8744ec9@web.de>
-Date: Wed, 15 Oct 2025 17:43:00 +0200
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="Sc6iP+g7"
+Received: from chcpu18 (191host009.mobilenet.cse.ust.hk [143.89.191.9])
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59FFqJiS3631000
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 23:52:25 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760543546; cv=none;
+	b=Xnz2tw+9fWGJNNp7lhSdmJoM4X3PPL5JqgteyJI3uzHfODvWGc8MWyF3qv6tv9zM7QzDgyXxMK/Z5u5nWcXSpj+DfksuQn6BT3lhF03Fna+55rGKrOyi0oC9wep+uYGig9F4qcExcnVtfzlKg3CKpACna0iE5a005CekKchCPmk=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1760543546; c=relaxed/relaxed;
+	bh=OVt7WcWwgf/KRbchBl3ZUc8uuIGie1r/3IL5drq8IwA=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=bQtGLbO53jHpJ5QZ/XLrHZPY0H3gozjpV0jWV+g5iBkLhXoLXF+/9zM70n4Hna9xWFfpf7JckcqicTtQetwO0gCkY3yWOnuZqhOW9WB3mqhMtZo0i32/8iWC053cTbyAtmwdzkHgIHWZPE+ukROSBxZL+fNg7kd+88hP2ykq9jU=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1760543546;
+	bh=OVt7WcWwgf/KRbchBl3ZUc8uuIGie1r/3IL5drq8IwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sc6iP+g7z3npeDwFOGeIj0lc9mrsy5VK466F5vyfyqBoyZhEgPS758lVa3WLbEfIS
+	 9WWfsfNLF/iIfU4e6vrYMGIOgVqFsQeiGV7JvLq0ZilDBCV97YZwDKLv6W4mOHaXIZ
+	 DvqLnvwRilgZ+EhWxdVV9yb3e/IXZXweESiUBVq4=
+Date: Wed, 15 Oct 2025 15:52:14 +0000
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        Bharath SM <bharathsm@microsoft.com>,
+        Paulo Alcantara <pc@manguebit.org>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Steve French <sfrench@samba.org>, Steve French <smfrench@gmail.com>,
+        Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] smb: Fix refcount leak for cifs_sb_tlink
+Message-ID: <aO/DLq/OtAjvkgcY@chcpu18>
+References: <aOzRF9JB9VkBKapw@osx.local>
+ <6599bf31-1099-426d-a8e5-902c3d98e032@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
- imx@lists.linux.dev, Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Shuhao Fu <sfual@cse.ust.hk>
-References: <20251014162824.2324333-1-Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/1] i3c: fix refcount inconsistency in
- i3c_master_register
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251014162824.2324333-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:W/RRhwjCgbZGkqjRQr/xmgwiTQgevNASJJKBC+jVROEgrTsW+y3
- ZoC/iy05ZPskZcKMW25GuENnIVGdR1oHpUpJITiOpYR7XBDkPiJF/Y02Cs1aOi14t0fgnsR
- G4XpzDCnYo0RtfBSN0fOqc/S3bQdQDZsQwJEP7zWB9D5Y/MHIb5O/SurIsCnasKse6nzl6F
- 5WZ632me1kj0Ozv+rwJGw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xUAWHNbcVUM=;tuaagL1GYLq0zCf5qkGgVtMgtiY
- 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
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6599bf31-1099-426d-a8e5-902c3d98e032@web.de>
+X-Env-From: sfual
 
-> In `i3c_master_register`, a possible refcount inconsistency has been
-> identified, causing possible resource leak.
-=E2=80=A6
+On Wed, Oct 15, 2025 at 04:52:23PM +0200, Markus Elfring wrote:
+> > This patch fixes …
+> 
+> * Will another imperative wording approach become more helpful for an improved
+>   change description?
+>   https://apc01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Ftree%2FDocumentation%2Fprocess%2Fsubmitting-patches.rst%3Fh%3Dv6.17%23n94&data=05%7C02%7Csfual%40connect.ust.hk%7Caffcb410915f4b4bc8f308de0bfa853c%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638961367775911255%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=bThHSbvjokcDU6hNpnYxt4%2BlVyzlyxHl1JopGmCLY%2FQ%3D&reserved=0
+> 
+> * Would it be more helpful to use the label “put_tlink” instead of “out”?
+> 
+> * Can a subject like “smb: client: Complete reference counting in three functions”
+>   be nicer?
+> 
+> 
+> Regards,
+> Markus
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
+Hi,
 
-Regards,
-Markus
+Thanks for the suggestions. My apologies for the inapproriate wording. 
+Here's my updates. Please do let me know if it still needs improvement.
+I will definitely address these issues in patch v2.
+
+1. An improved patch description
+
+Fix three refcount inconsistency issues related to `cifs_sb_tlink`. 
+
+Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be 
+called after successful calls to `cifs_sb_tlink`. Three callsites fail 
+to update refcount accordingly, leading to possible resource leaks.
+
+Fixes: 8ceb98437946 ("CIFS: Move rename to ops struct")
+Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
+Fixes: 366ed846df60 ("cifs: Use smb 2 - 3 and cifsacl mount options setacl function")
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+
+2. New subject: [PATCH v2] smb: client: Complete reference counting in three functions
+
+3. Labels are changed accordingly
+
+@@ -3212,8 +3212,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+        utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
+        if (!utf16_path) {
+                rc = -ENOMEM;
+-               free_xid(xid);
+-               return ERR_PTR(rc);
++               goto put_tlink;
+        }
+
+        oparms = (struct cifs_open_parms) {
+@@ -3245,6 +3244,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+                SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
+        }
+
++put_tlink:
+        cifs_put_tlink(tlink);
+        free_xid(xid);
+
+@@ -3285,8 +3285,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
+        utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
+        if (!utf16_path) {
+                rc = -ENOMEM;
+-               free_xid(xid);
+-               return rc;
++               goto put_tlink;
+        }
+
+        oparms = (struct cifs_open_parms) {
+@@ -3307,6 +3306,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
+                SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
+        }
+
++put_tlink:
+        cifs_put_tlink(tlink);
+        free_xid(xid);
+        return rc;
+
+Thanks,
+Shuhao
