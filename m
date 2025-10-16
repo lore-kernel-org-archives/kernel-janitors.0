@@ -1,179 +1,167 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395D11CAA7B
-	for <kernel-janitors@vger.kernel.org>; Thu, 16 Oct 2025 03:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170A32E5B1D;
+	Thu, 16 Oct 2025 07:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760584339; cv=none; b=m0OK9PMJpuz5SbMq3AWw7wos1EYLlC5xn2sDWyBl5y6UN8V+C+4UiAibPyzhEw2thlvyNFr51X23nOD4K9n36sGGiV3Z1EFpPKsGDZcLKP3duH88qaewH/h3Rb3ah3yZu6Odq1uSnFjcu7nwTMOBx+XUWnF73/UM3cktrZgcPb8=
+	t=1760599335; cv=none; b=YaEgItiF9ycTCqiYjCi/OQ9gQRhuDVC5J0Y5OEF3lRaf2dIlZLT5xcXg+UxsEOUfVIGM0j2DLqEmcTt5gg7kAXMVDgkcfh1LddDzHKUPdloK4dhlpXqQg92oGfAjDx7siRZkULEAYt6roMdFrU7tRTBMgcXFsplWIxTWrFIH844=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760584339; c=relaxed/simple;
-	bh=FosbK3+mmiDc/+/euP2ZG1JXUgsZmpul+xmFj7RybeA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARtYBOfHMswTx93qO8j2yC/FmEyNGxbFtEJpHtMtzzudn9a+KXYiIhse7/lGcvA9aougSDJidQbRwbJmLWnKrYYfFTyoueGAcNyoNE089cxMT8U+jgW4nAJF/DnPqTEUXkK7lZF8JsM4LMbxcFERiMFBXfE87PoyfvEXNgk8Ftc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJ7oGRTY; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760599335; c=relaxed/simple;
+	bh=C59JgKvwWWhUInISEqbPzJA1b1DFwSmcGjDq0Nulje8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHcqhANNYhFcSCYgHsLENoGRK9jnRQgqrsdDgiJSesk61tq8Pbgi1d1DoPyNKXI+Ur5/PowMHu3tCZNOZmKm3oEPFYDRl8Q78LLy+l2ua9lA9fa6YNlPoR36P7+x1CHeWv8DGFRVt7LSyX6MaNTROlRjpC4Ktft+JsHdyliI+FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QSA3J8fB; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJ7oGRTY"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-78e4056623fso4026506d6.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Oct 2025 20:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760584336; x=1761189136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KEQXE06caMZeo5HYZoW0oDsuziZc3EuBAg1B8KF+blo=;
-        b=cJ7oGRTYNYGo5taJhWyHlc73SKlNUgzpt5NlWHKnmoR/5tTokmNOxmo0uLhJUqp2Yi
-         kOpH35ZVswLp3UfmTknl1SF38mDMfZ39a+5mBRNzhBmAViNW22ZNFYZ3TQVr8LtHRQX3
-         pIsetqOXKwV91WMYzrgPrY4IwDtDydPnt6lRq+FIjynyFoePHYzAKA85WMzETo6Uttqw
-         0jKpcSnyLPNwCY0vT5iILtjSr/kR3eILUSGF/Xztm7Yzxl4uA07vlsFiKvpVdE54VlY9
-         AsaiJUX7RoUhQehpv2BZJgEhuxMfIQrUzvjzpxj0gogVPL/8yBKN9Bq2+LauRl52dY9h
-         qUzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760584336; x=1761189136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KEQXE06caMZeo5HYZoW0oDsuziZc3EuBAg1B8KF+blo=;
-        b=KnTtOus1Rkb9DQQL0aAzQ+vWdLYyKtDBDhJOEnjQhCjrPXGLY7LyFpvnTGr2OP7Iwt
-         Qgxbg0UHWauL5ju1GFHDm4/ZkLrf07/bQu5Kr6RD2lJ7I1l7iqDTAYC0iudNmGrSEjOh
-         zsZ3lkRbZSOk//ueFYC7pwTQQuf0HS5j8MjD5tIPS0dV0i1vw1jgHUrNLTJaDgaWVW9M
-         jypD877ocCDm/IZMhZhvg0m4D0m7tTcDhrexaq2mJ8A11v5GIIYFm2qf4uIGgskX0GKK
-         eTJZpjorLqpjNoWuckPLWQ6dZtU+D1AWcF9ICPZIuMPM1Jma8BASs7pVjJD4c/gP4VhP
-         U6/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXyN0094aCNUBhsRWOmPmFaPwOW9vvsxRapHx08BEMUHsdd7YKPIAFVX784ho9sng8O43+jr9HztfqGt6GklB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFnTRntmz1GfCYITI7GxwpWvzpKCI6HPj8ePkUVVrVk5bQpti4
-	NjdFj4rNFYmllzJWsNsIyIt3O4Lbor9u/dwqgKXVbCl/eTx+RJGmTeaZWWX0hS/yJWKYRMuWKOi
-	o5JPlYGHuzVYbJd66abK2HkZYcxx+p+s=
-X-Gm-Gg: ASbGncvRIR9tlSzO7DInfDsoUl7j33IWhcwH/kCeju4xW1aHFQ6ZIZHMnrmmy4w4Iiq
-	eNCc8SN6ZHIAe7Au6dDfIXXSpudle43RH4ULuoXOz6MC7x29LGtIwfB3BRkAS8pqWm1N9OllXcj
-	VIZqvg60JmteJPeG2nHhbHEy7XPLhpF8VBJ7nqCLn8QkFeqElbZVYFafyoqFMyo4qDCLo5qG7qd
-	nIwFUREuXOlWjDfErsq5fmp25eNdZCqMN3vXUXd+CAL6ZvE4suwA/xfHNvwmd7O1Cz2Gh/5W561
-	xD3JqN03zQJt6oJlQz3Kkavfl6qlO43/Lwh5uWBQWBOiYEULCXU07M5gfBFuUcTDePCUBMyvATL
-	qkldvg8EAmsy3yhSPaGbTkvSB8BnhppK2ovwa+VEgkP/vdj7fygGUL/ghAUs+nn1EoDiOMmCVj4
-	RvtC0keLmMgg==
-X-Google-Smtp-Source: AGHT+IGAmXUQRmwsgVDvQbYvXojEsX7CJBtDld+dU6Sg9MvBtBJilFj4HbmhNlkERWRbsuIYDiCI/jX/pZLNTYS90MU=
-X-Received: by 2002:ad4:5f89:0:b0:87c:b8f:f4f7 with SMTP id
- 6a1803df08f44-87c0b8ff74amr32437746d6.29.1760584335852; Wed, 15 Oct 2025
- 20:12:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QSA3J8fB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760599324; x=1761204124; i=markus.elfring@web.de;
+	bh=ClF/lH/L2hUjaH0udbSfDPG5j9SaktaTFd5cW5HzLTg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=QSA3J8fBq4SRPRa9EiMGeavZFncmqvWw6uIQr+J7lPEaqD+e0rG6ahOkBIXRIZLu
+	 IXRzxA6DQJNzX9gxptTEkcDjaqGcu/VYT9evvrg8gNHxSNrVBMlxKj/j5BziXK+fg
+	 2HWwGXLzrwynQrsDdCwIcCwQLzNvJq0N8/96r/INbY5WsLcq6i93bPkWaap6gP34g
+	 zVXZQbdxAdEXYPiO3ZBabjFzXtSD+g6X9hb4/Yb0eEKABrKWF0z/tfNx7qtQR9zI6
+	 3K8iB9WXIDH9wvkPmbK99k7UKcsmh2l2XBoqA4ws6sbhZn/JZW7+hT2FdvSd6n1+b
+	 fRhsV3uhzwh+ybTLGQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.241]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1uSqIE2VoU-00e1uU; Thu, 16
+ Oct 2025 09:22:04 +0200
+Message-ID: <1f9e946d-91e3-4f9a-b26c-e69537cbbd4c@web.de>
+Date: Thu, 16 Oct 2025 09:21:46 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aPBeBxTQLeyFl4mx@chcpu18>
-In-Reply-To: <aPBeBxTQLeyFl4mx@chcpu18>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 15 Oct 2025 22:12:03 -0500
-X-Gm-Features: AS18NWAEyWCeaVPeoVcoBEQpSJ9u0N2hnfc_WhSXLkxKfJqq1sbEBlBaJtOWFjY
-Message-ID: <CAH2r5mtNVsFcMsW+=jdw4=hc4rssca-0fWMg4uhipBbuHnQ9GQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] smb: client: Fix refcount leak for cifs_sb_tlink
-To: Shuhao Fu <sfual@cse.ust.hk>
-Cc: Steve French <sfrench@samba.org>, Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, Bharath SM <bharathsm@microsoft.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Shuhao Fu <sfual@cse.ust.hk>, Steve French <sfrench@samba.org>,
+ Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org
+Cc: Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <aPBeBxTQLeyFl4mx@chcpu18>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aPBeBxTQLeyFl4mx@chcpu18>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tmHGRQKLg/BK76yM/sIHBW5q2wuNFogaJ1LFLdCIQFchbHcz+7N
+ O5l+hWkWa/rt668xAJKX0haG9FQ7StluVA/titfss0j8LA5JVElGjCgZ9b/GvXf2r9W6nSV
+ zanaV0I8NTImmtS9koRHCFdxokaHwvUX83sfq1HQqnhni1sx69fBFO7KR31rnjbmSCAbQhi
+ zo+Z0vduXBb3hfWxCXgVA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nDdqvVZpSZU=;8Ua1uscXuUJEmHyHcaN6R46gWmA
+ 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
+ DWcYQ0kv8fdajPUDNoPDVo2LFc/iTGTe5e0=
 
-updated the patch in cifs-2.6.git for-next
-
-On Wed, Oct 15, 2025 at 9:53=E2=80=AFPM Shuhao Fu <sfual@cse.ust.hk> wrote:
->
 > Fix three refcount inconsistency issues related to `cifs_sb_tlink`.
->
-> Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be
+
+I find such an introduction sentence not so relevant here.
+
+
+> Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be=
+=20
 > called after successful calls to `cifs_sb_tlink()`. Three calls fail to
 > update refcount accordingly, leading to possible resource leaks.
->
-> Fixes: 8ceb98437946 ("CIFS: Move rename to ops struct")
-> Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getac=
-l functions")
-> Fixes: 366ed846df60 ("cifs: Use smb 2 - 3 and cifsacl mount options setac=
-l function")
-> Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
-> ---
-> Change in v2:
-> 1. improved patch wording
-> 2. nicer goto label naming
->
-> Link to v1: https://lore.kernel.org/linux-cifs/aOzRF9JB9VkBKapw@osx.local=
-/
-> ---
->  fs/smb/client/inode.c   | 6 ++++--
->  fs/smb/client/smb2ops.c | 8 ++++----
->  2 files changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index 239dd84a3..098a79b7a 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -2431,8 +2431,10 @@ cifs_do_rename(const unsigned int xid, struct dent=
-ry *from_dentry,
->         tcon =3D tlink_tcon(tlink);
->         server =3D tcon->ses->server;
->
-> -       if (!server->ops->rename)
-> -               return -ENOSYS;
-> +       if (!server->ops->rename) {
-> +               rc =3D -ENOSYS;
-> +               goto do_rename_exit;
-> +       }
->
->         /* try path-based rename first */
->         rc =3D server->ops->rename(xid, tcon, from_dentry,
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 7c392cf59..00b3f769e 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -3212,8 +3212,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
->         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
->         if (!utf16_path) {
->                 rc =3D -ENOMEM;
-> -               free_xid(xid);
-> -               return ERR_PTR(rc);
-> +               goto put_tlink;
->         }
->
->         oparms =3D (struct cifs_open_parms) {
-> @@ -3245,6 +3244,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
->                 SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fi=
-d);
->         }
->
-> +put_tlink:
->         cifs_put_tlink(tlink);
->         free_xid(xid);
->
-> @@ -3285,8 +3285,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
->         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
->         if (!utf16_path) {
->                 rc =3D -ENOMEM;
-> -               free_xid(xid);
-> -               return rc;
-> +               goto put_tlink;
->         }
->
->         oparms =3D (struct cifs_open_parms) {
-> @@ -3307,6 +3306,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
->                 SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fi=
-d);
->         }
->
-> +put_tlink:
->         cifs_put_tlink(tlink);
->         free_xid(xid);
->         return rc;
-> --
-> 2.39.5 (Apple Git-154)
->
->
+
+* Can it be preferred to refer to the term =E2=80=9Creference count=E2=80=
+=9D?
+
+* Would you find a description of corresponding case distinctions more hel=
+pful?
+
+* May resource leaks be indicated also in the summary phrase?
+
+* Would it be helpful to append parentheses to function names at more plac=
+es?
+
+* Is there a need to mention change steps more individually?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.17#n94
+
+* Will development interests grow for the application of scope-based resou=
+rce management?
 
 
---=20
-Thanks,
-
-Steve
+Regards,
+Markus
