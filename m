@@ -1,108 +1,108 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974CF189F20
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Oct 2025 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D708B28312E;
+	Fri, 17 Oct 2025 16:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717082; cv=none; b=C8sgNyH4ZobXYCJDOhffBKn0HVnh5K2/EKgtmPTDqcZTGNPn4q3k+buib8s9N9CfPDzK0umzm2mQWgNKASDaOnIKTkFtJ/oq5kzX7RTPX31xB4JSm2pzjFUMb1Kx4fPP+1yfMHb0ueabvX82ks2sv/7anMNHp1HkPZj2ZD21E6Q=
+	t=1760717772; cv=none; b=p9nfryvGvkTLkIU3CZDd08MLYf+GDbfmnTJWYfRVvw+XxCUEg40vs5ZCW71EVnVZCH/EFcpEn4vMu8bv5ZWJHBUUUHyECTA+wQbWZEU0IyWEc+Dyc/UdgwkWjWNEprmpijUdiy/HmbqPG+Jc0MBGCA2JoVMUYCjfuHNs18vHNqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717082; c=relaxed/simple;
-	bh=21MzbEOZZxXcBp8tJHgBWsUDFReLMA5Fun7i72mkmC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ac8dQSCetKydR67f6Jn1r0c12Ce15ql7ICMBEuNCEznE0Jgv6fPzYwXy4w6hkiHrEnSoA2MawOHVsf09dleY5thrlddry3KqomloaTr0OiCYSJQ3UoEWr5vM5YjDctAYR9efrLNWXkcNyQtuQfMrz74TrOS5OXBDommANEW5llU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D7zQ7cSB; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760717772; c=relaxed/simple;
+	bh=HAk5XarQfseeqeP7zVYEUF8QINQ4zYPsmcKTZ1AN/VI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1ARuL9GSRVlga2S1PVwGmIBBiws/vc7j3ZDRhWWTCixieAlhbR+j14yUEXmhAITYb8glp+gMw/mieNHi3X6BX3rPQAVrgcDW2d8UI9a4OhDJubeEesC0mygscCElilvVS9FzDchXNMaBNj6zgSdUVXekbBJCGa3I1o8oSpAtkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JhRrWIif; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D7zQ7cSB"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso1461952f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Oct 2025 09:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760717079; x=1761321879; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=950Q3osvXfNrhNZDR0R7N+wo2IA1yL5cHorDQTcIxKM=;
-        b=D7zQ7cSB9vFPaq/b/m0EfXvPBlSWRXcAguuwC3wCW4e3eDIEjtJSSIT/JesCfDWvLE
-         0y3LE96XMeyHVZevh08q03BV4CVKHvitEK8Y9hYA1JeXV86n/k2ZjMXNvlwAZWJqvoEN
-         P8rLTY1T4EK3wHVoMPirhx4G0kZvV+5yXbRgWziGDKmo+oRiXOroyftaEsxoYlD4W0kM
-         0HsnjZ3dc16xWTtKwSbhEQgILlh4HBYJ6csRoO3WUoyNe3r1EJPLaXMcZu7DeziR2nWG
-         g1BuF5Z0LxKTWSujw1yAc9qxSZ2lBHDoYDTdvamiPWh8zsFzcs/ICeiKrkW1quBnRwFG
-         jKuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760717079; x=1761321879;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=950Q3osvXfNrhNZDR0R7N+wo2IA1yL5cHorDQTcIxKM=;
-        b=UF4WXHt4xB/RIXqzBw7/HiRlKScOy4f/cyYe63IjHHaqAKJLBzwBYMx5R3TX5VIxb3
-         Gh2xtnpS66B8TSyNtTi/9GaqU9PBc2WfhhkqTnQZVCyX75YRkNcYUhDReEo9lRhnaUzs
-         /ESPIYuaRXJ9b4XJkgVkHJerqmHfvHzku35ATpyaEXE8fukQvUykSr4voBiz0W0L28uf
-         cGP1F1YPj+7mLLqXrudgvG2lohYsPb+8yQwOYEx1qoIJlTbYb7HxVbF1Yd2uWxjSsBge
-         5MYAyHuSvdEp+Gk9R3V8II3I3flEesWC9KC0UKxJeOrWY/cFN0447CypvqZRZ4egOZ1A
-         M6UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2IdVG1euHHdIbHPj8hU2H+hZpVwo1fj+ZO+Mf42FaTE7CEjoCPsTGaIxOj9fWj6A8/Ec3w9gc0ZWSL2gB38w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqQEpGaeaMiv2QyXU6YPnpkoGKzMTCkZJub7R39vovQk4qr9uz
-	LQpTEGiCl2zOCLYf6HgbB3PKvYW2CfwduwXkmc/if9PmG1VXVH5YBOYiEyc8yuJt4k4=
-X-Gm-Gg: ASbGncsjxk/nuTUHBr21Ad9qAyWUzlkJ7pfZad/14/QOj88zr+xvRcaYOf7hHiAlYAn
-	usutgbP7bbLg0l1lLzkT/qrV6mQfGtoZPS/RTjUSaRthRLV1M+lvq52EUlPCrwWHFe+UgEvRu7Z
-	6A8jes8kQWZHZWmz7mZoATLYL1Q0HjczuPHOkHKZtZOxaWAL30oHYAc279n5KesZQL0FukKqMCr
-	rMdrUDVj/Y+DwFen/vK5I6PIVb0ccgBfHonedNfEwmZWVksFOj1Au4V5S67AL5Kr1KjUwuHnMEI
-	Yz7Wu69LXE75o6UGyij2xIKN+ucLzy+BWmQ0xP5eL2nYsdasyCpUA+I4nwIJjZGhPdtbyWvx1g8
-	4JGmC3oUX2FMuhDrKrFaM0sA6TYX3lHpwYBTaoIHMsjo/GeWOGy6UQzWsYBrvTNnFSCIMfYwxdW
-	y1cHus+w==
-X-Google-Smtp-Source: AGHT+IEqaf8aEdQodsl+JMqmg15To8fNumQ1pcFMtGOlWgs5DrBRbhx4c+4oaiAKATvKgQ4yjwGtCA==
-X-Received: by 2002:a05:6000:26c5:b0:426:d72e:9924 with SMTP id ffacd0b85a97d-42704dd6cf9mr3110630f8f.51.1760717078511;
-        Fri, 17 Oct 2025 09:04:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427ea5a1056sm544f8f.2.2025.10.17.09.04.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:04:38 -0700 (PDT)
-Date: Fri, 17 Oct 2025 19:04:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-Cc: =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-	Mark Brown <broonie@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] spi: aspeed: Fix an IS_ERR() vs NULL bug in probe()
-Message-ID: <aPJpEnfK31pHz8_w@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JhRrWIif"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760717771; x=1792253771;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=HAk5XarQfseeqeP7zVYEUF8QINQ4zYPsmcKTZ1AN/VI=;
+  b=JhRrWIif2EBbxV2f13ZNtXvlOttnJVHiiUvAe510mBWwvMmSzFlkYM+Z
+   E0Z98N6xNKZRMR3dj1Gky1Sw2EZ7WiUy+tMyKYqJyGcrniYejW7o2S6Sk
+   6OvNi4PsXOl57+bZGA+KF0Zr8j70yL4ZM/s1wXF1nYDTFWztv+xCoW9bJ
+   3Bb7yNxj7rRFcJ/jXxkwdA7HA1MOARnCyMVP1ou+xpdIepD5xOw9L6Nng
+   KEYYQQvF3hIHSHZuL8L2QUqH3KX7O6pkK+SpzAiYqq5hGYO9PRC0JRJ0O
+   HkvBD+DtpkC/tbdV44kxfgcvmO3JuMCMFe41HSlvKSfuefoICJd3G7kNO
+   w==;
+X-CSE-ConnectionGUID: acaoi076QSmzrV1vHFE54A==
+X-CSE-MsgGUID: t5IAMHs0Rm6fM7n3ajvYsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="62978112"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="62978112"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:15:53 -0700
+X-CSE-ConnectionGUID: zrBRjgAaQuOVNryk6/wZVA==
+X-CSE-MsgGUID: XToEUZ7rRImx/pOoImC1/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="182712153"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.129])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:15:50 -0700
+Date: Fri, 17 Oct 2025 19:15:47 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/sysfb: Fix a NULL vs IS_ERR() bug
+Message-ID: <aPJrs7_u8KcalNsC@intel.com>
+References: <aPJo1W5Dl4rmGX_P@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPJo1W5Dl4rmGX_P@stanley.mountain>
+X-Patchwork-Hint: comment
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The platform_get_resource() function doesn't return error pointers, it
-returns NULL on error.  Update the error checking to match.
+On Fri, Oct 17, 2025 at 07:03:33PM +0300, Dan Carpenter wrote:
+> The drm_atomic_get_crtc_state() function never returns NULL, it returns
+> error pointers.  Update the error checking to match.
+> 
+> Fixes: cb71de092553 ("drm/sysfb: Lookup blit function during atomic check")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/sysfb/drm_sysfb_modeset.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
+> index 8517c490e815..d2c4d8f3d4d0 100644
+> --- a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
+> +++ b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
+> @@ -259,7 +259,7 @@ int drm_sysfb_plane_helper_begin_fb_access(struct drm_plane *plane,
+>  	ret = -EINVAL;
+>  
+>  	crtc_state = drm_atomic_get_crtc_state(plane_state->state, plane_state->crtc);
 
-Fixes: 64d87ccfae33 ("spi: aspeed: Only map necessary address window region")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/spi/spi-aspeed-smc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Looking at where this gets called, that should be
+drm_atomic_get_new_crtc_state(). Either that or the
+code is more seriously borked.
 
-diff --git a/drivers/spi/spi-aspeed-smc.c b/drivers/spi/spi-aspeed-smc.c
-index 0c3de371fd39..822df89cb787 100644
---- a/drivers/spi/spi-aspeed-smc.c
-+++ b/drivers/spi/spi-aspeed-smc.c
-@@ -865,9 +865,9 @@ static int aspeed_spi_probe(struct platform_device *pdev)
- 		return PTR_ERR(aspi->regs);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (IS_ERR(res)) {
-+	if (!res) {
- 		dev_err(dev, "missing AHB memory\n");
--		return PTR_ERR(res);
-+		return -EINVAL;
- 	}
- 
- 	aspi->ahb_window_size = resource_size(res);
+I'll send out a patch that warns about invalid use of 
+*_get_state()...
+
+> -	if (drm_WARN_ON_ONCE(dev, !crtc_state))
+> +	if (drm_WARN_ON_ONCE(dev, IS_ERR(crtc_state)))
+>  		goto err_drm_gem_end_shadow_fb_access;
+>  	sysfb_crtc_state = to_drm_sysfb_crtc_state(crtc_state);
+>  
+> -- 
+> 2.51.0
+
 -- 
-2.51.0
-
+Ville Syrjälä
+Intel
