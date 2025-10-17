@@ -1,117 +1,86 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D31F2C21D4
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Oct 2025 16:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE4C2FFDC8;
+	Fri, 17 Oct 2025 18:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760719385; cv=none; b=az32tokLeG5y1CNaK8Yb7X96nUJpbSYYTp8NmvQh4ydN8S3J+Qg9N1D5UFKe+JVApwcKGocuakGHMqbOUve8Sw7msksDXXV23NUGRH7jcILzEAvItkSxWEnzjF4OQWEuqqPFpDpsM3ZEyZHAzv81Ii0qcpzX5J8KNXWEsl8GO8g=
+	t=1760725693; cv=none; b=d9NU3O2Q3hzht78KV/3ZffVALSU/SawkKwFUugHTgjDLE6dFpwgxr+HZpi8b1q3HIYRTAH+RcPDlL676+/ARjTiy3oE7UTOErAzSDL4F2keUvoE0CMWEAKhkHWjAoCH92QcZNOgLvJBvsR96VbiKm/2bI71B2axabTHaHe7vZOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760719385; c=relaxed/simple;
-	bh=Q3sAr5IgC4u/2uxZQzODES4J6Xqsz5aUfWZySpoCpzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZom+bhAjRMV61r7Z0Vddh7UHpsjAela1GJmGSl5RGsR+HNNtwRzQcAkN+vBykbpoTF62ECE2se2IMlLYcFeWH4v0/EyAzxNq3KrH1zVc/iRCAaN86RWdB6lF69n2UGnI7Djyy/ni7qAgvkDK2dRzPALpeHczPiE1KuYx3LXJI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eYM79maS; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760725693; c=relaxed/simple;
+	bh=5cLbT2X/tFBAuRxHE52sCqVi7oz0uWxIVRufr/jQJYk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oBzVpuOEXIAO9Y+kcFo3GUJAmoAoqMMeVPw8jpPu9ENe3IrQP2e8Hcg6JnDLFtFSDiibeGpczLgfrvGsz3mXV2kTzmc3rVLXHXJ5Z9E0WCyaNGrGWi4fNgjc4pTsSEsh5dMYvkMuIG+BloyOmZUU1yITeX3x7/GTC/xLJkLuGyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chBEFcY5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYM79maS"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso957581f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Oct 2025 09:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760719382; x=1761324182; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=G6gCBpn1xaSdsDN3kuu/6RChT6cW/pr078XU7axphUc=;
-        b=eYM79maSRCBjK3X69Aak89HAGLyGmO5tFGeRxbudnCUoqiHLn47/ZgoJJz/sxzByU0
-         cyF3ahES36u7PjReT/xnXVNrlyhxv66bhAHl8U0TsV9hl1xz1DOQIrEiUVM69SzlWV5o
-         psV0cIdUxSbBkXS9TLBTJdmUlGHq15XYzG2/9nzuCGeKaIcV7ZiaqkNWtOr9GzCwbhu0
-         sEj5zJhEq+/StU6RrMIBVOUi8A0C8QkuZClbZN2cidG0+IAEJaof/N9bbIOekXmVJv0E
-         oAe+E7AO8vKi+xu0+kP9/+mZAgpbFAzocnC8XLigY2apL7RwlZECy0L/Il6MsegCRPbQ
-         gHQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760719382; x=1761324182;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6gCBpn1xaSdsDN3kuu/6RChT6cW/pr078XU7axphUc=;
-        b=DppXqbQFhT5kZNPefxo/Q/7lSrNIFQ0K3jGqtxE/hIbvfp1vu0ztLl9ySGgRS6V5/A
-         Rg5OW3ls66Pnj4RM9TiPdFf2wt1kqcAlVHpA+4J416vUxZ4ywDV5xmXLRHro/stql/S3
-         G32NlhcBaZiLU9Q9A+RBR9xjyvdUxa5Uj5uA6uHpd4u/LKt84V6fr/bg01xyN7XbQ5OI
-         asI9VRKiTtaw11DFBgC4SOISFSKRsRFESSx6mVDOSTS2k2GnMni9jz2CgYA82+SWYFLP
-         hE0q85tD1iBvUQ7LqcB7RVAdxZdz2zJNc9yXaeQtE5VV54AMpB69XaOBDfQ+saAt3Xw1
-         u3Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUb02hFXBw/AyHPwkB+RAFjl3Fv7rAZofRNxU5zK4WujZkBIKSkVxlURwkd+wnDVCpR1jNsRahoQHFfHms1p/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzT0XskAxlY5n3zGxHMMK0btZNRHtNLiXZB/43HdCc0Z2E6xjg
-	5Nk291dEe7tH5XGJNkFC2K5nIjh37D34W40C6Sk2vaIVDjVr3qWESldNS0GEoP/rP+w=
-X-Gm-Gg: ASbGncvSfA9drmdeNLqUy5kPEuBRnFpJk+BH91AxEdGWTf2oPqvhAfvodzirY6Tk7Fx
-	TbzOf1eL7+UNSqonc4TWKB3M2QxUD2PPZZEQNT040uBRGM5CylFYyhmwjqfaHwGlkKOLFGam8lO
-	GEYYp/Mv+fnkq/AY1LY+gtA536MRtd1hn1wAptsNkaae1t5wUTub5KY2Qj6c+YvMlA76P388HLs
-	YbkTmWYwlvuggOm5oELGErjyum2z7b+nbf0wv9AmSBmGvX47yYAPvMsOqqGIjDFauhtvQxtLOZ2
-	ajkyU2lfjMdbaRmSnJNNnXn0hKdIxaRV2YifcuAjyoblpZpaeXvimtTEUQnUPZkBP27PK7RTW7w
-	Nvjv2ygYs0Zs93tz6p5v/w8Q8WxuoT6Zg4o7u2frRDXmi64IAl9zmGljsApHYUaLHQriRGnalfN
-	B5nRoV3UD7ECCdf3rp
-X-Google-Smtp-Source: AGHT+IGMBA0qJ4gxpjjM3xG9IuatY3oWeNvAk3ViyCHo+q3HrYjHTp52+8ZLn0SPVSWIlQ60ex3wqw==
-X-Received: by 2002:a5d:5d08:0:b0:427:a34:648c with SMTP id ffacd0b85a97d-4270a34652cmr1088821f8f.58.1760719381734;
-        Fri, 17 Oct 2025 09:43:01 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00ce06bsm76237f8f.45.2025.10.17.09.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:43:01 -0700 (PDT)
-Date: Fri, 17 Oct 2025 19:42:56 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/sysfb: Fix a NULL vs IS_ERR() bug
-Message-ID: <aPJyEMWmWpWkcQvE@stanley.mountain>
-References: <aPJo1W5Dl4rmGX_P@stanley.mountain>
- <aPJrs7_u8KcalNsC@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chBEFcY5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF90C4CEE7;
+	Fri, 17 Oct 2025 18:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760725692;
+	bh=5cLbT2X/tFBAuRxHE52sCqVi7oz0uWxIVRufr/jQJYk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=chBEFcY5D6V/OVnkuwloQIaEU+vfkYkFz5RxJnY+9NXjZQ7BbJosIJbgJXDlr1bf+
+	 w9+tNKVkdDG2Hw4mDY8FrQqIWm+MeuG13+meKG7tvCO7jCE47Vtny1281/zWVln8qh
+	 JlxjbWX+nBAEe3wlIWdbJb/w+UXmfjVOXsS4anWyA2hr0EXJqPQhLmt8ZW7sx3A/xQ
+	 gmQ1sZdw+PTM/m6osVZmGM0EWMeXwmQDGklvG89n+1xPNZdoRUxLq8YjzXCCCdiHX3
+	 fKZukgNFYGNI45Qe6nXIq9hndvGxEJ6hM03KpMNwysxVPRMMXxld2w0q1ZrqjdNnbE
+	 652G/X/933IHw==
+From: Mark Brown <broonie@kernel.org>
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+ linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aPJpEnfK31pHz8_w@stanley.mountain>
+References: <aPJpEnfK31pHz8_w@stanley.mountain>
+Subject: Re: [PATCH next] spi: aspeed: Fix an IS_ERR() vs NULL bug in
+ probe()
+Message-Id: <176072569036.192503.11424414988999143165.b4-ty@kernel.org>
+Date: Fri, 17 Oct 2025 19:28:10 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPJrs7_u8KcalNsC@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
-On Fri, Oct 17, 2025 at 07:15:47PM +0300, Ville Syrjälä wrote:
-> On Fri, Oct 17, 2025 at 07:03:33PM +0300, Dan Carpenter wrote:
-> > The drm_atomic_get_crtc_state() function never returns NULL, it returns
-> > error pointers.  Update the error checking to match.
-> > 
-> > Fixes: cb71de092553 ("drm/sysfb: Lookup blit function during atomic check")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/gpu/drm/sysfb/drm_sysfb_modeset.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> > index 8517c490e815..d2c4d8f3d4d0 100644
-> > --- a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> > +++ b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> > @@ -259,7 +259,7 @@ int drm_sysfb_plane_helper_begin_fb_access(struct drm_plane *plane,
-> >  	ret = -EINVAL;
-> >  
-> >  	crtc_state = drm_atomic_get_crtc_state(plane_state->state, plane_state->crtc);
+On Fri, 17 Oct 2025 19:04:34 +0300, Dan Carpenter wrote:
+> The platform_get_resource() function doesn't return error pointers, it
+> returns NULL on error.  Update the error checking to match.
 > 
-> Looking at where this gets called, that should be
-> drm_atomic_get_new_crtc_state(). Either that or the
-> code is more seriously borked.
 > 
 
-I can't comment on that.  Let's drop this patch and instead (probably
-I guess?) change it to drm_atomic_get_new_crtc_state().
+Applied to
 
-regards,
-dan carpenter
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: aspeed: Fix an IS_ERR() vs NULL bug in probe()
+      commit: 0cc08c8130ac8f74419f99fe707dc193b7f79d86
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
