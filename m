@@ -1,50 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB63146A66
-	for <kernel-janitors@vger.kernel.org>; Sun, 19 Oct 2025 08:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAAA146A66;
+	Sun, 19 Oct 2025 08:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760861979; cv=none; b=F2LL7xgyhQd2TuJLWq8rMAlqJzASnjorWO6CoKFrOo0UP7/HjZ8ZXWLKDBSdAqi31Ifi8GGvoYttuc5zBIE6mHnV+Br2VlFuMS86ii1DghIpsYGH1C1y5AR9pjW5J2oKThBU3UDqFDRmQkGJ0b1XRIrIoaY2ejL2G6m4zOAdmCg=
+	t=1760862778; cv=none; b=WPOpk5pPoaRWNs3v/X2gz0GcIMPbRSMPBzAQmrmG0zHmug0AoD0CIopw+GbzMBD8A7TPKtFbjtIiH54xJsJZK3UueduDkqp/94p56Hkxbvos2Icb3SYOZYJK8HVzpCGh1apaR6MSeWUMgxn7cgCDj6uvsVknFu/1H+nrvlQDLO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760861979; c=relaxed/simple;
-	bh=lT4aDQLpPjd5u1zcxUN5qwsRj7lOl9sAvVUoAZ1cm6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=REpH0q+ePQE6TztSU/m4sv6A2sLX+WlRuv1bgIb7BJi1gJTPZ2KDAwOTpkSSVXFv0EVmLUtAI8ImG4TQUeKEtKRdT5JlRHIa1y5MimjWBRxvMk8kROPkmm49p4sj1Eub0UST73vTi+3g08vbPIuMt88XbQamI3TcZYwz6NaGsXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BXIvwF2E; arc=none smtp.client-ip=80.12.242.18
+	s=arc-20240116; t=1760862778; c=relaxed/simple;
+	bh=WpX+UrusmdOFu71UogvaT2bAJfzn0AT+XeC5c/lBXkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tO7McOeoaTkTtXYUbgQ0oN3ZkW9kedla4vgsF4YcFwRpMw9YB/eMSvMMrWHPRTUTeLWUpVDDO0zQOfS7F+kIoNNjsDyg6kk16LSBhr0CtKcl3eKVUjdW7oELo83ySujvspfLyQ4daIzazWi9OoyVl5e35gG1t2YXOnOOXXhNG7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XzU8En8/; arc=none smtp.client-ip=80.12.242.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BXIvwF2E"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XzU8En8/"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id AOcTvac6JaVsXAOcTvxxSU; Sun, 19 Oct 2025 10:18:27 +0200
+	id AOpLvqnmVle4HAOpLvakGs; Sun, 19 Oct 2025 10:31:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1760861907;
-	bh=4yZSqEWYj35UkXAaMOoJP24t/2SmsnoWwfpgr7ACf48=;
+	s=t20230301; t=1760862704;
+	bh=DLuOymrC3C8sEFjkTVXUx2j/qItjdLfaXHfU/fT442Y=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BXIvwF2EcJz0qdS+ASu9nQ7mJS4tyxNw0GB2tjeTBf7wWslbvRY2A4K3oSlHX5BVf
-	 U2QyU7WSwWTQ9tUbacBg8ooPik06I32RGgN1z2/4SOqFmcKv35WMe1lB0acoamy0BV
-	 3myHBFsKUgaM3JFYh000ftSmXSVdVuJyZUr9ijuZlUUrK6uTh6LucTAuSmBLRXy9Dr
-	 WKdQ1ekdFoK0K04zWbXIyQ+3jpEcN/H1CDvrepaRqpmsZtlvwYDfXaClNxRxHsnbXN
-	 EaoP1vTnybn4n9gfC1jYBvlic4yQT4HeQ4/Np8LGBOOeZ0Ffmvf6LI8isKU18bO52j
-	 6hm3guA1BjL+w==
+	b=XzU8En8/8KAteaF2LBJc8Hg8UDIWqtsn8eDIE16UBwoKPK5DzOl2DxOtWPWo50lA2
+	 Vd4/39+Yu5zGJFvNIHmFXGtaTun569JACpt2WGLyVLbn+FK6tvXUdV1xzlVPTqYFGY
+	 keDFlJ58GtvC2Xpcbm1/4g2h+xrQbb5J/QJ0o4+a6g8N6/N+XvFG2WbHZSfOgf8Rf3
+	 B1lN2nJbeus5pg2RURJ8jxuAoptlW3Gd3N4r5fDS1QkIKaTOPWNqsZX95qo1RDtt5h
+	 JrWPG3jciafm3Dyz490TzK7q0wbpnFJG84loAg5hMoxHQhEt0ZqbqiQFU90MVVZI7I
+	 SyM8t4uaIFhPA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 19 Oct 2025 10:18:27 +0200
+X-ME-Date: Sun, 19 Oct 2025 10:31:44 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] x86/ioapic: Slightly simplify mp_irqdomain_alloc()
-Date: Sun, 19 Oct 2025 10:18:20 +0200
-Message-ID: <cb3a4968538637aac3a5ae4f5ecc4f5eb43376ea.1760861877.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pwm@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: mvebu: Slightly optimize mvebu_gpio_irq_handler()
+Date: Sun, 19 Oct 2025 10:31:38 +0200
+Message-ID: <7190f5def0489ed3f40435449c86cd7c710e6dd4.1760862679.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,41 +53,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The return value of irq_find_mapping() is only tested, not used for
-anything else.
-So, this call can but replaced by a slightly simpler irq_resolve_mapping().
+In the main loop of mvebu_gpio_irq_handler() some calls to
+irq_find_mapping() can be saved.
+
+There is no point to find an irq number before checking if this something
+has to be done.
+By testing first, some calls can be saved.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-For the records and if interested with number, on x86_64, built with
-allmodconfig, this also saves some byte-codes.
-
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  82142	  38633	  18048	 138823	  21e47	arch/x86/kernel/apic/io_apic.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  81932	  38633	  18048	 138613	  21d75	arch/x86/kernel/apic/io_apic.o
+Compile tested only.
 ---
- arch/x86/kernel/apic/io_apic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-mvebu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 5ba2feb2c04c..1e0442e867b1 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -2864,7 +2864,7 @@ int mp_irqdomain_alloc(struct irq_domain *domain, unsigned int virq,
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index ac799fced950..22c36b79e249 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -573,11 +573,10 @@ static void mvebu_gpio_irq_handler(struct irq_desc *desc)
+ 	for (i = 0; i < mvchip->chip.ngpio; i++) {
+ 		int irq;
  
- 	ioapic = mp_irqdomain_ioapic_idx(domain);
- 	pin = info->ioapic.pin;
--	if (irq_find_mapping(domain, (irq_hw_number_t)pin) > 0)
-+	if (irq_resolve_mapping(domain, (irq_hw_number_t)pin))
- 		return -EEXIST;
+-		irq = irq_find_mapping(mvchip->domain, i);
+-
+ 		if (!(cause & BIT(i)))
+ 			continue;
  
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
++		irq = irq_find_mapping(mvchip->domain, i);
+ 		type = irq_get_trigger_type(irq);
+ 		if ((type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH) {
+ 			/* Swap polarity (race with GPIO line) */
 -- 
 2.51.0
 
