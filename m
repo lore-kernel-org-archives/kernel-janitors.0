@@ -1,66 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E612BE02D;
-	Sun, 19 Oct 2025 12:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6DC2EB5C8;
+	Sun, 19 Oct 2025 14:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760875599; cv=none; b=RteeuxdRsFnIfIzwbOKHidd77jXVHYC2AmGsaIbN9S2/hz29V7ws+lLkR5nKjwcMwkhFOM4Zad1rkc2kM/7a4hKD40qsK22Ln3r6Y+sL+YG385GiUzyCHGAWBeHE2JF4StXrY6rNKCuiZB8Sy/LXtKpiGQq8IW2WGGe41DXttNM=
+	t=1760885644; cv=none; b=qBzJGRGLHI32bI5jaGPBnXVxc7CmOK0qAebO4BKnvjnBIUc3PEduKQ/sdH2GPa97BjHS2p5X6kO5OqtKTnUSEJX73/9BbGpdgAIqCXWw8OZeVkI8aj8n2KRYhgXD12/u3xG6hrWVjxByFRShuXvn/f7QpAdMBy4X3NgKTGD4qGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760875599; c=relaxed/simple;
-	bh=jwTIPas7lC/lJexiriofL65Tjg4nkG6c33oxdib635g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mrSyPbBABPFuS3GgFAtITQCDikU0hAyh5XBVAAaeu2JiPKO/foGFbCPmLcslS/7qphgCv+vRWSFi9hMyRpTDszCXw5f3KRnpf9NdRQENIUsuJw2Tby/UFkvrIe8Svo7fiXkokAa1+bzkFfSzXvS5FgQesEHYABeB7NOcfypYT5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgrzxIld; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760885644; c=relaxed/simple;
+	bh=Fcy3UiOvMV1v627YIH3VVJY+mYw0xwJqHjOMyS0Hb/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cIVDL7LDot3fCojWP8XIUOVLNrqRzG+gR8uPbJxF/OP75yShXQO59pC1VdsyoTh/8HBe86JaYsz8pRqHoEv7QFgdENG1gJiMGWKeN5NZeg9hqaKX9zcc3xJtMN9T2DKhJY8Q6wYu3YqqUbIRK/LghyXrKX+oOrNYlbQgZAlbTKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UhuGRoKI; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgrzxIld"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9A0C4CEE7;
-	Sun, 19 Oct 2025 12:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760875598;
-	bh=jwTIPas7lC/lJexiriofL65Tjg4nkG6c33oxdib635g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dgrzxIldJDEKuCL8vvDMjQw9td6O8ceJbJJBRY1OuuWP4tqkIpI/HhX7TXdLOSDTE
-	 Ocvefi24xNKrlWjWdQT5MpmKe+0K/eGm/TA9q1EXbstC7SgctSSXPef1rGGSG0fUnc
-	 r+15BkRO2dvVifKiEMgQMyXEMV37KDwcg4XvSNBahBqVk7990MVsas2xGpp5jlmKpZ
-	 e5KEMRML9+hdiQ08g2PM2XtmOQIL92s1rjeBmcOejo/HkMZFU5wG7SruP09cUUy+/1
-	 v6udRpkG/QxDDRkNbKzHlrvEdQs2KYLPC0Cb7bU0h67Jzl94Ua3NZ98bgpbpZPj/Ro
-	 CfWcxvKPvHaTg==
-From: Leon Romanovsky <leon@kernel.org>
-To: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
- linux-rdma@vger.kernel.org, Colin Ian King <coking@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251014120343.2528608-1-coking@nvidia.com>
-References: <20251014120343.2528608-1-coking@nvidia.com>
-Subject: Re: [PATCH] RDMA/rxe: remove redundant assignment to variable
- page_offset
-Message-Id: <176087559546.151380.14260477175096572642.b4-ty@kernel.org>
-Date: Sun, 19 Oct 2025 08:06:35 -0400
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UhuGRoKI"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id AUebvZVGoUjXQAUebvcVLF; Sun, 19 Oct 2025 16:45:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1760885103;
+	bh=GdesLHGEaV1JBZuqmJbDS/jaBfHZjxT8ElBdzLC3Tqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=UhuGRoKIJrtlw0wUNoGko+gmYwvyO2Ue7rnSET3mQKJWF7PgHrnsQBQIm5ntnnAks
+	 Uubj6NYKVxBD8HHQvM8NEchfP4xsXSjehpzipA2S0JRY4AfXTZO6L2zTjTrQn/P6oC
+	 hWQpEJaDjzdnQ4pPZ90dzpXL79Ttiv+FA1vYtKdxnLD+whQBjsmhZ/Y2wjWc8uFphj
+	 zV/ce3i10/gDpU327tMMz9w/1m6FtQxiXTP0sdSSlqqR5RWvRCMoyNZUmVk4aeUVp/
+	 2ovcvr1cciV0tL0U4xhoqAx6+mfy6RzRH0MXo9tBYcequ07bul60gPvjXDca6K+/vI
+	 F7rB+ZwD8sIzA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 19 Oct 2025 16:45:03 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <26975dab-9631-4661-aaf4-afa213104a13@wanadoo.fr>
+Date: Sun, 19 Oct 2025 16:45:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] PCI: j721e: Propagate dev_err_probe return value
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20251014113234.44418-2-linux.amoon@gmail.com>
+ <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
+ <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
+ <cf656a57-bb2f-447e-ac6c-0ab118606dc9@web.de>
+ <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Le 19/10/2025 à 12:15, Anand Moon a écrit :
+> Hi Markus, Vignesh,
+> 
+> On Sat, 18 Oct 2025 at 16:12, Markus Elfring <Markus.Elfring@web.de> wrote:
+>>
+>>>> I propose to take another source code transformation approach better into account.
+>>>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/core.c#L5031-L5075
+>>>>
+>>>> Example:
+>>>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/pci/controller/cadence/pci-j721e.c#L444-L636
+>>>>
+>>>>          ret = dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie), "Failed to init phy\n");
+>>>>          if (ret)
+>>>>                  goto err_get_sync;
+>>>>
+>>> No, the correct code ensures that dev_err_probe() is only called when
+>>> an actual error
+>>> has occurred, providing a clear and accurate log entry. …
+>>
+>> Where do you see undesirable technical differences?
+> 
+> The primary issue I wanted to confirm was the function execution order.
+> since cdns_pcie_init_phy within dev_err_probe function
+> 
+> If other developers agree with the approach, I will modify this in a
+> separate patch
+
+This other approach is just broken.
+
+Using:
+	ret = dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie), "Failed to 
+init phy\n");
+
+1) is hard to read and understand.
+
+2) would log an error message even if 0 is returned. This is just wrong.
+
+2 good reasons not to do such things.
 
 
-On Tue, 14 Oct 2025 13:03:43 +0100, Colin Ian King wrote:
-> The variable page_offset is being assigned a value at the start of
-> a loop and being redundantly zero'd at the end of the loop, there
-> is no code that reads the zero'd value. The assignment is redundant
-> and can be removed.
+You should ignore people that are already ignored by most people on 
+these lists.
+
+CJ
+
+> 
+> As Dan Carpenter pointed out - " Wait, no, this doesn't make sense.
+> It's just assigning ret to itself."
+
+Yes, Dan is right.
+
+> 
+> This patch seems irrelevant to me as the return value gets propagated
+> to the error path.
+> Sorry for the noise. Let's drop these changes.
+> 
+> Since I don't have this hardware for testing, I will verify it on
+> another available device.
+>>
+>> Regards,
+>> Markus
+> 
+> Thanks
+> -Anand
 > 
 > 
-
-Applied, thanks!
-
-[1/1] RDMA/rxe: remove redundant assignment to variable page_offset
-      https://git.kernel.org/rdma/rdma/c/1511efaca032ed
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
 
