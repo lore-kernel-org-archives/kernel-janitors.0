@@ -1,212 +1,131 @@
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011037.outbound.protection.outlook.com [52.103.67.37])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047FE1553A3;
-	Sun, 19 Oct 2025 00:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760834217; cv=fail; b=aOrYmSj7K900IUK9MofaFZfaD+41er+8cMd/cWfZ0ZEkBu5x+r7j0WmHmzhk0YWUzLJLEcGVsD7Tk78AXKS9VQhJSgTSuEsR6KEC2GrcYB7A5vQCqT0lG95l37dKQO9UXJjNsIt0HBEl+sDUNvTc8efcrs5n83D5HMuHx70Z5os=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760834217; c=relaxed/simple;
-	bh=rOJ/pKWLjwazzNT9E6ZFYpqaXriuNBO0jqLJuDbpwdo=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NaFm0UnQDLDiCTsMVBG/4CDVJ2LUfYPnyNR07HAR7/+TJJdUGiCvz41FZV/PdoIC4faC1IsYCMiGMHR+NBgJYcCt5l1jxdcfYh9SkvLxw1eQ0+aY+ippqOsXq50kBKFTdHstfyQrQ/bheBPNMQ5i8m/ES830PJqLMRJWFTiU850=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=qiR4lFh/; arc=fail smtp.client-ip=52.103.67.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8727D147C9B
+	for <kernel-janitors@vger.kernel.org>; Sun, 19 Oct 2025 04:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760846909; cv=none; b=YkgmHKStV9aVcRRtyVP9rerYDj+oBcmZSsrqQ5GHG+Qs/1DjorZIUrxG62TJjiAMgPe7XhUiswoFEcRGaXcFv5dGmD9Q0+yZJaxKZ69oz4LzWxC9lDX/39rqXxCBS+bqmWwp8/QveJutb5x1Vwl6cm3J6TyivR5mNR09NJR6DIY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760846909; c=relaxed/simple;
+	bh=PYQScSZOYoE1QyTJBk6buoc5qNLZZCr+32xrpVAzVuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jF6cjRGc9EPXRCWsFS8/h7c3jPFqsiPkoNSxnTHZQSq0mcZgrNfxhjPPJQ4Nsq0ftiGD3E9hSGU6LQkhX29x4g5i8NWxjT0pxd/xuvsrbFacrZPfII6rA6YhuXCiVRCwWv/tXxo4aW+oWYvjDfatapYj/7DfjqpJ8fq0cCc9dgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XVWZ7fwi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="qiR4lFh/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mp3zt5b8duMHkXMvx1Ec6ScHUx22xNrVFkMznJBcpzuLN/kMo7Fkx4WKYYksktgHDXhAodtohKZlRZmE+OPSI0gfx4aagaEVVWQA3nwnn4DTRnUj9Uz+JDcqGCiIxtUzTuRRPx0yYkzHOYG10o0ZtzSoxybKbdoy8OxDGGFOtxBIjIrdxpRUjVO/8Yc/LtHa60PfZPcxLjoVInlB4lnpnHtLmHfLsXi94OznQOkGWM5/aNMMBGeXnxYaOdDtoq2xKGHyBt6ozMIIH03ZvsRVo2NsDMzluXjfB+44n90fntieM9QDiLQpqxu7LmeiUL94FsXCOABn2uykIFZ70E71Tw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jdIIto963DhZ81t6ShFpSh496z2k0QCsAsIu6a//k0g=;
- b=OBhhZRTYmpHN7yXgV7vQRgfU0zeFEs/1DmQ8UEsRqj8aD/FtwkjcocQcL/HApKOHhCjFTESA0lafrBltcWsZY5IZTliL8V62iB+M1gDWAW1yBTIMsdxCyPN2THwq3w7VCsnslA2/jQPGmeUnGg7xj1kzfWDQ1xfe2R40ZP7ziog374ffzzSysrqQBxVNke58IYRgnp9rOrN5vkJ4ugOX+jA9coRhFE+ySQcLMk3xmIuc6/Aa7kkAY/PUeHS9COZIk84NQk+NivNXDF54Y3R9xm1+odScr2Fq0kVUpTEsRFNv0xloR2QIJBEViorT6107yBudnfDT0jfhJxGMVw0GdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jdIIto963DhZ81t6ShFpSh496z2k0QCsAsIu6a//k0g=;
- b=qiR4lFh/6Oe2J+CAiO5YU7Bn/gmdLc+Tw9JphkEByca5iOy2feoHCR8vz0jKBgCytGUKYBDb1mo/zODZPaMemifTlFIdQyMHiNOtpNHuzb6pcwBtyfDQFSXE8/pJJLBMNImOMtjVs2R9pD7p3AGbrfbBWH7e+n3DMMcfbJ7hhA9jzvLKapaVrcQERWPo5f062o1392UQeVBk1W30zabv9KXBQULaHJa6woHnLr4f3tO41nNIQq0cOOrhONKSseWL5JwxIJwsEhyYHBgzI+JO//iIYxREN7J0B0fDERSq7tkhDHO9KSPT8vtgw3nNGebaIG7PbhbcDBqqR9TVJ2SESQ==
-Received: from PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:2f1::8)
- by PN4PR01MB11732.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:2e9::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Sun, 19 Oct
- 2025 00:36:50 +0000
-Received: from PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::2e35:fc95:ee3:bf0f]) by PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::2e35:fc95:ee3:bf0f%6]) with mapi id 15.20.9228.014; Sun, 19 Oct 2025
- 00:36:50 +0000
-Message-ID:
- <PN6PR01MB117174C06FE98FC0322A0B3F6FEF4A@PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM>
-Date: Sun, 19 Oct 2025 08:36:36 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: sg2042: Fix a reference count issue in
- sg2042_pcie_remove()
-From: Chen Wang <unicorn_wang@outlook.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <242eca0ff6601de7966a53706e9950fbcb10aac8.1759169586.git.christophe.jaillet@wanadoo.fr>
- <f1887014-17b5-405c-bba2-1a441d50e1f8@outlook.com>
- <0e9b75d5-a1a6-4c5e-ad69-8e189af69bf3@outlook.com>
-In-Reply-To: <0e9b75d5-a1a6-4c5e-ad69-8e189af69bf3@outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0025.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::13) To PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:2f1::8)
-X-Microsoft-Original-Message-ID:
- <0f572eed-e20f-4f7e-8895-e5b6abc1fd34@outlook.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XVWZ7fwi"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59J36UBe004333
+	for <kernel-janitors@vger.kernel.org>; Sun, 19 Oct 2025 04:08:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=eXtIl7gx2a3Jyse1CDj/YUds
+	dckxFLnn5liYk/3DXnQ=; b=XVWZ7fwiNdHgJNJA672XFIDVSSDeXZsLaXAdgl4M
+	zCHJrfEgm8LrYeUW330MrzQwl9M+tTIK3iP62ylNyAiih2Q8lqrICU4NGQ0aNEZg
+	fBg6VzLx8Mjr4xJqnvKna3Xz6mzOsoOCHKk0X4fQPC6G72sl+X4EBIpQoVVNAfAb
+	d/OBzlHz9JiGXXKeual49iQZnFnMbx67EolgQ9kq4XtHma93DecF8XByHabxEe93
+	a0qldw06+YOTeTvz3yy4vNO1FcMnAyhBKSUHdwIZWLLBQK8PCVkheivK4BEwrgIK
+	J1CBZsKbH8olCx74m0LWXdCJrubXyL2gKFb/Sz20PRpw2g==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1us9wkm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Sun, 19 Oct 2025 04:08:26 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-891504015e5so190880385a.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 18 Oct 2025 21:08:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760846905; x=1761451705;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eXtIl7gx2a3Jyse1CDj/YUdsdckxFLnn5liYk/3DXnQ=;
+        b=nJH6uflg78vWDJC7Bm5kXpGVseOPGiZVdbrshpSCcmY+a75ZOPyO8FJl61gP/nSM9V
+         5jujXvcwvmVqZlHIufXfs1N7pSp9JQ2L+t4nZ6dd9zaXPr6AACquiZ2XbICAaS1p9B3V
+         FofoiJvmisNcj4im9XhxffEuHu2FS140lSPiO3jx8J16k6JshKRk/pHwjr736rNqOLHE
+         lhHmxtQN0IjlWcDwfHaS5BZGAeCTt0bKrLzfMTv673ojYsi14P4wXqoRXPRjaiuYCqrQ
+         NIRMKW63uxq7Q9BSe92m5c91ZRa2f+6bOV7LZgoNaUapZTrfmaOaHczwZnu2PdrmkIkp
+         GCdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGPdSuj4DrxtyuUL03jH5S6Qfpph181GsxG41i5iKVtWVem3wLwpAxC4i2r4rohtbX6NuMHqhk0j65OYWjz3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjHYT2Zt9+X3BuB6tmwbfVD5RXagwKb83jTzuSe/tUbnQb3OPD
+	LWpGw9oDfAGyiJW+3aNOwwKS5kKwcF5YPsWiTmBBRSGdQEiglgnSp7e6HBRoaDueW/sYsHJRLN5
+	IotaH9CmPLDiP7IT79BH3N74HE91BXL8XSVeeWoW4VYa8ULiW3PriLXrY+asfZUl3FMMafoQ=
+X-Gm-Gg: ASbGncvPXKiqTIeKFXg9LbaxUjipqaTpaIO/1WmQRNLPTPCtSPxtTicmPy/K885nrPy
+	WKImh7QYlwivmxJj7l01VK7xD10asHUuQ67B4fggFWvtMr1FZEiCTDh1JQaxpQYP3dCMX0+crkj
+	RT4fFJqMTa5tPcNsGtdNehFYqXMG71tVIimi6FnOaVQGvHmYSFACs2spRlaoav7eNcc1xdlOCcy
+	+i3b1qeXgtomn/o6bcBS63h7yVqYjeiMFbVRUvhmf7VzWQ1t0VJv1yrf47HGmA07myx3k7wkbJD
+	nMUy0pdGBEsBv9Mn4+gzsnnJOZH/5n80j+9eNO+SIiDhYEoDagdbqWdyqBjoboqzxa/POSbA35r
+	7447hjKnyorYecU79+QQXCnh/vjrzSnTZ4T2FMJkhiMa/WcbnyepWhTRjIIQUdZtR/ISb9erUFi
+	vxKTsJi+PXOMc=
+X-Received: by 2002:a05:622a:1793:b0:4e8:b4c8:3fe2 with SMTP id d75a77b69052e-4e8b4c8412fmr34739571cf.11.1760846905202;
+        Sat, 18 Oct 2025 21:08:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwjpMQMP09kJ0jfxgHAqYveaQLqrlnJM2EpETyDsZGjRJiaYgkp4Ad4myb57SXe9M/dpx8/Q==
+X-Received: by 2002:a05:622a:1793:b0:4e8:b4c8:3fe2 with SMTP id d75a77b69052e-4e8b4c8412fmr34739361cf.11.1760846904593;
+        Sat, 18 Oct 2025 21:08:24 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def16b31sm1225608e87.60.2025.10.18.21.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 21:08:23 -0700 (PDT)
+Date: Sun, 19 Oct 2025 07:08:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] ASoC: codecs: va-macro: Clean up on error path in
+ probe()
+Message-ID: <oghgx6bzhcd3uoju2exzijoe7titw5kuhyk5g6hx7rdcgjsvmv@fvsefyhkeaui>
+References: <aPMyw_ryay9LA5SW@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN6PR01MB11717:EE_|PN4PR01MB11732:EE_
-X-MS-Office365-Filtering-Correlation-Id: 20ab34ec-9757-4046-d404-08de0ea7953e
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799015|461199028|5072599009|6090799003|8022599003|19110799012|15080799012|23021999003|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eFNEL3grVm1vVWlXNlQyUXArc1UwVDliUy8xRDh0SGs4QUl5WmhhREVmTFpy?=
- =?utf-8?B?dTlaaE0xUy9Ta2VGczNhcmszTngxK3U2bmlTVVpJTm9VOGRjWWVRbk80MDZ3?=
- =?utf-8?B?YUxiNGh5Y28zak0xV0RHZjlnZUZCbWtxeXhmUFJsazBIWlVKOVpaQXN1WWl0?=
- =?utf-8?B?ZThTOWRLYmhZQ3Jydk5tdXprNjhrUWVUNWZ6UldJVzNla3hnOVpxQnlMMDJ4?=
- =?utf-8?B?Zkx4aGljZExUM2szb1Q3d0ZCcnNlN3NuUnhQazFMQ0FrUlFFNFNoTGhRSWRz?=
- =?utf-8?B?S3lVY24wSVhCTkFjdUZjQTR0N0lpR1hpbStlOU96MlFzUnBDMHVSR1I3YVNw?=
- =?utf-8?B?dzkrdTQ4WCttNXZ0SnRJaG9mTVBveHpnUWZXeUFLMDdDeUliQkFpb2dzMjhU?=
- =?utf-8?B?WUxlMGpLR2l4aUJpVlh6ak5MMk5nNTltTDJxcVpQMUhaQmFxbUZyN056OXJK?=
- =?utf-8?B?T0J6Q25sNXVLUitud0kvVm96UDR1a01WS294MGhDcDIzZjkvSytab3VCNE0w?=
- =?utf-8?B?Q2tUWmNWei8wVzdMVmwvNUFsRDhRbnM1YVNWdHVad0NxWDZDbU9YdVFXSG1j?=
- =?utf-8?B?V2tCdU83RkRWSDBxT2xGQzBkOXdaWUNzTEZKYTJOWXBia0lpNm4xeEtiS1JN?=
- =?utf-8?B?Qk9QazNuandwT0wvbG8venNIMFdLVUgzNWQ0THlSWFpLS1RuVXZSRDZMMUgv?=
- =?utf-8?B?dVZ4ekN5eVhQZkNHZ29KKzJqTVdwVVVJS0ZOdnB1ek1WRzhvUG5PZ3VnOWt3?=
- =?utf-8?B?a0hFN2oyN2ZyWkhBNUZYaGRsV0NZeTZLb3JmU1F4NDBPZUJXYTRkYUlONFdr?=
- =?utf-8?B?bEwyeEthZWJHTTVxR1hHOGNPaHlIYk9YRGxlWGllekJuMDIzaXVvRjB5OUxO?=
- =?utf-8?B?cUxqam92N05ITW9wd1dsNDBnQXhwTXpjbGlwV2xKbERTaGRiSW5OSHpQNGNU?=
- =?utf-8?B?bHZ3ZW1jRHdnby9jQmthWkpzZjNlYUlyYy9HSDB4TmZla0o1OWdLaVY1V09o?=
- =?utf-8?B?ZU9STEc4YXdtRjJ0RHJCVTdJZTVyTUdJRTE2S1N5Q0xjRnd3VEk5MW9ZSWFQ?=
- =?utf-8?B?VS9uZjNkSTArZS9MbnRwbnh5eEczUG9uUzQzeHhXcFBLdEc3TURKTlhhaUVG?=
- =?utf-8?B?WTdEUDlpbjZSWDlWdzkyOGJLOXg4THJnTTMvRHF1aDU4ekFBNEYzd3RGQkNq?=
- =?utf-8?B?VFg0OVBLaGdUNGZSUjQwTWpLQzNJc1lHeWQvZkM5ZTNvOUlKVXp0cjhwa2J3?=
- =?utf-8?B?Tm1OdjZnMnJ2MmJlRWowY3J6SzJsTTFuMnJma0UyeVF5cTZ1WkdqSWxvcWRq?=
- =?utf-8?B?VjlSV203S1Y3aTEwdDB3WVEzNjZGT0t1MGxYbHZadk5wK2pqd1k4YnNiNURT?=
- =?utf-8?B?RVdOVDdncVdWSHQyOHdwUlVzN0pjTHhSZWVUeC9wL0ZJRFl0YW1mZE55RUl1?=
- =?utf-8?B?aG1BcEVRQXNQQTJTTkVieklkbktIeWNBTkpVZlFFanR4UDFUYktaYndaYks3?=
- =?utf-8?B?eTExci9WNlhzeDRsaVFpNFFlTkhmakFmOW53akRNdmFyaUhmbEwyWW5mS1E2?=
- =?utf-8?Q?f85aoVxjPhf0J2j6/4zbQ7ATM=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZW05YU4vbGphTDloQlp1STl1ek1UTmdMRENYUy9ZTGdINVJKcE1EbVhTQWh0?=
- =?utf-8?B?bXlNYXdoOVJhVFpyTkZLcGgxVkU1UUpJWko2RFdqOTZMWjBWWUU5dDNEb1hw?=
- =?utf-8?B?S21sbU85VDhocmlkUEswNHFmQWpVTXFvcHB0TnVOWm1sRE1KK21KZHVsbXo1?=
- =?utf-8?B?TnV3RTh1bUQ5L2RaYnRGckwyL0JSMGhORW5xa0syb3VkWTdhd1pPSmtjUjF5?=
- =?utf-8?B?ZjZwbUkySXNtd3JSZURjN1F0S1M4bjBpUTdlRGIramU1dytTOEN3NXNBV0lS?=
- =?utf-8?B?YmJESEs4Rlc0ODZ2ODhFb21SbTMxUXF1VklpL05MTVdVL2tpYk5JNkxNanZO?=
- =?utf-8?B?TzI1MEhpejZYNjVZdXppbG9nVXdjdUFzWktwR3d1QUxRd3J3NE0rNGVhQml4?=
- =?utf-8?B?WGd1RnM2SExlRmNTcDBBQVpmNTRNQkdPMnZxbU5FUFB0ZWlMRTd3YnY5anV5?=
- =?utf-8?B?UU01QmhJK3I0b1VuekF3TEQrbDQ0VzRWVDdudmU0ZGRtYzZ2SWhvZmZzZVdr?=
- =?utf-8?B?cFlSZ1cvYUwyN2Qvb0I5Mm1pck82YlZiSDM2Ri9QRDV5ZmQvZTBnQUoyNnpp?=
- =?utf-8?B?NmNDQW1zemMrdENMVzhaOU8rRGRGV2NVaUx6bEpCNzBMbTRVbit4OCtabExn?=
- =?utf-8?B?K3VlSnpyRm5RMGU2cE5VR1ZyWXgrVUdqTHFWeGY0WFI0M2ZtVkI3WHFPNCs2?=
- =?utf-8?B?bWRXOVVhWFRQTHN1OVNYU21MWDhYME9BRUNKY2cvU1ZJdkdYeHhUSVR2NUgz?=
- =?utf-8?B?VHVSUnJmRDJ4Vlk1cU5wMFNCdGNzYTltN0RGL05vd2J1dlZldDVNQ20vRjBH?=
- =?utf-8?B?RTNYRWJldXFQR1NSam85Ny9QQk53VjRnNlIxZmNISFlJNkNqcDVpUldIZUdJ?=
- =?utf-8?B?OWZRMXZRVUkwaWh2Ym9UTEx1WmkvZTJReVBDWlNCUDZrSklrb0gvSDM2VG12?=
- =?utf-8?B?azVxOGVrc09DQWVwR3pqbEFvVFhZZmhtOVRUa05QbkFHT0MydEtaa2lLWVZy?=
- =?utf-8?B?TVoyVHRkK1dyQTE1Um54TG9aMjg3OG5nekR1UzVRSlRKa2lMdUlEMHlsWW8x?=
- =?utf-8?B?cG1HekVyc2dUZFRlWkxpV2t4emptRy9mZHRRL01EMFZHUjhBL0Q0dHF2bjha?=
- =?utf-8?B?bmtCVTlCQ0VqVk5PUmJVQ2FIelEzbGZ0QjViUU1NR24xRk9HTDN0dXgwWURB?=
- =?utf-8?B?aVExbE1CV1RDQjdRUmM5T2dhdm1rYy9zUWg5aHZQZ3RwN3Fremw5Tnl1bnB3?=
- =?utf-8?B?TlRTU1BDeVdWbFBVd1ZZb3l0RXdXZThlWjJ3R1ZBc3FIK2dNbEIxc0RkaWk4?=
- =?utf-8?B?RTZKdmJpQlRrNUNvcHMrRnBmTko5Uk1ldUNSc3cyb24zanN3NkpOc2h1N2VI?=
- =?utf-8?B?OE1KQnVRUC9zUENFcTYzaEJYTmFyd2xLVnJDRTlZZ3pVMUtvVUxHMTNwTXA0?=
- =?utf-8?B?UEt1MWprbVRPcE1lcEYxTTBzaGQ1dWdxSzBqOXJMUEpWS0llZlhBd0tmQU1L?=
- =?utf-8?B?RCtwSm10aFlkUHY1YmtJVXJGNTI2a3I0aWgwSlBhSWxQZytVU0NvOVgzVERZ?=
- =?utf-8?B?a0MrWFgyMVg1VzI3blJwYXN3U1grcks2ZC96UG1TT3RJcDlTQlAwaEJUbGky?=
- =?utf-8?B?NUdXRUhQQnRCNUZRd09sRkdaeG9IYXlOQlBOVTNxNjRSWDhuTkhHdDI1T3pm?=
- =?utf-8?B?NjR5dXhIZyt5TklESWdqOE50aWxYSlBPdkpMMytrU2pKdE1jOUZyV3ZDQlR5?=
- =?utf-8?Q?TpXdRRuy4W6EAIRNqQ0T56mN0nOBoqnL+dKOPH6?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20ab34ec-9757-4046-d404-08de0ea7953e
-X-MS-Exchange-CrossTenant-AuthSource: PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2025 00:36:48.5605
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN4PR01MB11732
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPMyw_ryay9LA5SW@stanley.mountain>
+X-Proofpoint-ORIG-GUID: Hb90hBt0KzADRgMU5S1dtTYqYcYUXaiG
+X-Proofpoint-GUID: Hb90hBt0KzADRgMU5S1dtTYqYcYUXaiG
+X-Authority-Analysis: v=2.4 cv=XuT3+FF9 c=1 sm=1 tr=0 ts=68f4643a cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=ebUXpRROGgZ4PK-tThsA:9 a=CjuIK1q_8ugA:10 a=zgiPjhLxNE0A:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNCBTYWx0ZWRfX7CERaEPr19z3
+ LTkpxM0DgubkwcGAfyvy9b9V9QXI0Adoh8dj2wTeueTOLpsZhiV3mQDoUqdvosMZ0Qlcig8GgM+
+ 2+BvM/G3XbjvmDBdppv7us2EyAOdX49ffl7xlQTPM6qvasYAmIAK8M/Apb0RzEL5u/87r391fEK
+ o2IHiSPCyaRxqjkRxct2qTXYDJ7Bq2bqRGw7CaRY1qXBdgOUG9llFLHe7ZYAJA7Y9vGhyGdFcoz
+ RbpWhUz8rcNbEUmCB3mdWr7iEv6KGNF978fUtpp2e57qh6bIhJmesbKmR0Xn14wifbDibaPisG5
+ xehcX3Kx2pNs2SlYXPdFKr5RBTRw3peezTztL67WMe/UEfDNRh/eCFn06F1cdSmJObvEqeZhpo9
+ wAj9MNegwFwr/+IkCJrUUIJHcqj5/A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-19_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180014
 
-Hi，Bjorn，
+On Sat, Oct 18, 2025 at 09:25:07AM +0300, Dan Carpenter wrote:
+> Do some clean up before returning the error code.
+> 
+> Fixes: 281c97376cfc ("ASoC: codecs: va-macro: Rework version checking")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  sound/soc/codecs/lpass-va-macro.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-I see you raise some fixes PRs for PCI for 6.18,  can you please pick 
-this one also?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Thanks,
 
-Chen
-
-On 10/13/2025 10:31 AM, Chen Wang wrote:
-> Hi，Manivannan,
->
-> I see 6.18-rc1 is released. Could you please pick this fix for 6.18-rcX?
->
-> Thanks,
->
-> Chen
->
-> On 9/30/2025 8:43 AM, Chen Wang wrote:
->>
->> On 9/30/2025 2:13 AM, Christophe JAILLET wrote:
->>> devm_pm_runtime_enable() is used in the probe, so pm_runtime_disable()
->>> should not be called explicitly in the remove function.
->>>
->>> Fixes: 1c72774df028 ("PCI: sg2042: Add Sophgo SG2042 PCIe driver")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>
->> LGTM.
->>
->> Acked-by: Chen Wang <unicorn_wang@outlook.com>
->>
->> Tested-by: Chen Wang <unicorn_wang@outlook.com> # on Pioneerbox.
->>
->> Thanks,
->>
->> Chen
->>
->>> ---
->>> Compile tested only
->>> ---
->>>   drivers/pci/controller/cadence/pcie-sg2042.c | 3 ---
->>>   1 file changed, 3 deletions(-)
->>>
->>> diff --git a/drivers/pci/controller/cadence/pcie-sg2042.c 
->>> b/drivers/pci/controller/cadence/pcie-sg2042.c
->>> index a077b28d4894..0c50c74d03ee 100644
->>> --- a/drivers/pci/controller/cadence/pcie-sg2042.c
->>> +++ b/drivers/pci/controller/cadence/pcie-sg2042.c
->>> @@ -74,15 +74,12 @@ static int sg2042_pcie_probe(struct 
->>> platform_device *pdev)
->>>   static void sg2042_pcie_remove(struct platform_device *pdev)
->>>   {
->>>       struct cdns_pcie *pcie = platform_get_drvdata(pdev);
->>> -    struct device *dev = &pdev->dev;
->>>       struct cdns_pcie_rc *rc;
->>>         rc = container_of(pcie, struct cdns_pcie_rc, pcie);
->>>       cdns_pcie_host_disable(rc);
->>>         cdns_pcie_disable_phy(pcie);
->>> -
->>> -    pm_runtime_disable(dev);
->>>   }
->>>     static int sg2042_pcie_suspend_noirq(struct device *dev)
+-- 
+With best wishes
+Dmitry
