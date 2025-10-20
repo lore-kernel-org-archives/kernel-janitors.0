@@ -1,45 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5104D2AD3C;
-	Mon, 20 Oct 2025 05:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30962EB866
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 08:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760937538; cv=none; b=i8HBq6YmdYPTFDqM/rp+/+BzRnN5mMEVEl2ReVOZXZACVhzkjvyIEXpSTuPGNQzxcxkEXp9iVkVb3E3DnN5YPzTAy/KlvqHrCg7LdPwctUrELyQ1kk6C1RLQfPnvX7wQxopZIs6qJHZfY7awQqaiHtuSLfWI6aRK1yJ86baDJpY=
+	t=1760948692; cv=none; b=jr208ri3byFiwtNZYn7ST2sK5j1TUwGRqz/RnJr7I1TAKHVGnv4laHmDMn/ol8ZVZFCcuooNNVx9WEnJF0SUo/u8qkUr/eKzqoBbsuMhRoH6NPo+3BC9t4X9tw70V/ogWPlvY95YqPBx4su4SbQlMMhQoiVIYpghtjX2ULbkRcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760937538; c=relaxed/simple;
-	bh=DeHo/Ru9MNhb4/ml7h4GnuR5pMrP45DBZfpyiCNtk1Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EWX580zkvNYWZ3tgd4dk+lQknSJO5xFIz0NqP86zHhDjJHlBKTBkul9criAZTfTyeKPp5PkYTjP8r7ZExPYUVKo5weQGM3NcnkY/9zTf7m5ry/Yyw4kif1lScJqd7NM6KdCmO7lbdHKA8QKTPGuEUH6CePifs5kDE34oWxQFTQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHYqOocp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760948692; c=relaxed/simple;
+	bh=9zlHdu1C0OX3LQKq/csViY4KOIK1A0RLur/kX4QaQsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TidQTDoIF7ZDUSYRmeXoeOK44kfn/vsNU78fwvCLdEvUym23GHDEBn0K7RlgxIsiqHgQgOpVHva330dRLBj190S/k7ZQ2vSS5EprgSTCXL7xSkYAUBGnZs5o6Uh/IiiEZz4ulT3uuIGY+NybA5IVTWbFVt24+R62kwGcz9g7qFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Y15tKSXK; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHYqOocp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF9FC4CEF9;
-	Mon, 20 Oct 2025 05:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760937537;
-	bh=DeHo/Ru9MNhb4/ml7h4GnuR5pMrP45DBZfpyiCNtk1Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=XHYqOocpFVGRchbJgYuD5Cge75M0PiFFoEU8Prl72wo8AGe18WlE/vf0ePfbF+ICf
-	 6iv9OXy5a5OT9Gxbb4mxXz5sFiT/g5GfNmF2M51z8Dxzg239I+y8+qkAs5282HH7Ku
-	 K3Twv6PC9wR1sriTRYSuVEHd/Ff1AprVbJcG+m1jlw16ozin8tDxkiTFG4mWqsyype
-	 4wN9o1d3FEZlzpgFuctygCDMbo7YfFmnxC10mpc2kj0IQ3WaaQEKRXUzV8Ku729Paq
-	 mGkq982ZZ9UikQjE1jDqgERljDIKohgBINv2ZSZDQxfMjgwXAgjkGGj9aLilheeDgg
-	 G2jvBlvUQRSyQ==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Chen Wang <unicorn_wang@outlook.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-pci@vger.kernel.org
-In-Reply-To: <242eca0ff6601de7966a53706e9950fbcb10aac8.1759169586.git.christophe.jaillet@wanadoo.fr>
-References: <242eca0ff6601de7966a53706e9950fbcb10aac8.1759169586.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] PCI: sg2042: Fix a reference count issue in
- sg2042_pcie_remove()
-Message-Id: <176093753190.6981.6733572795969751925.b4-ty@kernel.org>
-Date: Mon, 20 Oct 2025 10:48:51 +0530
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Y15tKSXK"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47100eae3e5so37774295e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 01:24:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760948687; x=1761553487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vW/AkTk8WlPjo3na4ACa1EYleQcJKdyDIWqp1NdXgKU=;
+        b=Y15tKSXKDmQyX3VZJFUu8f1iVTx6lnd0y0zmsso2ucoAZu6OMaP2ixqT/IZC8e1Kpn
+         tTOSdqS0l797ygAn6hUa9/VO27AXNTYZE+dH8458B5QOvykC8OYtE/FCPhKOP9qcyeLC
+         ZUrhI/fkVY04tErNeJ1+bk/XomgWvE+HY2+4UBPrAVHNdbrYxSjLhEk7KAQYaWuSpoH5
+         7v44T9vXbs+RRQqVMwH0qc8J+aJ3lXVSEuMOkCW1LN5Z+5PvPxNmrvAuVDLM2sQVBoIn
+         UiyyP0cCYmYkciyOLx1jL6QlJuoS8+8KyyzGDkamE7aV7H2MFwcoty+2r8miH+CrRb0u
+         xFxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760948687; x=1761553487;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vW/AkTk8WlPjo3na4ACa1EYleQcJKdyDIWqp1NdXgKU=;
+        b=Dc6tHZHds28qKa8rwinmgbFoGY1M9i9stYFCDRT7MbwRUbTP1LGgvOZRytDJsqn2U3
+         s8tZdt8aRhdQ9PEY1NhTq0G5d8z6j09WsmdjCBR6FcTWxh3F1gJ9JuwxKHXgGPIz9Fsv
+         SxUt+yuy0gqgMmA26OHFLrZQa/z+LQBPDznFgBbzy9d1Nhq7zUUAyD5ywPH5ijeIN9NS
+         IM+uA4EOSYjJ9W0zkiRsjyGXJyDYHoProFuUfR2lz5GsTaTMUFc0c2dUlNLpbpB9Mowo
+         57vNQBr6B+ZgIma+Kl/Jmmp6XEYqXdraPy9uMNiYtPg5KLyYi2HP9H7tJ/W39z5qMTP+
+         PSKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU7vTxZMca8Cs5bbBmLQoEP4gfX2qFmBLWULKD8xGs7wr9FKyqcytcgxf6uvo0htMcwxD1prWbreXBCukur8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ8kzjrOwafRDqRg80LFYc3hW4xU9rN+EEfeuLfBo3HO6qSter
+	ype2zu8dn8eJ7uUqXZK7ax2YvkWrH5NqrW9/NIjsggBiG/ca0xUXF3qkYUWisoD8/QY=
+X-Gm-Gg: ASbGnctIznfOKvNh2SPpQ55FIX0UuAZniPtTkewyS7boJutfELhnIhQYjdTVxsdWxGU
+	tEthUINrh6W8g3YHjjy4cIUM0jd0GajBT5AXRidj5bjoVOxhdUNvxO7c+bcBUAfqK6JjvdE5n4/
+	0qfqB5hGTbebtZ2dMdA3Dl2PO6DWG9koQXDeXyLKTZOK4O/o1PuNhOIrOCpWIvtYcVOzi9d+uN8
+	bbm6tmjdKq55mHZzYi2tTdPk2rqCw6G6z4h9IkvavcFoGrjrPbOHi44F7EZ/adeynCF7a9l80kH
+	K35pee7WyndLpCVJAAJqIRWNumEBrkzoh8jJGyUbiW+hIEHuCoUAXWC4i/SJZbmuJRESKi2qxrD
+	iNCEtd3BeE7P6TpLThKhII6AxdL4yA+6n2DVBMZUFTjgQNk0ADE2GA/gmHyuL88iPFi/MAKGzqP
+	jr
+X-Google-Smtp-Source: AGHT+IElbGLyhlp/1ybVdhj0rXNPZOg5gvo0dz1RPUfJES3/ZAsbvfhG1ocMD7SptwzEZ+DrjQdnHg==
+X-Received: by 2002:a05:600c:3512:b0:46e:5b74:4858 with SMTP id 5b1f17b1804b1-47117877122mr69462225e9.13.1760948686986;
+        Mon, 20 Oct 2025 01:24:46 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5b13:a549:df98:9c00])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c29sm220299395e9.12.2025.10.20.01.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 01:24:46 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpio: mvebu: Slightly optimize mvebu_gpio_irq_handler()
+Date: Mon, 20 Oct 2025 10:24:45 +0200
+Message-ID: <176094868222.39929.1582779339210420040.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <7190f5def0489ed3f40435449c86cd7c710e6dd4.1760862679.git.christophe.jaillet@wanadoo.fr>
+References: <7190f5def0489ed3f40435449c86cd7c710e6dd4.1760862679.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,22 +82,26 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Mon, 29 Sep 2025 20:13:22 +0200, Christophe JAILLET wrote:
-> devm_pm_runtime_enable() is used in the probe, so pm_runtime_disable()
-> should not be called explicitly in the remove function.
+On Sun, 19 Oct 2025 10:31:38 +0200, Christophe JAILLET wrote:
+> In the main loop of mvebu_gpio_irq_handler() some calls to
+> irq_find_mapping() can be saved.
 > 
+> There is no point to find an irq number before checking if this something
+> has to be done.
+> By testing first, some calls can be saved.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] PCI: sg2042: Fix a reference count issue in sg2042_pcie_remove()
-      commit: 932ec9dff6da40382ee63049a11a6ff047bdc259
+[1/1] gpio: mvebu: Slightly optimize mvebu_gpio_irq_handler()
+      https://git.kernel.org/brgl/linux/c/eb7f1c8415bbbb81f8674a490a5da7c22599a012
 
 Best regards,
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
