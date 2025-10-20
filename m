@@ -1,107 +1,97 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30962EB866
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 08:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719852FB094
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 12:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760948692; cv=none; b=jr208ri3byFiwtNZYn7ST2sK5j1TUwGRqz/RnJr7I1TAKHVGnv4laHmDMn/ol8ZVZFCcuooNNVx9WEnJF0SUo/u8qkUr/eKzqoBbsuMhRoH6NPo+3BC9t4X9tw70V/ogWPlvY95YqPBx4su4SbQlMMhQoiVIYpghtjX2ULbkRcU=
+	t=1760963033; cv=none; b=QTykQ+32cQkD43qV9NHSy/eIoV952vnmGc2No8wMQL2U8PwEvy4igt+5ZrQncNmXfCEBy5Vnp6Ou8AziVP3m6aBnN9ydC8ETLf9odPVNRwAQOf77tDK/+tDVci3QoFbe0pDC0T0D0o17LEx/70xRQAIwE3eH513T9ZafNzoyAv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760948692; c=relaxed/simple;
-	bh=9zlHdu1C0OX3LQKq/csViY4KOIK1A0RLur/kX4QaQsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TidQTDoIF7ZDUSYRmeXoeOK44kfn/vsNU78fwvCLdEvUym23GHDEBn0K7RlgxIsiqHgQgOpVHva330dRLBj190S/k7ZQ2vSS5EprgSTCXL7xSkYAUBGnZs5o6Uh/IiiEZz4ulT3uuIGY+NybA5IVTWbFVt24+R62kwGcz9g7qFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Y15tKSXK; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1760963033; c=relaxed/simple;
+	bh=xsVrddNgKdsa59i88tOUom/s0Tf6ykU6bezL99BIn20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVKK3UHCT9McZ0m7EKXe2XuAowDy/uFKRKu2ImXkKejL4pSIXVa+PSF4WDLPI2t0vVHGUfpgBfVLVAEFLx43h0YCIoRduFn5WP8ksyhe013Ux2U81aICMZiS69DRkev5JHQFWBR0KjXnREERoXQdNM2Va5RaR8O7L4hjBULJBcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sxt8BRhI; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Y15tKSXK"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47100eae3e5so37774295e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 01:24:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxt8BRhI"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710022571cso36134245e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 05:23:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760948687; x=1761553487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1760963030; x=1761567830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vW/AkTk8WlPjo3na4ACa1EYleQcJKdyDIWqp1NdXgKU=;
-        b=Y15tKSXKDmQyX3VZJFUu8f1iVTx6lnd0y0zmsso2ucoAZu6OMaP2ixqT/IZC8e1Kpn
-         tTOSdqS0l797ygAn6hUa9/VO27AXNTYZE+dH8458B5QOvykC8OYtE/FCPhKOP9qcyeLC
-         ZUrhI/fkVY04tErNeJ1+bk/XomgWvE+HY2+4UBPrAVHNdbrYxSjLhEk7KAQYaWuSpoH5
-         7v44T9vXbs+RRQqVMwH0qc8J+aJ3lXVSEuMOkCW1LN5Z+5PvPxNmrvAuVDLM2sQVBoIn
-         UiyyP0cCYmYkciyOLx1jL6QlJuoS8+8KyyzGDkamE7aV7H2MFwcoty+2r8miH+CrRb0u
-         xFxg==
+        bh=xsVrddNgKdsa59i88tOUom/s0Tf6ykU6bezL99BIn20=;
+        b=sxt8BRhIXDtx4vu9KqP17PgMkS+Cc8Wf5VnW9SPMpkawYQFCW2nJ4UqDokOnQ/BbOP
+         1UKoNPjca7BshWAGhdLF4sM1dXQDy4YkBGp3VhyH6zetcxIGWlCYeKeNKsX8frNfx42P
+         XP4hW5S5UsXOIllauXGcuR8cMGiJNQJK0ut0424GQnez6x7Oj6JvGHtNHR0TxhSgwX1x
+         xN27l81GfgUbDp71FxBU21EOtTZbCM2VwzRAheDehQCkQNIJFmv3MNr4G+46pMbpp+kJ
+         P4bcNgolPKgt5uNNvwTN4qFjEpPUa7aT21sjQi4WyWlbR+WOlx6nvcL7RgqgyUowmerr
+         UDbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760948687; x=1761553487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760963030; x=1761567830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vW/AkTk8WlPjo3na4ACa1EYleQcJKdyDIWqp1NdXgKU=;
-        b=Dc6tHZHds28qKa8rwinmgbFoGY1M9i9stYFCDRT7MbwRUbTP1LGgvOZRytDJsqn2U3
-         s8tZdt8aRhdQ9PEY1NhTq0G5d8z6j09WsmdjCBR6FcTWxh3F1gJ9JuwxKHXgGPIz9Fsv
-         SxUt+yuy0gqgMmA26OHFLrZQa/z+LQBPDznFgBbzy9d1Nhq7zUUAyD5ywPH5ijeIN9NS
-         IM+uA4EOSYjJ9W0zkiRsjyGXJyDYHoProFuUfR2lz5GsTaTMUFc0c2dUlNLpbpB9Mowo
-         57vNQBr6B+ZgIma+Kl/Jmmp6XEYqXdraPy9uMNiYtPg5KLyYi2HP9H7tJ/W39z5qMTP+
-         PSKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXU7vTxZMca8Cs5bbBmLQoEP4gfX2qFmBLWULKD8xGs7wr9FKyqcytcgxf6uvo0htMcwxD1prWbreXBCukur8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ8kzjrOwafRDqRg80LFYc3hW4xU9rN+EEfeuLfBo3HO6qSter
-	ype2zu8dn8eJ7uUqXZK7ax2YvkWrH5NqrW9/NIjsggBiG/ca0xUXF3qkYUWisoD8/QY=
-X-Gm-Gg: ASbGnctIznfOKvNh2SPpQ55FIX0UuAZniPtTkewyS7boJutfELhnIhQYjdTVxsdWxGU
-	tEthUINrh6W8g3YHjjy4cIUM0jd0GajBT5AXRidj5bjoVOxhdUNvxO7c+bcBUAfqK6JjvdE5n4/
-	0qfqB5hGTbebtZ2dMdA3Dl2PO6DWG9koQXDeXyLKTZOK4O/o1PuNhOIrOCpWIvtYcVOzi9d+uN8
-	bbm6tmjdKq55mHZzYi2tTdPk2rqCw6G6z4h9IkvavcFoGrjrPbOHi44F7EZ/adeynCF7a9l80kH
-	K35pee7WyndLpCVJAAJqIRWNumEBrkzoh8jJGyUbiW+hIEHuCoUAXWC4i/SJZbmuJRESKi2qxrD
-	iNCEtd3BeE7P6TpLThKhII6AxdL4yA+6n2DVBMZUFTjgQNk0ADE2GA/gmHyuL88iPFi/MAKGzqP
-	jr
-X-Google-Smtp-Source: AGHT+IElbGLyhlp/1ybVdhj0rXNPZOg5gvo0dz1RPUfJES3/ZAsbvfhG1ocMD7SptwzEZ+DrjQdnHg==
-X-Received: by 2002:a05:600c:3512:b0:46e:5b74:4858 with SMTP id 5b1f17b1804b1-47117877122mr69462225e9.13.1760948686986;
-        Mon, 20 Oct 2025 01:24:46 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5b13:a549:df98:9c00])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c29sm220299395e9.12.2025.10.20.01.24.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 01:24:46 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: mvebu: Slightly optimize mvebu_gpio_irq_handler()
-Date: Mon, 20 Oct 2025 10:24:45 +0200
-Message-ID: <176094868222.39929.1582779339210420040.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <7190f5def0489ed3f40435449c86cd7c710e6dd4.1760862679.git.christophe.jaillet@wanadoo.fr>
-References: <7190f5def0489ed3f40435449c86cd7c710e6dd4.1760862679.git.christophe.jaillet@wanadoo.fr>
+        bh=xsVrddNgKdsa59i88tOUom/s0Tf6ykU6bezL99BIn20=;
+        b=qA3d7BY3XtCkz7fWF3W4BnXBbxwaTq4CuWkOfoWnbGa85WoBo68hBcDsQa8brEGl+c
+         K02y72uamsOPCBaNV+m0WhpNf58jLwLP7FEEJLSzm/mWwRuB+GCTc6GUOo8+v+Qpwvnn
+         yTbNQs0WSdT/8Gm/H+NVyFd9RKnkUCRKd9WTF9ZeDWLORV198lSjGoUy9naoVW9wa527
+         AaSyJyZmTOANdKSnwaJUm+cuLg5A/8oXo8ngMdwcMmcR9AJpLZvn7x2HHDXaALsDucq5
+         +BcXwn1Ek4S1UHyDfqO2O9JBiFD6z0TW++Mrt0gcJLLRHeowWUG/h34x1oel0vG40VVs
+         xkcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVH9mNASbwOsGF535SEzg+Zr86XmHV6u10NgZwumYriw+u6v3iFnTh4jBkwU7rxf/g5glYcGTBd1sxCr8df3rM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/twj8OjsMWfNhk+mlxBUDlOvyWdC+WPH1w7iZHDDFVOOqAeL5
+	CLhJUqQkrfgrqea0qUVwa4GJQiSpsoQDfpIJh6XgDOq6AQ4GmO4/sOIkZuPfMOI5EhiN35t8ib+
+	bXoZKO0QMmFKp1EFCElGS3pVk5gDdibHikW3nuI6z
+X-Gm-Gg: ASbGncu/pM42TWlcE+69kNU/FMdGXyDgIr+v8tGCYDwtXMiTrN6ccc8A9bs/cvLRLEi
+	8qKJD4dDzwKIGUD3qZDlI8FE/injIuL+7YgvVyX0NpMPYOEddFnFsHVm603cXgNTM0gQZeHMBGo
+	xrweeZibzJN0ZGVpv8mCoIy99XLq8t+AZo4vxoL9DmrKjUV/79nupvEkREOJZtQNbxXveg4lKFs
+	4KI/WpQc5pV0RJLp2rdIz69PMaAh50JobQIgNJafxrQgvYLLXTGc6/d9RH844Zl0Zczyv5mCX28
+	n37C0Dla0HgJ52E=
+X-Google-Smtp-Source: AGHT+IEzDxQ99eTVFb1p72eG4BzDy4n/ljYK7KwPaNsss7sxyo0CST4hlFo6R49mTS4MCJM90qjBH4sAGn3rQV8UuQ0=
+X-Received: by 2002:a05:600c:1d9c:b0:45d:d1a3:ba6a with SMTP id
+ 5b1f17b1804b1-471179174dcmr105272825e9.33.1760963029708; Mon, 20 Oct 2025
+ 05:23:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20251014064120.263455-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20251014064120.263455-1-lukas.bulwahn@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 20 Oct 2025 14:23:37 +0200
+X-Gm-Features: AS18NWA5B7IaPN02pGfQccVfxUVjCyEnsxCY8l0rw-xGHW4tso6TZRmVCMfMeXA
+Message-ID: <CAH5fLghsp6UXy9ghYe0bS7ASty-VrDLVwRkmOt44Pr1sU6vvag@mail.gmail.com>
+Subject: Re: [PATCH] rust: drm: remove unneeded handling for config DRM_LEGACY
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Oct 14, 2025 at 8:41=E2=80=AFAM Lukas Bulwahn <lbulwahn@redhat.com>=
+ wrote:
+>
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Since commit 94f8f319cbcb ("drm: Remove Kconfig option for legacy support
+> (CONFIG_DRM_LEGACY)"), the special handling in the rust drm code for the
+> config DRM_LEGACY is not needed.
+>
+> Remove the drm_legacy_fields macro and simply use bindings::drm_driver
+> unconditionally.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-
-On Sun, 19 Oct 2025 10:31:38 +0200, Christophe JAILLET wrote:
-> In the main loop of mvebu_gpio_irq_handler() some calls to
-> irq_find_mapping() can be saved.
-> 
-> There is no point to find an irq number before checking if this something
-> has to be done.
-> By testing first, some calls can be saved.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpio: mvebu: Slightly optimize mvebu_gpio_irq_handler()
-      https://git.kernel.org/brgl/linux/c/eb7f1c8415bbbb81f8674a490a5da7c22599a012
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
