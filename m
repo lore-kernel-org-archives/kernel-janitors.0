@@ -1,125 +1,77 @@
-Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D43325394B;
-	Mon, 20 Oct 2025 19:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11FA54918;
+	Tue, 21 Oct 2025 01:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988038; cv=none; b=kDbg3O2kBg9cLTnyJtj3U0YW8W0aCk39zNJ2lcqIPaiFQfOFKh54slYcp6an5eRSKcj65fHOcWXhYMnAciGb8uq+/i8gk5tOxpqo8hxqy4b1FA9YBRqkU++V/ZQbwicHtoxzj2iMAKSgME+avh/6cD1RYwqXj5liYHZ8QEGvIrU=
+	t=1761009736; cv=none; b=QCptGsg9BJZogyFsySmmipk8RhVrkCbx3ZG+EmSv0zGzJ6sSiMbE5Jo1WdJ5TL8f0zZf2i4H64DlVKVtWaXBFXabB0LAZzcxc5pbjJFNVLerRdmWXWJgCI6BJjf+YqqXnFmu4sQ3ForYKF1Ul3vQx6mewH1RUFiRMFStLJeIXVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988038; c=relaxed/simple;
-	bh=L4UsWSzuusmlizFglphTpMbVFFClnAflcd2d6Tv4uYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ppZ9X43WNlSJrubRCLwnNMQVJMITteW7/UrauwC54+GawBBVuwJAGRRBMm1U73SYdDjBWB7XJ49JK4WuhC2NerQzK+F7w3jiHQOcxVg6/gbPnKJIWQ3LAl0uGdNnUFzSLNjHDWoiVttsh2E2gXiBJKtDJHlZB55yz1mLJxOvpjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UsDV1yOl; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1761009736; c=relaxed/simple;
+	bh=OnEWViiPhOB58rPZCDEBcxBM8GNn8eKC8Q7NgoTqBKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRNjDbYNtO0iDqTNwcKTzeWVOtTNAaxmOGjj9D/5rqf8+06KvMZ2ppFQ6tLYps0UKGzYC+PwxBM0DaUkijG/byllZI8xu37Go49GzxJCMcCgg6KZs54KS0nQMT66mD97m0e/56Y4Mnc4VMAE1PIiKvDETnYLAAxGoV4d5iVmjI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rwnf0FWt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UsDV1yOl"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id AvHuvxg21KmV9AvHuvJma1; Mon, 20 Oct 2025 21:11:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1760987484;
-	bh=xnC6hSP77KC5LZzIcnY+I3sTuSG/mCUZB+qcZYzF0fs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UsDV1yOlmsSNe1We7aX1s6h3ih42qyfDQYb9I4YEApoHPKvcly61lJmuw9zpCdxsW
-	 87jpQqqPSEiY3gYh/cThVbIyFmjJl0Cg7q0jAE3QipIzF4ZxV4DrqM03NWKTQfrPO2
-	 v8yN2KQ6FBKSCiKArNpiNdyBEwMcohzM6t+MeO5/6Nr0gq2HyDulLXbV8BnHJyS/pR
-	 0TkHUIsGQheFRjv4m0/ZBjKCXtKIIPrLNWKSRV21m4Dp1l++Fu9eznY443i4LthCoQ
-	 iTpGhTHjnthLID+owISCtHYUnZYAF/K0kSzmkSjnkcUDfBu1e1oi6gVykH8tEV0l2Z
-	 B4gQAEun4E0vg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 Oct 2025 21:11:24 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	devicetree@vger.kernel.org
-Subject: [PATCH] misc: rp1: Fix some error handling paths
-Date: Mon, 20 Oct 2025 21:11:16 +0200
-Message-ID: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rwnf0FWt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267FEC4CEFB;
+	Tue, 21 Oct 2025 01:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761009734;
+	bh=OnEWViiPhOB58rPZCDEBcxBM8GNn8eKC8Q7NgoTqBKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rwnf0FWtDxTp8uROYpn+nNwsLMTn/+2/9Zja4vGZdUvSRF9gv37jj/4ykwrJjPkmM
+	 /cieUGcPiekho1qqZJG7OeMNzREvQF3lPSRQU6aMl6Aaem+BfKmE3SfUo7Nx2NmAJb
+	 rl/k57+u/Ay3FqetmWhDvmTqypWIHQqaJ4cdQOKVi9L1IAV4Li4v9QrrYfhK41hA6y
+	 JUV/vhptN6ypgutEpejOCL7PisUJRXVmRkjfMXdzh275bLlgYYDrhZUaFbyruKFSP1
+	 r9ykW71PQfgbL+wgtvcLgP4uPoZo60u8BP7f2/0C75D0vw6OLinIjNktxr7MIiB5Ao
+	 7ZvHGN/FeT+iA==
+Date: Tue, 21 Oct 2025 06:52:02 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: sg2042: Fix a reference count issue in
+ sg2042_pcie_remove()
+Message-ID: <dscsxzccevbc2aw7wupz4bsl3rf2cyuue776pbgchtptnebnth@rwbg5bum6pby>
+References: <PN6PR01MB11717CDA6EBC89511A6B567B6FEEAA@PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM>
+ <20251020152738.GA1141158@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251020152738.GA1141158@bhelgaas>
 
-Error handling in the probe and the clean-up path in the remove function
-should be adjusted depending on if data is taken from DT or from overlay at
-runtime.
+On Mon, Oct 20, 2025 at 10:27:38AM -0500, Bjorn Helgaas wrote:
+> On Mon, Oct 13, 2025 at 10:31:22AM +0800, Chen Wang wrote:
+> > Hi，Manivannan,
+> > 
+> > I see 6.18-rc1 is released. Could you please pick this fix for 6.18-rcX?
+> 
+> Mani queued this for v6.19.  Is there a reason it should be in v6.18
+> instead?  We're after the v6.18 merge window now, so we only add
+> things to v6.18 if they fix a serious issue.
+> 
 
-of_overlay_remove() should not be called when of_overlay_remove() was not
-called.
+The implication of calling pm_runtime_disable() manually in the remove() path
+is, 'dev->power.disable_depth' will be incremented twice. When the driver gets
+probed again, devm_pm_runtime_enable() will not enable runtime PM for the 'dev',
+but just decrement 'dev->power.disable_depth'.
 
-of_node_put() should be called in the remove function to avoid a potential
-reference leak.
+So this will result in an imbalanced runtime PM state. This is an issue, but
+the severity is less since the driver is not itself making use of runtime PM.
+So the driver should continue to work fine, but the runtime PM chain might be
+broken.
 
-Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is compile tested only.
+- Mani
 
-I think (hope...) that a cleaner solution is possible. So feel free to
-improve it or completely change it if needed.
----
- drivers/misc/rp1/rp1_pci.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-index 803832006ec8..9105269488a9 100644
---- a/drivers/misc/rp1/rp1_pci.c
-+++ b/drivers/misc/rp1/rp1_pci.c
-@@ -44,6 +44,8 @@ struct rp1_dev {
- 	struct irq_data *pcie_irqds[64];
- 	void __iomem *bar1;
- 	int ovcs_id;	/* overlay changeset id */
-+	struct device_node *rp1_node;	/* useful only if skip_ovl == true */
-+	bool skip_ovl;
- 	bool level_triggered_irq[RP1_INT_END];
- };
- 
-@@ -289,10 +291,14 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto err_unload_overlay;
- 	}
- 
-+	rp1->skip_ovl = skip_ovl;
-+	rp1->rp1_node = rp1_node;
-+
- 	return 0;
- 
- err_unload_overlay:
--	of_overlay_remove(&rp1->ovcs_id);
-+	if (!skip_ovl)
-+		of_overlay_remove(&rp1->ovcs_id);
- err_unregister_interrupts:
- 	rp1_unregister_interrupts(pdev);
- err_put_node:
-@@ -308,8 +314,12 @@ static void rp1_remove(struct pci_dev *pdev)
- 	struct device *dev = &pdev->dev;
- 
- 	of_platform_depopulate(dev);
--	of_overlay_remove(&rp1->ovcs_id);
-+	if (!rp1->skip_ovl)
-+		of_overlay_remove(&rp1->ovcs_id);
- 	rp1_unregister_interrupts(pdev);
-+
-+	if (rp1->skip_ovl)
-+		of_node_put(rp1->rp1_node);
- }
- 
- static const struct pci_device_id dev_id_table[] = {
 -- 
-2.51.0
-
+மணிவண்ணன் சதாசிவம்
