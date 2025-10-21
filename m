@@ -1,118 +1,108 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63221CC4D;
-	Tue, 21 Oct 2025 06:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5101E5B71;
+	Tue, 21 Oct 2025 10:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761029689; cv=none; b=pue+/ZB/C3KQV0fHQbSTlvlmcMEhG8U2TCe0hE8nx2HJLgYuDK8Zzh+9VIyAu9IvOs2tkSL5r3OwoHS5dXzeR3MV9S0212TIMSStSXdUoLISJFoP4I224qr49rp4KMTRKq8RMEdZ4wrVtyJ6Iziu2b+YenbbcvTCV+Ae8/w77zo=
+	t=1761041348; cv=none; b=U79PiEEGeLSL6yJ5ZSkaTk14ONp6xy5v9PWVSjqKzhNs8vmS2Q6vMWn7uD1ako10Xnt89J5InHTZk69hu+AHZzAEIZ2VVjKPbEDu+pRK5LEy7XYagBUrkkMOtDzBRPySDm2GXXIIh3WDaGps53/zfRRPLuThkokTJchXaz1cO/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761029689; c=relaxed/simple;
-	bh=vUVQbOfYmpXVNliJ8ltzcAHcsj2pzeSgxsCuE1Z5P44=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NcBoc08zOWWWPQ1ejtOITm/kfLA7BZHnt2Wq4tXx5Cs5JBkbwh8Eit8dMdc7cVSIOMMX4ECh+HpYSk6VPBJZuDN2aH5Din0CZs8V3SaG8D24E8rmgkIsNO24FWxp0XGAitGu2LzPZgSyzLL8WoOR6qHz+zeW+qx4zMNBIGdBsGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=17oh9UUk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m8kChcHl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1761041348; c=relaxed/simple;
+	bh=3IkoSazez8ElCAf7vNq4LiZ5Hk3FfC92/I68aQg1P+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=liYOhVGcj8QTcBJSv94wwZEQzYp3xy7OLqjTFd8NsPkuGLAwzmDLal+o2Yz9+0mntKe4pu/UlJHWKimhjILFbFAMOA546E15TGOKgCrI0CaxsOzaSEpvlA64t/h0cA2wURnB4l+TUpyc4AlS96HN7S9dpRiYyp3vPuQrP3CvxVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MzCdiHNq; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="17oh9UUk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m8kChcHl"
-Date: Tue, 21 Oct 2025 06:54:37 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761029678;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q/ChWnlMCc+/U7BqPT0kmt9rVElzF40BK+wKYBkt9QQ=;
-	b=17oh9UUkdJEu9e/UPNmSsmjy7SeRSNNad9nMvcwa40u7fvs6PfIxF3q/FsZulX2kwlzAzp
-	5acS/4eTUm9zcX+KlY1GF9o7KIQkDQlMhks9rtK11H2qeG0YsDft5IQ68mLQmWYR/+kWzT
-	oaOyEnl7srRXvEumuJF3q0OpdIY7B4Vv9hSBi+VpCiZqNEmXxEorUJpHzrOWNxRELsreOE
-	TfwzcyXCJTeiAOd56AlTo1kJhWwOcvOqL7m09EiexKfOJw+rDV7U0uCWw/p7y41yblXOz2
-	25LM+g5q/sg5qJmtFZRJR0qVRu45DnTizr/GULS19tiSqVI3D+Tka+p7iFs/VA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761029678;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q/ChWnlMCc+/U7BqPT0kmt9rVElzF40BK+wKYBkt9QQ=;
-	b=m8kChcHlSk3HF9ohf7IKd2NLRlb7NsqzG2WXW5yMRqZB1o8QoUgHoi/eIhJ75Cz2zBPnn6
-	Ls/n6iitvEoY9OAg==
-From: "tip-bot2 for Christophe JAILLET" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/apic] x86/ioapic: Simplify mp_irqdomain_alloc() slightly
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- kernel-janitors@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Ccb3a4968538637aac3a5ae4f5ecc4f5eb43376ea=2E1760861?=
- =?utf-8?q?877=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
-References: =?utf-8?q?=3Ccb3a4968538637aac3a5ae4f5ecc4f5eb43376ea=2E17608618?=
- =?utf-8?q?77=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MzCdiHNq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761041346; x=1792577346;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3IkoSazez8ElCAf7vNq4LiZ5Hk3FfC92/I68aQg1P+s=;
+  b=MzCdiHNqUCQ6OY3gn1i0H25TZE0nhvmJqSmbS7Y+iSx63/utoQkK1RiW
+   51+6g2l6aRyXQwS9jHXkmxRYK45mosybStgW9qPc8N8PL5/vZj9H4IGA6
+   q4wUVg+5UTQo4qnXRyjsdaLAlHoHMRE/0tHWUHeBWDEELGYg8WNCDXD//
+   Yg6gdVVXHW8vBU3TwShXmPTbXasNv0rbfASedeC2oAf8V1o3AvT4urq2n
+   2NVup0c5k9bU/6aq1+BAHfYOuuMLNUk5lfx9iiKaZ5uM6RtgbaoPCJzWM
+   qKniWOZaUFWuMQXst+wPjkcVP1q5msTUUNbb1thCLTdPXVOrSjKVjXG5z
+   w==;
+X-CSE-ConnectionGUID: AaMn8ZHpS8SP2OHvDP7b6g==
+X-CSE-MsgGUID: C/n+QPuiRfKqllPX8yRx8w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63204112"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="63204112"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 03:09:05 -0700
+X-CSE-ConnectionGUID: +kRsYGyUSpyirDU+nfxltw==
+X-CSE-MsgGUID: mlr9IvkQR8S/DIFYFMbZmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="214187185"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.224])
+  by orviesa002.jf.intel.com with SMTP; 21 Oct 2025 03:09:01 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 Oct 2025 13:09:00 +0300
+Date: Tue, 21 Oct 2025 13:09:00 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] usb: typec-mux: ptn36502: Omit a variable reassignment
+ in ptn36502_probe()
+Message-ID: <aPdbvC6Fz4kZ9x8q@kuha.fi.intel.com>
+References: <b33ac7ab-e66f-4407-ba3e-ec4c70636fcf@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176102967712.2601451.1941450016815014156.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b33ac7ab-e66f-4407-ba3e-ec4c70636fcf@web.de>
 
-The following commit has been merged into the x86/apic branch of tip:
+On Mon, Oct 20, 2025 at 06:00:06PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 20 Oct 2025 17:50:12 +0200
+> 
+> An error code was assigned to a variable and checked accordingly.
+> This value was passed to a dev_err_probe() call in an if branch.
+> This function is documented in the way that the same value is returned.
+> Thus delete a redundant variable reassignment.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Commit-ID:     27d2afa3b4eab5fb2a03b6ad8b74a3a700e92dce
-Gitweb:        https://git.kernel.org/tip/27d2afa3b4eab5fb2a03b6ad8b74a3a700e=
-92dce
-Author:        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-AuthorDate:    Sun, 19 Oct 2025 10:18:20 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 21 Oct 2025 08:47:33 +02:00
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-x86/ioapic: Simplify mp_irqdomain_alloc() slightly
+> ---
+>  drivers/usb/typec/mux/ptn36502.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/mux/ptn36502.c b/drivers/usb/typec/mux/ptn36502.c
+> index 129d9d24b932..b1a2977b974c 100644
+> --- a/drivers/usb/typec/mux/ptn36502.c
+> +++ b/drivers/usb/typec/mux/ptn36502.c
+> @@ -339,7 +339,7 @@ static int ptn36502_probe(struct i2c_client *client)
+>  
+>  	ret = regulator_enable(ptn->vdd18_supply);
+>  	if (ret) {
+> -		ret = dev_err_probe(dev, ret, "Failed to enable vdd18\n");
+> +		dev_err_probe(dev, ret, "Failed to enable vdd18\n");
+>  		goto err_mux_put;
+>  	}
+>  
+> -- 
+> 2.51.1
 
-The IRQ return value of irq_find_mapping() is only tested
-for existence, not used for anything else.
-
-So, this call can be replaced by a slightly simpler
-irq_resolve_mapping() call, which reduces generated
-code size a bit (x86-64 allmodconfig):
-
-   text	   data	    bss	    dec	    hex	filename
-  82142	  38633	  18048	 138823	  21e47	arch/x86/kernel/apic/io_apic.o.before
-  81932	  38633	  18048	 138613	  21d75	arch/x86/kernel/apic/io_apic.o.after
-
-[ mingo: Fixed & simplified the changelog ]
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://patch.msgid.link/cb3a4968538637aac3a5ae4f5ecc4f5eb43376ea.17608=
-61877.git.christophe.jaillet@wanadoo.fr
----
- arch/x86/kernel/apic/io_apic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 5ba2feb..1e0442e 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -2864,7 +2864,7 @@ int mp_irqdomain_alloc(struct irq_domain *domain, unsig=
-ned int virq,
-=20
- 	ioapic =3D mp_irqdomain_ioapic_idx(domain);
- 	pin =3D info->ioapic.pin;
--	if (irq_find_mapping(domain, (irq_hw_number_t)pin) > 0)
-+	if (irq_resolve_mapping(domain, (irq_hw_number_t)pin))
- 		return -EEXIST;
-=20
- 	data =3D kzalloc(sizeof(*data), GFP_KERNEL);
+-- 
+heikki
