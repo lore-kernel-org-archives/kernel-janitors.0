@@ -1,155 +1,118 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6472517AF
-	for <kernel-janitors@vger.kernel.org>; Tue, 21 Oct 2025 05:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63221CC4D;
+	Tue, 21 Oct 2025 06:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761024388; cv=none; b=hF6lJDfnfw0Bc9QdbUWgh/LxucyUY1WWKO6mQUohxw0wrp6i+uz3J4QF7gOERbtUhr4WMmPOkPqn6IQfwnkdh4vTlB9G2dhyxGSCIEAcJ1fdrNDeZo6EHclMr6hmPFpgoxyLVPmFQ524+FeBw1xCeg6bFxNU5erDB2QklcFZQAk=
+	t=1761029689; cv=none; b=pue+/ZB/C3KQV0fHQbSTlvlmcMEhG8U2TCe0hE8nx2HJLgYuDK8Zzh+9VIyAu9IvOs2tkSL5r3OwoHS5dXzeR3MV9S0212TIMSStSXdUoLISJFoP4I224qr49rp4KMTRKq8RMEdZ4wrVtyJ6Iziu2b+YenbbcvTCV+Ae8/w77zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761024388; c=relaxed/simple;
-	bh=Lh2hJUfWN74+RYC/v7DVT/JhYHN62QreXrlqKH1VsgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JS4aXvhnLSURVJW4gUzG//wEO4l4Sj5egTEdMoDSJkuVVD719J/paLQ+pR7Yb6UEIEhoSKFJT7DtZfcccUpJ9wInUTIp2Ccaj7RXibHFDbSoy+U1v++7ksERpU5mqPi26YQvYe99WHo6hvDO2MgibROljBsH6qlrs4TbHuxcUT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nyIWR5Fm; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761029689; c=relaxed/simple;
+	bh=vUVQbOfYmpXVNliJ8ltzcAHcsj2pzeSgxsCuE1Z5P44=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NcBoc08zOWWWPQ1ejtOITm/kfLA7BZHnt2Wq4tXx5Cs5JBkbwh8Eit8dMdc7cVSIOMMX4ECh+HpYSk6VPBJZuDN2aH5Din0CZs8V3SaG8D24E8rmgkIsNO24FWxp0XGAitGu2LzPZgSyzLL8WoOR6qHz+zeW+qx4zMNBIGdBsGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=17oh9UUk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m8kChcHl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nyIWR5Fm"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47495477241so3544935e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Oct 2025 22:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761024385; x=1761629185; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LpXcdCxES8VhMciNpBuW1YUVsgbsbaaJgsQSe3LFXBs=;
-        b=nyIWR5Fm2YYuBXcg++69ihYGT4RRrsj80Ek+PlUGmRYY8Olx+t1z90j9IRHrq3/b2S
-         c4DIDCQREK5d6ZTUSQfnighqFR1F6XHBdCOldymbr1ZD8iCbbN2HiZtxbp7ugCLUAWbd
-         nk8LZxzjb3E1SAthkoyaf0YGw69smPy9JWWxTVx08xE1Jv+iHbb1xtG4QXOrOXcPYUMa
-         HQ49HztnArHLzfnmjBTplQTwikT5pipLRXcSfVaF4nSwyffIFJCu0OA3VoZ/MG4RiEXO
-         tJbzM+sCaVsMANWC/qO2eWtEe/G/E0XB6G1ID9e8FK4W/ul3wMkd58saPQGUA8rb+h4h
-         8Y0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761024385; x=1761629185;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LpXcdCxES8VhMciNpBuW1YUVsgbsbaaJgsQSe3LFXBs=;
-        b=QwEhiSGT+4a15egcp6yYYQA8hIH+zsbfqZ/yyiNuqQH1BuQu8o4UpA3ISpd3OVnUmV
-         M4BdpEJpLULTOf4+FYFpfXcUCcyqc7fwwMEUANXMKu3D1CmsOh7EbQJVUn1lWwg7r6F2
-         1pR0hJS2cF2r0MrXLRGvbXIetU3RpHhC3frjPSqnE+Vieau1y+mIIdfePsKZLKAA0l+R
-         RxylVpisvPswuvOMo5yp7QY6afOsZGTBtuTDJ2KLvWSfGC3kjQ6i7fGZzwwKFbuR3N9Z
-         WKH4J3afsd1PyDVVsvUjodqOF6hUPiyGdTLOJVY4FFpwV26y5vvpBqdIOvnKoKn2+OYq
-         mgVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXccm+7PVSHv36QKraTrGTq6It8oUcz7WswShFR5QwfDLgHdiApH2XTcTGnRobU4P36sfgWWokNqlVRwGOxvY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDe1+UC97hwX0eHbONzeH52TXxHEl7V0rqqGWVCOyK77phB0qB
-	uo4BpkCx5PvNa8o9umblWJ0UDNdTs/EtJSD+yr7d1STrYLAGyVvaWXxeGV0hRV3cM7o=
-X-Gm-Gg: ASbGnct0D8EywFPKQJy/+8vEcQgCiq7vdUB6GCY8WURm1vki2mo7/eOxN7l6THrgsGj
-	RjjIBNDEjjjCsEyNtcyiaYFwj64aDBm6hLWvIiRIN8bgWlzDerESXLqnIxnvoGRFffWVhs3zQSY
-	/YUOsg8nZhEr97lMc0w6oslug9BytV53yu9+/sKuRma80KxpRtlUzfP8HpqetokSrjTGpnrwnmX
-	j+UBfRdhESEDSJlz4m0AaRsfYOK6eKuntLJ0SRQK0oU4hNU0kFPKpKqSKm/3ze9WTbkNUczMq/D
-	+rArQf0qt1Wogl1UQFTqLwijyqP8VMiPKP2d0bZmHMbh6G3GNTAR0ut+PSgCbFDc3+NkC0x+GXe
-	OjhsF5qeGaXTABdNTP3b1IgCNKyVbf31GRngxNmhmJ4wGKAQ+C/9Z8KX1C7NT80rks3LCV8WX3l
-	UFfNBC1H5DSg/StNDj
-X-Google-Smtp-Source: AGHT+IHIHSrtW3GijTRXt2IgYi51Hm0oWtBpCtSEWan639ujy1pKF9l/ZU8kFQADnPAQNheJfCrd6Q==
-X-Received: by 2002:a05:600c:8185:b0:46f:b43a:aeed with SMTP id 5b1f17b1804b1-4711792cc0cmr108057125e9.40.1761024384730;
-        Mon, 20 Oct 2025 22:26:24 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427ea5a0f88sm17811180f8f.7.2025.10.20.22.26.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 22:26:24 -0700 (PDT)
-Date: Tue, 21 Oct 2025 08:26:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] misc: rp1: Fix some error handling paths
-Message-ID: <aPcZfI4qePMNuil8@stanley.mountain>
-References: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="17oh9UUk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m8kChcHl"
+Date: Tue, 21 Oct 2025 06:54:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761029678;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q/ChWnlMCc+/U7BqPT0kmt9rVElzF40BK+wKYBkt9QQ=;
+	b=17oh9UUkdJEu9e/UPNmSsmjy7SeRSNNad9nMvcwa40u7fvs6PfIxF3q/FsZulX2kwlzAzp
+	5acS/4eTUm9zcX+KlY1GF9o7KIQkDQlMhks9rtK11H2qeG0YsDft5IQ68mLQmWYR/+kWzT
+	oaOyEnl7srRXvEumuJF3q0OpdIY7B4Vv9hSBi+VpCiZqNEmXxEorUJpHzrOWNxRELsreOE
+	TfwzcyXCJTeiAOd56AlTo1kJhWwOcvOqL7m09EiexKfOJw+rDV7U0uCWw/p7y41yblXOz2
+	25LM+g5q/sg5qJmtFZRJR0qVRu45DnTizr/GULS19tiSqVI3D+Tka+p7iFs/VA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761029678;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q/ChWnlMCc+/U7BqPT0kmt9rVElzF40BK+wKYBkt9QQ=;
+	b=m8kChcHlSk3HF9ohf7IKd2NLRlb7NsqzG2WXW5yMRqZB1o8QoUgHoi/eIhJ75Cz2zBPnn6
+	Ls/n6iitvEoY9OAg==
+From: "tip-bot2 for Christophe JAILLET" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/apic] x86/ioapic: Simplify mp_irqdomain_alloc() slightly
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ kernel-janitors@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3Ccb3a4968538637aac3a5ae4f5ecc4f5eb43376ea=2E1760861?=
+ =?utf-8?q?877=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+References: =?utf-8?q?=3Ccb3a4968538637aac3a5ae4f5ecc4f5eb43376ea=2E17608618?=
+ =?utf-8?q?77=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <176102967712.2601451.1941450016815014156.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 09:11:16PM +0200, Christophe JAILLET wrote:
-> Error handling in the probe and the clean-up path in the remove function
-> should be adjusted depending on if data is taken from DT or from overlay at
-> runtime.
-> 
-> of_overlay_remove() should not be called when of_overlay_remove() was not
-> called.
-> 
-> of_node_put() should be called in the remove function to avoid a potential
-> reference leak.
-> 
-> Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is compile tested only.
-> 
-> I think (hope...) that a cleaner solution is possible. So feel free to
-> improve it or completely change it if needed.
-> ---
->  drivers/misc/rp1/rp1_pci.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-> index 803832006ec8..9105269488a9 100644
-> --- a/drivers/misc/rp1/rp1_pci.c
-> +++ b/drivers/misc/rp1/rp1_pci.c
-> @@ -44,6 +44,8 @@ struct rp1_dev {
->  	struct irq_data *pcie_irqds[64];
->  	void __iomem *bar1;
->  	int ovcs_id;	/* overlay changeset id */
-> +	struct device_node *rp1_node;	/* useful only if skip_ovl == true */
-> +	bool skip_ovl;
->  	bool level_triggered_irq[RP1_INT_END];
->  };
->  
-> @@ -289,10 +291,14 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  		goto err_unload_overlay;
->  	}
->  
-> +	rp1->skip_ovl = skip_ovl;
-> +	rp1->rp1_node = rp1_node;
+The following commit has been merged into the x86/apic branch of tip:
 
-This is a reference to the device tree node.  We normally drop the
-refcount when we're done reading what we want from it.  So we can
-call of_node_put(rp1->rp1_node) here on the success path.
+Commit-ID:     27d2afa3b4eab5fb2a03b6ad8b74a3a700e92dce
+Gitweb:        https://git.kernel.org/tip/27d2afa3b4eab5fb2a03b6ad8b74a3a700e=
+92dce
+Author:        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+AuthorDate:    Sun, 19 Oct 2025 10:18:20 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 21 Oct 2025 08:47:33 +02:00
 
-We could just declare it with __free(device_node) and use cleanup.h.
+x86/ioapic: Simplify mp_irqdomain_alloc() slightly
 
-> +
->  	return 0;
->  
->  err_unload_overlay:
-> -	of_overlay_remove(&rp1->ovcs_id);
-> +	if (!skip_ovl)
-> +		of_overlay_remove(&rp1->ovcs_id);
->  err_unregister_interrupts:
->  	rp1_unregister_interrupts(pdev);
->  err_put_node:
-> @@ -308,8 +314,12 @@ static void rp1_remove(struct pci_dev *pdev)
->  	struct device *dev = &pdev->dev;
->  
->  	of_platform_depopulate(dev);
-> -	of_overlay_remove(&rp1->ovcs_id);
+The IRQ return value of irq_find_mapping() is only tested
+for existence, not used for anything else.
 
-It might be nice if of_overlay_remove() ignored when rp1->ovcs_id is
-set to zero.  Then we could call it unconditionally.
+So, this call can be replaced by a slightly simpler
+irq_resolve_mapping() call, which reduces generated
+code size a bit (x86-64 allmodconfig):
 
-regards,
-dan carpenter
+   text	   data	    bss	    dec	    hex	filename
+  82142	  38633	  18048	 138823	  21e47	arch/x86/kernel/apic/io_apic.o.before
+  81932	  38633	  18048	 138613	  21d75	arch/x86/kernel/apic/io_apic.o.after
 
+[ mingo: Fixed & simplified the changelog ]
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://patch.msgid.link/cb3a4968538637aac3a5ae4f5ecc4f5eb43376ea.17608=
+61877.git.christophe.jaillet@wanadoo.fr
+---
+ arch/x86/kernel/apic/io_apic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 5ba2feb..1e0442e 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -2864,7 +2864,7 @@ int mp_irqdomain_alloc(struct irq_domain *domain, unsig=
+ned int virq,
+=20
+ 	ioapic =3D mp_irqdomain_ioapic_idx(domain);
+ 	pin =3D info->ioapic.pin;
+-	if (irq_find_mapping(domain, (irq_hw_number_t)pin) > 0)
++	if (irq_resolve_mapping(domain, (irq_hw_number_t)pin))
+ 		return -EEXIST;
+=20
+ 	data =3D kzalloc(sizeof(*data), GFP_KERNEL);
