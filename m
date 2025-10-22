@@ -1,118 +1,96 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8862FB0A6
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 14:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D284932C954
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 15:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142090; cv=none; b=sNalmOY8W3tBLOAK+0IXzLN8spvI3uZVGgbIe5DSX+BiuGYkDuE73iG3MSuxz6uLAXSqLs1M3fDazemHyhpYXmS5MgpJAjwmt1ciSnXdyMlfn0YQxa8mrV5WTaB62pgaCiYBlGlql+rCJzM1cwjFbcqPwOJp/CR5eDPvtDng6eQ=
+	t=1761146044; cv=none; b=LcdQz49ScWF6++ESi2bXyY53gYbQCAuYHrgbqDs1jPl88OtwWqkKDEfHjYMyj+A6s7Qvn+yJH3XH/kYwT1VSW0aKzU1E7oGk1IR1omhRhoisN+kivovoSYrEIm+UoZtJEI0ULQEzpxfQzs9d+3LLwtFZPqCEWa77eS/dlWMw6NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142090; c=relaxed/simple;
-	bh=n6MZQWS9UxRif9lNNulxaU6i8BsuZ5VcpBJFujfN/yI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N+rS84jnYbF9nlgWe2fdlV4mX8ZTJYLkAs+y46HKS7YvGp/6QEG/AC+YDzhypot+V0JsQEHqvV4biN7tpagJt7fRN8cOrSolZ8cj+Uanlk2qOpnU1Ded11AefKEyBJVXKd4HYsP0/eMhpiKcDC7M9fWZ1S5rDqO4aAhuyKK4/lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5jn9DZK; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761146044; c=relaxed/simple;
+	bh=bJkRf2vDW66xzETEmduK5o/Wmh8MgCortzpmg5JEPoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DJDI5Q7gMuO/h3SVBqCbnPaV6dgGs0TZnOeheECKMGZmdctGZdt851HkEvgHn5z8BjT8/4trxZQ8YyaWtTtd3NmoAEXRlz+a1Y+lX7gr/lVKT0y9cLUhCbVbvSnMJeS3tEzFm/LcwQFAM6Gha1uR1ptmZ0CUgB/NR7A6sQEwev8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WILyl/bn; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5jn9DZK"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b6ceeea4b46so12277a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 07:08:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WILyl/bn"
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4420076bc1bso1853059b6e.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 08:14:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761142088; x=1761746888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pxWecD44n8F7A68MtB2Gk3SGRDfmDIC8qrgGGOx9IvQ=;
-        b=L5jn9DZK1yikZIa4fYdhTzlJ63nQ2IGV0pgyS0h6MHui7Dy3NnAliASW7jNf1YeKCx
-         JUVyvP06V+4uGjBfOKA1hTOUBpN4oPi2vYGVvdLkBTO46LxH7WSj9twZBKg3i+DAQjt7
-         QMQADk1l621dlM+rX4FZ90FicW6zpacAKxAbcxPAgimQgKo1G+exHITZAM1E+TAUV29N
-         dLL44o0F6C04kA9v8Vr1gQnLMP/YbRQerRa9qGKL79ddJ47SY3rydvTqlCPKcS5Tag9U
-         q3gkMnwnW88RRLsW1wqrBhZLsEUkM5NtHUaP+zmCm7rZAUaYLEl3BH5BjowFz8Dh+SUF
-         2BSQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761146041; x=1761750841; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M06GA4DzU6q4HcL9w50fg3W9nzfX6SVpmQDyjsPEDxA=;
+        b=WILyl/bno9iHRovIoGuzt1qOrfFXuCFLtYkN9W1HXfo7iMfQKCh9aUdvScBILF1qN1
+         qHEYWcyq5pcPdEtGuOSOaYcnBgcwXY9Q1HGMND12oMlaqdiHO97g+j0Paq58AwT8kg8c
+         qXbMVqEt8VglL7upyQgN7NvkdAp6cgcHk4omYQqARv64nl3ppKZXCmJK2uCUUa3zAtGv
+         LyS6QxCZswpi4NRMdRk5Y2ATzVfWtnucCnkuvTQP8xLKaf5Cm9xyCGc2lba/XKF6E0qA
+         CcZJk6CxbPV4/2bB56L4AL1qmsoYLvUa6mZrropBBTMZUzL8dOi+mybq/UdOHiiW1ptL
+         l0cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142088; x=1761746888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxWecD44n8F7A68MtB2Gk3SGRDfmDIC8qrgGGOx9IvQ=;
-        b=Bj1KdBnUPUC7MqCJ430r6Rm0vKjkxj2KA6SWfUVBTwh9CUn15yEqBqZF7VLJT/OiIb
-         z35TPfJUcSN49/gAXcQPl1bWTEf5Oz8XsrTQ7ZgTBhN4CNz29vuxXOp3vK6oDenzWory
-         CYo1w79sIQF7pnRpoGn7SlxnEKX9MItZkKxfLS2FHMW8tYtEEB3jqwmft3oNNh2ARbWu
-         EY7+PHBMoJMp0wHV9nB6OQmBIw79vJSntEbQ4BeZ4vVyswYsxN0P4Sqa82SRSJC7RhqT
-         UTTWTKgc5iSwYSNlD5ORynAsny/M2KrZa8KheT/cWTaX7IWdWGjE6ujsiByrIPBkOCw8
-         pkYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxtgBq7lZywCTlrdbOxfRIDEbXLtaJvM/oL3zYk3pzV40GoF/lVO5dHSLJM2ZMGgWr30Ox5WXGZ6mSZK6eMC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF23NNDsHn5rPsvReoYTy6rQsfrjAv4qAvivHLWtysCNWuytez
-	9+gpZQ8IH5jcGfRnxUPvIrFR6JX+jd/JfBhO+yG0NVW6LbVOE28x++QmnsOKWrHtTiGRTCHI+y6
-	rvsI/2yjTPoHGIOEJuVAn71keiwxvvjENWg==
-X-Gm-Gg: ASbGnctzzKsv6jj+4pwL+10LRNRQayCugtm9qQECIWH90dUwYroCh0iE0X1wzccind+
-	Oj5gVIa1ipwuyZey8JpIEszhbuXv0M1EXFgSL9B/EKgHKf7qgdsMRH938N5WJ2CxqQnxSar8U1w
-	ADtOYwOmU5H4oM0Egb3ERoi4QhJY8KOuFHkdHtLF2gI2GenF2vO49S1VrnHkvRi2IX0YKh4VQdj
-	R5nqPdqogE1xBbgyvVCNPrDRY0ma4xFJjieTUUBoY+QcQ+BizibAY2iIkxB
-X-Google-Smtp-Source: AGHT+IGM3mvFgkHnTG7QRIj/Gmy3p+LRuhhPAH5vukdmhYx7TsNqfkR+YhVrgCxY2EWb4hIpzDcGres9mluYuxqKhfc=
-X-Received: by 2002:a17:903:120b:b0:28d:1904:6e77 with SMTP id
- d9443c01a7336-290c9d26917mr126853125ad.3.1761142087899; Wed, 22 Oct 2025
- 07:08:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761146041; x=1761750841;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M06GA4DzU6q4HcL9w50fg3W9nzfX6SVpmQDyjsPEDxA=;
+        b=Z6WyWjdSpoVF54Kbw5GFMHMWjuRPS+d3MY24FB1+Pql4sNtNH3dK0tH8ke0lD8ZkgB
+         fFvk2tSSjQrnvm2uHhsX+JHQdNla4PHig3L4BTYsH0XQvo6b1520+sLmQVX+Q40PfsOx
+         95jcUv8wGT4Czl4GD/sVQDkgL1+u+4GOzVutMAt0vYdh7rYgM2CdOKYzRocqs/TzUfoF
+         qRn8uwDDIRoTcFdVxjDiIMoH8X6Tc8ktHnQ4oL0OOmw25i9Qf2AxcCjb2EAsEaLYoc2b
+         10W+byeSYx4wKaIVuarzHmQtJQGABEQzeCHSikPywjWj3YI8u/fovZq9EhCqTfN3KHVW
+         RLZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQAJKnM6ZpN2y578W9UWvp6pXiEpgs+dtA2Pj01zTnENzKU4QWa+5L/n29PZi9MG6lfnO9dTNiicMbqjY+6fU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfHJLjQ6xyZkkwADkTkX4EYq/xYZKmnEaBOeyW6tZNDMibuinr
+	WcTFBqrLOGUZtWNDbo+aMWUyt0R7mxmr607LQQziQmlfJNwiqiHK/+jLvZQS9beDdZs=
+X-Gm-Gg: ASbGncvzGsBnBMB9IhPbiEHXSR/OaUBL2j34sckSJ7Qh5b5VzvzdfdNklDKyUReBBPf
+	kecBLRIQo8vrUpod5b0dwDgGY80uM2piba7toPJumDSCsayqyV9e92+jq2uzs6zJTcZ3X17A2RV
+	feeij3Ik/jh5egj6w7V7J0A1tJYP1yZ4KS9ONez6868Qav5qCDiQ0gS+hG58j+DjeUPKzfyVofp
+	M7DxqolViJ3AqgFQkSx2wEM8AXIM+ZWsWf0IE/arYc+SIBwFuNGzLjPex+S8JCqg3R8Y9zNUmzk
+	V7RKDIwBkuKfFQtsUFVeorVRiKfgP4TI1Gx4Kdkanu+9usjWJdpqTUQKt2UIDIHMRIGy3JW5MxZ
+	CSwy+1t2JL0V507DU6M5+ccE2UB/h2B2dRf59PwkROvKlgUTD5dmw3m7p4ojm5RzRFBbxog3/q1
+	RuCmk4pqi1Kng9lLihqPfkTNLwyn4aJuOOiT4AVvkoVLLbJ4bLKA==
+X-Google-Smtp-Source: AGHT+IH5X1dX+eTbtzPr1DK1hodPbkihzSGYwZP+aVpU3q50pmX97szy9HuXtGku72DLkLr+jPiOWQ==
+X-Received: by 2002:a05:6808:2112:b0:43f:1b7d:b631 with SMTP id 5614622812f47-443a30af9femr9009191b6e.35.1761146040880;
+        Wed, 22 Oct 2025 08:14:00 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:4176:6994:bd72:1296? ([2600:8803:e7e4:500:4176:6994:bd72:1296])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-443df628a35sm3311240b6e.22.2025.10.22.08.14.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 08:14:00 -0700 (PDT)
+Message-ID: <cf276696-2928-4ddd-9750-db84466e4599@baylibre.com>
+Date: Wed, 22 Oct 2025 10:13:59 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aPi5_CILMKn3ZrVd@stanley.mountain>
-In-Reply-To: <aPi5_CILMKn3ZrVd@stanley.mountain>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 22 Oct 2025 10:07:56 -0400
-X-Gm-Features: AS18NWBdUcj9BuAc7F-BssClfHNNkfo9ryZDxZvVPhEuoCs-u5I60K5betUL5-0
-Message-ID: <CADnq5_MoG0s7K5wCaf8-32SWCnOeaPkYvDCyixem_w_jVBbgag@mail.gmail.com>
-Subject: Re: [PATCH next] drm/amdgpu/userqueue: Fix use after free in amdgpu_userq_buffer_vas_list_cleanup()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Prike Liang <Prike.Liang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sunil Khatri <sunil.khatri@amd.com>, 
-	Shashank Sharma <shashank.sharma@amd.com>, 
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return
+ statement in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Remi Buisson <remi.buisson@tdk.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aPi5vEp75jH0imQc@stanley.mountain>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aPi5vEp75jH0imQc@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Applied.  Thanks!
-
-Alex
-
-On Wed, Oct 22, 2025 at 9:31=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The amdgpu_userq_buffer_va_list_del() function frees "va_cursor" but it
-> is dereferenced on the next line when we print the debug message.  Print
-> the debug message first and then free it.
->
-> Fixes: 2a28f9665dca ("drm/amdgpu: track the userq bo va for its obj manag=
-ement")
+On 10/22/25 6:02 AM, Dan Carpenter wrote:
+> The intention here was clearly to return -ENODEV but the return statement
+> was missing.  It would result in an off by one read in i3c_chip_info[] on
+> the next line.  Add the return statement.
+> 
+> Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_icm45600 driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_userq.c
-> index 9d4751a39c20..2200e0bbf040 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-> @@ -159,9 +159,9 @@ static int amdgpu_userq_buffer_vas_list_cleanup(struc=
-t amdgpu_device *adev,
->                         r =3D -EINVAL;
->                         goto err;
->                 }
-> -               amdgpu_userq_buffer_va_list_del(mapping, va_cursor);
->                 dev_dbg(adev->dev, "delete the userq:%p va:%llx\n",
->                         queue, va_cursor->gpu_addr);
-> +               amdgpu_userq_buffer_va_list_del(mapping, va_cursor);
->         }
->  err:
->         amdgpu_bo_unreserve(queue->vm->root.bo);
-> --
-> 2.51.0
->
+
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+
