@@ -1,74 +1,73 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D32A2472A8
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 11:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6640B2777FC
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 11:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761131076; cv=none; b=Ech7lBq2qkl428ZL6GslMYDF/cAswjySlenDluE+mACPiZcspzop8HGtX5kp40F6dUCeKmSyd8vTROd7cIXmYb9zSOoIg56HFARViTcrZv8CEocyivvwWEsyChnMT2mHeWDD6zQzo1YHFAicS8UiXBcviK5WQ2hLUGdYdJWIYfo=
+	t=1761131089; cv=none; b=uL+vdGrPVhkhzKLasM70W8sUKm3LYobhoYF1rWt4aEWt9GryMbqT8fvrlfGeuVQnIQxiWyKWe6fchn+6X0OPZaU7+Sozdd2isVDqdUinN1+F0Bt1Em6vX7Kg8seHvyD8vf6yiUm3Jdk+qj1dLQiLf9hMBLnuAfsWRgxaQnwz44k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761131076; c=relaxed/simple;
-	bh=dPOpm5vBn3gdpvLHuFodqR7mnIn1IG6DinUEZR0SOkw=;
+	s=arc-20240116; t=1761131089; c=relaxed/simple;
+	bh=fbnf82wilN+OInKBeOAmH7SupbMbH8ConaawoIHXamk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lLNxPy3SJ8M0Lepn3Al56pe5XIJj7v/gpFMd47KDL5egUCjHGoMKMXRITumY6Ckl+YQKCMI9lC32W2NGVRz3qRxyo3j9WCV6xekZhLEGPnC6n23mVsa+QxVPdog1fcbG2hs31wIEmdtOpoOKZfmp6Tx/mneyjLitgnusbGJjxfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oHDy824P; arc=none smtp.client-ip=209.85.128.51
+	 Content-Disposition; b=ZT73+cJs6/4Kgr8aXKgDIs3JUayiaLaaM7TPC7zvnJdm+upa18aONGoCMZM8qXbh9yKzYB2hapMHp3uqZI5dU/sIjOdfdNEzPgLrLwyp782C+cKdMwamRBXGIeTQIObHrRQM52ZRv4jyflPKMSTjCehKeJHyyj6O94Kt4lS/eoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZJx1bT2T; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oHDy824P"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4710683a644so7673595e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 04:04:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZJx1bT2T"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4711b95226dso56024305e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 04:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761131072; x=1761735872; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761131086; x=1761735886; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qEafg9Klu5zOL06Nglfzdv2mgxyWpLG/yLgQwga+NA8=;
-        b=oHDy824P/FMBqmFZwktACi54CazSymctzVxokRz1ie82/Y+bssM8MoqKSRrXrHKtcI
-         RWr7RiPYP4Xta3uNcoPLzlGqBrrMa1xCDlreHFXOnyd8/CfiHtNme0Z/7sDDmiBlf6Pq
-         lODifHQ7QEgxXQuXcZcJqJEGhV5av3Z2T/ozfSNDBWNizr8Tn8J2J5huBZuBYYnpgPkH
-         C83G+CMYcw2dRaDBfBNp41GSFe6dO7B5gwEJf0kMIPLaf/WG6vw8GfYqX3MVIctWUs+p
-         M/pDZv9/hX/DNh4BYAAPvmeRwxc9UR4MkRudsB3F9f96AzYGyds7HckK0qEaac7GCCxG
-         pADQ==
+        bh=ec4fethFoS2+SPeTVw+Fwof3KrdKYWIF/kwJYkEKmFY=;
+        b=ZJx1bT2Ta+/gas6V6KLQ0yqH2DsgFbKU6MUOk1SLPCzuZYdVw0pPkfvvwhZFWsYiUN
+         Tv79scr8JZBRRkKSrRvjoZ1tL3fiCMYWvAEsfPc4/DWy2HvsSVKtt2llfIyUtSfosfp7
+         GuGicd6mVL/f7yuBlWVdXPyptpSDn2ZGHT0qh+MCOiO31u5qdm7SiN65HslDeOwgyzcl
+         XtmY94gjJVN7fh7mNMWRaa70JXXj9iO3B609h8g4Exs6z6KJxmoTOYrL6+HI06DQ6yLL
+         tq227ffNak8KQwyhbp34lxfKqXEGYyhGPHjcWmaEIqbYyLonMFRGnpNS7oSeXHNzd6jP
+         Ydew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761131072; x=1761735872;
+        d=1e100.net; s=20230601; t=1761131086; x=1761735886;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qEafg9Klu5zOL06Nglfzdv2mgxyWpLG/yLgQwga+NA8=;
-        b=PjsPGOd+x/2MRlwQX6ySRtW8slXxtQgB3s5PkAYux+q/y/DNhVXs3rchUt96Ir03q3
-         T1S/POOwAMNciMiB58uD8YAb9t4A7vUeMATUl+MjPqGT2ARvJBDxjcSE4gp4adpW9Ovc
-         vnzrdTmKE+F0IKOrK3a9c9JpJ+6s5qVOjCGcJKRgXbC1gqhv8UZ1znCNUkZq67LADuS6
-         rxhij3xnjmXe1SqFGXVqTGtQr0h55XL1XfJDBgAT9NTr7fcXz5Rw9K5S4uO9T65crwKY
-         +1Tj+z/jREX7Ctc7H2Pv7aFmV1T/esYRxsVbg2quYIsCpJTGBTGgOalXkCp01kYXebuk
-         wjWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlAk2FJtoGs+OK89zQaHi9Aetn3Gea524YfuxlvFmwyWmTH0Pkg97yL1DV3oqCg/KouI2ZZ9TotwGLTNn1wu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNPs7KicOS04XR2F3wPyRcxdk6Tu8WD2yVcLCGJHAcwdQBn2mc
-	fOGtOxHyYt4JDFdFdENqbbK3lNOoi6B6+elD7uYyuLAWzamcVXpbl1BLbyoObxLMkvs=
-X-Gm-Gg: ASbGncsiXjjMt9H11MWnrAUF87A2yH3G0P6yxVAbUMvEeJHlhwN6DR99tmNCvfdyz9S
-	L7aqI0irHuKDoMK7foczZ8RrYR+p4sjXFUDPI07VAhy8WT8quD8lWhnI7q3q9ATcFOor+Uih8Yd
-	o4fdZoSrDtLHCkZw/8OVYXTOMcV/t+xzXRUxuQZwyvMkTCqJAw3pzQakvpXGFKfTUZK35aHtLk8
-	EKUDCtuc16Z+g86GCQdwQhX/eD3SEr/OnHIwlO7vM5nj6mUQY9Wx9zixItqKSiuRZElGI5Nt3dM
-	co7tJmRIbkN5BU1982V1I+K1X/WNzUZqawNB/HGVfwHrnWZnytNebtHcdTMc+oiQ5Z4+gbkkuM/
-	yfjhbbF4Tmd2p8NUcX8OROc5MX0dd+HGZeYrOZcMcSaA85/qEBfQ2RhR85fpDZJOenl0GFlhq0B
-	A3EB/A/w==
-X-Google-Smtp-Source: AGHT+IEvzeQmuJZVlQvxOVzt5DBIbtifvWSq41OHqDirBuHQNqktljPPP8+Q3xqBRDvi5bTZGQ8Z5A==
-X-Received: by 2002:a05:600d:4265:b0:471:1e:ebe8 with SMTP id 5b1f17b1804b1-475c6f5d0edmr6359645e9.10.1761131072473;
-        Wed, 22 Oct 2025 04:04:32 -0700 (PDT)
+        bh=ec4fethFoS2+SPeTVw+Fwof3KrdKYWIF/kwJYkEKmFY=;
+        b=vAOVpHdLrqyIVRt09Zd0OdZ7Zj/SZdo7L4zsO1AeLWRAwtKFtxV4f22eqlOIxJuUiA
+         5C1c57HkbXUoxJC8rzNdcpKO/fku7SHMC74nWotZsE2bwKAEM5lNI+vF0morw8C20LlW
+         DGt1bQyNRypZFIVzHBSMYKMM7nTnpSH+Ut56xVE9YgyW8Qu42H3CIKYn9D2FW09wikRG
+         y5rpHvy1ST5oHrTTyudBUgruomyDF9t9ut5EBmVq6HJLEAP9JGcmFT9V86EIU7TrnvUu
+         j72fMMvwLbF6UVF+hzZtDWho5ETo9Gr1WdGp8MvDrMT56vxBWxS1kenY6+LfjmHSau63
+         q3XA==
+X-Forwarded-Encrypted: i=1; AJvYcCULoeg0aPsFfJjQ2gzFE42fetDn/2luavduOvBG7KWLnggIPoEHaygVpmQzDy/LkXgxJKjnr56q+XVdeii+lbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7QqQvKAI5gmVfJX+ulRyRXLtDQ07xzBCeoJskXntiUyNvJrFn
+	t53X/2soWNKVEVNmMDaqRkz/hooTdl8PTnW3tQIkceF4QU20+ew2CbdU/PqF6zn8cZE=
+X-Gm-Gg: ASbGnct8r/MhvptHvmo7tDoNlU2/j2CbZZT1DcnRqmIKrqQfpPiJXcHwSv/9CBEmRH1
+	exHRG4Gf7O32t9l/MrEoJOAJ1iIuusTu7CbHDmI8MLv2XbrKe95elheY2ew+ZGWAwnXm2fGNntC
+	It8xDLp7hFJ4OMtUSPcNG4VQUW04eECSm37E14HQ0632wLBCWOpeFQ4mWFVUDqWIQ7N8QFJ05fE
+	qQxOJJ+OH2Z+oow5icuXFnk2xzqBHq1ru+cT+cDZA1PqOT5cSTl6nOLcm7bLC4y88zLjCVV8qXU
+	hOkDcnQOIVcvCIaLlveZOf3E9hqYFpitnibe/z4YWvGkkjh16XECAXgLYYZQKzQb2506sxkgt4c
+	o2i3g/LeoGPNEOvfZ/AlWl+VTAcmlSU5ORmrHXru7vCX3Ddz5AqUSfiDMWnhA3y/CDQYhbYkTcp
+	dkA38J09cEDiNTJgN5
+X-Google-Smtp-Source: AGHT+IGMYkocvaBnPACpDrQqTQlINhZBUKIMjE+J1fPKEeBjdhwvP+lt5c1FWsAPVXg7BnBQuKDcjw==
+X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr156254735e9.33.1761131085678;
+        Wed, 22 Oct 2025 04:04:45 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475c428a534sm44924865e9.6.2025.10.22.04.04.31
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47496d4b923sm33430975e9.14.2025.10.22.04.04.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:04:32 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:04:29 +0300
+        Wed, 22 Oct 2025 04:04:45 -0700 (PDT)
+Date: Wed, 22 Oct 2025 14:04:42 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: YiPeng Chai <YiPeng.Chai@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Hawking Zhang <Hawking.Zhang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/amd/ras: Fix a NULL vs IS_ERR() bug in
- ras_process_init()
-Message-ID: <aPi6PTnGfpG02RgK@stanley.mountain>
+	YiPeng Chai <YiPeng.Chai@amd.com>, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amd/ras: delete an unnecessary NULL check
+Message-ID: <aPi6SqcrGtBvK24S@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,31 +78,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The kthread_run() function never returns NULL, it returns error pointers.
-Fix the error checking to match.
+The list iterator in a list_for_each_entry() loop can never be NULL.
+Delete the unnecessary NULL check.
 
-Fixes: ea61341b9014 ("drm/amd/ras: Add thread to handle ras events")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/ras/rascore/ras_process.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/ras/rascore/ras_umc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/ras/rascore/ras_process.c b/drivers/gpu/drm/amd/ras/rascore/ras_process.c
-index 02f0657f78a3..1d2f136fbe2b 100644
---- a/drivers/gpu/drm/amd/ras/rascore/ras_process.c
-+++ b/drivers/gpu/drm/amd/ras/rascore/ras_process.c
-@@ -241,9 +241,9 @@ int ras_process_init(struct ras_core_context *ras_core)
- 
- 	ras_proc->ras_process_thread = kthread_run(ras_process_thread,
- 							(void *)ras_core, "ras_process_thread");
--	if (!ras_proc->ras_process_thread) {
-+	if (IS_ERR(ras_proc->ras_process_thread)) {
- 		RAS_DEV_ERR(ras_core->dev, "Failed to create ras_process_thread.\n");
--		ret =  -ENOMEM;
-+		ret = PTR_ERR(ras_proc->ras_process_thread);
- 		goto err;
- 	}
- 
+diff --git a/drivers/gpu/drm/amd/ras/rascore/ras_umc.c b/drivers/gpu/drm/amd/ras/rascore/ras_umc.c
+index 4067359bb299..03c4cddfbfd9 100644
+--- a/drivers/gpu/drm/amd/ras/rascore/ras_umc.c
++++ b/drivers/gpu/drm/amd/ras/rascore/ras_umc.c
+@@ -207,7 +207,7 @@ int ras_umc_log_pending_bad_bank(struct ras_core_context *ras_core)
+ 	mutex_lock(&ras_umc->pending_ecc_lock);
+ 	list_for_each_entry_safe(ecc_node,
+ 		tmp, &ras_umc->pending_ecc_list, node){
+-		if (ecc_node && !ras_umc_log_bad_bank(ras_core, &ecc_node->ecc)) {
++		if (!ras_umc_log_bad_bank(ras_core, &ecc_node->ecc)) {
+ 			list_del(&ecc_node->node);
+ 			kfree(ecc_node);
+ 		}
 -- 
 2.51.0
 
