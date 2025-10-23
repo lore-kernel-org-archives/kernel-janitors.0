@@ -1,96 +1,80 @@
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D284932C954
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 15:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD3C1A9F86;
+	Thu, 23 Oct 2025 01:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761146044; cv=none; b=LcdQz49ScWF6++ESi2bXyY53gYbQCAuYHrgbqDs1jPl88OtwWqkKDEfHjYMyj+A6s7Qvn+yJH3XH/kYwT1VSW0aKzU1E7oGk1IR1omhRhoisN+kivovoSYrEIm+UoZtJEI0ULQEzpxfQzs9d+3LLwtFZPqCEWa77eS/dlWMw6NI=
+	t=1761183065; cv=none; b=Qa9wntbnZx+IxjS/f0vvHIVpfYZQk1yzwvhpE6bfVBc1+cb6SWnG41XOqMJqp0n5KUGddEZ/p6L2/5WeMZ4hshnVPrzimHSfRo4u8Wblnawu9CRWKntSuEKgGrhK66HULc0n9D3dUgo+RmXydH25o3l1BbRzqmZh+FHkKZy39xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761146044; c=relaxed/simple;
-	bh=bJkRf2vDW66xzETEmduK5o/Wmh8MgCortzpmg5JEPoc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DJDI5Q7gMuO/h3SVBqCbnPaV6dgGs0TZnOeheECKMGZmdctGZdt851HkEvgHn5z8BjT8/4trxZQ8YyaWtTtd3NmoAEXRlz+a1Y+lX7gr/lVKT0y9cLUhCbVbvSnMJeS3tEzFm/LcwQFAM6Gha1uR1ptmZ0CUgB/NR7A6sQEwev8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WILyl/bn; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1761183065; c=relaxed/simple;
+	bh=59DyMv2/kaUFuprY4Ty/bOg9HiLiF4WHMxqPfGF1CTQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ADmM2DwX/2GwoXMxrMkXiyUFFyZ+Epbj1mjyQYDbi9FD7zHivs5VLzGPCOBtHjzxn30asVxHDmqr/vGA4F32wJoASmmoDiAbMq36spBv7uD/tzvXE1owCHDHnLYFEELygVUj+hhHtA4keSleZzh1IS6BuniqHYMeSKkRFMXkjRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Ip85pdkU; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WILyl/bn"
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4420076bc1bso1853059b6e.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Oct 2025 08:14:01 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Ip85pdkU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761146041; x=1761750841; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M06GA4DzU6q4HcL9w50fg3W9nzfX6SVpmQDyjsPEDxA=;
-        b=WILyl/bno9iHRovIoGuzt1qOrfFXuCFLtYkN9W1HXfo7iMfQKCh9aUdvScBILF1qN1
-         qHEYWcyq5pcPdEtGuOSOaYcnBgcwXY9Q1HGMND12oMlaqdiHO97g+j0Paq58AwT8kg8c
-         qXbMVqEt8VglL7upyQgN7NvkdAp6cgcHk4omYQqARv64nl3ppKZXCmJK2uCUUa3zAtGv
-         LyS6QxCZswpi4NRMdRk5Y2ATzVfWtnucCnkuvTQP8xLKaf5Cm9xyCGc2lba/XKF6E0qA
-         CcZJk6CxbPV4/2bB56L4AL1qmsoYLvUa6mZrropBBTMZUzL8dOi+mybq/UdOHiiW1ptL
-         l0cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761146041; x=1761750841;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M06GA4DzU6q4HcL9w50fg3W9nzfX6SVpmQDyjsPEDxA=;
-        b=Z6WyWjdSpoVF54Kbw5GFMHMWjuRPS+d3MY24FB1+Pql4sNtNH3dK0tH8ke0lD8ZkgB
-         fFvk2tSSjQrnvm2uHhsX+JHQdNla4PHig3L4BTYsH0XQvo6b1520+sLmQVX+Q40PfsOx
-         95jcUv8wGT4Czl4GD/sVQDkgL1+u+4GOzVutMAt0vYdh7rYgM2CdOKYzRocqs/TzUfoF
-         qRn8uwDDIRoTcFdVxjDiIMoH8X6Tc8ktHnQ4oL0OOmw25i9Qf2AxcCjb2EAsEaLYoc2b
-         10W+byeSYx4wKaIVuarzHmQtJQGABEQzeCHSikPywjWj3YI8u/fovZq9EhCqTfN3KHVW
-         RLZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQAJKnM6ZpN2y578W9UWvp6pXiEpgs+dtA2Pj01zTnENzKU4QWa+5L/n29PZi9MG6lfnO9dTNiicMbqjY+6fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfHJLjQ6xyZkkwADkTkX4EYq/xYZKmnEaBOeyW6tZNDMibuinr
-	WcTFBqrLOGUZtWNDbo+aMWUyt0R7mxmr607LQQziQmlfJNwiqiHK/+jLvZQS9beDdZs=
-X-Gm-Gg: ASbGncvzGsBnBMB9IhPbiEHXSR/OaUBL2j34sckSJ7Qh5b5VzvzdfdNklDKyUReBBPf
-	kecBLRIQo8vrUpod5b0dwDgGY80uM2piba7toPJumDSCsayqyV9e92+jq2uzs6zJTcZ3X17A2RV
-	feeij3Ik/jh5egj6w7V7J0A1tJYP1yZ4KS9ONez6868Qav5qCDiQ0gS+hG58j+DjeUPKzfyVofp
-	M7DxqolViJ3AqgFQkSx2wEM8AXIM+ZWsWf0IE/arYc+SIBwFuNGzLjPex+S8JCqg3R8Y9zNUmzk
-	V7RKDIwBkuKfFQtsUFVeorVRiKfgP4TI1Gx4Kdkanu+9usjWJdpqTUQKt2UIDIHMRIGy3JW5MxZ
-	CSwy+1t2JL0V507DU6M5+ccE2UB/h2B2dRf59PwkROvKlgUTD5dmw3m7p4ojm5RzRFBbxog3/q1
-	RuCmk4pqi1Kng9lLihqPfkTNLwyn4aJuOOiT4AVvkoVLLbJ4bLKA==
-X-Google-Smtp-Source: AGHT+IH5X1dX+eTbtzPr1DK1hodPbkihzSGYwZP+aVpU3q50pmX97szy9HuXtGku72DLkLr+jPiOWQ==
-X-Received: by 2002:a05:6808:2112:b0:43f:1b7d:b631 with SMTP id 5614622812f47-443a30af9femr9009191b6e.35.1761146040880;
-        Wed, 22 Oct 2025 08:14:00 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:4176:6994:bd72:1296? ([2600:8803:e7e4:500:4176:6994:bd72:1296])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-443df628a35sm3311240b6e.22.2025.10.22.08.14.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 08:14:00 -0700 (PDT)
-Message-ID: <cf276696-2928-4ddd-9750-db84466e4599@baylibre.com>
-Date: Wed, 22 Oct 2025 10:13:59 -0500
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4xqZkbTQiHBUFbXKjuMKH2VrZh0pCiCiOZb19TYigo0=;
+  b=Ip85pdkUKkIBf1IVBVuKNZRbTnYVvFXwWy6Mbr00r7NtjUYJucwEuEPb
+   0WSxET6KAPykpoog5NcvVmSxAllU6zSLY3Q8Wtdp2Xuqs8ooiAo8K0cP0
+   3tnxhbjpeiMD8bgWOYylrUfAaa+jtXDAH/GVS2gyLod0D/S4N79SNLONJ
+   8=;
+X-CSE-ConnectionGUID: nnJZ0l1ISVCMoaINK6ilKg==
+X-CSE-MsgGUID: sG08PjC1TQyhxodYa+3gGg==
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.19,248,1754949600"; 
+   d="scan'208";a="245734728"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 03:30:55 +0200
+From: Julia Lawall <Julia.Lawall@inria.fr>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org,
+	kexinsun@smail.nju.edu.cn,
+	ratnadiraw@smu.edu.sg,
+	yunbolyu@smu.edu.sg,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] strparser: fix typo in comment
+Date: Thu, 23 Oct 2025 03:30:51 +0200
+Message-Id: <20251023013051.1728388-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return
- statement in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Remi Buisson <remi.buisson@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aPi5vEp75jH0imQc@stanley.mountain>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aPi5vEp75jH0imQc@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/22/25 6:02 AM, Dan Carpenter wrote:
-> The intention here was clearly to return -ENODEV but the return statement
-> was missing.  It would result in an off by one read in i3c_chip_info[] on
-> the next line.  Add the return statement.
-> 
-> Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_icm45600 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+The name frags_list doesn't appear in the kernel.
+It should be frag_list as in the next sentence.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ net/strparser/strparser.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/strparser/strparser.c b/net/strparser/strparser.c
+index 43b1f558b33d..b929c1cd85e0 100644
+--- a/net/strparser/strparser.c
++++ b/net/strparser/strparser.c
+@@ -127,7 +127,7 @@ static int __strp_recv(read_descriptor_t *desc, struct sk_buff *orig_skb,
+ 		}
+ 
+ 		if (!strp->skb_nextp) {
+-			/* We are going to append to the frags_list of head.
++			/* We are going to append to the frag_list of head.
+ 			 * Need to unshare the frag_list.
+ 			 */
+ 			err = skb_unclone(head, GFP_ATOMIC);
 
