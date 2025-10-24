@@ -1,50 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4332BEFF2;
-	Fri, 24 Oct 2025 19:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3128224AE8;
+	Fri, 24 Oct 2025 19:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761334762; cv=none; b=BWrWK7ApvLCzuzlE0+KQ0iYS+tT6O8nDJDax0hbKzebWHDUnM3oDUKr3CVKNF8jfe7FpmrKlAXEhl7U8XsqDX1g2te8bLik41pMt0Ml3EGtKpaTwPMaWU8KVcDLsgDLW55iU7FNuAihABhvoRP+l8DqP0nVfIWb7iHweFMdHpt4=
+	t=1761335493; cv=none; b=i0JQ0n1J/xpOMwknih+hzCOe/FbS33h1Oz9/3G0Ez+6DefnWkQEL17TNHa6hc/m1FnzI9TCjmiOJHaHbTJ70C3DA0coP4QKd3Dy2lGm3VpwZ4mP/Cc333tS/N9p2YOFJxhDespob6uvC6cLwOxKVXy5QUhYsIFUrkTH/YHDftgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761334762; c=relaxed/simple;
-	bh=ag+B16IygtW9FZgyE/zLeMJ4TjYkwMnN7o2cwPigeAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WAzlAoHTAoFk/psGTaWLcsixSWr8okN/QMqJNPXIST+dr/sRs59FFz0rb8I84M4dxv5SYXtdwPijM/aVaDDYOJTOWEacB1Kqi5z6yU6FdsYl/hV2n6G2ysL374wcSmnZfmgkJnAwzDEt71gQne2KW7yU4R9NZ093fYrEZVlaN+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ogxgI7YP; arc=none smtp.client-ip=80.12.242.81
+	s=arc-20240116; t=1761335493; c=relaxed/simple;
+	bh=TgoRAttjZrkjv9UEZTNrJN2o1wcIKakkLiYhp3V8ZaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lcmz+6KDVwwRP0fQ3pgUdhnrOjgMnJtl4gmM44nL0zRuB4YH064zzn+oz+2zWH8o10ufiwNykzgoKOFBXhR/SzlhUdv0WM2/tZY8XAOZ8g9ptQz6jaBI4pXPQIzJ4VWCoFK54+qs6t9+9bPhtOkbggPQtOOAfWFg9oV3+nidC8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sFezRd/9; arc=none smtp.client-ip=80.12.242.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ogxgI7YP"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sFezRd/9"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id CNcyvReICRty5CNcyvau3E; Fri, 24 Oct 2025 21:39:10 +0200
+	id CNonv9t11B8skCNonvL6bw; Fri, 24 Oct 2025 21:51:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1761334750;
-	bh=VU+BxUzO6Y/jMbH69ytGtPE5+48qwtEjO6D6PpvMXWc=;
+	s=t20230301; t=1761335482;
+	bh=J8pEsRZprLFB+bgyN5+No3D9zQP7+K5GO7ykUh+mzRg=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ogxgI7YPNHw1Mj6VB9BzdsFQbm4ZZby8PvWgMX31KwZMDsoVZk8FbYJynWEH87lr8
-	 8R1NtJANej2zrg8HL4WSW4G/F8HNg8X/8lRnvRSFt3+SezfuieolAwjfIMaMZ+bGKY
-	 kW5oHaOi+ehCjWwcLDaorh92ncx9ESAsEuvJHcIDftB0zEUTUpMKf3y6sTwiO/gXUx
-	 Zo07w0E39fWVQZKz60iC4VchfP16vnGDILC0Zd7dNvYLlXIc/zThoOk/o6amWOVAJm
-	 W/j3BceQ2vIEiywCOf1hKYtnbMNuVkd8G8rFSJLfmCvVglsrd3G5Hsj47kKTP4bBBB
-	 FzbsNB8ihZJgQ==
+	b=sFezRd/9ma2NVFM5wG/ffEsx2ZbXxhNxAV/vrtZT+vSkPJ1fjul8C28dVh8eyYS3G
+	 28SXYdLPj2HOAkS6zIT5auN36sVfmNTo87Oxnm5fgr1t9uHLvGBvTUrY5gzB0x4bQG
+	 rsjzderLpJRhE4eDrgDC4VM/mx8f7BTbkz4K6/tgG4KZZuDJY8ZJhP7RzHYeJU0gyh
+	 My9XPVNv7KgVXGwKxH1io60i9WRSWScfVlqoJhRHdK8rp9hh1GSDsocEmk9v61X+78
+	 A9lgB6umdY04PJJor81CJoIHczYJ1U/t4mN+EgJHItj3r6L0iu1E5sMwCyYkQxjbwV
+	 psDZO6qKxJI/Q==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 24 Oct 2025 21:39:10 +0200
+X-ME-Date: Fri, 24 Oct 2025 21:51:22 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org,
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: andrea.porta@suse.com,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v2] misc: rp1: Fix a reference leak
-Date: Fri, 24 Oct 2025 21:36:11 +0200
-Message-ID: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH] of: overlay: Avoid spurious error messages in of_overlay_remove()
+Date: Fri, 24 Oct 2025 21:50:58 +0200
+Message-ID: <f756e04e8bc239b33a0428c2dd055f202e214f0b.1761335298.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,142 +53,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The reference taken by of_find_node_by_name() in the probe is not released
-in the remove function.
+Make of_overlay_remove() tolerate ovcs_id being 0 without logging an error.
 
-In order to avoid a reference leak, use cleanup.h to automatically
-release the reference at the end of the probe when it is not needed
-anymore.
-
-In order to do so, a reference also needs to be taken when DT is not used.
-
-This simplifies the error handling path and makes direct returns possible
-in several places.
-
-While at it, also add a missing \n at the end of an error message.
-
-Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
 Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is compile tested only.
+This is needed for drivers/misc/rp1/rp1_pci.c where things are taken from
+DT or at runtime. In the former case, ovcs_id is unused and left to 0.
+Being able to tolerate such cases simplify error handling.
 
-This change is speculative. Review with care.
+This was suggested by Dan as a reply to patch [1].
 
-Changes in v2:
-  - implement Dan's suggestions
+[1]: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
 
-v1: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/misc/rp1/rp1_pci.c | 42 ++++++++++++++++----------------------
- 1 file changed, 18 insertions(+), 24 deletions(-)
+ drivers/of/overlay.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-index 803832006ec8..0abfeb4a28e3 100644
---- a/drivers/misc/rp1/rp1_pci.c
-+++ b/drivers/misc/rp1/rp1_pci.c
-@@ -5,6 +5,7 @@
-  * All rights reserved.
-  */
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 255e8362f600..5b4f42230e6c 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -1190,6 +1190,9 @@ int of_overlay_remove(int *ovcs_id)
+ 	struct overlay_changeset *ovcs;
+ 	int ret, ret_apply, ret_tmp;
  
-+#include <linux/cleanup.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -185,9 +186,9 @@ static void rp1_unregister_interrupts(struct pci_dev *pdev)
- static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
- 	u32 dtbo_size = __dtbo_rp1_pci_end - __dtbo_rp1_pci_begin;
-+	struct device_node *rp1_node __free(device_node) = NULL;
- 	void *dtbo_start = __dtbo_rp1_pci_begin;
- 	struct device *dev = &pdev->dev;
--	struct device_node *rp1_node;
- 	bool skip_ovl = true;
- 	struct rp1_dev *rp1;
- 	int err = 0;
-@@ -200,42 +201,40 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	rp1_node = of_find_node_by_name(NULL, "rp1_nexus");
- 	if (!rp1_node) {
- 		rp1_node = dev_of_node(dev);
-+		/*
-+		 * Take a reference to match of_find_node_by_name()
-+		 * behavior. This makes cleanup.h usable in both cases.
-+		 */
-+		of_node_get(rp1_node);
- 		skip_ovl = false;
- 	}
- 
- 	if (!rp1_node) {
- 		dev_err(dev, "Missing of_node for device\n");
--		err = -EINVAL;
--		goto err_put_node;
-+		return -EINVAL;
- 	}
- 
- 	rp1 = devm_kzalloc(&pdev->dev, sizeof(*rp1), GFP_KERNEL);
--	if (!rp1) {
--		err = -ENOMEM;
--		goto err_put_node;
--	}
-+	if (!rp1)
-+		return -ENOMEM;
- 
- 	rp1->pdev = pdev;
- 
- 	if (pci_resource_len(pdev, 1) <= 0x10000) {
- 		dev_err(&pdev->dev,
- 			"Not initialized - is the firmware running?\n");
--		err = -EINVAL;
--		goto err_put_node;
-+		return -EINVAL;
- 	}
- 
- 	err = pcim_enable_device(pdev);
--	if (err < 0) {
--		err = dev_err_probe(&pdev->dev, err,
--				    "Enabling PCI device has failed");
--		goto err_put_node;
--	}
-+	if (err < 0)
-+		return dev_err_probe(&pdev->dev, err,
-+				     "Enabling PCI device has failed\n");
- 
- 	rp1->bar1 = pcim_iomap(pdev, 1, 0);
- 	if (!rp1->bar1) {
- 		dev_err(&pdev->dev, "Cannot map PCI BAR\n");
--		err = -EIO;
--		goto err_put_node;
-+		return -EIO;
- 	}
- 
- 	pci_set_master(pdev);
-@@ -243,13 +242,11 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
- 				    PCI_IRQ_MSIX);
- 	if (err < 0) {
--		err = dev_err_probe(&pdev->dev, err,
--				    "Failed to allocate MSI-X vectors\n");
--		goto err_put_node;
-+		return dev_err_probe(&pdev->dev, err,
-+				     "Failed to allocate MSI-X vectors\n");
- 	} else if (err != RP1_INT_END) {
- 		dev_err(&pdev->dev, "Cannot allocate enough interrupts\n");
--		err = -EINVAL;
--		goto err_put_node;
-+		return -EINVAL;
- 	}
- 
- 	pci_set_drvdata(pdev, rp1);
-@@ -295,9 +292,6 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	of_overlay_remove(&rp1->ovcs_id);
- err_unregister_interrupts:
- 	rp1_unregister_interrupts(pdev);
--err_put_node:
--	if (skip_ovl)
--		of_node_put(rp1_node);
- 
- 	return err;
- }
++	if (*ovcs_id == 0)
++		return 0;
++
+ 	if (devicetree_corrupt()) {
+ 		pr_err("suspect devicetree state, refuse to remove overlay\n");
+ 		ret = -EBUSY;
 -- 
 2.51.0
 
