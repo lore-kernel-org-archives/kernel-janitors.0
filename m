@@ -1,65 +1,72 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F63528E00;
-	Thu, 23 Oct 2025 19:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED3025D540
+	for <kernel-janitors@vger.kernel.org>; Fri, 24 Oct 2025 06:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761248383; cv=none; b=f68bDfuVRlUaOnsJC0BVYbTllUcnbDQJnilLvvjHCkN1Sgg1tVe4LTGX9PfFdfd1yqomkJCUJF4SNLnyiPmlz+Vmjx5lzgoWRrbPmgot1NVv7X6H9PvuNw8xiBa7ED13gUdjSvDBnHhq+XNvLsHWC/d7RWIx5CBptVf2gK8Dhho=
+	t=1761286769; cv=none; b=nsM/hdDJnPQ41yxiGM2Or4KWJKGgQYov+5V6xnM5UOEMccjHwhiPL/1Pn4xRSde1u8yLEZiN5aVOTHq6OJ4Lhg3cNmiYsS4rpL5pU+nlwEfnXKCP24I8X8ZYCW4dXiBgHH/caJnRiCECSKtvfrow9myeURInQAPrTOKW1yd+glA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761248383; c=relaxed/simple;
-	bh=OSmpnNs0/AMNUFsS6Fsz1K/9p0tTe3Vtc+ysYl6ffNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXUuAhkqJT4XN0trD+H1+TrgCNyJa+kPx9Ht2oblMERuQLJ7VeCTALyb/2cZaSiClz6loz6E1tMcjxZ8LBAO/hY9KuSRo9oJKB9rouJUjTvZ6tFetWzbBNdpjT+BKEnUUh0gJ7iGE96MLELEn7QS/sFWD86MZINR94/27NG6YYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XAeQ6mZa; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1761286769; c=relaxed/simple;
+	bh=MjiIMaVHnxv85Sm0BB/UlJ62CEBZJOgW3U0C8rO6buI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bU7rOELgrJJBH/kLaCywKBhOzTslkFMD0J9W5nndZyAZjai+xWJ9vnY/pCeyqepCO9T+ZIT50xXg4J39eW5cpg9UZwvDQb32+vWWbSAAyZ78i9M7YzgkR63OmUifP54nk3QRT7LuxwvmxzCeseL9xngH99gpxLJSJPfi56i6wSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=atL7cSc5; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XAeQ6mZa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761248381; x=1792784381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OSmpnNs0/AMNUFsS6Fsz1K/9p0tTe3Vtc+ysYl6ffNc=;
-  b=XAeQ6mZaj+99SBbudJtBXL7VTy5F6psQ0Rk03lHA8SrJzl+PL3fHFQ4s
-   vsAd3As4QtmFv2rSPj/OBMNxP5Bd391LI5C+me31socaDXGnL3qvHQtXM
-   OMcoR1emqtw1r7ZaGtM/Owg9natBKgj0OucERSekk+Ar39wYxZJf6+tKL
-   pBlCm0haMKeNfy9WsesZppREX7fAieQbQ6S6rj2FwxoG0YK9763t8G7+9
-   SOGzm1wTLi1sMQDZHuF69XBY1ouZG7UcAC+PdnzIdP1t6sdutSs//v3hz
-   kW1+HsawrnLSFx5Dj3eOXtFJWOfhdCwsXFyQD9gXFZs3cLbKS0vfRGp2f
-   w==;
-X-CSE-ConnectionGUID: N8c3r/eIRSaa4HjMQwZx0g==
-X-CSE-MsgGUID: n5cPS0uWTAanF4sA5a1CHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63134815"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="63134815"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:39:40 -0700
-X-CSE-ConnectionGUID: f2VFH6p4QSS41LQ8JPt06g==
-X-CSE-MsgGUID: 2AGvUH8MQj+9jbyOus63oQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="184168230"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 23 Oct 2025 12:39:37 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vC19q-000DoX-35;
-	Thu, 23 Oct 2025 19:39:34 +0000
-Date: Fri, 24 Oct 2025 03:38:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dan Carpenter <error27@gmail.com>, YiPeng Chai <YiPeng.Chai@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Tao Zhou <tao.zhou1@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/amd/ras: Fix memory corruption in
- ras_core_convert_timestamp_to_time()
-Message-ID: <202510240310.WujwpVmw-lkp@intel.com>
-References: <aPi6I5z5oenppEuu@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="atL7cSc5"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-427091cd4fdso975543f8f.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Oct 2025 23:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761286766; x=1761891566; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iuW7JMitWdY//EYRZ6hUg7/sC/5FBOcO0+pu8iYSN+U=;
+        b=atL7cSc5/Ej7zPQ7n2QKen4qg1yhVqDWtKpvlEK43J03d791ymvxss64cDsU2+C9+P
+         FklFpCf/E0YNZmocWnGM/vjbp/eoyp4LwMvnvGiRW9751fI9HMh/GVxTuC+P+sD7dNrZ
+         Xi6nD/kMIS+tK5VbrCrfoupVlqwHVZNTzk2baUBQNGBmOpr3gcUCUFQOXFday8GDNTpU
+         hmvgTkqhcokaic4v2eoUh1AqfzUGUZT5iQVqkfB58EpgMYB6L2H900gf5GyfVcCeC4ne
+         0fe4tuRtrkndVfYQhpMjvgVLCjtfofyEXVaTU2OmCL0UXX+2BL3olqZbtZ5CvIBThutg
+         8UJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761286766; x=1761891566;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iuW7JMitWdY//EYRZ6hUg7/sC/5FBOcO0+pu8iYSN+U=;
+        b=l30GlSmPmOyUeOk5Nk76aLJ+CiBpE6xm0hrXiPmoa55g/CNjMRoSsRgMF+PhieSatC
+         56xHCVBXWDhIOOZt4VatSTTQpKnHy3CQvEosw664if9CViKfrdv5BJgW1U1OhJV4wNDw
+         vZnsN0vaxfTtRQ26c2+cpyE+Agtf7bj+pqPPMLx0FGN0sEJIHczAhegtC9S4x3j0Z7G0
+         OaQDlQP6rN1mEV6mKV0cBttgnNV1SBuZLhUBJ7km4CnEDQXsG2/HPE9Jh4adBUljHpD3
+         JsKT3BbbmG/Kv8mLyxGi0nx9xixS4UH5OJIICjffQyJNHxfoSeKYtDB6H7WOYFOl9oIq
+         0X9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUJlX4V7MXrEuazmuTDeHeL7i8gM9u+Ixd0MjVFoCn9a7wtuRUwg+VUvXMWZ+unRu0aZ/jKcSS7ydExob0TyQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjofaLDWrdQ8g6pJpb7em3G1PPDZ/p3FxbZQKoRm1nlE9Bp1Dw
+	FwYQ8i9q3MWZXq6+94bbUNnS072dnir0+bK5t2J1fwlyCnGol+od++ppQyG+pkfynxU=
+X-Gm-Gg: ASbGncuiJzhRWID8IKr+2SBva7p8vRkW5XJDN6RTQHIHIeV1/DeLdwRxDCo1XkVemoe
+	JdrJoUzNWponF2qh83lA8+ZwZAJzKA455CkQL9/A46CEXPI8ZfLb4VC5alOEW8KNE+msZpoEgv/
+	Ql+eBaH6hg0GhoSzkvX1JwYYRITTWUTytstXIGHNWQdB3TdhBmTCOD5DK/GtLB6m3VBJC7Trhuj
+	hoxkiN4qPvX/fbCB5JKvKooUQwmE2ZtrtUuIpLc/6WLOL3ErvObT4ErUozSsY/AI8bZfVdM1rzx
+	2rVdnbpD87Xa/RT2B1ku/gb9TXTj0jhansYXFD06/mSS4M9QZjEo+UQrZRNjvinEOmt5L3QnQQA
+	Qrf97PMFM7It5BttZxajsX2E8eFkYSKJEeib2Atkvt8jXB+J1VDMUXCCUxxB6lGSkr4j+2kjaMu
+	FMBenV/ebkP7nIR8AG
+X-Google-Smtp-Source: AGHT+IGuaT91f6JlqW4V0ICbs5URxpfktlg0GOQ7b4e28m0jHXiomSrIXCP/t5AqtpgGIxAmYlkf2Q==
+X-Received: by 2002:a05:6000:200c:b0:428:3ef4:9a10 with SMTP id ffacd0b85a97d-4283ef49ddamr15607904f8f.54.1761286766184;
+        Thu, 23 Oct 2025 23:19:26 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898adf78sm8054566f8f.32.2025.10.23.23.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 23:19:25 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:19:21 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] gpio: qixis-fpga: Fix a NULL vs IS_ERR() bug in probe()
+Message-ID: <aPsaaf0h343Ba7c1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,33 +75,32 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPi6I5z5oenppEuu@stanley.mountain>
+X-Mailer: git-send-email haha only kidding
 
-Hi Dan,
+The devm_platform_ioremap_resource() function doesn't return NULL, it
+returns error pointers.  Fix the checking to match.
 
-kernel test robot noticed the following build errors:
+Fixes: e88500247dc3 ("gpio: add QIXIS FPGA GPIO controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpio/gpio-qixis-fpga.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[auto build test ERROR on next-20251022]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/drm-amd-ras-Fix-memory-corruption-in-ras_core_convert_timestamp_to_time/20251022-190512
-base:   next-20251022
-patch link:    https://lore.kernel.org/r/aPi6I5z5oenppEuu%40stanley.mountain
-patch subject: [PATCH next] drm/amd/ras: Fix memory corruption in ras_core_convert_timestamp_to_time()
-config: i386-randconfig-014-20251023 (https://download.01.org/0day-ci/archive/20251024/202510240310.WujwpVmw-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240310.WujwpVmw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510240310.WujwpVmw-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__umoddi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-ERROR: modpost: "__udivdi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "__udivmoddi4" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-
+diff --git a/drivers/gpio/gpio-qixis-fpga.c b/drivers/gpio/gpio-qixis-fpga.c
+index 54c2c76822d5..6e67f43ac0bd 100644
+--- a/drivers/gpio/gpio-qixis-fpga.c
++++ b/drivers/gpio/gpio-qixis-fpga.c
+@@ -56,8 +56,8 @@ static int qixis_cpld_gpio_probe(struct platform_device *pdev)
+ 		 * create our own from the MMIO space.
+ 		 */
+ 		reg = devm_platform_ioremap_resource(pdev, 0);
+-		if (!reg)
+-			return -ENODEV;
++		if (IS_ERR(reg))
++			return PTR_ERR(reg);
+ 
+ 		regmap = devm_regmap_init_mmio(&pdev->dev, reg, &regmap_config_8r_8v);
+ 		if (!regmap)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
