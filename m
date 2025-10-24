@@ -1,79 +1,76 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F90B2405ED
-	for <kernel-janitors@vger.kernel.org>; Fri, 24 Oct 2025 11:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA5C3126C7
+	for <kernel-janitors@vger.kernel.org>; Fri, 24 Oct 2025 11:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304532; cv=none; b=jAw+Z9GQ+tDGUmG5ZQrNTK+dQI+efq2XUctkYN75S1wDoBABvW2+UFzh5N7vXCz+LrMUUUoY/TVyb2uQtjS0ks0cDwJVMLDDhTsAqt/LGyNwf7RSg3k1vB/D5E15HKJFiAtZHaI25nafBRXY7vlWDcEwemGhY9ScEvUnFrBHLZo=
+	t=1761305022; cv=none; b=nNYaSREdkDsE/OpT4R+jd3R0m+43Xes/PkIEycLMHvpH2SsC05r+xdJmkUcmK9pP7bjoYlQ0LHUSJK97fMpkB3hNLktiT/DF/WJNNe4IiSexw9ivNkU46SbClei7rx0y8F0BZEEElZJWKeMoANsxZ7IkBT8NXhn8P4sHwCJeUpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304532; c=relaxed/simple;
-	bh=O0Yq9b0ntIV2rXwmu5CJkLogXD7qjpje5XMHRfj6JVE=;
+	s=arc-20240116; t=1761305022; c=relaxed/simple;
+	bh=0zowZQE/EmMI6GxlKIwg6FGmmiIJo4BbJNTy9TYrt7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Uwt72KwpUJj/1KFF+50MJD6bv2lSZ0e8Y5TVyd0xvfiTA1NXQ2ofzNTJMMhBnrCC+UPnxUnVmLa5u0nWWuAJJ+xjWCL3afT6uk0YZTA2BZqWITQICMSk8d8SBQMaVjxKy1sUwJS5fpFrsLGTTOeGa4dcKLUJKvE6yH/HQ1XewUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y5hLClOT; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition; b=u5x3KUz4UyX04GgWs9179iBQn+ZxNQmKGvN5GrfVc4wFH7DGeb3GErfg+q6gt5sTwhSn1DP31S346uiwQJow7Q/yzfnSgm1V1EmyMIoeINNKIhRuxgXjqH4iz8FaOEn8DQf6E2gIMkSU23hTywjdSkvg856xfal75P+rFazSnX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DY6QzpVe; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y5hLClOT"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47117f92e32so17968165e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 24 Oct 2025 04:15:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DY6QzpVe"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-427091cd4fdso1169561f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 Oct 2025 04:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761304528; x=1761909328; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761305019; x=1761909819; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tjnWrdwJJM6Xkd6ejbGWp0lF4mtBxwGKExhzOcwx4QM=;
-        b=Y5hLClOTg1UL71XBvkW8/po2xRWzMClQMp9JrbL/Lz3mlMCyE69j10hJCGrpnSz3oK
-         tExai27nKFNjcHXOkjK406JWs5UuosvuLLNyD8csfMpk5wpZLrMh1K1rrKVx2Cp+5iwf
-         m3fYtTUCawTlRa2iuF1WiPcnZHzJuWmNut60pEgjQxXs16QYPx6YZIuILkj5JLjsA+uk
-         O9vVNyhgy+CKNezJbeRifmsvmQNRr2WXKcEmNLhYducHgjYY8JBPhfRcoQezf6/OoDDl
-         38AZh3NMBwGhP4peaTiefBcpU/g+fz5wOdMoCjWusoHkzV4BJRLWytXEFZRn1nsU5xyG
-         SuoA==
+        bh=FQOc+jM39ubvRhhSlIjQuPooaB7ldn1LylmA2tOzblM=;
+        b=DY6QzpVe0rxSgKfR1z1haUEhujvUsfah5zRuRK+UNKDNuQwQDhgN9Q2Pv/I6rSunfn
+         myhJ/e2273OQCiglJIDkS1JB7voG3EU0MHqMxLATAb7bdAAEjJTA+W43vpbn1mDCkAOL
+         so0Nynvwyo56spz7PdCkRP35AB1hil/QXwMtKf+3aKT2DBgN078yqy8k287KyXHTEBKG
+         VfAAaEVJGfCPaAXFbU3Hane6Llc8DORtJcAQsubIDVvHZqQip9BjGrhcbhiWL/5j/siA
+         4HZO3RKb+H5LYfSEKByhCnp6fEMQXcFNXrisTI3nts0WKc2RSv82LRwO3DKU1FpKV21W
+         zx3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761304528; x=1761909328;
+        d=1e100.net; s=20230601; t=1761305019; x=1761909819;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tjnWrdwJJM6Xkd6ejbGWp0lF4mtBxwGKExhzOcwx4QM=;
-        b=AOigj6CIZVFcOff3oSUGPt0o4+FUTowh4HMs2QI59J8W0R4Fo+vQLjjE4SALEmGd4U
-         Sh4aAmIpcJGZGjoPujWus8+D51h6BrSjtbDG1NOGD4o+V3LXyBCk1T8fglof40L++b0K
-         IaC52Xm7pg76ZciZEMA6j68jFDku6BiX8a9rPAwVQeoBGk4VvRdNJVwxTzCmYXdU0yJg
-         CghNOAaEHQH/4c63N3p3FS8r8W+6wQVECvAUkKIWeuBv9nwpu2PuxKEUYHIHCwjLJfw5
-         LkZFhhq3Oohsd29ORv+q2ZHVlOflmrjar+dH4C+mCxYIVEv35a0lxlHoHLoG3HFtMVDR
-         dpSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnT5vF5oB+5D5rwEk/HpB1ZGO2DRFjHPJvrWd/G5qkl2IYD9r/bFeXO9pyZp8BRi9n63ZI1cBMlNhZQm5s9nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQZcm7VG/4MtGgxpc31kb1apkk3twk3W25YkTotcAUFqxcPjDD
-	R7WXam+2bEPj0USUyVB4eYZDytt4OBafUOUQyUZXrBom13k7Wl5ih6cAucxPW4pXzJw=
-X-Gm-Gg: ASbGncsJec6bi89ByBGVNNE7hTg66bATtc1vyytsN1LfPM4emBTdlkYRRaKtiKM3lwX
-	eFhJ9donhRHR/QYts9oTtXhxMrrbt39RI3xlt14yn5qBcTTLwuf6iqJJS2vLw4Cx93+bLeENP+J
-	V37ceNczSLJxsNcUXWxSF+0LtdgzKK1J325x6leketdHEDuQDRYRIVwukJatNjIcIPiFZvq/lyH
-	6rFsbpHapb7EQZkd4LQNc5fFBkT/cIh0dMRG5Vq7oETKCtvZq2vOwnOJS/tXZ/n2KwDYjLpcPZ6
-	qX82bos/SIH5BkB4KTJl4tSkXLLEj10hGKGWj1WHMP5SvmQM2wO5W/iI08DmTzbWNUMtiFU/0ol
-	lCUPw5XTZgyRTVr44EZWcphaYERKunGQ1lFydKPXwdxazoSn+EsnPuu9AykRG/8r8WGfRnGPawH
-	4XgMRSkA==
-X-Google-Smtp-Source: AGHT+IHppQw7OhXyE1vh506SaVqjXNUIJ+8VzvhstGEr4RfM3xhdsHlPAMgvjfWhOUYwQyK4GXMIgQ==
-X-Received: by 2002:a05:600c:5287:b0:46e:6a6a:5cec with SMTP id 5b1f17b1804b1-47117876738mr245432555e9.2.1761304527664;
-        Fri, 24 Oct 2025 04:15:27 -0700 (PDT)
+        bh=FQOc+jM39ubvRhhSlIjQuPooaB7ldn1LylmA2tOzblM=;
+        b=hBy2qz6aibWzoFsHXHBMChJ/QE6htG4+ckVt9ifaErYvqtfng8W+Ae3LzS1VPu+u7m
+         SEp7726Amn9LK4qS/e3es7BgcUuTvKU2Vn8+fUNQfPa9gj3oXsxkIMQYroECsnk2SgZn
+         dM92ukn8N52Rv4PCWUdef+d0GXIUmMwMWEDXPRIu10v8Yhf+0PAKg8AAzZvhxce8xYPy
+         jE5YsCTYnBbAIPl5acmAlXl9xqJ0qKaLT3FguIocmjATXgKyw4m7JfW1b2yxbZm2R7lj
+         0F5APx444YI3eyAA9eTJ3jG5/gnam536NFhZfaiFRJGn4fJZu1bjQZUtoNDGE4feS/5f
+         2rfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYwQkgVtw6PUaAfyg415WZe2qhI/sRLkRiETSr9c+k7XoeFlCu87r6CqDFdtdhep19qKrNeByeyKV4cfIWuMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDP7F3qleuxHQzJhtboIKFShalSKjjBWconf9tEF0t/9nrGlHO
+	I9srdvdchcm3+XvwQZ8GufTrlv0iYLuHlO3EgppYaRe4VGz7NbxWiHNv8kMGvpNP9Ic=
+X-Gm-Gg: ASbGnctvZXN6sI+j0hQmsT/6oZczo+uFAmPzEkvgT1pWDFn39cLByTYPnS8I+KzpL/k
+	HW/uNtx3ikK02MB/PRJt6DcVhMGPQcXmxL2DKqZQbGxnPN+6dXR2N2AR5PHf4rmGUYrDXBVfH4R
+	MNpQ6Y4CZV9KPv+1lOoeEs5ulSSgTh6goct/1oJwXI15kctjQ5nQPcWOqFlZwYLxd0JMkVfZfbb
+	Uc0KqFrF7IJ+1KynziZd16nt/hxodZ+HHL+IUwjRI676P2V1tbzd81NjWnhhhFA9QCdMx6crzzG
+	ISbQ2MST2BnSgcpsG40JVQKVeaPhkct/lZ/71uMU4qrShZpbhPCy/y6cyivEWgKcLc32uRJb+Nu
+	0omZ3z8jEUd0S++bbxUp4VLhMetRyGnLWK51CWYcc06AFhkPWZ/f/sqBJPOf3rE1A45/Pj9+9wz
+	Xvnr2xcBForVXbf84l
+X-Google-Smtp-Source: AGHT+IExQzOyk4omzvi9Zz7XZjs/LOOnvxM4yvkC9gtz1IfMXQ9aSiPVkXwgXIxJvNBEVGrXMNkh3g==
+X-Received: by 2002:a05:6000:4a09:b0:427:62b:7f3 with SMTP id ffacd0b85a97d-427062b07f9mr22219100f8f.33.1761305018812;
+        Fri, 24 Oct 2025 04:23:38 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429897f5696sm9120866f8f.14.2025.10.24.04.15.26
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898ec1dfsm8923611f8f.43.2025.10.24.04.23.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 04:15:27 -0700 (PDT)
-Date: Fri, 24 Oct 2025 14:15:23 +0300
+        Fri, 24 Oct 2025 04:23:38 -0700 (PDT)
+Date: Fri, 24 Oct 2025 14:23:35 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/vkms: Fix use after frees on error paths
-Message-ID: <aPtfy2jCI_kb3Df7@stanley.mountain>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: airoha: Fix a copy and paste bug in probe()
+Message-ID: <aPtht6y5DRokn9zv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -84,119 +81,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-These error paths free a pointer and then dereference it on the next line
-to get the error code.  Save the error code first and then free the
-memory.
+This code has a copy and paste bug where it accidentally checks "if (err)"
+instead of checking if "xsi_rsts" is NULL.  Also, as a free bonus, I
+changed the allocation from kzalloc() to  kcalloc() which is a kernel
+hardening measure to protect against integer overflows.
 
-Fixes: 3e4d5b30d2b2 ("drm/vkms: Allow to configure multiple CRTCs via configfs")
-Fixes: 2f1734ba271b ("drm/vkms: Allow to configure multiple planes via configfs")
-Fixes: 67d8cf92e13e ("drm/vkms: Allow to configure multiple encoders via configfs")
-Fixes: 272acbca96a3 ("drm/vkms: Allow to configure multiple connectors via configfs")
-Fixes: 13fc9b9745cc ("drm/vkms: Add and remove VKMS instances via configfs")
+Fixes: 5863b4e065e2 ("net: airoha: Add airoha_eth_soc_data struct")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/vkms/vkms_configfs.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/airoha/airoha_eth.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index 07ab794e1052..506666e21c91 100644
---- a/drivers/gpu/drm/vkms/vkms_configfs.c
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -204,6 +204,7 @@ static struct config_group *make_crtc_group(struct config_group *group,
- {
- 	struct vkms_configfs_device *dev;
- 	struct vkms_configfs_crtc *crtc;
-+	int ret;
- 
- 	dev = child_group_to_vkms_configfs_device(group);
- 
-@@ -219,8 +220,9 @@ static struct config_group *make_crtc_group(struct config_group *group,
- 
- 		crtc->config = vkms_config_create_crtc(dev->config);
- 		if (IS_ERR(crtc->config)) {
-+			ret = PTR_ERR(crtc->config);
- 			kfree(crtc);
--			return ERR_CAST(crtc->config);
-+			return ERR_PTR(ret);
- 		}
- 
- 		config_group_init_type_name(&crtc->group, name, &crtc_item_type);
-@@ -358,6 +360,7 @@ static struct config_group *make_plane_group(struct config_group *group,
- {
- 	struct vkms_configfs_device *dev;
- 	struct vkms_configfs_plane *plane;
-+	int ret;
- 
- 	dev = child_group_to_vkms_configfs_device(group);
- 
-@@ -373,8 +376,9 @@ static struct config_group *make_plane_group(struct config_group *group,
- 
- 		plane->config = vkms_config_create_plane(dev->config);
- 		if (IS_ERR(plane->config)) {
-+			ret = PTR_ERR(plane->config);
- 			kfree(plane);
--			return ERR_CAST(plane->config);
-+			return ERR_PTR(ret);
- 		}
- 
- 		config_group_init_type_name(&plane->group, name, &plane_item_type);
-@@ -472,6 +476,7 @@ static struct config_group *make_encoder_group(struct config_group *group,
- {
- 	struct vkms_configfs_device *dev;
- 	struct vkms_configfs_encoder *encoder;
-+	int ret;
- 
- 	dev = child_group_to_vkms_configfs_device(group);
- 
-@@ -487,8 +492,9 @@ static struct config_group *make_encoder_group(struct config_group *group,
- 
- 		encoder->config = vkms_config_create_encoder(dev->config);
- 		if (IS_ERR(encoder->config)) {
-+			ret = PTR_ERR(encoder->config);
- 			kfree(encoder);
--			return ERR_CAST(encoder->config);
-+			return ERR_PTR(ret);
- 		}
- 
- 		config_group_init_type_name(&encoder->group, name,
-@@ -637,6 +643,7 @@ static struct config_group *make_connector_group(struct config_group *group,
- {
- 	struct vkms_configfs_device *dev;
- 	struct vkms_configfs_connector *connector;
-+	int ret;
- 
- 	dev = child_group_to_vkms_configfs_device(group);
- 
-@@ -652,8 +659,9 @@ static struct config_group *make_connector_group(struct config_group *group,
- 
- 		connector->config = vkms_config_create_connector(dev->config);
- 		if (IS_ERR(connector->config)) {
-+			ret = PTR_ERR(connector->config);
- 			kfree(connector);
--			return ERR_CAST(connector->config);
-+			return ERR_PTR(ret);
- 		}
- 
- 		config_group_init_type_name(&connector->group, name,
-@@ -756,6 +764,7 @@ static struct config_group *make_device_group(struct config_group *group,
- 					      const char *name)
- {
- 	struct vkms_configfs_device *dev;
-+	int ret;
- 
- 	if (strcmp(name, DEFAULT_DEVICE_NAME) == 0)
- 		return ERR_PTR(-EINVAL);
-@@ -766,8 +775,9 @@ static struct config_group *make_device_group(struct config_group *group,
- 
- 	dev->config = vkms_config_create(name);
- 	if (IS_ERR(dev->config)) {
-+		ret = PTR_ERR(dev->config);
- 		kfree(dev);
--		return ERR_CAST(dev->config);
-+		return ERR_PTR(ret);
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+index 8483ea02603e..d0ef64a87396 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.c
++++ b/drivers/net/ethernet/airoha/airoha_eth.c
+@@ -2985,11 +2985,11 @@ static int airoha_probe(struct platform_device *pdev)
+ 		return err;
  	}
  
- 	config_group_init_type_name(&dev->group, name, &device_item_type);
+-	xsi_rsts = devm_kzalloc(eth->dev,
+-				eth->soc->num_xsi_rsts * sizeof(*xsi_rsts),
++	xsi_rsts = devm_kcalloc(eth->dev,
++				eth->soc->num_xsi_rsts, sizeof(*xsi_rsts),
+ 				GFP_KERNEL);
+-	if (err)
+-		return err;
++	if (!xsi_rsts)
++		return -ENOMEM;
+ 
+ 	eth->xsi_rsts = xsi_rsts;
+ 	for (i = 0; i < eth->soc->num_xsi_rsts; i++)
 -- 
 2.51.0
 
