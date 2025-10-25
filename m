@@ -1,33 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FF917C21E;
-	Sat, 25 Oct 2025 11:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96F121323C;
+	Sat, 25 Oct 2025 15:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761391990; cv=none; b=jL/CrhFd3jOI0TeCvRrtcRBWjOtk1X1Qwsgq9sVtYwry8mSnFWcpta5QEZrnpBbcRrhkS3FLjpNpOLVvTtSg+/ziDwyihZQfYGuo/zzN/+IoBza8cUBb5Mp63z3PEZ/8CnGV3KV/wAhUExCXpP/Cp4DvoW3aDcNvzHMiB6ux8Oc=
+	t=1761406757; cv=none; b=KxL5zQcvDY70quJ9JgwxrKqhUNnSYrk6fC9PqZVtZYoP59MTYKsIZ9oO2aw8Bl8A8S3Qfv2E2CCFXMCvmDl+2qvxs55+xo6klE7dk7Rhahk+78hYdCGuqblaANRlYbZb+RdEVejL3zBwIQy5Odcj6evD2N4WeRZzSK/MHKmeevM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761391990; c=relaxed/simple;
-	bh=ezU1DRuGnsw3vL5rtzM9FxW6SZkGjKTA78pL3akBlcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PkH9NeB3tjXau2BaUUE1G29F0LDVh/G2ALbQvL4N1PsfGTNKqXecoXLNmFCwgb42fc46+9ufnTxWuPsOvmPrIKhoeQNA/rUXzh/FTMV0H+4E2IGEgJ2+aXM9JzyCorDaY3jzaD9IAMc+9ZOaZqfWdpL4giv/hMQxtbNnKg4A7j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrWPmUgv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761406757; c=relaxed/simple;
+	bh=lIcT7DGHfmW+6KASwi1FSInr/6v4dqNDhMmWNSx8n98=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dE+3osm7celu1XOZrNNcqqDL9DMKPOM0rmLcfIvhT397Z9ymzcp+Z1PXotkG6UHs6LqOpf6f00ry98NB8x4C64NUfrLgZlpupmOIXbVUqWDhBP2XV8rXz0pF3za8b9Hf1O+8idx5kJ+G7ZcV8gT6nmd1x4iB0PRAw1ObOP3DAjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=VymnHbRW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qIBsEoKZ; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrWPmUgv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8A8C4CEF5;
-	Sat, 25 Oct 2025 11:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761391987;
-	bh=ezU1DRuGnsw3vL5rtzM9FxW6SZkGjKTA78pL3akBlcc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XrWPmUgv9wm7Xf+5SoC4m4HgmwHOgp+cOLmMOL/7gJZTq/cTMIVWhGrE+wUgjK6QR
-	 svfNZxO3UKMHSD9ahwZiJRKu8tgQkdFirbzfB3cd37HDG1UTh+HsHpmJPwrwnTX8gC
-	 s0jUW5IN3YboJB+GJcZXPMqGX3Qwqk5TMyibS2CVpj9NvMAu2m87i2fm0Zjh11kMpC
-	 +p2tnpMRDiDJVB7tQJPrw5E8m2bJu1dbR1uX+ZQmhtCwAqKh2QqGEakZHPv18+1z5y
-	 AGl/uZfLEDSJf3lr+UAOzS3c6/Fkrdvj7RdFlg2V44gGiMtZRl4DTXDdAusZ1kaQuL
-	 VSM6s+ervkFoQ==
-Message-ID: <a2fc02e2-d75a-43ed-8057-9b3860873ebb@kernel.org>
-Date: Sat, 25 Oct 2025 13:33:03 +0200
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="VymnHbRW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qIBsEoKZ"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id E717E7A02B5;
+	Sat, 25 Oct 2025 11:39:14 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Sat, 25 Oct 2025 11:39:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761406754;
+	 x=1761493154; bh=4lsl0L/8q6KxkaWZxSqc3YCjdL7PlHqwbE9m4byzu70=; b=
+	VymnHbRWAclIBNsd83NmFxeOafm66E8DQ5FNEnYatVM4mgu8WqxXkSnAxWZl7bJC
+	krkhTGA5cipXQg/xFmex64Ad0rFIKOHuYLkN2FnKkrRA3Tyod7tpe82OHiXpn2p8
+	qe+OgmTsaeNuc+c92DBk11jb3mKdJy5+FmzY9TW41kJC5pM0poWSMg4cEGr8d8eX
+	mH4Ts5k3AED+vaQ088BXh6Wf6ndNbhiCD1B3ntGvol8EbFtxwWoFP4bLEXzqFHh2
+	EnaYvaoN7WBws4nVDaxup7PVJPizIPP+nLxB0QI4Vwz/jg2btGJD5dq9D8ubNERG
+	oYhVHm6rxxb6VeD3Lg0asw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761406754; x=
+	1761493154; bh=4lsl0L/8q6KxkaWZxSqc3YCjdL7PlHqwbE9m4byzu70=; b=q
+	IBsEoKZXLWsEmP/6HwFp+n9kkR3QLBec84xdS1J85JPhQ/PhZ+IQirJD7vhf0MCa
+	0LmsJedcbiKBWHmYd8NiGJCAc8Y2gVcQgRw2V/rpX5koQWypPfJxizF8aJTGEwWI
+	+DUmhJN81mgb6H9C/6nAZwurbsojCVyQ1F1Ax4Zv4hwwLb52doKAhRDn5lVoS4gu
+	OmD7ncdJWBlQwuoaSR/4XaIXu6JZNjhJVOnF4SWqEQkPtT+DFsJTxrvLpct+NBt5
+	H4P+bcr1qOVZUXKnk7y48LnqugXYIsLRMsnKbj8GqEvM62tNwzPh53i9K3TF0IWo
+	WUNF8f99DkrkFJyoZyrHg==
+X-ME-Sender: <xms:IO_8aG06GqdOxAUC1e0fulmCSXFPg2I2EyJSubDwz3Bc15bi3Y1w0g>
+    <xme:IO_8aJiExipX3nHkgPNa8piMH49OAirKFIUu8gub3g0DpBhSN1pkSb1cH3loY-hcf
+    xIIL-IBsKrD_WE2vBN3pb2Ug8Hthxw0_bLdfrUtuRLfh7dJSXxUZwyf>
+X-ME-Received: <xmr:IO_8aPkAzmY-A11DdFbgtWUQ3Pb3wNOuBO3sO7NL5xkfqIjeqjwknLF17u9mgYTGbd3SEKF8rx0ZAonkf_0sgE04>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduhedviedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfhffuvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepje
+    efgfeghfejuefhheeigedvteetudeiudefvefhhefggfffhfetudefteevudffnecuffho
+    mhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohep
+    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghsmhgruggvuhhssegtohguvg
+    ifrhgvtghkrdhorhhgpdhrtghpthhtoheplhhinhhugigpohhsshestghruhguvggshiht
+    vgdrtghomhdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohep
+    lhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtohepmhhitgesughighhikhhoug
+    drnhgvthdprhgtphhtthhopehvlehfsheslhhishhtshdrlhhinhhugidruggvvhdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:Ie_8aPYG7iUX3rmdfzHZkdlfcGTD68ISxLWvC1Onnk2sfbUaqU50Jw>
+    <xmx:Ie_8aKEzCDN2OJZcYiNbfa-TXyy5m03F0G9Wya5gO2048Fbujl6Ovw>
+    <xmx:Ie_8aOaiwX-NMrQ9jnil6nQh7BMLfVb76OvVjynnHrnHQ5_kiUmyOQ>
+    <xmx:Ie_8aOzX8ll50qpGENrerrq4Z3TkaeoVnB40-p56NTZ4nG0BdNzPFw>
+    <xmx:Iu_8aD9NouaJ0FishsdAagPNfFUtXuYcuNPMSsa5V4I1RsEkgGDeBX2k>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 25 Oct 2025 11:39:11 -0400 (EDT)
+Message-ID: <73432e36-de5b-48fb-b314-052b2668bb8e@maowtm.org>
+Date: Sat, 25 Oct 2025 16:39:10 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,204 +84,50 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] misc: rp1: Fix a reference leak
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH] fs/9p: delete unnnecessary condition
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aPtiSJl8EwSfVvqN@stanley.mountain> <13655400.bYd4YqkHfl@silver>
+ <aPuAXaHNWMhZOeuv@codewreck.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <aPuAXaHNWMhZOeuv@codewreck.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/10/2025 21:36, Christophe JAILLET wrote:
-> The reference taken by of_find_node_by_name() in the probe is not released
-> in the remove function.
-> 
-> In order to avoid a reference leak, use cleanup.h to automatically
-> release the reference at the end of the probe when it is not needed
-> anymore.
-> 
-> In order to do so, a reference also needs to be taken when DT is not used.
-> 
-> This simplifies the error handling path and makes direct returns possible
-> in several places.
-> 
-> While at it, also add a missing \n at the end of an error message.
-> 
-> Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is compile tested only.
-> 
-> This change is speculative. Review with care.
-> 
-> Changes in v2:
->   - implement Dan's suggestions
-> 
-> v1: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/misc/rp1/rp1_pci.c | 42 ++++++++++++++++----------------------
->  1 file changed, 18 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-> index 803832006ec8..0abfeb4a28e3 100644
-> --- a/drivers/misc/rp1/rp1_pci.c
-> +++ b/drivers/misc/rp1/rp1_pci.c
-> @@ -5,6 +5,7 @@
->   * All rights reserved.
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> @@ -185,9 +186,9 @@ static void rp1_unregister_interrupts(struct pci_dev *pdev)
->  static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  {
->  	u32 dtbo_size = __dtbo_rp1_pci_end - __dtbo_rp1_pci_begin;
-> +	struct device_node *rp1_node __free(device_node) = NULL;
+On 10/24/25 14:34, Dominique Martinet wrote:
+> [...]
+> Anyway, thanksfully this particular double retval < 0 check is harmless
+> -- I'll pick this up for -next for now but hopefully we'll be able to
+> "revert the revert" and fix the other problems Tingmao pointed out by
+> the time we reach the 6.19 merge window...
 
-This is not recommended way of using cleanup. You should declare it with
-constructor.... if you cannot that's strong indication you are not
-suppose to use cleanup.
+I'm hoping that the solution I proposed [1], which is to pass
+V9FS_STAT2INODE_KEEP_ISIZE in v9fs_refresh_inode_dotl if v9ses->cache &
+(CACHE_LOOSE | CACHE_WRITEBACK), would be good enough to prevent these
+sorts of issues.  But given I've already missed a thing the first time,
+I'm less confident in my judgement now 😅
 
->  	void *dtbo_start = __dtbo_rp1_pci_begin;
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *rp1_node;
->  	bool skip_ovl = true;
->  	struct rp1_dev *rp1;
->  	int err = 0;
-> @@ -200,42 +201,40 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	rp1_node = of_find_node_by_name(NULL, "rp1_nexus");
->  	if (!rp1_node) {
->  		rp1_node = dev_of_node(dev);
-> +		/*
-> +		 * Take a reference to match of_find_node_by_name()
-> +		 * behavior. This makes cleanup.h usable in both cases.
-> +		 */
-> +		of_node_get(rp1_node);
->  		skip_ovl = false;
->  	}
->  
->  	if (!rp1_node) {
->  		dev_err(dev, "Missing of_node for device\n");
-> -		err = -EINVAL;
-> -		goto err_put_node;
-> +		return -EINVAL;
->  	}
->  
->  	rp1 = devm_kzalloc(&pdev->dev, sizeof(*rp1), GFP_KERNEL);
-> -	if (!rp1) {
-> -		err = -ENOMEM;
-> -		goto err_put_node;
-> -	}
-> +	if (!rp1)
-> +		return -ENOMEM;
->  
->  	rp1->pdev = pdev;
->  
->  	if (pci_resource_len(pdev, 1) <= 0x10000) {
->  		dev_err(&pdev->dev,
->  			"Not initialized - is the firmware running?\n");
-> -		err = -EINVAL;
-> -		goto err_put_node;
-> +		return -EINVAL;
->  	}
->  
->  	err = pcim_enable_device(pdev);
-> -	if (err < 0) {
-> -		err = dev_err_probe(&pdev->dev, err,
-> -				    "Enabling PCI device has failed");
-> -		goto err_put_node;
-> -	}
-> +	if (err < 0)
-> +		return dev_err_probe(&pdev->dev, err,
-> +				     "Enabling PCI device has failed\n");
->  
->  	rp1->bar1 = pcim_iomap(pdev, 1, 0);
->  	if (!rp1->bar1) {
->  		dev_err(&pdev->dev, "Cannot map PCI BAR\n");
-> -		err = -EIO;
-> -		goto err_put_node;
-> +		return -EIO;
->  	}
->  
->  	pci_set_master(pdev);
-> @@ -243,13 +242,11 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
->  				    PCI_IRQ_MSIX);
->  	if (err < 0) {
-> -		err = dev_err_probe(&pdev->dev, err,
-> -				    "Failed to allocate MSI-X vectors\n");
-> -		goto err_put_node;
-> +		return dev_err_probe(&pdev->dev, err,
-> +				     "Failed to allocate MSI-X vectors\n");
->  	} else if (err != RP1_INT_END) {
->  		dev_err(&pdev->dev, "Cannot allocate enough interrupts\n");
-> -		err = -EINVAL;
-> -		goto err_put_node;
-> +		return -EINVAL;
->  	}
->  
->  	pci_set_drvdata(pdev, rp1);
-> @@ -295,9 +292,6 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	of_overlay_remove(&rp1->ovcs_id);
->  err_unregister_interrupts:
+(The other alternative I see is to flush the cache before updating
+metadata, like we do in v9fs_vfs_getattr, but then that's a even larger
+change, and I'm also not sure if it would be race-free (i.e. if another
+write is processed after we flush but before we refresh metadata))
 
-And gotos is another strong indication that you should not use
-cleanup.h. See cleanup.h for further explanations.
+I can try and do some more testing on this, and would welcome pointers on
+things to try.  Also let me know if you think the above suggestion
+(V9FS_V9FS_STAT2INODE_KEEP_ISIZE) is safe on its own.
 
+(Also, for some context, the main victim of this stale metadata issue,
+afaik, is just the workaround for Landlock to work on 9pfs, in which we
+get something to deliberately hold the paths used in rules open for the
+inode to be reused.  Although I guess some other workloads which do a
+similar thing might also suffer from this so still good to get this (stale
+metadata issue) fixed.  I hope we eventually come to a proper solution for
+the Landlock issue tho)
 
-
-Best regards,
-Krzysztof
+[1]: https://lore.kernel.org/all/6c74ad63-3afc-4549-9ac6-494b9a63e839@maowtm.org/
