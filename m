@@ -1,49 +1,48 @@
-Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421EA221282
-	for <kernel-janitors@vger.kernel.org>; Sun, 26 Oct 2025 07:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFDF3B7A8;
+	Sun, 26 Oct 2025 10:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761464524; cv=none; b=G//qICcKvBBfrUFYmh9OgS8JhFQWVulzN4oPL169vMGEDcp+eOCxAEYVvy2+mwLP6UY9T/uSocWHUv0AoFmcbbrI3ZGtwSmM7IqWtDm1t8v3yjEIKRSxEd94QeUEd1+oVVI6ee3SYc/VaDAZs9SVt2iYdvayRpXqn/72DRqOCwI=
+	t=1761476062; cv=none; b=VhtpGXrpg1SePi0Rxs+7enYtxB+CXDpmL/yxJ8vu1JmirXZBPfJCRASVr+75+jhUq8kEp1n8z/BetArepFePmN3gTE7983NG8ZF+SpdflvpKYIKdPMWPo33ITPDvcse8eeLUu2NPDRBZvh39+TdB5b6pDnRZVz+QMBgRNWj9l+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761464524; c=relaxed/simple;
-	bh=nBsmSQFi+vaIAicJvhip5z+1yFa/mkWHTlFBtfY7AUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aIQVM25DAJqkqwwMJDdPeeMLI3fv2GbXbnclQ5awftCvDKq3p4hkJi7ubyqbmPzvbN1CS4p5GPTlstjfQ/zWe21TOx/GkeoLhRcuF+TjBUU1fCOczwck1avOiRKTBToqaUA4VUDIo4eicTfeYL7v1C5jf7aMuqffRpxnXAMeOIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SJWTcwSZ; arc=none smtp.client-ip=80.12.242.78
+	s=arc-20240116; t=1761476062; c=relaxed/simple;
+	bh=tK7HS9bj/DEqYFWNQwvGX6kIY9II8FCtL5zQJwqPB64=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H8bhNihl1wRbvdIYWrVMGumcm9xSt+2K04Hc1cTNHmb++jMgFO7aUAh+U0x1UO3UsKEN+ylGrRwSkOZz8C2odjvCOHbyGMQxK1gzGCbSfiC5Gp+1v88c01UGEQhZPN3i5bbsK3paTDvR+4gYvQRzVwHkwRRrvBeMbFACsoekR1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dN663kkO; arc=none smtp.client-ip=80.12.242.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SJWTcwSZ"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dN663kkO"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id CvO2v84G3ZqBKCvO2vv2ZO; Sun, 26 Oct 2025 08:41:59 +0100
+	id CyN1vAKxM7TjyCyN1vOFVf; Sun, 26 Oct 2025 11:53:11 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1761464519;
-	bh=uEwnxd7x2uL4HaQMJt0KEV7togDKpOIRB+P5azfi0BE=;
+	s=t20230301; t=1761475991;
+	bh=nLTWNBJbJPgxe0pVePlYQcmuPVBtcUlK4ki+WghVXJE=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=SJWTcwSZINSRGkeVF6+BK/NXjX9+SV0tGZ3du/AgOQ0yLuzJLhTQIK6OXysvEOTZr
-	 YDBf8nvpqo2g0wZaaIRK+rKuGIgGCBrDeSLMityAG28n65G9c25M7m15sIOo2Ofpwj
-	 3QFlv/RzsDuZCInwtbmISOwXvTqtZWpLJkO2qOyf8oit/2rqTNjhe8NVy8h+Rh/OXh
-	 IDxtLbqVLQvXpSOAgJrY0tVgKvcXP8An7DKee5FognG2/Wyf9SpINyDe3/JmFgFBB2
-	 yUQBvjhWTGET9mydmlyKbTE3vgjCUtsuCzAQFc5bsEGDc4Z0e4DPHrb5Lm5M8rqB3H
-	 0JEQrDeNzrRKA==
+	b=dN663kkOmoL1Yqtgf9bVfvFh8G1TTPKem18dWi4I2911mqyC5iut+ymVsKal1toGP
+	 GK2J+gdGuZka/JHwzkIIsdZqTBFkb0js8kNl5iB3pR50ziH/u1rNduIQ4sO0mvhz+h
+	 r0haMKkGv2xttG7+CRbFMzhDseidaiRZA0//eHz8jxK7n7Q2LEpT7ZFzk9UhGDS2vQ
+	 hs7S09rfKLv1agePW2zPKkANzCpOxohm204s/HZ6MMIfoxg7+caSI+oC8vej2XXr2W
+	 bFem56uVJRHEESHx87OXSlVcO7/2+dZYhcXcm0zf3u7Wkrklk7P+L1lzkkfi5Myktc
+	 +gIqKDc6ftgpA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 26 Oct 2025 08:41:59 +0100
+X-ME-Date: Sun, 26 Oct 2025 11:53:11 +0100
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>
+To: Juergen Gross <jgross@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] fs/resctrl: Slightly optimize cbm_validate()
-Date: Sun, 26 Oct 2025 08:39:52 +0100
-Message-ID: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	xen-devel@lists.xenproject.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] xen/usb: Constify struct hc_driver
+Date: Sun, 26 Oct 2025 11:51:04 +0100
+Message-ID: <63241c9e857646d895ce615b998d41ee4829f9e3.1761475831.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,49 +52,50 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'first_bit' is known to be 1, so it can be skipped when searching for the
-next 0 bit. Doing so mimics bitmap_next_set_region() and can save a few
-cycles.
+'struct hc_driver' is not modified in this driver.
+
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
+
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  52065	  23176	    256	  75497	  126e9	drivers/usb/host/xen-hcd.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  52897	  22344	    256	  75497	  126e9	drivers/usb/host/xen-hcd.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only.
+ drivers/usb/host/xen-hcd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-For the records, on x86, the diff of the asm code is:
---- fs/resctrl/ctrlmondata.s.old        2025-10-26 08:21:46.928920563 +0100
-+++ fs/resctrl/ctrlmondata.s    2025-10-26 08:21:40.864024143 +0100
-@@ -1603,11 +1603,12 @@
-        call    _find_first_bit
- # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
-        movq    %r12, %rsi
--       leaq    48(%rsp), %rdi
--       movq    %rax, %rdx
-+# fs/resctrl/ctrlmondata.c:133:        zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
-+       leaq    1(%rax), %rdx
- # ./include/linux/find.h:214:  return _find_first_bit(addr, size);
-        movq    %rax, 8(%rsp)
- # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
-+       leaq    48(%rsp), %rdi
-        call    _find_next_zero_bit
- # fs/resctrl/ctrlmondata.c:136:        if (!r->cache.arch_has_sparse_bitmasks &&
-        leaq    28(%rbx), %rdi
----
- fs/resctrl/ctrlmondata.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index 0d0ef54fc4de..1ff479a2dbbc 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -130,7 +130,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
- 	}
+diff --git a/drivers/usb/host/xen-hcd.c b/drivers/usb/host/xen-hcd.c
+index 1c2a95fe41e5..0a94d302911a 100644
+--- a/drivers/usb/host/xen-hcd.c
++++ b/drivers/usb/host/xen-hcd.c
+@@ -1388,7 +1388,7 @@ static int xenhcd_get_frame(struct usb_hcd *hcd)
+ 	return 0;
+ }
  
- 	first_bit = find_first_bit(&val, cbm_len);
--	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
-+	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
+-static struct hc_driver xenhcd_usb20_hc_driver = {
++static const struct hc_driver xenhcd_usb20_hc_driver = {
+ 	.description = "xen-hcd",
+ 	.product_desc = "Xen USB2.0 Virtual Host Controller",
+ 	.hcd_priv_size = sizeof(struct xenhcd_info),
+@@ -1413,7 +1413,7 @@ static struct hc_driver xenhcd_usb20_hc_driver = {
+ #endif
+ };
  
- 	/* Are non-contiguous bitmasks allowed? */
- 	if (!r->cache.arch_has_sparse_bitmasks &&
+-static struct hc_driver xenhcd_usb11_hc_driver = {
++static const struct hc_driver xenhcd_usb11_hc_driver = {
+ 	.description = "xen-hcd",
+ 	.product_desc = "Xen USB1.1 Virtual Host Controller",
+ 	.hcd_priv_size = sizeof(struct xenhcd_info),
 -- 
 2.51.0
 
