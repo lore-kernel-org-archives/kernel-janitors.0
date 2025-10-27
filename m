@@ -1,112 +1,132 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EA92773EC;
-	Mon, 27 Oct 2025 09:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93CD2FC88C;
+	Mon, 27 Oct 2025 11:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557583; cv=none; b=Vl1nQu+YXqWO2e5AvX4SALu/hUkPE69FeFtp6AQWlO/Db79au2+HmmGyFihRtQsxVjoNs6y8zcfr87+5dss24hoigZ3o8WL/olD1N2rh9tlM6DyG8AB3yVWN1jejxXGcy4HD+5lqifFROnXnWNjPNpqKM0AqFygJInjO3LlblyQ=
+	t=1761565444; cv=none; b=BXR3okCo6ndLCVRRkc/ozYaSv5HeBAhE3p854iVqBRlvmjZfwkU2VAjxmF4TsG3SkfY0ljuHRdtTkYPhqU4Eq+1Ir2MpXL+WSa3peGZ467W6PpugPYgrHFPf248lliFyxOGfCIZQW9p3HSPQ8UMdooSP/7O5/tmSLEymI1fUpUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557583; c=relaxed/simple;
-	bh=rTgPzkbHTz6CLV0HalVq6PovgVJUM7yM8MpMHc6txvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+G3+hxGFTexkFOvNHI4uqagSPR3tKmVLIB4ovSBKJ+fusn0/0nfQngQpEQq6YPUh/Vn/XM4cvVhdNgiTXk5fL2DSQ68zbu4fWb9bRcGl+g0QfcuLU4guRCzBl9LehUcOfDJl50gtyhSEE4TstW22PlI8qWgNaIX03RpfnE793c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IavK31t9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IavK31t9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761557574;
-	bh=rTgPzkbHTz6CLV0HalVq6PovgVJUM7yM8MpMHc6txvU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IavK31t9oKFUguKtvnj6uUkl+zZI+2ndJShUTkxMkNWpcz2bSvDuzD5rtx60eMNt8
-	 NDmQKPXEFtuCJJWZMwkxMrnG3rMnZVoqZMJYeFFz17yMfxjVufSmsS2QKdryuAjeNx
-	 muCM3jfql29XKccecm0ynWrjB1jGjzICzT79uuefqvgthH4u9IRtTNN2vSRXVtmRSR
-	 h8L6R8tyqkEHVsb7t6+dMJvp0jTCBs5fZNZ4HFGlM9HywZ3XswhoQf4IT1hswUjLOl
-	 jgGqJVhhFBykQja9wHsa+7QwEE0fds7lb/cwX2y5D9ewxRdVJ0EjHCtl6mdmZv5Bpg
-	 bJoUySTZRf2og==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C691017E1340;
-	Mon, 27 Oct 2025 10:32:53 +0100 (CET)
-Message-ID: <158c16f0-9d50-45f9-a3cb-5deb36d09366@collabora.com>
-Date: Mon, 27 Oct 2025 10:32:53 +0100
+	s=arc-20240116; t=1761565444; c=relaxed/simple;
+	bh=8SGdPTxUHSUvdkvomZFHBaqkm2RreBRK43eClYZlDO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khjN0Mc4tvAFdHIi7+dfxUeaGBpH5RIIhoZrt3XH1R8rQoeO3JjGAVxoWtcbByaY9K9G6bRwom5JBt3iFjeAcYS9fYdHbTex9WWeV/TzbgdLhVDhaPgJpCoYQ5MMp5obnmY4L4tjD49lcNAwkiS6GEbZcGj3fk5ztNIxR31yj8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43CDD169E;
+	Mon, 27 Oct 2025 04:43:53 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEC9E3F673;
+	Mon, 27 Oct 2025 04:43:59 -0700 (PDT)
+Date: Mon, 27 Oct 2025 11:43:49 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Tony Luck <tony.luck@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl: Slightly optimize cbm_validate()
+Message-ID: <aP9a9ZtigAWCWSWk@e133380.arm.com>
+References: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <aP8agyKj73bLZrTQ@stanley.mountain>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <aP8agyKj73bLZrTQ@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
 
-Il 27/10/25 08:08, Dan Carpenter ha scritto:
-> The snprintf() calls here work but they have several minor style issues:
+Hi,
+
+[Tony, I have a side question on min_cbm_bits -- see below.]
+
+On Sun, Oct 26, 2025 at 08:39:52AM +0100, Christophe JAILLET wrote:
+> 'first_bit' is known to be 1, so it can be skipped when searching for the
+> next 0 bit. Doing so mimics bitmap_next_set_region() and can save a few
+> cycles.
+
+This seems reasonable, although:
+
+Nit: missing statement of what the patch does.  (Your paragraph
+describes only something that _could_ be done and gives rationale for
+it.)
+
 > 
-> 1) It uses ARRAY_SIZE() which is the number of elements in an array.
->     Since were talking about char that works, but it's more common to
->     use sizeof() which is the number of bytes.
-> 2) The printf format is "%1d".  The "1" ensures we always print at
->     least 1 character but since numbers all have at least 1 digit this
->     can be removed.
-> 3) The kernel implementation of snprintf() cannot return negative error
->     codes.  Also these particular calls to snprintf() can't return zero
->     and the code to handle that zero return is sort of questionable.
-> 4) In the current kernel the only "core_id" we print is "0" but if it
->     was more than 9 then the output would be truncated so GCC complains.
->     Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> v2: The v1 introduced a W=1 warning because of the truncation issue.
->      It's a false positive because GCC assumes that "core_id" can be
->      every possible value of int but actually it can only be zero.  And
->      also generally, in the kernel, truncating is fine and it is fine
->      here too.
+> Compile tested only.
 > 
->      But let's use that as an opportunity to do more cleanups.
+> For the records, on x86, the diff of the asm code is:
+> --- fs/resctrl/ctrlmondata.s.old        2025-10-26 08:21:46.928920563 +0100
+> +++ fs/resctrl/ctrlmondata.s    2025-10-26 08:21:40.864024143 +0100
+> @@ -1603,11 +1603,12 @@
+>         call    _find_first_bit
+>  # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
+>         movq    %r12, %rsi
+> -       leaq    48(%rsp), %rdi
+> -       movq    %rax, %rdx
+> +# fs/resctrl/ctrlmondata.c:133:        zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
+> +       leaq    1(%rax), %rdx
+>  # ./include/linux/find.h:214:  return _find_first_bit(addr, size);
+>         movq    %rax, 8(%rsp)
+>  # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
+> +       leaq    48(%rsp), %rdi
+
+(This is really only showing that the compiler works.  The real
+question is whether the logic is still sound after this change to the
+arguments of _find_first_bit()...)
+
+>         call    _find_next_zero_bit
+>  # fs/resctrl/ctrlmondata.c:136:        if (!r->cache.arch_has_sparse_bitmasks &&
+>         leaq    28(%rbx), %rdi
+> ---
+>  fs/resctrl/ctrlmondata.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->   drivers/remoteproc/mtk_scp.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 10e3f9eb8cd2..db8fd045468d 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
->   		return ERR_PTR(-EINVAL);
->   
->   	if (core_id >= 0)
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
->   	else
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
-> -	if (ret <= 0)
-> -		return ERR_PTR(ret);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
-> +	if (ret >= sizeof(scp_fw_file))
-> +		return ERR_PTR(-ENAMETOOLONG);
->   
->   	/* Not using strchr here, as strlen of a const gets optimized by compiler */
->   	soc = &compatible[strlen("mediatek,")];
+> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
+> index 0d0ef54fc4de..1ff479a2dbbc 100644
+> --- a/fs/resctrl/ctrlmondata.c
+> +++ b/fs/resctrl/ctrlmondata.c
+> @@ -130,7 +130,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+>  	}
+>  
+>  	first_bit = find_first_bit(&val, cbm_len);
+> -	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
+> +	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
+
+Does this definitely do the right thing if val was zero?
+
+>  
+>  	/* Are non-contiguous bitmasks allowed? */
+>  	if (!r->cache.arch_has_sparse_bitmasks &&
+
+Also, what about the find_first_bit() below?
 
 
+[...]
+
+<aside>
+
+Also, not directly related to this patch, but, looking at the final if
+statement:
+
+	if ((zero_bit - first_bit) < r->cache.min_cbm_bits) {
+	        rdt_last_cmd_printf("Need at least %d bits in the mask\n",
+	                            r->cache.min_cbm_bits);
+	        return false;
+	}
+
+If min_cbm_bits is two or greater, this can fail if the bitmap has
+enough contiguous set bits but not in the first block of set bits,
+and it can succeed if there are blocks of set bits beyond the first
+block, that have fewer than min_cbm_bits.
+
+Is that intended?  Do we ever expect arch_has_sparse_bitmasks alongside
+min_cbm_bits > 1, or should these be mutually exclusive?
+
+</aside>
+
+Cheers
+---Dave
