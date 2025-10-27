@@ -1,91 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ACA17A2E0;
-	Mon, 27 Oct 2025 14:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029EC322DD6;
+	Mon, 27 Oct 2025 18:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761575017; cv=none; b=HxYsRI3HCma6KH79WMSLsDDitb55Rf2hMg1KRLuWToIltSstgctBTOPRMd++TdKhLSroi8TI9CbIv1IKV+gRUivMj2hGpbTqLV922jfjafaUg3oX6T3YzNlTWJrOyf82POkYmZH/Sp+fxozreQiGy7jwqHKw3Gb3zvI49qR7DuM=
+	t=1761590912; cv=none; b=m0MJt81GZpFgF1aZDIay56yZ+LETLUmIEPHodg7EG3Zcr5qumf6PtpuC9GAptHCNt9RHvt76q56r6gEXxN5R7Oxcl9wnMdo07iTYinmngopBk5wPK4AiXiDMMa+Zvii8mg12f7rKA4MRTn/gz3rGvKlBG1rt30FApXr8HaVFoOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761575017; c=relaxed/simple;
-	bh=bEZAhKU/gmp7DRZn+x/CT+6rXAvYol0BBVHtXI9aG3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=arMCbZ45DH/cEuPoDjgQhSq1IQG5MrTVg0YB8HwcfF/qifleLP7F1y2ulKQxT8V5tATHvqXEF8ip9INMlm2yo6Sy5MC96VLxL3PHOO2HVYyqjYIT8h8FrDNbkgW/+s8eULEskQfjWD/9O69KVckGcgvr3CJ1sHx43FJVOE7Csj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dmpz5sLm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761590912; c=relaxed/simple;
+	bh=JyX5IiNpi+mT5A3b1mPJfwg7kWiJXFyu6cjoHIuw+Ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFI1qOWDELlpMbRRTOT8B9spo/tKQG41GmrQ1mX653qXcgHc/h4VddKgoqgiDU0oU8ogN0fjkCMfUJuOtLIGUunWFUMspH1PYk1IoJUsza8ZUjhvHq+oxByS/fJKNy3vWJ/zH+j7MiQBQXbtwMWJ3PGYeMWM6/5/BFFAjiqVqJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEdxdewS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dmpz5sLm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B68C4CEF1;
-	Mon, 27 Oct 2025 14:23:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEdxdewS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F5CC4CEF1;
+	Mon, 27 Oct 2025 18:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761575017;
-	bh=bEZAhKU/gmp7DRZn+x/CT+6rXAvYol0BBVHtXI9aG3k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Dmpz5sLmkgFWTzbdpjMsCcAdyuGEU6GNprBALP6mwxrpmDz69ZhOZqOoMDHoGLuaC
-	 G+nqYVWqcZX4EarRGnLTy3C6zlvHxPgXwCjxpLd5pBlGSIsI6KNoB070SUb3vHJRZ7
-	 BT0QqgUwseMy6ZB6+aH+tjfvPHdzKTa3zmkp0mN7rHrgknACtd+UexeMkLiOFy1Av/
-	 og/3JfBuKdVuACELMYHlTsWU0gmd2b/O9LnxfTu+cl9NOQy9lERgcbetoK9+pTaoRV
-	 C+z7KR0t3zDGJLJTUglQL7BvO+e9M6TvZZlCaUV85cxgWL/IX3rFxi6QlZ/WgOrEM+
-	 LRjosk3WOdqmw==
-Date: Mon, 27 Oct 2025 14:23:31 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Remi Buisson <remi.buisson@tdk.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return
- statement in probe()
-Message-ID: <20251027142331.29725dfe@jic23-huawei>
-In-Reply-To: <aPi5vEp75jH0imQc@stanley.mountain>
-References: <aPi5vEp75jH0imQc@stanley.mountain>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1761590911;
+	bh=JyX5IiNpi+mT5A3b1mPJfwg7kWiJXFyu6cjoHIuw+Ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EEdxdewSUd4k0K182nSh1VF2uVzRwo6dOycwlY9E34w0rGftGhsJtjg4g2i5kmVck
+	 UJLNtvMJU+BxbS9hOZQh151Vud1CGRXvsbX5KrdbPWD4juOjFZGJOLI7ad/b49/9op
+	 YAraHXS4pyXK4zLrSE9KaGnV3Um/lGWZFDLLhcZGImfhtobKtSjadbVTBDhgzSah2e
+	 4GaLLV0BHpjZWt/TTA4RZg6PGfykteVVa56c53QbtpNLb+k8IqeNBPhUwzw8ExX0qE
+	 Q/GWATNQNOm2+mS261PsZxIMgCuS0QC3DbdvL3PcKioRZL7ZGbVK1Y0GYGV2w6xHrM
+	 EFThu4CANBp2g==
+Date: Mon, 27 Oct 2025 13:48:30 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	andrea.porta@suse.com
+Subject: Re: [PATCH] of: overlay: Avoid spurious error messages in
+ of_overlay_remove()
+Message-ID: <176159090855.1395199.16848791379867357248.robh@kernel.org>
+References: <f756e04e8bc239b33a0428c2dd055f202e214f0b.1761335298.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f756e04e8bc239b33a0428c2dd055f202e214f0b.1761335298.git.christophe.jaillet@wanadoo.fr>
 
-On Wed, 22 Oct 2025 14:02:20 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> The intention here was clearly to return -ENODEV but the return statement
-> was missing.  It would result in an off by one read in i3c_chip_info[] on
-> the next line.  Add the return statement.
+On Fri, 24 Oct 2025 21:50:58 +0200, Christophe JAILLET wrote:
+> Make of_overlay_remove() tolerate ovcs_id being 0 without logging an error.
 > 
-> Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_icm45600 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> This is needed for drivers/misc/rp1/rp1_pci.c where things are taken from
+> DT or at runtime. In the former case, ovcs_id is unused and left to 0.
+> Being able to tolerate such cases simplify error handling.
 > 
-> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
-> index b5df06b97d44..9247eae9b3e2 100644
-> --- a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
-> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
-> @@ -57,7 +57,8 @@ static int inv_icm45600_i3c_probe(struct i3c_device *i3cdev)
->  	}
->  
->  	if (chip == nb_chip)
-> -		dev_err_probe(&i3cdev->dev, -ENODEV, "Failed to match part id %d\n", whoami);
-> +		return dev_err_probe(&i3cdev->dev, -ENODEV,
-> +				     "Failed to match part id %d\n", whoami);
->  
->  	return inv_icm45600_core_probe(regmap, i3c_chip_info[chip], false, NULL);
->  }
+> This was suggested by Dan as a reply to patch [1].
+> 
+> [1]: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
+> 
+> ---
+>  drivers/of/overlay.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-I'm going to apply this but the resulting code is still wrong (even if not
-a true bug after this fix).
+Applied, thanks!
 
-A hard ID match like this breaks use of dt fallback compatibles.
-What this should do is 'give it a go' on matching, but if there no match it should
-carry on as if the match was to whatever the compatible that was supplied was.
-When that happens a dev_info() is appropriate but not error out as this does.
-
-Remi, if possible could you look at adding such a patch on top of this?
-
-Thanks,
-
-Jonathan
