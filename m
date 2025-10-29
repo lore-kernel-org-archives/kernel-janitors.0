@@ -1,99 +1,103 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDA2264A9D;
-	Wed, 29 Oct 2025 13:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CD12874E0;
+	Wed, 29 Oct 2025 13:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743959; cv=none; b=BZmFpkToo70fltIGuRAMWtUcrjFPR3CUEpjysGOS61wu7Mh0eU4ZfvqwsoSrXXcJBpbxphsr1XtcSc/wfhKIEtm01TVx+l3PJBPeaVb3od2+RyyF5DmKCr9mxJM3rHNSDfzLh5cr8SfntHdaCFcAeuveDgC9GIqTlBfFbFOv+eA=
+	t=1761744914; cv=none; b=PuzkLfQsRMkr0dX7STfldcwIP1b6YafuT5EZRi4BV3XB6VmkiRgZPYCqMXA15wq3KR4kZDTYBwFZT/dAra3UAkwKenVkvGAGMv+4Sw6r9IHnM8vBSVyimlojrDF4j9ZsAhEgKQp5vQFl0yRsEMPjymPLzJmz19KpormS/szbzi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743959; c=relaxed/simple;
-	bh=fE3GI6tnC+2H8YMme5hylFf1T+W9ZUVZeAJHZpgAR1c=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=MJS7ztPvy2PtbbN6xPQoCmJgDcMmf13g6D/3HQb5MgLMkzr3aAX7TqqbccWA12xvNwov/wFOyANByTNgn1fpApoFf7gKGhQgnlROW4+NMY3ABC8jE/Lr3Jwmg6C78fUAuzPpcC0AzQCi/j/00hxQ1iOuhje/TcBoOeGAH7xLBp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HviZ1Y9f; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	s=arc-20240116; t=1761744914; c=relaxed/simple;
+	bh=zk6u99OtGnbAQaUuV35Pxy7dNCuKsP/fJdfEn8rLNbw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SeP6IF49Qq9/aJ8eTcZbpldnZFSdlHlDt6Fr7qqtz8+Frz/GFnQf6CfBCalNe7dJFMOtHEp/qJ3oGvBXV7ZCyDnaMLouwB+zT6Y1KqPupCdYE3mlSOg41mP0b5iCFVWjknSxsIyTZu+TXbZXJMca/3YRJqoALy4uaeiIAHddaZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DH0fqoJ5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=v1425Yqs; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HviZ1Y9f"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=gTY+fh4/ukja1oSr3pfFFJ7ZbrQGeiX8cxOtmfsJPd4=; b=HviZ1Y9fNLqZQLJBsqf+T5iiuZ
-	VHg4Qq5Zbf3kkn2oBIkKV32E56t/jxmh8kAkCTNx9/v8IaqTbsLd+707COElupQAfkzwVm5wQgb8H
-	9vS5w/DArwM4rgQaoPTo6VLw39iDXuSmLjOhmxEtWY09lHZQAm1yLZxI08zaRKWSx3iT9JK3ymeAy
-	iGxc31YFFgFE2WUgao8mFzvkW/5+Facdw7ONRSCrnISwRzm4JnspiG2hfvEVANaK4j4VTYJCdBgqY
-	G4qLMhiMLJeNisDW5gWdspBpX1Df8MIxpwt36HgsNBe+DEiWwYcVszxCttm4TJa6jdn6rshAHaCdd
-	YRxbJP3g==;
-Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtps 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vE64q-00Gcm4-7S; Wed, 29 Oct 2025 14:19:00 +0100
-Received: from webmail.service.igalia.com ([192.168.21.45])
-	by mail.igalia.com with esmtp (Exim)
-	id 1vE64o-000l86-63; Wed, 29 Oct 2025 14:19:00 +0100
-Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
-	by webmail with esmtp (Exim 4.96)
-	(envelope-from <uajain@igalia.com>)
-	id 1vE64n-001UFh-1y;
-	Wed, 29 Oct 2025 14:18:58 +0100
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DH0fqoJ5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v1425Yqs"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8511AEC080F;
+	Wed, 29 Oct 2025 09:35:09 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Wed, 29 Oct 2025 09:35:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761744909;
+	 x=1761831309; bh=LOXt9ukdE/myXtxPN27g0WsvCr/T7HGAPyXOfP8W8tw=; b=
+	DH0fqoJ5K3HA9N2X714F+VSdjfUN8x6I0Yy338O0/zXvHrNjnx6dtVpN/vhvTmoF
+	D+PmDG3coSa3j+ik/57On2kUJwnnTZzm19+L1VS77ee81nNiLFoWY5ELlDPl7dps
+	sPWnjYTKoqCzA9O7OM56RuIwdWyGOdQIYd57OBvZhiWVxqQe+RglNmxSS/u+fAtS
+	XfzgUT/VbWo7G8j8LavNv+GitBKp+k7yS4CYcY/8yZkvRHzICIRHDGCHnHZ3/8rz
+	Dta2UFz1D50ymvMLAX8nRz8SQ8hdRGB033r6ScN+kfzpFU0Z2Z0e+lVY7QDJtpel
+	pZ9asHO8pnp5WVJToaastg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761744909; x=
+	1761831309; bh=LOXt9ukdE/myXtxPN27g0WsvCr/T7HGAPyXOfP8W8tw=; b=v
+	1425Yqsk7qoEPHLQtxftO7qN2WuSsFyZkfZTNyEFrDQugn1/t1WxJQrie+5o8zFA
+	2kz7hZQnPRF8G9zjMj/ixPsyaqSL/QWAPfQhphAnOt3/Fud+MjmmWPk2qYlUnws/
+	+HK40ckOlZ5BZom6Y6429taSSil/YTGkoGu21z97GRg5XaEjOgRk44ZWs14du47C
+	iydKfJxAv7Uw81QL2EV9RLnAumk9Rw5ED/9cNZfjH1gCbOF0ug70Ixuo5+Vu4QEB
+	X7qYzRuHVQKSj7khMDo7J+nN33JqIOqqet+HU6ziN5qFdR6JVrh0HjpMItdh+6kw
+	rX6mgv6C1bPIGEuOWi8rA==
+X-ME-Sender: <xms:DBgCaSY0nyzSH69wt4S9SKgdeX-vyU_MkPQLwA3wjj7r9g7bqTfRCQ>
+    <xme:DBgCaQMsOusvQV3Dpz0STi0OrbHQw538x24XIzc9FW-PHrEEZ-VTYNnkHUs5elnI0
+    dmjBgMbx9NzpnnpV89IsccuLBb3XD5RxZN0tUuJ0ISEbdVqY4pNA2c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieefkeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepmhgrughhuhhrkhhumhgrrhdttdegsehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthht
+    ohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
+    epmhhirhhqqdhlihhnuhigsehrvghrvgdrqhhmqhhmrdhplhdprhgtphhtthhopehkvghr
+    nhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:DBgCac_GRxcACcOKBLRJHk3p5ta3k2kzB7hfJWT9BqdbhyBoFOEw4w>
+    <xmx:DBgCaW-kzy0T9cr2b0KRDM8Pkxc5LDqEIOeI86nZSUDI6diTxFh4bg>
+    <xmx:DBgCaUSZvNJVOnJJ-XWnjGzQDrqxky0cpdXIFxP-eH1G_7xpyz44iw>
+    <xmx:DBgCaSfIX_3rFJG3Y9y2FO6fxyKLiovnSlxY_qquXQCtxSc8SOwqaQ>
+    <xmx:DRgCaYTEMg8szP4v9qWjhcmzKqzNCEilTzrtgCcxOXbj4dFekjY7x4t2>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 82F08700063; Wed, 29 Oct 2025 09:35:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 29 Oct 2025 13:18:57 +0000
-From: uajain <uajain@igalia.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Stefan Wahren
- <wahrenst@gmx.net>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>, Rohit Chavan <roheetchavan@gmail.com>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: vchiq_arm: delete unnecessary check
-In-Reply-To: <aQIS6Q73Ss8xyJTD@stanley.mountain>
-References: <aQIS6Q73Ss8xyJTD@stanley.mountain>
-Message-ID: <86db61cb04863e9799eb20962a47ecdc@igalia.com>
-X-Sender: uajain@igalia.com
-Content-Type: text/plain; charset=US-ASCII
+X-ThreadId: AhXEKh3rk67k
+Date: Wed, 29 Oct 2025 14:34:48 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Madhur Kumar" <madhurkumar004@gmail.com>
+Cc: =?UTF-8?Q?Micha=C5=82_Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Message-Id: <25164f38-842b-4b35-8012-e2c548b2a4f8@app.fastmail.com>
+In-Reply-To: <aQITFDPyuzjNN4GN@stanley.mountain>
+References: <aQITFDPyuzjNN4GN@stanley.mountain>
+Subject: Re: [PATCH next] misc: cb710: Fix a NULL vs IS_ERR() check in probe()
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-Spam-Report: NO, Score=-2.2, Tests=ALL_TRUSTED=-3,BAYES_50=0.8,URIBL_BLOCKED=0.001
-X-Spam-Score: -21
-X-Spam-Bar: --
 
-On 2025-10-29 13:13, Dan Carpenter wrote:
-> Both sides of this if else statement print exactly the same thing.
-> Delete the unnecessary if statement.
-> 
+On Wed, Oct 29, 2025, at 14:13, Dan Carpenter wrote:
+> The pcim_iomap_region() function never returns NULL, it returns error
+> pointers.  Update the checking to match.
+>
+> Fixes: b91c13534a63 ("misc: cb710: Replace deprecated PCI functions")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-LGTM,
-Reviewed-by: Umang Jain <uajain@igalia.com>
-
-> ---
->  .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index e2cac0898b8f..130be2f58342 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -4001,10 +4001,7 @@ void vchiq_log_dump_mem(struct device *dev, const char *label, u32 addr,
->  		}
->  		*s++ = '\0';
->  
-> -		if (label && (*label != '\0'))
-> -			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
-> -		else
-> -			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
-> +		dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
->  
->  		addr += 16;
->  		mem += 16;
+Acked-by: Arnd Bergmann <arnd@arndb.de>
