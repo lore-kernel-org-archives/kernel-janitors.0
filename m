@@ -1,105 +1,99 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD672BFC85
-	for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 13:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDA2264A9D;
+	Wed, 29 Oct 2025 13:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743644; cv=none; b=mgsXsi6GV+9jqE+h5A3vwDOHQ9HrZJs7c20g+jA/eX7/Xd+/hL1eiZYAviddf6m00scHQJmzlEW3Qz5p7kA2rqH/YlMP+/fTzsrat0hRAmR+0WsXijbflSku6MwRXF+ad1PRFj35hT2////9+H1tYQkye2vsG8QzqRnxKB6zcio=
+	t=1761743959; cv=none; b=BZmFpkToo70fltIGuRAMWtUcrjFPR3CUEpjysGOS61wu7Mh0eU4ZfvqwsoSrXXcJBpbxphsr1XtcSc/wfhKIEtm01TVx+l3PJBPeaVb3od2+RyyF5DmKCr9mxJM3rHNSDfzLh5cr8SfntHdaCFcAeuveDgC9GIqTlBfFbFOv+eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743644; c=relaxed/simple;
-	bh=gmgqgw24MLfjErvr+kfghlRml+3oa3rLFqQ5uT+bh+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qx+i8FPUQyONxCxmFbe+5ukwMKh7tenfNj0whRafCgyQWYg1+ul+vs8KZeBME/g2PwhuEwFe084JfOxCVJI90U26ww4Bg3z4UjrJPMWK0tUbVbFtkJgYXGMzTxQ+ohoDhfECZuY2nFp6kHwBhIbMxBVkKm1z8KHjFGAsSFIewpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VL9vNvTn; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761743959; c=relaxed/simple;
+	bh=fE3GI6tnC+2H8YMme5hylFf1T+W9ZUVZeAJHZpgAR1c=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=MJS7ztPvy2PtbbN6xPQoCmJgDcMmf13g6D/3HQb5MgLMkzr3aAX7TqqbccWA12xvNwov/wFOyANByTNgn1fpApoFf7gKGhQgnlROW4+NMY3ABC8jE/Lr3Jwmg6C78fUAuzPpcC0AzQCi/j/00hxQ1iOuhje/TcBoOeGAH7xLBp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HviZ1Y9f; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VL9vNvTn"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so72552185e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 06:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761743640; x=1762348440; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=obvVO6ijh7zJI9QaOo5VQtAg4MY4RGT7X+Wj9ef9Fx4=;
-        b=VL9vNvTnuv/Qu+l5zbH+8M+p+iIBkP1b5yYzfjsQro2Iq2PgCoX4i13iB7RLeE/mls
-         ipsC3CZehO98DyClgJkdhBZ+NmRei6GqTEbj6B+dAoygOEK7lAUy30OnDLjrF/E+uagp
-         yLF2+ljJzhrZVXO0rgQEaWvJ96dDSwYnvB9olnDcz69ueUDi47mXXiMQw9xvVNU8IRNN
-         r1q+OZT6qXehUNpO0nDnCkHUnheKw6108NKqbRP1f+SyHryxUH8logHAuOrZC5fKTEKJ
-         SA9DWMPgH31Yx5Di02M0ogS1OWCp2pCzghv0woa9qa6AnIsadSBHxHDywrnS+IFAD64U
-         L3fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761743640; x=1762348440;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=obvVO6ijh7zJI9QaOo5VQtAg4MY4RGT7X+Wj9ef9Fx4=;
-        b=rPAwhGIhoFYHtRpryvqhHIhaGsxTmzpLdQGwKX10AE1641Zjv3aOcHqGXQizKYDr6J
-         y5KB4ar7fQOLsiLud321ZGQKmgXHy8wQLc63S1IELbaYQfOBO+EshzDni6nBkqNosnfv
-         jTcPU2ODyy9lJDKy1tMqijFmmqIq9Sp6Uw0CuA+3ASqddEtH5mnV7cik3g0CrOQ318LG
-         ZSj6a7OiU6beUgQ6+hdiRc/skpGGVk8fujLIaZrg42gR4c8fU00aGVPYcMrPoqLXhGjC
-         Oef+DZ1kKRKzlwzlI6p+FC1m8CFAeyhewhJ8LFxWAoq4NvDnTzIvbzXHkG4JhuztZmQf
-         gABg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuQKEhSOTEStBuYbrZgx7z+NZM6tt+lImYxOZPPumTUmc+dTNG3v9qvxzwmKmj8Js/HczCDmDmAgut4OvHCVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTjloLajDfgUg0uaiDQ8m/5AaPx7A7BVjO3y2qAsRcvVp8BR8p
-	aB02frMu+JCX0N1FK42e30Mc6t5Yh1o+DKeZyM/CdPOEUwkiNIkL8+v7z3Vp+e5z+CU=
-X-Gm-Gg: ASbGnct9bXohJiUt/inzG08SO76M6T5NEDito2AajYL8n/IURDhUReTEw6KcqxqGPc2
-	SIx1qQvYpV8FPfrGAnYBhe5MZhgUfWGm0TGuGfaSRjREbiUjDMS76zBVBpTgILcLo4/xWgysdfo
-	Zu//tu2Uca1lAdtSt//kkibab7YLA8oyg0cc0zTTxQbI6TBTaiNUGNmm1OIziK2qpDp82xxbhry
-	Bohn4YPg52C0AvESiLOrFOqNWspoD0pPM/4Z24wZuRZ/bnvoOlDN/rxdt/CQfIqUXrZRuffy1+H
-	KjU69An5yKs7XhnUbj89fzcC11nCP/Q3aFlh9YMDqlvu8710B6D7QF5XAnaqc+Ca3dW7QlFcLoE
-	XFEE47FHTnN7hIyUpk5nT2vq4a6ojlLJN2sqmuMvGveCZHU8X5gsoOaXSXI/+okJYGvXmpV5eT6
-	WrbQ8j5fDviO5i+glu
-X-Google-Smtp-Source: AGHT+IGOlwhirvKhC2gYeFfPJKrIR9GBb37d6lWPNsa4U9lLC5IBxuYdwplG7hkMlAutxG2URF4BGg==
-X-Received: by 2002:a05:600c:8b8b:b0:471:1717:40f with SMTP id 5b1f17b1804b1-4771e1ca084mr25439795e9.22.1761743640364;
-        Wed, 29 Oct 2025 06:14:00 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952e2e06sm26433385f8f.46.2025.10.29.06.13.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:14:00 -0700 (PDT)
-Date: Wed, 29 Oct 2025 16:13:56 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Madhur Kumar <madhurkumar004@gmail.com>
-Cc: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] misc: cb710: Fix a NULL vs IS_ERR() check in probe()
-Message-ID: <aQITFDPyuzjNN4GN@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HviZ1Y9f"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
+	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=gTY+fh4/ukja1oSr3pfFFJ7ZbrQGeiX8cxOtmfsJPd4=; b=HviZ1Y9fNLqZQLJBsqf+T5iiuZ
+	VHg4Qq5Zbf3kkn2oBIkKV32E56t/jxmh8kAkCTNx9/v8IaqTbsLd+707COElupQAfkzwVm5wQgb8H
+	9vS5w/DArwM4rgQaoPTo6VLw39iDXuSmLjOhmxEtWY09lHZQAm1yLZxI08zaRKWSx3iT9JK3ymeAy
+	iGxc31YFFgFE2WUgao8mFzvkW/5+Facdw7ONRSCrnISwRzm4JnspiG2hfvEVANaK4j4VTYJCdBgqY
+	G4qLMhiMLJeNisDW5gWdspBpX1Df8MIxpwt36HgsNBe+DEiWwYcVszxCttm4TJa6jdn6rshAHaCdd
+	YRxbJP3g==;
+Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
+	by fanzine2.igalia.com with esmtps 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vE64q-00Gcm4-7S; Wed, 29 Oct 2025 14:19:00 +0100
+Received: from webmail.service.igalia.com ([192.168.21.45])
+	by mail.igalia.com with esmtp (Exim)
+	id 1vE64o-000l86-63; Wed, 29 Oct 2025 14:19:00 +0100
+Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
+	by webmail with esmtp (Exim 4.96)
+	(envelope-from <uajain@igalia.com>)
+	id 1vE64n-001UFh-1y;
+	Wed, 29 Oct 2025 14:18:58 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Date: Wed, 29 Oct 2025 13:18:57 +0000
+From: uajain <uajain@igalia.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Stefan Wahren
+ <wahrenst@gmx.net>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>, Rohit Chavan <roheetchavan@gmail.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] staging: vchiq_arm: delete unnecessary check
+In-Reply-To: <aQIS6Q73Ss8xyJTD@stanley.mountain>
+References: <aQIS6Q73Ss8xyJTD@stanley.mountain>
+Message-ID: <86db61cb04863e9799eb20962a47ecdc@igalia.com>
+X-Sender: uajain@igalia.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Report: NO, Score=-2.2, Tests=ALL_TRUSTED=-3,BAYES_50=0.8,URIBL_BLOCKED=0.001
+X-Spam-Score: -21
+X-Spam-Bar: --
 
-The pcim_iomap_region() function never returns NULL, it returns error
-pointers.  Update the checking to match.
+On 2025-10-29 13:13, Dan Carpenter wrote:
+> Both sides of this if else statement print exactly the same thing.
+> Delete the unnecessary if statement.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: b91c13534a63 ("misc: cb710: Replace deprecated PCI functions")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/misc/cb710/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+LGTM,
+Reviewed-by: Umang Jain <uajain@igalia.com>
 
-diff --git a/drivers/misc/cb710/core.c b/drivers/misc/cb710/core.c
-index a1e6ba62c298..2dd212f04fed 100644
---- a/drivers/misc/cb710/core.c
-+++ b/drivers/misc/cb710/core.c
-@@ -226,8 +226,8 @@ static int cb710_probe(struct pci_dev *pdev,
- 	spin_lock_init(&chip->irq_lock);
- 	chip->pdev = pdev;
- 	chip->iobase = pcim_iomap_region(pdev, 0, KBUILD_MODNAME);
--	if (!chip->iobase)
--		return -ENOMEM;
-+	if (IS_ERR(chip->iobase))
-+		return PTR_ERR(chip->iobase);
- 
- 	pci_set_drvdata(pdev, chip);
- 
--- 
-2.51.0
-
+> ---
+>  .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index e2cac0898b8f..130be2f58342 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -4001,10 +4001,7 @@ void vchiq_log_dump_mem(struct device *dev, const char *label, u32 addr,
+>  		}
+>  		*s++ = '\0';
+>  
+> -		if (label && (*label != '\0'))
+> -			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
+> -		else
+> -			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
+> +		dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
+>  
+>  		addr += 16;
+>  		mem += 16;
