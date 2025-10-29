@@ -1,126 +1,109 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B65A3161B8
-	for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 11:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207B529DB9A
+	for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 13:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761735994; cv=none; b=QwGcbD+44EndfB6lapVezRDM1xN4mBrll7SsdRFB2Oh69NhlL3pwMwzWiVmiKkGu4F4AsSBKw5kONPzwioJf6Fgsi07J1FEveoU/rLu6VgvHNTSe4PO6NIeAo4oqEhgm61d2TIrFbr3QZPtwg0YAHXG4fbpDKg8MfAsNZgjlo24=
+	t=1761743601; cv=none; b=RMSsmsMW08wBjnOumjVLrcQAmgYScLeKzuTqOLzef2uXOlf02gjtTcPbHunDeA9Itv5XQdGYZJQU3PiAI4HdDXivW//i1Uq+OV6GFuA6gzkPH4Vg9HStPCYO9v22GkuDd3Qw62U1e71TGkIr6lCLwKTl5+fJc+1FHgPHtFT/2Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761735994; c=relaxed/simple;
-	bh=jKGLCRj7hWPj6nCNCOR0lDjd3tjy9+HvWQH6dH7MB6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hvN/SE2pCwgh223rJQQOZ6+AWh0aI93OUZjucb7qe0ZX+ZCGKUG+G/okw7qjj91ks2nvL3YDuSgKHrJa+iuWXZDe2soNSVBduPAIoc2qhb5xYAhD0Nhwblt9iziD9nGVEBl3IKlUvxFWxSUAiHJl71V6QXFsBl656rQN7htpZWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HchAJfem; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1761743601; c=relaxed/simple;
+	bh=gKP7Hj4PgjLdlCElLMQoEHfgYE8vw4zIpqeIgVCFNzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tWNBAdxM4GbjVgGU4gch4Le+jBhfeupiBtMJ5XVCOpwYvVUFG3u2DgTwHlpviuWSg1XXd31V0ivFqEN68idzSnZkgug9t5+I7lSft4RYQ+dotaITIBYW6hPisjL8hfb1KcNry4l2hVuysc8sBFqJJdk5I4Vnjag/MOA+L/KrDV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zRq4ZVv3; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HchAJfem"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761735992;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wq8ujO9Dpm/7YPTf3iw45Jy/+tYmVu6IfrY/4dh0q7w=;
-	b=HchAJfemNS1k7AsTdAsiboBt5s1dRhu9QiaPSCDfhR03DEmsJajNuHXI4fLO1kkAASBwjk
-	/47BL2BNr8YJGVDY5OTmyK2wmc/Uck0lpVzYNuP6A3OrDJagJPxB8Ltuwj+AoU3XSHs0nH
-	ZW41dRppyhbxqG4/skUODEd4eGe0UJI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-126-iZCR6LQXO0W5F8dU6pn_Jw-1; Wed, 29 Oct 2025 07:06:29 -0400
-X-MC-Unique: iZCR6LQXO0W5F8dU6pn_Jw-1
-X-Mimecast-MFC-AGG-ID: iZCR6LQXO0W5F8dU6pn_Jw_1761735988
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-42814749a6fso3765596f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 04:06:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zRq4ZVv3"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso6489730f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 06:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761743597; x=1762348397; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fuIsZJAikyEekZcQ72lnOaH5lxPiOYkA7xu56IYCNWg=;
+        b=zRq4ZVv3ZfmNe56SwASuyxsdNsJWgIA2rm0czxuAwnoQ/oa0ozvwewyxCewZ4XySnm
+         t0s7+jAMeV3rRuSvvDBkVYO4isGWsoTD4ZU1V/n0T/XJdbQr7DgMpq+DAiSDCpQzD7Bc
+         iRIpd1PEzDsY2HP9JwTZROtwOma3levQKCxvrTAyes/0l+Uo6Ogxkj194Ffxn9Fb+0Ie
+         knFN/sw2b/21qgWW3wNxbNcPgE8rz12hA2/JdSV9cKbNsp9zCtrjL/9fOkBfWLYUDy6+
+         hMZfGe2TDxwQtHRsAKLzZWEHMhLTRDSZvrkhIjCR/J34TBB3VfBtWKnJmhULiDGkRtaZ
+         gQ/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761735988; x=1762340788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wq8ujO9Dpm/7YPTf3iw45Jy/+tYmVu6IfrY/4dh0q7w=;
-        b=sTP3qO3MUpsxps4fBd2ov/qQa3NQLrfzB5QdfAo0aoCdxIvLiOh2Y5sUbhXTxOtS2S
-         L44D9gxWg+jp1Z9NMxNhOFam86CR5y3j7z0Y//nmSjfUk4v+udmvmZpPW8+H5IkpDOMT
-         zS9PR8q9C1cobqucEZAWVM5sSYQCTFM1AnyumDOlXx8eOqsEAdyB4aquE5npb9fVqhz9
-         jTeJt+MLjFf/g3ADfllx93OyEfg+G/X4UXyO7KneK+F9+ha7vJ9W/Ujmd1gNW0DLb7am
-         GAjwhlLPfiE3NricP6hke5wvZFyTWq+5FFo/zH51mw5QefBZr4Rxp0cahMqNGRhf954K
-         u71w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJD2v0MFPTD7oMSXJp8JuEYsG3Jp/Stup/Ktl6OaI2q5VOcKYC0JX9FVj0zX3uC4fK+iZzBUyY7YPI05zok4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsPZsbei7L7EjaKvYVtlXy9mpFSJMxyC6hzUAC5wuQli7FNPOk
-	SvbxmLcGD8pwGUs5gY9RGNhoQp3hft51+YUcxV5pnrPqClvDZPMpd61bOeh3CnGbNpDarmvCMjJ
-	6y/l91LVkvaWudz27XMJs+WsYr4h/jyTzQCjgmwxLI/byJ8VUGIDeoXw7m1jC7IyYaFiEPg==
-X-Gm-Gg: ASbGncs2r+ZmVZp+a9weAE6YssEvfG0Th7aHPzFt2nlDtNyRp3CKRVgQ9VukUovADfm
-	mqBvtwTzfOtcjw/MW+s4HblO1lu5TyUOa3r9Fh8avp8s9fq90AsVJVMwuJfYNIKBJtxznGOzJW0
-	WVc8idnIqs1ib9MaP54SCYNvUReg7mtL69LpShEh2cI0muL2euOx26+kP/GSKHEj2K5l9nnqWK3
-	H9T5vpl3dvL9sn85sJz64gn9GhTl7vsNCu/15Aenu8Wf7gAA4y6uqUtRsK8Qb0fDu8fsnGv3Ndt
-	jJnQF2THH2TlndrL+Ui5LOrf3GvIajYWi3f2rv/i1RyoCNcSYZ/Qw8bbmw6K+yR0mC64+w7wUFS
-	Id48tGKCeBVYgnK7xbw6VM42jc8+apkN4LsZEa9zAgVinzx+k
-X-Received: by 2002:a05:6000:2882:b0:427:e1bf:13db with SMTP id ffacd0b85a97d-429aefd0840mr1957003f8f.54.1761735987797;
-        Wed, 29 Oct 2025 04:06:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHB8RsWZ0SjBkvUi9VbRgSefrwznyNGIlSzLxxkHxgmXUspqFq3z5NvztJjJO8HtqyDc5C8pg==
-X-Received: by 2002:a05:6000:2882:b0:427:e1bf:13db with SMTP id ffacd0b85a97d-429aefd0840mr1956977f8f.54.1761735987352;
-        Wed, 29 Oct 2025 04:06:27 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952ca979sm26665735f8f.14.2025.10.29.04.06.25
+        d=1e100.net; s=20230601; t=1761743597; x=1762348397;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fuIsZJAikyEekZcQ72lnOaH5lxPiOYkA7xu56IYCNWg=;
+        b=Q6L8l9iMlrjmfu8q1u1lK6bfRJGli/GoGkuohm4diOpMekf23lG4CrhUNV+ZNwHFLF
+         hIS4zw4oVAySBEMYGK2cBNSl/B8h0poi2XHMpD+cT2v+BITMXaK7kBTTpOR+gHweHRfk
+         88desSb622jUatSlyPz8haIWUwiGsD7MAvde7XtG8mEXcv9ZKABb9bWvvAKAcCClsAnZ
+         wR6u/RlMtb9f+m8BE7yMve1sbVhvG4jRog1RJYVmGFVtl/tXFSMv2IC0SxDIFBtTKGZI
+         pSKKnLe6whueaealG4VuzM0TFuIsfWBmgbdb2axcXFw07RI7O9xIVSuLqUjyzcBq9I/L
+         DWGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxNmYPZyiwFf35BMK7d7RDYm34F0w8bk1rl93HvIDLKgIY7CxLqE34MV5cOCgcu+wIeVVI8h6XcrdUYMCNMz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrxIe8XbTiXE3HEIY6fE/3ufUJKf/yZ3DApBf4klLgIssyATxp
+	/ib1EvoeHYQZQIGOqkQsPGg2/E7QDhPFx1ECpBdIYg2XHgIzYUVwMnWXVtlPmCfVcG4=
+X-Gm-Gg: ASbGncvyvc3Veh8ZY4vl64OSNoVZaUh4391w0y2fZp61PY8gOwGNCKoHVRmlFDkS9x4
+	8GXgTiHflVCUn8vhYSRnnMc8N9PtnIaI5TqR/stfLs9tA8MoLcCd2MOaH9jhkLN6uG1p9D3pPRy
+	iHL/RfcatbuugPJNzfThOdwTtL6oKkFUwVzFTsqMzLkphBoEj0l0oLGRnKSaREo872NwXBwMy7Z
+	0j1QSMxHwcF3cDU88U/rh9LVDN5CLv1iyDVTfaS38Lb3ualsP0KCgCHD5f5gTl8uTne2d15zt0k
+	K290Vy1uaOAE7TQ3ztCP8Gxp2autj54Y/KQC3ZBPIjFux6nhs5AkEpMVysIOsuqjvz1sue4s1RV
+	2VvC1MVuFqMqXB5sKrGlAg9PO+a2RVXy0YdXegUiyEQRT/fH7ZUSALtmy2PdFP6Oe6HZEcO7PGg
+	zj8k4xLgzU70wOXmUR
+X-Google-Smtp-Source: AGHT+IHWVrau2m4RaNjTyO72rP9dhKVo76M6sAXBvO9VLZ1VFeKc3lw8F8BaYPpaPHfy3t8Vo31Ixw==
+X-Received: by 2002:a05:6000:238a:b0:425:76e3:81c5 with SMTP id ffacd0b85a97d-429aef795fcmr2632000f8f.17.1761743597111;
+        Wed, 29 Oct 2025 06:13:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952df5c9sm26362401f8f.41.2025.10.29.06.13.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 04:06:26 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in MEDIATEK MDP DRIVER
-Date: Wed, 29 Oct 2025 12:06:23 +0100
-Message-ID: <20251029110623.96661-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+        Wed, 29 Oct 2025 06:13:16 -0700 (PDT)
+Date: Wed, 29 Oct 2025 16:13:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Umang Jain <uajain@igalia.com>, Stefan Wahren <wahrenst@gmx.net>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Rohit Chavan <roheetchavan@gmail.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: vchiq_arm: delete unnecessary check
+Message-ID: <aQIS6Q73Ss8xyJTD@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Both sides of this if else statement print exactly the same thing.
+Delete the unnecessary if statement.
 
-Commit 169ac4bc5bc4 ("dt-bindings: media: Convert MediaTek mt8173-mdp
-bindings to DT schema") renames mediatek-mdp.txt to
-mediatek,mt8173-mdp.yaml as part of this dt-binding conversion, but misses
-to adjust the file entry in MEDIATEK MDP DRIVER.
-
-Adjust the file entry after the conversion.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e428ec79dd24..c094b2fef0fc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15881,7 +15881,7 @@ M:	Minghsiu Tsai <minghsiu.tsai@mediatek.com>
- M:	Houlong Wei <houlong.wei@mediatek.com>
- M:	Andrew-CT Chen <andrew-ct.chen@mediatek.com>
- S:	Supported
--F:	Documentation/devicetree/bindings/media/mediatek-mdp.txt
-+F:	Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
- F:	drivers/media/platform/mediatek/mdp/
- F:	drivers/media/platform/mediatek/vpu/
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index e2cac0898b8f..130be2f58342 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -4001,10 +4001,7 @@ void vchiq_log_dump_mem(struct device *dev, const char *label, u32 addr,
+ 		}
+ 		*s++ = '\0';
  
+-		if (label && (*label != '\0'))
+-			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
+-		else
+-			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
++		dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
+ 
+ 		addr += 16;
+ 		mem += 16;
 -- 
 2.51.0
 
