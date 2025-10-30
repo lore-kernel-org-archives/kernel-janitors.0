@@ -1,98 +1,90 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B5334A3AB;
-	Thu, 30 Oct 2025 10:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D2D33B94B;
+	Thu, 30 Oct 2025 11:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820326; cv=none; b=ArP4Oxx7JKNxRYQVj7iQBtuf6hLg6y6SKBp2bEbO5Tar5YcMAdMcVJZAxbP85lmGkixCh/GK295UxfFSnJg85ady7sNVKz024kFlI1sznLJPmGKF5300CR8TBx3Ll684Waf6YqGpr7ec3JBRfAS0UkLjHED1DEfWmWsr7zXii9M=
+	t=1761822568; cv=none; b=VNQVzldY/LlVO9oqSsxbkDzpIR4esp8RlmGx2eRLQLnCk8tULscaBOULEOGGu2Nb/GR00uY4k89aVWOn9updnnjEj0vn0M0Mj8VEh5A3ODb66/jllJnJCc6bqUbN3wz7hLhh9e9APbwc0PVlrtT3WQFkn0X3NRPiU8J/dboTMbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820326; c=relaxed/simple;
-	bh=4TN3C7+FypWsuAQyY9vV9G46wSx98UAoidia/xMt7R8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=RFDFhzcGFT+4NqVPrXHd1GC+N2BiaBPK97MwHxh5Saoqt7IJF4tjQoDjwSilwZO4tBK1X8xRn9+qUuWKO8hrFNf4kWQb8jr315UF4AGJU33+JBSylld0vqlBVx1Tuk8t6LgRXlIt/U1CkIu6QLHXxcUJOO/ocWFMQJGrH6fHtpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=oFGYhfCn; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1761822568; c=relaxed/simple;
+	bh=/jyxz82Rs8lMFhLCKbv6MeuXvAxkVmm8s1WZg6B+U2w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HWFe6VdvhTAIXgdzrFclVOTstI6sMJ3/CpttuagPCvaCQ5nNuscMoQ5DScQeMoRK3nCq/+Qg1gyHHpUAVhfCj/KHBz+ODQ2tE/nC5dXLaw5QMhb95JSCrVNzKk0MIehuSwaeLL9ve3cZ2dx8f68ib8ajnSlZXQ5bHl9aC0cDGcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pd643V7i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="oFGYhfCn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=ZBM496W0H808A/sxrZpKWnijC/g2m+6y7yc2jQ+jtWM=;
-  b=oFGYhfCntwSlqhl+lS4g0Y71grRFgna6mpTl3MOxvySgGzSonPIDQ5ty
-   zyT9h+vbyWrCekWkAb05Mhaud+OtB6Fi7FR8UWul2PetI0BxEE3DTNWmZ
-   yO2i4XK79wuhUyYrq2hKG4JRAK8z0wq25/WApCwyxuW1HAfrIgOpHpVJ0
-   8=;
-X-CSE-ConnectionGUID: ueWAXUFRRIO2UcyBAq2KIg==
-X-CSE-MsgGUID: bOojJxBISzOfg1InzIRX9Q==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,266,1754949600"; 
-   d="scan'208";a="129484394"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 11:32:02 +0100
-Date: Thu, 30 Oct 2025 11:32:01 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments
- from memcpy() calls with SmPL?
-In-Reply-To: <d227e982-d69d-45b7-9388-9082f86af69c@web.de>
-Message-ID: <6faae122-fddb-34cb-68fc-5f4b62d7e16@inria.fr>
-References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de> <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr> <62441255-45fc-4edb-a8e5-c208b36ca2c2@web.de> <53e91f9f-bfe5-5c57-157c-fc456bd430ca@inria.fr> <d227e982-d69d-45b7-9388-9082f86af69c@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pd643V7i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56D3C4CEF8;
+	Thu, 30 Oct 2025 11:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761822567;
+	bh=/jyxz82Rs8lMFhLCKbv6MeuXvAxkVmm8s1WZg6B+U2w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pd643V7ixRjskTAFNWlsbwEKq/IYExhfBKt4HE/JXXcKxKnO6+PDmp/7xiPvbfu7n
+	 uFkaYz4TOqkeGSu5aUc1lPdRy/3f2khQ0S4WHISQlHphXhdEJlME17P8uLQIsA+UlS
+	 26wr3EKF32nyBOA61Wq6ovde51GjrKQOyWdn30HuUSQcVKAFRN3+W7Ixn/O2Iuquch
+	 UXv05Od6DWqfqdXqSiINeO/EAuBIpx9V9msNW/6IOr8c6XISwaEn+q1PCFph7Uuw5X
+	 5RwxWZN5utIl14CamGFnqwkMwqgMKyBdGBRm8XU9ak1wbji/ds6xqBBfBR5xlSgogY
+	 ue2cA7K6vtP0A==
+From: Mark Brown <broonie@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>, 
+ support.opensource@diasemi.com, Liam Girdwood <lgirdwood@gmail.com>, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Rob Herring <robh@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20251029081516.83298-1-lukas.bulwahn@redhat.com>
+References: <20251029081516.83298-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: remove obsolete file entry in DIALOG
+ SEMICONDUCTOR DRIVERS
+Message-Id: <176182256554.10414.9428685076956872040.b4-ty@kernel.org>
+Date: Thu, 30 Oct 2025 11:09:25 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-1271298350-1761820302=:11598"
-Content-ID: <b3dd7bd5-3cfe-16ab-a8f8-cea6d32713b@inria.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, 29 Oct 2025 09:15:16 +0100, Lukas Bulwahn wrote:
+> Commit 6277a486a7fa ("regulator: dt-bindings: Convert Dialog DA9211
+> Regulators to DT schema") converts the last txt dt-binding in DIALOG
+> SEMICONDUCTOR DRIVERS to the yaml format. With that, there is no file,
+> which matches the pattern for the dt-binding txt file entry in that
+> section. The existing yaml files are already covered by the file entry with
+> the pattern dlg,da9*.yaml.
+> 
+> [...]
 
---8323329-1271298350-1761820302=:11598
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <fed1875-fe5-1bbc-81f1-eb68a9c7e35c@inria.fr>
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
+Thanks!
 
-On Thu, 30 Oct 2025, Markus Elfring wrote:
+[1/1] MAINTAINERS: remove obsolete file entry in DIALOG SEMICONDUCTOR DRIVERS
+      commit: 28039efa4d8e8bbf98b066133a906bd4e307d496
 
-> …> I think you would get a more satisfactory result by just removing all of
-> > the code and adding it back. Then Coccinelle would take charge of laying
-> > out the whole thing.
-> …
->
-> See also once more:
->
-> >> Another SmPL script example might become helpful.
-> >>
-> >> @replacement2@
-> >> expression object, size, source, target;
-> >> @@
-> >>  target =
-> >> -         object; memcpy(target, source, size)
-> >> +         memcpy(object, source, size)
-> >>  ;
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-I said to remove everything.  target = also.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-julia
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> >>
-> >>
-> >> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --no-loops …/Projekte/Coccinelle/janitor/use_memcpy_assignment2.cocci arch/arm64/kvm/arm.c
-> …>> real    0m0,626s
-> >> user    0m0,588s
-> >> sys     0m0,037s
->
->
-> Regards,
-> Markus
->
---8323329-1271298350-1761820302=:11598--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
