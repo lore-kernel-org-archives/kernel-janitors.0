@@ -1,100 +1,122 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E93195FC;
-	Wed, 29 Oct 2025 21:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D7D2DC77F
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Oct 2025 01:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761773054; cv=none; b=RgMbyQKXI7+FaJENs/VohJCV2IApaKz4ZhwlXaLiW8zO59lfeq5GkjxjfyrvD7/AmP0hr07BTC76Bm3hExWU75q+FHHZvU7qbKD3mCXWlemHnTsPoDAxHFiHTsdHdFB5DgF/CQNGpUqnIQwaAPjoammeYO8M5/ZOET36jdpfIBc=
+	t=1761789244; cv=none; b=ikoy/w/5Ma09o6nLf7OSxAkqAl33UM7pXD5RCUEVufb2AJZ5AfyQKrVS+LwOZ+nqkH2s47gpsTtdjgY/p3QT75rlNyjMVhX/dLLYnEciTv7gVYnlZjtkn+EHbWhWV8Y9ujJABDoWveAXt9VS3CV+UrB+BOVIoF27BPayO9StiDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761773054; c=relaxed/simple;
-	bh=AoWJkaeuPELhOLcErmA+AIqNOI83/H7VbD7V4mPgde8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MNRJRymx3zrmZO2XTiqBxaXJyNWrilCyTsz3QkKJ/p2LR0GnqWrKIWUFRDEwN4iYFYd8awaOrZyBjxaRetiDwmMzJ1Fz5kjahVTfmA5xHuz/YIXAqX+tvC9Rdv0WurfT/Iab+/kkyEJQmO9jiux91ilp3oTGMCaKGcNI9e5ea1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=l4LgjgNs; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1761789244; c=relaxed/simple;
+	bh=phF+41jPYGFsWZNLAeFbe1hdIEJHWy1G5CKaXfNjyN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIFbGiCg8y4wn2ErhQ0iDmGpHKUtyBEYHHjciOdVdGIR0TU9LglVqwJ4rCxaEi6uIzM3AkFN/6WNGdwLWG7QsDGG42v24eRuKC5RRJ5TZ1VZUkk/gSXVFS9FLdu2OZTWJs8x9kfTHShwJLyiY4PD65h2G+xskJmWMKPStgHfC6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZeJBaKpd; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="l4LgjgNs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZeJBaKpd"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4eba6e28d06so3656521cf.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 18:54:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=FERmsB+tS9xO1ykNi67NXdFvsLGuPfJXUcOk6M+xjwo=;
-  b=l4LgjgNse9C2yymulJpUXI76EyG66UuPXFBWOd3zZQdypaNsyrbIdf6u
-   ITfTyetuwWDSwJP7lXikmkY1J+y/zibBw2JQBymcw3C+fsFvfs18EONMZ
-   wgdUd8p8PpnLJUX/nZunXR1usZMA48/eIo7vN+rvpymSPO2ORnQJVtdIy
-   U=;
-X-CSE-ConnectionGUID: 3nQfdhFETqCNj1Uo4OorKw==
-X-CSE-MsgGUID: 3JezrcibS/2QdtaevInyXQ==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,265,1754949600"; 
-   d="scan'208";a="246753524"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:24:01 +0100
-Date: Wed, 29 Oct 2025 22:24:01 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments
- from memcpy() calls with SmPL?
-In-Reply-To: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
-Message-ID: <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
-References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
+        d=gmail.com; s=20230601; t=1761789241; x=1762394041; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cny/pF2/UWb4s3KOzXzTRQuku/xp77wec9CPlPDB6hY=;
+        b=ZeJBaKpdd8Iel2mR+bBE0meijEo9XDUB9fJssBwFqrL0mTsyiCzoFmfcrMM57TpFG7
+         jFUALzWfreSWXbcm3OJQHJWwsBFleVqDA7whA7JTuWNcQix0syjyeMa/4Hcs/BKTvOdU
+         1R04aPYrZ62o8mytpUmRRIyj4R+b4vLUNZeclg5eSCHogLYfWACliOT1I3hCj6ieuKRL
+         wz5LnRQ3OHsU09t05NWvktgwhmNzPVBIurfAcClv2jpc+4yECVoT7Evrz2NS/ph9TbQ7
+         MDqme3ztOldeW4oHuNHu/jhrcHr5wLfEGTLIyQdqQGAkUWxJtleNEAVsT4IKc/x+Dsl2
+         f1KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761789241; x=1762394041;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cny/pF2/UWb4s3KOzXzTRQuku/xp77wec9CPlPDB6hY=;
+        b=tCIIEfxc1spVdgXK4JHsSp6KQ7VLDzMtgKFujQzcSzvdo/9nccl3GkD4Ayr6MofTsD
+         rkFU7gr1IL307UiaxLnsLXBN0kXuGoFCOrW3fSoqaN7egPuHuvrUO2HGWvSMs6HsHdlB
+         4J0mddz8WfKYoTS0PdsYRT8o5n39erlAylp8LZs/I/dtUlvCQXO1ySOwTyB3NFebKsdT
+         Nv7dzO7xyEolXzo1CiIf2bECkzwhS+FcfV2V+/B0JO3sNEoBS4QEyXIBoCQtLpCtzZLf
+         r9+D+3LCQ+bna/tv7yI6aivGM92ApbjC2sIUqyx3grDU7BNPevjYclh5wQbVNEG+A71d
+         6e1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdUbXo6mawXZtant60OZLT1rtHpK3+6l5MwhlVmtY7/Kmk6BacT5MREbYOHhNCyCS3BWDTdQMVmc+XIcBZlDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1NzPKYAHItUK2h+/l4E9sETSxjknDjTxCKvoNYIGyVGKElfCI
+	zJZalKbYiGZfFXQy0y7m2DwVFlb9ovbg+0Lh4mNfdMNqkklHa9uRI2mD
+X-Gm-Gg: ASbGnctcTfwlCG4AAIiOW9kkJ2hn5vVN8ZcdpLQrI8BQHFBKXa0YJtUra9C2E68F9M0
+	8winruou6PP6V2iM9riYnTOaRK3B6xioaZIC+7iarHD+E7ZlC1+wYYnGjyMWeuETIYQQb+mZQqu
+	sS/U9vDwEHu9g/LCUQ0eFtQHvUWRliv6a3h0snAxqty9Fk3mgHs9D5SWIuc+27LA9rX04xNgPYK
+	S29nae98STU6oRr11B549XWEZVh6zi/c2Ugee7vemjL7z6W6r2Du5KwUdx7evND/9fX1cWibcuh
+	vnSF+L2gEq+A1EZrI4lwdXZXHIks5hnYVOABk6cat6/BuH//xI2zRiZjo59SssiOdgfba4dBzVg
+	Z2o+UCSg2DGhdJbRGV7pDKa5eeQ3yY3PSKNasctQ2RLJULJ4tiY4VzLV2xdEXG5DgTa8295KYU1
+	w=
+X-Google-Smtp-Source: AGHT+IE+61G4p2S3GzFHVNxAsZS2OUebLYMCNTGNbtH9VbO1FZnXm51zQySPKvrbNYQTOh7o+SE+Fw==
+X-Received: by 2002:ac8:5889:0:b0:4ec:f9a1:17c5 with SMTP id d75a77b69052e-4ed15bb2b3emr57941951cf.10.1761789241028;
+        Wed, 29 Oct 2025 18:54:01 -0700 (PDT)
+Received: from sam-fedora ([142.182.130.176])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3863cc2sm100445901cf.32.2025.10.29.18.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 18:54:00 -0700 (PDT)
+Date: Wed, 29 Oct 2025 21:53:55 -0400
+From: Samuel Kayode <samkay014@gmail.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Samuel Kayode <samuel.kayode@savoirfairelinux.com>,
+	Samuel Kayode <samkay014@gmail.com>,
+	Jerome Oufella <jerome.oufella@savoirfairelinux.com>,
+	Lee Jones <lee@kernel.org>, imx@lists.linux.dev,
+	Frank Li <Frank.Li@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sean Nyekjaer <sean@geanix.com>, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in NXP PF1550 PMIC MFD
+ DRIVER
+Message-ID: <aQLFM2-WgRvDHfZT@sam-fedora>
+References: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-899333787-1761773041=:4032"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Oct 29, 2025 at 11:42:28AM +0100, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit ebaec90ec0b5 ("mfd: pf1550: Add core driver for the PF1550 PMIC")
+> adds the header file pf1550.h in include/linux/mfd/, and commit
+> a7d6255a0bf3 ("MAINTAINERS: Add an entry for PF1550 MFD driver") adds a new
+> section NXP PF1550 PMIC MFD DRIVER intending to refer to that header file.
+> It however adds the entry for pfd1550.h; note the additional letter in the
+> filename.
+> 
+> Adjust the file entry to refer to the intended file.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 70de2f9c4a50..e428ec79dd24 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18718,7 +18718,7 @@ F:	drivers/input/misc/pf1550-onkey.c
+>  F:	drivers/mfd/pf1550.c
+>  F:	drivers/power/supply/pf1550-charger.c
+>  F:	drivers/regulator/pf1550-regulator.c
+> -F:	include/linux/mfd/pfd1550.h
+> +F:	include/linux/mfd/pf1550.h
 
---8323329-899333787-1761773041=:4032
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Thanks for catching that.
 
+Reviewed-by: Samuel Kayode <samkay014@gmail.com>
 
+I will be sending a patch to update my email on this.
 
-On Wed, 29 Oct 2025, Markus Elfring wrote:
-
-> Hello,
->
-> I got into the mood to try another simple source code transformation out which
-> can be achieved also by the means of the semantic patch language.
->
-> @replacement@
-> expression object, size, source, target;
-> @@
->  target =
-> -         object;
->  memcpy(
-> -       target
-> +       object
->         , source,
->         size);
->
->
-> Test result (according to the software combination “Coccinelle 1.3.0”):
-> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --timeout 23 -j4 --chunksize 1 --no-loops -dir . …/Projekte/Coccinelle/janitor/use_memcpy_assignment.cocci > …/Projekte/Bau/Linux/scripts/Coccinelle/use_memcpy_assignment-no_loops-20251029.diff 2> …/Projekte/Bau/Linux/scripts/Coccinelle/use_memcpy_assignment-no_loops-errors-20251029.txt
-> real    5m35,579s
-> user    20m20,037s
-> sys     0m14,467s
->
->
-> It can be determined then from the generated diff file that mentioned
-> implementation details can be transformed in 304 source files at the moment.
-> Thus I became curious if it would be supported to adjust any places there
-> according to (Linux) coding style preferences.
-
-If you have a concern, you have to say what it is.  It doesn't seem it is
-about the running time, so why do you include that information?
-
-I should not have to repeat your experiment to figure out what you are
-asking about.
-
-julia
---8323329-899333787-1761773041=:4032--
+Thanks,
+Sam
