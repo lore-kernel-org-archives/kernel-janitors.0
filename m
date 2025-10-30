@@ -1,124 +1,119 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DA1D5CD1;
-	Thu, 30 Oct 2025 13:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CA61A9FAB
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Oct 2025 13:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831533; cv=none; b=iNeyKeE7ANixo+QLMVuCLDG2OgdD1xeaOA+klBP4UKt7eJLr9SaknT3yoLwb0B8eul/JkZxBDSbdpnk78Hq7wN6AILU6zNyQI1gSX0/czcGMeJ+gdTqa71KvZ6/tWFawglZ66SK/hKoLWfADS5Qq4Xc4PDtPtpn4SWvxelsbaus=
+	t=1761832006; cv=none; b=RJw+5ojEGNTN9etmMmL1lwtmCbpzVxuLxrqL653HKcL56s2bcSUrlrxkUaNithZ6ICgwbH+t1G5ze+4oqqWlx5BsTMrMmBuj9149YIUMPCp3aPpwh1wR8yVNeXLoAE+fyFa1txm9Rp0jlgljcN4mlRt4fpT9RVti190eeGEpXng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831533; c=relaxed/simple;
-	bh=mGQztEN4S0/G6ld3AnwbjjruYNq/oG+QRisOk6Khj4s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=K1c9Hctd3aRdXeqx01viawqUciYqL0gF+MqkebpGyXVZWuwBjQLHSimDd+sHSHtk7hIwTCV2aqZ3cAMR8hsmvlfxIhk+HhVfBcEUBhlQSZMZjSjjQ3Xq4YZwnWaWYF2myT0OaZfNmMop2z9Vj+OYXBTpvpj+M+sRS8B9ruBs5s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ds0HgokC; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1761832006; c=relaxed/simple;
+	bh=m/qQ+Ye47boxFRojPi93NDRLf547F5zOAg1Vvu5tBSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T+UGkGBaqf80EjSGlbxr0LvkPuJSZFsqxgo1iuE0aNe8TB4HsXO4UADXe7OD3Rxo3p+cWScYWr7PTUH3LI33Fcl4pbFCsyBV29GZtE9s2QC4kE3FCsnbxKBO7yZ4MGzIRWKX7zHOSfhucpdvSIpDA21IQRVpwjoccqc0y5Qjnho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LG69tbqm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ds0HgokC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=+9GCbyx0nM5jk0KxizZbCcB0mtfNvPzaCv7oLfJtX+4=;
-  b=ds0HgokCCDoDNlvWPIfPEeuATpkKsCozTlFlALg91YSlAxw6Scunw9jb
-   lmE0o+UviiFrrbcti9BgNG9ckY7t/TBDwxu90W9gJxJ4iTni4bh0tOjqo
-   tFn7doJjgXI3FZ43z2m2sXvrKWVoAkKInrWdEMN7GrnVIwfPNHjc25jjN
-   0=;
-X-CSE-ConnectionGUID: 7cxw7crpQmi9x+ULw5pwKg==
-X-CSE-MsgGUID: H4kwkNjnS0K6wtUy73fXGw==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,266,1754949600"; 
-   d="scan'208";a="129502388"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 14:38:49 +0100
-Date: Thu, 30 Oct 2025 14:38:47 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments
- from memcpy() calls with SmPL?
-In-Reply-To: <abda1fe0-af59-4fa9-a1ec-efda0f63b3f1@web.de>
-Message-ID: <75a9224f-8c8a-da15-3ad7-f49fe3c36cf@inria.fr>
-References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de> <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr> <60f881dc-979d-486b-95be-6b31e85d4041@web.de> <aa99eded-be51-af3b-414-7c3bbaddea4a@inria.fr> <abda1fe0-af59-4fa9-a1ec-efda0f63b3f1@web.de>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LG69tbqm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761832004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qXVeC5x4UjvdpdxBQtQYDv2PCBr6tJQZhEasSYJVqpM=;
+	b=LG69tbqmsarS0cLiVVpoSmkrdr4Mfij6gcKGsrrRmkDxqBmMvnl55TSvDTTp2U6GzI3OHv
+	r39v27r/kM6nWlhQFPlmwhnnalkiVojDql6jnXiNRTuY4H/dsTBUKBmgd0MUFBhipRjJdH
+	rrrHaEH4YykmbcOyWibFPf7Sviw3RpQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-XyK1QKO4Mhiq1NPON1i8Ow-1; Thu, 30 Oct 2025 09:46:42 -0400
+X-MC-Unique: XyK1QKO4Mhiq1NPON1i8Ow-1
+X-Mimecast-MFC-AGG-ID: XyK1QKO4Mhiq1NPON1i8Ow_1761832001
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-428566218c6so534784f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Oct 2025 06:46:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761832001; x=1762436801;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qXVeC5x4UjvdpdxBQtQYDv2PCBr6tJQZhEasSYJVqpM=;
+        b=JGVNrSHQj7VK3t+yRZfeqZFX/dF6dKD/x/s0p+6eUMnC7mBMFAbN26hQ4c4zdtX82B
+         PZI/yboqmAz4B+ZwihJiGBIZlTNYG8NYIdiP7cFOSRFL9aXF5wcZlbQAP+SvF81vhf3H
+         u9YRfGoXa9MKGN1SzDRdItm8JeBC39/2w4SvdbeGQ/wOEYYpMKZttjJzO+9gI54rwixV
+         GwCJ0EckRPoGnGUBaXs//BpUjWoM7dWRx6L5uyHdcbGxaRgcdv2jCfmiM+YUTzGigcuU
+         cO0icBhJHW1KvhjynXsSM8yVfYtiGP2DP3dz8SsCVnfM1AlMZuz+tzdpPqgvnmLNszqA
+         Db3g==
+X-Gm-Message-State: AOJu0YxoQGyQ0JS47J+AGfOSS2HV1XcWc+r5QaEKCPslLpDSCXMTEe23
+	1K3HAvfLtcMYWy39P2A5Hpiq8C2Bk/wdgNChz7IN4SnEqf636ntgMscvZ+Q44jmSnJJ9zq2PRgD
+	YPBsuiW9KYEfVmS9M+Y2kgyoxZZsdjElkN+GZf+7AChcKwI9LK5jixY08Kh01aEVjDc7uTg==
+X-Gm-Gg: ASbGnctESb7GfnB7qEl4f98+R3flOT6U3DlUH4ATt4HVPrDxIoswa9zZMfAfAyEBKnN
+	sVFXMEUtEoQi8EPM8rKcNO7H1BCOUacFIO0BV0AYRavewJ+MNDdALqrzRjpHY7j2uAFI4V3mQmu
+	pZG0bV8tjMaf9AN2YOlNGopkB0ZpoEqhDCaCMzHROHXAnAQ8ddr9wgMJjU5jX7E6xun7DMTUqqD
+	W1H8KhnXX0m082DpyHj3o0aY1zAUMETXzL61rYJyJUiV07nWc+93m8DpOo+ZtwwJLDFwwJR5oqh
+	EkOJSyUV4OZV15AbV8oLXcocmurs5B0BjXcjR8SQeU5t78HyoEPl6EAGxOUw5xlLb2TlMz9Ldj8
+	aY3LszlYLwSsMXgdjWg9JRlfQdm6S1sHPJeMhWymSOgmA+mhF
+X-Received: by 2002:a05:6000:1786:b0:427:6c7:66f8 with SMTP id ffacd0b85a97d-429aefbdf05mr6876982f8f.52.1761832001307;
+        Thu, 30 Oct 2025 06:46:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/4DJxIB6GKcBndXz26LErjJv4VyAkibid3kK/z0tZJxHwuSAecj/C6Y3Ult2UaXNcOJzYMg==
+X-Received: by 2002:a05:6000:1786:b0:427:6c7:66f8 with SMTP id ffacd0b85a97d-429aefbdf05mr6876945f8f.52.1761832000863;
+        Thu, 30 Oct 2025 06:46:40 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a7csm32483487f8f.8.2025.10.30.06.46.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 06:46:40 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Tim Harvey <tharvey@gateworks.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in TDA1997x MEDIA DRIVER
+Date: Thu, 30 Oct 2025 14:46:37 +0100
+Message-ID: <20251030134637.134024-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1183597951-1761831528=:11598"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
---8323329-1183597951-1761831528=:11598
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Commit c423487bf667 ("dt-bindings: media: convert nxp,tda1997x.txt to yaml
+format") renames nxp,tda1997x.txt to nxp,tda19971.yaml as part of this
+dt-binding conversion, but misses to adjust the file entry in TDA1997x
+MEDIA DRIVER.
 
+Adjust the file entry after the conversion.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, 30 Oct 2025, Markus Elfring wrote:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5f7aa6a8a9a1..4d739e18aab6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25233,7 +25233,7 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ W:	https://linuxtv.org
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-F:	Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
++F:	Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+ F:	drivers/media/i2c/tda1997x.*
+ 
+ TDA827x MEDIA DRIVER
+-- 
+2.51.0
 
-> >> I “accidentally” tried also the following SmPL script variants out.
-> >>
-> >> A)
-> >> @replacement3@
-> >> expression object, size, source, target;
-> >> @@
-> >>  target =
-> >> -object; memcpy(target, source, size)
-> >> +object; memcpy(object, source, size)
-> >>  ;
-> >>
-> >> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --no-loops …/Projekte/Coccinelle/janitor/use_memcpy_assignment3.cocci arch/arm64/kvm/arm.c
-> >> …
-> >> @@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
-> >>                         goto out_err;
-> >>                 }
-> >>
-> >> -               page_addr = page_address(page);
-> >> -               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
-> >> +               page_addr =memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start),
-> >> +                                 nvhe_percpu_size());page_address(page);
-> >>                 kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] = (unsigned long)page_addr;
-> >>         }
-> …>> B)
-> >> @replacement4@
-> >> expression object, size, source, target;
-> >> @@
-> >> -target = object; memcpy(target, source, size)
-> >> +target = object; memcpy(object, source, size)
-> >>  ;
-> >>
-> >> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --no-loops …/Projekte/Coccinelle/janitor/use_memcpy_assignment4.cocci arch/arm64/kvm/arm.c
-> >> …
-> >> @@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
-> >>                         goto out_err;
-> >>                 }
-> >>
-> >> +               memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
-> >>                 page_addr = page_address(page);
-> >> -               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
-> >>                 kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] = (unsigned long)page_addr;
-> >>         }
-> >
-> > Not sure what is the point of all this.  Try:
-> …
->
-> Would you like to acknowledge that undesirable difference displays were generated anyhow
-> for these test cases?
-
-Sure.
-
->
->
-> >> Would you like to reconsider implementation details accordingly?
->
-> Are we looking for corresponding software improvements?
-
-If time permits.
-
-julia
---8323329-1183597951-1761831528=:11598--
