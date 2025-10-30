@@ -1,87 +1,114 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D6637A3A6;
-	Thu, 30 Oct 2025 17:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD372868B0;
+	Thu, 30 Oct 2025 18:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846601; cv=none; b=bGgVhBHgDlUhLNrKl4pDVQ4Ji9i1g8VWb76ZMLtiI07u+Nq2LCeezwzkUrME2ipCFO1jq6SPgBazWSwf0OPiBTrRRpC7n34T65xHBwM4uO4OwhH3/lEIZPhTFVhSR53p2KjcI9khWTwIHJLRiKspYy0MntrJqm9OM6z9kDTmylI=
+	t=1761847649; cv=none; b=YBuaQxQHEZAVoAbx7pR31LC+/dj9PjkOfofteMju48vMuh++mLDBqSumVp14SRmnyO1BN9YKqmk+LujCAFquFocWAmvYbHMUWc1EYxpvOf9hUlbGjx/xnVH4kJsSbDKwduf4BYnuBzy20NbZar2CqMO3tM9OCXDcKFCewq8hjAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846601; c=relaxed/simple;
-	bh=PmlVtuLRMUGlPaXNotA+Y+vL38gowXndZOXkWJxEguk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fAtf4+lSip0ZFmIDHwCUUpUECDZ10HUaZ1MHsG7XW6SjWx4b6NbfzN+CfiW8ejvSE2pr2GYDMMkYbtHj5L7eARnlPG4qTBu2ogYOKTwdW93xzneaUUK8rMjMfQgyt7B3NR8+EOL6ShWkTCmJrBLZNiWy7p6HWVlvQOdV6VIU85k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37EDC2C40;
-	Thu, 30 Oct 2025 10:49:51 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01E493F673;
-	Thu, 30 Oct 2025 10:49:56 -0700 (PDT)
-Date: Thu, 30 Oct 2025 17:49:51 +0000
-From: Mark Rutland <mark.rutland@arm.com>
+	s=arc-20240116; t=1761847649; c=relaxed/simple;
+	bh=sRQqD17ahn+kzZRYxFkDmApRJ9iKc38vVieFyY53S8Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rtI/Ro6uWBmWReMD/5OoX2FahqU9KMI00Lq2HABHdd5tjKLTjV4VbJM6YdZ2WUGZBjSJdrbJW2yWw2Y+lOk2SMJnfSXwPXWbH8b3J0bmp8sHGvdDwRq2ozk2n95PHBOuPKQEFXT7uIkJAHFI7LXHBnZQY6p3yIo2MLDjhZePLWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpCNCqbA; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpCNCqbA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 962C0C19423;
+	Thu, 30 Oct 2025 18:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761847648;
+	bh=sRQqD17ahn+kzZRYxFkDmApRJ9iKc38vVieFyY53S8Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CpCNCqbA4a4j8mKlyZlwnNktYacA2ZxPIrdQ2Q/UZ/+gorskwm1G8Jx0KYF46y3pK
+	 Rrp/vwuXr2oI/aGvKyK8JicqSrMnvy9NOuEUnDvNPQuW6VEoh5QCT9FUdSYY4VrpkA
+	 3tO5zrlyJ/90umHZ0iyyjZ+CmaR64giYcJePFLAD9+g0FLXCu+dIhI0u7Kv+drIB29
+	 nwLDUcWCsDb2RNZO5oRiy4En8Unpx23XjNmHIzs3YkbRMfo+8JhOnz/3v3mAYycpTe
+	 2+DeBR7V1j2HpAVet/vPrMPhZCy/NdwCsDq0E+QtMU+ZL4Zmld+EZ3DMCo26H8/KnG
+	 Fp6Ghcb9+dkzA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vEX3W-000000015F6-0bSG;
+	Thu, 30 Oct 2025 18:07:26 +0000
+Date: Thu, 30 Oct 2025 18:07:25 +0000
+Message-ID: <86o6pouuua.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+Cc: kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Walbran <qwandor@google.com>,
+	Ayrton Munoz <ayrton@google.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	David Brazdil <dbrazdil@google.com>,
-	Joey Gouly <joey.gouly@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
 	Oliver Upton <oliver.upton@linux.dev>,
+	Per Larsen <perlarsen@google.com>,
+	Quentin Perret <qperret@google.com>,
 	Suzuki Poulouse <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>,
 	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] KVM: arm64: Use pointer from memcpy() call for
- assignment in init_hyp_mode()
-Message-ID: <aQOlPy7W6xljdkJW@J2N7QTR9R3>
-References: <6e962260-5069-490a-89fb-908a4342ccd9@web.de>
+	kernel-janitors@vger.kernel.org,
+	Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] KVM: arm64: FFA: Use pointers from memcpy() calls for assignments in three functions
+In-Reply-To: <cb3bd42f-4fec-4300-8875-b6861716f274@web.de>
+References: <cb3bd42f-4fec-4300-8875-b6861716f274@web.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e962260-5069-490a-89fb-908a4342ccd9@web.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Markus.Elfring@web.de, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, qwandor@google.com, ayrton@google.com, catalin.marinas@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev, perlarsen@google.com, qperret@google.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linmq006@gmail.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Oct 30, 2025 at 06:11:03PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 30 Oct 2025 18:01:41 +0100
+On Thu, 30 Oct 2025 17:40:39 +0000,
+Markus Elfring <Markus.Elfring@web.de> wrote:
 > 
-> A pointer was assigned to a variable. The same pointer was used for
-> the destination parameter of a memcpy() call.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 30 Oct 2025 18:25:55 +0100
+> 
+> A pointer was assigned to a variable in three function implementations.
+> The same pointer was used for the destination parameter of a memcpy() call.
 > This function is documented in the way that the same value is returned.
-> Thus convert two separate statements into a direct variable assignment for
-> the return value from a memory copy action.
+> Thus convert separate statements into direct variable assignments for
+> the return values from memory copy actions.
 > 
 > The source code was transformed by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  arch/arm64/kvm/arm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 870953b4a8a7..feab88c31703 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
->  			goto out_err;
->  		}
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 4e16f9b96f63..4820a9e96f80 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -431,8 +431,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_1_2_regs *res,
+>  	if (!host_buffers.tx)
+>  		goto out_unlock;
 >  
-> -		page_addr = page_address(page);
-> -		memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
-> +		page_addr = memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start),
-> +				   nvhe_percpu_size());
+> -	buf = hyp_buffers.tx;
+> -	memcpy(buf, host_buffers.tx, fraglen);
+> +	buf = memcpy(hyp_buffers.tx, host_buffers.tx, fraglen);
+>  	nr_ranges = fraglen / sizeof(*buf);
 
-This change makes the code harder to read, and harder to modify. It
-saves no space.
+This is unreadable. And even if memcpy() behaves has you describe, you
+are breaking a pattern that people are relying on.
 
-As Dan said [1]:
+I'm not planning to take anything of the sort.
 
-| No one will thank you for making these changes...  :(  Please don't do
-| it.
+Thanks,
 
-[1] https://lore.kernel.org/lkml/aQNsecHJSO2U68Fc@stanley.mountain/
+	M.
 
-Mark.
+-- 
+Without deviation from the norm, progress is not possible.
