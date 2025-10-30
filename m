@@ -1,122 +1,242 @@
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D7D2DC77F
-	for <kernel-janitors@vger.kernel.org>; Thu, 30 Oct 2025 01:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9C92BEC30;
+	Thu, 30 Oct 2025 09:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761789244; cv=none; b=ikoy/w/5Ma09o6nLf7OSxAkqAl33UM7pXD5RCUEVufb2AJZ5AfyQKrVS+LwOZ+nqkH2s47gpsTtdjgY/p3QT75rlNyjMVhX/dLLYnEciTv7gVYnlZjtkn+EHbWhWV8Y9ujJABDoWveAXt9VS3CV+UrB+BOVIoF27BPayO9StiDM=
+	t=1761816804; cv=none; b=ouNrBx2Jheo317pkXKWxXu3mvqIuB3IitmJm8QdAUrySqHOBnHFnYpON303poOeD3/j5yZ75Lu5ETMIwKnUV58QlJOjcwZoRmo1pmqVnxjSEGUiDy7k7BUMALeXIbIXmARrcezeWPjJLP/n5kajusbaANyCkdhrEXwndgDoUtMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761789244; c=relaxed/simple;
-	bh=phF+41jPYGFsWZNLAeFbe1hdIEJHWy1G5CKaXfNjyN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIFbGiCg8y4wn2ErhQ0iDmGpHKUtyBEYHHjciOdVdGIR0TU9LglVqwJ4rCxaEi6uIzM3AkFN/6WNGdwLWG7QsDGG42v24eRuKC5RRJ5TZ1VZUkk/gSXVFS9FLdu2OZTWJs8x9kfTHShwJLyiY4PD65h2G+xskJmWMKPStgHfC6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZeJBaKpd; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761816804; c=relaxed/simple;
+	bh=348IViIBYTNKkLiaEvgW/CJn6HWLD4TiU5cxj9hvfkQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nn4VEONhwYlPKu0ZS7G5zSnHPJzR+47q4zWqOqi6i9Mdazgl4QMclYWORwzKYVuQ3W7XlNOd3n0YmmyXXUt8KAPRFTi4xaOLTH4PBuhrayyivt8XhZXWKFcnqHtAuAWbtBP8S7GwiW6zaMXZCnfpQbv2yyXTQaGF8AEIZzJUy74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=foGOXW05; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZeJBaKpd"
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4eba6e28d06so3656521cf.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Oct 2025 18:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761789241; x=1762394041; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cny/pF2/UWb4s3KOzXzTRQuku/xp77wec9CPlPDB6hY=;
-        b=ZeJBaKpdd8Iel2mR+bBE0meijEo9XDUB9fJssBwFqrL0mTsyiCzoFmfcrMM57TpFG7
-         jFUALzWfreSWXbcm3OJQHJWwsBFleVqDA7whA7JTuWNcQix0syjyeMa/4Hcs/BKTvOdU
-         1R04aPYrZ62o8mytpUmRRIyj4R+b4vLUNZeclg5eSCHogLYfWACliOT1I3hCj6ieuKRL
-         wz5LnRQ3OHsU09t05NWvktgwhmNzPVBIurfAcClv2jpc+4yECVoT7Evrz2NS/ph9TbQ7
-         MDqme3ztOldeW4oHuNHu/jhrcHr5wLfEGTLIyQdqQGAkUWxJtleNEAVsT4IKc/x+Dsl2
-         f1KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761789241; x=1762394041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cny/pF2/UWb4s3KOzXzTRQuku/xp77wec9CPlPDB6hY=;
-        b=tCIIEfxc1spVdgXK4JHsSp6KQ7VLDzMtgKFujQzcSzvdo/9nccl3GkD4Ayr6MofTsD
-         rkFU7gr1IL307UiaxLnsLXBN0kXuGoFCOrW3fSoqaN7egPuHuvrUO2HGWvSMs6HsHdlB
-         4J0mddz8WfKYoTS0PdsYRT8o5n39erlAylp8LZs/I/dtUlvCQXO1ySOwTyB3NFebKsdT
-         Nv7dzO7xyEolXzo1CiIf2bECkzwhS+FcfV2V+/B0JO3sNEoBS4QEyXIBoCQtLpCtzZLf
-         r9+D+3LCQ+bna/tv7yI6aivGM92ApbjC2sIUqyx3grDU7BNPevjYclh5wQbVNEG+A71d
-         6e1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdUbXo6mawXZtant60OZLT1rtHpK3+6l5MwhlVmtY7/Kmk6BacT5MREbYOHhNCyCS3BWDTdQMVmc+XIcBZlDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1NzPKYAHItUK2h+/l4E9sETSxjknDjTxCKvoNYIGyVGKElfCI
-	zJZalKbYiGZfFXQy0y7m2DwVFlb9ovbg+0Lh4mNfdMNqkklHa9uRI2mD
-X-Gm-Gg: ASbGnctcTfwlCG4AAIiOW9kkJ2hn5vVN8ZcdpLQrI8BQHFBKXa0YJtUra9C2E68F9M0
-	8winruou6PP6V2iM9riYnTOaRK3B6xioaZIC+7iarHD+E7ZlC1+wYYnGjyMWeuETIYQQb+mZQqu
-	sS/U9vDwEHu9g/LCUQ0eFtQHvUWRliv6a3h0snAxqty9Fk3mgHs9D5SWIuc+27LA9rX04xNgPYK
-	S29nae98STU6oRr11B549XWEZVh6zi/c2Ugee7vemjL7z6W6r2Du5KwUdx7evND/9fX1cWibcuh
-	vnSF+L2gEq+A1EZrI4lwdXZXHIks5hnYVOABk6cat6/BuH//xI2zRiZjo59SssiOdgfba4dBzVg
-	Z2o+UCSg2DGhdJbRGV7pDKa5eeQ3yY3PSKNasctQ2RLJULJ4tiY4VzLV2xdEXG5DgTa8295KYU1
-	w=
-X-Google-Smtp-Source: AGHT+IE+61G4p2S3GzFHVNxAsZS2OUebLYMCNTGNbtH9VbO1FZnXm51zQySPKvrbNYQTOh7o+SE+Fw==
-X-Received: by 2002:ac8:5889:0:b0:4ec:f9a1:17c5 with SMTP id d75a77b69052e-4ed15bb2b3emr57941951cf.10.1761789241028;
-        Wed, 29 Oct 2025 18:54:01 -0700 (PDT)
-Received: from sam-fedora ([142.182.130.176])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3863cc2sm100445901cf.32.2025.10.29.18.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 18:54:00 -0700 (PDT)
-Date: Wed, 29 Oct 2025 21:53:55 -0400
-From: Samuel Kayode <samkay014@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Samuel Kayode <samuel.kayode@savoirfairelinux.com>,
-	Samuel Kayode <samkay014@gmail.com>,
-	Jerome Oufella <jerome.oufella@savoirfairelinux.com>,
-	Lee Jones <lee@kernel.org>, imx@lists.linux.dev,
-	Frank Li <Frank.Li@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sean Nyekjaer <sean@geanix.com>, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in NXP PF1550 PMIC MFD
- DRIVER
-Message-ID: <aQLFM2-WgRvDHfZT@sam-fedora>
-References: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="foGOXW05"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761816797; x=1762421597; i=markus.elfring@web.de;
+	bh=KZZIcQzYA9TKZZ4pBuqY8Wcz9dpXDRCHUVCzOi3IjVU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=foGOXW05sRd6bbXf9975A3dHUFkyAuPOg3fxfBmR1AxuHGEhP4U0UrBtpspKsG9g
+	 2yIOZN+cdeFsa1Fqjh3dCNo2LmMxEJta1wZFA16gK5cQF3Q2HxNCdfYcjoVAReRcw
+	 UnkSmNuyA4kfHiyCNow/0M2FNloYWnKCRmJOMTdfMTRjR74rMHqvH0npdNG9lHQrP
+	 PKCnAg/i+uO6BFEwIL1lFY8fH6vUchihKHRNZH8+g0fVYvBxQSvJriSEGeGGkiRD3
+	 NZi+ONwtSXu7BTb3OdMb0lxsdb5ImBHC9RfDawZqyhpyJMDLKxDxC5Il2UirVkXLA
+	 ELiirKNWXUrHItdYLQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4KJX-1vE8323COP-00BKsE; Thu, 30
+ Oct 2025 10:33:17 +0100
+Message-ID: <62441255-45fc-4edb-a8e5-c208b36ca2c2@web.de>
+Date: Thu, 30 Oct 2025 10:33:07 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
+User-Agent: Mozilla Thunderbird
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments from
+ memcpy() calls with SmPL?
+To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Miaoqian Lin <linmq006@gmail.com>
+References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
+ <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
+Content-Language: en-GB, de-DE
+In-Reply-To: <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:igsxJEJ/bMRLpMHAxUf665lp4BlW1C2RI6gdD73+sOV29FN/8l+
+ E5aJSss/Tc+QHQ493hP7umLxqvL9z776LDw57biPDt4Mz/OuIzWGjER0ZTSbJoqRDlKPm8m
+ t7Oog+Fr8QMkIC/IHsI+Y3LSTSvBlLjqhDbDDCc8zcv38FZ9cqEB/WQS76wc0NKmq310ttd
+ pBzXj1EVxwE7hG1Rkcszg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6YE9pGvHNbg=;QTv9EixLj9QejHM+2M0cMWdtAJF
+ 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
 
-On Wed, Oct 29, 2025 at 11:42:28AM +0100, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit ebaec90ec0b5 ("mfd: pf1550: Add core driver for the PF1550 PMIC")
-> adds the header file pf1550.h in include/linux/mfd/, and commit
-> a7d6255a0bf3 ("MAINTAINERS: Add an entry for PF1550 MFD driver") adds a new
-> section NXP PF1550 PMIC MFD DRIVER intending to refer to that header file.
-> It however adds the entry for pfd1550.h; note the additional letter in the
-> filename.
-> 
-> Adjust the file entry to refer to the intended file.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 70de2f9c4a50..e428ec79dd24 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18718,7 +18718,7 @@ F:	drivers/input/misc/pf1550-onkey.c
->  F:	drivers/mfd/pf1550.c
->  F:	drivers/power/supply/pf1550-charger.c
->  F:	drivers/regulator/pf1550-regulator.c
-> -F:	include/linux/mfd/pfd1550.h
-> +F:	include/linux/mfd/pf1550.h
+>> It can be determined then from the generated diff file that mentioned
+>> implementation details can be transformed in 304 source files at the mo=
+ment.
+>> Thus I became curious if it would be supported to adjust any places the=
+re
+>> according to (Linux) coding style preferences.
+>=20
+> If you have a concern, you have to say what it is.
 
-Thanks for catching that.
+I expressed something for further development considerations.
+The source code analysis result can be interpreted in some directions.
 
-Reviewed-by: Samuel Kayode <samkay014@gmail.com>
 
-I will be sending a patch to update my email on this.
+>                                                     It doesn't seem it i=
+s
+> about the running time,
 
-Thanks,
-Sam
+Not directly in this case.
+
+
+>                         so why do you include that information?
+
+Further software users can compare such a measurement with other observati=
+ons.
+
+
+> I should not have to repeat your experiment to figure out what you are
+> asking about.
+
+You can recognise recurring development challenges, can't you?
+
+* Change resistance
+
+* Varying coding style preferences
+
+* Code improvement possibilities
+
+* Development resources
+
+* Pretty-printing issues
+
+
+Another test result representation for your convenience:
+https://elixir.bootlin.com/linux/v6.18-rc3/source/arch/arm64/kvm/arm.c#L25=
+54-L2726
+
+Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> time /usr/bin=
+/spatch --max-width 100 --no-loops =E2=80=A6/Projekte/Coccinelle/janitor/u=
+se_memcpy_assignment.cocci arch/arm64/kvm/arm.c
+=E2=80=A6
+@@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
+                        goto out_err;
+                }
+=20
+-               page_addr =3D page_address(page);
+-               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_p=
+ercpu_size());
++               page_addr =3D
++               memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start=
+), nvhe_percpu_size());
+                kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] =3D (unsigned l=
+ong)page_addr;
+        }
+=20
+
+real    0m0,606s
+user    0m0,576s
+sys     0m0,030s
+
+
+
+Another SmPL script example might become helpful.
+
+@replacement2@
+expression object, size, source, target;
+@@
+ target =3D
+-         object; memcpy(target, source, size)
++         memcpy(object, source, size)
+ ;
+
+
+Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> time /usr/bin=
+/spatch --max-width 100 --no-loops =E2=80=A6/Projekte/Coccinelle/janitor/u=
+se_memcpy_assignment2.cocci arch/arm64/kvm/arm.c
+=E2=80=A6
+@@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
+                        goto out_err;
+                }
+=20
+-               page_addr =3D page_address(page);
+-               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_p=
+ercpu_size());
++               page_addr =3Dmemcpy(page_address(page), CHOOSE_NVHE_SYM(__=
+per_cpu_start),
++                                 nvhe_percpu_size());
+                kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] =3D (unsigned l=
+ong)page_addr;
+        }
+=20
+
+real    0m0,626s
+user    0m0,588s
+sys     0m0,037s
+
+
+Regards,
+Markus
