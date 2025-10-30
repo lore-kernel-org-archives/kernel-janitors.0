@@ -1,142 +1,125 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEC11A9FB5;
-	Thu, 30 Oct 2025 14:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9188C1AF0AF
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Oct 2025 14:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834168; cv=none; b=UPAsI8siEVGmreLQPOXLN4FBh6ln15A7Vrwc3M1f0AEM2dSauxpfYQiW6ubKDu0598eIzp8fKUfbfcKdAl/2Gi8k7Ah6L2+iT0M6Y/MqTP1JkgjAiFvLO0Dw1Nz9VUgfGuewur55nHvS6SpqkRa1qxmi1r9NkM3Gl1LcHa+GVkA=
+	t=1761835068; cv=none; b=HxFu7jrYmC6BNcUcLMEwG+XaIuejd3iQwfGVqqw5koSETC/NzbNlrY5OLksSNjSlh8vBYn/q4AGrBCiHf0MFAUIvnFOI7Lv0zBNlbzp4iRCU7XH3+Rx5A9Ev/+eLaWrLv3tdXh6IB/lqIstrCPth++/0hIlP3cg0I8QRXVn6624=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834168; c=relaxed/simple;
-	bh=nQBSskfH2ELgXa6kPvuWTv0xsHVxBuWS0/JEu7LtRYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSywAXpTeRMoO3QezOid20Vret7fdTl7ZDGcKh38sx5fH/zpGJLX5uchkCYSKfBqF7Iijdbn27a3kkOpUMWHyY8xQ2+OuGpAm/NjWF0l647lX2Q9CaO/Pzx8iMwLHac3ZwOrJ3Xx/+y8Ao42Dfh6FvgnPmZeyUdK1NTl9Y48Y7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KGRfSEQ2; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1761835068; c=relaxed/simple;
+	bh=uiL/+HWIqkPDhLYnB+bmPpKcGNU/horgbRhtuBxsmro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X6WRPuSVBOo1sUuCi7mGk9pj7P5OLqMJIF9iKMK4okPthTFNfvEpJ/UHaRhxhEwwByXDjpognWsaokDAKTBDhSn8MDcdaX7dNrPmPYX9MjhszbibreKVYAiR0oYpySN7lN/ghaQD6nM5JUUwvUBQtGixreQF8D7Jy3q69TW/VJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L5oBJuYA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KGRfSEQ2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761834163; x=1762438963; i=markus.elfring@web.de;
-	bh=nQBSskfH2ELgXa6kPvuWTv0xsHVxBuWS0/JEu7LtRYA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=KGRfSEQ2cpp6T/2Dazmw64bF1jHIKcSmT/DbnWStyGV+RFwedl+XmBG2q9qDSqSB
-	 hZHQ0/urJ4CL9sWIRZNf2XD9XDVte7SfWKBx+8ueTGoxQyHXZqqI7/KT1usa3Oxb8
-	 6HsixA/Vnb34XHXq2h16BeGUFpruF33+4bgjeaTlFGRFJwW7Ahuie+1ze9XUvwuqt
-	 8hDTYt9hlvER89h6KfWdSRkWpkOy3PVLHp13/iHZQvzzMHuqOMNLzpOXIAmaw+Eqn
-	 YIqXB22OhxvLbtfCaYLqq1Zrdw1r3sPiLKX/Jf/8HZS0JEYXcVgsAg4X2KTy3TFCN
-	 SWWucz6D2QNC8oZnmg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUCuv-1vdwuX48p9-00KieH; Thu, 30
- Oct 2025 15:22:43 +0100
-Message-ID: <2232fb5a-2e5d-48a0-a8f7-97826e0946f5@web.de>
-Date: Thu, 30 Oct 2025 15:22:41 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L5oBJuYA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761835065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nkks9IPPTiRjudJKz2fy8ztuwHSVrBIwR6A4uWG3RWI=;
+	b=L5oBJuYAb59YKvU52ig9pUfcmIKo5BjfBdoFXi/VyctmBJ/MgX5woK7Bf4brQgmIkZ57mV
+	n+Lp6kJstPuYWU0i5Y1U76lO7ZKW6goB9AlQk1nakgnfbx3YvMruMk/DNEhB6S64uWyltE
+	5l0TbeHfX06TTIEdx1jZkxC7rMurTlQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-63-af29Q20mMZqTVtiUWUa8Zg-1; Thu, 30 Oct 2025 10:37:44 -0400
+X-MC-Unique: af29Q20mMZqTVtiUWUa8Zg-1
+X-Mimecast-MFC-AGG-ID: af29Q20mMZqTVtiUWUa8Zg_1761835063
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-40cfb98eddbso1051746f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Oct 2025 07:37:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761835063; x=1762439863;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nkks9IPPTiRjudJKz2fy8ztuwHSVrBIwR6A4uWG3RWI=;
+        b=lBwmXVd4BRXnFPvwR2gGjJ1dGp8OChnLqe4ajk8JSKc+20Z8lMU/Xq3paZgevifgTX
+         wHrEgUZKjzrTiPOra9w8+1xqdulut99TAC+2c9kXrxGH1YECM5ZrxaigpknbHxmS7U9K
+         T2Si6krFxPTimoQ4URM+ss3z2RIyrKHzAmYdVqzXAItZ+Rfh/icVIRPHueFNBe1yYxsv
+         +SjgxPqC4RZ6S6i9d7FgxAvh4XnEn00FXGiRO7ZqwdvannDCt7OUNQONcCLAvm+oW3G3
+         3FU2n5WCbNgD32JAwMUAAHbGAI5ZP9KaIl7b4fNSCvxcNt3eIjN1EU9uZTb4DWbt0iAr
+         0qnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqTLorjQZRnbHh3LsV7slo6Wav1DXy/UWuCDINVtrkSFSUBD0ZEeNVaFO2K/5XB46G1ttr3njob/i4IVkSlQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/kzqHG55jiEDXvihiSiJ1tbK8nJMuuoa2TdiI9129obV2BQZT
+	qoulfxtHAYwx4hrPG3+50eyTOd7iMNpP3fRqN/77HS9lXMAB6z8LUbkwssBEYTfg/k21tNIET4m
+	FBcv+NFke7yang+3g1GtzOM2wBB63b05Jsp2QmNqdNRS1MRB/b5ZRVUHXaEsWuCwBhmoNqw==
+X-Gm-Gg: ASbGncsVtRP3E4szkpFqtQL7cbCh+eGwcdZbQMbNLzPAm7VJ9dMT3KjEu+FpPSRLbcn
+	WgPIMZbyG8vy4AKgXLFUusfk+VLF4QmT6+pjziB5h+Byn+QXLY4zWzH4elq7HlHjwLLNveWcKxS
+	0yAn72HHlgS6ibLLW/tIZuY93jH6EteAs46TdZOw2hBFCeriNRVrtV+rAYsN9N0nMbSAw/yRR6m
+	0nz5J0bAF5WH/hM6stv50iCq5ZQGpQ3zRMfIZ9ju5tQ3xfksfpldECWTcXHjuMButYksV5ZBrDF
+	jQGcTtLiMrQP9RHEK1/7e5wrhS+MA5n63A/w/bTWSNRExYqeGh9nlzAhDrsB0ky7Mgl7rGTu2BL
+	BqROgFJ8Pj1YuiWX+0YTnEvlw27Nj8Tl/ceFysOqdrVxVf/wY
+X-Received: by 2002:a05:6000:1449:b0:429:b963:cdd5 with SMTP id ffacd0b85a97d-429bcccf0aamr87208f8f.5.1761835062913;
+        Thu, 30 Oct 2025 07:37:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4Hb1Zr2+1H9F1aQQVjn8swQhMlyoOrBtrdyyo6F0SLZbU4syUP2hFz8P5UzKpetZ1C9iD6A==
+X-Received: by 2002:a05:6000:1449:b0:429:b963:cdd5 with SMTP id ffacd0b85a97d-429bcccf0aamr87184f8f.5.1761835062481;
+        Thu, 30 Oct 2025 07:37:42 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a94sm38472105f8f.5.2025.10.30.07.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 07:37:41 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Austin Zheng <austin.zheng@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
+	waynelin <Wayne.Lin@amd.com>,
+	Dan Wheeler <daniel.wheeler@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: Jun Lei <jun.lei@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in AMD DISPLAY CORE - DML
+Date: Thu, 30 Oct 2025 15:37:37 +0100
+Message-ID: <20251030143737.136120-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments from
- memcpy() calls with SmPL?
-To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Miaoqian Lin <linmq006@gmail.com>
-References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
- <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
- <d67f27c1-973d-470f-8903-7e5aaf93777a@web.de>
- <2ce668b8-7042-ceab-1ac2-4afd86b6c6a@inria.fr>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2ce668b8-7042-ceab-1ac2-4afd86b6c6a@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:NfX8WnPjxKokgpSMU8CrErNXJDXfEOwMizA/0EtVVRtoaz564wF
- MarbB837r2Cs4Ct/jmvCwv/ZMoKbAcf4KsKuQCDiliidal2TPnI6mDbEqu52gqs8tqqrgzo
- 3iQhUCCVnC6+W8RLm/ka1crTTjsdvCpAdOhenWVQdhKBtuPJeUxwqTkpFXBGDsSg4z/v1cA
- Nkj1AzxS7edioobgq8GEA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:j1ZNHeiNWZw=;cRASlzf9s1VsgVNwDwMMR3JMESC
- 5zlOQJA+a9Z3ZHzoaKDm9pt9ZKVE5g9vZWHgJEtgUKOcHyrNNwMLzPIdjA+JD+o+Dgw/IJwB2
- 49fNPZ7GX4jiJA7Ly6uB5ckewKzSusCkUc0UXkI/S4tUyhYJfs5bEhvFMYJHZEFP5X+t2enr5
- aKAtEhc/WXu1esoiSsYT+AQzlw/pvx0xnKlr5caLuGFLoDRxBd18WFn/dQrWSUeFaW1DUVweJ
- aWDgRdAzxKVbx6ifOnRGNx+WxB3hKNg18LdmTq4u4wyFh8Gr0L6B5KlHD0o+njdy9jyWBN7lS
- 75xTU9Q0wP6SnRr9BKEOhKIjIufXXIzHCs3KkTc7p6lN8X1U75HKdIEjlwm4Kmt3ybGV5jnnq
- oBYjjNtA10NGUyh6n51AfEEMp9wO5jTAOcQJ7OK9Y9vYy0wSCqTFw/6fPgEf+fbe7GNirMl32
- ht0qFXriSBmwD4XsCVm/20seudzSs+O+nlxyBOGq/GcbPMwMlNcsv5ODlL5MVyGwQR4/6AL5Z
- 8CAZRkM7M8hHjXmDr6oevy1kMUOh7eK8ZSXMAazfBePXXgXHn2hNmXZxqvy2btn74kKPYrutL
- WJy/p8WZZ0mLEuOvqm4KZX+rnd7LDcev01zE790nmYcbXZO2ryp12U4MDMX3djNzFS95SQUab
- ufskYgFxmqwyg+lMOJJ6DF4v+kqyvmK11K7g/a0yehJ9LeTc334xf56ZcYtI3deJTTGWsmemP
- zf4gF/DRvewiGgTEiJ5XltZMiRpl8OxlP5eo3VOHTA8/MX1dmESYhEM04kAWlW4OeVeFA8Xfc
- +ZFZASVsqtYbKWPpd7J9WSfGmm3GSQ5SrmTWIycN/pHnHGs+86wEZ+lHL4J/axeuOhTVhhpSk
- CjLx6IuYp5i0kezFvj5oHh5pb6x7SSmFw8NRIO+nKatXlmiBkzrvn5311nEfQtAOWnQwkORze
- 5uv5sOkqD/VYCeY2W/v8GhBVjiyRp/Hx+XqhEJWQYwN/GLlHQxitN8I+tw/fwesrAGI/2NsxD
- jYxzdxjP5+tXTl2tLstgTkg7hEh2z41pBg+AdK4MhX7mCvTn+GriPJEhqO+PzVEGRv6u9avN4
- rgruThS6myD1wDBD7MgiyMAv8LdASZGV7EdkY3bIkgiQ58HOWnrfCBIvis+JaUDNMXoVnftvo
- yAsnQr31pn9yj0gRMH0Rmm8F82Ku6C50fwvxHIPyvUygOB8l9xryMyl3huVx/Dq6CfnHhZnwq
- zvNsPKEEwNjsyoeHiML1XMSz9rA6eUa8xCA++lvIgco0Ms05j6/bKeXhgwgPO9xVK/AOKXqLF
- qk82bsQ9H+mNlxvxvcFotul8i8sQw20GziUfAqesmL8vvOQ4njyZaDlBPysWJ0bGEyp6Hs0VZ
- NYhOT7vGqY5TA5ZBAdPLiQKWvWIvjUw1tujorVmRxM1wO36yAmxtVyUBK8cnLFbgBNehpuOMc
- O+k5tZgCDBoKPw9r47ya8o1Cs77vv2nk9F2Jrjze5ooLHWYnamxWsyQkhOdlQDg3PLfNwBJNh
- XSaAn4ntfYceNUUTOw+ahZx2o8rXGw0Es3JyhwEXVyk4gaARn34V3drwFTxPhXyu6gBOtbP2V
- CgeWX00KtVBE5QG94NVy8plP4rirpIeaLvwMXn3PxVGiElFLMLAS4DGVzEyttE7atMZyKZBdE
- 5KPRx4FlWGsEY8yeg3twy9917tITcTKzl/QAtnYreHM3+6MjbwL1KnVbAt8os+Hr6i7E9VSyr
- RMBArFxLUDDdeUzinM24KnOZnQ4HHeFXJGJR5sgR5c93KwRWtCmNrwkR9B2/riuAGV0TV2ALL
- OVKG02Ej8qOgr83RxXsQ1/1r7Owdr8aaTYA0U9HT90xzXaSfR/UpUrlGGJgsXONAVG2IDh0mS
- BrBi3bfO8LMachjvz9vILyceC4UcZtfVM/8mzCErbo+XCxK/1FE4B0HUOH5jJHi5/wgh+Nmh7
- kk5xnOzJ1/4TWRlKHaYNXiKBYEMAzrLUxczHNIkioUNMragfCT+ZX/s6D8LORcq/lx3ReEJkC
- F4nk5QtinR6xikZm7bcjm8otC9A6PK3MajYQx2QNsrvHHm9SaZZ0SL22NlfjyQQn+NzdExLoc
- vYc3d0AxJ9uzYhQSkauRosjpgapZ7KlzUinDA74ciwWiAwyhdjN6r+r1hlJXC3TZOHXM1E2Ih
- KCfUHQlbaBbIkMFMf6iirWhuL3gXZoOx+zwR49uTfDoNfc0xAzxNbtrCTmiBa2y5urh7CpUUs
- O86CFiOnydYcnT9x5blgCutq6LHe3oBVfndB9vej8JKfwd3kJAk2PLuZihM8RETlnpGix7Q6z
- SdOPp/rOg4sSHBi/1UBbyVSgxugdS7fHexoEndYsZxd5zNL4lT+XWYl/qVh2YLbgeROpeZWqp
- ocP7s6KPZUkQVsGDhFtsDvCUyJ30RpJb7PqkBop8MYaOafoWoxViWcj9gywf93gNfxKHd8PlS
- 3RXa/Ou0SXOoMNVpVZSXi49vnpPKY5UhbKUK5H4sVdwqS4ASSPDuCMdK0FuCPUIXDCO/qbGjc
- +uuPr3EIeTuuSpqkZcUbOoiUYa4oXWbwf3RQG766C94cNiqB5JK1aic/pWcdt4q/LcLkbKFjd
- coUVAjmmQ81/zzOeFsAaLPPNdfC51XKBVwERvwOq+/YB7yaw2q2+z8cjBJQzFnDJymhLgzrwu
- pyzG5KZOLj+vvGlNXCm6Ff2OykBJkQW7K13DxGkzafOj+9/fSU3ZHQg6DPj9pMHPSZnnNjvA7
- KmtRy2RUuJ9hqaNMdZ5KtIk79rSF886U1g0Z2uLfl6yNVkBVKQlypK+IpGec4/EqMCn8P6HmN
- o9gLkxkic6Ugz57DFYng/wpuUZoxUcLkusao2fBGdqK4vIRjIdFgxhtAcYPs5KvReh84GTJkM
- 87pQZIUjGHAxw8f702e3JpNCBdxV1Jqu0ocBpaNFfNmlLAQAW5GAC0EhzBYsrjzBwiLpyM4ql
- oyvl9kbmKuGryR5a8GEu1xPcxgzZHE53rCF/Qf0dYTY8T2vFWmvjqRSFOIrEh8YCv3mO3bQM9
- RKT135JIvN5jorHYzgz9Ak9R+EzhU52QIQDzKZ0MAdpITYiiblwD5LWoiowS1QhP0KPt4wVlS
- 6Ihff4X90VKHIM47jxn6zdBV9Rfp6fElvWOKDa7Zf7wbTEtP4naTQM8tO5hCwLOFEBDs/pNHb
- EWPa6P4MPJJlz9nL1qDZoCJcMuwcTqNbdIpwYuYPiUX8w3tAQOPKBO4kvF4t80FJc7O574nnc
- 9WK4R8ebDAMesf50oT4VZADxjyu5MPVjqTeJaL4meNp2447w9xItKMi3aOEEwDYEBfYcY/VsW
- g/MZTqxIcvoiBkEmw5htS76ioFjETbCJVU2LtI5p6RiqaAZaDCxD7jMq53YnUIL1LaohZW5t/
- VR69GyH/Z/PITKLOeC7X7KnakG5buZvYEbgZNPWRNIEVeX2ZGmEJOmGzchwUgVS0YlVnV9w/X
- yL0ePS2CuQ0r8da/MiVN/PdfVQUzZ4OnnVo+wh87oMH2nOST9GgGbrhIyuv4cwL5Rsn/2YULZ
- sUAkSzx02cVMB0C+TRe1+nYgtLWn1NSvHPEfiSlrK5pDJi0t9F9S/UTA553yIiq/32pvTQ6FB
- ubRRqh7apC111BmHzSyryBX7+zptZmE635OzR8RNQmh9y199UgI8YroSb3+yl2JFIvGkjMqa4
- imUMtFahYehuH1TZ58wC8qcL/+9yZCMD6GbiY/vCzgWIZtDaUkxC8Dd6iJuY1Y67lxKQtMld4
- N3q2xZ7WJrdQgL1iUmXHmDd9rHEuJx2k6WjyEUNVaDneClf7rn77CH3Cpw9Ge1rLR8cWGS8TR
- 4TPrWcm8m13odQZDKTyPVcOR3/iu26LbZllNHxeuC1NR3Un9ACr/Wqk3B6GEr7cExubOKzFpg
- cN9m5gZlRYwF+lXUMwBt4ti4Ca2iZ7zEwgsPQPdbaUbBb8pO3Z+8gC0YvCz1/SAZeZzcpKHfH
- 1CvMD8FuyejPnrCTNTQSdsUsvgVTSj+JmEOiO1VRLBy4GLTkSSlmRbIJvNItXu4I5ZQ3xmCSO
- hoGfwpJyV63PguiW3e+GjMzZ/nh/sEIH5GTOjqCuTQqbiqxFjAJ4gsLHl4wNb98BYkCvimqSG
- 4RmQURx9tlP63fb7VttJ8IEnS9uQ01hMwFueaL9ov6dFRlrCnbBaXRugKiWxY0MvUzxYyNcLr
- DZKulHqlKHodf/UKiMUjaQ2/TMcja1p8/LC18CSehOdbsjL7BkYKeZWtGUCg7NYocr8hqLxby
- QgLpVI62cdqOFK9c2XjQiuQf3etIAOmbGMHyWjCJTepgEyngThHxMX4bkD8y+ULhEARWOz1AJ
- BQWTYZLtvhmOXVg0gOFaKJYN6fXCrtg04YJhzgItWG2IU71ETK81ALvOYCY3esQP54MuRy6gk
- QakpZ3qvT8kzf5pAzbJbinXRLIuE++PzAUWBr6Uw/XYRcPNZbSGUu4I0hI/iu/iSCRO4RigkS
- vazZylQ0G7LMXCRX6DkzpvTL7C9swUIcE4g97GA9wpEoJMwJQ0IPEAOf9wizemeg1Vrwbcf6x
- GjHWo+FcUM+UaCyE812R3FiFomBYCHG2cptxUSNkSOUpN4eL7svDy/xMavuTtFlzqlHZnm9yn
- igwtq3t51ZJIEAyqswoYYlp36mBtbdeFMkfAJ3Bl7zmvfhaNgyoc9VaZlnWpKjUbuEdjfcAgs
- 30r61X7bRdPqiFQU9T35NFjh/j5v2QfOo2v+3OKVvtY1y+95rQ+TOo2G+TPyBT9HyO5o6JLQO
- z8ej0ewmIFSQKChxxpV+pFM3k/mGkouxMpqlOBBsS+NS/cUzTG0jd9X2cotC/bG8ScTtWS7O9
- A+p5HUvIQn1TsnxNHKAjH4vPASJEStDQxq/Nb8IGid8hUpwxpYLenkIv9rRfRNKXpEHzLd1UI
- ks8mi++D8Yzw2FRPGJn+rKzvYh6DYPwrwfVgflHjwLqlMbOdn0Kk9iTCoPH3GB6gvqVuJrRCL
- 9xxwEziJzbUaQQaLx3C0eNhTEDj6fgYfTesrdZnv6nl/UAXXqWc4Zwz/
+Content-Transfer-Encoding: 8bit
 
-> No chance, given Dan's negative feedback.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Will any additional arguments become more convincing for change possibilities?
+Commit e6a8a000cfe6 ("drm/amd/display: Rename dml2 to dml2_0 folder")
+renames the directory dml2 to dml2_0 in ./drivers/gpu/drm/amd/display/dc,
+but misses to adjust the file entry in AMD DISPLAY CORE - DML.
 
-Regards,
-Markus
+Adjust the file entry after this directory renaming.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4d739e18aab6..7031ee1e7cff 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1080,7 +1080,7 @@ M:	Austin Zheng <austin.zheng@amd.com>
+ M:	Jun Lei <jun.lei@amd.com>
+ S:	Supported
+ F:	drivers/gpu/drm/amd/display/dc/dml/
+-F:	drivers/gpu/drm/amd/display/dc/dml2/
++F:	drivers/gpu/drm/amd/display/dc/dml2_0/
+ 
+ AMD FAM15H PROCESSOR POWER MONITORING DRIVER
+ M:	Huang Rui <ray.huang@amd.com>
+-- 
+2.51.0
+
