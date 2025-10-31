@@ -1,63 +1,79 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3127C1E834B;
-	Fri, 31 Oct 2025 12:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BA9345CD6
+	for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 13:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915139; cv=none; b=cjuEyqXdYRRinjo0fnixjC/0VZ4f8mWijReYbRs86Vt9amGjrXLHYP5YMiJC993g9G4DhJqW0x1CvqDr/v3xTFc3V7me4MwvEVLzDJ2zs7Zkjh6KtTlHxZ38GP8i47micMc5C6YYJiYfTyncTgnARINkLldRViXRm1r+DFalKo8=
+	t=1761915753; cv=none; b=e3NSZljiiISUTqrngRpSvA5S7tbjaRe7NPY2sMIy/uxwpSs0QtU9eZ31VkuofzsKVjsXFZPiql6aMM8M+MO75Shz/P5vBniO6nhJ2skOMq0Z0HRifOwfSsASI1YulxFwVKS7/j5Yp5wr2hJ1YEVlXwVj/a5JSx8mSvn0bxX4v6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915139; c=relaxed/simple;
-	bh=UhgY56L2Y48rGqsa8FjhgUlMRK793nBioVqcnGX0uUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoOsUNtUhAR6UvuiCdJJdOs+aHDuD1b213PmSO650E4pdxXjjROlAWT3z0lDZk44toRD64LAA5sQzsIeWmlWKSbnp9I6goUROjJAeR1spHY1FquHNrD9lJx9e64ABHdk6d3AW9nRjNjYnXnmpocMyHlrYm5dBDPjpo5w1LQjemA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BHfCZb1E; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1761915753; c=relaxed/simple;
+	bh=mC8PFQiBgB01djBFj2JpH1pU7vb907f/6mCcztjN0VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HnIlBcKFL+JCoKT99QBN1Xs1hsUalDLcd5ND+HunMviY8NmIh+Ct9RuCF4zbJDFDyyQgoPRC206549hmHujKpPDyathn2uce6YREjtWV0llSWNow69rrGl3sCVtX/YkumZwB93181rZGnzRawynhmyDYjMrk0FxcWyd7LFwrYeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bMjBar2s; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BHfCZb1E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761915138; x=1793451138;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UhgY56L2Y48rGqsa8FjhgUlMRK793nBioVqcnGX0uUc=;
-  b=BHfCZb1EZ3tBoITxYE9VKlPoD8OBGdWJtjX9dgDc8F6vnOotR0p9qiSj
-   R+gjWUG4NGU0QqNeX4GUGP+QxeqLNUoEKI8MuNF3IARKNLapFLbQ678aP
-   JGuoGEO9tTfHOaa+x7Nc+xtIJsL6SX/X7QaLh3IheBuYJR1rREt+3M5PQ
-   5RV+Js4PGNEl15BNpxOuq9YmFVJ1y7LSJgsG/urpJhM2PB9Xwf+N+fDXb
-   GjPBHNBYFcW2xFpx7UcVwsvftiYkxSiWlPKPHNaLTH194URwy1vd/ngDs
-   QJz3X8F+K40FzG9HE8+U4JpdvM+SedAkq3EO+JDiYUBlIjR9kT9bLePKx
-   w==;
-X-CSE-ConnectionGUID: X6ldc/rLT66o6nfWyM20DA==
-X-CSE-MsgGUID: pY4+gmZQT1OVaxxcu8ot1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="66688128"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="66688128"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:17 -0700
-X-CSE-ConnectionGUID: fotXEm+rSS+AXCY654oD1A==
-X-CSE-MsgGUID: UZoZcDi8SNi3Kv7d80kCHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="209793862"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 31 Oct 2025 05:52:15 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEobv-000N7U-1K;
-	Fri, 31 Oct 2025 12:52:08 +0000
-Date: Fri, 31 Oct 2025 20:51:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>, linux-alpha@vger.kernel.org,
-	Chen Gang <gang.chen@asianux.com>, Matt Turner <mattst88@gmail.com>,
-	Richard Henderson <richard.henderson@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] alpha: Use pointers from memcpy() calls for assignments
- in two functions
-Message-ID: <202510312008.rLcaBIfL-lkp@intel.com>
-References: <1605dd43-5e95-46eb-a0c6-78ff8b4d51b3@web.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bMjBar2s"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4770c34ca8eso19388815e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 06:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761915750; x=1762520550; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2FQGZCGnHsgyhdfpYgLWb8UhWYQWnOT5iNG04Z0iL94=;
+        b=bMjBar2sjGpZ67mDCSasIkdcDoUpsLtDzCSsCBvnJh+/5pkoMeagd6uyFi/kTM6j8M
+         ipju7lFDW9uLrE9b5yTj5LM/h4rf8Cn4vRmlnvJTGr6QRMPiHiUtjAx9J6v+UqohgrpJ
+         ixD0CADgBIz8bQyS6uaWuPFyZhwlkmLW91ujD4Vpr6xQTI4+r3x1hwQ8wtBkja/32vdI
+         c8KX6rs26sZa1Zec0QlzHfdi0Y6Mfmvyz6arq2m1B8Ikfm8mRM+/BisAivEDxoocR+ad
+         6AFcClOZjl8hh7y471xtCQ1rfwF1aJRpRyO/00CjOtk4BSy6Iolwfc/MYkGSFd0U01PT
+         DPOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761915750; x=1762520550;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FQGZCGnHsgyhdfpYgLWb8UhWYQWnOT5iNG04Z0iL94=;
+        b=geTxuEBjsA92jCYZ1zRVV9/g00nfmFFY/FkZEFdnwa5b8cE+WLP9h/qnGHV51EvMbT
+         +5UliuVVxKrV2dCHvpfXcOcaVEDKfzBoKCaq0sDN1BQTo6v9+J+SrvunjkOBuilUGKAw
+         kzCOHPg1B3XrmLtqxSXdqIC8ffG1bt0pSocB7PfIdP993ynmm9YRWqPQ9cwwS7fAhbmA
+         E+2NQNcIkGtMKYLZ6NeBPUX7sUUyI7qXUE2YYLxZ1tn17xssBluT+DdCRkuGZbiEq+zL
+         2x7Ilz1SLQKuoWLU9TzjJJ0xdQhZo4lLjp04WCTy+2HjMDrmjPndMqkjRPSnQIpWBkxC
+         aRkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4D4A2ahGmxo1bdfXidIRs13rknPSwjSUiDszaMkJbwG70uNDj/nmMk37aPo99K0DVL9JYJ/bmKyFEjhRGSqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4S4L8GijZWUwiEFKfZlkHp40wG0/NDhnW58CQgNjufrBG9Ds8
+	g7EFg00MJPVuzOvTpFOWOjD6fJK32XdFnThmQvwzk2IZjFDUxUJIXrLmz/91k/tczW8=
+X-Gm-Gg: ASbGncsfh+1Fj+YL1m4/eWpgVL9k5teZaIQlQLybV+KXcP8ZmmNg85toYh1gJ36uAOv
+	RAYUQ7ZxQWfnqJlnAZyWeiNbQvteaWvSa6Fj8AVJl3dQJq8XcTy7H8o6CNjXt4V9+KjBV0joaaM
+	MAa5xwKK1YIDoN87Yy4QMTrG4w/YdTgeAA5L12zVis3PWdK04YBqZcTKjw46JXP1hx6a0n6drrN
+	WJkkRdc79uFo+X9WWFG7mP819592miS/BGIeeGdtXTUTIbPa0BySip72eePNVLgLmEW2EqnlXaw
+	xxhE+h0WORFLXywMpYWG2obmkDReFtGDEQOHR1SJZ9gUIwLb193/sTetuo65MR7/axth34grzfY
+	CmPQhw7mzdC5QcEpxNAz+czJg0Y7zwpYmCJkG7uD6Msdl0gnjddWpkYvPJDfR2TOTszokISj3V6
+	zdFDMxSA==
+X-Google-Smtp-Source: AGHT+IFtOV4W0Y8ZfIuQZW9gadDZKRpyQvtO7XZin6e2iW2zHXOgFcxmDRDXqGF4RU8aG0zT2NZ4TQ==
+X-Received: by 2002:a05:600c:3149:b0:475:dd89:acb with SMTP id 5b1f17b1804b1-4773089c4a1mr29545645e9.22.1761915749827;
+        Fri, 31 Oct 2025 06:02:29 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4772fbc32d9sm22667605e9.1.2025.10.31.06.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 06:02:29 -0700 (PDT)
+Date: Fri, 31 Oct 2025 16:02:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
+Cc: Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hamish Claxton <hamishclaxton@gmail.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Zaeem Mohamed <zaeem.mohamed@amd.com>,
+	Michael Strauss <michael.strauss@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amd/display: Fix logical vs bitwise bug in
+ get_embedded_panel_info_v2_1()
+Message-ID: <aQSzYV0ytfQK2kvN@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,85 +82,49 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1605dd43-5e95-46eb-a0c6-78ff8b4d51b3@web.de>
+X-Mailer: git-send-email haha only kidding
 
-Hi Markus,
+The .H_SYNC_POLARITY and .V_SYNC_POLARITY variables are 1 bit bitfields
+of a u32.  The ATOM_HSYNC_POLARITY define is 0x2 and the
+ATOM_VSYNC_POLARITY is 0x4.  When we do a bitwise negate of 0, 2, or 4
+then the last bit is always 1 so this code always sets .H_SYNC_POLARITY
+and .V_SYNC_POLARITY to true.
 
-kernel test robot noticed the following build warnings:
+This code is instead intended to check if the ATOM_HSYNC_POLARITY or
+ATOM_VSYNC_POLARITY flags are set and reverse the result.  In other
+words, it's supposed to be a logical negate instead of a bitwise negate.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on mattst88-alpha/for-linus v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: ae79c310b1a6 ("drm/amd/display: Add DCE12 bios parser support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Please note that I have not tested this.  It's straight forward enough to
+see that logical negate was intended, but it's always good to test things
+as well.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/alpha-Use-pointers-from-memcpy-calls-for-assignments-in-two-functions/20251031-003938
-base:   linus/master
-patch link:    https://lore.kernel.org/r/1605dd43-5e95-46eb-a0c6-78ff8b4d51b3%40web.de
-patch subject: [PATCH] alpha: Use pointers from memcpy() calls for assignments in two functions
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251031/202510312008.rLcaBIfL-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312008.rLcaBIfL-lkp@intel.com/reproduce)
+Harshit and I only recently created this static checker warning.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510312008.rLcaBIfL-lkp@intel.com/
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-All warnings (new ones prefixed by >>):
-
-   arch/alpha/kernel/smp.c: In function 'send_secondary_console_msg':
->> arch/alpha/kernel/smp.c:201:24: warning: variable 'cp1' set but not used [-Wunused-but-set-variable]
-     201 |         register char *cp1, *cp2;
-         |                        ^~~
-   arch/alpha/kernel/smp.c: In function 'recv_secondary_console_msg':
-   arch/alpha/kernel/smp.c:237:13: warning: variable 'mycpu' set but not used [-Wunused-but-set-variable]
-     237 |         int mycpu, i, cnt;
-         |             ^~~~~
-
-
-vim +/cp1 +201 arch/alpha/kernel/smp.c
-
-^1da177e4c3f415 Linus Torvalds 2005-04-16  192  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  193  /*
-^1da177e4c3f415 Linus Torvalds 2005-04-16  194   * Send a message to a secondary's console.  "START" is one such
-^1da177e4c3f415 Linus Torvalds 2005-04-16  195   * interesting message.  ;-)
-^1da177e4c3f415 Linus Torvalds 2005-04-16  196   */
-ab39c77c3246f84 Paul Gortmaker 2013-06-17  197  static void
-^1da177e4c3f415 Linus Torvalds 2005-04-16  198  send_secondary_console_msg(char *str, int cpuid)
-^1da177e4c3f415 Linus Torvalds 2005-04-16  199  {
-^1da177e4c3f415 Linus Torvalds 2005-04-16  200  	struct percpu_struct *cpu;
-^1da177e4c3f415 Linus Torvalds 2005-04-16 @201  	register char *cp1, *cp2;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  202  	unsigned long cpumask;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  203  	size_t len;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  204  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  205  	cpu = (struct percpu_struct *)
-^1da177e4c3f415 Linus Torvalds 2005-04-16  206  		((char*)hwrpb
-^1da177e4c3f415 Linus Torvalds 2005-04-16  207  		 + hwrpb->processor_offset
-^1da177e4c3f415 Linus Torvalds 2005-04-16  208  		 + cpuid * hwrpb->processor_size);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  209  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  210  	cpumask = (1UL << cpuid);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  211  	if (wait_for_txrdy(cpumask))
-^1da177e4c3f415 Linus Torvalds 2005-04-16  212  		goto timeout;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  213  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  214  	cp2 = str;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  215  	len = strlen(cp2);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  216  	*(unsigned int *)&cpu->ipc_buffer[0] = len;
-c37a29a96dcfc93 Markus Elfring 2025-10-30  217  	cp1 = memcpy(&cpu->ipc_buffer[1], cp2, len);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  218  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  219  	/* atomic test and set */
-^1da177e4c3f415 Linus Torvalds 2005-04-16  220  	wmb();
-^1da177e4c3f415 Linus Torvalds 2005-04-16  221  	set_bit(cpuid, &hwrpb->rxrdy);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  222  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  223  	if (wait_for_txrdy(cpumask))
-^1da177e4c3f415 Linus Torvalds 2005-04-16  224  		goto timeout;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  225  	return;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  226  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  227   timeout:
-^1da177e4c3f415 Linus Torvalds 2005-04-16  228  	printk("Processor %x not ready\n", cpuid);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  229  }
-^1da177e4c3f415 Linus Torvalds 2005-04-16  230  
-
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+index 04eb647acc4e..550a9f1d03f8 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+@@ -1480,10 +1480,10 @@ static enum bp_result get_embedded_panel_info_v2_1(
+ 	/* not provided by VBIOS */
+ 	info->lcd_timing.misc_info.HORIZONTAL_CUT_OFF = 0;
+ 
+-	info->lcd_timing.misc_info.H_SYNC_POLARITY = ~(uint32_t) (lvds->lcd_timing.miscinfo
+-			& ATOM_HSYNC_POLARITY);
+-	info->lcd_timing.misc_info.V_SYNC_POLARITY = ~(uint32_t) (lvds->lcd_timing.miscinfo
+-			& ATOM_VSYNC_POLARITY);
++	info->lcd_timing.misc_info.H_SYNC_POLARITY = !(lvds->lcd_timing.miscinfo &
++						       ATOM_HSYNC_POLARITY);
++	info->lcd_timing.misc_info.V_SYNC_POLARITY = !(lvds->lcd_timing.miscinfo &
++						       ATOM_VSYNC_POLARITY);
+ 
+ 	/* not provided by VBIOS */
+ 	info->lcd_timing.misc_info.VERTICAL_CUT_OFF = 0;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
