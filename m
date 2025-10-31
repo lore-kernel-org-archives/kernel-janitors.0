@@ -1,100 +1,171 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FA142050
-	for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 11:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD692335557;
+	Fri, 31 Oct 2025 11:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761910040; cv=none; b=TCtG/NSfx1euO/SAsBYpqp4p2/hwbqggJFSPgybepYht5cxjZybDU7XStu8SA5eiLklwICEqs7+qkscNi3xIdI7q/uH4omQpiPZ9I+O+ET/5k8bnHJCVXprbah8/5kSydEquJNPMDWITzead/nCaSU+M5LPOXCuNkURApFNA/Tc=
+	t=1761910950; cv=none; b=Djqn0E2MdQ9X3kn+IkVuCP8i4HVjwOk38Kv34QNIArzVS2DODScESj7cS5jaHOnyBQTtFoUcoaFa2535n2p5gfHJF4RH6/870gppynG1/9f5dk/zWle3CgyvNQ6QMlKykChcGeJUm3lhpKUD/SbNGd2fxhTmqsbkR0cESteOH28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761910040; c=relaxed/simple;
-	bh=plC+/6CrEBYyMLwLcmmekRAtRmr4crxYvfBWrqa4EsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/Lg1rLpGX1/ZMNNbK5pjSJgORADiThNOl0krg05rp7QGAR8A9y8qxslpX8sSw0VYudRtkeE1oqS7iKRUd+TjXhjMb4b5zuG1JZpzwVpxcZzqw9P74HHlu79f8pbeSXDRYnASwA/UneNoi5j8aknGMCbWJ50q7yZCdg8UU7IdKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mVx0TeTu; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761910950; c=relaxed/simple;
+	bh=YQ6PwtFXbaQwhsnlM6RHuhQxFDME8QV0xiknAS1hJNA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MyzoYez0HYueAs1Ee3u4cSYtG/RQDfulXWF3dfYwYcfwLV7Cz7hLLPXojwfd5MYZNdKPZwJkAN1zr5mHU3GBNGpwsy0tff7DZKvXqMS2+6sVip7ATZ2OtjgSN4Q0uPW9JoCBlTdmdfNi5vC5d6gXmNh06x4V2PU/HpjxeVw5piw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SY5eRufJ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mVx0TeTu"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710022571cso22769735e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 04:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761910037; x=1762514837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwf871RDbtgle/X+gHRRa1kmehrfWm8Nitz2OZjIhxk=;
-        b=mVx0TeTuTskgFvVTRNFRNe6XPJ94tkP1BMM3Y+K2B68F7NwdV8zrYxQtzarW4GnYHN
-         2akQ1i0UOJPhSqXG78UBb3x/gjoD+M1vtBRBMoRzCz+nr5/hoE1RUzwdR6sK30PiSC0N
-         UKgyltXMeNnjYB8zeitgS/3/LFrhIXkoDINbmEfZtBL4SvulrJ4jZmymUYq0y+khpK5q
-         H0Xqr0TMWLZ/853vx/Z2BIy84xuxgKHy+s+RKgYKNiQnj1Yk8XOnpcZUREm2FZev0Vns
-         Ex34fuxZ7RZBIM/sWha4ANvIYjrhV9aubPIfpZQQeEu1rcWjUVVCaY8Scvt9JYx6O+1p
-         Ltyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761910037; x=1762514837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwf871RDbtgle/X+gHRRa1kmehrfWm8Nitz2OZjIhxk=;
-        b=sbs0EgAGK8GdeP3G4j0Q+dfCyQWcb7HbdPa4kCKEvZGFv9s7rrVDyZ+IinA3xH9Fwq
-         wWmcjDcSCU19AXqu+n4HYybM2pkxCYiCxtQFRhi5hMc97z52VyddD/yVPKqXrE7iUvOQ
-         Jn2J433HQtKszXUjAW/8dpyNmR0GzyNsPdeeQQN0IzuPSRytk7GOstxyXsiBnGTFL9HV
-         OM1z6tHc6ykOCbCAckg+MrtaDphpp0QoAufQdK2u1/2ioTNn+dLQGsNQBVUPgCRFIVac
-         5W0SSM9kmJBf6fMLE+fdcJRyPAstBGY3DjYPwFM/qVKPMiEoYKLgK7oxnKTJRglPpKKG
-         9W8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7ipnwrR2qb8cXFHJHOUCO3LnXNasEkt62IuS7iiMrU8jahvHetNPnn8Y1C1I1ME510tNRb3msq8pcFfzRZLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypA+K/Hx8bl0OwdtP1sHVpseLTcRjelqPY+4HmXk5znk+3gIHt
-	CzuBxNgrFCSLWxqqDxGady/zogJyYYLrLauqKmk4yblkAHtItpfwGlacDT/qXcYuuOs=
-X-Gm-Gg: ASbGncvmGRDyuwsrPIf9dED7CfZz02QArc0/r/G+LbmQKV3q9wiqSY3JcuWCgJBOdGD
-	/0bHUGNlxz+UoXaHwV67EBZA4QJVefKqm2nO9DGnT8BROU4CgikVuMYLfh4Tou+otO2ZVZIhoHI
-	XmxvDTanAFvhm0kl1TSuKRUztgSAliGpjS6mreEzUjJqpTugkG2Izx/t750sXEYjUxb2c4QDkwR
-	VRn1kUZy4RkGUMj45eG5cLOYc1/Jm7eaScOrnVAeNRIJo2nln2T5eBXpk7am2jtha2IZitwMQjB
-	ZOdRHSpE0S5dQUmcxZsWqbGS2+DLobXmXCUoGbkEs4Uo2oFUJls4/8Xtc14r7ga83t1jv6GuXcM
-	HAKWE7JQwrKFSore27NHwURhnHmMVxhJbGeDNvYuBLSWXY/PyfPr7ErwYkn7JrzI4XGPd1kxr8Y
-	fEYyxZTw==
-X-Google-Smtp-Source: AGHT+IHOCxnrV9vNtIsoHM6missOnF5vwOTnrAGX8+16mZQ7e1sifCeCAgu5UUuGQnX7eDw9qPPn1A==
-X-Received: by 2002:a05:600c:5387:b0:46e:1b89:77f1 with SMTP id 5b1f17b1804b1-477307c23d9mr27753125e9.9.1761910035750;
-        Fri, 31 Oct 2025 04:27:15 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47728a96897sm90006865e9.11.2025.10.31.04.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:27:15 -0700 (PDT)
-Date: Fri, 31 Oct 2025 14:27:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, sparclinux@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Christoph Lameter <cl@linux.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Finn Thain <fthain@linux-m68k.org>, Tejun Heo <tj@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] sparc: time: Use pointer from memcpy() call for
- assignment in setup_sparc64_timer()
-Message-ID: <aQSdD5RFHvzJOlak@stanley.mountain>
-References: <2fa899eb-60b6-4637-9035-aeff78e261fa@web.de>
- <CAMuHMdX-uKt3-Lb2NaxmONEqWdtFgTOqXEo1nOfGq-R8ysHfcQ@mail.gmail.com>
- <33199802-d83d-48e8-9032-f1c4c61cfee7@web.de>
- <CAMuHMdXL+YXxwAM+HkawzTMxL2ez5O4bQ-j-LCCXTjz=NoLOKQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SY5eRufJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761910933; x=1762515733; i=markus.elfring@web.de;
+	bh=LIuwmjED+t2z+KDKUv8Eh5krBiiaen7sVq2Zq/jdSwU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SY5eRufJ7Pb0ZtlEyF6l8rSXaJvF2Ne6ES8h0gJmfkUMt+pbqcQLoqw3xloaM5KI
+	 m+GpSi1YsKtlkrHmiyx0wAwVvcP/VPhxzSkMV6dEW2DSWwl/QwcTZHHXc7krdb6SO
+	 v7y2x9pZ9mw+dkWrEJwQvM1e+qGdtAaP2Vkl4SVqLfvonUYjUXF33oZQq41RsKxM7
+	 ojxvVeYzYQsJa2dwIm1w0AieSfx2WjATDHu/IY/7KHt6TMOg6NfmiRqrsjtbd1O2h
+	 BOq6at3l36U7/FrPHr2TM0X8yzRo/d9iDTQk0zu+nONMyjcU1Lr1nC7TN3A7BK05z
+	 oIts+fWCBr027Cu6RA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.206]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbHE-1vxAta3M9q-00auAZ; Fri, 31
+ Oct 2025 12:42:12 +0100
+Message-ID: <093033d3-0ea3-49a0-83e8-621fc4fe1d24@web.de>
+Date: Fri, 31 Oct 2025 12:42:09 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXL+YXxwAM+HkawzTMxL2ez5O4bQ-j-LCCXTjz=NoLOKQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+ Chas Williams <3chas3@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <David.Woodhouse@intel.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Miaoqian Lin <linmq006@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] atm: solos-pci: Use pointer from memcpy() call for assignment
+ in fpga_tx()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YuRQqTE/gUfjHYEOzXOz5Zch2p9YXCmHybB97ONwl/osGzDq+Qm
+ SY4ZAsWssp4sOpNIhyPtwSAWzXcmEQCgd4SVFzLShCNJQEJwuiEpQxUcfmEP/6etaTQnYRX
+ duC1AyDt1NEbnEPaf4cG2mNVB9wu94vXUlHA17OLM6HuiinAioEOwIRHm7+2gmStXbro+AE
+ ZvSBeK4q8i25ezy41UiNg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yOe7G9YCKVM=;4SxOJKoifK+RClfI8uVCLgYoEWw
+ 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
 
-On Fri, Oct 31, 2025 at 11:08:39AM +0100, Geert Uytterhoeven wrote:
-> 
-> The above function could be shortened by writing
-> 
->     (sevt = memcpy(this_cpu_ptr(&sparc64_events), &sparc64_clockevent,
-> sizeof(*sevt)))->cpumask = cpumask_of(smp_processor_id());
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 31 Oct 2025 12:30:38 +0100
 
-Heh.
+A pointer was assigned to a variable. The same pointer was used for
+the destination parameter of a memcpy() call.
+This function is documented in the way that the same value is returned.
+Thus convert two separate statements into a direct variable assignment for
+the return value from a memory copy action.
 
-regards,
-dan carpenter
+The source code was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/atm/solos-pci.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index d3c30a28c410..dc4aa803f3d6 100644
+=2D-- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -1087,10 +1087,11 @@ static uint32_t fpga_tx(struct solos_card *card)
+ 				oldskb =3D skb; /* We're done with this skb already */
+ 			} else if (skb && card->using_dma) {
+ 				unsigned char *data =3D skb->data;
+-				if ((unsigned long)data & card->dma_alignment) {
+-					data =3D card->dma_bounce + (BUF_SIZE * port);
+-					memcpy(data, skb->data, skb->len);
+-				}
++
++				if ((unsigned long)data & card->dma_alignment)
++					data =3D memcpy(card->dma_bounce + (BUF_SIZE * port),
++						      skb->data, skb->len);
++
+ 				SKB_CB(skb)->dma_addr =3D dma_map_single(&card->dev->dev, data,
+ 								       skb->len, DMA_TO_DEVICE);
+ 				card->tx_skb[port] =3D skb;
+=2D-=20
+2.51.1
 
