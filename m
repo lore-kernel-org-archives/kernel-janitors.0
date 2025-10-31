@@ -1,41 +1,86 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F75C143C61;
-	Fri, 31 Oct 2025 15:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3402D47E6
+	for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 15:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761923241; cv=none; b=qKpttGjYYFA+MZIGdv0i1RWx8s7ngHO8uT+BWuwHfwbF1a75M6VW3qU/1jaXLwBqoA70Xr07OGLLxZBSRk71InpZcpnuTh9V1vNsANWlnpFEu7sVAPqVYq5Xlk8GQhnqehwfXGt+ijFKw4FlqkGG9rle0HWVaYGTVv6O9jp9p6s=
+	t=1761924619; cv=none; b=GSB5rsVWWUtNtNaiu/mlU4EjS0EfMcn2jsJa0LTeJ+BXvPUX7mLzg2VbUy7Cooejpc+4V7l4/CpVJ3j8gO5g3cPFjhQ5BJs+Fw1R03qhlDunn3PXxvtWttdTkmilM2ay6TUvFJ0kf0TmkrsMcocisa0wdl0G6coUcanMmRQT3kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761923241; c=relaxed/simple;
-	bh=CAYicgWbeTqs9mxQhGa10rlScGyd0CZAWlkZ/jG6y2g=;
+	s=arc-20240116; t=1761924619; c=relaxed/simple;
+	bh=/eiVLLLAUQkmCi47mmct2VhL24BCqlSBWKy9afC3gT8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qlx5OVIpXgFlVbY4Nt4iD3hLIelmk1WI6qtSC0H8h6qc0Va1AUTGlePHXq8dKmyHeBZ2lWoaOkPvLymyJgh7PXT3swCUyfRTxmWVV6VpsSvWn/drcmnMD5YPhMjQIh8W1yHFIbf0fJmt6M4Nm1ego2Q4J7qY9hc5PcAYVEfxiQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Gw72x7eY; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=eNc1hgucKaGGv53WzlFBeTOWG/PVzGXXdmt18FykEEGuWbLhImq1d85BicLydQUyuqHjpx0ePRAAVh7iZYjXv8ol2Eksu2bdeYXK8dzuvTdzrFnmki0sj/HlJ5NQxPUo58TSE5wqncyPo2VB/DG25DD6mZF5Pra4RnQck6KlsiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k83hUwoE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GrD41hJ8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Gw72x7eY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761923223; x=1762528023; i=markus.elfring@web.de;
-	bh=CAYicgWbeTqs9mxQhGa10rlScGyd0CZAWlkZ/jG6y2g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Gw72x7eYULvdndwBCdPyVOUi3DoaZwouFm4aIl7JPRrr6hRcm6Zoi9mAzExquanS
-	 nnTQ6dSdCoIjXls9TU9TRRxb0cN1FlwlrzYPAMq4iWSbg2Y3Yhwvu9sAxQAw/5ksD
-	 pu9zQwHvuNtgMR2rt+NeoHcactcVhhcwkdqykIIUdGFpnv+V6wd+h76ub2B71s/fh
-	 w/AE1VIy8zNzau988iBkiURurJtC8lE/0w9ScpftVRcvuKXtZAvOTbDJASKAd+JLl
-	 1fIlKHf4aiKz/L7dawiROSsVBUFA2RcqOxVj03VH3BejLCQbM1a2aN3ByS4rx14v2
-	 rONGd0kwCdwMPnw0YQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.206]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbkSC-1vpZe43L5S-00km8h; Fri, 31
- Oct 2025 16:07:02 +0100
-Message-ID: <06be737a-365d-4a2e-89dd-72fe415bc7d5@web.de>
-Date: Fri, 31 Oct 2025 16:06:59 +0100
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k83hUwoE";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GrD41hJ8"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V8SjnE873191
+	for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 15:30:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aubjBpZ4Wxz6WDYi3ML1S8Br7mpPFHUcMeGT2IdqfJM=; b=k83hUwoE2hZlFlIS
+	oITN13ABbcaks5UErqK2TdL64wOAw1HGbfYOj/mxk2jhaplLkPD2f69cpA9lyyel
+	BnVXZ+fbCtyn4IFA+wgHiQQZa1tH2bdci/akd+TnDbyRyk9D0HJ9c+SzO3i749lc
+	eXgO8Huj3AgL4EodPMD6YTGbUMLo+L0DaXzgDEHsMyh/LYPEtLZ8LZPG61cIjKl0
+	mr7F7tMjPXtCNC2rjoxsZhlGEEbfK+OoD0ljgZ8THSLhfBksXW4OjtqcgtUO9TEi
+	IAJHMkK8PtE/PCDUkNVtaOz1TYjdfONAX2g95aNsZ4OMto2VGTy4eVUlSGwa/Yuh
+	k2qzZg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4fqn2kvt-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 15:30:17 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-78108268ea3so3057718b3a.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 31 Oct 2025 08:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761924616; x=1762529416; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aubjBpZ4Wxz6WDYi3ML1S8Br7mpPFHUcMeGT2IdqfJM=;
+        b=GrD41hJ8jzZMBgyWhYuwHmU+zRJjw6Bv6OJ+Ic6PoRabb9lurrLI/KCEzidw+CXCg6
+         bh/CjS5r9OVtoy6mAwvS0+4CIShLVHROG/c+aWIWhndPL7uQwNsmKrqUXmaS44t9Jbe/
+         M4Uq+TjCRR9n/5Kzb6k+tMOrsAtoXHsVDT0zg0ylj2CbDfve0mBVAIDPfo4AwaCfp7RV
+         jjlVhn85ZMkFHoM7Yrj4Ygx6E5oAdguWhHE6PiB6jIpGbDz1kWXtG2pHo4qrEzbGgnkp
+         rY6Kc1xZ2O7ZnKaoZ/THro6x9f1+dT3baaLzg5ZBZcxkb/nZqLMNh50e/SdcOZrqLHSj
+         0xMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761924616; x=1762529416;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aubjBpZ4Wxz6WDYi3ML1S8Br7mpPFHUcMeGT2IdqfJM=;
+        b=T8mS6PZlfec0Uh6nY8FMvhZkw+ewN5l5ScHRH//gYcTs43JXuegvwZJw8HvjPbPm1M
+         ht8VTVP3L8ExnWyrdP6BD1fCY3zKlgyWxMxEjtIyBBg5/ZqO+fkzgXVAa1tbNtP0Fcad
+         lwuY+kUClbgME5WlCoP8KBReriVz99furrU5Vio6boANCw5zweuB8Ima4hwVyzl7lg/T
+         rzmwro9rJnma+nWKAyzBsqlge1qtDFTvMFb69v3Eh7e49QFxI6x7pn+NXO0RhtuRDJVB
+         Ctijkj0J7KOZtb9c2rYQhAZSsGMb+2sBI8YeJovEdPi9P+JuV/JUB6xfKV3+hvmPT8dK
+         nuTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAWcQ4VRJteTfygzq/uyWsRlE12P0CZk6CkD0XqgW18mAScQ7GRCTjxv8i8CVKNBi7/D8Y2AUEsk2XORSGO9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5MJ04rAEsIsDBxtyHX9W/4IKBooyYdt8FmdXVPabsT14mcqUP
+	hR2bHwLUTjmSldgTPZHlXKqnyiBq5jAt8kcYdMe/CKByecpmJGKITVKBc79bmAG1pT5CbNCeGLC
+	tEfpXRXEd9lGoTp3+v3S1CqKJIyQg4l/KmezRaBqdIlmmPIf+9JskauIu+lz+V9wyFD99po8=
+X-Gm-Gg: ASbGncuDtCxYobnJoSTIcP/hAIeQ8GjvHC+X6LO2mgfR15Ue0pmt7f5FjlNYUnkoGp7
+	mNoUiAqFzWZuQ/6d93+Ba60O39D6Fxqnfr7YvDYC9/WQg2RbT/KO0+AU8DYdq0AqJxwiYSKu0Q2
+	zJL5tmuvijiRG2unGfxj9da/zQ94Ihw/U306/JgJKv63SZUsy7zTEkpkHFpEz1hHPObRX/f7nVU
+	/fVec76laAUtMkFt44BdXPKThT9ke6Zm3R2zPxXQpIS5q6yKKuqJAwlLxt8gAB48dXgOdKskwG4
+	//W8641wCBvzm0y3QJvo4WhO/ET6K8cib850ocayPEHmGmgvXh78dyLBWXv3U+nPb/RbobvTf7t
+	l3qA6lmhQoatU8cXMnRekYlER+lRg1S5kuf/vqPrmfP/L3KWU7Ncv
+X-Received: by 2002:a05:6a21:3998:b0:345:3eae:c6a3 with SMTP id adf61e73a8af0-3477c3d4aa1mr11213332637.18.1761924616195;
+        Fri, 31 Oct 2025 08:30:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGI0yjTWVj8oWnooNwsC1xD39utAJSo9GaWuze9TCeSTyfY65uj7xmGoPU885hFwiAxRoWjtw==
+X-Received: by 2002:a05:6a21:3998:b0:345:3eae:c6a3 with SMTP id adf61e73a8af0-3477c3d4aa1mr11213279637.18.1761924615551;
+        Fri, 31 Oct 2025 08:30:15 -0700 (PDT)
+Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b9483c03f43sm1961613a12.24.2025.10.31.08.30.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 08:30:14 -0700 (PDT)
+Message-ID: <ce252b99-c011-428f-a89a-5792f14c2eaa@oss.qualcomm.com>
+Date: Fri, 31 Oct 2025 09:30:13 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,116 +88,84 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: clk: keystone: sci-clk: use devm_kmemdup_array() once more in
- ti_sci_scan_clocks_from_fw()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>,
- Raag Jadav <raag.jadav@intel.com>, Santosh Shilimkar <ssantosh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Tero Kristo <kristo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jonathan Corbet <corbet@lwn.net>
-References: <a8e94921-a426-4db8-aed6-b6e17e88b8e3@web.de>
- <aQTLHlv2_V9Pgjk3@smile.fi.intel.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aQTLHlv2_V9Pgjk3@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CeAyZu8pRQKCAJj0rELzvujy0zKPWs4AEHFKlNsaBrD/pZYoBQa
- rvmwqxG9sqBEhSlB9eBu9cj+ufCCjG8nlJddf7y3uK37B4e1EYrsZhKsltcVfOkFz/BikXP
- wQI7erbjQqvQ4m0HzowlVi06Gjqt9/o9zN4osvozxY1keGYWzc2zkVydtriUYrdsJLrvzXJ
- B4zJNkkAlxtOOPPkAdoMg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eyAYh83QM8c=;w9/KmFsiwH0Q6BQGJc7x6Ff1296
- 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
- wz2pbl7zYB/ODuYTc=
+Subject: Re: [PATCH] accel/qaic: Use pointer from memcpy() call for assignment
+ in copy_partial_exec_reqs()
+To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org,
+        Carl Vanderlip <carl.vanderlip@oss.qualcomm.com>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        Miaoqian Lin <linmq006@gmail.com>
+References: <d154d3c4-dd3e-488d-862f-5361867a70f1@web.de>
+Content-Language: en-US
+From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+In-Reply-To: <d154d3c4-dd3e-488d-862f-5361867a70f1@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=RL2+3oi+ c=1 sm=1 tr=0 ts=6904d609 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=FP58Ms26AAAA:8 a=i7YI89PhWf-mWEaAo1gA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: vDj8iRTKD4CjXgJHY39y5w3PzkpUu7XF
+X-Proofpoint-GUID: vDj8iRTKD4CjXgJHY39y5w3PzkpUu7XF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDEzOCBTYWx0ZWRfXwU/St36fldTq
+ 5BW2vYMl4TEQ3I9x90JNMHxJ5/2o19enC/ZUNuoaxHyKi5egTHwmaRP2qzwCmRsNSF07deMwXFz
+ MnXRjlhn9zIlj3KJ3FQDp/wwdu6xLaM8sx3qgVPmXZzPHEyjp/Bx4GpoQNwS6kxl1rlyCkFraAb
+ edLbCOmvOBaUvU69jVQKEAz8PBIoRdhVDWaqc7wpg+YG+6uK247dles29tvMMzzRqbKVIeHADr6
+ H5zLQ5Yqv8MZ67WlXurhxo30rShbMqn242gwLuyWCgfeo2L6P8hrMzPN4nP913Bx8zMJq+SAIPQ
+ 9tHeJzQiefobYAqmZA+AjNL6EY116T+GvNFRJ8aeDrgQpcLd6j6W8cISeKgf+BXJ+F9YpqMZ/LC
+ KitX/bY2iAGgAv8iRc7yTAXC87bM2Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_05,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ phishscore=0 bulkscore=0 adultscore=0 spamscore=0 clxscore=1011
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510310138
 
->> Fixes: 3c13933c60338ce6fb2369bd0e93f91e52ddc17d ("clk: keystone: sci-cl=
-k: add support for dynamically probing clocks")
->=20
-> Wrong format of Fixes tag, please keep the SHA at bare minumum.
+On 10/31/2025 4:34 AM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 31 Oct 2025 11:26:33 +0100
+> 
+> A pointer was assigned to a variable. The same pointer was used for
+> the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert two separate statements into a direct variable assignment for
+> the return value from a memory copy action.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-I got an other impression.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.18-rc3#n145
+This does not match the address this patch was received from, therefore 
+DCO does not appear to be satisfied.  I cannot accept this.
 
-Would you find information from the commit 6356f18f09dc0781650c4f128ea4874=
-5fa48c415
-("Align git commit ID abbreviation guidelines and checks") interesting als=
-o
-for this technical detail?
+> ---
+>   drivers/accel/qaic/qaic_data.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
+> index fa723a2bdfa9..c1b315d1689c 100644
+> --- a/drivers/accel/qaic/qaic_data.c
+> +++ b/drivers/accel/qaic/qaic_data.c
+> @@ -1171,8 +1171,8 @@ static inline int copy_partial_exec_reqs(struct qaic_device *qdev, struct bo_sli
+>   	 * Copy over the last entry. Here we need to adjust len to the left over
+>   	 * size, and set src and dst to the entry it is copied to.
+>   	 */
+> -	last_req = fifo_at(dbc->req_q_base, (tail + first_n) % dbc->nelem);
+> -	memcpy(last_req, reqs + slice->nents - 1, sizeof(*reqs));
+> +	last_req = memcpy(fifo_at(dbc->req_q_base, (tail + first_n) % dbc->nelem),
+> +			  reqs + slice->nents - 1, sizeof(*reqs));
 
-Regards,
-Markus
+The new version reads worse to me, so I do not consider this to be an 
+improvement.  This is not a critical path, so I doubt any performance 
+increase that may exist outweighs the impact to readability.
+
+-Jeff
+
