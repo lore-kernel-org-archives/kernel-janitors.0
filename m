@@ -1,113 +1,150 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117AE2C21DD;
-	Fri, 31 Oct 2025 12:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3127C1E834B;
+	Fri, 31 Oct 2025 12:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913957; cv=none; b=LSvxKelJsdojdFoq9BXNAVNtoMIc1ZTF3wPMCdEhyxlVGh5Rt0pqI3lY1L2YfDmADGcUXivDJkvXfNTde8lZ7slwP3GEI28m/d21MQyP6Bl3KPeJKV8TtesZBcwMKYruI0hcKBzzlscUyqFRBoq+FPCdqa6nF5oYn4vx4FUXZpo=
+	t=1761915139; cv=none; b=cjuEyqXdYRRinjo0fnixjC/0VZ4f8mWijReYbRs86Vt9amGjrXLHYP5YMiJC993g9G4DhJqW0x1CvqDr/v3xTFc3V7me4MwvEVLzDJ2zs7Zkjh6KtTlHxZ38GP8i47micMc5C6YYJiYfTyncTgnARINkLldRViXRm1r+DFalKo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913957; c=relaxed/simple;
-	bh=g+6ULz8iyoSYggdN5bJWXhfFYL+vrPewszkEUW0byeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EI97s1IvRHG02/b5qD1nezEJigIRETknq8NtgVEMVFX8SeRq1/tc2I3ZejsvkB18IEynISS9unEbQmFngsF/ukCoYOB+gEKxPevsL7alt4kHurSXFUG33LYkUC4r8wSclmD8wqUp9z/Uxovz4p0A+jn99dlw97HLxmZFyXSDD2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Bvcli5Cj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1761915139; c=relaxed/simple;
+	bh=UhgY56L2Y48rGqsa8FjhgUlMRK793nBioVqcnGX0uUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoOsUNtUhAR6UvuiCdJJdOs+aHDuD1b213PmSO650E4pdxXjjROlAWT3z0lDZk44toRD64LAA5sQzsIeWmlWKSbnp9I6goUROjJAeR1spHY1FquHNrD9lJx9e64ABHdk6d3AW9nRjNjYnXnmpocMyHlrYm5dBDPjpo5w1LQjemA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BHfCZb1E; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Bvcli5Cj"
-Received: from [100.79.97.123] (unknown [4.194.122.136])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E01D4201DAE8;
-	Fri, 31 Oct 2025 05:32:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E01D4201DAE8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761913953;
-	bh=XuvWkiTgt0uWpq/KzS6KtJXZLzNVJb+11t6BDSOOSD4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bvcli5CjkfOEG2w50WZHzxM/rxzevPoDTIIeYFUaGCGHpktbYlXhqwManTWgb43r0
-	 /WOR66OzlQx+WkTRDiaVPHfeMMqJLq2xDvEOtcuwKvY0QNO6g6cXSLLr5lb+jiKLSR
-	 HSBpIVFcxkzyffidZNJ9vfQ30J3o4aVfM23so6zM=
-Message-ID: <33545bb5-6307-413c-b692-e7bebce58edb@linux.microsoft.com>
-Date: Fri, 31 Oct 2025 18:02:22 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BHfCZb1E"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761915138; x=1793451138;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UhgY56L2Y48rGqsa8FjhgUlMRK793nBioVqcnGX0uUc=;
+  b=BHfCZb1EZ3tBoITxYE9VKlPoD8OBGdWJtjX9dgDc8F6vnOotR0p9qiSj
+   R+gjWUG4NGU0QqNeX4GUGP+QxeqLNUoEKI8MuNF3IARKNLapFLbQ678aP
+   JGuoGEO9tTfHOaa+x7Nc+xtIJsL6SX/X7QaLh3IheBuYJR1rREt+3M5PQ
+   5RV+Js4PGNEl15BNpxOuq9YmFVJ1y7LSJgsG/urpJhM2PB9Xwf+N+fDXb
+   GjPBHNBYFcW2xFpx7UcVwsvftiYkxSiWlPKPHNaLTH194URwy1vd/ngDs
+   QJz3X8F+K40FzG9HE8+U4JpdvM+SedAkq3EO+JDiYUBlIjR9kT9bLePKx
+   w==;
+X-CSE-ConnectionGUID: X6ldc/rLT66o6nfWyM20DA==
+X-CSE-MsgGUID: pY4+gmZQT1OVaxxcu8ot1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="66688128"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="66688128"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:17 -0700
+X-CSE-ConnectionGUID: fotXEm+rSS+AXCY654oD1A==
+X-CSE-MsgGUID: UZoZcDi8SNi3Kv7d80kCHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="209793862"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 31 Oct 2025 05:52:15 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEobv-000N7U-1K;
+	Fri, 31 Oct 2025 12:52:08 +0000
+Date: Fri, 31 Oct 2025 20:51:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-alpha@vger.kernel.org,
+	Chen Gang <gang.chen@asianux.com>, Matt Turner <mattst88@gmail.com>,
+	Richard Henderson <richard.henderson@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] alpha: Use pointers from memcpy() calls for assignments
+ in two functions
+Message-ID: <202510312008.rLcaBIfL-lkp@intel.com>
+References: <1605dd43-5e95-46eb-a0c6-78ff8b4d51b3@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/hyperv: Use pointer from memcpy() call for assignment
- in hv_crash_setup_trampdata()
-To: Markus Elfring <Markus.Elfring@web.de>, linux-hyperv@vger.kernel.org,
- x86@kernel.org, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Dexuan Cui <decui@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
- Long Li <longli@microsoft.com>, Mukesh Rathor <mrathor@linux.microsoft.com>,
- Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Miaoqian Lin <linmq006@gmail.com>
-References: <d209991b-5aee-4222-aec3-cb662ccb7433@web.de>
- <cea9d987-0231-4131-82ac-9ba8c852f963@linux.microsoft.com>
- <17da2cdc-7fdd-43d1-91d5-36425615588a@web.de>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <17da2cdc-7fdd-43d1-91d5-36425615588a@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1605dd43-5e95-46eb-a0c6-78ff8b4d51b3@web.de>
+
+Hi Markus,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on mattst88-alpha/for-linus v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/alpha-Use-pointers-from-memcpy-calls-for-assignments-in-two-functions/20251031-003938
+base:   linus/master
+patch link:    https://lore.kernel.org/r/1605dd43-5e95-46eb-a0c6-78ff8b4d51b3%40web.de
+patch subject: [PATCH] alpha: Use pointers from memcpy() calls for assignments in two functions
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251031/202510312008.rLcaBIfL-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312008.rLcaBIfL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510312008.rLcaBIfL-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   arch/alpha/kernel/smp.c: In function 'send_secondary_console_msg':
+>> arch/alpha/kernel/smp.c:201:24: warning: variable 'cp1' set but not used [-Wunused-but-set-variable]
+     201 |         register char *cp1, *cp2;
+         |                        ^~~
+   arch/alpha/kernel/smp.c: In function 'recv_secondary_console_msg':
+   arch/alpha/kernel/smp.c:237:13: warning: variable 'mycpu' set but not used [-Wunused-but-set-variable]
+     237 |         int mycpu, i, cnt;
+         |             ^~~~~
 
 
+vim +/cp1 +201 arch/alpha/kernel/smp.c
 
-On 10/31/2025 3:14 PM, Markus Elfring wrote:
-> …>> +++ b/arch/x86/hyperv/hv_crash.c
->>> @@ -464,9 +464,7 @@ static int hv_crash_setup_trampdata(u64 trampoline_va)
->>>            return -1;
->>>        }
->>>    -    dest = (void *)trampoline_va;
->>> -    memcpy(dest, &hv_crash_asm32, size);
->>> -
->>> +    dest = memcpy((void *)trampoline_va, &hv_crash_asm32, size);
->>>        dest += size;
->>>        dest = (void *)round_up((ulong)dest, 16);
->>>        tramp = (struct hv_crash_tramp_data *)dest;
->>
->>
->> I tried running spatch Coccinelle checks on this file, but could not get it to flag this improvement.
-> 
-> The proposed source code transformation is not supported by a coccicheck script so far.
-> 
-> 
->> Do you mind sharing more details on the issue reproduction please.
-> 
-> Would you like to take another look at corresponding development discussions?
-> 
-> Example:
-> [RFC] Increasing usage of direct pointer assignments from memcpy() calls with SmPL?
-> https://lore.kernel.org/cocci/ddc8654a-9505-451f-87ad-075bfa646381@web.de/
-> https://sympa.inria.fr/sympa/arc/cocci/2025-10/msg00049.html
-> 
-> 
->> I am OK with this change,
-> 
-> Thanks for a bit of positive feedback.
-> 
-> 
->> though it may cost code readability a little bit.
-> 
-> Would you complain about other variable assignments in such a direction?
-> 
-> Regards,
-> Markus
+^1da177e4c3f415 Linus Torvalds 2005-04-16  192  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  193  /*
+^1da177e4c3f415 Linus Torvalds 2005-04-16  194   * Send a message to a secondary's console.  "START" is one such
+^1da177e4c3f415 Linus Torvalds 2005-04-16  195   * interesting message.  ;-)
+^1da177e4c3f415 Linus Torvalds 2005-04-16  196   */
+ab39c77c3246f84 Paul Gortmaker 2013-06-17  197  static void
+^1da177e4c3f415 Linus Torvalds 2005-04-16  198  send_secondary_console_msg(char *str, int cpuid)
+^1da177e4c3f415 Linus Torvalds 2005-04-16  199  {
+^1da177e4c3f415 Linus Torvalds 2005-04-16  200  	struct percpu_struct *cpu;
+^1da177e4c3f415 Linus Torvalds 2005-04-16 @201  	register char *cp1, *cp2;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  202  	unsigned long cpumask;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  203  	size_t len;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  204  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  205  	cpu = (struct percpu_struct *)
+^1da177e4c3f415 Linus Torvalds 2005-04-16  206  		((char*)hwrpb
+^1da177e4c3f415 Linus Torvalds 2005-04-16  207  		 + hwrpb->processor_offset
+^1da177e4c3f415 Linus Torvalds 2005-04-16  208  		 + cpuid * hwrpb->processor_size);
+^1da177e4c3f415 Linus Torvalds 2005-04-16  209  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  210  	cpumask = (1UL << cpuid);
+^1da177e4c3f415 Linus Torvalds 2005-04-16  211  	if (wait_for_txrdy(cpumask))
+^1da177e4c3f415 Linus Torvalds 2005-04-16  212  		goto timeout;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  213  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  214  	cp2 = str;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  215  	len = strlen(cp2);
+^1da177e4c3f415 Linus Torvalds 2005-04-16  216  	*(unsigned int *)&cpu->ipc_buffer[0] = len;
+c37a29a96dcfc93 Markus Elfring 2025-10-30  217  	cp1 = memcpy(&cpu->ipc_buffer[1], cp2, len);
+^1da177e4c3f415 Linus Torvalds 2005-04-16  218  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  219  	/* atomic test and set */
+^1da177e4c3f415 Linus Torvalds 2005-04-16  220  	wmb();
+^1da177e4c3f415 Linus Torvalds 2005-04-16  221  	set_bit(cpuid, &hwrpb->rxrdy);
+^1da177e4c3f415 Linus Torvalds 2005-04-16  222  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  223  	if (wait_for_txrdy(cpumask))
+^1da177e4c3f415 Linus Torvalds 2005-04-16  224  		goto timeout;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  225  	return;
+^1da177e4c3f415 Linus Torvalds 2005-04-16  226  
+^1da177e4c3f415 Linus Torvalds 2005-04-16  227   timeout:
+^1da177e4c3f415 Linus Torvalds 2005-04-16  228  	printk("Processor %x not ready\n", cpuid);
+^1da177e4c3f415 Linus Torvalds 2005-04-16  229  }
+^1da177e4c3f415 Linus Torvalds 2005-04-16  230  
 
-The only thing which concerns readability IMO is that it is based on the 
-assumption that the person reading the code is aware of the return value 
-of memcpy. Now, it is debatable if that is something which can be 
-considered trivial. I don't have a strong opinion there, but would 
-prefer it in its current form.
-
-Also, we could have optimized it further by writing it as below, but we 
-are not doing that for a reason as we want to keep the code simpler to 
-read and understand. The same may apply here as well.
-
-dest = memcpy((void *)trampoline_va, &hv_crash_asm32, size) + size;
-
-Regards,
-Naman
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
