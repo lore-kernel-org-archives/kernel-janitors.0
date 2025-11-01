@@ -1,123 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822815D1;
-	Sat,  1 Nov 2025 15:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686B8274B56
+	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 18:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762009343; cv=none; b=GZdCGZgQhbEXzoX08tcl+uLT3u7fK5jvQCXk2F+GB287m9xGQQu6ytgnJavyU/37wGpFG+k/PB32sIy+gbvSxBAQX1YMsBVbn5Wfs3a2Zy4sErsQ46Ok+HoffRYKZR54OW+k55USAtjGUt8t9ZIKHK5bDYO7WuOvFGvZgsaUMJs=
+	t=1762022142; cv=none; b=qt3KJEVVBsXouBUHzl0pfN57fB1C7V1i8BFLkAA5uDyBQ5E6dndD7sANf9j3PPp+TDZ2/UrPB3bb6oQuFqyOTI2x7E2HXiHfjLwC8Zs++LQNfIDeufwiSSyXUjBSEROIL1WcskGJwiCu3FfTlLDiVp0wMqRM8v5XcCNM9h4LIgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762009343; c=relaxed/simple;
-	bh=XjqkzxujCssc2zk4tDrvih0oWnYgkiq9ucEXAO2KA3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OE7srUNTmXDu42iT6hasQLkeBP1gPCdF2/PX695mSv78IhUBB3okCQUlgqcVP5+WwgLkOdjVXAljMHZmWEgb8djwFQ3uqZLkme5HPcPoOe/jBqQm3E649jt5tCAn+GkXdArBOVqzxKWZSOcWvTK2Z2rpS2FNSkFmUA1qXMwUQ8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXi9MXYv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762022142; c=relaxed/simple;
+	bh=4sUqxa80eDuptdCLV+9yUlpRXQVSwLs4Gf5XQWScT+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S+mxWBqQuSMjgJFjKmKEZcUFZvc9jHuOd2KJBsNzlkrsBjZ7joeDA1imlLwnLVx3hyIYWibQafFM+qp6qsorvbsPpe0B/RzdksaY06zrdZ2eHZa8l+SvJ7BptxYYuchnZadfFrQ4VdD0Ct5BY1a9WPk5vgX0Iu9lWZKXWPkuADQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCW4y7dR; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXi9MXYv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA099C4CEF1;
-	Sat,  1 Nov 2025 15:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762009342;
-	bh=XjqkzxujCssc2zk4tDrvih0oWnYgkiq9ucEXAO2KA3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JXi9MXYvV+9UQPohIrfx+2q5bqfUaBY+fjcqd0597u+aQfZgIt7ewlwe23GVoaFKz
-	 IRbRec6awKlAUU1agKgFUnIhQGcP5VY9Y1vhfAXLlpBZFLmopVTp088U/plN7nT9QM
-	 mbt1AS9GiF6XJFGgTU3u7QTqXo/BsOlewiTTQpKVhEZ+eWXrgS6UbWqls01WG8Gkia
-	 rN0/vPYtGRzEFCd/rtvreLmq7RhqMcIZFdjitrV8maMEAsOLK4dm5bYyskZNfSHRXR
-	 8g3Ch/eEC+SLeyrLC5OLCegha6x0mbTIt848BGiPrfc2WUbQz5iKB6kb5rt83loCxL
-	 bdpBjjB/xBwyg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, leitao@debian.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/2] configfs: Constify some fileds in struct
- config_item_type
-In-Reply-To: <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
-References: <UMPsw5UqjtBaIrv5LPKiow0sOdVevbuvSx39jhXV_gtjHReEeeqGpgijGJj5OoJjMJA3mDIeSyzR9lffgIOr6g==@protonmail.internalid>
- <cover.1761390472.git.christophe.jaillet@wanadoo.fr>
- <87sef2fa5x.fsf@t14s.mail-host-address-is-not-set>
- <AenlUrApTlCB19zk49DWpC_tbPKSEaDPmg7GhZfuqlDfQvbMuYTWFkgVfp85fisHGgilvaGZEy_is6qnad9KMA==@protonmail.internalid>
- <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
-Date: Sat, 01 Nov 2025 16:02:15 +0100
-Message-ID: <87ms5594p4.fsf@t14s.mail-host-address-is-not-set>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCW4y7dR"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47114a40161so37014585e9.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 11:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762022139; x=1762626939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lFcBnQWmGxUHkWuOHMhhl9sQofbkx4ng+ZfaT543MNM=;
+        b=WCW4y7dRv2fMFk5KQolOvjP45emeJn8LXvKQUkBbPyl2W882te1oSPRPpLnxC3qXqX
+         waU7vZ2g1Nx98CMpO72FHFDoVeY2GYOr47wUSXzSAr3ouhY1smGZhx2SJl47oWtKxFXD
+         /wCPLw5Lha9Ucs4OKFHJ44RJewakowUuVt/W+pkyObPjyd3XQquuPlzB3KmLu6fG0pqt
+         /eUfwrLtguJKDARBbewCVujxAnOBfAZEEZjqhEpRRtp2mkdlfqtuaheCYqm4UFtl8Mef
+         Sv6PollxLXtLTtITTl6cAqe9PyX/cOq69j47v9s6rCwWeaRfDbRj28Uv99uljRTkvLOC
+         QcGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762022139; x=1762626939;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lFcBnQWmGxUHkWuOHMhhl9sQofbkx4ng+ZfaT543MNM=;
+        b=XRp/RKWrt8auSsAKv9ZPdVH2o+A9sHEtMYnriI5Xvr4YpEDfbTqolzXCqQdzvTfHIg
+         ne1WJgl5NsODFKne+sgBai9I+zLw8l5alWGwXFnOR/stSl4b41xXtIxxh+6jCPNsOYVC
+         5tw5JpKKksJ3q1PVggGnG30VMHrgaFS12HcERYx9Q0L8yZlnRqE6gvGlZHfxBA3PaWGr
+         SLLcR9jExHfquBwmEjbEVB8E3cEp6zAY9PCpyB+GzzQEwNKjIhtcdsj9T3T7Z9AKG+Ha
+         Tt57NrxWRpPSUtuAlqZSXZ0BujO+dAA8IYPS433+tiC0YAU4Deo47kQEcyoaOYS/I9cp
+         DBOw==
+X-Gm-Message-State: AOJu0Yy47knQjkoOBYG9bH8tElnXUCZJkmdGWiHelHmvohOaxv920EuL
+	h7kvZhIy2Oltod3p8bLvXepyjbZIrfaLibCdu50EKwSvaeY/5tBVHfyg
+X-Gm-Gg: ASbGncunt0pU0YiSTBKZgv6WCj+fSvdJ8X1ekfRMxHL4toft/u4OSFD2LgepOvHYuuX
+	6LR41O9GWJqe/rQ2TiTP9usRSfFef82dn/OjMLnokCxx7Lrah0rYOWbSG16H8mjdT/3nvtEO6+y
+	sk00EkaghlaJesqvA8sJJApipr2M5KoEqJ/lWPiG4MYai+IHrDoYnrRD4Snk/WjNI6bwhxK2Tco
+	J6QV6gp4GgAtYDCMnLlK57+fHJOU166642xUtVSVSMujO2VHBrSkVPSkV9xleZiq/ANlPVxnGDT
+	R05izwA3zTZH68ZJrjwYw3+WVW498xn7HABuUs/jg9Tg2Z5bVF0r43OSdYP/9GGkUCaQbiNLWMN
+	9/Ud/MyZ5dNBv2s7ervACDlpsSPQTWfWs2Vkb7PSRRLWU+kxcxZ7iInZVhEd/d4Ras/2D/M6vey
+	9XAP27SNnOSQ==
+X-Google-Smtp-Source: AGHT+IEv2HySmX9ZH4mesehdWb7wgnujM5Ajti5lbRw0Mrtv6PqNuhJysmW3Q3uyqD2pSUVf7SrbXA==
+X-Received: by 2002:a05:600c:45d3:b0:475:dde5:d91b with SMTP id 5b1f17b1804b1-47730813642mr73186695e9.17.1762022138469;
+        Sat, 01 Nov 2025 11:35:38 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4773c4a812csm68881265e9.6.2025.11.01.11.35.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Nov 2025 11:35:38 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: David Yang <mmyangfl@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: dsa: yt921x: Fix spelling mistake "stucked" -> "stuck"
+Date: Sat,  1 Nov 2025 18:34:46 +0000
+Message-ID: <20251101183446.32134-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-"Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
+There is a spelling mistake in a dev_err message. Fix it.
 
-> Le 29/10/2025 =C3=A0 08:18, Andreas Hindborg a =C3=A9crit=C2=A0:
->> "Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
->>
->>> These 2 patches constify ct_item_ops and ct_group_ops in struct
->>> config_item_type.
->>>
->>> When/if they are applied, I'll send some patchess in each subsystem to
->>> constify the corresponding structures.
->>>
->>> This 2 steps approach is IMHO easier way to make these changes.
->>> This avoids long series and cover-letter/first patches sent to many
->>> maintainers and lists.
->>>
->>> However, if you prefer things to be done in the same serie, I can do
->>> that as well.
->>
->> Looks good to me. Please also include a patch to fix up the rust
->> bindings in the 2nd step:
->>
->> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
->> index 318a2f073d1c7..468c8c4170d5e 100644
->> --- a/rust/kernel/configfs.rs
->> +++ b/rust/kernel/configfs.rs
->> @@ -755,8 +755,8 @@ pub const fn new_with_child_ctor<const N: usize, Chi=
-ld>(
->>                   Self {
->>                       item_type: Opaque::new(bindings::config_item_type {
->>                           ct_owner: owner.as_ptr(),
->> -                        ct_group_ops: GroupOperationsVTable::<Data, Chi=
-ld>::vtable_ptr().cast_mut(),
->> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr().cast_mut(),
->> +                        ct_group_ops: GroupOperationsVTable::<Data, Chi=
-ld>::vtable_ptr(),
->> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr(),
->>                           ct_attrs: core::ptr::from_ref(attributes).cast=
-_mut().cast(),
->>                           ct_bin_attrs: core::ptr::null_mut(),
->>                       }),
->> @@ -773,7 +773,7 @@ pub const fn new<const N: usize>(
->>                       item_type: Opaque::new(bindings::config_item_type {
->>                           ct_owner: owner.as_ptr(),
->>                           ct_group_ops: core::ptr::null_mut(),
->> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr().cast_mut(),
->> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr(),
->>                           ct_attrs: core::ptr::from_ref(attributes).cast=
-_mut().cast(),
->>                           ct_bin_attrs: core::ptr::null_mut(),
->>                       }),
->>
->
-> I'm not a big fan of mixing c and rs files updates in the same commit.
-> And, as I don't know rust, I'm reluctant to changes things that I don't
-> understand and I'm not able to at least compile test.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/dsa/yt921x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is why I gave you the diff.
-
->
-> Can s.o. send this change as a follow-up patch?
-
-Sure, I can do that.
-
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/drivers/net/dsa/yt921x.c b/drivers/net/dsa/yt921x.c
+index ab762ffc4661..944988e29127 100644
+--- a/drivers/net/dsa/yt921x.c
++++ b/drivers/net/dsa/yt921x.c
+@@ -1131,7 +1131,7 @@ static int yt921x_fdb_wait(struct yt921x_priv *priv, u32 *valp)
+ 	res = yt921x_reg_wait(priv, YT921X_FDB_RESULT, YT921X_FDB_RESULT_DONE,
+ 			      &val);
+ 	if (res) {
+-		dev_err(dev, "FDB probably stucked\n");
++		dev_err(dev, "FDB probably stuck\n");
+ 		return res;
+ 	}
+ 
+-- 
+2.51.0
 
