@@ -1,83 +1,70 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6D0235C01
-	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3299153BE9
+	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762003611; cv=none; b=YmwsaF/1Ua27UN3dVFIw3w1UI9+OYyZJo9pCzXQlhTM4jR0+/aLHvUh+I6V6oQaiekpEXjzYB9SAK8k8vRuePJjjl9LVsZhrsY4EQndcn2THgEZXR1klE0BdjLi0RiTMrw/fO1aWXJZ4RZ8HLYKwzJS0qmj347EC83Q6/wAGneA=
+	t=1762003625; cv=none; b=Mh/bwQRlHBBrjGfRZVJQztR4YCK+9qyocTLgtAmHWXQWiiXwhcGZPlIuvte2mXruOV7QRASDn59TPQ3Sg7uZMG4gabHNl90I5WOs7ecdBrFkwCWoIu7U6SGL24GxqR/ZcJZtctY4StfA7L9zPfFlBRcA+nyHaemWg8aU/sdohOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762003611; c=relaxed/simple;
-	bh=Mgp89QAtrTjRgM6jWQFTc0jn1YY1UmGe8KsPam+6Ssk=;
+	s=arc-20240116; t=1762003625; c=relaxed/simple;
+	bh=fWlbNlumtIJU8NMitW6PzV9ymTkF7fleZ1mZ6E3kFuk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cWFHDF1ZeHGH5T/gU+kymlz6mu7VCS0b64X+UP2eIAb9XfustQtJKNIdX2IVKySs+bkOoHEcpKGwD5DA4aFVw0upWUidFtI3iMmB7wJwduXgXW8+1XqFbgmFgxYKE+0yKiqNovI3/araP9e2PLaZbfH7EQyfdxDf+IQwcuuA/aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mXkxOZQL; arc=none smtp.client-ip=209.85.221.50
+	 Content-Disposition; b=ASSgo8r2ZhFq/m8VInR/qgLiyaFKeD2riqzgdoU34ewuCNLZ0cYAsPNRz2fMYi8F0BvPBS2MSvMkseKloOuLGyMbRRZP4d4DAoiJD94Q6pEqfTdTeDdfHolVOTJ0+Mpvh0TjdZ688Abg3U7Fm2JKA0i/5M0uGTpqQQyMPT6y6/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeCsWzVg; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mXkxOZQL"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429bf011e6cso1817103f8f.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:26:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeCsWzVg"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so24816165e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:27:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762003607; x=1762608407; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762003622; x=1762608422; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eg53ujn5W1DedX1Vyep0yhtifcPEiIbNUDg4dfuJiow=;
-        b=mXkxOZQLOo/7v+JkoergXHoljqy4zc1MzpCWRuTLPEdmhjfiTLmQPKSUbxOZA+LCI3
-         Lijpx/r4nzNmIBuLh6ZtW17pykbV9+EZ1rR2r5X/OGbpiq0tYgpdTUNb9+p3tyaHmDQj
-         zeZ3RyvnM+2ek/MHXY6aQVkwPXdlGB12Lbv+BjJyAkeHWU/NqicXcn/vpYHSSKSDS15N
-         DWYG571c8l2HiMiXlzFU0P5FmtO6lFhn3EcRLOI0XJZJaYk83w/vljsx9Mnb/qhkCq30
-         dwVDf+gxSikJiNxKpSwAu3pGRtnuK4HCWv8Af6oCjBVpJEYdA5rfh1H+1Zw/MbiuNs5O
-         sY0g==
+        bh=LOljo+7M94iVLGqaAQA2njY3cBe7lZLjBtaF9D6zVHs=;
+        b=OeCsWzVgfF+NDc5oR5yv2J0nyxO4AmTT+iqw5khA2+MbYRLxaB23hGLl2yc0/ybhT3
+         Gk/Acjse9gghXVJaYe/Sim0lMguEsFapQAzbN2zLEdbwnsDMefzY/AW3iWaxcrOAfnoX
+         LxY5klura+q5jUy8PL8igtFv0MXs6TKLhQirJa7s8UnjG2x/ToU9i33q2FFssnvHoDYx
+         QpnSxoeRG98mS4qT2K6lgr6Ic9tC31NtDS5V20WWWbfGZJ6/bmEhQVYZZ5ldz1oS00jK
+         s/mgceMlPwuoRr3zr76XQ+OVM/wYlf1uHDAEnj8vkMEkMzjdM6O7qkhz2TYsAEVSpEe3
+         pIpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762003607; x=1762608407;
+        d=1e100.net; s=20230601; t=1762003622; x=1762608422;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eg53ujn5W1DedX1Vyep0yhtifcPEiIbNUDg4dfuJiow=;
-        b=SK7Fw1AE6SRHVcPMrL+/paWQtHgGQ5F0yu1whRCblR3KaspvAs81lOeNMDmyusoRmn
-         upr8pQSDyEdLl8djl1lWk6f9+/YU7p3JBIKV9712AqquwdbRwpaf6FgWNtZFArzgkqnp
-         QvxTFQgT6ha2PTynbpB5YagRHenZIIITJj5kVZ0uEuQvP0EO4WA50ecpwxFzKHNWC8Wj
-         HnC57dfQUJFpb614Pir2KqGIOpO/GApyvnm0NZqQHwY8YKW9bfkFxL5j4Ei3mHNlRByu
-         pGwtjRB48F3n5yyMNKuj9L//YaGgFtAD45Do0JZKdJOvCQEfqj8rHqUnczr2ORnyd0W0
-         EcCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXy37rhxPF0iE0JYCeROymqwfxf1/CbT6stxcejr33wnh0ub7iaYN6DMIu7PcYbUGEEX5HMvX9bF5IPwuIH8bE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFYilFUKgZKCb8pD1TMThGX+xyfCcr0e51zqM8KlQYum3soXPX
-	N18CV0pD/+jCovNBoh/fKaRzi6Ey/21JdzBzvOC4kR5eLZapWmzbvyWz8neUQdEp09Q=
-X-Gm-Gg: ASbGnct8aS4ioOzQYyTWWNdYuQQUujQ81tqjFeWW7S1I82/Rtr43JUDBRs3dsr40UKp
-	64n7HxNz/PbvaptZa23GYUezLUEwhJaNKj2Ie8yRCjLENXuELPAWvgHcvePlL9YgWe/N/UGeIg5
-	RRFdLS5/eKiz9g3JyGIxnkCxd1O5VahLbZh2GlVfsFrb7adrX1AddhVuWm9l+V4Otcr8CRnShj+
-	gf9sn3xW1RsCBSYSSnHFq/CJHP+CRQ2eKrnlAKP13zSNbEqh5H8YlrEqSDqtcmvS45g1SQc9nJq
-	X04Y6yxAz3rCX27+qjNzZhN38eJ4fR8ZunutHH2nOP0gAgu8MQ5JUs4jQMNCYW41tPIJxLHY4ce
-	zmo03Tk13Dauogsa0vpBvA02auPVT3vsKVZfrbUW/kzZegzRehmtDw5ZIUWThNCdKiGwIbrHzKK
-	qh5QybVpmKvXI+9OzC
-X-Google-Smtp-Source: AGHT+IHWklOzm9hRp2MshFHHpjAPX4YwiYbf/S/L+tv28vs/jH3gOqeBv6O9b8sMd6VBVbyb1K/+5A==
-X-Received: by 2002:a5d:5888:0:b0:425:7c2f:8f98 with SMTP id ffacd0b85a97d-429bd675fc0mr5343738f8f.1.1762003606366;
-        Sat, 01 Nov 2025 06:26:46 -0700 (PDT)
+        bh=LOljo+7M94iVLGqaAQA2njY3cBe7lZLjBtaF9D6zVHs=;
+        b=jXSwZK0yMBA+GLUMWaGJUkTjsder76It6QHhUAbrrdB9YYYdU0P0VkWXHS2bSZ2fQm
+         kPs9EWQZFNWx/M/+2j4i+RzzO8INKbAOxi7QAy/8UINh4467sIs1HZUIfDcSD0Ot4+uZ
+         /t5+fMplVpb+3md7T2Q9uPjc2hgwhZ7wjAsZsASKSxquPUWkgXR6ERGwpk42AS3NOH0v
+         VBHFazkpGtEO2qNDrKSdEC4hk5R5Higxd16M0ErD9L7jZn5w78tH3UpSSCzhfNl3BD8K
+         eHMzwvRSblI25J2Ah2kT6xd9C+KkeOSizgY9DoBFesbjBxumD1Aso2oKwCaB9YPiW748
+         3MOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqqP4kR/YKxyoW+TbXrY9n8mJGTW8BwAc8v0of+UJxiYA8jQY7fkYlwdeiAVmyl4WdnfxksT94YNJoX7nbmEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOJvUGqokz/RzMLIpe1Dj2ESMvR6jcBprxH2/DHLdpF3eOCq1O
+	qryJALuNH8BoIutACDCD/60DDYoNgLil1jyBTRY3CMkv2ppFaiJ4rxPxxPGYFwytX69/5dNf1zT
+	DUQQl
+X-Gm-Gg: ASbGncvEhRhb+NNeC5Foq088IKFqx3x5icmj94X/W5X1z+mDi8GJXI3sakhI1nJoaMd
+	NI77r9YoMI3zS2MAZ9IALuBIEfmMjDeW0mJDyZeR9AaIErhpiaeyvuBOPt+/2c9x5ZVzc/JFKiq
+	tEcwY8gZJtNJnnT8gzJzR5P0t2r6ABvIUu9Ae+KQr/LN2Y9uoCPzuI3ZnPuD2mIKCLrhRKiEPLV
+	QqP9L3GD5UY239WALVdLfmOgrT5fZysQ5HMw6lhFEMebn59oHdmrxUlVfEiPwmWKDGDuYb9tQX4
+	QCkouDhKv8naVW4zNzwxZ3W3Vab9IUp53IPPK3Z3kSZz5wT6Da9rocN2Lyjg5NvAjY4ssBUra4o
+	h79Z+HYf5tYDVkFBHbgWD8RD60+NdiFyI/0x/u7wsrcbEOslrsNpr2f181ztBLHQAPRT4MM8cBI
+	g2bkgMs1usVR9+/y6g
+X-Google-Smtp-Source: AGHT+IE4cFFbUyFklIu8Ul5MgDjUxTX821uY1/uQ0hddPoJ9GnQf41D7nTZg/rZeH9y2qNDX2ivo+A==
+X-Received: by 2002:a05:600c:3f92:b0:46e:4921:9443 with SMTP id 5b1f17b1804b1-477308ddbe0mr65219995e9.37.1762003622105;
+        Sat, 01 Nov 2025 06:27:02 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429c54498dfsm5711594f8f.34.2025.11.01.06.26.45
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47732c2e725sm36882335e9.2.2025.11.01.06.27.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 06:26:45 -0700 (PDT)
-Date: Sat, 1 Nov 2025 16:26:42 +0300
+        Sat, 01 Nov 2025 06:27:01 -0700 (PDT)
+Date: Sat, 1 Nov 2025 16:26:58 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Suman Ghosh <sumang@marvell.com>
-Cc: Sunil Goutham <sgoutham@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net] octeontx2-pf: Fix devm_kcalloc() error checking
-Message-ID: <aQYKkrGA12REb2sj@stanley.mountain>
+Subject: [PATCH] regulator: Small cleanup in of_get_regulation_constraints()
+Message-ID: <aQYKoiivuec3m0Jj@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -88,34 +75,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_kcalloc() function never return error pointers, it returns NULL
-on failure.  Also delete the netdev_err() printk.  These allocation
-functions already have debug output built-in some the extra error message
-is not required.
+Just pass "init_data" instead the address of it.
 
-Fixes: efabce290151 ("octeontx2-pf: AF_XDP zero copy receive support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/regulator/of_regulator.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 3378be87a473..75ebb17419c4 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -1530,10 +1530,8 @@ int otx2_pool_aq_init(struct otx2_nic *pfvf, u16 pool_id,
- 		pool->xdp_cnt = numptrs;
- 		pool->xdp = devm_kcalloc(pfvf->dev,
- 					 numptrs, sizeof(struct xdp_buff *), GFP_KERNEL);
--		if (IS_ERR(pool->xdp)) {
--			netdev_err(pfvf->netdev, "Creation of xsk pool failed\n");
--			return PTR_ERR(pool->xdp);
--		}
-+		if (!pool->xdp)
-+			return -ENOMEM;
- 	}
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 32e88cada47a..33463926a2a6 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -79,10 +79,10 @@ static void of_get_regulator_prot_limits(struct device_node *np,
  
- 	return 0;
+ static int of_get_regulation_constraints(struct device *dev,
+ 					struct device_node *np,
+-					struct regulator_init_data **init_data,
++					struct regulator_init_data *init_data,
+ 					const struct regulator_desc *desc)
+ {
+-	struct regulation_constraints *constraints = &(*init_data)->constraints;
++	struct regulation_constraints *constraints = &init_data->constraints;
+ 	struct regulator_state *suspend_state;
+ 	struct device_node *suspend_np;
+ 	unsigned int mode;
+@@ -359,7 +359,7 @@ struct regulator_init_data *of_get_regulator_init_data(struct device *dev,
+ 	if (!init_data)
+ 		return NULL; /* Out of memory? */
+ 
+-	if (of_get_regulation_constraints(dev, node, &init_data, desc))
++	if (of_get_regulation_constraints(dev, node, init_data, desc))
+ 		return NULL;
+ 
+ 	return init_data;
 -- 
 2.51.0
 
