@@ -1,76 +1,73 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27652C0279
-	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361EC17AE11
+	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762003534; cv=none; b=W4WUKZL+yg2sBDiFKjvmxRRwWKnrqVzua+fUsp7C3P/R15Dwh0ZShN21qDFYaccWGG/CBznRESs1g42NaASI+KuViXe+pf7zUC4CexneKenJoHZH8m1W6wYUsCpQpM4DzrS7GfwZ4oUn9MnaUzkeHUw9Yz0pL8Cz4HGHzupJfnI=
+	t=1762003554; cv=none; b=pPtVTckqCHubQ3QlQqSH2azJeQOpqMfwXtwNyEH26vv1ft3FpvLGdsyPpwM5ZSKCvqVRnd3Elh/+2CnlOmOW+FDtVk6MTkyHq6euRWxleNIJCSxZSdSBQ5P4U/MplL93hcEMvFXVI6rSexyzSC5SkbYoQ98dfirl025WwrZOYkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762003534; c=relaxed/simple;
-	bh=Z98SLm/EfpTZZ+75oYqs1vAnViW8qDAEJMAoaxRjcMQ=;
+	s=arc-20240116; t=1762003554; c=relaxed/simple;
+	bh=Mc1wsSOnWuVBW5U3mmx+TYZyVd9CGG8SkUFXpUY1mqo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Sp1hoyijEIxnur5HBhejSF+f0qtNap2yzjzniCBtTsrnBtXMlAPtJ81RENjZOaUhWYzfNjmYF2ekQYDpus/oPIIdnBETX1nntMMduhYVKumwO5j3y10jF6UOoKIJjnBBW5GsBT4RNO12WaQhPK2ltLgTMTZQuQHfLPDZ6g5XU/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SdtaO3jk; arc=none smtp.client-ip=209.85.128.41
+	 Content-Disposition; b=jbzhiqgEqG3N4IVVjHA/X+0kw0RLLbKgNZr34R++zUEEscMB9386pQZHSYI2efY9xrnX8zg0fzXgk+tbjy2d4+x0JzmWcT/GbnUsdRF6ofvVOrT+S85hGNO0po3Ef8Tcg4gFc7HvqxrMSttGiG3R4o2x5Fd2zL0DozcHcBw1Wdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eH6/Ao1X; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SdtaO3jk"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-475dbb524e4so18539195e9.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:25:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eH6/Ao1X"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47710acf715so15059575e9.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762003531; x=1762608331; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762003551; x=1762608351; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=L9gbS+9LrLe7y4J6JOoi0YS3Bk4wJ8cYhZR5dEyxBSU=;
-        b=SdtaO3jksgTLqU+mS3qclYS5VWLHEev1z9DX2gw+YhZLE+lYolFpb210a5XBvsUhOS
-         rDc8D46VdPJtVb0QB9oP10HOGB170XfZvhDbqd1ul/hrq7JhGQAIY+GrqRM79XtGSV11
-         21RmS0OrKQWNnlX0XL/CVqiHhOG0+KQQotDA2FniWnm89DCi9Np+pJ+NCgsVAGGe7RKK
-         lgcrCz91r6nGf7KySwGW5SSHOynTR2jZ4uEQ2MjjhTJoUdjnDwX2wlwx2ugpUPn3/l/v
-         pllDQvO9kO075YipdWvZAb/nTR4b66nXsKvyB8wqLj3AGFXrUC0DlWucXQeNBlLiJZ+F
-         RymQ==
+        bh=kefLFDRMJrK9HnSrDfYpLnvqtBuSL8Qun0L1purZEqI=;
+        b=eH6/Ao1XjBYqaHdXLBpygJfeBPrFmBZvJ828MYS/cDd9KmUK5/7GERD/wKsFl9luz2
+         qbcoq5u4wMQlgdCAKrY2Xqsfa09+EMa1GH9HGgkjT7OPWC3OPrP5UBYd+sytptJfrXOd
+         ZVfF8ceZNDCpDRYsaOTZy577y6aWobLFpvSOC4Pbg0uU9dsOyxfIsI0foQWfObzKgdJU
+         ZoytmCWFiSXB20QvuojVKsBvI6bJ1sXs+gRHpMmFKG5J2nPEqT8+/arT3a4VOLv9nFhM
+         ypX0Rf3k16h9oXI8d2LjNJZqgg9wXazRZUmvuac44wd/32Ivrfa3xU4n+Zkg4kcIqkiD
+         vP9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762003531; x=1762608331;
+        d=1e100.net; s=20230601; t=1762003551; x=1762608351;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9gbS+9LrLe7y4J6JOoi0YS3Bk4wJ8cYhZR5dEyxBSU=;
-        b=Nur/7eAouT2K4W8ThfzC3d8/LHBee9nCzDUi6uGxE3G4S/7Qn7z1kA63Y3b/MzTKjG
-         5k7LRqqUE3oTz6cNZXmpUnnkqDghaXydQD5SNYoqcgXbpAPY8/oZsb/U6r50PZ58H3oi
-         8jUOHRvBnV9B5zGMFukbf5NjPE6J70n96TF3J2S5TOrzCA7Kp7ma3tfsKPRN+Gw9Cq60
-         ZDUfFujj6NrnjMmloiQp0aiDnYiXPujHCBhuki3oOfmZJq2/H/I6TMLVE6HX1JfvQU4f
-         MfMBA59AK3m7k3otiQynuhRt5Hzey0V4vuD/DbBM5tMyVJ3tQndhTHiQN8RRFfOPnHMw
-         ZQrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnW6K1VV4EnrL9MHLwjaLnYwyxL/f9Y0rpycsYEXtlbEtpazUEyKWLrugIVpTWhYRFOX0BRImsWCs4lc/ESYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzZojA9oEwqTgPSmzj3QAUHZYZ3tkFUdAoYpDHybfzlPzUTEO0
-	/SFGBoBU8f0i79WakAJ/TPk3vTwJWR/aMv/Fwq8WTRkgtpIy2iSkXEQtuF8jpj72DVQ=
-X-Gm-Gg: ASbGncsxN5Aa6qVrGabGyasWeXsoQK8T9RwShyQ2GuVhtMPs/l8z93Fq4PsbpBr+8yV
-	KDP1S+VzOmwlwN4Ap36KFrQF8BpxnTwBu5ClxCu4E5qNFt7TALh5Sbm0h7AeC2B0HpRQqDLZful
-	LxHYTswGYSELbVq4EvN56r/WgJWMX8xEK5ZtBXh20xwlvZKqq6bgCJAeb0VbSDX8a/43++KERuS
-	kKYZSIAIcs/eFuJf7vbIzExjKei1N0DvhJ5InlW7bGKt8WsOOzoxS6OV4JGEmMz/QeB/KHnkCh/
-	wjoI+zudPDW16NOkm3phWiOKSm1l8mUAiygxFc29BL13OxoVv+o8cnbbkYynUmJ6zdT7fIPduVb
-	O/mmEU/3J72v/F7tdlC0beYH9UCQPSy4flo9dpiv/WfC7CNvBVYO7Gj/XzPbRmCHr5HsVtc1m1k
-	TX7LhK1A==
-X-Google-Smtp-Source: AGHT+IHfkE8YJK+hEniklXFT4GhX0FQkyrWL8TAH+8xEiRGBmRw2WAmAAnJ/Iz+FCPOhsKJuLyo9JQ==
-X-Received: by 2002:a05:600c:1e19:b0:46e:711c:efeb with SMTP id 5b1f17b1804b1-477308aa8acmr60161545e9.25.1762003531066;
-        Sat, 01 Nov 2025 06:25:31 -0700 (PDT)
+        bh=kefLFDRMJrK9HnSrDfYpLnvqtBuSL8Qun0L1purZEqI=;
+        b=o9EVS2CfM7ouhMMQMV+ADeBDT/xGHR+I47b8baNCVUnntI3vSBvCHPcxNXxojCrctv
+         IlTqKWY3edCCuJeofOJCWDBCvuEMlL/QcCZCOou+NsC823vPJmueEvgE43QzJ3KrWSxe
+         e7/hIYPoQNN4Mp4Vvco3WUHKOqWWEdUev3RoBv1GunF9lrDIeTMKWK8VjNJx/z86lCQa
+         tYjLvJKWXtXKV2LgJwoliDOshln7J2dPj69VumLiGX7RVLl0wRVrWJsRNlsVEPsKuxRi
+         c6TLnxpoNIOOvR0u6TiT3kD8G1k2UxP8oDJij7+Ih6T3WitAFFassPqLk/GY4SpwPLfF
+         DZEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWK2Kcg+ytRDcZAQhgPNg6GbZg4gnIyRaTaiLleK7+9EmgJ3ayyiYO8vczcIX8uc5VVppvAR85SY5kWoMI7urI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKbUJtUuFgS74ZhPQVGeGP4h4yuggWPRHTsSTAMithya7MffUH
+	wIP7PaUaLSXg5Jt1/xa/OcL2lGi56bYx+PYP4xlXajl6eAMINar+joUCxxD88/2JTjA=
+X-Gm-Gg: ASbGncvNTR2SEijPWHsUEGAUoLyjRXPO9RodY7f1Y0+hRJ4YK2Olz88v8yVulS6DYrI
+	L8Rtf1QSqSyZyhu+1GFbR5v/+7SNgrfnpicVnoTq/s/RIt+1S7054n85cHR1wLyAWI4zWjTxD5H
+	tnHxoS0p6XruBCBxr5D+SurNOpKdu5U+mBwST6aGFqc+dqOpZEisG0D+GVI+hTMJr7QKvoJJHYr
+	dt/dx1+shPAM6UfHpQY4Nc+fbxBR8Dmm+oHDARTHQq2g+YqSL5n4Q+8dGEqFLVD0gxP2wjoKCE0
+	5KdcYGGUjW8Kk01N96mDhgrK9lt3F7ynEuBy4WT/m/BAZHBkZatx4ztpERaax6iXIBa5sv53EbB
+	QAiEYbw9ZM2y91tzyEslV2zuAqloo3BsXXrHCOJQN4BWS9OlkNJmfvbLMINtbmxB8pLEh6dKGFm
+	0txsOhQUZiilYE6EvT
+X-Google-Smtp-Source: AGHT+IHg6f3fIsXsLrLzGR7r5NdaH5rE26INwWReTi4lRgX0CdFFywAF4j5hbZstscw0VD02x8o6vg==
+X-Received: by 2002:a05:600c:c4a7:b0:475:de81:563a with SMTP id 5b1f17b1804b1-477308b22a2mr64707215e9.33.1762003551417;
+        Sat, 01 Nov 2025 06:25:51 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4773c48de65sm47854815e9.1.2025.11.01.06.25.30
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4773c2e674csm49318355e9.4.2025.11.01.06.25.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 06:25:30 -0700 (PDT)
-Date: Sat, 1 Nov 2025 16:25:27 +0300
+        Sat, 01 Nov 2025 06:25:51 -0700 (PDT)
+Date: Sat, 1 Nov 2025 16:25:48 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	David Woodhouse <David.Woodhouse@intel.com>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] Input: imx_sc_key - Fix memory corruption on unload
-Message-ID: <aQYKR75r2VMFJutT@stanley.mountain>
+Subject: [PATCH] mtd: onenand: Pass correct pointer to IRQ handler
+Message-ID: <aQYKXGSoLqCLNqKg@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,29 +78,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This is supposed to be "priv" but we accidentally pass "&priv" which is
-an address in the stack and so it will lead to memory corruption when
-the imx_sc_key_action() function is called.  Remove the &.
+This was supposed to pass "onenand" instead of "&onenand" with the
+ampersand.  Passing a random stack address which will be gone when the
+function ends makes no sense.  However the good thing is that the pointer
+is never used, so this doesn't cause a problem at run time.
 
-Fixes: 768062fd1284 ("Input: imx_sc_key - use devm_add_action_or_reset() to handle all cleanups")
+Fixes: e23abf4b7743 ("mtd: OneNAND: S5PC110: Implement DMA interrupt method")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/input/keyboard/imx_sc_key.c | 2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/mtd/nand/onenand/onenand_samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/imx_sc_key.c b/drivers/input/keyboard/imx_sc_key.c
-index d18839f1f4f6..b620cd310cdb 100644
---- a/drivers/input/keyboard/imx_sc_key.c
-+++ b/drivers/input/keyboard/imx_sc_key.c
-@@ -158,7 +158,7 @@ static int imx_sc_key_probe(struct platform_device *pdev)
- 		return error;
- 	}
- 
--	error = devm_add_action_or_reset(&pdev->dev, imx_sc_key_action, &priv);
-+	error = devm_add_action_or_reset(&pdev->dev, imx_sc_key_action, priv);
- 	if (error)
- 		return error;
- 
+diff --git a/drivers/mtd/nand/onenand/onenand_samsung.c b/drivers/mtd/nand/onenand/onenand_samsung.c
+index f37a6138e461..6d6aa709a21f 100644
+--- a/drivers/mtd/nand/onenand/onenand_samsung.c
++++ b/drivers/mtd/nand/onenand/onenand_samsung.c
+@@ -906,7 +906,7 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 			err = devm_request_irq(&pdev->dev, r->start,
+ 					       s5pc110_onenand_irq,
+ 					       IRQF_SHARED, "onenand",
+-					       &onenand);
++					       onenand);
+ 			if (err) {
+ 				dev_err(&pdev->dev, "failed to get irq\n");
+ 				return err;
 -- 
 2.51.0
 
