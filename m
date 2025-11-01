@@ -1,70 +1,70 @@
 Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3299153BE9
-	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198982D12EF
+	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762003625; cv=none; b=Mh/bwQRlHBBrjGfRZVJQztR4YCK+9qyocTLgtAmHWXQWiiXwhcGZPlIuvte2mXruOV7QRASDn59TPQ3Sg7uZMG4gabHNl90I5WOs7ecdBrFkwCWoIu7U6SGL24GxqR/ZcJZtctY4StfA7L9zPfFlBRcA+nyHaemWg8aU/sdohOU=
+	t=1762003634; cv=none; b=cGlgJp/ODggB0GwwC0n55hjJFk+IGNN6vaHFrKxzVsiVb9cCy8zknKd1qIWkpFtTCgHb0eeUU/TaLKD4AKbgxleZlVEtrqAF/zNrKf8jI8Lb2XFpLjAbzQLEPuOHBlG0r8O7pgBzwkIY4sB4HR4iqINDsWYV6TM6h8Pufsbdv98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762003625; c=relaxed/simple;
-	bh=fWlbNlumtIJU8NMitW6PzV9ymTkF7fleZ1mZ6E3kFuk=;
+	s=arc-20240116; t=1762003634; c=relaxed/simple;
+	bh=rprqeoJfwBpFW+gsXZSt/F8Jo8zBJ8y+vgAA/x/wPfs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ASSgo8r2ZhFq/m8VInR/qgLiyaFKeD2riqzgdoU34ewuCNLZ0cYAsPNRz2fMYi8F0BvPBS2MSvMkseKloOuLGyMbRRZP4d4DAoiJD94Q6pEqfTdTeDdfHolVOTJ0+Mpvh0TjdZ688Abg3U7Fm2JKA0i/5M0uGTpqQQyMPT6y6/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeCsWzVg; arc=none smtp.client-ip=209.85.128.41
+	 Content-Disposition; b=sM+5/8L9K8gb1g26BLzZWs6CyCzHIWPY7dT6NnBWakHeo0g6kHid56uUCznM5ldaOfq2jz6+mHKYdwngBtLdcUMiEjCXcSJ8pRvQJngNIZFFLMbhWhITG1qHb5S0w9wXcbrgdQK8mYxdfh89YUWcYWfJtd4oxp5cDR39uzCt6Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x22h1lm5; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeCsWzVg"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so24816165e9.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:27:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x22h1lm5"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4711b95226dso38437105e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:27:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762003622; x=1762608422; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762003631; x=1762608431; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LOljo+7M94iVLGqaAQA2njY3cBe7lZLjBtaF9D6zVHs=;
-        b=OeCsWzVgfF+NDc5oR5yv2J0nyxO4AmTT+iqw5khA2+MbYRLxaB23hGLl2yc0/ybhT3
-         Gk/Acjse9gghXVJaYe/Sim0lMguEsFapQAzbN2zLEdbwnsDMefzY/AW3iWaxcrOAfnoX
-         LxY5klura+q5jUy8PL8igtFv0MXs6TKLhQirJa7s8UnjG2x/ToU9i33q2FFssnvHoDYx
-         QpnSxoeRG98mS4qT2K6lgr6Ic9tC31NtDS5V20WWWbfGZJ6/bmEhQVYZZ5ldz1oS00jK
-         s/mgceMlPwuoRr3zr76XQ+OVM/wYlf1uHDAEnj8vkMEkMzjdM6O7qkhz2TYsAEVSpEe3
-         pIpQ==
+        bh=1+EqGbBXvqXSCm047SOrrdUeNNQRu1BHO6Ywcm/gq0o=;
+        b=x22h1lm5DK0LitEr4Owa7rw3LCi8ZLIK8d7/sM5Tfqy7I0jDq1crUIwPwAFO/VRntp
+         1agobuX1KTagALULNM8fiU4xXwyw01sZS9WgTwFKyzOwX1BTRDQCMHvHHqnkoUY3hXY/
+         UbRjAsILpWfXybMo6I+eQbCj4EBeCsOjd9BS92EwmRfYtjXGxyGlJqAU3e5lUMzn3LCE
+         LshQcXH/dUcVUJYz7QPc5Tsr8/nqEkXJXRtWPnG3I3aOy2BiAmKFqsZGnjkUCRkzHosP
+         f8aSrOgNldTSRN5o+H1OqNQz74iXpbBpLO1Cwvqk1+fpRIp8GplsbXz+enEyLQXE/P9e
+         XOnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762003622; x=1762608422;
+        d=1e100.net; s=20230601; t=1762003631; x=1762608431;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOljo+7M94iVLGqaAQA2njY3cBe7lZLjBtaF9D6zVHs=;
-        b=jXSwZK0yMBA+GLUMWaGJUkTjsder76It6QHhUAbrrdB9YYYdU0P0VkWXHS2bSZ2fQm
-         kPs9EWQZFNWx/M/+2j4i+RzzO8INKbAOxi7QAy/8UINh4467sIs1HZUIfDcSD0Ot4+uZ
-         /t5+fMplVpb+3md7T2Q9uPjc2hgwhZ7wjAsZsASKSxquPUWkgXR6ERGwpk42AS3NOH0v
-         VBHFazkpGtEO2qNDrKSdEC4hk5R5Higxd16M0ErD9L7jZn5w78tH3UpSSCzhfNl3BD8K
-         eHMzwvRSblI25J2Ah2kT6xd9C+KkeOSizgY9DoBFesbjBxumD1Aso2oKwCaB9YPiW748
-         3MOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqqP4kR/YKxyoW+TbXrY9n8mJGTW8BwAc8v0of+UJxiYA8jQY7fkYlwdeiAVmyl4WdnfxksT94YNJoX7nbmEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOJvUGqokz/RzMLIpe1Dj2ESMvR6jcBprxH2/DHLdpF3eOCq1O
-	qryJALuNH8BoIutACDCD/60DDYoNgLil1jyBTRY3CMkv2ppFaiJ4rxPxxPGYFwytX69/5dNf1zT
-	DUQQl
-X-Gm-Gg: ASbGncvEhRhb+NNeC5Foq088IKFqx3x5icmj94X/W5X1z+mDi8GJXI3sakhI1nJoaMd
-	NI77r9YoMI3zS2MAZ9IALuBIEfmMjDeW0mJDyZeR9AaIErhpiaeyvuBOPt+/2c9x5ZVzc/JFKiq
-	tEcwY8gZJtNJnnT8gzJzR5P0t2r6ABvIUu9Ae+KQr/LN2Y9uoCPzuI3ZnPuD2mIKCLrhRKiEPLV
-	QqP9L3GD5UY239WALVdLfmOgrT5fZysQ5HMw6lhFEMebn59oHdmrxUlVfEiPwmWKDGDuYb9tQX4
-	QCkouDhKv8naVW4zNzwxZ3W3Vab9IUp53IPPK3Z3kSZz5wT6Da9rocN2Lyjg5NvAjY4ssBUra4o
-	h79Z+HYf5tYDVkFBHbgWD8RD60+NdiFyI/0x/u7wsrcbEOslrsNpr2f181ztBLHQAPRT4MM8cBI
-	g2bkgMs1usVR9+/y6g
-X-Google-Smtp-Source: AGHT+IE4cFFbUyFklIu8Ul5MgDjUxTX821uY1/uQ0hddPoJ9GnQf41D7nTZg/rZeH9y2qNDX2ivo+A==
-X-Received: by 2002:a05:600c:3f92:b0:46e:4921:9443 with SMTP id 5b1f17b1804b1-477308ddbe0mr65219995e9.37.1762003622105;
-        Sat, 01 Nov 2025 06:27:02 -0700 (PDT)
+        bh=1+EqGbBXvqXSCm047SOrrdUeNNQRu1BHO6Ywcm/gq0o=;
+        b=m2tbj2MCrqMRBu/iBQhHoibU+ui8LoCZkb2Pq53rBdJixrOl6KJyBW4XPcJ1K+kDR9
+         Bbzj37YKwOyAZN5Qz4tb+qcc6o6GmeXSsOTq+Zz1jVXrwOqHRZFN25whw8DK5GKXw4Vt
+         RZla6iwTYEiuA3GTBUxrAhQuk9tJMvV5eQPfuSDP6W/HV91d1RLsZm7HXPAJ0l04i83C
+         y6eaWcgx1Ud+LKEjmcl5ZhMK1UobDtpKVgDMMCk2nPb2Ef/4BIF06HZyKOyNYR+sbMnR
+         xm20PmzhIPfKQYxmlVkqBNzJir0XGyKjsLLWmPKg7LSKbyMdmirWsbaL2TAx0P2h4h9t
+         d9Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9fzShrcIVybAsUAjadP81GbeYOorH4hZG9pkOzra7glu95UqiPlmGoxGSt1b3COIPWHXDe0uZb+ysATQTxGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxemFDmdy5a0u2WtIo6Ro5ZLGqs11OpYECVK/kFr7FH5d5NweQx
+	AsawxMPOcK7I762SrGh0ZBihsB0ieHC6vG5FzGduLpM7VIWBqsDhF0AX6ZAVq/VL2sw=
+X-Gm-Gg: ASbGncu9VUPpEwImY0JsL/MTC9bvNRHGiadUKc7KizGkDomp860Z3myBvYI7Fd1TgKg
+	8JIlsMfrVc0CLQsid2hG4mcSrCVEgTv8985KMDXGhtY3yW2kEU/Loy+TZLQvxzUiadbssYx/PfR
+	ewK5R6F+VfjeoBqaHwnxES8+HFtWJmKxZ73k84QVjHLSdFnmVFy+lkkO8nDZx+hD/GZue+Qwss5
+	CEEvcIz80MV3oi/A/4BBT4wD3AfiRPrKA6mdoZTiUeeiQSYdm7ko6JR2Ao3fX+5q767AzL0YK7t
+	XU3w37tIh/NWxbZlOa/K7wvuMrFuIObY568UgYS7DlkCzu1T3LHnLQxg0cHpeo+GN4Bea7TRnSE
+	Bu2CC5D9eMys8V5GsPzPGf9MRJlZA3LuMzDuodijP7r7BuQGQloxDlxGIFc3bJuc+3Y4C+zCnka
+	saivgRkQ==
+X-Google-Smtp-Source: AGHT+IFdb7/zkRruK0oXQCY8hr8gJ7/w3OO6SCISIKc7LTj9giiBqFQHOldEq9+NA09bcOurjb6I3w==
+X-Received: by 2002:a05:600c:3146:b0:477:2f7c:314f with SMTP id 5b1f17b1804b1-477307af7e0mr52252055e9.10.1762003631249;
+        Sat, 01 Nov 2025 06:27:11 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47732c2e725sm36882335e9.2.2025.11.01.06.27.01
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4773c55dc6fsm47729965e9.14.2025.11.01.06.27.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 06:27:01 -0700 (PDT)
-Date: Sat, 1 Nov 2025 16:26:58 +0300
+        Sat, 01 Nov 2025 06:27:10 -0700 (PDT)
+Date: Sat, 1 Nov 2025 16:27:07 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] regulator: Small cleanup in of_get_regulation_constraints()
-Message-ID: <aQYKoiivuec3m0Jj@stanley.mountain>
+Subject: [PATCH next] reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR() bug in
+ probe
+Message-ID: <aQYKqxD6qCQwFCye@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,39 +75,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Just pass "init_data" instead the address of it.
+The devm_regmap_field_alloc() function never returns NULL, it returns
+error pointers.  Update the error checking to match.
 
+Fixes: 58128aa88867 ("reset: rzg2l-usbphy-ctrl: Add support for USB PWRRDY")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/regulator/of_regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 32e88cada47a..33463926a2a6 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -79,10 +79,10 @@ static void of_get_regulator_prot_limits(struct device_node *np,
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+index eea56687cd0a..4ecb9acb2641 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -158,8 +158,8 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
+ 	field.msb = __fls(args[1]);
  
- static int of_get_regulation_constraints(struct device *dev,
- 					struct device_node *np,
--					struct regulator_init_data **init_data,
-+					struct regulator_init_data *init_data,
- 					const struct regulator_desc *desc)
- {
--	struct regulation_constraints *constraints = &(*init_data)->constraints;
-+	struct regulation_constraints *constraints = &init_data->constraints;
- 	struct regulator_state *suspend_state;
- 	struct device_node *suspend_np;
- 	unsigned int mode;
-@@ -359,7 +359,7 @@ struct regulator_init_data *of_get_regulator_init_data(struct device *dev,
- 	if (!init_data)
- 		return NULL; /* Out of memory? */
+ 	pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
+-	if (!pwrrdy)
+-		return -ENOMEM;
++	if (IS_ERR(pwrrdy))
++		return PTR_ERR(pwrrdy);
  
--	if (of_get_regulation_constraints(dev, node, &init_data, desc))
-+	if (of_get_regulation_constraints(dev, node, init_data, desc))
- 		return NULL;
+ 	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
  
- 	return init_data;
 -- 
 2.51.0
 
