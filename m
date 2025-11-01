@@ -1,114 +1,123 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A242E22AA
-	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 14:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822815D1;
+	Sat,  1 Nov 2025 15:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762009064; cv=none; b=aPRXY+hVuuhVO4EGYsYSTyhfqY8Brbs3Uch6d8zmHbah8KrFsyrexTCXSyA+r/B8ionoBM60FGRbot3lB62AiEHgZYI7cm8vyeKbwQRFcZp8kTBEXfhYMkIJ+MdMEETnYyvlOPYMQnMQFg3bmCrpuojctSYhO8Mhoxw67W7+kk4=
+	t=1762009343; cv=none; b=GZdCGZgQhbEXzoX08tcl+uLT3u7fK5jvQCXk2F+GB287m9xGQQu6ytgnJavyU/37wGpFG+k/PB32sIy+gbvSxBAQX1YMsBVbn5Wfs3a2Zy4sErsQ46Ok+HoffRYKZR54OW+k55USAtjGUt8t9ZIKHK5bDYO7WuOvFGvZgsaUMJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762009064; c=relaxed/simple;
-	bh=UX6a+St/oon0bMcSt/uBqo7nx1nv8SZZ1H93Yc3b+SI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nOUN/4i7Yo7ye9q8jyu3Dwv8KY7t6Rv9urx3bzEKLV+0P1Nqk3nqPhVq3kidxtBMIVwCZJhQFblIcmSEcKDFQwOgzAoYosnq+rbLVXnmAir8EuBe+u5ViSRzoC+mbGL50qr8tvJUPwE8Xf/JtMB+jyc8hvTPipjc5kTifqGb/qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TdDfrxOX; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1762009343; c=relaxed/simple;
+	bh=XjqkzxujCssc2zk4tDrvih0oWnYgkiq9ucEXAO2KA3Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OE7srUNTmXDu42iT6hasQLkeBP1gPCdF2/PX695mSv78IhUBB3okCQUlgqcVP5+WwgLkOdjVXAljMHZmWEgb8djwFQ3uqZLkme5HPcPoOe/jBqQm3E649jt5tCAn+GkXdArBOVqzxKWZSOcWvTK2Z2rpS2FNSkFmUA1qXMwUQ8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXi9MXYv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TdDfrxOX"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47719ad0c7dso27249185e9.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 07:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762009061; x=1762613861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EqDn1RC8UO2IDPb+c3+sWenx5mUO6CHUTILYTfEVrJQ=;
-        b=TdDfrxOXABmnwYmJsbmvsOTDRN8kbHVybjpzZ2voku/A61UwiZJxqTsozHVBgePjwW
-         mlMXUsfxIcwB55ZSTTiP5WMcS7Ls7mF0GH0/wd8C5OxYbPDs9gjSGDlP/eJqBdg+yePH
-         GPWREucDb+mz3njA/Ll5ccZBdQoT/oQOOmOga5XcKHG+5RNWXyQv99QjH4C75eugw6so
-         CLaQo/t54pbvb7NUYzQy9GEauogQ2v1cr6JDSrXUpIWQr1kt+L7/Au0odLBvdXnWl3Lb
-         PQb9/LJQDjAV27diSXW+27td4Ib6tfWRWptklA88C7+w4YM8TsXPw7hrDoB+rYuZjTiw
-         OGCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762009061; x=1762613861;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqDn1RC8UO2IDPb+c3+sWenx5mUO6CHUTILYTfEVrJQ=;
-        b=MQ+Ap6zV33HCL/lLoJ7akeYh6QetN3icOnd1bMNmpoSdO3r+sgRXHo9c41ym13ITNc
-         Sv1q6coLREWPePJVi4VxJhDRcu7O0Cld8q+N4qRCuzlBeC/ZufPu06ehFQJ89f1L+bZu
-         ZJh6BbRXYSc4RUmW44xjy8alDz+jEpygthChACS6+Nw52zvlwZDvQrwck7EtxUz3XIxp
-         I6i7a3tVkUg1L6tC0rMlTGxVakIkf+1aV5ria90+kleHA1yK7VbaCpgTI8+wN4wZYS8Q
-         GU2ZO6SuiipVFCMQeqOe7Q/hOL81Ue5DkF94kdFTs0ETk4Rflfz5bW4A/uoh+6DfyGX3
-         lSaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRzkc79R/ryp/WoujxtIXG7O11U5eoVIovBjvOLJZRXCe5AEVhOQ9vK2EPFzA4fNy27W1o9ae4dAfCO1kFf2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXLjIZk0GflAeFqpaIhrW0RBCtHSp4UACbF9JuWd1H9nERhewG
-	T6zODPfxwzypnrj5aEUcUNCLDS+YdH71Mn+QC+84QGFCNFcNuJdluxozrz82mpddWp8=
-X-Gm-Gg: ASbGncs9KznfBQAGq3VU5L8H//5NmExr1Okk/Zrz8ptzxPmLi8ITipehsLLbQMl8Ydx
-	oErdtMrLb6Kmj/FMtoLrS7OnYZMmUDXsrHO7l36WlWMeaPoC935VPxMZ5qycOfqZEPKMw2k4guA
-	4RkzIPJdqkOua9VQUWPBPHq406NwdIjfozEFD4Dfg1HVhjDBR0encerrupbww4zOYn7l+6F+gFH
-	0aucBSvV/96BOv4H0HSDQ8YMdjcxiQfDTMmvfQb4fnX++EiFaSFvEBqCdyeAfopbJd6LuH55wXm
-	uSm5/qv6G2pakXrtPZoI2U1MeL3fUaw8upyE4FKYaAt5kVznZCfrbSfAUraFEx+edRoXEO4WME/
-	Oh26HFu68+f5d1VZzVXwhbRvb0Tx3NCVp1qK7iZl473j1oBWq0bRS8EziXkB3XTQR90VRtegwdg
-	vFmmYMOaJw
-X-Google-Smtp-Source: AGHT+IEqIrsV+gOof4n3Jx/bwouIFoZoJa8acq7wXUb7wBmEv6oMx40rV85tqc9myqKF+jTACk906Q==
-X-Received: by 2002:a05:600c:3b9f:b0:471:6f4:602a with SMTP id 5b1f17b1804b1-4773086bee3mr82378005e9.23.1762009055927;
-        Sat, 01 Nov 2025 07:57:35 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c23b8d9sm60335475e9.0.2025.11.01.07.57.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Nov 2025 07:57:35 -0700 (PDT)
-Message-ID: <5d306cb4-a383-4efd-a3ff-add07ef28e8b@tuxon.dev>
-Date: Sat, 1 Nov 2025 16:57:33 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXi9MXYv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA099C4CEF1;
+	Sat,  1 Nov 2025 15:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762009342;
+	bh=XjqkzxujCssc2zk4tDrvih0oWnYgkiq9ucEXAO2KA3Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JXi9MXYvV+9UQPohIrfx+2q5bqfUaBY+fjcqd0597u+aQfZgIt7ewlwe23GVoaFKz
+	 IRbRec6awKlAUU1agKgFUnIhQGcP5VY9Y1vhfAXLlpBZFLmopVTp088U/plN7nT9QM
+	 mbt1AS9GiF6XJFGgTU3u7QTqXo/BsOlewiTTQpKVhEZ+eWXrgS6UbWqls01WG8Gkia
+	 rN0/vPYtGRzEFCd/rtvreLmq7RhqMcIZFdjitrV8maMEAsOLK4dm5bYyskZNfSHRXR
+	 8g3Ch/eEC+SLeyrLC5OLCegha6x0mbTIt848BGiPrfc2WUbQz5iKB6kb5rt83loCxL
+	 bdpBjjB/xBwyg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, leitao@debian.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/2] configfs: Constify some fileds in struct
+ config_item_type
+In-Reply-To: <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
+References: <UMPsw5UqjtBaIrv5LPKiow0sOdVevbuvSx39jhXV_gtjHReEeeqGpgijGJj5OoJjMJA3mDIeSyzR9lffgIOr6g==@protonmail.internalid>
+ <cover.1761390472.git.christophe.jaillet@wanadoo.fr>
+ <87sef2fa5x.fsf@t14s.mail-host-address-is-not-set>
+ <AenlUrApTlCB19zk49DWpC_tbPKSEaDPmg7GhZfuqlDfQvbMuYTWFkgVfp85fisHGgilvaGZEy_is6qnad9KMA==@protonmail.internalid>
+ <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
+Date: Sat, 01 Nov 2025 16:02:15 +0100
+Message-ID: <87ms5594p4.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR() bug
- in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aQYKqxD6qCQwFCye@stanley.mountain>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <aQYKqxD6qCQwFCye@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+"Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
+
+> Le 29/10/2025 =C3=A0 08:18, Andreas Hindborg a =C3=A9crit=C2=A0:
+>> "Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
+>>
+>>> These 2 patches constify ct_item_ops and ct_group_ops in struct
+>>> config_item_type.
+>>>
+>>> When/if they are applied, I'll send some patchess in each subsystem to
+>>> constify the corresponding structures.
+>>>
+>>> This 2 steps approach is IMHO easier way to make these changes.
+>>> This avoids long series and cover-letter/first patches sent to many
+>>> maintainers and lists.
+>>>
+>>> However, if you prefer things to be done in the same serie, I can do
+>>> that as well.
+>>
+>> Looks good to me. Please also include a patch to fix up the rust
+>> bindings in the 2nd step:
+>>
+>> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
+>> index 318a2f073d1c7..468c8c4170d5e 100644
+>> --- a/rust/kernel/configfs.rs
+>> +++ b/rust/kernel/configfs.rs
+>> @@ -755,8 +755,8 @@ pub const fn new_with_child_ctor<const N: usize, Chi=
+ld>(
+>>                   Self {
+>>                       item_type: Opaque::new(bindings::config_item_type {
+>>                           ct_owner: owner.as_ptr(),
+>> -                        ct_group_ops: GroupOperationsVTable::<Data, Chi=
+ld>::vtable_ptr().cast_mut(),
+>> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
+::vtable_ptr().cast_mut(),
+>> +                        ct_group_ops: GroupOperationsVTable::<Data, Chi=
+ld>::vtable_ptr(),
+>> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
+::vtable_ptr(),
+>>                           ct_attrs: core::ptr::from_ref(attributes).cast=
+_mut().cast(),
+>>                           ct_bin_attrs: core::ptr::null_mut(),
+>>                       }),
+>> @@ -773,7 +773,7 @@ pub const fn new<const N: usize>(
+>>                       item_type: Opaque::new(bindings::config_item_type {
+>>                           ct_owner: owner.as_ptr(),
+>>                           ct_group_ops: core::ptr::null_mut(),
+>> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
+::vtable_ptr().cast_mut(),
+>> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
+::vtable_ptr(),
+>>                           ct_attrs: core::ptr::from_ref(attributes).cast=
+_mut().cast(),
+>>                           ct_bin_attrs: core::ptr::null_mut(),
+>>                       }),
+>>
+>
+> I'm not a big fan of mixing c and rs files updates in the same commit.
+> And, as I don't know rust, I'm reluctant to changes things that I don't
+> understand and I'm not able to at least compile test.
+
+This is why I gave you the diff.
+
+>
+> Can s.o. send this change as a follow-up patch?
+
+Sure, I can do that.
 
 
+Best regards,
+Andreas Hindborg
 
-On 11/1/25 15:27, Dan Carpenter wrote:
-> The devm_regmap_field_alloc() function never returns NULL, it returns
-> error pointers.  Update the error checking to match.
-> 
-> Fixes: 58128aa88867 ("reset: rzg2l-usbphy-ctrl: Add support for USB PWRRDY")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-> ---
->  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> index eea56687cd0a..4ecb9acb2641 100644
-> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> @@ -158,8 +158,8 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
->  	field.msb = __fls(args[1]);
->  
->  	pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
-> -	if (!pwrrdy)
-> -		return -ENOMEM;
-> +	if (IS_ERR(pwrrdy))
-> +		return PTR_ERR(pwrrdy);
->  
->  	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
->  
 
