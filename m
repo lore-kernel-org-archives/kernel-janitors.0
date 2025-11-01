@@ -1,133 +1,180 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-79.smtpout.orange.fr [80.12.242.79])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5CE2DE1F0
-	for <kernel-janitors@vger.kernel.org>; Sat,  1 Nov 2025 13:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28C1E51EF;
+	Sat,  1 Nov 2025 13:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762003662; cv=none; b=bAqX0cCKFuNsWqTPfNnGC18np29or0gxCSkE7MITkUylWipHxNynOM8faA28Mn0duLopush7FpslrQZOKng2ZzNRfLmX2DfIiFIdsSZmnKBu8AKgzxoFz7y7lzyhznV8xd3PRc/ODHTV52aqloM2VbnuxQ2mJof3dkqzlxNcEs4=
+	t=1762004473; cv=none; b=r7ekCHpj3/U+SlSjw2SixQ8qKURvVZTNFfzJv1XznHJ7/pZ/QJy6DywsOLA+vQ5y4DtPtk9+SYOXyhx377LuaQ0EZkGJgU2/UTEBEQj/9anr4DsBsz3+rrtgbeGZKrNEQKDcZBxljpFouSffZLjGKJ1Vu3KOo2dVea7olfKm49U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762003662; c=relaxed/simple;
-	bh=O7ACs0ldqUJpLVDp+21SQI0MSqblXSVfkxhdkXYAbio=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uGgesYGPmeqVAoiPE/mAVcMoZgsAbsmPsPcWj1pp/C+DgLh8f2mSUCP9QxsgvovFCzavkhQS2YilPqb2Tkm7j08flWfkKODKiAf+EcEjVhe+lPYALbb4gxs0qFhbRgYuWoTs3G6rew8HnuIETMnLtrntte9fIGTpur9pWkoQgTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LHWd44YO; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762004473; c=relaxed/simple;
+	bh=AuDDrond62cdQlyE60iW/Lef0hfpGtCQrKuAmCVh4iY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GQTnoEY2OJUaNchvEjTg1iUJBNUjHmp6b5Zgx0qVTGGze8F9KGUUNYESThoWuP0FnfHyLw0Sp6YeuDBbqU8FU7f+mbZ2Lhfmms0uib7BskyTKD+mwxqWpBHBV4VbvOptjoZPgU3zDjRepUZmbvCcunCxox2IkqF4lwOnMIsuCKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kSUNPqNL; arc=none smtp.client-ip=80.12.242.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LHWd44YO"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-477365fbdf9so6900295e9.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Nov 2025 06:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762003659; x=1762608459; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YXhWn6yI771aYOLRcSIj3itITp8Yx3KJMWGw7nupRLE=;
-        b=LHWd44YOQBGe+Aj0B9QLiXQI+7ubRnClAS2uvvUlbWOw3moe98NjJbjbA+4sbVMAO0
-         wjJSQLhtt7ScrWdC7UqyPWEd7vNzUe83ifjbTdZ6cAAh4XhbuCL7pl8wyJNgVaNSCX9A
-         WhZkZr9Z4pkDvzm2PpfkZWoq+auHCE9f9hJ0FSGsxHwcMSoI0XMp2w7PwD4jgRdhxuXv
-         EMmvf8vC/vZa0kWk9reFIU9sk4YDOFPz8E3ZxuD5I/cZCwDAvQaMZzZaOA8BLa34ZiTK
-         spgFB7k1J59jI7J+zkPP/+x9ErHPm2cn1NqDd0rYZEfncjQvbWH7JhNvLDy1n1i3tFkc
-         e9dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762003659; x=1762608459;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YXhWn6yI771aYOLRcSIj3itITp8Yx3KJMWGw7nupRLE=;
-        b=WNATLUa+mOiX2v/ANVE7qZnOgLqtaC2Ysp6kBxbXYr8MCSAhaFLI0apSXw13UzUbki
-         EKtdwTIKe09dO6r+r4SbsCAker0oDd9BCfaMFhWTRUiRcEvSAPubaPq0fIkY9QQ6rnVc
-         F/Eahr0Bz6rhzXwpsRRmcfQToEdkfmb3t79qQTr+9OIfIEoukIzJx8R7vo9pRku6Wmp+
-         3xnDTrGw/Hf+/aNqX5Yh6UHD0OD+vF+gRWFHAsSSOE5fFjnkb8IqiwWw0wepw047kySi
-         uRK4rKcags3Fknx4yCs770NCdr1EkjQoLGbaB9OE4PH4hB+OieLn15znS3iSEom4NfmI
-         A7Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaBRotGjAXrMiL3PvinOZwsS/iL+owJjpS0MMXNsr8AbcK1GwcfxvDlUYGVG2rRqfb8J8/o+5a6jvCjqPqJtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywelvef4nER6pd/zIeEmeFqxujc3rwfi+WBAOntfceAZthYG+vl
-	FMvgked+n5+x34cWeyTB8m5rBgJPDc/t4PAm+rWlvWMZLlJHGjeAHY/DblwwbEkWZEQ=
-X-Gm-Gg: ASbGncvWzV4Dk1FpBk22DBr0/EA1aX1Ipj06n03tS3T/vLj4CQ1vKuzud1uppyNRDE3
-	jAhWiPPBIf/R3El8K2BpjpGlCBQowE6B09rkCkBA/oY5jqXwukr/cOnHpuSQIV6ZEsIN4PqXH8E
-	CbuT674rM0+C75fK0XBKMkI5i4Gd2e4eyKXX0tPiLkACEJ7dGbdlgWs8AQrwOQxFVhvhYydGF28
-	ZyjMYF5j3e5aUaclgZ86E6ipTpk2532xFZGfi/TWBqFwy2OXRm+cLRhkC7c6n+08dLPd7U+b8so
-	FmrGtNiwPoAFEroWiIa0fMjRVMMxHOEDArwZJMYDPCAmw93Xvary8Y/3eBiTLJ2gjKWZZIp/r8+
-	bkS5S99qKBRL2A8n2bpDdo6eGVLw5MJDt1XDL3nxDTw6x/fFjttDIvuH0OXZCDJzt9ouYNcr+4b
-	hX4K9TgQ==
-X-Google-Smtp-Source: AGHT+IHqXes4RC0d/pZNok2qTFXjlWakyDJ5XbPAbjHTCzlugL+3ND+rGETKmKuLd5fEQQ0F3CoHKA==
-X-Received: by 2002:a05:600c:4e56:b0:46e:2cfe:971c with SMTP id 5b1f17b1804b1-477302d3677mr58158665e9.0.1762003658683;
-        Sat, 01 Nov 2025 06:27:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4773c53ec2csm48606565e9.11.2025.11.01.06.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 06:27:38 -0700 (PDT)
-Date: Sat, 1 Nov 2025 16:27:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: codecs: aw88261: pass pointer directly instead of
- passing the address
-Message-ID: <aQYKxl2f-zGVdYFC@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kSUNPqNL"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id FBqlvvyZc4wQjFBqmvMesc; Sat, 01 Nov 2025 14:41:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1762004462;
+	bh=BFRIQ+k/BrGzxmo6SmGnQQfTWG7vWAKgQMdsX7DqaCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=kSUNPqNL8nv0iYridFZ1+9eObXZrpad/ZBAB11cVzlUfqy1ls+kQ5zBkWNxMK3WRB
+	 g3YNuNlU7W5SkLZQQB7ky4xYBAx6QP3SY4TqKQqk4z3z8sqKA4IPa3WukEC91C5JDg
+	 dTiSKQeU0oDw0KEbnxFjb5ZsmVAFByc3O8SVitjGMa2ERHXnqx1uvtUNnbwVSy+d2f
+	 1GcakxJvEzOod1H1XQuWv5TFC1aiHi9BV6vMZwCjZ3PfT2NzuAm4h8SC9/js8CBuwL
+	 7+sH34NimxdWkqYiseIgnhY/2iEPnWq0Qy15m9nvyzNNo6j0ucFJ5VRdqITuyGWX1m
+	 oOCTPFQk2YBiA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 01 Nov 2025 14:41:02 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <7776eb1c-418a-444b-aa24-0dfb23f05a2a@wanadoo.fr>
+Date: Sat, 1 Nov 2025 14:40:58 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/resctrl: Slightly optimize cbm_validate()
+To: Dave Martin <Dave.Martin@arm.com>, Tony Luck <tony.luck@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
+ <aP9a9ZtigAWCWSWk@e133380.arm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <aP9a9ZtigAWCWSWk@e133380.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-It's a little bit cleaner to just pass "aw88261" instead of the address
-of it "&aw88261".
+Le 27/10/2025 à 12:43, Dave Martin a écrit :
+> Hi,
+> 
+> [Tony, I have a side question on min_cbm_bits -- see below.]
+> 
+> On Sun, Oct 26, 2025 at 08:39:52AM +0100, Christophe JAILLET wrote:
+>> 'first_bit' is known to be 1, so it can be skipped when searching for the
+>> next 0 bit. Doing so mimics bitmap_next_set_region() and can save a few
+>> cycles.
+> 
+> This seems reasonable, although:
+> 
+> Nit: missing statement of what the patch does.  (Your paragraph
+> describes only something that _could_ be done and gives rationale for
+> it.)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/soc/codecs/aw88261.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Will add it in v2.
 
-diff --git a/sound/soc/codecs/aw88261.c b/sound/soc/codecs/aw88261.c
-index 43556f66549e..8600b21ea618 100644
---- a/sound/soc/codecs/aw88261.c
-+++ b/sound/soc/codecs/aw88261.c
-@@ -1184,7 +1184,7 @@ static void aw88261_parse_channel_dt(struct aw88261 *aw88261)
- 	aw_dev->channel = channel_value;
- }
- 
--static int aw88261_init(struct aw88261 **aw88261, struct i2c_client *i2c, struct regmap *regmap)
-+static int aw88261_init(struct aw88261 *aw88261, struct i2c_client *i2c, struct regmap *regmap)
- {
- 	struct aw_device *aw_dev;
- 	unsigned int chip_id;
-@@ -1207,7 +1207,7 @@ static int aw88261_init(struct aw88261 **aw88261, struct i2c_client *i2c, struct
- 	if (!aw_dev)
- 		return -ENOMEM;
- 
--	(*aw88261)->aw_pa = aw_dev;
-+	aw88261->aw_pa = aw_dev;
- 	aw_dev->i2c = i2c;
- 	aw_dev->regmap = regmap;
- 	aw_dev->dev = &i2c->dev;
-@@ -1221,7 +1221,7 @@ static int aw88261_init(struct aw88261 **aw88261, struct i2c_client *i2c, struct
- 	aw_dev->fade_step = AW88261_VOLUME_STEP_DB;
- 	aw_dev->volume_desc.ctl_volume = AW88261_VOL_DEFAULT_VALUE;
- 	aw_dev->volume_desc.mute_volume = AW88261_MUTE_VOL;
--	aw88261_parse_channel_dt(*aw88261);
-+	aw88261_parse_channel_dt(aw88261);
- 
- 	return ret;
- }
-@@ -1250,7 +1250,7 @@ static int aw88261_i2c_probe(struct i2c_client *i2c)
- 	}
- 
- 	/* aw pa init */
--	ret = aw88261_init(&aw88261, i2c, aw88261->regmap);
-+	ret = aw88261_init(aw88261, i2c, aw88261->regmap);
- 	if (ret)
- 		return ret;
- 
--- 
-2.51.0
+> 
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only.
+>>
+>> For the records, on x86, the diff of the asm code is:
+>> --- fs/resctrl/ctrlmondata.s.old        2025-10-26 08:21:46.928920563 +0100
+>> +++ fs/resctrl/ctrlmondata.s    2025-10-26 08:21:40.864024143 +0100
+>> @@ -1603,11 +1603,12 @@
+>>          call    _find_first_bit
+>>   # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
+>>          movq    %r12, %rsi
+>> -       leaq    48(%rsp), %rdi
+>> -       movq    %rax, %rdx
+>> +# fs/resctrl/ctrlmondata.c:133:        zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
+>> +       leaq    1(%rax), %rdx
+>>   # ./include/linux/find.h:214:  return _find_first_bit(addr, size);
+>>          movq    %rax, 8(%rsp)
+>>   # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
+>> +       leaq    48(%rsp), %rdi
+> 
+> (This is really only showing that the compiler works.  The real
+> question is whether the logic is still sound after this change to the
+> arguments of _find_first_bit()...)
 
+Will remove in v2, if not useful.
+
+> 
+>>          call    _find_next_zero_bit
+>>   # fs/resctrl/ctrlmondata.c:136:        if (!r->cache.arch_has_sparse_bitmasks &&
+>>          leaq    28(%rbx), %rdi
+>> ---
+>>   fs/resctrl/ctrlmondata.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
+>> index 0d0ef54fc4de..1ff479a2dbbc 100644
+>> --- a/fs/resctrl/ctrlmondata.c
+>> +++ b/fs/resctrl/ctrlmondata.c
+>> @@ -130,7 +130,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+>>   	}
+>>   
+>>   	first_bit = find_first_bit(&val, cbm_len);
+>> -	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
+>> +	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
+> 
+> Does this definitely do the right thing if val was zero?
+
+Yes, IMHO, it does.
+
+If val is zero, first_bit will be assigned to cbm_len (see [1]).
+Then, find_next_zero_bit() will do the same because 'first_bit + 1' will 
+overflow the size of the bitmap. (see [2] and [3])
+
+The only case were we could have trouble would be to have 'first_bit + 
+1' overflow and be equal to 0. I don't think that such a case is possible.
+
+> 
+>>   
+>>   	/* Are non-contiguous bitmasks allowed? */
+>>   	if (!r->cache.arch_has_sparse_bitmasks &&
+> 
+> Also, what about the find_first_bit() below?
+
+Should be updated as well.
+Will send a v2.
+
+> 
+> 
+> [...]
+> 
+> <aside>
+> 
+> Also, not directly related to this patch, but, looking at the final if
+> statement:
+> 
+> 	if ((zero_bit - first_bit) < r->cache.min_cbm_bits) {
+> 	        rdt_last_cmd_printf("Need at least %d bits in the mask\n",
+> 	                            r->cache.min_cbm_bits);
+> 	        return false;
+> 	}
+> 
+> If min_cbm_bits is two or greater, this can fail if the bitmap has
+> enough contiguous set bits but not in the first block of set bits,
+> and it can succeed if there are blocks of set bits beyond the first
+> block, that have fewer than min_cbm_bits.
+> 
+> Is that intended?  Do we ever expect arch_has_sparse_bitmasks alongside
+> min_cbm_bits > 1, or should these be mutually exclusive?
+> 
+> </aside>
+> 
+> Cheers
+> ---Dave
+> 
+> 
+CJ
+
+[1]: 
+https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/find.h#L203
+[2]: 
+https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/find.h#L185
+[3]: https://elixir.bootlin.com/linux/v6.18-rc3/source/lib/find_bit.c#L55
