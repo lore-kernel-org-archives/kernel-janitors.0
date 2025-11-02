@@ -1,117 +1,137 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9E26E6F2
-	for <kernel-janitors@vger.kernel.org>; Sun,  2 Nov 2025 11:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3442528FD;
+	Sun,  2 Nov 2025 12:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762084769; cv=none; b=ILIIgaAJS8ikdnlTx8sq3VObxNItAPSdayn599umcw9yr0ix17w6LOTuEVn+O7gRyPx6sVon28avfJ4FHRtGGD3LDxNkWMRWGaHpnUE1qavpba+UtrABXc3LyRzZPAsSHiONqjBaySp5cGaPrMJ7Zx14P6zOZR8p8l6G5QzAJ+M=
+	t=1762085731; cv=none; b=sEDdghVauYNo0Y6lEElzLVaMSQJvqvrikmqzElscq6rReEj1zjkQHx/6R5087NakKhspBISBEJy88P7EOL4oXTiKCFIvK5SOYjtRBpNTZ/X+FPQqMfpZdo+JIQWn4HEUDJk5HrSk8bXEoI18qNHskhiqCM4+iEuOmIGPpA0ijKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762084769; c=relaxed/simple;
-	bh=hpeBzxEihKqcYDLSraTGoETkRiM4IsrmvQC8etRPW5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IcSKGZplfMAvzhIhuyIIHtpVo9EFDt0yaqXtsqnpic/Wp4FgX4JttUuCEBMjjCfaUoxrgdyCbv00NhV5WFTLEjnNEg9n+0+T2zvYIVRszFQz1Ki3n8zAtYhbm7zedEYLruL0DV9SgewBpJ5pposUm53cEES5PdNregzJZM0Buv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T/C/C8dR; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762085731; c=relaxed/simple;
+	bh=3k97OTELKzAVCJ9qui84cL+tLyGh4k0aajyBkqcVMDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aLuCixuwCf9ss41JLdVrpyYTf+Ek208QGiHG8yukGurO405ogmk3QFQu//eQBHjsm8YuSLX5hMCu3OVh+1BNfJYN0FEz6du3iY7F95cerbvNNcRjCVMURMx4lJ9mB3XKx8SMeAV39VkA6+NPvMZ4j6BAe3ffYWLJ44H4myvYl3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TY9v5a2w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T/C/C8dR"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so1891745f8f.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 02 Nov 2025 03:59:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762084766; x=1762689566; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OnVbBOQKvp7iEa1IOf5Rt2UqmUysOa/t2FpZVE9J3gU=;
-        b=T/C/C8dRW4W6oExi8DR7HFmE1aiP7WzZrToSTaPs/GBSZ9w5YPMs06yg4KzDW0lhij
-         NZ2AhS0b2/O9puqFNPireXA60TrFzeXkfxdeya7W6MYZW0C5pS0Frbmzt4czUFY4jvRN
-         G/6Yq0hJLd2adyk0AgbSFu8kUQ8sOqJMIIZPXWiTMHgmxQD4OBwjiLrAUIOJ2LVWD6PQ
-         PrGvgf+H9sg6u+fKYAlNZceIqZCeBqqWD+9EE9y6KMVuSWLff3/6+3z5iGKXekzu6ihl
-         p+ZXonpcjXPAZg+xPk3PEwcLnD7if0ZVaV7YpNxzzlOFgV8szorU5tA3ztfZnDIUgU5b
-         Rpuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762084766; x=1762689566;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OnVbBOQKvp7iEa1IOf5Rt2UqmUysOa/t2FpZVE9J3gU=;
-        b=rYqDo4WgXAUwrBa61twnGqTW5/9iQfraHDdpgsHxVWLBhmQLojjzcj8sAK6ahja/tp
-         Y0xw+GzdHFnUWM9yfxirFuqpnVd+GXBpDaVZJttUGaGiPd/peMQuc3b5KjzsrxcH6mhk
-         IMM7GV8QAdQztfuIm9XpANVgy5P4MZUMAnokOSFhPJc/WwwSrVgJVl9F+62onuLr0Kcl
-         gZCt/RnzPgTF1gCMI6xp7hMdKnbOxh7AP8ZjNGkK1JH6Vy+ZO5FrGQCDbxu4VFJAbb63
-         +OX/vxhEONnnn1TCRmf1ooRCazmmfhfMDcR6l8ViprhKrlY74/u2BBomT6prahpDEW3A
-         gtLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbjUW/Z1w3jMCvzhOMf+R7Id2ZC0dIqutYdnryIgJCtHqfySo+3MKBRblol7PI/WSe4/pJqWZ7pnZbBOZgF1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5+K10DjrU4SKEFGBAmyXGL/eBOmx5eiz41akt/qwJImp7zcRl
-	AiPby4Qm50IKlY8Ph1PqFYae1XWAABgUKiBDR80CTDc9SdH8WIG8JMWHPUWyNXsf7VE=
-X-Gm-Gg: ASbGncsWPsCJfT8D8CFSVEPQrqVegPfkmjZBdJqZHvRJPZSo7okpdjJxvta2qUz7c9W
-	NjPfPjvaukejx8ydaBJCCoT7wP4VgVSlP+dbtWRecSpC7UspEwrUQ7jKDFTvIIzOTxbKYu+hybR
-	T95+K4NCufQCNWoj7AkBe8p0YLQXjIHgmVeqaxuUkdopJJB0GoPanCYMdhtey1BnmeA4sQiqEKH
-	bb9RkLLcHs4Z6CjcOVR7mmYVry9tzW1mIiMJGjGqRrYmPn/rKw3R1KWJjREweK6BhBMs0xVUZwm
-	3DPgln+/8K73n50BMeYD6nguQTNB8givp5bcFjZr+sY/Ecots48pdU3WodwCWmuI6SKZaSMu5l7
-	qf1PWM+FaI43lzB9QH5QFrASa9W0LYeu7+D+yeuMpdMTAIQlPYmskkeqjBC8/4qC/IyUDTAvFga
-	G/KRgYhbRG1PA0+9V7
-X-Google-Smtp-Source: AGHT+IFXAmD1Ur8kjRz+0QpWqdWQSLUUmNESuCE++DroKu7wDH1qhIW0Z9BCyFRWINAFWXSCUv0Xwg==
-X-Received: by 2002:a05:6000:4382:b0:429:bd09:e7b6 with SMTP id ffacd0b85a97d-429bd67245dmr8378115f8f.10.1762084766143;
-        Sun, 02 Nov 2025 03:59:26 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429c1406a45sm13910629f8f.47.2025.11.02.03.59.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 03:59:25 -0800 (PST)
-Date: Sun, 2 Nov 2025 14:59:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Chen-Yu Tsai <wens@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>, linaro-s32@linaro.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: [PATCH v2] mfd: syscon: return -EPROBE_DEFER if the syscon is not
- found
-Message-ID: <aQdHmrchkmOr34r3@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TY9v5a2w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93125C4CEF7;
+	Sun,  2 Nov 2025 12:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762085730;
+	bh=3k97OTELKzAVCJ9qui84cL+tLyGh4k0aajyBkqcVMDc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TY9v5a2wf7T+BQlpIFHnasE5REPJXcYtG/9R4/cj4nEnmE1FzcC74GQiclyw3DbyJ
+	 Es7NvRYumCu8SXJ2FrmjQX80yPCbb3pRwe84uMvOnADUlcaDQicHwrx6MXY+O5jx2H
+	 kBPw/TA3f4meltpe7L4VaDElAgWbkDEuagyWXU6Uob8ib0kE8nXUGQo5+MGC7gD2eM
+	 MxlB8+9dVgWXN4I9hU/KgKBIcPxEsrjPO/q327hjuygsM2ZY5+Puj/0BygksCMb09m
+	 AjeN6TIzyyEuI0QPM6vzfjVGfGYU3MdySzV6Rdr+6lL0bgiz81N0WEXMCd9oLdE3hc
+	 VTDw8wHW5oHDA==
+Date: Sun, 2 Nov 2025 12:15:24 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson <Remi.Buisson@tdk.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+ <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return
+ statement in probe()
+Message-ID: <20251102121524.7f9729ea@jic23-huawei>
+In-Reply-To: <FR2PPF4571F02BCBB9894C421F5472EDE968CF8A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+References: <aPi5vEp75jH0imQc@stanley.mountain>
+	<20251027142331.29725dfe@jic23-huawei>
+	<FR2PPF4571F02BCBB9894C421F5472EDE968CF8A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-These days we can register syscons with of_syscon_register_regmap() so
-when we can't find the syscon that probably means it hasn't been
-registered yet.  Return -EPROBE_DEFER so the driver will try probing
-again.
+On Fri, 31 Oct 2025 09:56:45 +0000
+Remi Buisson <Remi.Buisson@tdk.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2: In v1, I added a property to the syscon yaml file, but those changes
-    were not welcomed or required.  The "syscon" compatible means "have
-    Linux create a regmap for me" and my property meant the opposite
-    so it was kind of pointless.  So don't do that.
+> >
+> >
+> >From: Jonathan Cameron <jic23@kernel.org>=20
+> >Sent: Monday, October 27, 2025 3:24 PM
+> >To: Dan Carpenter <dan.carpenter@linaro.org>
+> >Cc: Remi Buisson <Remi.Buisson@tdk.com>; David Lechner <dlechner@baylibr=
+e.com>; Nuno S=C3=A1 <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org=
+>; linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors=
+@vger.kernel.org
+> >Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return s=
+tatement in probe()
+> >
+> >On Wed, 22 Oct 2025 14:=E2=80=8A02:=E2=80=8A20 +0300 Dan Carpenter <dan.=
+=E2=80=8Acarpenter@=E2=80=8Alinaro.=E2=80=8Aorg> wrote: > The intention her=
+e was clearly to return -ENODEV but the return statement > was missing. It =
+would result in an off by one read in i3c_chip_info[]
+> >On Wed, 22 Oct 2025 14:02:20 +0300
+> >Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > =20
+> >> The intention here was clearly to return -ENODEV but the return statem=
+ent
+> >> was missing.  It would result in an off by one read in i3c_chip_info[]=
+ on
+> >> the next line.  Add the return statement.
+> >>=20
+> >> Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_i=
+cm45600 driver")
+> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> >> ---
+> >>  drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c | 3 ++-
+> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>=20
+> >> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c b/drivers=
+/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+> >> index b5df06b97d44..9247eae9b3e2 100644
+> >> --- a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+> >> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+> >> @@ -57,7 +57,8 @@ static int inv_icm45600_i3c_probe(struct i3c_device =
+*i3cdev)
+> >>  	}
+> >> =20
+> >>  	if (chip =3D=3D nb_chip)
+> >> -		dev_err_probe(&i3cdev->dev, -ENODEV, "Failed to match part id %d\n"=
+, whoami);
+> >> +		return dev_err_probe(&i3cdev->dev, -ENODEV,
+> >> +				     "Failed to match part id %d\n", whoami);
+> >> =20
+> >>  	return inv_icm45600_core_probe(regmap, i3c_chip_info[chip], false, N=
+ULL);
+> >>  } =20
+> >
+> >I'm going to apply this but the resulting code is still wrong (even if n=
+ot
+> >a true bug after this fix).
+> >
+> >A hard ID match like this breaks use of dt fallback compatibles.
+> >What this should do is 'give it a go' on matching, but if there no match=
+ it should
+> >carry on as if the match was to whatever the compatible that was supplie=
+d was.
+> >When that happens a dev_info() is appropriate but not error out as this =
+does.
+> >
+> >Remi, if possible could you look at adding such a patch on top of this?
+> >
+> >Thanks,
+> >
+> >Jonathan
+> > =20
+> Thanks Jonathan, the fix is correct.
+> The problem is that I3C don't specify any device in the device tree,
+> and these sensors cannot be identified by their I3C IDs neither.
+> So, the driver cannot fallbacks to any compatible device, other than pick=
+ing one, more or less, at random.
+> Do you see any way to work around this limitation?
 
-    Link to v1.
-    https://lore.kernel.org/all/cover.1761753288.git.dan.carpenter@linaro.org/
+Ah.  I'd missed that. Fair enough, sounds like nothing we can do
+if the driver doesn't know the ID.
 
- drivers/mfd/syscon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index ae71a2710bed..e5d5def594f6 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -183,7 +183,7 @@ static struct regmap *device_node_get_regmap(struct device_node *np,
- 		if (create_regmap)
- 			syscon = of_syscon_register(np, check_res);
- 		else
--			syscon = ERR_PTR(-EINVAL);
-+			syscon = ERR_PTR(-EPROBE_DEFER);
- 	}
- 	mutex_unlock(&syscon_list_lock);
- 
--- 
-2.51.0
-
+Jonathan
