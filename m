@@ -1,146 +1,94 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D61314B66;
-	Mon,  3 Nov 2025 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA39331D39C
+	for <kernel-janitors@vger.kernel.org>; Mon,  3 Nov 2025 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762187059; cv=none; b=SPeHa6RPlXWsHuRhAa8wfHk7TFki0cDDO/UqirFYk2UarXkr7a9Lbp1Tkt6y4MMM+RdKHDMVBRlrVY7HGHZnErH6KR/U7L9UHg3vb2tjZygQqxnGt68Mro6sK9bLSdhiz+zon9EC87t6iKGBYncw4WDozjWtI1yzzsdthHSIJls=
+	t=1762187576; cv=none; b=Qc41qnnpzD0kh25bhEIiqcMOAS5hNtxhf44IVSCrZ7E5VZCzibuQxHrBDy+/MLTEhRpPn9Yr1mOO37+DPpxH2ba7oeFYNzYF2ah3MNQE/Y6bcT6AjZVv5togaWSvHjACo7AloyR2dsPf331pL7SvcaEKvWJBQWuGlbPyrPhR/+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762187059; c=relaxed/simple;
-	bh=hXs+xAyEZF81W8cTRopgPmrYNWCpMOoEma/6SFBEXZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0CewrNHRsRGBm9Dj1S+i7EoUxKZ9iXXVfT7IDuJ947yqjCvxqK5VdrFL2A1F9Y7jLYRfpiJnTUo7odaaTJ4qK2nILQH1hYw0LHfSx1wYQLBgieuNt0QvOLLav5g74RsmFlKNhF2ZXoBid0qzVAWPGmklOf0k6D/MQvEKjT1DK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 538361D14;
-	Mon,  3 Nov 2025 08:24:09 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA9593F694;
-	Mon,  3 Nov 2025 08:24:15 -0800 (PST)
-Date: Mon, 3 Nov 2025 16:24:12 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl: Slightly optimize cbm_validate()
-Message-ID: <aQjXLOHQevfQDhL0@e133380.arm.com>
-References: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
- <aP9a9ZtigAWCWSWk@e133380.arm.com>
- <7776eb1c-418a-444b-aa24-0dfb23f05a2a@wanadoo.fr>
+	s=arc-20240116; t=1762187576; c=relaxed/simple;
+	bh=hfsFJ0JmsaHcn92cUkxmK7bOCu0BvRvBVwUEixHaRuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BVWXR61TuOmmbNxiNGpQjSg2CXP07lRBD1E6MsSPGK4rOTc5xMSh5pIHTC1+llHy+F+6KrNpn6XVoMj79C05Qc+9UlKECF94h/JU9scmcpleJ2oaSkk00IEvHEIIbUk/zopQfKOTO2VJPlU+ZvWgXGgbBYRi8yF7TwT3rePXR/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuWbkaSQ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuWbkaSQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66DCAC4AF0B
+	for <kernel-janitors@vger.kernel.org>; Mon,  3 Nov 2025 16:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762187576;
+	bh=hfsFJ0JmsaHcn92cUkxmK7bOCu0BvRvBVwUEixHaRuo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RuWbkaSQnN9gm2oyfmOdumljiA2KF97l/oX2aKh4tbtTMH1WnUdrSCjEeUdvysg5u
+	 nC3Qw6SxQT8sKwK6ffWnNP5keEOrqW52HbE3NDaRd9dbMSkcDIHjF6h276wJf6+sTz
+	 P5tc4+Pmuyy/V2d5bMnDIjK1eFI1ZaNSuMzHPQ98SXcF8PnTuhCv8G2I0NmhnVeaPz
+	 3vwAou38zbxobafSsG5olqCmjF+sHUfadvytjE2lrR/HApJXg4C0cvH+643J3BWAPB
+	 bZKRQP0eQghuLTtKY5tG4yVMEBUh9+3ZdZ4+xB5oMKmskoZsyyCguv6adgkVJFneBZ
+	 mnG9MINxZ/L1w==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-3d220c5a16aso2913976fac.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Nov 2025 08:32:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVCur2Ud0kFA7hTdFgyPiyeq2//YlHp9F23pbMPq/wofLx72cq4Y7lGtFMdcv74Cc344Cy7qfYE7Fmajow32Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH7MURt95l7eVOxv+qgk/NssDd089AYlZ0+3WI0yHpqlV+QQca
+	exksjxwY5n/RtYalTREXpcVV45cHJfJVdiIsPa//BnI714gI/5qTXK5U0LcZI0/STIWJdH5UZUz
+	czw7wEWwGD6gtJXWEzPPWjXP74DsSWLc=
+X-Google-Smtp-Source: AGHT+IGScnDEu+8/ixwFRFtuzjgUYukaYh32bsn+tYEEAv/30JtDZAtMc7syra+yFCuWLNC2D3p9QiuPabnNObc9z3w=
+X-Received: by 2002:a05:6870:558a:b0:322:5678:8245 with SMTP id
+ 586e51a60fabf-3dacbfabc55mr5867463fac.31.1762187575743; Mon, 03 Nov 2025
+ 08:32:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7776eb1c-418a-444b-aa24-0dfb23f05a2a@wanadoo.fr>
+References: <aQSzr4NynN2mpEvG@stanley.mountain>
+In-Reply-To: <aQSzr4NynN2mpEvG@stanley.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 17:32:44 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hi_Sa6KW=kOto0Hm5-D85=8z30Oobhtt3yKNwL9VZ6nw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkzBR_vT9YRBHw5a7-Ze_HqzL-yDSNjkE0Ua44s4bQH3pnPsI174Xdm5hE
+Message-ID: <CAJZ5v0hi_Sa6KW=kOto0Hm5-D85=8z30Oobhtt3yKNwL9VZ6nw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: SBS: Fix present test in acpi_battery_read()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Alexey Starikovskiy <astarikovskiy@suse.de>, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Oct 31, 2025 at 2:03=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The battery->present variable is a 1 bit bitfield in a u8.  This means
+> that the "state & (1 << battery->id)" test will only work when
+> "battery->id" is zero, otherwise ->present is zero.  Fix this by adding
+> a !!.
+>
+> Fixes: db1c291af7ad ("ACPI: SBS: Make SBS reads table-driven.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This is a new static checker warning that Harshit and I wrote.  It's
+> untested.
+>
+>  drivers/acpi/sbs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+> index a3f95a3fffde..d3edc3bcbf01 100644
+> --- a/drivers/acpi/sbs.c
+> +++ b/drivers/acpi/sbs.c
+> @@ -487,7 +487,7 @@ static int acpi_battery_read(struct acpi_battery *bat=
+tery)
+>                 if (result)
+>                         return result;
+>
+> -               battery->present =3D state & (1 << battery->id);
+> +               battery->present =3D !!(state & (1 << battery->id));
+>                 if (!battery->present)
+>                         return 0;
+>
+> --
 
-On Sat, Nov 01, 2025 at 02:40:58PM +0100, Christophe JAILLET wrote:
-> Le 27/10/2025 à 12:43, Dave Martin a écrit :
-> > Hi,
-> > 
-> > [Tony, I have a side question on min_cbm_bits -- see below.]
-> > 
-> > On Sun, Oct 26, 2025 at 08:39:52AM +0100, Christophe JAILLET wrote:
-> > > 'first_bit' is known to be 1, so it can be skipped when searching for the
-> > > next 0 bit. Doing so mimics bitmap_next_set_region() and can save a few
-> > > cycles.
-> > 
-> > This seems reasonable, although:
-> > 
-> > Nit: missing statement of what the patch does.  (Your paragraph
-> > describes only something that _could_ be done and gives rationale for
-> > it.)
-> 
-> Will add it in v2.
-
-Thanks
-
-[...]
-
-> > > For the records, on x86, the diff of the asm code is:
-> > > --- fs/resctrl/ctrlmondata.s.old        2025-10-26 08:21:46.928920563 +0100
-> > > +++ fs/resctrl/ctrlmondata.s    2025-10-26 08:21:40.864024143 +0100
-> > > @@ -1603,11 +1603,12 @@
-> > >          call    _find_first_bit
-> > >   # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
-> > >          movq    %r12, %rsi
-> > > -       leaq    48(%rsp), %rdi
-> > > -       movq    %rax, %rdx
-> > > +# fs/resctrl/ctrlmondata.c:133:        zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
-> > > +       leaq    1(%rax), %rdx
-> > >   # ./include/linux/find.h:214:  return _find_first_bit(addr, size);
-> > >          movq    %rax, 8(%rsp)
-> > >   # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
-> > > +       leaq    48(%rsp), %rdi
-> > 
-> > (This is really only showing that the compiler works.  The real
-> > question is whether the logic is still sound after this change to the
-> > arguments of _find_first_bit()...)
-> 
-> Will remove in v2, if not useful.
-
-It's harmless, but a bit of a distraction...
-
-> > >          call    _find_next_zero_bit
-> > >   # fs/resctrl/ctrlmondata.c:136:        if (!r->cache.arch_has_sparse_bitmasks &&
-> > >          leaq    28(%rbx), %rdi
-> > > ---
-> > >   fs/resctrl/ctrlmondata.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-> > > index 0d0ef54fc4de..1ff479a2dbbc 100644
-> > > --- a/fs/resctrl/ctrlmondata.c
-> > > +++ b/fs/resctrl/ctrlmondata.c
-> > > @@ -130,7 +130,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
-> > >   	}
-> > >   	first_bit = find_first_bit(&val, cbm_len);
-> > > -	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
-> > > +	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
-> > 
-> > Does this definitely do the right thing if val was zero?
-> 
-> Yes, IMHO, it does.
-> 
-> If val is zero, first_bit will be assigned to cbm_len (see [1]).
-> Then, find_next_zero_bit() will do the same because 'first_bit + 1' will
-> overflow the size of the bitmap. (see [2] and [3])
-
-Right, I think that works.
-
-> The only case were we could have trouble would be to have 'first_bit + 1'
-> overflow and be equal to 0. I don't think that such a case is possible.
-
-I looks impossible to me: first_bit comes from
-find_first_bit(..., cbm_len), so I don't think it can be greater than
-cbm_len.
-
-> > >   	/* Are non-contiguous bitmasks allowed? */
-> > >   	if (!r->cache.arch_has_sparse_bitmasks &&
-> > 
-> > Also, what about the find_first_bit() below?
-> 
-> Should be updated as well.
-> Will send a v2.
-
-OK, sounds fair.
-
-Cheers
----Dave
-
-[...]
-
-> [1]:
-> https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/find.h#L203
-> [2]:
-> https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/find.h#L185
-> [3]: https://elixir.bootlin.com/linux/v6.18-rc3/source/lib/find_bit.c#L55
+Applied as 6.18-rc material, thanks!
