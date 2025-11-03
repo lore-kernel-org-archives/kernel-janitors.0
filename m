@@ -1,97 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B345FEEB3;
-	Mon,  3 Nov 2025 09:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881642FF158;
+	Mon,  3 Nov 2025 10:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762160539; cv=none; b=j9WCxfaf+2eY3Civ2C0kDNGeEkVq97dhjTn6ZLQUfdxFsSHWjmBfNxtJo8el6o6aF7JgHClPG6L3r0dkIw4Qk70oEf4csZ7zA+UXU2yCA0ADXh+Pbvyqwn364L8g8gdLb+Qt7/OgcvRSVUFLxZsXlMjNphJSb1zlbEnW6Fq+bL4=
+	t=1762166361; cv=none; b=CAhKFr/FE5zEqetAzCno6YKWTqBGveMYuFXMx+mjfQfn0HuCMzXa6HPiRBqGWE1KpVWG5S1hlLKek8/FaTBV3EiE/ALyOc+Ej2my1+8DCobNe6wqCm0/z8r39IuKJ6O8nX5Gx5EgBLsj3CG6O8ne7N7PToqTEqNvoPtHiD9IxNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762160539; c=relaxed/simple;
-	bh=W8dEDPU+y16+j7p2S006IJb//u+cz581x8CUkn3B/4Q=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SxQIXbmz3dMEPqshn5XTBk8RO8hJSOqrTHJOobVBGbQlCPannFN7fO8rX38z10TVZ0jfGuE5uOAXwj3r+arGBXpS1oItO/Us60omqruQZjxDmGvYxrXL8sykX3eN4CnZcRiOa0fhEoHWQJ0fX0OVsjcUD74/wKaabwmceb87J4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIP5eMU3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762166361; c=relaxed/simple;
+	bh=smcGT1qUHh6wbxjS4q0raxEjI5EqYgotAbw2Il7gBlY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GvwLlqh0TqJwNcHfkPQCoYpzim+xCBOc8UqDLhX3GWlocLciTwXC9BWyrq+5bk3FyCKzR5QkOqJbLOlUviPlubSlcMsx44p3Rh/zctYwGpHN/vine2E3YoGpuoWc4r4JrregR2WFFAySzf7AUAK4KZiSzwUBdj6bENJX2F2lPHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YzZwQ52W; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIP5eMU3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973A9C4CEE7;
-	Mon,  3 Nov 2025 09:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762160539;
-	bh=W8dEDPU+y16+j7p2S006IJb//u+cz581x8CUkn3B/4Q=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=fIP5eMU3/TlkV4WaIeORzkfCc09vjr7X9960r3wf5HUHS5Lmw0OveLNoK2SM4/31k
-	 sBS8fpvPaUxFHp1W4fUXl0WE+xCKjxpU9OKvGyCXXv4Ey8mJkExNzUC/7gb1UOIboL
-	 +dpZW0yBeSO+e+FvPyLnUAiGTlyWC0Kn9Pnxt3pTLm2mNsvoO756KmbZyU1ObsWSPF
-	 HzxWv0kNdtB8Y/+Xo4fS/I0I+76V7KY81jwnGORY5/cgpiWCS87Jl8L5JmHYA7GJyf
-	 vnAxwe/DMdUZx07cQS7o5Y+3kp/pM2qkQ9D15iKbqOjANIHOF9DLzZkqxivtz0vYuC
-	 xn7qdljWFJFGg==
-Message-ID: <13df4a17-93aa-41f4-bbff-d1e83993a618@kernel.org>
-Date: Mon, 3 Nov 2025 10:02:13 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YzZwQ52W"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 72F061A183B;
+	Mon,  3 Nov 2025 10:39:16 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 48CA760628;
+	Mon,  3 Nov 2025 10:39:16 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6397810B50048;
+	Mon,  3 Nov 2025 11:39:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762166355; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=pjoQF6Z2Piwu1ua0g1e4fPfIoIQtxuXgSgmVey2wobA=;
+	b=YzZwQ52WqCYjNNhztDGM5T4EnlHiA+K+R8X14AH6mEmPBUquJ+rWAKG6qKlEjhNjtfsB3D
+	x+13KkKneAw7DVPV0Qx4SY8bmtwicvsmJ+HVSjV+0hPiyCKSe4tHgqmmqt3hcV8UfM9Lqa
+	h7lw3DzWEVmcSs+KufpwQhXzUCCHDNIgykKeKw2/sAm08gDvgTjbxwVIinsja/JcTU2oNx
+	/5fw6NVFTW4XEy9+Vu7OFrgpLqpoKuHQfUYihN+k3KOO5QYC/WoEEtn6SqxFckzm93hpgs
+	OVmXQQOnbelZvbVTbD1uAnS69X8XrgF3dugX7iwuL2VhHZN0+Mt8IRLt3Mt30w==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, 
+ David Woodhouse <David.Woodhouse@intel.com>, linux-mtd@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aQYKXGSoLqCLNqKg@stanley.mountain>
+References: <aQYKXGSoLqCLNqKg@stanley.mountain>
+Subject: Re: [PATCH] mtd: onenand: Pass correct pointer to IRQ handler
+Message-Id: <176216635321.908445.5469559454267528784.b4-ty@bootlin.com>
+Date: Mon, 03 Nov 2025 11:39:13 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in MEDIATEK MDP DRIVER
-To: Lukas Bulwahn <lbulwahn@redhat.com>,
- Ariel D'Alessandro <ariel.dalessandro@collabora.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20251029110623.96661-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251029110623.96661-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 29/10/2025 12:06, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Sat, 01 Nov 2025 16:25:48 +0300, Dan Carpenter wrote:
+> This was supposed to pass "onenand" instead of "&onenand" with the
+> ampersand.  Passing a random stack address which will be gone when the
+> function ends makes no sense.  However the good thing is that the pointer
+> is never used, so this doesn't cause a problem at run time.
 > 
-> Commit 169ac4bc5bc4 ("dt-bindings: media: Convert MediaTek mt8173-mdp
-> bindings to DT schema") renames mediatek-mdp.txt to
-> mediatek,mt8173-mdp.yaml as part of this dt-binding conversion, but misses
-> to adjust the file entry in MEDIATEK MDP DRIVER.
 > 
-> Adjust the file entry after the conversion.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Reviewed-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+Applied to mtd/fixes, thanks!
 
-Rob, since you picked up the patch referred to in the commit log, can you
-also take this patch? Since it relies on the yaml conversion patch?
+[1/1] mtd: onenand: Pass correct pointer to IRQ handler
+      commit: 97315e7c901a1de60e8ca9b11e0e96d0f9253e18
 
-Regards,
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
 
-	Hans
-
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e428ec79dd24..c094b2fef0fc 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15881,7 +15881,7 @@ M:	Minghsiu Tsai <minghsiu.tsai@mediatek.com>
->  M:	Houlong Wei <houlong.wei@mediatek.com>
->  M:	Andrew-CT Chen <andrew-ct.chen@mediatek.com>
->  S:	Supported
-> -F:	Documentation/devicetree/bindings/media/mediatek-mdp.txt
-> +F:	Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->  F:	drivers/media/platform/mediatek/mdp/
->  F:	drivers/media/platform/mediatek/vpu/
->  
+Kind regards,
+Miquèl
 
