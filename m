@@ -1,107 +1,164 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF7086334;
-	Mon,  3 Nov 2025 01:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1328DB3;
+	Mon,  3 Nov 2025 05:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762132636; cv=none; b=kjbSTb0Wbv2fdcpBzt4C4mlk2wve71SR1dePgv1rNTzAQnEDaFS2VzdoeG69jNCRvmzFVCajR8ZwthOANke/mDCP0nj8RTgoJOgOMeB3fhaJs7ifYdXmWDknohstxHjTF16tUdo4lei1RdnPHx5dv1TapCFgYeS67Q6qTAmgkbc=
+	t=1762147265; cv=none; b=sMNpv2p1tv8AMnrZNR81w1poalR6F1WRLUoMR9A4HWgCbXzoJ/r64LaAZ8qG+oyWxU+GvYv6sROvFwHmnct+uzKMuCqbGrgp3xVTA2KsUzWxChX3QfnjtblyeGGI3ownMfOOWq0FnR0nUd7YCb7xNFbXoPnndlSO8OpDsgKnmpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762132636; c=relaxed/simple;
-	bh=4R7tTrPB599Lq1pscObtmhgAovA9NIF1vQfHeXM8dpc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iiMFX4iuFHP/ZvRTEl5FDfD8C14SYy51ae6GRv3q9mTlIDaOtjwSUmFX0tXV6vXFiPhYDSE2KRPwJ0X/u4PbwOkx1TM7a33e1dcVTsQJV8gi6AqFIsC6grU/pUw6iSgA9fzdVXLwo4ZgkOrMoGn0xkD8tmV3TC5oE2HmFshwJXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=bpfadUeE; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1762147265; c=relaxed/simple;
+	bh=KiTakMNYhpyqAGwMX4/KFpUS4ukxEBVyGXTR+SlrTZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8G3Yrspd2n/zt3D6sOF6rZHftC+f5k71C7jzm6ek/kR9BNRYmNSUpbKDbvvLEBJTMBafi++r8akLD2f/+K+IZjBGY6q5GIqsRtsEfNg6FXyP27pW0R3nqm7ypt4KBjyeIJK9s5V+zIo8v5ABox4htwLDWrXRxqaPZS81yCnCHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ly1wlrTy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="bpfadUeE"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A31H7F20538960, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1762132627; bh=UuF+p8aMoeYMKRW3GJPXUnskNsyDTfAWc5P8vQuQO9g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=bpfadUeEhHGjmwdJogrpLzWHKVeE6BdKoQ/u9+3rMuG9piESZbousx9DuiPchxg0g
-	 iAaf3ypIUaMDrDap8M1lLQsFGtY9s443BhXGMV74x3zCaEOdGrzWcNiunlzI8NZZtf
-	 eErkK4mICBp2IixLOWw2B2Q/SQeHFsRtjTwSEWrqXKHz88cSklX6UTEbeUP4jWRYt1
-	 Zao3/h+uICEqJ/trIyCuXtbth5UACp3bssScGZNR/G0YePtEWJATNDaFeyXJhL1V/u
-	 d7DCEf1FFDVycHYXV2Z4kwtLUkz7acBz7dmfTkJ/e2GS1gn7/KPOhhVFN4DEKwxf/K
-	 UW1uy0ilfAyxA==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A31H7F20538960
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Nov 2025 09:17:07 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Mon, 3 Nov 2025 09:17:07 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Mon, 3 Nov 2025 09:17:07 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
- 15.02.1544.027; Mon, 3 Nov 2025 09:17:07 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Harshit Mogalapalli
-	<harshit.m.mogalapalli@gmail.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
-Thread-Topic: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
-Thread-Index: AQHcSmbpgJ0klacK4UCTMB6Tyko8vbTgKWCw
-Date: Mon, 3 Nov 2025 01:17:07 +0000
-Message-ID: <8d6962531a9545fd8279fbc7cd04340c@realtek.com>
-References: <aQSz3KnK4wFIJoe3@stanley.mountain>
-In-Reply-To: <aQSz3KnK4wFIJoe3@stanley.mountain>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ly1wlrTy"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2KCFaa016813;
+	Mon, 3 Nov 2025 05:20:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jMSYAu
+	sxYlf1VVxhQe8v5fMuC5LP0UC5SXkvrut2NoI=; b=Ly1wlrTy7yuurWKEqwCftm
+	BHEdTAFc4o0aYdJQ1lPXFflwDjA8ujjHnCF92O8IcPOHIxKB6Lh9lF+Ys09DdiUA
+	ophyPJMZYVYhxLWnExSwyhQe3ZC+dVgIMx5no3G5606zur30BueDI12jvk8f/FAE
+	cvBzG3ivNuzCSj9HGqwShDadILR4HjFaobNTWR79+2rd0YjQGYnlI88DTDsWsPbC
+	E4AKRKqfGVu2uo9l+DzsD6GdQJvFOsSFr9xJjzmZBoseJxIFQ/2VXjmhlDHoZ4zv
+	clUUtTbcL2OHkOS9ufRQmLfuw0vuYFiRZSjJKD/j0sgeXqk794wudEEnpqQNuNFQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v1myd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 05:20:39 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A35KdRO006672;
+	Mon, 3 Nov 2025 05:20:39 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v1mycx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 05:20:38 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A344fri021483;
+	Mon, 3 Nov 2025 05:20:38 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrjbs1j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 05:20:38 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A35Ka9N31981836
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Nov 2025 05:20:36 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 52E4D2004B;
+	Mon,  3 Nov 2025 05:20:36 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 157CC20040;
+	Mon,  3 Nov 2025 05:20:34 +0000 (GMT)
+Received: from Gautams-MacBook-Pro.local (unknown [9.43.116.143])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  3 Nov 2025 05:20:33 +0000 (GMT)
+Date: Mon, 3 Nov 2025 10:50:26 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+        Alexander Graf <agraf@suse.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] KVM: PPC: Use pointer from memcpy() call for assignment
+ in kvmppc_kvm_pv()
+Message-ID: <aQg7msPQvAZbXs_u@Gautams-MacBook-Pro.local>
+References: <ad42871b-22a6-4819-b5db-835e7044b3f1@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad42871b-22a6-4819-b5db-835e7044b3f1@web.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: s1oEhR6BIpCrsug6jsfVGX8pgU_LzU-4
+X-Proofpoint-ORIG-GUID: _pMypZ0RUqX5RFeWRSx1Kt-pJHcoctpY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX2zSSroT9Kfsr
+ uMXS51u8zrNm1Lx+V5gbzWX8OcPkIdi4f2cTjfViqY0xPbk+/WTWPCNV4U+13OkpT7JFd4/Hg9L
+ vf7UKx+e+Wp0lx40J5XD3EXP0XIDsWLF8Zgbr+k0xhjGC5Uq0QEBBIo0kT9Issb4znXTe8bMrcn
+ b74iPOtldM9tNREFr39+x8SbcKMNRPO5iGFOhqPkwBpVXdBTGDF7hVwCFMry49bMzBDG6jssRXY
+ yXOPTDV6emxigeiBqKuuskHNOJsQ33rETCkEyTQjcVnEqWE+wrkQ0wBeXexZIzHsbKOu9wjOkiK
+ H/MUU8dnoD7+YCWJjalMQcAmptHrw2m2cs3Ii79SV7d1ZegbIhEQfPMfcQm29waujgYJVI1ulX7
+ m5ed6qt5cX0siX1Y2CrRVnY8WI97sw==
+X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=69083ba7 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FP58Ms26AAAA:8 a=8Wr6nJrWg-yotHxcTvEA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 clxscore=1011 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> Sent: Friday, October 31, 2025 9:04 PM
-> The "->allstasleep" variable is a 1 bit bitfield.  It can only be
-> 0 or 1.  This "=3D -1" assignement was supposed to be "=3D 1".  This
-> doesn't change how the code works, it's just a cleanup.
-
-Yes, this patch doesn't change logic at all. However, it looks like existin=
-g
-code is wrong, since other places in the same pattern in this driver set to=
- 0.
-More, I check vendor driver which also sets this value to 0.
-
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Oct 30, 2025 at 09:51:00PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 30 Oct 2025 21:43:20 +0100
+> Subject: [PATCH] KVM: PPC: Use pointer from memcpy() call for assignment in kvmppc_kvm_pv()
+> 
+> A pointer was assigned to a variable. The same pointer was used for
+> the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert two separate statements into a direct variable assignment for
+> the return value from a memory copy action.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
-> Found with a static checker rule that Harshit and I wrote.
->=20
->  drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-> b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-> index 7252bc621211..7ef57b1c674c 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-> @@ -694,7 +694,7 @@ void rtl88e_set_p2p_ps_offload_cmd(struct ieee80211_h=
-w *hw, u8 p2p_ps_state)
->=20
->                         if (P2P_ROLE_GO =3D=3D rtlpriv->mac80211.p2p) {
->                                 p2p_ps_offload->role =3D 1;
-> -                               p2p_ps_offload->allstasleep =3D -1;
-> +                               p2p_ps_offload->allstasleep =3D 1;
->                         } else {
->                                 p2p_ps_offload->role =3D 0;
->                         }
-> --
-> 2.51.0
+>  arch/powerpc/kvm/powerpc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+> index 2ba057171ebe..ae28447b3e04 100644
+> --- a/arch/powerpc/kvm/powerpc.c
+> +++ b/arch/powerpc/kvm/powerpc.c
+> @@ -216,8 +216,7 @@ int kvmppc_kvm_pv(struct kvm_vcpu *vcpu)
+>  
+>  			shared &= PAGE_MASK;
+>  			shared |= vcpu->arch.magic_page_pa & 0xf000;
+> -			new_shared = (void*)shared;
+> -			memcpy(new_shared, old_shared, 0x1000);
+> +			new_shared = memcpy(shared, old_shared, 0x1000);
+>  			vcpu->arch.shared = new_shared;
+>  		}
+>  #endif
 
+This patch does not compile
+
+In file included from ./include/linux/string.h:382,
+                 from ./arch/powerpc/include/asm/paca.h:16,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/sched.h:12,
+                 from ./include/linux/resume_user_mode.h:6,
+                 from ./include/linux/entry-virt.h:6,
+                 from ./include/linux/kvm_host.h:5,
+                 from arch/powerpc/kvm/powerpc.c:12:
+arch/powerpc/kvm/powerpc.c: In function `kvmppc_kvm_pv´:
+arch/powerpc/kvm/powerpc.c:219:45: error: passing argument 1 of `__builtin_dynamic_object_size´ makes pointer from integer without a cast [-Wint-conversion]
+  219 |                         new_shared = memcpy(shared, old_shared, 0x1000);
+      |                                             ^~~~~~
+      |                                             |
+      |                                             ulong {aka long unsigned int}
+
+
+Thanks,
+Gautam
