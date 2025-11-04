@@ -1,75 +1,76 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1763A253B52;
-	Mon,  3 Nov 2025 23:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B41D5174;
+	Tue,  4 Nov 2025 01:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762213429; cv=none; b=HOjqi1o92oHu1gYbO+6VacbX4Ls5/y6RURT4qD5N5Gx3wNHENqDUUe9lbSOcP24Nd1pFKUG5a29GixAlsI/Ip2QoN1VhiYTCWG/P12nH7bD/BhEAU1HIv54LyiPkosgPe0BdIjhhDc/5lTFYjYUT91XcEMWfiI+dujTnFUsvFkI=
+	t=1762219840; cv=none; b=h8zMo/ZWyWhnwHvD5QrAysxloU3o7b/xxynjgedgybhYBCKfe0iLJC99oij/xwk+YOdiDoXc31Nwje5uxmUaYCvYt5TIG9FcEEyQdcgTUZq1NBaBx1THsV3lze/bUT4IkzoYbzLLQ6lRTV5dVSWY8UpnVVAqRG370tpSj3Y8S6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762213429; c=relaxed/simple;
-	bh=W9kTvkXGhxlnwl6dcqTSkl4ipduPnacYfTO3z5ei260=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VU/JpMZmk5MfptLQdcgk6XXX45ngaQQ1lwGoxXHVO8BxpW2rOoWhU/reVLTGvDdKaRFHIqAVeZGFdmhq3n3+qngbQDxq5cvGLg2/q6PgdbrwlPeb1UfqS2D9VrM89KPo+gXqUaMeYjwiXxTt5uo03udhgutT5EnpJBcTasxLxH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Yz8Hs29H; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1762219840; c=relaxed/simple;
+	bh=4OwAu4AjL3KVjURZeUJ+75f0A/QIgJ35Jui27bfTihw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=hbOV9EebVuyyJ257GEv7vpmirD3dpnrcdXuTFWML5gE+IiAgJZjctdU17wfK3V1W0ZvPXXMQsiM/h3TkbyDgsS/RPOMEa2X6RGeJ4kw16QHwHLjD8hvgq/GvTWU2U+kv9TUs0OV11t8DYTM9yX6g0zCyOcm6WRBXdf8VwLCZUyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieavUMMf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Yz8Hs29H"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4F58F40AED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762213426; bh=oKS1z7eQ8ip2lvPGXvOw3U9nANBvDh12FTm85ZuTH80=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Yz8Hs29HpmpgYqQQwgOJ/YuK/qC77C0dYqYdyT1rqrP5pGAFxSsHpZrGIRm9G9txF
-	 LR1Vb7QY3AXTLphekl5ivVQqfAe3y4IxQHEp9pDkaUs5+2p51GHW0rFRjU/XiSXMI8
-	 8fJtihRCM3dvuzeh9XYCKlIAE9Fp2jcZAsb6Y5+Ppm0MJ+8ZHyWJnLApZKHxHDZKEx
-	 Y+eViyDCGNJQgrx8v6hmHbrjTgoSSIXkfoS8pVMv3Nl46llmwG6HzEBsgV0ey5nq4b
-	 nhMrn5I+wZWaXqqhUS7Kh4S5vHLXhcD+tp8ganxD1v1CAJBZDjNAoL3+8HYV+Mwpk4
-	 uyleE4RaiwzMQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4F58F40AED;
-	Mon,  3 Nov 2025 23:43:46 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: extend DOCUMENTATION SCRIPTS to the full
- directories
-In-Reply-To: <20251103075948.26026-1-lukas.bulwahn@redhat.com>
-References: <20251103075948.26026-1-lukas.bulwahn@redhat.com>
-Date: Mon, 03 Nov 2025 16:43:45 -0700
-Message-ID: <877bw6bs26.fsf@trenco.lwn.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieavUMMf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AE5C4CEFD;
+	Tue,  4 Nov 2025 01:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762219840;
+	bh=4OwAu4AjL3KVjURZeUJ+75f0A/QIgJ35Jui27bfTihw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ieavUMMfyizrolmeVvlC+dt3/GP2WOzbz7HdWbKVppNfJlkrOS/PhBn5lXQ2dFRmL
+	 4QGLa6LozHPegyN2si9iB3adsEjSyVcngeLxFCRRKPseXdmnJkBZlbXaTaeHWweF0f
+	 ZQqjytCpZPRVl2plDPJ3t1uBWagHMwXyoRQxsnvTaGldGy/xqUXYAZjDsBhfj4n69Z
+	 Q1Jn9X7v+FAD8N2Tertebct2OPIRyV+jWuc8yXD0rdApgj1h+d6oPCmuht9bOAeqBj
+	 YRrjvc9NMH83T5iq0KdBSgk+CPNeLBOUiAaHS2br0NYk/Gp5YO0dJpPoaiqA1f+gJI
+	 yH5LwwT7/JCdw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE653809A8A;
+	Tue,  4 Nov 2025 01:30:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: dsa: yt921x: Fix spelling mistake "stucked" ->
+ "stuck"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176221981424.2281445.11835643244520389770.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Nov 2025 01:30:14 +0000
+References: <20251101183446.32134-1-colin.i.king@gmail.com>
+In-Reply-To: <20251101183446.32134-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: mmyangfl@gmail.com, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Lukas Bulwahn <lbulwahn@redhat.com> writes:
+Hello:
 
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Due to commit abd61d1ff8f0 ("scripts: sphinx-pre-install: move it to
-> tools/docs"), checkpatch.pl --self-test=patterns reported a non-matching
-> file entry in DOCUMENTATION SCRIPTS. Clearly, there are now multiple
-> documentation scripts, all located in Documentation/sphinx/ and tools/docs/
-> and Mauro is the maintainer of those.
->
-> Update the DOCUMENTATION SCRIPTS section to cover these directories. While
-> at it, also make the DOCUMENTATION section cover the subdirectories of
-> tools/docs/.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sat,  1 Nov 2025 18:34:46 +0000 you wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  MAINTAINERS | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/net/dsa/yt921x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Here is the summary with links:
+  - [next] net: dsa: yt921x: Fix spelling mistake "stucked" -> "stuck"
+    https://git.kernel.org/netdev/net-next/c/22795871edea
 
-jon
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
