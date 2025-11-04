@@ -1,44 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC56322C66;
-	Tue,  4 Nov 2025 13:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25792F5A1D;
+	Tue,  4 Nov 2025 13:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262700; cv=none; b=fK+ZRsTdYMug+OOu5/zY+dvusAtPGBOXb3lV6u45/010fLjk/wXJYETLfEkH6z3BJouyQ+ofs5zsVc1yLd4V0rOe7W8CA8vNeegD4eVpZW71Aa3vejconjsSaKxFIwrOaULE3LoGrRwkKTwoqQh47PVhSZmQYnnmoFnAYjsUm1o=
+	t=1762262708; cv=none; b=oIeEKes+h0ITh9txd53+Ri1gHuEIUGS3JZvWLw8X8v3jOSHOUBKumom86tY75L28Dt310cVdPyTXJyEvYsIQqG3LdSG+JQjKtR4MjwsQCNg3kfhooOqKuHrSrVo87zcQ5w01FCOTYa1ggTq980v0QxPBldNiJRv3XKJ5nQH0avc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262700; c=relaxed/simple;
-	bh=Y38eEqKX315O/hK8GM4uxaI+ySMw+eyVY1SFmRr/Zgo=;
+	s=arc-20240116; t=1762262708; c=relaxed/simple;
+	bh=iATfAD80ddorotenYSHXywKR7AKJQY/F+ZFnNEwTPEM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fbUK7m+mstcRVfB0lTSGWNe1isN88AFIXm7lT7/fscHSSJ82gl/WTBnSOwChDI359tSFlKa+jmRzovR8taoj99OYkM7LmaqzJaM7qaGgwWfDXmdaGvau0ZDCT+fxgktoz+nVBMQR0QlQkbsbbj+IwIPE+6bYlIq8rGiGyvsi6No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovtupvph; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=IBlvh/1VnX/CIX3Ddg/oQ1PiRMzwKhkB/BN8r5dV5jxOgj8zJWys/tUW5cOmTwS0WPvR7bcSEmEwBtWW26XQd4v8Pm+92+vX1i6sAvtiJZeAhon4L1QGCEJtpSi0TghKNllJoaKAxM6mcJQv+4XSFFHuVMcTCHojbZqxQAg+/m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sU0OKzZt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovtupvph"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E12C116C6;
-	Tue,  4 Nov 2025 13:24:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sU0OKzZt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5619C4CEF7;
+	Tue,  4 Nov 2025 13:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762262700;
-	bh=Y38eEqKX315O/hK8GM4uxaI+ySMw+eyVY1SFmRr/Zgo=;
+	s=k20201202; t=1762262708;
+	bh=iATfAD80ddorotenYSHXywKR7AKJQY/F+ZFnNEwTPEM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ovtupvphRvOwowH9up9y/0B+7TVWAXgjx2SZCYu0TOyZ+UmdQUhkZyMVY03x2m7BX
-	 pt6m2CLV6Le+opzwJ0BKV3LE/gQ4+13sbe7EkP58W+GWgytfhYoNYvsZdwbFo4c/wO
-	 zzDuk3gcIV/T9bqXHf6GfyeLCXis5mR1s2/AeJsz+20qnXRKKtfyYDfJkDfzDNpNQB
-	 tH6E792kgbrxRHYahYlCN1wvFKmuJeeelv/VF6x3FYNW7OEqUka2jsUyseELJX9V/1
-	 aWI36NxsQ6n0mWox3WgitZMadExXZQlrsNK/iD4+wPTCN7WbAhWGrx450mgYLDjBhL
-	 kzeB1mmTRkyjw==
+	b=sU0OKzZt6g0S+mWgVHBvftuaXH5wuKFhF4Io6tn4K72nZBEf7XYBsZAGiYuyltlg0
+	 dLJFxc56flKunbq3fy9rtLkx9VNy/YEnASXLz/vFhLpRAaCX8SDQ8LRAFohUVWzRtD
+	 sJclyonKr9c79UdnPVblcjjx6d4Ob2X84AL+fazY+oDhBfXZFvstYoCDWgN3/N1AmL
+	 Qizo/w4wHwgnMa1+atMDnkGt1I1XX8b6pI57NqPL75sm5Qjdn67zCTqUGcCx0/Iphh
+	 /QqXl2ptvCFvbNEAgOg4fI08StuANm1EgJA9LpOFLkvRTRwfKziEjQXbFlR8M/lEKT
+	 q0Qa9eFuG4xWA==
 From: Mark Brown <broonie@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-In-Reply-To: <5fe08f028395a6c6f50d11eee8fdb4a90b1f68ab.1762151503.git.christophe.jaillet@wanadoo.fr>
-References: <5fe08f028395a6c6f50d11eee8fdb4a90b1f68ab.1762151503.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: fsl_spdif: Constify some structures
-Message-Id: <176226269713.2215600.7013778287587240101.b4-ty@kernel.org>
-Date: Tue, 04 Nov 2025 13:24:57 +0000
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aQYKoiivuec3m0Jj@stanley.mountain>
+References: <aQYKoiivuec3m0Jj@stanley.mountain>
+Subject: Re: [PATCH] regulator: Small cleanup in
+ of_get_regulation_constraints()
+Message-Id: <176226270691.2215752.9832991675412345735.b4-ty@kernel.org>
+Date: Tue, 04 Nov 2025 13:25:06 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,24 +46,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-a6db3
 
-On Mon, 03 Nov 2025 07:32:03 +0100, Christophe JAILLET wrote:
-> 'struct fsl_spdif_soc_data' and 'struct snd_kcontrol_new' are not modified
-> in this driver.
+On Sat, 01 Nov 2025 16:26:58 +0300, Dan Carpenter wrote:
+> Just pass "init_data" instead the address of it.
 > 
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] ASoC: fsl_spdif: Constify some structures
-      commit: 1a88479436a52452429f6d50ec5bd0a546406485
+[1/1] regulator: Small cleanup in of_get_regulation_constraints()
+      commit: 252abf2d07d33b1c70a59ba1c9395ba42bbd793e
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
