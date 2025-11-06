@@ -1,80 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ECA23183A;
-	Thu,  6 Nov 2025 02:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC682DAFDB
+	for <kernel-janitors@vger.kernel.org>; Thu,  6 Nov 2025 10:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762395043; cv=none; b=ArEAaQBvxbLxR7OT656UwZBJ/5aXN98f8Yh8pUr+2c0I+4VHuyYM3jtybhSmayWXFPOHN1a4/QVGbUVungwR9TC8gbfWvcvRXgFYHUSoVL6j0OSiyceAeSnrn55irscS4XqNNGIywwTZvI+Gs40DLQVQ7VAkkjSzfe9EHPzngbE=
+	t=1762425884; cv=none; b=C67KHEiDRLUiPODv1MOMPbvwbkPhPhOFnjYBWjnfTr+flp66mE7d6rvtij6cLyg7OvfH3FpqJ0PbXTgr34Uo6jPNo+V+hhuF/i2ze71RaNnQ8pSEUcrdyMBvtel8Xb6eJSTUc6tHb7/ZjaUVs8iOTNXa6gsi71Xe7zgQkOtpw4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762395043; c=relaxed/simple;
-	bh=Z3XhN86ER0M7XyvLgbCxXeczLMzJ/uvJdfxjwDPihyA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NXvjJPGbtuNsKWmIgWNP3RPRQuNKtP0GvMpKwqsohdxYMnv8juPxMdX6g/QRL5JjYcaTLStT/vKyecAOB4ZxWILLMqqfS56MLcWX09eMjVrnf5cYxsRlEb5mdIxBGeL+GQu7zSV0QNCRPmOTWG3QUSNCPJJ1jJlD0ULUKp728vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSGsMUfU; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSGsMUfU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4C5C4CEF5;
-	Thu,  6 Nov 2025 02:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762395042;
-	bh=Z3XhN86ER0M7XyvLgbCxXeczLMzJ/uvJdfxjwDPihyA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NSGsMUfU1SYUX5ZfUgsZ6FqZIiq89C5j0U48TSalVgrcqf53gUY5kc6mzkMaaaEm0
-	 07ehPsqql0j8hgVcXzAJumuMBR3t+z/ax6f0TUSe3l/qf+20OwUukz6uFShCxfLGDq
-	 v2N39ystXmBD7loLHpRc4IVJ2hhPnWrmAJKSEZ/v+nhSubtImaSnj0LK3yCTvs6Sn+
-	 xYrxKX8AaYt+UftkTSoTbxiG4t2JJbBQ5rnNRIF+YAJPRfT2JFISVt4/xFvQjm7eNI
-	 WhvSF4Zau3dn42tv0uB05B1IQ5g1+wDCBBsZNOnaR9eaKAvhMOBj5gTAu6bTI8Y/VR
-	 Z5GLnZZTePulg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE8B380AAF5;
-	Thu,  6 Nov 2025 02:10:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762425884; c=relaxed/simple;
+	bh=XCy5GKbtcnoIwU/cbmwio1bDMDjKohQStt86XJ4W4Hw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ac3NhRklQTzXOU78a4ch7ENP2cO8aNrET4EVP1wx0MD+O4kHsoGO6+0RkL4Sqors7djLQ9VUKUlo6cjJOFc/1cr3NxTSP5W4gnTByGFEOLABNEcD/jPVqf647qj8fnz2Tikgdt3hCgU8QmLuxIGZBtsjpyVAW1TSyz+D4lnWOYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vGxTg-0001J7-US; Thu, 06 Nov 2025 11:44:28 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vGxTg-007LZE-0x;
+	Thu, 06 Nov 2025 11:44:28 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vGxTb-0000000049j-0omw;
+	Thu, 06 Nov 2025 11:44:23 +0100
+Message-ID: <3e7c80cb273d8a8a7741ae45fab9cfdf3367a229.camel@pengutronix.de>
+Subject: Re: [PATCH next] reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR()
+ bug in probe
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Claudiu Beznea
+	 <claudiu.beznea.uj@bp.renesas.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Thu, 06 Nov 2025 11:44:23 +0100
+In-Reply-To: <aQYKqxD6qCQwFCye@stanley.mountain>
+References: <aQYKqxD6qCQwFCye@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dsa: microchip: Fix a link check in
- ksz9477_pcs_read()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176239501549.3834029.5601067498463856029.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Nov 2025 02:10:15 +0000
-References: <aQSz_euUg0Ja8ZaH@stanley.mountain>
-In-Reply-To: <aQSz_euUg0Ja8ZaH@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: tristram.ha@microchip.com, harshit.m.mogalapalli@oracle.com,
- woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 31 Oct 2025 16:05:01 +0300 you wrote:
-> The BMSR_LSTATUS define is 0x4 but the "p->phydev.link" variable
-> is a 1 bit bitfield in a u32.  Since 4 doesn't fit in 0-1 range
-> it means that ".link" is always set to false.  Add a !! to fix
-> this.
-> 
-> Fixes: e8c35bfce4c1 ("net: dsa: microchip: Add SGMII port support to KSZ9477 switch")
+On Sa, 2025-11-01 at 16:27 +0300, Dan Carpenter wrote:
+> The devm_regmap_field_alloc() function never returns NULL, it returns
+> error pointers.  Update the error checking to match.
+>=20
+> Fixes: 58128aa88867 ("reset: rzg2l-usbphy-ctrl: Add support for USB PWRRD=
+Y")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> [...]
 
-Here is the summary with links:
-  - [net] net: dsa: microchip: Fix a link check in ksz9477_pcs_read()
-    https://git.kernel.org/netdev/net-next/c/c79a02252457
+Applied to reset/next, thanks!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[1/1] reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR() bug in probe
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Dce2883a0339c
 
-
+regards
+Philipp
