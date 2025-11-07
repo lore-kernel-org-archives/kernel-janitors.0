@@ -1,67 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5322E32E6B6;
-	Thu,  6 Nov 2025 14:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7C2E8E08
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Nov 2025 12:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439522; cv=none; b=Bi7BJ6zPok551YV6wMmZpYjfGMettXeQi3Bm7HiIDCEpNoPWL+2GXeAVps7ephBw+VmufQwBhE6mamnqWs9/W9B23hGG9HmR+017a2Y7XsWW1vu85osZR+FV/dKER1FFWQ1iyRvnw9wwMQcGw40N90VWrrbN9sH6FNpsvNlZvGQ=
+	t=1762518990; cv=none; b=Ri6WWZsxzyxy2cu3GN2IYhktrlJvGCCb0MGgrmmISTX64TuVbWaRVH//twH5e96seZUVavFweZv25JykQyECBrZ1XamXguquRb6jeUxDa2915h9MX6CiMK0rs9JRP6mz2wb/kbEqP01SY4EUbOcVyz4wnQk50eNrukoqouEf/KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439522; c=relaxed/simple;
-	bh=JGUYC4+gcMsKU3qtcGUGOQeUoOnSuVvjAJ+OKcr6/0c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rVq/UdeHvUmay8sgZ8Hn+4Ovs40dNN00DIvp1JSvL0c4CCRBkZRMbHpEp1GmVbHaz2fW6/0XDEpGuu7CYshO7bglN9FlTJ7IjtAJWm7B4qBzOtG58kiXbKTIXTy9ForOsp4ERzlyjm6ray+xxGr9hXaF4zxvWtDHUTeGVIlI1Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmAs4SUI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762518990; c=relaxed/simple;
+	bh=fcggPcLDIQTv6YFTOVcBGogTQrJwnTz4cX4nFLOhcUA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uBRnQZ/v2gmnpo+7/tL9G56mdOp0kpbJKkarAmTHp3fHT8MOvFMv2bJn1CDr+Pq2mkZzmktj24qEge6NPczj1/2OUJjccYw5HnjluaRd2EMBExWXr7AcJ8Y4nRBPI7XMdUVhxkUO1ONhyfm1Cwn/E0khERgI7r81zpVHQ8EUX1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ff/sjVJJ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UHHigW6L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmAs4SUI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E293C116D0;
-	Thu,  6 Nov 2025 14:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762439521;
-	bh=JGUYC4+gcMsKU3qtcGUGOQeUoOnSuVvjAJ+OKcr6/0c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gmAs4SUI0+9cMa8SNHmeFaF8ncEcN+3Rqe3r8/BD9Nw8wMR+HNphwhWyH0UqUEDc3
-	 nNP7ncao+RL/kiPck9D3Wg1qnaiHhwLxSNAQQcmHvAKgu50Kd3F3dZvnkGNaSu5Q1v
-	 juMduuxemeRwCMWSJbe7qqemHnKSCkCBIXGKvd87tkJ+p7OTOWeGmXUxNohuQmk+c5
-	 M0392fqNgqOSkPGIynIb5X0jfuLwNqgYtpVpDQEWdudysDUrw00XXnks//2tr/r7p7
-	 YJB8j9nyiPgXfcJqAJruiNV4+rsSWLXnAh9gnCg5I5DgtTMcCznZOXHklC+g29XDtz
-	 mOOJrNzK/blIQ==
-From: Lee Jones <lee@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Lee Jones <lee@kernel.org>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <871f52e7ab5d12853bc39f36ac78b5a8e484d863.1761391599.git.christophe.jaillet@wanadoo.fr>
-References: <871f52e7ab5d12853bc39f36ac78b5a8e484d863.1761391599.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: (subset) [PATCH] mfd: da9055: Simplify the error handling path
- in da9055_device_init()
-Message-Id: <176243952026.1877393.7368996860439286431.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 14:32:00 +0000
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ff/sjVJJ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UHHigW6L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762518987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1siZim9NDW4Tl0EKq7x9rZRpMbOBM1ClHh169bAxgS0=;
+	b=Ff/sjVJJMW3PHtFLpZMVkIolfJgSjKW5OAdkulfuACAw8dIqMwW7Ok5Ivbz3ept7A53nEQ
+	zhjCqbJjUUazyGvXN/HMfD1rOTHQHrCtkUBALNRqrFoD0gBPvbv7j+twkgJ2ewgs06pXRx
+	XFYP0owtl9BBXEVPwTqn1cKXR1D8g0w=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-7-8VTdsO4lMXSNkcWvU8GEfw-1; Fri, 07 Nov 2025 07:36:26 -0500
+X-MC-Unique: 8VTdsO4lMXSNkcWvU8GEfw-1
+X-Mimecast-MFC-AGG-ID: 8VTdsO4lMXSNkcWvU8GEfw_1762518985
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-429ce8ac89bso528934f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Nov 2025 04:36:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762518985; x=1763123785; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1siZim9NDW4Tl0EKq7x9rZRpMbOBM1ClHh169bAxgS0=;
+        b=UHHigW6LthOEZ4R2I9BAcE5P+CMup/pWkdtnc/BqG8ZEhQu8D8gtwSfoJa0idjxvkm
+         dYzZDCbrNlCbsK6UbrBjLCXicfzs2fOzBaQiZyeOTitKfol76+TeW3C8Thkmvp9ZND9p
+         pAiz5u4FU6T95Zr9Q/yik7kYn+WrAAlpKxF1+SUUtKw+gYUnbwxHbqd02+44cqSAfjV2
+         ClV8ltrJhJhlzvCR/bigTsTmUAtivFFDdjsaggVDOUiZTjEyd45Jc24UZVmP8j67Stb8
+         rSJLR/yfZgqYjMWncdmR341NyDelGHdSrXpO5QLox4p35qv3AAbkigUihiFxi0+tScDA
+         DV4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762518985; x=1763123785;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1siZim9NDW4Tl0EKq7x9rZRpMbOBM1ClHh169bAxgS0=;
+        b=bhU76h8M1h7z+AelLB8uBWO0+COUPAUb2CXfnsHvJZJZw/dPH5ewlTd22o9UBJSBhs
+         QxGRYPmX/qoWFwEnt8ffy+3tkci8v6AKVL4MsYmOYBJbNDvt3mVKfOOQ2Y4jzxAIymLI
+         tePgJ8SY8W6X5ph+9O5Vx7Xm/3dwHoYYPzcozhewQC4kfAPr7iIsjinl4CBgoEgsdbEK
+         tqxlqlYxnKPz9M3MRu0P7sGGUxy6Q6OCkc3l6jbpIE6fA8Nb8BpaFUKavD4ednL5gYaH
+         ZB6nupyjUSfF1bBkbQkcpASvhWuYoQ21ODzoFrK2UFePJe8M7lRKrqdYPkCzYCy+SWlu
+         KzcQ==
+X-Gm-Message-State: AOJu0YxNCjfbbmvGGWmlj6gcuZ/U4h3HlBweWykuIOOw/2XpYw6RQFWk
+	NNqpvcMqPww0WKodlfFP2FibHHEt69q5WZEO2DarKfdPsrRcBdg6vrAuhNzJXzo1VoW74YqjGDm
+	B+vLrjIU6Sb+i8gM5/3PsvSNGZ+YAq80qxlbgVx21zrAst6jqQlvHGoRrpqjc9Dto+fyRsw==
+X-Gm-Gg: ASbGncuRxbihunzZ0/sYPkVGiN5Lg/XrGGj+dWxfvXdssJzFknyoTUfWNmB0aPZfFNL
+	u+o7P59RsiYps47OZPp7NCoBgcbmD80Y9Az0ooPhRvZVUTkVI8tgcyfb8eVLICxwgxaQN9x7gnW
+	N6FJPYIrXuQ0ryRzRE3HyzwPQuDLMd+Rkgcl0CinLjo1Cpl8bUYKgWeSyCB+t1vjbbvu682CAL5
+	PRQ54AZj4LEMtwSFVpfICv3zwGIV81xZXuWdT3HNMZhNn2+6p+fPOGVSHa4t2ttukkPk7Bt5kMq
+	MaFL6AglaKmC5GWAB9WAJ0YuUd833NrGYUlFYbCMmBGMrmX1kbchlfxqYBTcgpwnfq4ClZl8EYi
+	NhMf3Zs9LMhDnamXvDziDBEUFc7mWkgUhLQDdAZHjn02eurhW
+X-Received: by 2002:a05:6000:26cb:b0:429:d426:fb9 with SMTP id ffacd0b85a97d-42ae5ac987bmr2037285f8f.34.1762518984964;
+        Fri, 07 Nov 2025 04:36:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEylXKmQTrFotELc6oCwxKJ4KvmE3IvEF0/zAZ97as2az8kWIyuFMKUbHCj4k9Gpi+YSaCAyg==
+X-Received: by 2002:a05:6000:26cb:b0:429:d426:fb9 with SMTP id ffacd0b85a97d-42ae5ac987bmr2037266f8f.34.1762518984562;
+        Fri, 07 Nov 2025 04:36:24 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67921c3sm5146947f8f.40.2025.11.07.04.36.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 04:36:24 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Andreas Kemnade <andreas@kemnade.info>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in ROHM BD71828 CHARGER
+Date: Fri,  7 Nov 2025 13:36:21 +0100
+Message-ID: <20251107123621.425633-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-52d38
 
-On Sat, 25 Oct 2025 13:27:16 +0200, Christophe JAILLET wrote:
-> If mfd_add_devices() fails, there is no need to call mfd_remove_devices().
-> The needed clean-up is already done in the error handling path of
-> mfd_add_devices().
-> 
-> So, remove the unneeded (and harmless) call.
-> 
-> 
-> [...]
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Applied, thanks!
+Commit 5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
+adds the file bd71828-power.c in drivers/power/supply/, whereas commit
+b838cecc2291 ("MAINTAINERS: Add entry for BD71828 charger") from the same
+patch series, adds a section referring to the non-existing file
+bd71828-charger.c in the directory above.
 
-[1/1] mfd: da9055: Simplify the error handling path in da9055_device_init()
-      commit: 049929c5a159c8671b9b0c12a7da963fef535b00
+Adjust the file entry to refer to the intended existing file.
 
---
-Lee Jones [李琼斯]
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 58c7e3f678d8..68774e9d1d57 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22481,7 +22481,7 @@ ROHM BD71828 CHARGER
+ M:	Andreas Kemnade <andreas@kemnade.info>
+ M:	Matti Vaittinen <mazziesaccount@gmail.com>
+ S:	Maintained
+-F:	drivers/power/supply/bd71828-charger.c
++F:	drivers/power/supply/bd71828-power.c
+ 
+ ROHM BD79703 DAC
+ M:	Matti Vaittinen <mazziesaccount@gmail.com>
+-- 
+2.51.1
 
