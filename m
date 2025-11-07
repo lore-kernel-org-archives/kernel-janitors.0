@@ -1,129 +1,103 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7C2E8E08
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Nov 2025 12:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584A6320CB8
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Nov 2025 13:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762518990; cv=none; b=Ri6WWZsxzyxy2cu3GN2IYhktrlJvGCCb0MGgrmmISTX64TuVbWaRVH//twH5e96seZUVavFweZv25JykQyECBrZ1XamXguquRb6jeUxDa2915h9MX6CiMK0rs9JRP6mz2wb/kbEqP01SY4EUbOcVyz4wnQk50eNrukoqouEf/KY=
+	t=1762523847; cv=none; b=ANsXjxcHv4w+CrQuTJb/fsB/VRvCeLkv/h3iBa007lbt2vfSbIddusmvTLSXgSqsNXeFWfNRu8P2/GcEuB8l8uTkvkkv/ppkneceoT9PauCo7ra7zy+Gw/JCzIRhVuBAgMHi7powOh6rp901iRtfHQA59yO7UzzEzioJqIc0rec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762518990; c=relaxed/simple;
-	bh=fcggPcLDIQTv6YFTOVcBGogTQrJwnTz4cX4nFLOhcUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uBRnQZ/v2gmnpo+7/tL9G56mdOp0kpbJKkarAmTHp3fHT8MOvFMv2bJn1CDr+Pq2mkZzmktj24qEge6NPczj1/2OUJjccYw5HnjluaRd2EMBExWXr7AcJ8Y4nRBPI7XMdUVhxkUO1ONhyfm1Cwn/E0khERgI7r81zpVHQ8EUX1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ff/sjVJJ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UHHigW6L; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1762523847; c=relaxed/simple;
+	bh=pU1/d3gTQ3oOdrNMuwLNWQMPQlhrormAWhdG+nQqqZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IcqLVlJ7gtzhrK/9fNTkkJdS6Qp/1Sznb+K8nl/aLALg77fzs2gvchxego0TpWbYfLo09biOCZZ/EU6G3+9cM3eMOBu2bV1/nrKYS/HNL/VgXDKMCbbzRRetRCJd+Dnp/tZRb7KiPwNGM8DxPOcYR3Btr6Ue1fg8Gwpwtn6DVDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m54AXq6O; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ff/sjVJJ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UHHigW6L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762518987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1siZim9NDW4Tl0EKq7x9rZRpMbOBM1ClHh169bAxgS0=;
-	b=Ff/sjVJJMW3PHtFLpZMVkIolfJgSjKW5OAdkulfuACAw8dIqMwW7Ok5Ivbz3ept7A53nEQ
-	zhjCqbJjUUazyGvXN/HMfD1rOTHQHrCtkUBALNRqrFoD0gBPvbv7j+twkgJ2ewgs06pXRx
-	XFYP0owtl9BBXEVPwTqn1cKXR1D8g0w=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7-8VTdsO4lMXSNkcWvU8GEfw-1; Fri, 07 Nov 2025 07:36:26 -0500
-X-MC-Unique: 8VTdsO4lMXSNkcWvU8GEfw-1
-X-Mimecast-MFC-AGG-ID: 8VTdsO4lMXSNkcWvU8GEfw_1762518985
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-429ce8ac89bso528934f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Nov 2025 04:36:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m54AXq6O"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-378cfd75fb0so6940321fa.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Nov 2025 05:57:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762518985; x=1763123785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1siZim9NDW4Tl0EKq7x9rZRpMbOBM1ClHh169bAxgS0=;
-        b=UHHigW6LthOEZ4R2I9BAcE5P+CMup/pWkdtnc/BqG8ZEhQu8D8gtwSfoJa0idjxvkm
-         dYzZDCbrNlCbsK6UbrBjLCXicfzs2fOzBaQiZyeOTitKfol76+TeW3C8Thkmvp9ZND9p
-         pAiz5u4FU6T95Zr9Q/yik7kYn+WrAAlpKxF1+SUUtKw+gYUnbwxHbqd02+44cqSAfjV2
-         ClV8ltrJhJhlzvCR/bigTsTmUAtivFFDdjsaggVDOUiZTjEyd45Jc24UZVmP8j67Stb8
-         rSJLR/yfZgqYjMWncdmR341NyDelGHdSrXpO5QLox4p35qv3AAbkigUihiFxi0+tScDA
-         DV4g==
+        d=gmail.com; s=20230601; t=1762523843; x=1763128643; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZmTmsZO+E5ineqtVbOXnuX3qzTxvM93F9HyZ2/MV6QE=;
+        b=m54AXq6OPUT/DAxGH4PVrpXzN0MqFPPWaCfBPchovIRCdVYeGUcPBSKroXiNMY/1JF
+         vcnFJTBbhEpnewuMK3IG6Kv5e/51bgUfk7ZmlSfGWOddsX7sbgY1LxZ2X2M+mYuftXk9
+         ReAucveDqxqK2pxoK1nrbylv+nbYdRe0kPvGhJBhJ0Z/TshFvP1pkSaKfYa+h8v/Qpvn
+         5RUbppmEBthm+uw7uxj2N+bPLYT1pgXwgKdUQwZgsLmHo6p5MrE1VlTM6hr7zS4axNbB
+         i+SJ67Pj7B8JTPHy3Dos5eoft1g/g7DJmHOC256vP3Y6jp4wKwBbekRCQhBQXSXpOVJm
+         FIdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762518985; x=1763123785;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1siZim9NDW4Tl0EKq7x9rZRpMbOBM1ClHh169bAxgS0=;
-        b=bhU76h8M1h7z+AelLB8uBWO0+COUPAUb2CXfnsHvJZJZw/dPH5ewlTd22o9UBJSBhs
-         QxGRYPmX/qoWFwEnt8ffy+3tkci8v6AKVL4MsYmOYBJbNDvt3mVKfOOQ2Y4jzxAIymLI
-         tePgJ8SY8W6X5ph+9O5Vx7Xm/3dwHoYYPzcozhewQC4kfAPr7iIsjinl4CBgoEgsdbEK
-         tqxlqlYxnKPz9M3MRu0P7sGGUxy6Q6OCkc3l6jbpIE6fA8Nb8BpaFUKavD4ednL5gYaH
-         ZB6nupyjUSfF1bBkbQkcpASvhWuYoQ21ODzoFrK2UFePJe8M7lRKrqdYPkCzYCy+SWlu
-         KzcQ==
-X-Gm-Message-State: AOJu0YxNCjfbbmvGGWmlj6gcuZ/U4h3HlBweWykuIOOw/2XpYw6RQFWk
-	NNqpvcMqPww0WKodlfFP2FibHHEt69q5WZEO2DarKfdPsrRcBdg6vrAuhNzJXzo1VoW74YqjGDm
-	B+vLrjIU6Sb+i8gM5/3PsvSNGZ+YAq80qxlbgVx21zrAst6jqQlvHGoRrpqjc9Dto+fyRsw==
-X-Gm-Gg: ASbGncuRxbihunzZ0/sYPkVGiN5Lg/XrGGj+dWxfvXdssJzFknyoTUfWNmB0aPZfFNL
-	u+o7P59RsiYps47OZPp7NCoBgcbmD80Y9Az0ooPhRvZVUTkVI8tgcyfb8eVLICxwgxaQN9x7gnW
-	N6FJPYIrXuQ0ryRzRE3HyzwPQuDLMd+Rkgcl0CinLjo1Cpl8bUYKgWeSyCB+t1vjbbvu682CAL5
-	PRQ54AZj4LEMtwSFVpfICv3zwGIV81xZXuWdT3HNMZhNn2+6p+fPOGVSHa4t2ttukkPk7Bt5kMq
-	MaFL6AglaKmC5GWAB9WAJ0YuUd833NrGYUlFYbCMmBGMrmX1kbchlfxqYBTcgpwnfq4ClZl8EYi
-	NhMf3Zs9LMhDnamXvDziDBEUFc7mWkgUhLQDdAZHjn02eurhW
-X-Received: by 2002:a05:6000:26cb:b0:429:d426:fb9 with SMTP id ffacd0b85a97d-42ae5ac987bmr2037285f8f.34.1762518984964;
-        Fri, 07 Nov 2025 04:36:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEylXKmQTrFotELc6oCwxKJ4KvmE3IvEF0/zAZ97as2az8kWIyuFMKUbHCj4k9Gpi+YSaCAyg==
-X-Received: by 2002:a05:6000:26cb:b0:429:d426:fb9 with SMTP id ffacd0b85a97d-42ae5ac987bmr2037266f8f.34.1762518984562;
-        Fri, 07 Nov 2025 04:36:24 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67921c3sm5146947f8f.40.2025.11.07.04.36.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 04:36:24 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Andreas Kemnade <andreas@kemnade.info>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in ROHM BD71828 CHARGER
-Date: Fri,  7 Nov 2025 13:36:21 +0100
-Message-ID: <20251107123621.425633-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.1
+        d=1e100.net; s=20230601; t=1762523843; x=1763128643;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZmTmsZO+E5ineqtVbOXnuX3qzTxvM93F9HyZ2/MV6QE=;
+        b=jBrM6JjCk809bI7ZOBZCo/Pp7ahWR3yobQrb1KHjPuRlOt9V1Rd5ZlS1iKnGPYECPI
+         wosDTMWl6YO38+mT/8i98GOO62Ug8jgX8Wkx9QLj8GUQ8jRiIgoxgNgYL+k25Yd3BE4A
+         da9kBPnQjNbqfsTNbuSYp4FGK7y2dG5BhSGJfrhMwlHBOucEsfDDHoHPGFATfJ4PzYeL
+         eRv+wTnvAjE048sCW+RbYtFgnYycOmmmiJs6VGPBsweuoI4Qf0Ajxn7+ZoYsVYC8WhdP
+         cdxIAUAFxN5euMamRIdNFAb1XsrtrAH5e2sm/04Amo1oc62carOH0R07lPFfvHnTPGx6
+         EqwQ==
+X-Gm-Message-State: AOJu0YwNAMZZ1sd2zRXG/pvVto5gzTOLH+DriA4djCCsUA2PGxp5w5ZT
+	vBI5bs9+sG/egiZOpe24r5VQK5fnk72Zm52IDVNKV0s0CdYytUAI4f4h
+X-Gm-Gg: ASbGncudavLn+Yg69BLegQ0Pjq+bg+61U8e4tfucQiAhfvIL4wOUf4BjS+ygsccmxSL
+	R4sFBPhTigbLrDpTgpmkJYVvSrvWop2JXih1lG5kcHCnNA2VBcp8MkjnRfEULO3DblWO4QwITh6
+	Fui7LLshnG8s7B7ksdH8GWH+BzQnxLKN+R1FsBKPZdevX4YCsqk7mElk9gHG+npE/hSiU4Bpxdw
+	iIAQ+0zK4solMA87BLs3hBEQ5l8oPoqgzBS07SvT0UsLo7+1oZDl33iukPZhrcQ4uoVf+KEQ/gf
+	p7zpjx+fHYRN97Vaqlm56QjIXMNq/GVHhfzlkT5bi2yQKX8d0O4fomUKiadJ+Yzzs2CRC2Wx7eH
+	Fjn64MZpzlbsUnBRAtjYw2yRRkgOoOlvcb/28ayZyoRxGvhMiD1e9c7pUrgai4wJ6qg7S/4ckPp
+	mJAroQLCLimLHPxGqjW7rXxKYMy8fAdjUnNbVkuFXJ3ikpmuVQ2FS5YTYl3w==
+X-Google-Smtp-Source: AGHT+IGuna97US5S+FEJvdQXB1ZSmKd9d9FBrPTuZIikplId7oOFsTN/OD71KzPyK4H+bf41lFXeyA==
+X-Received: by 2002:a05:651c:110f:b0:378:ec26:bac with SMTP id 38308e7fff4ca-37a7312d659mr6724151fa.15.1762523843126;
+        Fri, 07 Nov 2025 05:57:23 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a5f0790a7sm13094511fa.22.2025.11.07.05.57.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 05:57:22 -0800 (PST)
+Message-ID: <5189f05c-136f-4ad9-b309-159607e6e930@gmail.com>
+Date: Fri, 7 Nov 2025 15:57:21 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ROHM BD71828 CHARGER
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Andreas Kemnade <andreas@kemnade.info>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20251107123621.425633-1-lukas.bulwahn@redhat.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20251107123621.425633-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 07/11/2025 14:36, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
+> adds the file bd71828-power.c in drivers/power/supply/, whereas commit
+> b838cecc2291 ("MAINTAINERS: Add entry for BD71828 charger") from the same
+> patch series, adds a section referring to the non-existing file
+> bd71828-charger.c in the directory above.
+> 
+> Adjust the file entry to refer to the intended existing file.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Commit 5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
-adds the file bd71828-power.c in drivers/power/supply/, whereas commit
-b838cecc2291 ("MAINTAINERS: Add entry for BD71828 charger") from the same
-patch series, adds a section referring to the non-existing file
-bd71828-charger.c in the directory above.
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Adjust the file entry to refer to the intended existing file.
+Thanks!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 58c7e3f678d8..68774e9d1d57 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22481,7 +22481,7 @@ ROHM BD71828 CHARGER
- M:	Andreas Kemnade <andreas@kemnade.info>
- M:	Matti Vaittinen <mazziesaccount@gmail.com>
- S:	Maintained
--F:	drivers/power/supply/bd71828-charger.c
-+F:	drivers/power/supply/bd71828-power.c
- 
- ROHM BD79703 DAC
- M:	Matti Vaittinen <mazziesaccount@gmail.com>
--- 
-2.51.1
-
+Yours,
+	-- Matti
