@@ -1,205 +1,140 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010065.outbound.protection.outlook.com [40.93.198.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8AA1A317D;
-	Mon, 10 Nov 2025 11:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775279; cv=fail; b=iKyA9zMhvE2PJreB/7k4x3ac/pVl3WSeNU17W+N7BvjFqE0v1IpacK3wC4Vz9809fbm2L54y/0IVsx2Lm8Kp+gplSu88LD017V9pRaaR7Ruf8vzsPXBRQ1f4GyPFFK6+QrNFRIXZqMepZC52d8ZdYxGf+Res2Wx7nydbzJDNfCA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775279; c=relaxed/simple;
-	bh=tE1cw4j7RyqZ35Yx2sVfez1+aa26lm7culPCfdMnrqY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hJYsqlUWfqQ+mbzrx3q3s9JOVT9nVGoC0itJ/cPD8VzYlQdsSRiqGjBGRDz4dBliSA4aieZPRg3+oZ9QDrl6+iDKRLPcSAZ0XzDGXtU9EsHU+AAav8968gzvlvfS9+STldAPrnjBQ8bCaMGtyPCPHKK+70nVFfx/2vsFxfvzSJg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VDk2jgjt; arc=fail smtp.client-ip=40.93.198.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5588280A5B
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Nov 2025 17:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762796626; cv=none; b=ELzhvVpRZF6Iyv64R3VgCVUhbDiw1RowS4EWM+rPyoOxyTYq/SUILH9TnUu+GF2h5d3eSNyEQXa17iH0pyZAAk4GhvyaIFsI4PhYptFIadV2AzxQ6XeH83z6DbtNXCARYebwd+Ife+5cL4bKNGbiaHk+GBjVD/IOmL+IlxDnLRA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762796626; c=relaxed/simple;
+	bh=S4tg3Dr4FAR1CV10xXnkKduKxsDv65SRP68os3+k4kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFxLPpXYvfRrN+/G2uRyaHkssqmv5aUKOzK25DuXme/682MVQGJ9glJE1vdUzgYH8yt/5uSejP4d2KSTeheJNCWCUVnTIXg0JtCdbYXgTgimBJHKGPBxviSPoEFxWWAObozshI5UKVGZNlyvhlUGwGUPl+iK3mMdXDVa4n22Mdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ABXtOHJb; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VDk2jgjt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aQQinsQoghPLoUurruK8mASWhrPVzgJQI4LNJ//QuEzaD62YTj1TWxVwKCFFidESRGOt3Am1cfX1Nak2/JwKjLbCENHXnBRQ1xL/oQqiiScFOAqcBGE8JD86FZoTJv0jlwPYCILjtDNcoaMX75xjeWL0NSPKdYvqSI4Ow7rdyq9zTUGP1j5gcAjzhGAmhJibX2Ol9EYDYiHS4B1oVJPr/VZQpqJ2mfOArU6oy1mffESSccwvlLLh8Ui4l5qcKB6Oz6s7Y2qMXpsZKiCRwIsxN5Zxh+MVxV8FjgRVhqsgzWwlHL/5Q5HxIFP+lr0BQrcfMlS5pt5EpqOSFv+j3irb+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=99hZQ/6fPirh8aEpnhwYGwg0C7CfoyAMJ13ybCNvBBQ=;
- b=rmF9+YC8pcEl0Nzo7EOpQqPDTYXekn15xNR5cywwuF3rzBzHok+BFumtXQDjqZghiPl1mxUbD05Y5XvLpAGszeiMImpdQBkE1EcSgrdJFT4LUCHNqX1dud421k6xgN5ntpxDeX7O4tKqH+CAvg45NqzofI0DmUTzHih97A+C0LFpCOWxGginnSK28HI7AR9SWHk6A0L3NtXf0pLMIQIJBXmT4Ckts3LsvjFlOKZEht4/B0IM9tGQa43gAyfxqrP7ziFGSUSVygvLTb6MT9FwYJ/OGWvF66tVpnhLVWdNvnilvnJSYev8BZxM0MCCWpK0R9YMQAKoMPo6fbZ1fXN5NA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=99hZQ/6fPirh8aEpnhwYGwg0C7CfoyAMJ13ybCNvBBQ=;
- b=VDk2jgjt1TWMuc3B1Rg2o3DL22fv39swc0GbJQX7exLhpfs/Yeqegfo0W8WnExMGAIjaPRLxk6WfPwmrw1v5VWD8f3gwiQwaa7MgETlVadMNPyt/uYMKfzAoSvOtZsS950vJ6kBaWibZCGR3HXyoZV3vZrR6ZOWla5KnRUKSsFQyHpcST/cxfYfWJRkA/EJ4Oy24GTBu3sr8+BinCoVm7zVSYwMmnPKSoeKhdYP5nEcDPoC4a4l8idPGux0VEqOOgLhmldT+62LXiL4YIWrOe0BpWFU4ByIDBQPfXb4ybd7A8gH+MqSRCygGa4l5YG6Xpde1buAzide/y0tFolhRaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH3PR12MB8212.namprd12.prod.outlook.com (2603:10b6:610:120::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 11:47:54 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 11:47:54 +0000
-Message-ID: <42ce1ab1-8334-4dd4-8301-1ae84a7786b6@nvidia.com>
-Date: Mon, 10 Nov 2025 11:47:49 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: drop unneeded file entry in NVIDIA VRS RTC
- DRIVER
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Shubhi Garg <shgarg@nvidia.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20251110073544.443816-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20251110073544.443816-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0270.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a1::18) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABXtOHJb"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b996c8db896so2716523a12.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Nov 2025 09:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762796624; x=1763401424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
+        b=ABXtOHJbLr+PXUmEvGomTywTdyDRQpTkFas3NmIaBDWZkYPiDy+bJB6IDy7KAzGen5
+         saYkzIYZX7ZvkQfW0b16beMLxJdpuwlug0qqUQwzaXK7sgAptpoYDEXsIzZ6SLeXmMZu
+         Cos3BrcLCiMfjgafyBKOMPpTtgNXNiKcyKENofdEuwTdauFjSmRFcSBTdc4Hu1z6UDPR
+         6prjvLZe/6m1Z39u8+4gxIIlo6oQN3/rGCaVmQ/lFHCzdqhdXxR03TZcwmeWb4IkCKt9
+         0pqR2kBaBLEMtGdHy39Pa7j9WfbqN1mj9/mVSvlFn+FXa3nM9RpIYVnI7WDcXWSzwNfm
+         Q6Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762796624; x=1763401424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
+        b=q56+Ifi0iFC6TJZYedfiz1SP09+BGvZ+oYoadis2xXFUeIvW2p4FsH8AHV10a0VYFH
+         SJA39UetoQtBR3V18zKAZvlE3VCPjpcqXxt9i6ouukqSa4UT8PAktryn6tqkd/Ivlf7+
+         mEi7S1A5itcwrhw8qHmnAgFsCh4EPOU0xkA+O4aSeawxeuhWyzTtMJrm6bDzFZXeHYCC
+         j91pmakbdmSqr8r1T4jEd7UcVaE1LHWaBlDOy20j9zjr/95fzy3K+Tgma+cXpzP2QTYi
+         mMBpDNR+08fRvfCdQmt77TlM8hgmp7Yb7H6aI+uoa9nDVuFIiq7z0uPUC7j8+Xbq3Oru
+         eWFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpraCR+OTDMhOjJeuMUMMod+T8WVy++nAluJ2k+kAfXhMwcxyAILdfVdrQvLuBhk2P+hhchaSXqypuLSZO1SA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD9J3SyvdB9LULXxqZ4TmPvw9Sa+pM5Oq2XlnlgG/PVzrakT1A
+	evnaX867EOGGhUz2zkISNHhG8xhJd5pVT+G3OhcRMwjCjuD64WbT6J2YwnVh1eJYSvo=
+X-Gm-Gg: ASbGnct9vmh+O3RJGUWW5sSJ4gyWw9jLE2U4ludlCtUMch81OL20zSH5t8wbXPRtBCm
+	jKVPFa2y2Bhvq7mqVE9YPgd9/ARVLX9LX5LS5w9MbeTaHCUAiezEndGuQ1sYR14BYmGA+1ZKdFg
+	T01Y/6QuSbOlZ2cxFAl+ptlFjdwzeZXYU9/3E/ucve/vuw6zHOIWydjf8SIbpR4W4fLa6hW/pDZ
+	n4lNDcD6ouXWF4GGW5tHx4wCrVuLADLAn3IzbrmExVlUDKGNnAWmddw4Cqq6zmG+KKHqmxikSpI
+	I01kYFva7gF1gzqgN5+07cx0r/S6tMgJBA9hHH3D9pLe3BWVfw/1x2TocW27WekgHyjsXofz0cC
+	zPLX/8lc8mfP2Z/8CfzVTlMa0n9r1/3VsKubMo57b0fS4sJ0+udYUwSg40GYGTCmomHUHlFGHoQ
+	v3Kk1fVzME2rXx
+X-Google-Smtp-Source: AGHT+IH9KL6qJufmaDst932E6GsFJgG2DPRvV0ZpXeCS06v9BXdY1k3lpKtvHXKr+tDgIwa14Fuucw==
+X-Received: by 2002:a17:902:e545:b0:26a:8171:dafa with SMTP id d9443c01a7336-297e564cef9mr133819655ad.21.1762796624024;
+        Mon, 10 Nov 2025 09:43:44 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:e689:789c:c35:41e7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c747d1sm151325125ad.63.2025.11.10.09.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 09:43:43 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:43:41 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
+Message-ID: <aRIkTV8C9gjSyH-o@p14s>
+References: <aP8agyKj73bLZrTQ@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB8212:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71bbb759-7e87-4e96-9d86-08de204efc2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UFJrSFMza3Z4ZFlyblpVQmxZeWtrbnBDV1lCTmxVNjRZenFtRnc4MHJGb1RP?=
- =?utf-8?B?MVJkb1gxTDQ3aFU3V1lvUmx0Zkk4L3l0alFLeGxNVEowUklpRHpZNzBTUlpv?=
- =?utf-8?B?UEI3VzhPUVZtSEZoU3J6Tmpwa2FqSHUvV2RQSmlVRXFNMm1mWGdsdWxRanVv?=
- =?utf-8?B?dUROUWRMRVFpbE8xR2J2Y0pPNmZ4QjNSRTVRa00vNWQzODVibmdvelcwOExW?=
- =?utf-8?B?ZXBJVGhnYlZQRnhmK3RUbmIybHNPajdUN1JwQ2R4M1NqOVNpNHFveDQwWVU2?=
- =?utf-8?B?ODlpUDFUOGhGckliV0dMM0ZLcU05cGxsTkcwRWhEMU9adXUzeC9XOXZZSVRJ?=
- =?utf-8?B?dkVBV0d0QjkwK1Z2V2cwQkJvb2xCdkVPUzVxUXVraXQ4V2VXQkQzYm1pSkhD?=
- =?utf-8?B?b3g0OWlSNGZTRUFPbTZkUGlTc1F2TThGb2RRajVINms0OUp5OEZXYlhpK3Ji?=
- =?utf-8?B?K0hXWjk3UFRhZ2hxTnBCZ3U5bnU3b0lIM0h2RThRL2NGY1RHLzFRckZjcTlV?=
- =?utf-8?B?S0orcE11aCs2U3JhOEVYcVVlU2wwL1A1bVNZcFRGaGdwU1ZKN1VGNWpPYkRT?=
- =?utf-8?B?enF4SUFXUER1R1A3My9nSzNFREVPMmc0U2ZoSWRRSGJhazM5M1NTTXJOTjJh?=
- =?utf-8?B?UFJ3YWlaUU1rcnExNVFzVW9XRkFGdUZRczM4S2IxWkhLTTdjaVdEQk96NzBs?=
- =?utf-8?B?eE94WW56VUZJQVcya0NMZGtVOHJFN251ODRGbHR2VDJpTFFzVnVIRm9EMm1L?=
- =?utf-8?B?YTVUenZRblROemJqQmRJSjBvYlVrYTdCMFVGQlB6dnRhT0ErTWhJelBtVGlK?=
- =?utf-8?B?WERzV1EyZHFQelo1UjlxSWsvRUcyMGZCR1hmbVR2b29OUzFhVSt0S3hKRUlI?=
- =?utf-8?B?VHRzZDRkWDJRMmZSNkVGdmxQYTc2djZ4YTRaeGtOSjJnTkZERjBnaXZweWFm?=
- =?utf-8?B?N2ErQmRjUVl0QlF6SUxDZmpoRVgzM3BGR2RSK1dEbmxtanBJQ2ZoVUNBSTFo?=
- =?utf-8?B?TXJHMmlyNXFtdFIzUzVyaTdoN2xxUXNYMlhJcmJKVWlhOGI2MVBhL2JNTXQ2?=
- =?utf-8?B?MUVScXoxVHhPWDl2bUluMjdKWTQ2Nm5pYkpSZzF6QlBYb0tlOVFRU25SS2Yw?=
- =?utf-8?B?NVV2UjRBNm5VYlBwamYzVStaUjU4eDJ4MzEzUHNkeHVDNWowZFBwZE5ZcTZv?=
- =?utf-8?B?RzliQ3l4TEdPeTMwbVZEWTIzRUtYdEMvQ0VFM2dhQUJ2UVhjMlJhclhCK25P?=
- =?utf-8?B?TVhLdnZmNWJab0wzTUtBQUl0KzdqaytoU0ZGTVhzMTU4dGl3Um1JYzF6ZFRu?=
- =?utf-8?B?NDdBYU5OcUNCWjVXMGlieW9iQWR6TE1GT2VGdmE5end0OElPbHJQTlZvZFp4?=
- =?utf-8?B?Y21GeUtJK05jUFRHZkpaR3RRRThGOGZRUk9tZkZ2a2o1dXVsUmJid0pEQjYw?=
- =?utf-8?B?QXh6a1BQMm9hUmFaOFRrVWVEMXdqeHdnUFVNZGdtWFpOMmt0bWJka0xycHAz?=
- =?utf-8?B?RmN1aXpyQkpwK2NvMGNwa3JFM250YmNId1JzT1lFbjVZamtEMndBNWNST3BI?=
- =?utf-8?B?YlNBdnEyKzRxdVdRMUJUYU1sNlFJakFvK0YrdDlxcHI3WTU4N3BKL0FtamRG?=
- =?utf-8?B?bGhzbzFSdVVHczNUTXl6Mi94TEpjamVyTVVHeXlFTkRCNVpqWU5WWmJuUFVl?=
- =?utf-8?B?UUJnQlNGeEtEVGp6a0g1a2JPWjVNMmpQblpWZmJwSUJNWGEwVTFnNlRYYzdp?=
- =?utf-8?B?NU5HZGZZbTEzeW9uSmt1aWk4eWxNWldTcjN2RlpyQTE5bFpSOW5IRjVOblI3?=
- =?utf-8?B?Rjd5MkpyaTdCcVFBdDNkS013ZUl0aExtcnplWnFDdi93SVhRN0c4aG43aDVk?=
- =?utf-8?B?VWJYOUxTZVEyUXFMUmdnajZFRk9CZ0phSGg2aEhRQ3I0STkrODZtVHNqRFJR?=
- =?utf-8?Q?GAVgQQBURcb0223fEZ3gjnKBX03Xkurf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnA2c0I1TnIxaDBzVGlCUGpEdFQwazM1UXFmTjZkcDFJdFh6NG04a0NqWDkv?=
- =?utf-8?B?MFhYWFdFaTNDZmk1ajJadUYxbDY3VDArTUNESkI4Rkc4d1o0VGd4YTRzZ0xa?=
- =?utf-8?B?VVMxMXorWXFZR3psL0hldGM3WElwREdKcEdpM05xYW5wMVhvVzdNa1Y0WnN6?=
- =?utf-8?B?QnlnNXZoc1FzMmxzNnBnYUV3bitERHZzeklGMWpRcktRQmhpL3JLSHZYckJN?=
- =?utf-8?B?bFRoa2N2TnpzT2ZnR0dqNEhFTXZjQ3pnY1o4ZmhTYmFnUHdIMVdQUmZQak4y?=
- =?utf-8?B?cDEyTmRpN0JMMzFSSmZQWi84eGRVSmxFRUJiaktTSTllN28vTUNIUGQ1YUlz?=
- =?utf-8?B?b2hHVm41dHoyMFd3WmVXMmFISVA4Tm1pTmI5c2l6cThsQ2hibFAvSExGc1R5?=
- =?utf-8?B?YXdvU0RZZFdNUGV6U0JGcGorczNtMm83SkZTR2c3VlFqdGNXVGFSSDR4UWQ1?=
- =?utf-8?B?aEJtdmUvU0JaSTJycFRQYlk1K0hJdGVZa2FFYTBmMDJxTk1OdjNvcFlBYkxk?=
- =?utf-8?B?QzJVUG1UUHp5cHlMRkRMdkMrZktycHFZTklUZVJmSHZPbW9nSlVSUzN2RkVr?=
- =?utf-8?B?SnpCWDBYVzdQeUVoYXQ4RHJ1dVkzZ1BSRlRkQWd3Ymlsa2s2ZXB6czRHbHZz?=
- =?utf-8?B?ek5KREtJUm9pbTJYN01leFFveFFENDdNTGt0U01HSnlQVUJacURhaWtLUE1C?=
- =?utf-8?B?RlBMWmVaV2V1MDg2NXdnMEZmMkNXaFpocmYxWEJkVDNZeEhpdjh0bEhBd2NS?=
- =?utf-8?B?a2hhdjdvK1ZvOGNaZngzTjk1Z1NaTXB6ZjhLSlNFdlpDWk9OSjRqTSt5Qlo2?=
- =?utf-8?B?Ync2MEJiRVdBQWZNOURRY1JsY1dIQUZGUDlwYmRGOFpxQWFjZ3R5T2hLb01T?=
- =?utf-8?B?VStYOHFKODdaWGtXeERaOFEwODVNaldZRVZmWDc0NmpJNlpvSjNudm0vMUhB?=
- =?utf-8?B?aitDWkJGVzBwWDdSdGJ5cFEyM0diYzlGRFFCOGlic2kzejBzM0hQZENRaXVO?=
- =?utf-8?B?SCtCUDdXblFYSHl5M0VBcDhqQlNWaURjYUJzZmQzWVNRZktDQUdqQmU5bmJ6?=
- =?utf-8?B?YlRWS1pqN1NXWUdyTGZZdzZURjNDMFBpN2JYZHdnWjBHaHg5NjkyUGkxUGlK?=
- =?utf-8?B?SlN5cTFxVWUxSHNvVnp1MDJvenlBQk8yZUJjQktHbWpwSXEvYnZ4d1V1MEov?=
- =?utf-8?B?N0ZmMUFsRWhIa0RCYkVhT2x3MEc3Z3U2RStkSG45Z0YyekIwZHIrSi9GdzFD?=
- =?utf-8?B?eGlOTSt5Z3F5Q0E1L0wzY2lnR1haTHJFaFNON3ZtUjZXbTdiYzQwcW5aK1ZK?=
- =?utf-8?B?Q1FGQ29uOHAweVE4TFNXVndUZUVNaWlIVDg1VkF6RE84VlJSR1VmYUtEd0Jp?=
- =?utf-8?B?UzdZbDNNelFUTm1kV1BFT2phQnNvckxLQlRQTE9sNU5rT0VoVHZrcUhBeURI?=
- =?utf-8?B?VDRFWmZzUVdvMjQ2U240QXFmZi9oS3ZlU2dKbEF1NHJOZ1pNdDVnTTN6RlJm?=
- =?utf-8?B?YzYvQXB4ZGd4ZWxoZXY0a2VXUzFSVkkwUk5iRm10dGdWQ3F3cUhZdDhCa2V1?=
- =?utf-8?B?UkFHV3VBMFkzUngyTy9EN1FkaC9nZVVwVFJZYUYyaEMydlNlTTYwdVlnN1RX?=
- =?utf-8?B?aTJ2QmZBQzV0QlJZT2I1dFZxMWlyNnFub25ZalBnYkVHVU8zR3hGclYzVzdk?=
- =?utf-8?B?Tzl4UklRZ3Bhcjc5UmNDaXRjSEpaVVMwZDBpU1JybGI5QThFMTluOFBDTFlC?=
- =?utf-8?B?RHV6c3dxM082NCtHbWxUcHBmRnV4OTFGMXVSMm5QNHBsQ0VrdXhLbkJ2ZWtu?=
- =?utf-8?B?SU40MUNNSFQyU2UyNWZuZVc2RWgrM2Y2RU9udS9pSjRvVFdhYkhKT0VEbXlw?=
- =?utf-8?B?OTc0Sk13TWU2cWk3K0NKYkU1T2o0LzFtZXNnK29kaDYyRUpEWGREOFRXbHA2?=
- =?utf-8?B?d3ArelgvM3NOK2pFVUticFpjWE5zcEdlRkJMS3RNK3ozSUdiRnlPQXRORnJl?=
- =?utf-8?B?L3JhcEg1WXhKKzVtN3ptZHVzSGRZUkViSVBBczhDY0g1eVRRem5URTdBc3Qr?=
- =?utf-8?B?N0w5OWh2d2YwUi9wcGg1b0gwYmtqRVA3MVZMYlBCTkdmYlNVQVpqczdGazM5?=
- =?utf-8?B?YVZHNDZFVU01d21BZ3dRakQxRENORXpBNStoK2swazNJdEVBVlM5allWZ2VB?=
- =?utf-8?B?czdOUTN6U3AxNDNYRDVtRVBjVmVuVktSVHRvM0lJc0k4VWdrRld6QzhzTGc5?=
- =?utf-8?B?Zjc2aWVLejZQb3VrY2hBTWNCeHFnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71bbb759-7e87-4e96-9d86-08de204efc2d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 11:47:54.6218
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bMokYA82OcKS3o7TDhcJ0pkK0t+de/PLXphU4DGnitr6zjR6wDbtHM+q/tpaJeRBCmuS7KsncUwVqvzVP59F6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8212
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP8agyKj73bLZrTQ@stanley.mountain>
 
-
-On 10/11/2025 07:35, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Mon, Oct 27, 2025 at 10:08:51AM +0300, Dan Carpenter wrote:
+> The snprintf() calls here work but they have several minor style issues:
 > 
-> Commit 9d6d6b06933c ("rtc: nvvrs: add NVIDIA VRS RTC device driver") adds
-> the section NVIDIA VRS RTC DRIVER in MAINTAINERS, which refers to the
-> non-existing file include/linux/rtc/rtc-nvidia-vrs10.h
+> 1) It uses ARRAY_SIZE() which is the number of elements in an array.
+>    Since were talking about char that works, but it's more common to
+>    use sizeof() which is the number of bytes.
+> 2) The printf format is "%1d".  The "1" ensures we always print at
+>    least 1 character but since numbers all have at least 1 digit this
+>    can be removed.
+> 3) The kernel implementation of snprintf() cannot return negative error
+>    codes.  Also these particular calls to snprintf() can't return zero
+>    and the code to handle that zero return is sort of questionable.
+> 4) In the current kernel the only "core_id" we print is "0" but if it
+>    was more than 9 then the output would be truncated so GCC complains.
+>    Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
 > 
-> Note, with the changes of v6 to v7 of the patch series adding the driver,
-> the content of this include file was moved into the driver file, and the
-> include file was dropped from that patch. It was simply missed to adjust
-> the section in MAINTAINERS that was newly added with that patch.
-> 
-> Drop the file entry to this non-existing file accordingly now.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   MAINTAINERS | 1 -
->   1 file changed, 1 deletion(-)
+> v2: The v1 introduced a W=1 warning because of the truncation issue.
+>     It's a false positive because GCC assumes that "core_id" can be
+>     every possible value of int but actually it can only be zero.  And
+>     also generally, in the kernel, truncating is fine and it is fine
+>     here too.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2a881629003c..b2b55947efef 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18586,7 +18586,6 @@ L:	linux-tegra@vger.kernel.org
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/rtc/nvidia,vrs-10.yaml
->   F:	drivers/rtc/rtc-nvidia-vrs10.c
-> -F:	include/linux/rtc/rtc-nvidia-vrs10.h
->   
->   NVIDIA WMI EC BACKLIGHT DRIVER
->   M:	Daniel Dadap <ddadap@nvidia.com>
+>     But let's use that as an opportunity to do more cleanups.
+> 
+>  drivers/remoteproc/mtk_scp.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 10e3f9eb8cd2..db8fd045468d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	if (core_id >= 0)
+> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
+>  	else
+> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+> -	if (ret <= 0)
+> -		return ERR_PTR(ret);
+> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
+> +	if (ret >= sizeof(scp_fw_file))
+> +		return ERR_PTR(-ENAMETOOLONG);
+>
 
+Applied.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
-
+Thanks,
+Mathieu
+  
+>  	/* Not using strchr here, as strlen of a const gets optimized by compiler */
+>  	soc = &compatible[strlen("mediatek,")];
+> -- 
+> 2.51.0
+> 
