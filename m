@@ -1,106 +1,65 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3152EF66E
-	for <kernel-janitors@vger.kernel.org>; Tue, 18 Nov 2025 10:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCB3624A5;
+	Tue, 18 Nov 2025 14:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763463140; cv=none; b=IGubdEBcW7+o87B/U9JAsOa/c2miZ5cIT8wciDI3FkDJtHONyOLAfZsl/PDW7ZuJqBb4c7fTIoqrLfAb0QdtaP9hbL4DN8RDkt1sWpnQgEQXV1w/6ISF+gihPkNBa4Wx0VhNTx1kIz1xEige2T/LKGuI6eiaHaHq1E+z94SwTZQ=
+	t=1763477891; cv=none; b=WltohW6yL5lE8Snu/uP7fB2hMTDSv8XYkBAvlTkY/i0uo1Zx5vJwcpdmd6YmPXhFdyA17R0m1E4D2kImD0GgHGwbU9jpXoDXa8FEhoBVYTBnb+tbcgtq9jaw/NPokRDDh0TFy/0QzJ3m88gHiBICl3eJvm6EX7huY53LaHzidhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763463140; c=relaxed/simple;
-	bh=AW5+d6KVs/jU1qw1fZdT24U/ZZM+94jgRm1QSjEBmb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VhIwXYqOQTDr7UuEczG6ePPFaJOsG8EMXIrrQ0UFqILf0K2vllJuB8AkZPog4UA9jAP4j/NoI92B1dwUpvS7XAx1bQwtemWpvO++SIGn1Zv2LDppWThRRpYBvaJK97qNi00REQmfobnpdADfNTe31yRmvve5NGm0kZihpsM25Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pcoO137T; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763477891; c=relaxed/simple;
+	bh=mXaQ0PbQSdqK1G0ampoRYeGoToUgnBQlAhKb08K2CBQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q1ID+1WWXbuTXrhZffY6eXOwlm+4LjEks5PgO1tg8IvM1hXkRrcpGif6CRtNaEt+pzQ3EotyGdpcWLG6xYQVMd1MJcwtHXvLf41mPtEJUsUjtZibBv2Pko7LgBK8rN27v3O9CFf4D7IzbF+J0z4F9ZfldS/qXVnEhltDRl6M6jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qwVupRoY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PlFkYG1c; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pcoO137T"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b2dc17965so4344129f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Nov 2025 02:52:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763463137; x=1764067937; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zscoEzxzpyUe8qPqbhispQ/2WF7eSYXb3vUOtEoYZYw=;
-        b=pcoO137TxlICDtQggykYRQ7nLIEM1P6rDXgoCl9RPFpCT6otJEUOFNIpI3wQVGDOlr
-         +KQy0/WQQbWoX2RxVlW8ZHvMlbA5KKkWBANlZlYInFjxSAa1f544AEynNJPIrisy+lGB
-         PYohKNTkHcDk1BB+dTMEBOVyUZZ0cPpK3oHNkxAZdBEv9TVzD7xsW7VnpaZsokDWEkDU
-         iVhkfxcqwIQ9l1kAOxxb8c38qZ2qqJDVTGJroLAhlqFJ3VVpW1cNmbkGL+TTqmJeoBaR
-         ZmAqTnGfTlEyia0e0oZrx68P2UM6v6anJwFTKV8WDKYfXJS4aOgsqCunakZY0HcKQ1eG
-         Iuiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763463137; x=1764067937;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zscoEzxzpyUe8qPqbhispQ/2WF7eSYXb3vUOtEoYZYw=;
-        b=xAIF0extVQSra92fgX2t/THiZ7HqemxTnOI2otzyi4YiH1IDoEq+SSW1XHGhfiRvBH
-         AJgDv+oLQeP8zjxYA5Dt15A2k+DAFfxUuQbgSQ9SOzeH7Qj7WRTByGC/ViLrLPTtjJmk
-         L+gZlk/klIRFzWUTyXXXbnrWc8wIdO0lAw0ET+KqpQuVFjLzUs/QEbrIrL2s4ZHFXnQL
-         pSMwGqn0aKjR69OdxN4R5waZjUjqzSsAnh2G/NwOQAbbhdu+oSlPrvRiWdkA8Df1oAGD
-         y6YjeFADTgd/ahaSdXw1JsdL7zL53BHbsCdaYutEjgbFSD6k623rZy/EcY0mVGWUSK8V
-         UFYA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1Q15av5qO5YGTLYQIBLiU9LqgJDOttU5+1Lx+kg62FiHWy2thxoJvznBfh7t/Peqc5wqWZMcUN9zuxDiPCj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIDyVYPnaELQs4YMGZq4ZFpRvEDOPeXmT/mwuPbNA+KIq3rc49
-	ZiVyxb6JC057fkCvBbuXog+PqGpq2JE4vPlB6Y9Sj349iead30V/OhKTgepC/tv3RAY=
-X-Gm-Gg: ASbGncvX/rGPasblAL0wVtWCmps6ANBIimlbRwRd3/6PdvvH386IFAJqTQ60tuz/w4O
-	L4Nr3iAOjs1oQCQmF1C9hqrQIKqXdWG09MvmFsOu73bNE0eRKc/nT44WVirlzqK08zA1IYR3LHu
-	9YXFLbGK+Kf+wU4ltUnn+Ho3LsXWeI3X0Wb3rfHkaPIqJuAFZ6cKXWfs2Ib1WkyE++2dm7Sw7TP
-	3csiXKFMH1RDMLqDGVI9dTO9UXgYVb0ZulaEC17VAezrQOxVO9INVWNPhHDI9/yl7lnmI6uhbgv
-	vxqPHiBbzxBoxyDqyeilz0utGPdIc7jJ2lFtdlZkqXE163mTfxzsBQ1+IeKOVvYFEwOJ+bQaqSF
-	mOmmHaHuBd1H0QJQqh+ktXTxGRuA8/y0Ecmq2oAGeQND+HCKhK7cOlK1Sp35dmrDzSEgQMgieBC
-	RemNb1SA==
-X-Google-Smtp-Source: AGHT+IHNwyYTYLJgZi7N6YIaIizYeNVzG3FffpiHlLF3dnlal7Qh5mvZVG+uHjTWCBuIvAKscpesSw==
-X-Received: by 2002:a05:6000:178c:b0:42b:3ed2:c08a with SMTP id ffacd0b85a97d-42b5933e40fmr16604689f8f.13.1763463136931;
-        Tue, 18 Nov 2025 02:52:16 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42b53f0b8a0sm32003077f8f.25.2025.11.18.02.52.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Nov 2025 02:52:16 -0800 (PST)
-Date: Tue, 18 Nov 2025 13:52:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Simon Schuster <schuster.simon@siemens-energy.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] rseq: Delete duplicate if statement in
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qwVupRoY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PlFkYG1c"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763477885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z/r65hY8SWPaoKncjsGYJmpsCcPpi7Lo1MIAjd+cRLE=;
+	b=qwVupRoYSItfwZLGqo/nEuJ+0Oe9Okeq13p/Qs9UrYxDP5//00beg7JJ68iExXHcqkSpp5
+	suxKemMmC8I/dHPtKodx0nYytHqSMoDCPrnlpwFHi7uCl1oSljLjBfl+886BTwQ/G28KtS
+	4oKyf/I2pO0HCnnEd3kLihD8uFsLqeTZE+URGnZoJ1/oBBPy3I6hlPnPPfc9wiLlP1EGG4
+	92mdlWDqM3hR/qBUYfaeoFDkahLZCPfR3IMmZJOwdGYxLsWLShmAVixoA0Jwpy06tCx5Z0
+	crgUNRfnqZ9QeygOqoMYThMT1Qq9qp/eT2QJCiPZkzutNHONhpmgXA8jNggzEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763477885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z/r65hY8SWPaoKncjsGYJmpsCcPpi7Lo1MIAjd+cRLE=;
+	b=PlFkYG1ckdpNPS4ab39+HM/c2AqRGdfUJ66ycHO9OH51AijoWG44TLRIPDzXe1SjfZn9oh
+	t2UuVi6SQXDjKABA==
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, Ingo Molnar
+ <mingo@kernel.org>, Simon Schuster <schuster.simon@siemens-energy.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rseq: Delete duplicate if statement in
  rseq_virt_userspace_exit()
-Message-ID: <aRxP3YcwscrP1BU_@stanley.mountain>
+In-Reply-To: <aRxP3YcwscrP1BU_@stanley.mountain>
+References: <aRxP3YcwscrP1BU_@stanley.mountain>
+Date: Tue, 18 Nov 2025 15:58:04 +0100
+Message-ID: <87v7j75qwz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain
 
-This if statement is indented weirdly.  It's a duplicate and doesn't
-affect runtime (beyond wasting a little time).  Delete it.
+On Tue, Nov 18 2025 at 13:52, Dan Carpenter wrote:
+> This if statement is indented weirdly.  It's a duplicate and doesn't
+> affect runtime (beyond wasting a little time).  Delete it.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-This was introduced in commit 32034df66b5f ("rseq: Switch to TIF_RSEQ if
-supported") but it doesn't cause a bug, so there is no Fixes tag.
+It's actually optimized out by the compiler in both cases, but yes
+that's an odd one and likely a reject fixup artifact.
 
- include/linux/rseq.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/linux/rseq.h b/include/linux/rseq.h
-index b5e4803c4ebe..bf8a6bf315f3 100644
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -126,7 +126,6 @@ static inline void rseq_force_update(void)
-  */
- static inline void rseq_virt_userspace_exit(void)
- {
--	if (current->rseq.event.sched_switch)
- 	/*
- 	 * The generic optimization for deferring RSEQ updates until the next
- 	 * exit relies on having a dedicated TIF_RSEQ.
--- 
-2.51.0
-
+Thanks for detecting it!
