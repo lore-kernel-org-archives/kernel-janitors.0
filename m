@@ -1,65 +1,90 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCB3624A5;
-	Tue, 18 Nov 2025 14:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACC33126A4;
+	Tue, 18 Nov 2025 23:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763477891; cv=none; b=WltohW6yL5lE8Snu/uP7fB2hMTDSv8XYkBAvlTkY/i0uo1Zx5vJwcpdmd6YmPXhFdyA17R0m1E4D2kImD0GgHGwbU9jpXoDXa8FEhoBVYTBnb+tbcgtq9jaw/NPokRDDh0TFy/0QzJ3m88gHiBICl3eJvm6EX7huY53LaHzidhs=
+	t=1763507709; cv=none; b=uMdu2c1+6K5K9jboj/zbMJVVtQZNrvQ+MFIZvsh99jTgE26ZrP54TUcb9X41XcoaQKAsCWwSi1MKGW0Lm/f4MLpD7uiqRR091yoknUnfWi9SSecylxFwOtPC6DkQZ/EFgxQdeJXOipD/0R+Y2SoM2ssaz1PUICzm5+37/+4hFLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763477891; c=relaxed/simple;
-	bh=mXaQ0PbQSdqK1G0ampoRYeGoToUgnBQlAhKb08K2CBQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q1ID+1WWXbuTXrhZffY6eXOwlm+4LjEks5PgO1tg8IvM1hXkRrcpGif6CRtNaEt+pzQ3EotyGdpcWLG6xYQVMd1MJcwtHXvLf41mPtEJUsUjtZibBv2Pko7LgBK8rN27v3O9CFf4D7IzbF+J0z4F9ZfldS/qXVnEhltDRl6M6jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qwVupRoY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PlFkYG1c; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1763507709; c=relaxed/simple;
+	bh=gtZ9x9hNGJ2crNqrmM9FblaMEjzm9BUY+A4w2ICStuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=n41iMkTaEHvVVnbwzSjRCkkt/3nLbRL7QqD6o8izOsosisiZa4BMXzqxVqlqSmFPFPlsrCM195FyskRvgN0hszOLij9sNFdFWBaIdY5LEGGIro3BgzN+/iwuHwZVtOfwtoUTSYJPiRC6onGnw8Cq0fAJA/8rtVdKwtrrNnxSLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0uMIyyk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qwVupRoY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PlFkYG1c"
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763477885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z/r65hY8SWPaoKncjsGYJmpsCcPpi7Lo1MIAjd+cRLE=;
-	b=qwVupRoYSItfwZLGqo/nEuJ+0Oe9Okeq13p/Qs9UrYxDP5//00beg7JJ68iExXHcqkSpp5
-	suxKemMmC8I/dHPtKodx0nYytHqSMoDCPrnlpwFHi7uCl1oSljLjBfl+886BTwQ/G28KtS
-	4oKyf/I2pO0HCnnEd3kLihD8uFsLqeTZE+URGnZoJ1/oBBPy3I6hlPnPPfc9wiLlP1EGG4
-	92mdlWDqM3hR/qBUYfaeoFDkahLZCPfR3IMmZJOwdGYxLsWLShmAVixoA0Jwpy06tCx5Z0
-	crgUNRfnqZ9QeygOqoMYThMT1Qq9qp/eT2QJCiPZkzutNHONhpmgXA8jNggzEw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763477885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z/r65hY8SWPaoKncjsGYJmpsCcPpi7Lo1MIAjd+cRLE=;
-	b=PlFkYG1ckdpNPS4ab39+HM/c2AqRGdfUJ66ycHO9OH51AijoWG44TLRIPDzXe1SjfZn9oh
-	t2UuVi6SQXDjKABA==
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Simon Schuster <schuster.simon@siemens-energy.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rseq: Delete duplicate if statement in
- rseq_virt_userspace_exit()
-In-Reply-To: <aRxP3YcwscrP1BU_@stanley.mountain>
-References: <aRxP3YcwscrP1BU_@stanley.mountain>
-Date: Tue, 18 Nov 2025 15:58:04 +0100
-Message-ID: <87v7j75qwz.ffs@tglx>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0uMIyyk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0BF5C2BCB3;
+	Tue, 18 Nov 2025 23:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763507709;
+	bh=gtZ9x9hNGJ2crNqrmM9FblaMEjzm9BUY+A4w2ICStuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=N0uMIyykd1R+agxLk1XZPKIWnxJVYvcpclRwXiF+1xW0Lgni9jZk+ch5V23p0QuMp
+	 kCHhrLUTlXIq6b1O/nTtr6l1FlUteFJAMvsb4QaAL268eyI+dzPrtN6o54b/cvsuS/
+	 AxpaHVkmKwMOdfC1TLT/Dx9LxVtnFMDRfHrGRYwWfGBWygST4dJoFd+VXW53/90Eco
+	 ZHToM59mJzj+kPSDut3PWtnO0RGUSHiCK7fvl089OTlESjFvZfVA4dw7ntg+XdgVF6
+	 MEQA75wQjT6SgpwGhFF0oEYsf7PxWK7tjQ2WeYf2S6FDK8lhBKvqKjqivE1vmh/Fyc
+	 nKndlYxd+yoXg==
+From: Mark Brown <broonie@kernel.org>
+To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20251117104044.291517-1-lukas.bulwahn@redhat.com>
+References: <20251117104044.291517-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in RISC-V MICROCHIP
+ SUPPORT
+Message-Id: <176350770659.1411024.1566191077939342244.b4-ty@kernel.org>
+Date: Tue, 18 Nov 2025 23:15:06 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-On Tue, Nov 18 2025 at 13:52, Dan Carpenter wrote:
-> This if statement is indented weirdly.  It's a duplicate and doesn't
-> affect runtime (beyond wasting a little time).  Delete it.
+On Mon, 17 Nov 2025 11:40:44 +0100, Lukas Bulwahn wrote:
+> Commit 71c814e98696 ("spi: microchip: rename driver file and internal
+> identifiers") renames spi-microchip-core.c to spi-mpfs.c, but misses to
+> adjust the file entry in RISC-V MICROCHIP SUPPORT.
+> 
+> Adjust the file entry after this renaming.
+> 
+> 
+> [...]
 
-It's actually optimized out by the compiler in both cases, but yes
-that's an odd one and likely a reject fixup artifact.
+Applied to
 
-Thanks for detecting it!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] MAINTAINERS: adjust file entry in RISC-V MICROCHIP SUPPORT
+      commit: bd79452b39c21599e2cff42e9fbeb182656b6f6a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
