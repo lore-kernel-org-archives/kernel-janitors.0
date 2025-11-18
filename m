@@ -1,89 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1211FA859;
-	Tue, 18 Nov 2025 00:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC743148D6
+	for <kernel-janitors@vger.kernel.org>; Tue, 18 Nov 2025 10:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763425136; cv=none; b=gVFL4YZbBk+/beOziDa58F8sjpMWKHETfHLRgptoZ2rPVM3cFfwcoag7jdPNpUwSVFTwXTDkgHpkw+C8+DSEKSWIwxr/8ugr7gc3Zru8NFUfxNlu0pkXX3iq5fqBY/nio/tEk10voaDiV6EGshGj61YvmQj2Wk0TEBc8FKVWAD4=
+	t=1763462944; cv=none; b=YtRU/GazeTbkvEJqGkz5i0jaA9CZgswqWuS9r01m3GTqvOIbgRU7NELsQLc+mWJgZDTZZX5J095R7BvW/mwi7IcjY2dGMOSXN2qbqOBy15ypoTxKu6rK8u6a8+dbYg/VOkfFyvmKM+cT0AyigaTUDm2YiZHbAABiv27mD8WnJNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763425136; c=relaxed/simple;
-	bh=H4Da9LfoTBW+hfMYJa7p3b4t7+UpntgAOkV+A3n7osg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBedTVI14VOg0gpQdB6XHZ+5VgcWBj8FLrI516S2BMA49CGKHAbIUanoYBOuPRzDW9A/I1IHz20yaENPzTdvViUCI7JnysBuuS98IGNMLVH+aJ3i+JCpsDPIHy5hOukKAMCQdmKeIBPkfUfkQ6pVpeZ3qJHolwplyGB1SFkGYdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GL+snsQ3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763462944; c=relaxed/simple;
+	bh=pSacPUfTJqdVOpSE7Tqm0QbIDxP64e72/O29IF4V3js=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BpsVb5hzV2oGvrfbZYc/WN497MPWiNmdQ7KFEFPufX0Ypoc5kYBhI+c7yp7Ylx/ULf2BkYPnMbR8Wh5NEfEkStAM7YnvgpOY/dOdc/RfTm5TTLMeDX5CaIU0o9tRzn54Zk86pHt/gvEfJBzx+F0W/jFMWnPj0HI6fXRvzMq49yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ukvmWUg4; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GL+snsQ3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3087C2BCB5;
-	Tue, 18 Nov 2025 00:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763425135;
-	bh=H4Da9LfoTBW+hfMYJa7p3b4t7+UpntgAOkV+A3n7osg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GL+snsQ3PrUZPtrMveZTCYK03tfmkBmaki3CU0bIKelZgW80OhixrIYUCu0O8jGEO
-	 BN0ySuRmMlu0as50bYQY0hj5TQSBqSIuR1wJO5X04mj479EFkcsla9w99wtmqVdI0f
-	 ZXWAEn0i0uOFXQs3rUB31qZzUMqxGt7UwL5FTBHSXGlg8f/tCNv65r/ogpBd1DuTUb
-	 HLER65uo8ojM0J3U3V4vOnn5YlnJqmYmTG85QJt5n7vo8euENVMOdFGzK8wDdWRclq
-	 V1paUkRKB2hlcM6FiQK3T27RdK0DZjoJntnQpkMTtEMakfFi1p2s1ovvo+enIMJcvD
-	 9ddrczEieVt5Q==
-Date: Tue, 18 Nov 2025 00:18:50 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Lukas Bulwahn <lbulwahn@redhat.com>, kernel-janitors@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: refer to intended file in STANDALONE CACHE
- CONTROLLER DRIVERS
-Message-ID: <20251118-broiler-engraver-b9bc787fa6a5@spud>
-References: <20251117105311.293508-1-lukas.bulwahn@redhat.com>
- <20251117120639.00000a44@huawei.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ukvmWUg4"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b32a5494dso3156803f8f.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Nov 2025 02:49:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763462941; x=1764067741; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s1y/mR0RQcwwMGAg4az+yXoD/LmwVs8/J1VOM/Bo49w=;
+        b=ukvmWUg4dwwnJ0JXXinhYfidVnPXVz4EAAX3kZFoJUGU4b1Jj2vpuyZ4xbsvhbpKmU
+         IUrvkL7GukMavnHxkTKILfL+VkRtmWfVPqHiguj6fRODXp5gmPaqs6Amv7DZ3WXflhTq
+         nYGoSzjo7mUYdpgPA1iNTZ0N//hFfHVeiJ4He/YsvkdzAyxKBZeeoXbZzp8LLIOjx8uw
+         ZfRqEWt91Aa6Gq/hbsDD5skdB55ePq9T+c/afYZPi8V/NcP8sMyVOiIcKMsAwJdZYqBE
+         N3jcRFOw8LeYVz48K49ukbcHmPFUZxgGOMHQ2rxsUk/Fkaoci2Jaovn0Njmzwz3h+n9C
+         3S5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763462941; x=1764067741;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s1y/mR0RQcwwMGAg4az+yXoD/LmwVs8/J1VOM/Bo49w=;
+        b=ifoCAz+mALyW02AwtMGi9vbUX3i7dYpmetWMeiNoPz6a15Ph2UN049pihhAFl5mfet
+         ME/EQoNzayGoLAN/U2QvR0r/YiufoH/8Qno33pwRgWbEEUrL/StNGt/pJCZXYC+8K558
+         ZOb93U/npJa6NSZultO/6MT0PFPkFM7NRiIxApqeA+np2oWlf2jzkK2ZNfW9J4Wg6zLa
+         d44dt5dkmoLUzXxqPoBoZQpvdTkc7aAZUbsDE5Dg7hGwzbhUn4i0D+7ArCyKF2j2HD6o
+         VLt6+fELv/pvCh+851hQGc22jmvI7teZ5Wp6FZPtGslPLVz5wjMSJnpHOTarq31shB9g
+         4Y4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnSTETrQ95gR1DsBrD0YdsAaqfaSa7/niu03BJMe9edccd8SyPgUsw8fUkV2JGSQKimcDv604e7xH4/C7yU2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBrmHL6XZRbQkM6sTt98nOaL1NRuqbkR1XFWd7HcIbAW3Y1zOU
+	ZcQBhr9lq7Q+uhB2Qm/Fu0gqQSIy/vgO15MNIWUptH9svhwg6t/KyVK5iBcnYOGezwHADqC9EAN
+	W7Ko9
+X-Gm-Gg: ASbGncuOMmG6SzVnrA7i542m+8BhaIw6wW6b25CISIqkJaMcShul5at2ecazJrzw5np
+	8kEpPs0RWL6m/E4wPlLX00VtBhYt0iqL6twTdJ2NP8uv9tisnBPH3J9aqCUVwgeO3vdSXrt6ysX
+	p8Q6CeZiID6FvIjmgpCAioNiKH8NA5LSrOn4bWd2ro+e5V2U79Bqq3Keb2q+JOleR7j5Vc1lN61
+	EzPLRg5CSXGIx/rpf7kGa+SCaepoFhjo35cSY+n5yr6LNCn/TSPLcBoILTHErsFSHfkfyTBjHZW
+	Bceiu8WxZ4Gg0mHEmdxVb38stKZKnus9NVefHxzuDYj9RPcsA7Hh7CxXlMmIckrfDa76eHpzP7w
+	0C9Hx6f9V10lyNBHB8H+CnA5HDXTvaaQehWf+SZyuUWSpgHLY5w/2Ls7wA9oB08h6B+4zz9H4kS
+	ZgdO2ciQ==
+X-Google-Smtp-Source: AGHT+IE+uO9N9ifqs1Y8ygDQTWEad0nnwpu/28efWIWor11GJUehCS6HQAbsFian1eY23T6Y6M2COg==
+X-Received: by 2002:a5d:5f42:0:b0:429:c711:22d8 with SMTP id ffacd0b85a97d-42b59339b7dmr15233727f8f.15.1763462941281;
+        Tue, 18 Nov 2025 02:49:01 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42b53e7ae16sm31647134f8f.3.2025.11.18.02.49.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Nov 2025 02:49:00 -0800 (PST)
+Date: Tue, 18 Nov 2025 13:48:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: CL Wang <cl634@andestech.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] rtc: atcrtc100: Fix signedness bug in probe()
+Message-ID: <aRxPGBEX8hbY6sjV@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CVqjsSk4RFSLha1M"
-Content-Disposition: inline
-In-Reply-To: <20251117120639.00000a44@huawei.com>
-
-
---CVqjsSk4RFSLha1M
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email haha only kidding
 
-On Mon, Nov 17, 2025 at 12:06:39PM +0000, Jonathan Cameron wrote:
-> On Mon, 17 Nov 2025 11:53:11 +0100
-> Lukas Bulwahn <lbulwahn@redhat.com> wrote:
->=20
-> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> >=20
-> > Commit 23db6eed72bd ("MAINTAINERS: Add Jonathan Cameron to drivers/cache
-> > and add lib/cache_maint.c + header") intends to add a file entry pointi=
-ng
-> > to the cache_coherency.h file, but messes up to name the right path.
-> >=20
-> > Update the entry to the intended file.
-> >=20
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> Thanks. Just missed my v6 (some changes in Kconfig requested by Arnd).
-> Conor would you mind picking this up on top if you take that series?
+The "atcrtc_dev->alarm_irq" variable is an unsigned int but it needs to
+be signed for the error handling to work.  Use the "ret" variable
+instead.
 
-Aye, I've grabbed it provisionally depending on how you would like to
-deal wit Randy's comment on v6.
+Fixes: 7adca706fe16 ("rtc: atcrtc100: Add ATCRTC100 RTC driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/rtc/rtc-atcrtc100.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---CVqjsSk4RFSLha1M
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/rtc/rtc-atcrtc100.c b/drivers/rtc/rtc-atcrtc100.c
+index 51933ae1a2fa..9808fc2c5a49 100644
+--- a/drivers/rtc/rtc-atcrtc100.c
++++ b/drivers/rtc/rtc-atcrtc100.c
+@@ -296,10 +296,12 @@ static int atcrtc_probe(struct platform_device *pdev)
+ 				     "Failed to initialize RTC: unsupported hardware ID 0x%x\n",
+ 				     rtc_id);
+ 
+-	atcrtc_dev->alarm_irq = platform_get_irq(pdev, 1);
+-	if (atcrtc_dev->alarm_irq < 0)
+-		return dev_err_probe(&pdev->dev, atcrtc_dev->alarm_irq,
++	ret = platform_get_irq(pdev, 1);
++	if (ret < 0)
++		return dev_err_probe(&pdev->dev, ret,
+ 				     "Failed to get IRQ for alarm\n");
++	atcrtc_dev->alarm_irq = ret;
++
+ 	ret = devm_request_irq(&pdev->dev,
+ 			       atcrtc_dev->alarm_irq,
+ 			       atcrtc_alarm_isr,
+-- 
+2.51.0
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRu7agAKCRB4tDGHoIJi
-0lxyAP91yZK5QkQhoKMaELFs9QbI480U3sGE0cv3By7P5pHvSQEA5YqRCkKQteZz
-xuZl4E1o/lobsjZWQEyVzC3M2NpYpwo=
-=fnrM
------END PGP SIGNATURE-----
-
---CVqjsSk4RFSLha1M--
