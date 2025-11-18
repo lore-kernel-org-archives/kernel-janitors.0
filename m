@@ -1,83 +1,89 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2F6324B30;
-	Mon, 17 Nov 2025 12:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1211FA859;
+	Tue, 18 Nov 2025 00:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763381206; cv=none; b=Klf+Y37WotsKHEDEgW2Y0g/8OyAiQ3IBa34Kp1o//W5Kd0t2WxhfkPOuS3AatQjRHjsG7uZ1AsXsbMsc5Qcyu3BI9j9q82zhwsNMoQuWUIBanYU80ARE5xjDooLvTt0AUX11qng5QDX4HilZnjEjUG2DJOJMb+YqjLPnuCv/BaQ=
+	t=1763425136; cv=none; b=gVFL4YZbBk+/beOziDa58F8sjpMWKHETfHLRgptoZ2rPVM3cFfwcoag7jdPNpUwSVFTwXTDkgHpkw+C8+DSEKSWIwxr/8ugr7gc3Zru8NFUfxNlu0pkXX3iq5fqBY/nio/tEk10voaDiV6EGshGj61YvmQj2Wk0TEBc8FKVWAD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763381206; c=relaxed/simple;
-	bh=Xesqli3HhuvDfdiUjHR6MaQRzHvvRoTp8xLI+pgUd6Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ND3j60hOwIrGUO8aL0hobjZ4TQfVMDgWsP6jqL+Sn8kZGkoeELk985tgExzm2QiA+DrUrc85QRCPjLhlUMt+e1iQMUdQVAYQ7RShplKZXQ9GqKl4BEKFpWlf+8wPbp+gQ59lcd4LSaK4dFgJ4cYnKMWtt8gShMhGbBftWBhKiUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d960N4vdlzHnH8x;
-	Mon, 17 Nov 2025 20:06:12 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7DD8A140159;
-	Mon, 17 Nov 2025 20:06:41 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 17 Nov
- 2025 12:06:40 +0000
-Date: Mon, 17 Nov 2025 12:06:39 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, <kernel-janitors@vger.kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>, <linux-kernel@vger.kernel.org>,
+	s=arc-20240116; t=1763425136; c=relaxed/simple;
+	bh=H4Da9LfoTBW+hfMYJa7p3b4t7+UpntgAOkV+A3n7osg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBedTVI14VOg0gpQdB6XHZ+5VgcWBj8FLrI516S2BMA49CGKHAbIUanoYBOuPRzDW9A/I1IHz20yaENPzTdvViUCI7JnysBuuS98IGNMLVH+aJ3i+JCpsDPIHy5hOukKAMCQdmKeIBPkfUfkQ6pVpeZ3qJHolwplyGB1SFkGYdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GL+snsQ3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GL+snsQ3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3087C2BCB5;
+	Tue, 18 Nov 2025 00:18:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763425135;
+	bh=H4Da9LfoTBW+hfMYJa7p3b4t7+UpntgAOkV+A3n7osg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GL+snsQ3PrUZPtrMveZTCYK03tfmkBmaki3CU0bIKelZgW80OhixrIYUCu0O8jGEO
+	 BN0ySuRmMlu0as50bYQY0hj5TQSBqSIuR1wJO5X04mj479EFkcsla9w99wtmqVdI0f
+	 ZXWAEn0i0uOFXQs3rUB31qZzUMqxGt7UwL5FTBHSXGlg8f/tCNv65r/ogpBd1DuTUb
+	 HLER65uo8ojM0J3U3V4vOnn5YlnJqmYmTG85QJt5n7vo8euENVMOdFGzK8wDdWRclq
+	 V1paUkRKB2hlcM6FiQK3T27RdK0DZjoJntnQpkMTtEMakfFi1p2s1ovvo+enIMJcvD
+	 9ddrczEieVt5Q==
+Date: Tue, 18 Nov 2025 00:18:50 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Lukas Bulwahn <lbulwahn@redhat.com>, kernel-janitors@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
 Subject: Re: [PATCH] MAINTAINERS: refer to intended file in STANDALONE CACHE
  CONTROLLER DRIVERS
-Message-ID: <20251117120639.00000a44@huawei.com>
-In-Reply-To: <20251117105311.293508-1-lukas.bulwahn@redhat.com>
+Message-ID: <20251118-broiler-engraver-b9bc787fa6a5@spud>
 References: <20251117105311.293508-1-lukas.bulwahn@redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+ <20251117120639.00000a44@huawei.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CVqjsSk4RFSLha1M"
+Content-Disposition: inline
+In-Reply-To: <20251117120639.00000a44@huawei.com>
 
-On Mon, 17 Nov 2025 11:53:11 +0100
-Lukas Bulwahn <lbulwahn@redhat.com> wrote:
 
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 23db6eed72bd ("MAINTAINERS: Add Jonathan Cameron to drivers/cache
-> and add lib/cache_maint.c + header") intends to add a file entry pointing
-> to the cache_coherency.h file, but messes up to name the right path.
-> 
-> Update the entry to the intended file.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Thanks. Just missed my v6 (some changes in Kconfig requested by Arnd).
-Conor would you mind picking this up on top if you take that series?
+--CVqjsSk4RFSLha1M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+On Mon, Nov 17, 2025 at 12:06:39PM +0000, Jonathan Cameron wrote:
+> On Mon, 17 Nov 2025 11:53:11 +0100
+> Lukas Bulwahn <lbulwahn@redhat.com> wrote:
+>=20
+> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> >=20
+> > Commit 23db6eed72bd ("MAINTAINERS: Add Jonathan Cameron to drivers/cache
+> > and add lib/cache_maint.c + header") intends to add a file entry pointi=
+ng
+> > to the cache_coherency.h file, but messes up to name the right path.
+> >=20
+> > Update the entry to the intended file.
+> >=20
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Thanks. Just missed my v6 (some changes in Kconfig requested by Arnd).
+> Conor would you mind picking this up on top if you take that series?
 
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 320045a6bad9..30eaeb3675d6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24725,7 +24725,7 @@ S:	Maintained
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
->  F:	Documentation/devicetree/bindings/cache/
->  F:	drivers/cache
-> -F:	include/cache_coherency.h
-> +F:	include/linux/cache_coherency.h
->  F:	lib/cache_maint.c
->  
->  STARFIRE/DURALAN NETWORK DRIVER
+Aye, I've grabbed it provisionally depending on how you would like to
+deal wit Randy's comment on v6.
 
+--CVqjsSk4RFSLha1M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRu7agAKCRB4tDGHoIJi
+0lxyAP91yZK5QkQhoKMaELFs9QbI480U3sGE0cv3By7P5pHvSQEA5YqRCkKQteZz
+xuZl4E1o/lobsjZWQEyVzC3M2NpYpwo=
+=fnrM
+-----END PGP SIGNATURE-----
+
+--CVqjsSk4RFSLha1M--
