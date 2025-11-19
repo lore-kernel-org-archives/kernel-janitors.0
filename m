@@ -1,77 +1,70 @@
 Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD0D2EF65B
-	for <kernel-janitors@vger.kernel.org>; Wed, 19 Nov 2025 08:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BBC2F12B6
+	for <kernel-janitors@vger.kernel.org>; Wed, 19 Nov 2025 08:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763539802; cv=none; b=JJKAu+llr5u14ANMNUPpR76GlKsyHhjLqKpD3Xm7z/5A5ZyW8GTQsSUnf72neC6AxAz5Gr7b2tw5mKepOtaDnUDSLU71bFBSGyBOQg44/91nKORwVwRk3cFvCpiG6HeYoazH/k4aeomCzp/Rd8HQwbw+fuNg8OfWmu25oJZQNcg=
+	t=1763539851; cv=none; b=TS1mhRapljc24dTx/LPMQN3LEz/L5PrJQ/ld1ZR/4O/Akbq7lJ+J6/Tl4BSXcyVwqsLu7F8GlxOKJNhoxwLuuxmbPtsf3JU5igfi5Bf7/O+NpZJM1puYBVi7H1KhZ1HzwJTzlkWcEZ46YELYlqCoSKnveGMtqX34hTfIpPfBFiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763539802; c=relaxed/simple;
-	bh=Yut0WA+8SDFNziooZRQDH571zlB6+TkPVIIMdys54mA=;
+	s=arc-20240116; t=1763539851; c=relaxed/simple;
+	bh=1T1+jAbl7kIhgWk6qUK1AsoH0OKPzv/Ln63uJS+N5NM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QKlBTmDwETk734b+t3yqGz0kC2eUkQEZfdQm3DcmD+MmoDr7JW9vzUSmid+Tr5G5wHVfKBhuxMHgqlrCao/pZF6qkcWGjs98BXl40TFeJyyM4RB9MMsj1CVRuudhUQrWq3Gql7izdMBr4r1/jrKd1n0eAeVNWG+K5BYXpa5cS2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qwie+VBY; arc=none smtp.client-ip=209.85.221.51
+	 Content-Disposition; b=DyY/ZOPYDD7T+Cqk1JRBV8kwaojqZmXMIK0oC835BOiU+Z1NDxVAuT51IDQd+WsRicli/oWEBhR9BzuHdF7OpeCelsvzEn4gip8KymaT1Qkli61E2qYHtPFpTAm9P5piyZZypQzRX5LET3Bp/CwBcABVrgPxakNIhExIC5Anopw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W2XaDnbb; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qwie+VBY"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429c82bf86bso3761950f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Nov 2025 00:09:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W2XaDnbb"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42bb288c219so3135011f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Nov 2025 00:10:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763539798; x=1764144598; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1763539847; x=1764144647; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FiIFVMX2MR+XXmvXnG9d1/8nmYiayzPl3ENasC1cOTY=;
-        b=qwie+VBYVnit58cr33wDwSb0UtHxPpvJua6ZfibbsqhWxHley4kl++LlnXRnzXmHAW
-         SScx65XfAydUfNQAGf+R1oH851gLQx88h/qyRRaKtKl42P2OOphSkuKTgH8kxoGCrSpo
-         C0taVxK9D22K1WYTyBpe/affBidYcBzWP0KXLX7vfq/v++lBBpkuz0JVpCgWCxTC5sxs
-         QRKNagCXUWBcUKZDnr1jbYFCwdm0W9rmMiKFYWFu+693iLYehmw+vtN/7hdqntAPn+h8
-         QOT7QKfY7QY2N0H/Srp+vUOMW02PyFeq23KKYrsxdTLle8XGQSVuuHz7RSgWf6dxQWJ7
-         Wtig==
+        bh=wMN2hgnHRjdnPSJYW5xImXYTzHzljoemIaE/vDCS39g=;
+        b=W2XaDnbbRaLxqLzH2/xIIKTFThGvuZXHaOGZtmW31XBQNHjUpaWZqsmpSNbNyIcfec
+         tu+6HHNRpnR86VbGe6C+HFtXbvNy+TeaCtYFILKKeaF2KXgmlK1dUPAICNW+/BsIE9FU
+         VnfXxL6Bpt9LqjHuyYrwb0XQIQwyRMBqli47tVHGEBZufFApXfowrJzoJtdrBmfwyXd2
+         YAaHsDYMTbVbsGCJB+D6jQmTiFqs5PsVSrJEiI9kWqaiDHSfzaTPLksUqzep5qCvhT6L
+         7sAaJuOEZLZGI5+dXBcEnA+1PPyANC+Feo+GdCrLa2hAgOcEDyklucJ/XQB2CiRc5nIR
+         z8rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763539798; x=1764144598;
+        d=1e100.net; s=20230601; t=1763539847; x=1764144647;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FiIFVMX2MR+XXmvXnG9d1/8nmYiayzPl3ENasC1cOTY=;
-        b=iqK5Y5OX7YVTDeblbqxnAmIMacfhNE3dQ7A1iz6UVY5mfswMeSE/4pOPqXFDUyptyj
-         sBK1SSwwapKTKe9FRvGMaEhDBXtBgsjqLdLIM//Oe8y4sFk2sdUFB6KAcxS+PM4QbozW
-         btdHD11egwShmpT6RQwgx+rJL0ZtyugNbIiC9AjeBpKoXCZBQ+Sc7AqyTBDlZdIba750
-         2LKKw626Rowte9QS36gF+2Q3PJ31NEXToAbVnUZqOceDtZkt2LhkXLnvKWwpTg7g6B12
-         F4M19YRAYx4li5k+ncoRawV87uAlIPcPW+DLEuvjH79g6ESpnAQIESf2/As5qkW1l8GQ
-         H4Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUP38tkWQxQ9/RDiSD8ut7vwDqd9Ab9vFGKYuV5G+rTL9DSJ61Cwj/9QJ2nXF5VTpxz2DPruoDfN2+YCh10XRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdhTi2ocC94KL3KFhSCgoGi4TFRm0kcIRfsE4tw36GYxids5Fh
-	AtS2I9DYviYdwMwpGFhalwKBzLwvJQO3z9ONZn3yFqYHn6wQUj0NLaUtS8B1oUQbuHU=
-X-Gm-Gg: ASbGncvoS3JKvWrXACGhr4VrMvjLDBSS//4i3PKNZG0mHjbNZctgtC3UMAeMew3Pprq
-	+PTV2/yrQgnrw2TA/Sjd62uuJbxZ5lYkA2WFKxpz5Jx9CdqyGr7aK2SivD89AGnIb+1uJfNQqUj
-	QjUpQDa1TLqW2se1k8Uxb+hKrMaC8U7kC8yV7AzV202vcahSCftw90OWhCK0eBWCgYCyGorWSQm
-	wlEJFgrCkOCMJ2PXVFBD+NZHlxFueFa6tdPnyZT4aVJS7J1urP52aQyPwNijqNosYlHd+QRKVbr
-	aIulnA3U9Feowm08i+YAYFkaorxGSpm/baFVlkoTB14OiL4hKkSEh/nmGNkAy1uAaMLIugwII1w
-	GRfshz08GseD9oRj6xSMQNoOY95dkIkzzy11uMrJ0fEY4crPdg5k8ebZ8pLK8SyL3vWi9I+KMQi
-	8XjjlqgEhDCNeaurYaLSSBsMPP7Yo=
-X-Google-Smtp-Source: AGHT+IE1q82L18y3VRPhHfEId7f170t/V5fSl9Cnt7w8NWmAat0eSm35Q1/LPz22OoVfb8I/7QAR9w==
-X-Received: by 2002:a05:6000:4383:b0:42b:3c8d:1932 with SMTP id ffacd0b85a97d-42b59345301mr16798960f8f.23.1763539798470;
-        Wed, 19 Nov 2025 00:09:58 -0800 (PST)
+        bh=wMN2hgnHRjdnPSJYW5xImXYTzHzljoemIaE/vDCS39g=;
+        b=q3DSLDBnIfb2umx3cFbQ+5iOD6SM0YIjTEyNe0hod1VrtJrQXkQ7D0Y89i2C9w6CU1
+         jm0sNoH+2pw/+FDuYgAmFh1mR3DTamnCUrq9nlxHo3pjggU2w1U4RiUvYLRU8mkOPapv
+         B5jBIQADinnFBqFUbuqLcFUjNzK1fFofkyinCpJq+4F1INRVbXzI5ytwcOH/Mju3TaUT
+         dE18oLC1u4SrTZLX0mMXrBFQYwIFa9OrY4UmJdGhKzdT8c01Vi33qPFtwSb6cOyrD9fB
+         niDeCz9RjNRTDfJ0ElrENcFmsCNWB8YfuXDvS0nt0LuO+UYYe8MjC+3wmbTgsKozjBV9
+         REyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwmnQWlaC/ssvpKeoz5apBn0jpERSHIun+ISNBkgBQIOYKRitfUU20+BIYg2yVqTmrKrHRqWZyBU2oqrbfAwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV9bHU/mOGpRSgIrLyvKNyAuaSCm9uzLxZIFt3gsCeld/ajRQU
+	5kQMgclZjNvYxusmNSmF9PZLX1UYFq3MKGmPaK8FtXI2PBnE3xk9Mnujb/Q0vK7eBNw=
+X-Gm-Gg: ASbGncu4ieMdC43CZLblvykzC7AgH6NuvRJDAOU65x5bqhKfwJoWf7lv4erG2c/cxuJ
+	keL6GP69Tsxh6JiPLP30DNa1CqP/FmA+PxVMPIcgjN7PT6un0CCC8hANTOLAHZ+BDM2yd+piQHZ
+	RPyr1JiIcrTPuAia4fJBz12E8JUaPEfY+we+ehoSDBQaK/WZFfnolIw/LjiT0HPVgHsytwDVAvq
+	ILR9oTiwuNWhEn3BoMp2twMH9wvjI84jzZRTWllMc8oFEvI3PQ6L3UemwCtzF+SCE9b8M4jI5iC
+	Ft1AV1KZHURwpT7OdaooTyf5NSMfFw9oBfAXZiVGyEzRyc6IaqM1wNwLHAM/iuC/WCQ9HJvKLvp
+	l50QJRSdV3BTscDkDZMZXhtzGT6Vj+x40MJizhj90+aIGtjp6fTKtDYI0y0P8cQWUJ0RFNTns3U
+	U0AJpsTobXokKXrQyvJLal9MV7CQE=
+X-Google-Smtp-Source: AGHT+IFMAB84W75/smMpky/NBlEFmUpRSjSTcnjp+yIeuN1AfzdIXu0eJmDXc3YZJMHtKEA4S1hqEQ==
+X-Received: by 2002:a05:6000:22c1:b0:429:b8e2:1064 with SMTP id ffacd0b85a97d-42b5938f05emr18865514f8f.47.1763539846777;
+        Wed, 19 Nov 2025 00:10:46 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42b53f0b60csm35501317f8f.22.2025.11.19.00.09.57
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42b53e7b074sm35135682f8f.7.2025.11.19.00.10.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 00:09:58 -0800 (PST)
-Date: Wed, 19 Nov 2025 11:09:54 +0300
+        Wed, 19 Nov 2025 00:10:46 -0800 (PST)
+Date: Wed, 19 Nov 2025 11:10:43 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michael Riesch <michael.riesch@collabora.com>
-Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: rockchip: rkcif: fix off by one bugs
-Message-ID: <aR17UkYsfAxCZ4fe@stanley.mountain>
+Subject: [PATCH] unwind: Fix signedness bug in unwind_deferred_request()
+Message-ID: <aR17gxtrzOJnVNFq@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,43 +75,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Change these comparisons from > vs >= to avoid accessing one element
-beyond the end of the arrays.
+The "bit" value comes from "work->bit".  It is set to -1 if we cancel
+the work in unwind_deferred_cancel().  It needs to be signed because
+we check for negative values.  Change the type from unsigned long to int.
 
-Fixes: 1f2353f5a1af ("media: rockchip: rkcif: add support for rk3568 vicap mipi capture")
+Fixes: 357eda2d7450 ("unwind deferred: Use SRCU unwind_deferred_task_work()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- .../media/platform/rockchip/rkcif/rkcif-capture-mipi.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/unwind/deferred.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c b/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c
-index 1b81bcc067ef..a933df682acc 100644
---- a/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c
-+++ b/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c
-@@ -489,8 +489,8 @@ static inline unsigned int rkcif_mipi_get_reg(struct rkcif_interface *interface,
+diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+index a88fb481c4a3..8dc11e0d9374 100644
+--- a/kernel/unwind/deferred.c
++++ b/kernel/unwind/deferred.c
+@@ -232,8 +232,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+ 	struct unwind_task_info *info = &current->unwind_info;
+ 	int twa_mode = TWA_RESUME;
+ 	unsigned long old, bits;
+-	unsigned long bit;
+-	int ret;
++	int bit, ret;
  
- 	block = interface->index - RKCIF_MIPI_BASE;
+ 	*cookie = 0;
  
--	if (WARN_ON_ONCE(block > RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
--	    WARN_ON_ONCE(index > RKCIF_MIPI_REGISTER_MAX))
-+	if (WARN_ON_ONCE(block >= RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
-+	    WARN_ON_ONCE(index >= RKCIF_MIPI_REGISTER_MAX))
- 		return RKCIF_REGISTER_NOTSUPPORTED;
- 
- 	offset = rkcif->match_data->mipi->blocks[block].offset;
-@@ -510,9 +510,9 @@ static inline unsigned int rkcif_mipi_id_get_reg(struct rkcif_stream *stream,
- 	block = stream->interface->index - RKCIF_MIPI_BASE;
- 	id = stream->id;
- 
--	if (WARN_ON_ONCE(block > RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
--	    WARN_ON_ONCE(id > RKCIF_ID_MAX) ||
--	    WARN_ON_ONCE(index > RKCIF_MIPI_ID_REGISTER_MAX))
-+	if (WARN_ON_ONCE(block >= RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
-+	    WARN_ON_ONCE(id >= RKCIF_ID_MAX) ||
-+	    WARN_ON_ONCE(index >= RKCIF_MIPI_ID_REGISTER_MAX))
- 		return RKCIF_REGISTER_NOTSUPPORTED;
- 
- 	offset = rkcif->match_data->mipi->blocks[block].offset;
 -- 
 2.51.0
 
