@@ -1,62 +1,62 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773782E8B81
-	for <kernel-janitors@vger.kernel.org>; Thu, 20 Nov 2025 19:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2C2301001
+	for <kernel-janitors@vger.kernel.org>; Thu, 20 Nov 2025 21:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763668336; cv=none; b=EcRFupcBKtRETtofCrbBAQImACAlxhsYi6Ii32l6b7x9HlT4Yl5NKnZnR8GWJYoe+vhGSr74WBmXw/cukO3nfRUTCcpbn7LS6iSHLKlMWjZkBmQDKrZCt+ts01C4KuLNv59YdhtXDIqVjqm0cpedq/RkDCPS4Y6ArWwUFg0j6vE=
+	t=1763673243; cv=none; b=rlhsvQxzvzlFiC3S2T0MwLeLslXbEOJslxo1Q6QMnW3PuNlzboNW24CLmpZejMfgWga4WyyNvwF7JZWgRCeQwBT44/MKc6Ej9W1zvXkg3CN1m0pT9U11bKfnwlnusrA2+KGHm662c/drQfwLSlmYQl2h96PBMzem2dlDLikSK+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763668336; c=relaxed/simple;
-	bh=u2+T1r+sWsvkftBxAcy6kHz++p4wMgmzB+K5Zky2h7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PcgLpEkz4Onw0fJAJZysZdhv4eN2yBw6buV1mGAnU9wU8/ZMmMcq1hJpVvp6M6vQhivZKiHVehv+OPWq/wRcJM6sTcJGZq4dcEiLDQijdMcksVGZBEpnccqJu69xIeN/x2Hk+8BLn1qxYRBACEdnApXY1zAqfGlYuDemVK2Z+ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/R3ReHN; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1763673243; c=relaxed/simple;
+	bh=cQMX/usI8gqcSln2UFa8v99XXRwzaizYb3BPi10FYFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yrj8igUeIfw1fOpNMRxB0EvnEcqrYeVBbrIQD9rI34+4Jo6wmax+e+2P53kVZJzmQs0jvU6Dkc/Wh3VIgS61tMY9wZtt9ILddRMxRVXQAU9Y4rny/r24I2sj9qnObH9mA4sNIRnFiSVZbJKUNkLAN5gkI31gZ3tmxnVUGn3y92Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4ahJ2y9; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/R3ReHN"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37b935df7bfso11798761fa.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Nov 2025 11:52:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4ahJ2y9"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5957d7e0bf3so2334284e87.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Nov 2025 13:14:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763668333; x=1764273133; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763673238; x=1764278038; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Er2FJbbUBh6YnvwnjR3JbLaZQz/HmWBPLBBSx8YXc30=;
-        b=O/R3ReHNg9yfPZePautjRzF19+lEy9Hf2j4Kpj7ri0B9WyAH7mSEGa4DT+6pBdcp7R
-         jO4xtupiuCkKRKNs1tu1iaxLGriOYp+Ur+/CRimjHwICAPVMBXYa0cLkzEikFUpnxMIh
-         hyrVAaIsgiCdQrviBEwnZespK4Nsm+e6TCoCxp0yue4MySR4PUOtrg22WH3yD1y8zQW6
-         COEUlp5WsXCdJEDeAqhCDWgUjRBYMpQ2Pt0a866y+FzVq+GgcXoGvqAgzlLUT4MnktKj
-         KxDRYolCqClZ4YGlY5B47UfY7bM/iRaLdHtWXPz3tDtYlNKvcYQL7Hhawl2tiOZzccUH
-         OzvQ==
+        bh=4d7IAZGUxK1m7h2GDkMHE2QpE3zLGipSmtQ9os7xNBI=;
+        b=E4ahJ2y9Dr2smEtT2XU7QMybWZpsABlFm76xydDHK7yLVYpHSwFhDwbcviGStzq334
+         JJJEAfwMv81Ef68b2dNmyXqfDmDdWG+u34jhB7EfefVRttZ7yxCG61ufnY9rsx9LZIRD
+         Bp4/u//7kgVbUw3Qq9z/vk5TtJjyhxzpgvodzKI8AlDGGZ21cCg8Jtlnqj9M3cuzEYm5
+         3p0MAf35RtCEwgI7XoLTIkoXXrVPMxpbdr5KrQcTAWOq3CdDsjmObKlqIHBLwzAGmGqv
+         yGWIp6n6m7pfY0fp2qQ6oCJeWuhYi5D4djkxCIyR1K4vFBZBoRXJUgqmxYQPpkLBjBSi
+         /odQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763668333; x=1764273133;
+        d=1e100.net; s=20230601; t=1763673238; x=1764278038;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Er2FJbbUBh6YnvwnjR3JbLaZQz/HmWBPLBBSx8YXc30=;
-        b=Hu59p6Yx9OR2QiOsZUFQxHXSG8VzlsBv8nYImTKamqUDXJ1ZwiMktozDyN8X0MMV3+
-         13Yj0UyMVU/kU9WXEhmd2UKWp51iOQFMQEdR/bISYS47OCw1Hae44/ocEHoSk4lE34fC
-         HobCcZRiZVDxTvNRb+endAViy2nbFJCe2B8RkX3kijUYtu8ZUcegd7co3TiBRYNhBMWT
-         zF4ryKFjFeB9JndcyEAJGu+eSc5VL3lMLX1sMIhsn6FVp8mkCn4AlPHWXzpGuG3gdN3Q
-         /8+Lp7qLrmeNu7eUsYxaNQ3QMet80VaPWgdqvHj0woxeopQzN4VNazkAgfIsgyySBEbh
-         IIoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbSNu4JEe7oZEzHLVVDy8bSAmEj2cHXB2QCc2XbKMFRHjw+tSqbgu2Z2RcETesgoKg9Dx90LymVahZGQ8qTL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQS7xLQNiSy83V7lrG7FjTfgh9VtaOJ8pDfzdDqqG4WXYp/AJJ
-	mOG3NzS/sh1FUHs/OzmqdJcoCdppS7AbFwQK4jDw/I7517ylHn+IdRyQ
-X-Gm-Gg: ASbGncspnpOHoYPp/koO3kw0U6YOOS1b6L2e5dzcYjTMKDL4JKFkgma1ebMfSD3aiSx
-	5C6QqmkWftl9ml6jTxz/WJ9e1TSxm+ILYkHloWgdoHa7+N88koC7EIJ81KqC3k9GQGnPRyV0+M4
-	CSrk8Z5/Nnq6piMFCZkShHcJ+wCjcxXJIbUxamEs+FBe7vM0p+B+dmt+WyTf4q7wWVQpvbJq+As
-	v2iImmmKEVtjXQ9Gm+bFe57dq46sbye+yoipal52E9xHYZ6YbxvOnSUGo16rf81touFLg9gNvGx
-	ZpjwLUNkATKZPn/avRagRtZ67o8J0F7vpkbQcN/V/WJaCLReMpu5zmYi8mIr/CJDc+a5ylmT4eW
-	RQGNlkgbpmThmlt8UBijjI4ZiAgs6wcfHoig0IuB0aEcp6D3yCWb8JqDSAbPDTKPcbyG2KpfabY
-	3i5mpAMupK
-X-Google-Smtp-Source: AGHT+IGO95a2DriC/sUFBPYgQuutgp8Cgi9UCTrUgdhkhO22s+KUmGoBKxdV94i/DlK6/m1jFIzlDQ==
-X-Received: by 2002:a2e:7205:0:b0:37a:4714:ff39 with SMTP id 38308e7fff4ca-37ccecd68aemr7615261fa.23.1763668332347;
-        Thu, 20 Nov 2025 11:52:12 -0800 (PST)
+        bh=4d7IAZGUxK1m7h2GDkMHE2QpE3zLGipSmtQ9os7xNBI=;
+        b=sRs/H7EX4VReV95sLq2TFukFOZUK7ZELb5U+ol1Rv7jrk5xNWapoJqGk+9zbJBNnt4
+         FNPKAUL8ceMlIplECV0mi6/P2hTKDT388Fs6RoyIIzxaJOXbaFS7OCPovQNq+428q1Hn
+         rqwZcRhiaRyt7YQgv7ABX27hWU8HUIsINSAadeRXoikgsc7m3kUoGs2y3g4ZgIpfZb46
+         BC0PXv4/5OtTEdq+TI2buDPXGvbS8OE40kh3yEzHz5YLHf9BiKGB1ZaTyjLvL5tYIjXk
+         96hvM+W694/tVByyy17d0rN1gGMPh6O8cE5zrexYBA61FpXAJi4NBKabws+k30yBYBvw
+         aHRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcIAmF2IKjWKiHIbswU6UGXAoX1Wkyi7bdbtqz4dkuPu6Wmi1969QEx5OyYctYmrUnNiIam6Auasy5RIWKlHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyESvvLL877j8gJnOkGwFgKsNtoELCJYnbDSAJlvzeocjjvlO9B
+	T2efHeImODJ/ks0Zqb1brzjr2qNc/zrq6w+8KssY5Q0nTTMCI5eX6TmY
+X-Gm-Gg: ASbGncug2QA5xvJqAimtT9rC2m8rXl22kro0QhS0bdVu4mE0Tz1FQuRMR4dqqLrES3+
+	fHs/VqsjRqLvcYCpBGw9TEI88TCYjfpZuCgEiaANG01fuIYkFeL6LrRaFfhie95f79i4NXPFJdw
+	IcrNgAXZTfvqedXyYKssCARbWaqLuXDZA7FkN6uJwAkARQBKRzw5TmkqW7J0GPfhbfL1wmMDrNu
+	GWYXAq4VbOJ5LwiFJBwV/Vk2zqn5ammHv/TZq0eBwAOIXzLFlc0vRItIFgyibGtD8+YnQue54Zx
+	lg6zM9no2/20aG7r9YXzhkSnIjp07H3+fG/2xENak4cj9zBf7KOznj0W95dHXHcZCFeLla3LaWe
+	J6Z1kGdz4cfTm+QY2fJ+2nygARcNFkbgl02tZRN1Nk8bzKnrskGjsZlC2JGkKfkGxt5NSaYVXbD
+	8Ws6NJ1vuN
+X-Google-Smtp-Source: AGHT+IGhpshH5PO4QTdDzSqAVgMyMOZ968ZCv3rtjofzqeUqpZ5T2qu6vbZdUcrZQBx0KF/2QP0meA==
+X-Received: by 2002:a05:6512:1293:b0:595:8a7d:87cc with SMTP id 2adb3069b0e04-5969ea2237dmr1408150e87.16.1763673238128;
+        Thu, 20 Nov 2025 13:13:58 -0800 (PST)
 Received: from localhost ([109.167.240.218])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-37cc6b4b47fsm6967301fa.2.2025.11.20.11.52.10
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-5969dbc5964sm991716e87.70.2025.11.20.13.13.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Nov 2025 11:52:11 -0800 (PST)
+        Thu, 20 Nov 2025 13:13:57 -0800 (PST)
 From: Askar Safin <safinaskar@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -65,9 +65,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-kernel@vger.kernel.org
 Cc: patches@lists.linux.dev,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] include/linux/fs.h: trivial fix: regualr -> regular
-Date: Thu, 20 Nov 2025 19:51:40 +0000
-Message-ID: <20251120195140.571608-1-safinaskar@gmail.com>
+Subject: [PATCH] fs/splice.c: trivial fix: pipes -> pipe's
+Date: Thu, 20 Nov 2025 21:13:16 +0000
+Message-ID: <20251120211316.706725-1-safinaskar@gmail.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -81,22 +81,22 @@ Trivial fix.
 
 Signed-off-by: Askar Safin <safinaskar@gmail.com>
 ---
- include/linux/fs.h | 2 +-
+ fs/splice.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index dd3b57cfa..247e37090 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3103,7 +3103,7 @@ static inline bool inode_wrong_type(const struct inode *inode, umode_t mode)
-  * file_start_write - get write access to a superblock for regular file io
-  * @file: the file we want to write to
-  *
-- * This is a variant of sb_start_write() which is a noop on non-regualr file.
-+ * This is a variant of sb_start_write() which is a noop on non-regular file.
-  * Should be matched with a call to file_end_write().
+diff --git a/fs/splice.c b/fs/splice.c
+index f5094b6d0..d338fe56b 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1498,7 +1498,7 @@ static int pipe_to_user(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+ 
+ /*
+  * For lack of a better implementation, implement vmsplice() to userspace
+- * as a simple copy of the pipes pages to the user iov.
++ * as a simple copy of the pipe's pages to the user iov.
   */
- static inline void file_start_write(struct file *file)
+ static ssize_t vmsplice_to_user(struct file *file, struct iov_iter *iter,
+ 				unsigned int flags)
 
 base-commit: fd95357fd8c6778ac7dea6c57a19b8b182b6e91f
 -- 
