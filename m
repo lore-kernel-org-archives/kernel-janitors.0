@@ -1,88 +1,104 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6395425F96D;
-	Fri, 21 Nov 2025 13:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDC9346E72;
+	Fri, 21 Nov 2025 14:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763733242; cv=none; b=VB5J2+5KWX840fAt3B/etTDIf3bR0ERO3sHVxJ67+mDtrHsEMD9sbp9RrsGO7lN1yDnocP+ZtW3xU+VrIXF9OinR7vZG89QQTqIEub5YxdBvYKLEocSOmZ62a/k6mHsHzRmcuPRz2SKsMnOPbkR9H8rnQYsfzgCaLBWGPgGLR0U=
+	t=1763734734; cv=none; b=jbRbGy42Tl4CFfdtm8xX031PktOxILHGepdXQLi8XW32qKar0+02unbhLw0ArLbQvos81MK7vEoioWJrlGyr5yh7VDYv9SEJNvvP94+fA8wcQJ8XUDDvnLcIEc0bl09NL68jvX3+DJhoESFmjVaIILQbtdkNIk+18UtznhVXYvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763733242; c=relaxed/simple;
-	bh=6aOKUFvI/rROPcJzchZ2XUHheh6FRPpDR/g7aPBpWdY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tMDA1oYecDyFSmPGmdB2LXKO1UV5cuyMH/4RUd6xhS4QpsglBJ71BgufqsD44CrMY8V+WPwjT0skXXwKL9At0Pv9Sf5mEP9d0gR+i+aXH5CK4CQ7Ka2t9UmL8fGFL8XzdIyNOHfyBaPhxAWR9Whg87ROH8YrS8QKNY9/XkbPdco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AHzsXTMY; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	s=arc-20240116; t=1763734734; c=relaxed/simple;
+	bh=NsprtF+HIxjxhCRioUHdnInNCJikmnxU18uwM7I+1kY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJaEazS5DwlC/IKuxqnsEl37vGlt0t6tUaEeQb8BLkvDRBEHGLT4/p2FpBWlMVfoTiTXSEwnBQ8ElCAv/gkhqzTBixOqSEb8U4OrtpHS2bhf/Jhqen37P5f1rCT3k5e7qcw2I9t/sd53yTnthta7egHGqHUovRJ898Enn8Ti8G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EagljLLZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AHzsXTMY"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=xlj5zr5ZF4MFJ3LrKwSWRL9UcULZKY99NYG9PorymqY=; b=AHzsXTMYlr4PD7nAETBDXfnqpB
-	Ye5dFgos9E7a6pR+6nP18rTKSRK5RqvbxRKHuOZvkdgyFAbNANx1h6uw/Owzqpfa8GIahpg7JRL/+
-	RFvEWl0KhJ/mR5wIMsmbvfrs75ukVSxHWdRMVbbBTyDF726LGVqyiwnHBekpcZmztipPy5w7KljHO
-	3MPrfZ/+FHQ+Ctdq+mlQ1J8HDEWnDlMLp5R+5VDYqYxMeVVZL0obkSd5t8VPvUxoamknXKJOhyyBT
-	Mqhkt51YUl9+s1F9NEyC5683hB5w7eEpqFMHdGGydITw+vmIjA3zOm0hjq6MsZggpbQVum5AyP7kh
-	mj3T217Q==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vMRa9-003gHd-I1; Fri, 21 Nov 2025 14:53:49 +0100
-From: Luis Henriques <luis@igalia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EagljLLZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91572C4CEFB;
+	Fri, 21 Nov 2025 14:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763734733;
+	bh=NsprtF+HIxjxhCRioUHdnInNCJikmnxU18uwM7I+1kY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EagljLLZNrtDsGontDqDb8T45zIR9BkND/LHICMJq1ONW04Dq3EUaqqkHbu9Um5b6
+	 +ow/TgXUOHRA1l3M2GxYVLF9ocD3szF2gWTofv1Bi1nVBRRxi6HQPGOGmEBXbr72cS
+	 14ZHuyaBpoWiGUux+If4tIM9npcAR0ZkRENrE6DM1kM9Gd+ZTn79sqAgQuIxjYMaiI
+	 keOQzVnGkNBFJhdhIzlC4nTH+cNLSQ4S2A/HBMCyrPWAIqA6S8myAWE+JfWa2LrEDg
+	 8OU1mQFQOUxvJ+B1Zrz9ZUMXF7pPAJHREpnSBsGTvtR2iuz1qN9TAzM88TYzgA81Hg
+	 7NRgBtYcnJpsw==
+Date: Fri, 21 Nov 2025 14:18:49 +0000
+From: Mark Brown <broonie@kernel.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] fuse: Uninitialized variable in fuse_epoch_work()
-In-Reply-To: <aSBqUPeT2JCLDsGk@stanley.mountain> (Dan Carpenter's message of
-	"Fri, 21 Nov 2025 16:34:08 +0300")
-References: <aSBqUPeT2JCLDsGk@stanley.mountain>
-Date: Fri, 21 Nov 2025 13:53:48 +0000
-Message-ID: <873467mqz7.fsf@wotan.olymp>
+Cc: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] spi: Fix potential uninitialized variable in probe()
+Message-ID: <cd3dc38e-72f6-4e83-a67f-266523e686f1@sirena.org.uk>
+References: <aSBqhdjiywXq2Aso@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jnQOdFs1tKeyDk7h"
+Content-Disposition: inline
+In-Reply-To: <aSBqhdjiywXq2Aso@stanley.mountain>
+X-Cookie: revolutionary, adj.:
+
+
+--jnQOdFs1tKeyDk7h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 21 2025, Dan Carpenter wrote:
-
-> The "fm" pointer is either valid or uninitialized so checking for NULL
-> doesn't work.  Check the "inode" pointer instead.
-
-Hmm?  Why do you say 'fm' isn't initialised?  That's what fuse_ilookup()
-is doing, isn't it?
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> Fixes: 64becd224ff9 ("fuse: new work queue to invalidate dentries from ol=
-d epochs")
+On Fri, Nov 21, 2025 at 04:35:01PM +0300, Dan Carpenter wrote:
+> If the device tree is messed up, then potentially the "protocol" string
+> could potentially be uninitialized.  Add a check to prevent that.
+>=20
+> Fixes: 059f545832be ("spi: add support for microchip "soft" spi controlle=
+r")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  fs/fuse/dir.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 761f4a14dc95..ec5042b47abb 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -201,7 +201,7 @@ void fuse_epoch_work(struct work_struct *work)
->  	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
->  	iput(inode);
->=20=20
-> -	if (fm) {
-> +	if (inode) {
->  		/* Remove all possible active references to cached inodes */
->  		shrink_dcache_sb(fm->sb);
->  	} else
-> --=20
-> 2.51.0
->
+>  drivers/spi/spi-microchip-core-spi.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-micro=
+chip-core-spi.c
+> index b8738190cdcb..e65036cc62f3 100644
+> --- a/drivers/spi/spi-microchip-core-spi.c
+> +++ b/drivers/spi/spi-microchip-core-spi.c
+> @@ -320,6 +320,8 @@ static int mchp_corespi_probe(struct platform_device =
+*pdev)
+>  	 */
+>  	ret =3D of_property_read_string(pdev->dev.of_node, "microchip,protocol-=
+configuration",
+>  				      &protocol);
+> +	if (ret)
+> +		return ret;
+>  	if (strcmp(protocol, "motorola") !=3D 0)
+>  		return dev_err_probe(&pdev->dev, -EINVAL,
+>  				     "CoreSPI: protocol '%s' not supported by this driver\n",
+
+This should probably also complain about not being able to get the
+property, otherwise nobody is going to be able to figure out what's
+wrong if we actually hit the error case.
+
+--jnQOdFs1tKeyDk7h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkgdMkACgkQJNaLcl1U
+h9CPOwf/YH0v9sLikttYK7LcYfsSfi4JzoE78aL6gexf4xUfth8PMXTnDccuX6Lw
+G1tSK5LmQD/Z3Lkj7mHVaCULBBAL2HYZDe6fo2Vn3AlCnXdoRXmGYourEO5udgV+
+lY5A40R4P2m/4pU0ddUK1Kd+U0uwSDhdQ23uFJpOvgO8lZQjKSMOOWnQUFYCxXoJ
+LZe0GLRSbCHazaouPW/k1tebrwRL5M7FtJiBp5t/fkdNMtNuFqtQctjL1wWkLERH
+ODl34uRHIwwhEPE+d54sKVhp6r07rAmay/AMQrwuxDrxkd2sPWezLZ0lp94i+zKu
+Sk47HAhD8lIADZxJunw6wsqemlV3qw==
+=0+bs
+-----END PGP SIGNATURE-----
+
+--jnQOdFs1tKeyDk7h--
