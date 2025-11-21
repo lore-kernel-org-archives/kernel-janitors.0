@@ -1,77 +1,73 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE8334CFD4
-	for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 13:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF52834D39F
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 13:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763732176; cv=none; b=Xc9v8aySP1a0IZcJKqei8U3nUq5Y1IE+YJtRUuRJRt79fQQnU0RulLy1asDKbRIZcGYlzTqmipLDlanor/b0xtfLb/jmW4HDswvn7YvcyEfpbelKR18PRCuQv1J8jNDdNR3ETDBfbprFluNrlu2r7XqpMBqopNAKOFVZAm5qrfo=
+	t=1763732205; cv=none; b=O1taSwf6IpsaOOX3HciDwuvkpW5LvLnKovuJuSbTbe7cTvo7hWXWrB7c77bi5MuKegcSxB6YOHG6a5wqrCwkqjqL9Z9fqxmFhU98gX+NZQuCZux+ENbUkqZBWsx3ByX51rb1c8MbnEhlCwVPJs89oNToToxpfEivhpwy5iGfmxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763732176; c=relaxed/simple;
-	bh=SNhnVPvZIHPLVZ/on1Eao7513kU/koRUzcXYbd29eE4=;
+	s=arc-20240116; t=1763732205; c=relaxed/simple;
+	bh=uE4HXHI9Mc6ljZxrgmkbsKbCZ4Sosf3M2ARYwEUQLlg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=g7as3m65is3kqEgJpPjwYlo0gpTETg4mjaaQAxXFCgtGpI+3IGMPaHZs9nY+FbC68hSuMD5LIGoXHy8TS2HY/noHn27gWKNVTgrN4I9a9ChM6XZsaLhLqY/TvdDt00ja7ePVSbT1sAr+VbfKF+60IWwZHllLqx8y+uOKtYvwMC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K8xmGul7; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=lj6h0jSEq3OEUv5dxXP2QYyBY7V5CV8SeNZp32ErwHrZpx4jLwPdkHHCqCiNvrZ31lLuWcYfkmY0LT24RJCqysiGFpZRwjeYjpXPtedfqcd3mFGmtbDvSMmhgsxVlyaL2khCljE6AXHqa3GWfRilRp1B/s234Hxp1fb7GZpZjwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eyYRYvTi; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K8xmGul7"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47790b080e4so11348255e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 05:36:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eyYRYvTi"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so17907505e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 05:36:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763732173; x=1764336973; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1763732202; x=1764337002; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z2PesaBKduBABW9/nRvmlbqH9Oh7ml3xkQQS9Uo3etk=;
-        b=K8xmGul7gA6zEUP9/ajlGjmDm3wHEiURk+sai2bOMZZgMSAgb8r+Sj5sBeGrfAsIDS
-         cjtm6XvnSbkSg7yr2fGs1/EuW/IJDNAJNavci3aDCPbiZOGSN9E3uydW2i3cB9d4LZlm
-         FHdmG0pmQCFN7lFdsLa3EdcXhsS7KQqZLcNVPdqwnjVRE+NKwxLotGTpNUiuYRuIfpA0
-         2k1QSIuncVCFOVeBv2LFDZ268Q8i4wAdukm7rcQPyJfebQy4Plpb4W5X+xewwyeYTimJ
-         1L68ZzOQ6z4IkP/LTK0mLobYryOhySFpZznrsX5vTX3/qgZVboa2YETVwM2ilIxMAIcy
-         Pt+g==
+        bh=TzEyBCas7IooWk+MKSQXAh7ZMi3I77yN3jnhiz/DdHY=;
+        b=eyYRYvTif7jhkC6JXRvPfHTpJQ8u1zzc1UG49YcTT3rMWYe/wWl+aziWGD6MWczsMT
+         PHCTJSZ2JQuLXcPN0lLN8B5W3C0KEW6DahfqcS7xej521azRDgHLIpfcoB01J3ycqiPp
+         uQ8h7x4WUEBwMZQmydNH0e54iAN+lM2ECEcD22mYvsJTSs90lDahz5Ms6E3RIEtS+VhV
+         jTlyVSCx/8/kVc5hw9Tn6S5v4xkjhfALdyzxW9NzJugAitlManU0/tRKHwZTkG1jEvVy
+         UC87uaLuh7bUvG11tpcxD1UUDHnwV529xsObi60wYDXHABS378SUW9UCTtvFWNhOu6P/
+         n+Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763732173; x=1764336973;
+        d=1e100.net; s=20230601; t=1763732202; x=1764337002;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z2PesaBKduBABW9/nRvmlbqH9Oh7ml3xkQQS9Uo3etk=;
-        b=O7jHMVb3E4oV0/Po9ft/B2MbACRxxllA4aQBNTkBi52ZwwFbjf99XLMZb0Ixz1nVdr
-         YG/vl0xS9+ZixR7r67mRKLHOBbm3x/eeuJpLVKLGZ4bSoXaAvQS7UW8RqtpOi7JUvHA7
-         aZ6flWim09zj3WljewgWIO0vl8I1ySIW8x9IS7MdjD7VVVwY4erRtmSB2fz1P8QKZoBX
-         EybFmyTeHH2nrXXd03ZR2EJwTcx8gwPENFeeYjfCAgVgCR3Gv2vkLD/RDtAMoDjJefG3
-         aMUNz7Ym+Avd3ZRcq2uPqAnVHA+S8JUhBc7n3WNZ6rvbaOiRjvyVWPDi+NBPSV8zvVLd
-         1J2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXAHbCOHQdIe06Dy059LnAPeAuzzZS3QtV4e10WV0607W6CrYxcuOJYqkG/T5knx3DqrT4AJ4HQoYOVekPqrnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww95kgwMBdPjLwQD+YLmq7HAQyNl9/2aQQAid39BnPbPwCrEHn
-	I/Yh9eOIB9TS+c3DZ3w6PHNJyjGNZMag9Z+lkDCSFuCOOX3O38XqKypz09sfQE6QdJ8=
-X-Gm-Gg: ASbGncsNJY1v+PsYAPe5265j4bSiAEF065NV11a5KPa7fh0SrhtLmV3j4rHPqwLK5vy
-	zTT8LRCT4fakp3HBDEsOJPJ6yU2CcA/Ubm35dUaQgXJC4K7hLCq3ZtoxRU+cyACAW+1TSYPghlr
-	r91B+zjprMExW0IkQh5mIkzk2s1kb9FR0DjAh2BPqnjz9g20cRZe4ihXoe8eUmePWtzN5WHLa/X
-	CyYUuFdUGqaejEPN3Fe4+YJDXG7OnHAQlHTVVrMAYk7PJEipP7rbAdhn6YMY6psL6ijhg8Gifju
-	kGRbMwBEzzYXiJ7tK5rWb69RIUOJfgKERfxxX9x/zxXrKbk5lPCWdSFqtOdeY39cEhQ3b8DwV6w
-	Qehr4ROI3BP2RRWWeiaAe5FpUcEAMHkgKJto3GQQvbGHqJpXCvHAW4daXclWc3nGXeItAf5mB1S
-	p7zfKlGszRWQWjJ92mcKkmqPCAgyU=
-X-Google-Smtp-Source: AGHT+IHmKits0Ab8ZpUqVmd4qefREverhE79kiAHHxNwyMWrDSIyB6s607/u5/y6Z7cp7ArOd07/MA==
-X-Received: by 2002:a05:600c:310f:b0:475:de14:db1e with SMTP id 5b1f17b1804b1-477c1125568mr27673535e9.24.1763732172938;
-        Fri, 21 Nov 2025 05:36:12 -0800 (PST)
+        bh=TzEyBCas7IooWk+MKSQXAh7ZMi3I77yN3jnhiz/DdHY=;
+        b=LZYn4MJaUlVm+ZagjJmb4rTTpaylbGdQH7AOPeqaSUJqY+4tuHzauSl6YxS9p2uoZS
+         +aarxx0ij1KxSY34WFpwPHrg+SZKxY1X0JXmlUoaLIqrocpj+0RnwYdvXeG6Mx9/KZHE
+         YwPP0YFo3er+VHTljOYiMpz8FfoGzOisf9ShH3Wkf/GDGO/uVbHQ+GnoZxCsSrWZvwDU
+         +1k4hHDo28TIk8WJotftzxi/deTQth6eqP3YJnuM91q7+YsZj5AGQT/utXAKZT+nqu8V
+         AVpNW8dlLPq8RtIFC26GgooIqQxWyGQqlMYBHVZ186Ag/ZE9Ii7m3lXNu1xU4Qe34ILo
+         f7Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV+/oV9hx1oUXBuFJUM7mz3MGU7zbkazrxvid+dbLYh5JGjgN7rctmUrzj5riW3S7Y38lnIU/ko3UvdIRu0lZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxizHchFK4lK2If/MC22XVOdTzL7r+nC+QcbV039cjBB+5IkDT
+	3RiFCQ+iY9vpR1brBEHhOvKQ5NqTkhm2UM5qVZzw8NTF0fVet1jbgtmssmPOMvM1c+0=
+X-Gm-Gg: ASbGnctPHhA5gnDzp2u2N40di18tRmZ+X41x3js0hRuTnuyAOQJhDif9cY6RhXnFmly
+	VscNfyMlxckYKlu1Sq/XfxZoheaEsYNSbi5wQ1h/XTFmOkfJPj2f1HjeeFx+MkIoMuDCl/k7q3y
+	hg1508PVbc2XUFZwuDyQP7n6ycO3nIGXGv2p9DfgQE10QQY4ZBrwsLuQ1ByuwOvqZacywFiqKbW
+	DKCvLIJOEJmp9XbaB2Plgh9gDHHcALDXh+IikJmfWE3k18RGuDo2Vbo9NC05BJZ9nHGgl3Xk7It
+	CKzSG0O2HWebmFCr/T9aXT8sEKcw8rp71EZ3yefhCEWyu5F5a2wHdRYtARcIsRszSUZoa/DijVL
+	y7omznvnTNTKOKtzfCWHHUBcH8lNiq8JomuGa67PJzKaTgzdHYxyv9cCXByse9CZhoxXjzQwYQC
+	X3eYFIb/c/2BmNU5YD
+X-Google-Smtp-Source: AGHT+IHn72BgHYyXBAFrHrkEPwDLpmHZJhWH76OVXgjki7oj4pfilEmGcsYHhJxsG+r/JbIMusA7sA==
+X-Received: by 2002:a05:600c:470d:b0:477:89d5:fdac with SMTP id 5b1f17b1804b1-477c01f4f4emr28632935e9.31.1763732202028;
+        Fri, 21 Nov 2025 05:36:42 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-477a9dfd643sm83520865e9.14.2025.11.21.05.36.11
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-477bf3558d5sm43686925e9.1.2025.11.21.05.36.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Nov 2025 05:36:12 -0800 (PST)
-Date: Fri, 21 Nov 2025 16:36:08 +0300
+        Fri, 21 Nov 2025 05:36:41 -0800 (PST)
+Date: Fri, 21 Nov 2025 16:36:38 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>, damon@lists.linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] memory: tegra210-emc: Fix error codes in
- tegra210_emc_opp_table_init()
-Message-ID: <aSBqyISKPN5TWbGu@stanley.mountain>
+Subject: [PATCH next] mm/damon/tests/sysfs-kunit: fix use after free on error
+ path
+Message-ID: <aSBq5uSPIqsqH8zO@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,40 +78,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Fix several error paths where the error code was not set correctly.
+Re-order these frees to avoid dereferencing "sysfs_target" after it has
+been freed.
 
-Fixes: b33c93babead ("memory: tegra210: Support interconnect framework")
+Fixes: ee131696794c ("mm/damon/tests/sysfs-kunit: handle alloc failures on damon_sysfs_test_add_targets()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/memory/tegra/tegra210-emc-core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ mm/damon/tests/sysfs-kunit.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-index 397448cb472d..c97ce799d53d 100644
---- a/drivers/memory/tegra/tegra210-emc-core.c
-+++ b/drivers/memory/tegra/tegra210-emc-core.c
-@@ -1981,11 +1981,13 @@ static int tegra210_emc_opp_table_init(struct tegra210_emc *emc)
- 
- 	max_opps = dev_pm_opp_get_opp_count(emc->dev);
- 	if (max_opps <= 0) {
-+		err = max_opps ?: -EINVAL;
- 		dev_err_probe(emc->dev, err, "Failed to add OPPs\n");
- 		goto remove_table;
+diff --git a/mm/damon/tests/sysfs-kunit.h b/mm/damon/tests/sysfs-kunit.h
+index ce7218469f20..0c665ed255a3 100644
+--- a/mm/damon/tests/sysfs-kunit.h
++++ b/mm/damon/tests/sysfs-kunit.h
+@@ -76,8 +76,8 @@ static void damon_sysfs_test_add_targets(struct kunit *test)
+ 	if (!ctx) {
+ 		kfree(sysfs_targets->targets_arr);
+ 		kfree(sysfs_targets);
+-		kfree(sysfs_target);
+ 		kfree(sysfs_target->regions);
++		kfree(sysfs_target);
+ 		kunit_skip(test, "ctx alloc fail");
  	}
  
- 	if (emc->num_timings != max_opps) {
-+		err = -EINVAL;
- 		dev_err_probe(emc->dev, err, "OPP table does not match emc table\n");
- 		goto remove_table;
- 	}
-@@ -1994,6 +1996,7 @@ static int tegra210_emc_opp_table_init(struct tegra210_emc *emc)
- 		rate = emc->timings[i].rate * 1000;
- 		opp = dev_pm_opp_find_freq_exact(emc->dev, rate, true);
- 		if (IS_ERR(opp)) {
-+			err = PTR_ERR(opp);
- 			dev_err_probe(emc->dev, err, "Rate %lu not found in OPP table\n", rate);
- 			goto remove_table;
- 		}
 -- 
 2.51.0
 
