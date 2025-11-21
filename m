@@ -1,72 +1,76 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718A3349B1E
-	for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 13:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72E6347BC9
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 13:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763732109; cv=none; b=ZoHQWYoaLAlwT6bTkKuh46JtfME3xxMGi7j0LF/3c0AS7/Krty2ZPE4eJ/bsV5LhVh9n1Mxj7k7hqA0mfnnttj0GcdvWMG+o8TeFvDFdukALSLf4S7HmyamzYbib+8uBHUbklUogoSiK0x3J2NxxvcCLekLm7BEu5omimX4IS3k=
+	t=1763732117; cv=none; b=CnPl38gbdKZGfu6i4uXO2QMbw4a0r/SHasnzD4T97lS/7di4ZZFIBI6Y5bfvlfQqMFy+Br1IfT8HVRgVmoLK0PXiVBPxBXRKB9soA91buFnobqfl4I+yoVC6y7Oc+bAsvtMX7LiUtAkIUj/U5gWw2qk/li1UsxrT57KUz6n86UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763732109; c=relaxed/simple;
-	bh=hktJNp5r4PgkBcqCirMqTHzK016VyP4+D5g6LVifXys=;
+	s=arc-20240116; t=1763732117; c=relaxed/simple;
+	bh=KXv9/DU644cIIz1nqtNrSpWhbnBLfejEZSSzjDiMVVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XJkI4Pld3mRwv6OnWMUKtY/4Wqw+/Ke8+COzd3QTttjg+Gdf57fDDWiGSY/xaYzca9jmYnKoqfrL/9WxsBhjnk2zWh4NXau/hX/o5fESt+3iECagNIuSupXRthnpr6Y8fIF94NW/370M+31v4vFSiJjpZ3qij5caaFPFFbUqiI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x+L1LBMS; arc=none smtp.client-ip=209.85.221.54
+	 Content-Disposition; b=ugeGRP+duSceRGcCwQHUYxGe0TbWAy6+RjgZaVXhNjCQgLJkoPmCCM5KbHvtT7iAyEPNTrFnYgEYV+WIkhdnvK7cRh2Usx/rjdlKwnquN/5JJ8o4LGv27hyUHuxI4QBguvznrSG3htQadUC1otK882ripw+CmSG9t5bjzLpMjss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ogEdLPAA; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x+L1LBMS"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42bb288c219so1889461f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 05:35:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ogEdLPAA"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42b31507ed8so1755738f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Nov 2025 05:35:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763732106; x=1764336906; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1763732114; x=1764336914; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nqvrWwIAH98E3GCNn8rbqv0Z1nqQqruLCAExUktrPVc=;
-        b=x+L1LBMSKE8b6NZH1KVFUhR+Pknn1Y//kAjS6KkwaBNO+loLZh+VZCSoLQe7MMmXa7
-         Exp0tSyzmpWtBfUt485jNDZ5BtgC8K+6Aht1ct5mSXRAKitzCQUw5fmh82FcAgMWgxGP
-         UIXFmeM3DA9EoyaornbeNVAIpSM3EjNWqpqGW2fQv8XA7X1IhTXNMnaJuZITPu3lG3RS
-         SzEOOlZ3ZTMG7LPP4Bc5JIyO0ub/RQSSZQqJXcFlZTbcjSKbpr68J0U9STMcrvpppKJr
-         zzrr5oF9ZzlO5GXJ6wIF+9kQlQO0KNWqmEMFnFaqt4+IaJEppbgpBRAP4efdMt47P7Mf
-         Qkgw==
+        bh=LTowRJGcYg0HhmMoZiyqiMQ9fvsrn/LxONuXHhgGuGM=;
+        b=ogEdLPAAW3Me4+lGFwwc5FfctRL+4g6qHDC6g5zT1/2vLHFh8hAaLpOMFZLVdZi4my
+         p3KX3FfHF5wcGgg8fGtJYiFXD9liu4S7lsyws1FZgPcGNKMycC7hesbhinCm6DAf2ogC
+         8uze+sF6M3pwGpDkWBsiYK2kTwcqyp6IUJ8tRGjghmP3MtDdQgkg4KFMEck97qzy2Y+d
+         WZrska0qz50eL/ZuzurG0ptkBSc3V41RqY9x8qbAEfh64sYuYNpAcL6uAfKGPzVK605i
+         1ZvTXmj692vnQmLACXTfWb5X9AhZUi3DVzkNCqLqDmT1xwCvuoa0NBFdyq36wlZcxQF4
+         2wRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763732106; x=1764336906;
+        d=1e100.net; s=20230601; t=1763732114; x=1764336914;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nqvrWwIAH98E3GCNn8rbqv0Z1nqQqruLCAExUktrPVc=;
-        b=jWjELIC0+lqClX2MxHewrfKgmDj5S8Dr7rpYadJjhKBPUz1uLOeREfihvD1iOkUUZM
-         IWNYsHBojT3HCbMe5xj+fh3iWD1qUIr1yyVhj/cQPxJcn+4WaietbVBxHBb/1y7NnMG4
-         a6xj8y6ZkNWEn1pi7LW9FhubLET5cCmDt5lO43y41l5tkEWeBCJlkUYftdY7le2MT/Ii
-         hPlI7KcNh5oNstI8P2wzbx4YvoudmbzbBjpky+TVd9kZGeK4/E2IhIqPzvU/D8gBcfnJ
-         GMVa0168gn4MQEeDHpkG3fn0y3hsOuBnp0HTBIcTHF76+9LH9daEgwhlckcEweFAXqyp
-         5qWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxKKS4WhijIPSLtD4EpbBHNhJqsatiP4lutEXPXXSorvFgaXixSmhrY+TsEncTqT8JsCkms2QOJdLSgp1nV7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU+I2D8IgsQZoyyveqPfciy1hCNdD/oJkp9hmo9H9SbLmTSn3n
-	2sdKKf5KuWErdphFppV5jYHGqAgHQcF7r2f3mC7qqWSycI/H3CXq3/caEWjovg4N544=
-X-Gm-Gg: ASbGncts/i9PlEjF0kNu8+8NODXha2QPYeLiGY0vBmhrvRgkMlyKrxHlWzyNpeJvAef
-	4/ZnDUM3eK9YbphFXiTr/OgJz8C0qgciClBdXDbr6UfO67s0KnKbw+IcjWUTHN2EjXJqjG2pC/C
-	tQFv00slryQYMeLRcBkoEGkoSTINi8ukYiF6EZKHExFEFLOPbD24AJl4EjzJGabBn+nFv/qd3Ce
-	zXd4wvKf5X3PY6KsTYNM3JXp/4tSJ2WKHBkfwH5iJUy0siH8Lxd4O05MpjdUf88iDEvDl2z5mFM
-	yoaLsMcxxkqebQFWKAa7QOC9cEMWOxK9vPj5aOkQwVk+CvAwjuX+w25GmgZTGE1nDGK+koLK5fh
-	YH+TCn3jWCL9eBEyAnkMo/sHtXXTlpayJA/S3ZUCrHYkf8wXcBWOJloXmfbfwW065rGsee5BU0T
-	UVJh7XVJXifR/QfD4iGDX+barCSzA=
-X-Google-Smtp-Source: AGHT+IGAAZuJMb35YVwVd0XVBpgFQcFth74Yu5RjXUkruWgElazXjr2FU56f062qpHqju9zFoGQDCw==
-X-Received: by 2002:a5d:64c3:0:b0:42b:3825:2ac8 with SMTP id ffacd0b85a97d-42cc1d23eb5mr2641946f8f.59.1763732105589;
-        Fri, 21 Nov 2025 05:35:05 -0800 (PST)
+        bh=LTowRJGcYg0HhmMoZiyqiMQ9fvsrn/LxONuXHhgGuGM=;
+        b=CaMX403OQRFKbAtDm48pONKBqrcCa7DYkBeTOTmhD9S/6T8OXjBUoywzgtsme9YA/Q
+         2Wbra9mWP3gAyZpJLIClxJ0HRxKuInXuKIOAkmIidjXyGiIO26jKc/vooYakQWWdOACO
+         DvDp/Rz6R/qb6DlqbwlljyodanBAuZHZUeu0+IG6VptTxHU1TfMjLwzTX75yQwoLR+ql
+         HdVmXzwj2A3NUWMccIhiT/2z9Bx70cpegMeXLkEM4XZ1ssyttNDrwEjB5kfBMYhmMf6R
+         lIFrNi/9c2ykB3OE9xp+t+UCdMubhQhzi8pKhqQEo4M8Ii8kvvL4A/7gPvf87V7kaiu+
+         pcLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4XNVEGXvxwlY6tVbC7UKAoxxPP3+CV6sQRp6UZynbVRww+3MUZ+0rb1bMAepbUcjVTtfiJ2lqtQTdEoqsbkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcONA8tkXk/W02psTsdLOPpVfPGrYhadkObad5R+V72McE8oTz
+	Jsn979bmicD3b019lFNsYCv/sgCxOlvFf23AahWhwvAkwbKb21Bi0BpGnIkVe5O2TWk=
+X-Gm-Gg: ASbGnctTkYkziY6NiSi1ivBnyIROD983MrBop5IrYuQ9/8AiRNge5xkigg/8lo550it
+	6dnxaY/n5nnvU+HlwRA2ombTveiFpWQtyd+d0fMfqgbttCyHAL/oZupPiBEf/VS4kDrQ8Q38B//
+	yebeLssAsf/GUHPOn42Yd5zHz7fI3kxOF4vPc3SwORUsNQVPTQ4M+w5aUca97svZcgAiZ5vmfa9
+	suiOyB2FBJdgx9uHXjVB0FUiqzzNuyCALkpIfh9DX3FFCEl7pajTR+mKOx50GL4LkS1xjnoY8Gj
+	OVSwtNEAfrE9NtGsyuRcIRgKcNBjM6NrJHpV8DBBhEKqqjebafVMzoax8PLoJdluBd9Uceo/VIn
+	GnK5u5yE/jvweSgMJ5G0CzNNLf2s1sakheQVhxzX1sXIESMCoeK3kNMtqvQ8mHfMpjLfyFktX5A
+	pUvPyPwKK5/co3x9q2
+X-Google-Smtp-Source: AGHT+IHmU/+0OTxZO/ujLXvOPYvw9YHDjZwUJsy0cCotaR0gtzRnkipBingnOhyq1CTayGE3YXHsxQ==
+X-Received: by 2002:a05:6000:230c:b0:428:52c7:feae with SMTP id ffacd0b85a97d-42cc1d0cd4emr2314094f8f.32.1763732114087;
+        Fri, 21 Nov 2025 05:35:14 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7f34fe8sm11150653f8f.15.2025.11.21.05.35.04
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7f2e432sm10663506f8f.9.2025.11.21.05.35.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Nov 2025 05:35:05 -0800 (PST)
-Date: Fri, 21 Nov 2025 16:35:01 +0300
+        Fri, 21 Nov 2025 05:35:13 -0800 (PST)
+Date: Fri, 21 Nov 2025 16:35:10 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] spi: Fix potential uninitialized variable in probe()
-Message-ID: <aSBqhdjiywXq2Aso@stanley.mountain>
+To: Mohammad Heib <mheib@redhat.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] i40e: delete a stray tab
+Message-ID: <aSBqjtA8oF25G1OG@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,28 +81,26 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If the device tree is messed up, then potentially the "protocol" string
-could potentially be uninitialized.  Add a check to prevent that.
+This return statement is indented one tab too far.  Delete a tab.
 
-Fixes: 059f545832be ("spi: add support for microchip "soft" spi controller")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/spi/spi-microchip-core-spi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-microchip-core-spi.c
-index b8738190cdcb..e65036cc62f3 100644
---- a/drivers/spi/spi-microchip-core-spi.c
-+++ b/drivers/spi/spi-microchip-core-spi.c
-@@ -320,6 +320,8 @@ static int mchp_corespi_probe(struct platform_device *pdev)
- 	 */
- 	ret = of_property_read_string(pdev->dev.of_node, "microchip,protocol-configuration",
- 				      &protocol);
-+	if (ret)
-+		return ret;
- 	if (strcmp(protocol, "motorola") != 0)
- 		return dev_err_probe(&pdev->dev, -EINVAL,
- 				     "CoreSPI: protocol '%s' not supported by this driver\n",
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 9d91a382612d..8b30a3accd31 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -2967,7 +2967,7 @@ static inline int i40e_check_vf_permission(struct i40e_vf *vf,
+ 			dev_err(&pf->pdev->dev,
+ 				"Cannot add more MAC addresses: VF reached its maximum allowed limit (%d)\n",
+ 				mac_add_max);
+-				return -EPERM;
++			return -EPERM;
+ 		}
+ 		if (!vf_trusted) {
+ 			dev_err(&pf->pdev->dev,
 -- 
 2.51.0
 
