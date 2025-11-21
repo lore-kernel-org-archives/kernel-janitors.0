@@ -1,41 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDC9346E72;
-	Fri, 21 Nov 2025 14:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE21F7260B;
+	Fri, 21 Nov 2025 16:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763734734; cv=none; b=jbRbGy42Tl4CFfdtm8xX031PktOxILHGepdXQLi8XW32qKar0+02unbhLw0ArLbQvos81MK7vEoioWJrlGyr5yh7VDYv9SEJNvvP94+fA8wcQJ8XUDDvnLcIEc0bl09NL68jvX3+DJhoESFmjVaIILQbtdkNIk+18UtznhVXYvA=
+	t=1763742045; cv=none; b=m3Ozd6cFpgXWD3uhlbz7GfUl7Dka4nsuRyjhKlQCpkKzADHOwSoPx8YbQInz6jJ1NmxyfV8PCUyzmixSMfnf+v9pzG4yuuKp7pRiqNjR9LH1xWY75l3Ihz+ig+y0ZNgQCDzgTCGWXaCWknCYi/kBcOxSPX2pvsWgR1vrQepjqxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763734734; c=relaxed/simple;
-	bh=NsprtF+HIxjxhCRioUHdnInNCJikmnxU18uwM7I+1kY=;
+	s=arc-20240116; t=1763742045; c=relaxed/simple;
+	bh=bPvbITpgxfkzcIC5GsYQKwKsf7bury28D6Ssr8icWf8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJaEazS5DwlC/IKuxqnsEl37vGlt0t6tUaEeQb8BLkvDRBEHGLT4/p2FpBWlMVfoTiTXSEwnBQ8ElCAv/gkhqzTBixOqSEb8U4OrtpHS2bhf/Jhqen37P5f1rCT3k5e7qcw2I9t/sd53yTnthta7egHGqHUovRJ898Enn8Ti8G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EagljLLZ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NnES/Vyj6BovlVQJlBdBZlgyiBtNmp8aVhCXCl7oJsbPrMCa9xH0IHuPyu6OUKvZ1vN3V03azKGODCVqk8Kb8UnUWTzsEdnE+6Q3Yk+kyu32Je6pyaZt/orGvL5X+b68QEVs9a40nrNg2aMlf4yxSzwIJP7cX0lRVO+KlWgAOyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUcf/m3z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EagljLLZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91572C4CEFB;
-	Fri, 21 Nov 2025 14:18:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUcf/m3z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50005C4CEF1;
+	Fri, 21 Nov 2025 16:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763734733;
-	bh=NsprtF+HIxjxhCRioUHdnInNCJikmnxU18uwM7I+1kY=;
+	s=k20201202; t=1763742044;
+	bh=bPvbITpgxfkzcIC5GsYQKwKsf7bury28D6Ssr8icWf8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EagljLLZNrtDsGontDqDb8T45zIR9BkND/LHICMJq1ONW04Dq3EUaqqkHbu9Um5b6
-	 +ow/TgXUOHRA1l3M2GxYVLF9ocD3szF2gWTofv1Bi1nVBRRxi6HQPGOGmEBXbr72cS
-	 14ZHuyaBpoWiGUux+If4tIM9npcAR0ZkRENrE6DM1kM9Gd+ZTn79sqAgQuIxjYMaiI
-	 keOQzVnGkNBFJhdhIzlC4nTH+cNLSQ4S2A/HBMCyrPWAIqA6S8myAWE+JfWa2LrEDg
-	 8OU1mQFQOUxvJ+B1Zrz9ZUMXF7pPAJHREpnSBsGTvtR2iuz1qN9TAzM88TYzgA81Hg
-	 7NRgBtYcnJpsw==
-Date: Fri, 21 Nov 2025 14:18:49 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
+	b=aUcf/m3zSdSKse1sx4uITR03GHCzlpqOX9FjXxoLoT014VojDFp9WQKhhDGAfUFlc
+	 hLe+8m7JQ0ATr1JvH3R4cLQCr5mBk7f+jtRinMAhgzJwM9LwWD6YJhg2XAfXpLFlm9
+	 zT7hgYIj5fBBTxIbd+c4fdFnPUAaleTfprbnASahlqSLxpOVbS2SwULOpie3X8ejvy
+	 +p8ul3ErKoZua8N1jQFQrK+JrY5Xm7MCYqzyOpD67c7HlIUTLcl5QKIKMR/BXIpuV3
+	 EevUNCw3GjMKvD7NjM3/LsC0DT/2JqjtqoqzOrQN0V4J04i9M060WND1IVv4F3X1ph
+	 BJGjf2PI7m2Dw==
+Date: Fri, 21 Nov 2025 16:20:41 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
 	Conor Dooley <conor.dooley@microchip.com>,
 	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH next] spi: Fix potential uninitialized variable in probe()
-Message-ID: <cd3dc38e-72f6-4e83-a67f-266523e686f1@sirena.org.uk>
+Message-ID: <20251121-apostle-stark-7af8aebfe9c1@spud>
 References: <aSBqhdjiywXq2Aso@stanley.mountain>
+ <cd3dc38e-72f6-4e83-a67f-266523e686f1@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,62 +45,75 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jnQOdFs1tKeyDk7h"
+	protocol="application/pgp-signature"; boundary="hENh9cIf10+g9oH0"
 Content-Disposition: inline
-In-Reply-To: <aSBqhdjiywXq2Aso@stanley.mountain>
-X-Cookie: revolutionary, adj.:
+In-Reply-To: <cd3dc38e-72f6-4e83-a67f-266523e686f1@sirena.org.uk>
 
 
---jnQOdFs1tKeyDk7h
+--hENh9cIf10+g9oH0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 21, 2025 at 04:35:01PM +0300, Dan Carpenter wrote:
-> If the device tree is messed up, then potentially the "protocol" string
-> could potentially be uninitialized.  Add a check to prevent that.
+On Fri, Nov 21, 2025 at 02:18:49PM +0000, Mark Brown wrote:
+> On Fri, Nov 21, 2025 at 04:35:01PM +0300, Dan Carpenter wrote:
+> > If the device tree is messed up, then potentially the "protocol" string
+> > could potentially be uninitialized.  Add a check to prevent that.
+> >=20
+> > Fixes: 059f545832be ("spi: add support for microchip "soft" spi control=
+ler")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/spi/spi-microchip-core-spi.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-mic=
+rochip-core-spi.c
+> > index b8738190cdcb..e65036cc62f3 100644
+> > --- a/drivers/spi/spi-microchip-core-spi.c
+> > +++ b/drivers/spi/spi-microchip-core-spi.c
+> > @@ -320,6 +320,8 @@ static int mchp_corespi_probe(struct platform_devic=
+e *pdev)
+> >  	 */
+> >  	ret =3D of_property_read_string(pdev->dev.of_node, "microchip,protoco=
+l-configuration",
+> >  				      &protocol);
+> > +	if (ret)
+> > +		return ret;
+> >  	if (strcmp(protocol, "motorola") !=3D 0)
+> >  		return dev_err_probe(&pdev->dev, -EINVAL,
+> >  				     "CoreSPI: protocol '%s' not supported by this driver\n",
 >=20
-> Fixes: 059f545832be ("spi: add support for microchip "soft" spi controlle=
-r")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/spi/spi-microchip-core-spi.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-micro=
-chip-core-spi.c
-> index b8738190cdcb..e65036cc62f3 100644
-> --- a/drivers/spi/spi-microchip-core-spi.c
-> +++ b/drivers/spi/spi-microchip-core-spi.c
-> @@ -320,6 +320,8 @@ static int mchp_corespi_probe(struct platform_device =
-*pdev)
->  	 */
->  	ret =3D of_property_read_string(pdev->dev.of_node, "microchip,protocol-=
-configuration",
->  				      &protocol);
-> +	if (ret)
-> +		return ret;
->  	if (strcmp(protocol, "motorola") !=3D 0)
->  		return dev_err_probe(&pdev->dev, -EINVAL,
->  				     "CoreSPI: protocol '%s' not supported by this driver\n",
+> This should probably also complain about not being able to get the
+> property, otherwise nobody is going to be able to figure out what's
+> wrong if we actually hit the error case.
 
-This should probably also complain about not being able to get the
-property, otherwise nobody is going to be able to figure out what's
-wrong if we actually hit the error case.
+The one thing to be careful of is that the property has a default, so
+EINVAL needs to be treated differently, so the decision tree is
+something like:
+if (ret =3D=3D _EINVAL)
+	<do nothing>
+else if (ret)
+	abort complaining about malformed
+else if (!motorola)
+	abort complaining about unsupported mode
+else
+	<do nothing>
 
---jnQOdFs1tKeyDk7h
+obviously that can just become two clauses, but you get the idea.
+
+
+
+
+--hENh9cIf10+g9oH0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkgdMkACgkQJNaLcl1U
-h9CPOwf/YH0v9sLikttYK7LcYfsSfi4JzoE78aL6gexf4xUfth8PMXTnDccuX6Lw
-G1tSK5LmQD/Z3Lkj7mHVaCULBBAL2HYZDe6fo2Vn3AlCnXdoRXmGYourEO5udgV+
-lY5A40R4P2m/4pU0ddUK1Kd+U0uwSDhdQ23uFJpOvgO8lZQjKSMOOWnQUFYCxXoJ
-LZe0GLRSbCHazaouPW/k1tebrwRL5M7FtJiBp5t/fkdNMtNuFqtQctjL1wWkLERH
-ODl34uRHIwwhEPE+d54sKVhp6r07rAmay/AMQrwuxDrxkd2sPWezLZ0lp94i+zKu
-Sk47HAhD8lIADZxJunw6wsqemlV3qw==
-=0+bs
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaSCRSQAKCRB4tDGHoIJi
+0hUDAQCy6DCA2ZtjlIe8Je9fG1esPeTgP2b20jYJUoOZ4kRVjwD/ZKcbjPa6tIg4
+VAryRCasKFzt2Ah9eS98kFwOq1Kvkwg=
+=gGc7
 -----END PGP SIGNATURE-----
 
---jnQOdFs1tKeyDk7h--
+--hENh9cIf10+g9oH0--
