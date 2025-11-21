@@ -1,88 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433622D1F5E;
-	Fri, 21 Nov 2025 17:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754371AA1D2;
+	Fri, 21 Nov 2025 17:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763744444; cv=none; b=RlyNcj6vhWzMKt/u7OyKAnxuZz2skki7NaZHRVKzVH8mtn3NT68evde75jl5mYSwHuAWzpMw1H12IZ4J4Nqkf/ZXQRJY8nwF7Xmh+4e+2YXxjjrN+05zTSsuXzbjWEv3yOxXMw0a7wIRsYe05cV5MYOYoCo20gzxrF+HzKHdwU4=
+	t=1763746083; cv=none; b=ebqgIHMbLguc9GsK+ggpCsm+LOpDsclxomklRHt3MxDS4dIIMCMYLXtVuz0j94DitpNBgohaBezy0U19E0nGhg/SbcUgsLLWMzJ8derFeMuqzm2zulImKxXGtvovD9iE3um4MOtlZJ0TYgzZ7dtYIojr215JhZEpw+2lQA0gcqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763744444; c=relaxed/simple;
-	bh=pB2y36Hn5MVLYcX4ELMU56QzMs4V47Ht55KA15gFf0s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=roeIofLesQkFTglmqmqzP1SAwbyYOPx6ebLe623WayfzVhvc5K2g0zJcELU5mFQg0AGVXnOCPwhOxFJwWgdpV85HszwaBpwLBKXnuYdOWXFjwDsXktTr0rbf0earh8fR46X6KW10H9y8SFocOpboQPI6cCuvWQ/9qYdZ4RloKLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PNObFts0; arc=none smtp.client-ip=192.198.163.12
+	s=arc-20240116; t=1763746083; c=relaxed/simple;
+	bh=noSfWXD52sfsRRnhlkbPQC/HuP7vYWvBGCAaCE8YJNY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rdK8iaLtR2pjZrOAZA7Luqi86dSo9uC1khDrhANoeR/oZTd9mJRqoU+VWJGNEQnWUVAKjZYjzrJcF0zzGpvhr+rq7y1UASryDyVsxOCxsLjUqCkFgcK/ahh4tPFQQzPaHY/3aaernKL8mkfHf8ZAxdq78epNk5VnWzB2dLtOD8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIr7QvSI; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PNObFts0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIr7QvSI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763744443; x=1795280443;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=pB2y36Hn5MVLYcX4ELMU56QzMs4V47Ht55KA15gFf0s=;
-  b=PNObFts05N4feJcwojKd3os6MG7C3JyG+USbCk6c/JDQ4GjVrD+y+nK9
-   eITWmhXm/7z2wzscR3hTTvVSI0COePSsnMPano1NgnFmJBxF2wRj6HOWL
-   sOaaDXNAhD8N0OJL76FbgyQOIQOwS48ZAytLmT3+TUu6GovElzHso/nCQ
-   v87H8/GDrb9GpHThqgL/f6hTP01kERzMi98E3GkEkt/IAdQ388g8qJvCq
-   4qyj4amOGRxaSSzA7aSykx+kHVbFGE7uJM56cXprbtY27UvZWOxJrBZhr
-   NHJ+GUNe2R7oMOKHowjsT1het2jSn/KfpSfRdzyyzMXoPCKcQahWXPIYk
-   g==;
-X-CSE-ConnectionGUID: g1aGQPRdRPOPBT55TI/fmA==
-X-CSE-MsgGUID: FnSRk1uSQYusc6XwRsuAjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11620"; a="69707531"
+  t=1763746081; x=1795282081;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=noSfWXD52sfsRRnhlkbPQC/HuP7vYWvBGCAaCE8YJNY=;
+  b=YIr7QvSInPklhlC1Y9O4tucLVdvq1OOz4mM/Fz6e9KBiSjXckQIBqNgI
+   JTHwjhCgqTJdOBDa09iu2zwqnM5GLAPh4H92UZ3IVeyZzGTtykqIwx5cx
+   eOfMiI/zwvNOtwO8mEgQXgrM87dLnvMrnntD5DBMzWobntm5rg+Zh38l2
+   2lxPIcL1cAm+/8IiGrtvFy78HH6HlR5jA3ZkadQcW62llbQd/FhsQWVFW
+   iMe8UtmuwewocqRhbTl0Hs5PG41uWLCZAmVGOekd5a5f8GU3dNWIddlLq
+   IFysQRF9PqT0f1CGu3L+9HdlfUIgX5CmKAGnKyIZQ7LA+hibvhcNx8PXr
+   w==;
+X-CSE-ConnectionGUID: vjck3HhXS3aGzol/0+SuJQ==
+X-CSE-MsgGUID: jsclsdSDTc6NC9WNCCaLYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11620"; a="65886314"
 X-IronPort-AV: E=Sophos;i="6.20,216,1758610800"; 
-   d="scan'208";a="69707531"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2025 09:00:42 -0800
-X-CSE-ConnectionGUID: ghVyNwl6QPedQcgtNZ28EQ==
-X-CSE-MsgGUID: exY1hzMfT+qukwGywI8KOw==
+   d="scan'208";a="65886314"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2025 09:28:00 -0800
+X-CSE-ConnectionGUID: G55ZJNGiT0mzBR26K/WTng==
+X-CSE-MsgGUID: hjU4it7gQy+I62wIhpN44Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.20,216,1758610800"; 
-   d="scan'208";a="222692728"
+   d="scan'208";a="215107470"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.50])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2025 09:00:38 -0800
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2025 09:27:58 -0800
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: "Luke D. Jones" <luke@ljones.dev>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Corentin Chary <corentin.chary@gmail.com>, 
- Denis Benato <benato.denis96@gmail.com>, Hans de Goede <hansg@kernel.org>, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aSBqRHs256Tz7EKr@stanley.mountain>
-References: <aSBqRHs256Tz7EKr@stanley.mountain>
-Subject: Re: [PATCH next] platform/x86: asus-armoury: Fix error code in
- mini_led_mode_current_value_store()
-Message-Id: <176374443397.14895.13710946903719696711.b4-ty@linux.intel.com>
-Date: Fri, 21 Nov 2025 19:00:33 +0200
+Date: Fri, 21 Nov 2025 19:27:54 +0200 (EET)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Qipeng Zha <qipeng.zha@intel.com>, Hans de Goede <hansg@kernel.org>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Darren Hart <dvhart@linux.intel.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: intel: punit_ipc: fix memory corruption
+In-Reply-To: <aSBqXtt8hJb7WYIc@stanley.mountain>
+Message-ID: <c5867aff-4b9a-9cf4-98ab-2e00df9aa4f4@linux.intel.com>
+References: <aSBqXtt8hJb7WYIc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 21 Nov 2025 16:33:56 +0300, Dan Carpenter wrote:
+On Fri, 21 Nov 2025, Dan Carpenter wrote:
 
-> There are two return statements in a row here.  The first one is wrong
-> so delete that one.  This changes the return value to -ENODEV.
+> This passes a stack address to the IRQ handler, "&punit_ipcdev" vs
+
+This first part I don't get, why you think &punit_ipcdev is a stack 
+address? The punit_ipcdev variable is defined in the global scope:
+
+static IPC_DEV *punit_ipcdev;
+
+> "punit_ipcdev" without the ampersand.  This means that the:
 > 
+> 	complete(&ipcdev->cmd_complete);
+> 
+> in intel_punit_ioc() will corrupt the wrong memory.
+
+Can you please also rephrace "will corrupt the wrong memory" as it has
+a bit awkward sound in it. My suggestion:
+
+...will write to a wrong memory address corrupting it.
+
+(I'd have done this edit myself but I wanted to ask about the stack 
+address claim so better you just send v2.)
+
+The change diff itself looks correct.
+
+> Fixes: fdca4f16f57d ("platform:x86: add Intel P-Unit mailbox IPC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/platform/x86/intel/punit_ipc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/intel/punit_ipc.c b/drivers/platform/x86/intel/punit_ipc.c
+> index bafac8aa2baf..14513010daad 100644
+> --- a/drivers/platform/x86/intel/punit_ipc.c
+> +++ b/drivers/platform/x86/intel/punit_ipc.c
+> @@ -250,7 +250,7 @@ static int intel_punit_ipc_probe(struct platform_device *pdev)
+>  	} else {
+>  		ret = devm_request_irq(&pdev->dev, irq, intel_punit_ioc,
+>  				       IRQF_NO_SUSPEND, "intel_punit_ipc",
+> -				       &punit_ipcdev);
+> +				       punit_ipcdev);
+>  		if (ret) {
+>  			dev_err(&pdev->dev, "Failed to request irq: %d\n", irq);
+>  			return ret;
 > 
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86: asus-armoury: Fix error code in mini_led_mode_current_value_store()
-      commit: 0a69fe8f097f7410dc232259129d334518d4e8dc
-
---
+-- 
  i.
+
 
