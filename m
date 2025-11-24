@@ -1,114 +1,88 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1397286422;
-	Mon, 24 Nov 2025 14:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3352C21EB;
+	Mon, 24 Nov 2025 18:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763995810; cv=none; b=PjYp3nKrPFCy+NxG68YXXsEjRTvvTo8b2BUBUzH/ttrLkm1yQJwfzFavFcc/qZD/nuHb79N7n7ooDj8e4bXH5tP3ey2B/pV7iut3m1ECq/JB0Z7gceKkcQUNuzbHgDnNaYnzGoNifU1SnayIa8EHeHalxDhsBWNJqC9a1IIgw3Q=
+	t=1764007740; cv=none; b=AOYybq+eIwiOellz3hni95oQ1fIIakf4r5UUENIYuhEJboK3p8G8wvlkrm4dIxSvZMtcUWj1ch2/sAsPUfMPVw7XUfi2OiZczUWGKpyINaVnyS0CAJjj4nocdrUbWyAmbI5rGsI5ZnXMxlcx81CQq3uoJPYq1BBuTOj1wakRLck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763995810; c=relaxed/simple;
-	bh=ldR9Jbkn+lG8+Fw1qz6qmlfFqMRuk5844+RygMXc0QE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GP2yG1C06xAklzKksrqdd5ePxmggTWmOsjOPfhn/bRlleaG+atvU20SSQn7P1xDHNW1B0AL3kOtJdl7FyjvpZENVx0g0+lm8ISQQKrzYb2oYT+hzNDoIdB2t3ADW+1GuWYyGTE7LrHA10iEAQP+hfQ9Dd4p2wy5xHsSfVc64tQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t/fjJ/Tn; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1764007740; c=relaxed/simple;
+	bh=GhQcWx42J0d0ewB7WVogF7BGD8aTFOdgav+kUNjMAPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qjRmOACbguWvBioyscAnaTQadAf1B1JLFtT+pPfHY29lOQM8aYtj9DVL8dpHF0t29AOQHr4xbq/dqMl5Tf19pTxItnWbhT4ObJ1ruBrJ6+5pnfYF5bqGJFN2gj22iCkrW0noebtP8P6bdMPAxA8GsZ1Ng3GTFa+lOoAH5mdlCJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEd3XJcR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t/fjJ/Tn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1763995807; x=1795531807;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ldR9Jbkn+lG8+Fw1qz6qmlfFqMRuk5844+RygMXc0QE=;
-  b=t/fjJ/Tn/Ma/J7trnD2N1rPxDiad/VHFHTbwUa1Ii7xJHwoEvsBVOcZI
-   SI3BIkVTNg5cqyJarxwRqccT/mwh7tsx/4sP/3IeHQo/0c9FSkXYaACGL
-   RmwnRn6EtlKpIWiXeg75GRNPrc+x+D6Xd6ATqxP/rbJ3CesjYUXsyqV19
-   T+owh8TP7XvSlhQn6CruB8kx4skv1oHzOfoEqypPZk5aB/EPtCHgrTUuT
-   jSHcHXf3P+cBD6H4TcMhVvgx7ZaMn7H70l8GpAL7C3z/Vx24EPYhNx9wQ
-   Lmmm0W+sN1Eyz01x/cU8ovHxv6FtBIdbdMYoD/bLsgADKfyfp8LZOsqRR
-   A==;
-X-CSE-ConnectionGUID: OeN9174cR8eHEXvZOy+fKg==
-X-CSE-MsgGUID: DtLvZ2mDQxKim2utQ5AXiA==
-X-IronPort-AV: E=Sophos;i="6.20,223,1758610800"; 
-   d="scan'208";a="56142126"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Nov 2025 07:50:06 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 24 Nov 2025 07:49:47 -0700
-Received: from [10.205.167.104] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 24 Nov 2025 07:49:46 -0700
-Message-ID: <48ad36dc-613f-401f-a8e2-dec832bd6ee1@microchip.com>
-Date: Mon, 24 Nov 2025 15:00:55 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEd3XJcR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6C9C4CEF1;
+	Mon, 24 Nov 2025 18:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764007738;
+	bh=GhQcWx42J0d0ewB7WVogF7BGD8aTFOdgav+kUNjMAPM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=aEd3XJcR7n8AuUrojYsCfxJ8IZxUS8/qCkU28Hu96BCovkBmb6J3Z9oEKsea4Qj+I
+	 cwxAfX+QWcrI3wQJ3/p1VAyLBt3ezyakmR1ITcuc1b9cb5WC2Bmul3kDYIsxbl57Pn
+	 b1yR2Yh144jWyEfH4SVaCm2xNp0TmJNgwQopp4IjaO0I0AVfHlOdk81BWBuwKLFpEj
+	 +PTw1QwjJcJgCX+lJPnaJYMVOEI3RA7mnb/ZfFuN2KcUfFnvgsy+KoRYfr4KoNaVmC
+	 xR83NzucXAVQ5PYqSEkIBspYl6jlFomgMiFu3RKy6LZiyYgZIhBtVVqxGt+hb1t+3y
+	 jfCx6nFfKtduw==
+Date: Mon, 24 Nov 2025 12:08:57 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hans Zhang <hans.zhang@cixtech.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] PCI: sky1: Fix error codes in
+ sky1_pcie_resource_get()
+Message-ID: <20251124180857.GA2702217@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next v2] spi: Fix potential uninitialized variable in
- probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Mark Brown <broonie@kernel.org>, Conor Dooley
-	<conor.dooley@microchip.com>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <aSQPkfkiJ0w-FJMW@stanley.mountain>
-Content-Language: en-US
-From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-In-Reply-To: <aSQPkfkiJ0w-FJMW@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aSBqp0cglr-Sc8na@stanley.mountain>
 
-On 24/11/2025 07:56, Dan Carpenter wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->
-> If the device tree is messed up, then potentially the "protocol" string
-> could potentially be uninitialized.  The property is supposed to default
-> to "motorola" so if the of_property_read_string() function returns
-> -EINVAL then default to "motorola".
->
-> Fixes: 059f545832be ("spi: add support for microchip "soft" spi controller")
+On Fri, Nov 21, 2025 at 04:35:35PM +0300, Dan Carpenter wrote:
+> Return negative -ENODEV instead of positive ENODEV.
+> 
+> Fixes: 25b3feb70d64 ("PCI: sky1: Add PCIe host support for CIX Sky1")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-> ---
-> v2: Add an error message on failure.
->      Default to "motorola".
->
->   drivers/spi/spi-microchip-core-spi.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-microchip-core-spi.c
-> index b8738190cdcb..16e0885474a0 100644
-> --- a/drivers/spi/spi-microchip-core-spi.c
-> +++ b/drivers/spi/spi-microchip-core-spi.c
-> @@ -295,10 +295,10 @@ static int mchp_corespi_transfer_one(struct spi_controller *host,
->
->   static int mchp_corespi_probe(struct platform_device *pdev)
->   {
-> +       const char *protocol = "motorola";
->          struct spi_controller *host;
->          struct mchp_corespi *spi;
->          struct resource *res;
-> -       const char *protocol;
->          u32 num_cs, mode, frame_size;
->          bool assert_ssel;
->          int ret = 0;
-> @@ -320,6 +320,8 @@ static int mchp_corespi_probe(struct platform_device *pdev)
->           */
->          ret = of_property_read_string(pdev->dev.of_node, "microchip,protocol-configuration",
->                                        &protocol);
-> +       if (ret && ret != -EINVAL)
-> +               return dev_err_probe(&pdev->dev, ret, "Error reading protocol-configuration\n");
->          if (strcmp(protocol, "motorola") != 0)
->                  return dev_err_probe(&pdev->dev, -EINVAL,
->                                       "CoreSPI: protocol '%s' not supported by this driver\n",
-> --
-> 2.51.0
->
 
+Squashed into the commit, thanks!
+
+> ---
+>  drivers/pci/controller/cadence/pci-sky1.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pci-sky1.c b/drivers/pci/controller/cadence/pci-sky1.c
+> index 99a1f3fae1b3..d8c216dc120d 100644
+> --- a/drivers/pci/controller/cadence/pci-sky1.c
+> +++ b/drivers/pci/controller/cadence/pci-sky1.c
+> @@ -65,7 +65,7 @@ static int sky1_pcie_resource_get(struct platform_device *pdev,
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+>  	if (!res)
+> -		return dev_err_probe(dev, ENODEV, "unable to get \"cfg\" resource\n");
+> +		return dev_err_probe(dev, -ENODEV, "unable to get \"cfg\" resource\n");
+>  	pcie->cfg_res = res;
+>  
+>  	base = devm_platform_ioremap_resource_byname(pdev, "rcsu_strap");
+> @@ -82,7 +82,7 @@ static int sky1_pcie_resource_get(struct platform_device *pdev,
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "msg");
+>  	if (!res)
+> -		return dev_err_probe(dev, ENODEV, "unable to get \"msg\" resource\n");
+> +		return dev_err_probe(dev, -ENODEV, "unable to get \"msg\" resource\n");
+>  	pcie->msg_res = res;
+>  	pcie->msg_base = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(pcie->msg_base)) {
+> -- 
+> 2.51.0
+> 
