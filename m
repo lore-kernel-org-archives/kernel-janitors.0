@@ -1,93 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A06306495;
-	Mon, 24 Nov 2025 13:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1397286422;
+	Mon, 24 Nov 2025 14:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763991667; cv=none; b=tIR54nX1c1+ES9YhDtWGt4jAq/oCyJZTbfRlmGUIi2Ekp8mt6zBhlIXiVich3L3kpPSkNP/TXZFbPRKvndVoYGIYjqInmTlLOhcMw8rBN1YLaEgPJcORYx3b834XWFbyUDq0CO9bnNAkvJGXrwsa55dOR6CpupKl3EWz9pntm+Y=
+	t=1763995810; cv=none; b=PjYp3nKrPFCy+NxG68YXXsEjRTvvTo8b2BUBUzH/ttrLkm1yQJwfzFavFcc/qZD/nuHb79N7n7ooDj8e4bXH5tP3ey2B/pV7iut3m1ECq/JB0Z7gceKkcQUNuzbHgDnNaYnzGoNifU1SnayIa8EHeHalxDhsBWNJqC9a1IIgw3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763991667; c=relaxed/simple;
-	bh=cWxXhFWSs490Ewvf8Le8zDNYzzbUaZfaLFNbcBn/eCA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l7gp0P1F/Q0iV4nObx/8n2QsNh2qvoM4fYg7GsqqbvCW6qX7rT5hGZv6eLtNx3kXAgIDWqcdu3kz/qHdnwd69hed5srEXobL8LA2BhaHVSA5kOZmh/KMnhWUTUuENsiy+Xa7VCL0HA2aLGK+kjFfRAaIP5WdZh9NietBOI3VDwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9xWfJ+L; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1763995810; c=relaxed/simple;
+	bh=ldR9Jbkn+lG8+Fw1qz6qmlfFqMRuk5844+RygMXc0QE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GP2yG1C06xAklzKksrqdd5ePxmggTWmOsjOPfhn/bRlleaG+atvU20SSQn7P1xDHNW1B0AL3kOtJdl7FyjvpZENVx0g0+lm8ISQQKrzYb2oYT+hzNDoIdB2t3ADW+1GuWYyGTE7LrHA10iEAQP+hfQ9Dd4p2wy5xHsSfVc64tQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t/fjJ/Tn; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9xWfJ+L"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t/fjJ/Tn"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763991666; x=1795527666;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=cWxXhFWSs490Ewvf8Le8zDNYzzbUaZfaLFNbcBn/eCA=;
-  b=L9xWfJ+LTEVg88zsiS4i7Qf2MCDB5cgihevQl8qggWo6kyjVxRXuiQ2F
-   L0VDPIo1n4UmnHB0XZh7tpZ8KnQewY4T/xWDZXK3d5SZ61WT1cZtZNWDM
-   vPvVNQDdzJgVbIBuK7KbnjFT0RFZb3eCYavJzRA+vDyvygaoygjLzmDbX
-   3k/F9ln3k+LczqV582QNVabz/vGhS87FWxjanoxBPXxB0wPN4OwObJ4GP
-   OyJtjrq2TXXkeHIhoUE2izH1MwGA9VQusCu6jHYs6smnD/kuuMI1nM8tV
-   SIq57qhCU3g3odYH/l1nEmy7Yac3oFoAFur3Ny6SiRkvRiciPSqEp+3A3
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1763995807; x=1795531807;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ldR9Jbkn+lG8+Fw1qz6qmlfFqMRuk5844+RygMXc0QE=;
+  b=t/fjJ/Tn/Ma/J7trnD2N1rPxDiad/VHFHTbwUa1Ii7xJHwoEvsBVOcZI
+   SI3BIkVTNg5cqyJarxwRqccT/mwh7tsx/4sP/3IeHQo/0c9FSkXYaACGL
+   RmwnRn6EtlKpIWiXeg75GRNPrc+x+D6Xd6ATqxP/rbJ3CesjYUXsyqV19
+   T+owh8TP7XvSlhQn6CruB8kx4skv1oHzOfoEqypPZk5aB/EPtCHgrTUuT
+   jSHcHXf3P+cBD6H4TcMhVvgx7ZaMn7H70l8GpAL7C3z/Vx24EPYhNx9wQ
+   Lmmm0W+sN1Eyz01x/cU8ovHxv6FtBIdbdMYoD/bLsgADKfyfp8LZOsqRR
    A==;
-X-CSE-ConnectionGUID: IQ96QHjVQ+C4IOQgRzteGg==
-X-CSE-MsgGUID: oZdeqP8TTM+cDv91LNLRkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11623"; a="68581008"
-X-IronPort-AV: E=Sophos;i="6.20,222,1758610800"; 
-   d="scan'208";a="68581008"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2025 05:41:04 -0800
-X-CSE-ConnectionGUID: +XKx//CuTfOv3hkvcOUTZg==
-X-CSE-MsgGUID: WsMeVTRSSV2cRGuiCAGxuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,222,1758610800"; 
-   d="scan'208";a="191616372"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.97])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2025 05:41:01 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Qipeng Zha <qipeng.zha@intel.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Hans de Goede <hansg@kernel.org>, Darren Hart <dvhart@linux.intel.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aSCmoBipSQ_tlD-D@stanley.mountain>
-References: <aSCmoBipSQ_tlD-D@stanley.mountain>
-Subject: Re: [PATCH v2] platform/x86: intel: punit_ipc: fix memory
- corruption
-Message-Id: <176399165439.1782.14998465716898808944.b4-ty@linux.intel.com>
-Date: Mon, 24 Nov 2025 15:40:54 +0200
+X-CSE-ConnectionGUID: OeN9174cR8eHEXvZOy+fKg==
+X-CSE-MsgGUID: DtLvZ2mDQxKim2utQ5AXiA==
+X-IronPort-AV: E=Sophos;i="6.20,223,1758610800"; 
+   d="scan'208";a="56142126"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Nov 2025 07:50:06 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 24 Nov 2025 07:49:47 -0700
+Received: from [10.205.167.104] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 24 Nov 2025 07:49:46 -0700
+Message-ID: <48ad36dc-613f-401f-a8e2-dec832bd6ee1@microchip.com>
+Date: Mon, 24 Nov 2025 15:00:55 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next v2] spi: Fix potential uninitialized variable in
+ probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Mark Brown <broonie@kernel.org>, Conor Dooley
+	<conor.dooley@microchip.com>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <aSQPkfkiJ0w-FJMW@stanley.mountain>
+Content-Language: en-US
+From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+In-Reply-To: <aSQPkfkiJ0w-FJMW@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-On Fri, 21 Nov 2025 20:51:28 +0300, Dan Carpenter wrote:
-
-> This passes the address of the pointer "&punit_ipcdev" when the intent
-> was to pass the pointer itself "punit_ipcdev" (without the ampersand).
-> This means that the:
-> 
-> 	complete(&ipcdev->cmd_complete);
-> 
-> in intel_punit_ioc() will write to a wrong memory address corrupting it.
-> 
-> [...]
-
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86: intel: punit_ipc: fix memory corruption
-      commit: 9b9c0adbc3f8a524d291baccc9d0c04097fb4869
-
---
- i.
+On 24/11/2025 07:56, Dan Carpenter wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>
+> If the device tree is messed up, then potentially the "protocol" string
+> could potentially be uninitialized.  The property is supposed to default
+> to "motorola" so if the of_property_read_string() function returns
+> -EINVAL then default to "motorola".
+>
+> Fixes: 059f545832be ("spi: add support for microchip "soft" spi controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+> ---
+> v2: Add an error message on failure.
+>      Default to "motorola".
+>
+>   drivers/spi/spi-microchip-core-spi.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-microchip-core-spi.c
+> index b8738190cdcb..16e0885474a0 100644
+> --- a/drivers/spi/spi-microchip-core-spi.c
+> +++ b/drivers/spi/spi-microchip-core-spi.c
+> @@ -295,10 +295,10 @@ static int mchp_corespi_transfer_one(struct spi_controller *host,
+>
+>   static int mchp_corespi_probe(struct platform_device *pdev)
+>   {
+> +       const char *protocol = "motorola";
+>          struct spi_controller *host;
+>          struct mchp_corespi *spi;
+>          struct resource *res;
+> -       const char *protocol;
+>          u32 num_cs, mode, frame_size;
+>          bool assert_ssel;
+>          int ret = 0;
+> @@ -320,6 +320,8 @@ static int mchp_corespi_probe(struct platform_device *pdev)
+>           */
+>          ret = of_property_read_string(pdev->dev.of_node, "microchip,protocol-configuration",
+>                                        &protocol);
+> +       if (ret && ret != -EINVAL)
+> +               return dev_err_probe(&pdev->dev, ret, "Error reading protocol-configuration\n");
+>          if (strcmp(protocol, "motorola") != 0)
+>                  return dev_err_probe(&pdev->dev, -EINVAL,
+>                                       "CoreSPI: protocol '%s' not supported by this driver\n",
+> --
+> 2.51.0
+>
 
