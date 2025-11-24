@@ -1,85 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CCF27FB18;
-	Mon, 24 Nov 2025 19:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8D032E6AC;
+	Mon, 24 Nov 2025 20:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764011718; cv=none; b=HzgBNc+uhwmwJqs9qaQKd4lx9xjqApSpU+9tF2RSbSylr/0CjtfP8FgHq6pcC+Cj2pYvf6bvp5zIxxZl3MuGk0K8SLcbXPJsIxHWxo8eDy6UG7tyJ/fYNXY6F3XHJEKSp/ZKJikTdT5J/CqRDsEJyCPJ0gg+XompprjnpyBsklw=
+	t=1764015188; cv=none; b=b+3sHmtvndKAF9MYpj9jHN4RXRAl2v7M+0KpmKxdHyqBU2SjmsQJJ55i/2AWMHUxHFbioK5W1PVXlBQqArLC66g9KuqFFAyOD3rfttWaRgiPYqBiGwVhE+7nE7PSqjMLY1WUL/FL71waEuL1XQwiLTYEBOsSbvfv/fKEw9suBGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764011718; c=relaxed/simple;
-	bh=+QwuBL0wNKIpCY6FHQZUa+NQUqMLdd9Q7/OdSTIYHuM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tdkZv/mesVwpA2Qc81ulv0ECXeWyAtLQPAVB0ZNnKKp4YRn20jKDMf+hVp+d0o1Ju/NmqXyG+o1C+axJDuarMT6S5pH75DLbxEiR9v0LP5+hJpm6HcS6+MDN7h8spMI7dlUM9qLOKRKdm78pFtFGpJynycSsKxKaLhivQNW3bIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHkj7A6O; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHkj7A6O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD832C19423;
-	Mon, 24 Nov 2025 19:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764011717;
-	bh=+QwuBL0wNKIpCY6FHQZUa+NQUqMLdd9Q7/OdSTIYHuM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=lHkj7A6O7+0ZbDXcvlzmeSRmmRuGdTxZ7kIG2e6JGpDpl56ZbsMJo9Ih8z4RDSjjM
-	 0Gui6etj7vFRtppWeJMtfAKEVMJPQq/pLgSN0HRRxrkPwpcul5lu40BbuE1JUISEQV
-	 0ZN3OMjJaUOFTRfVBP3bFyFte4WVY+bODKP+2sYvaRMuPx3hTT5E08MrLXe5/q3Zmu
-	 i8LW/pYpD9tgc7fto0fllzvkIb1eT+wxA8OfS0s5hLUPgEid+JHQIVagjaKuklIR+S
-	 /rDZ4BUjzny1yUz/YCYeguiFbYWA3NiWXNcqDF6v9LiONQKoIWMW9CHkDJNDzy7kyG
-	 aHTLgbv5mg2vw==
-From: Mark Brown <broonie@kernel.org>
-To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <aSQPkfkiJ0w-FJMW@stanley.mountain>
-References: <aSQPkfkiJ0w-FJMW@stanley.mountain>
-Subject: Re: [PATCH next v2] spi: Fix potential uninitialized variable in
- probe()
-Message-Id: <176401171651.101831.4873072118786072827.b4-ty@kernel.org>
-Date: Mon, 24 Nov 2025 19:15:16 +0000
+	s=arc-20240116; t=1764015188; c=relaxed/simple;
+	bh=xHo61vJ5nQFQu6c1UrCVWvtoTvY5cpP9WHdMCkOHtFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=myZB4RSMZzJiFGZIjdWbJy7o8s6vwMTabSjgoGyiiwewMhslHj/8KzFRbUAjoEk8n0gwRgsZPmqnzlnBPFXVj+erMsUpHy4LXi/S+VZi4XDDQmmQFbg7JgH9FcYFFQccLqM3arCTu7b7Q42kO1zwr3JQtBpkO75clW3mjVXB2sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 1F4C01A054B;
+	Mon, 24 Nov 2025 20:13:02 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 28BA060010;
+	Mon, 24 Nov 2025 20:13:00 +0000 (UTC)
+Date: Mon, 24 Nov 2025 15:13:41 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Lukas Bulwahn <lbulwahn@redhat.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
+ Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: add tracepoint core-api doc files to
+ TRACING
+Message-ID: <20251124151341.3e99a015@gandalf.local.home>
+In-Reply-To: <20251105182505.6efad861@gandalf.local.home>
+References: <20251105092428.153378-1-lukas.bulwahn@redhat.com>
+	<20251106080616.a46ca1c46b4034ce9757e5c9@kernel.org>
+	<20251105182505.6efad861@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-88d78
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 28BA060010
+X-Stat-Signature: fwd54mib44p5qkqhxidqpzespecd35di
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/nYpvfZztApzwGmtUyPFLO23D+xnGWi+g=
+X-HE-Tag: 1764015180-465532
+X-HE-Meta: U2FsdGVkX1+5WfzA9dGIycsRNZM3kZT8igEct0JOXX2f8a2x0Z3FI/WdifZQ36G911oBpd4SKYAKb44vhCrMuPYznQbNOB/vRGp+GUD58GtMmkIZzPeFjrEG5mLubkwmprxgL9lxiPVsGS4SkvhCD+GmQYzRuaVgppk4rW6gc/Mrp4UPP9iXBZEj1Hht5SFCb5O1XvfGZCrZi6661Ld8gm+u7uBsEnD3zjnxP+NpRkdI5j2Kk2/R68LzKvZa63tm5RDvcw7xSJwmC5wKq3+ZPeflgP0GP+qwfMYimlWx+Fj3jCPjaYYQDo8ASI70S5ILnN8IfxJQCFbsvL28PaSCKNsQLRLf3ayLyypWCz8YGJuqy594S19keeeDn40anlkvDH8Tkj2RqElaEfdQNLnatg==
 
-On Mon, 24 Nov 2025 10:56:01 +0300, Dan Carpenter wrote:
-> If the device tree is messed up, then potentially the "protocol" string
-> could potentially be uninitialized.  The property is supposed to default
-> to "motorola" so if the of_property_read_string() function returns
-> -EINVAL then default to "motorola".
+On Wed, 5 Nov 2025 18:25:05 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> > 
+> > Yeah, that should be maintained by us.
+> > 
+> > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>  
 > 
+> Agreed:
 > 
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Applied to
+BTW, should I be taking this through my tree?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: Fix potential uninitialized variable in probe()
-      commit: cb99656b7c4185953c9d272bbdab63c8aa651e6e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- Steve
