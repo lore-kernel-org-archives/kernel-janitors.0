@@ -1,70 +1,75 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6533A2727E2
-	for <kernel-janitors@vger.kernel.org>; Mon, 24 Nov 2025 06:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47D62727E2
+	for <kernel-janitors@vger.kernel.org>; Mon, 24 Nov 2025 06:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763964304; cv=none; b=fpFR0uXomE4uy4wwtVh3mORp5UQ1HccF3+I/BadR5LE6l59D0rrHTf4BswVNt93yV1mu9dzNVwFe7ho6XM+RzLVkZ5yI+kyDe7C2BEM83FYY+sU38xSXIbLJa98lmM78FGosU1KPK7ULffAT1t5VGT6pkdQF+7Jk4ca23f5OOWA=
+	t=1763964359; cv=none; b=bDSO0dhP+pyAwBmxnuXfxw6mNBEipsl8cYeah9HKWRFO1pJH/IvvOlVn9ZVWnonr8SyPOrMVVbFkdQFack3uQLAUc5kTxL8XpDgAZ5EumUe8xVAVt2Yo4MPZCzFnLhrpyG43QWKKOha5GXYsMxGuQFMhWLLluE1b6pfriWW8TP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763964304; c=relaxed/simple;
-	bh=uwW5/7qGULapL1sVMLPb1Xc+6mdWxww9p7V7V1LV88Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EcF72KLY/0BlS4xjQOgj54r+Z+vBJ9HGuqOm0zCpRBfl9FjQW1xyGJp18OlZaMemfTzyOrp2wWa7mzLoGjwvhQVn9WBrhtb+QI/UUlXWkdHmb0dFaBYTl7lU0w6RSe7ubCoNq0mIU6L6L0ODYvIZ4l0h7osRmjNlnNdCWGT24H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qx9Oav8k; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1763964359; c=relaxed/simple;
+	bh=2CbeR8ntenQ/udtVhShMbURQAzej9vCJiC0LEn5ddxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TMpAJTh9oGEDPFby+JPq5qQy/OoC+sGxlJFYWEQ2D0roy3AfcdmA054ipB3A7hlYXgYn3CIvYHWwlW/cBO1/Wn02rS8I2MncPT92Z5sUeC53vdHW60jbXZKWXQcjoyD74duwEjSY/H66wGELQD/Zj9mx8jejKbIpg5dLLmdJCmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bsI5Eq7W; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qx9Oav8k"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so32921645e9.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 23 Nov 2025 22:05:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bsI5Eq7W"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b3d7c1321so2369685f8f.3
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Nov 2025 22:05:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763964301; x=1764569101; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uH1o7GeIwYc1DYoErssPphWFX52WlisMeq9xtONgZz8=;
-        b=qx9Oav8kq/eUyg4PMAyVbAa9TYkOJfPG4CLU41YDrLYNTTZrseRzKIOrjCWVHsooYj
-         xENKfb1e8hKuWxpQmiipL1jeehc9rqnWL9prnV2IHHbyyIuByKyEmQZ8rqqzqcHs32mj
-         47/OBWOk5QONOwVeLgnnx6lSCme3Y5OhQOYlLjPC3/ROwUfloPLPSua9FhnNSAU0MIKL
-         2dcdWC72e1eEsrFc4iMtuAjM53rxbp3f/G126AE8RO9nq96S8ZYgg4w+uYYvmARlD0Gi
-         tCoF7sl2WZmKrkBSZZcx8/dVY3mzT0ih6L/1MnV+6DB9Qc+CFI7E1Q7g3NbaqBFvDVta
-         LzXw==
+        d=linaro.org; s=google; t=1763964356; x=1764569156; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZqOLfNt4NNjM4szCLBdWh2M6zRj7620Z1ksv8HS62c=;
+        b=bsI5Eq7WM5o1MsHflC2TU+27GoNjGqfn0Eon/PYJCuPpTIZ0SnJadfXFw5+ecFqxFo
+         lzEdbaXh4/SMIUxxyKRqnW02RLlrS7u4i3GgxTqFYB+f++jS8r0n0nMHpA2RzzT1J0Qq
+         mHtANDl93/eAjZbovv8E07DKM8T6VtE+2Z2pX86cWNw/DmicO+etSkVntzJ1vSlPq/y0
+         HQ1qkKcPvygHyShiT7kPbmeyBRe2IVcqpLPFl8CpH4ZETB1jkVEkI3I0pKoh3nDOwT/5
+         htUJ3GFB42+SvhWNmw1tRWejCaPFhal3CgSwj/AhO51YJ0k+avBcSmSzfQvEfe/cuFG0
+         jFtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763964301; x=1764569101;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uH1o7GeIwYc1DYoErssPphWFX52WlisMeq9xtONgZz8=;
-        b=b0XwL8Z7q4189G/BdBXfKmFBnlZpR7Dl0AlZQZM+5rCMrMx5rBnMe8UidmPEZyQwqg
-         /6UCgGBJEjCa305HxGObwcq/4MBMdv5xvczrn77LQTd/fc9UNfeDw+sygx4Xc1toewcs
-         3LoTvDuq0EdVc9/KsyKYRhm8+0lj0b/VwEEfkgwYbe6N7TuXnKO6jFVgWEF4maxt/c/6
-         GEvHcCzaR7MCn+scPyQ1xNo1YlrA07gHTMfGZUWdr4HQu8EUpnUh4NSaPPdrmaAap3GE
-         JdKvkPnPA/upfJaJJN3VfW9E2JuMMQM5vDeU1xFhNA9fxbMZBPg+x9l8vw/AOwakAr3n
-         vH/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZq9d4RcW9dhaxOhcIyfdsJGoQpWcDF+YLgr6jdjk6lT+GbbJSISwJ2PLE56piyaAE8/z5SX3v+Rp/dkfHCm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzfonoD3d2XInbings+2lN5b+6Lh6sjhogpJRpsS9d/bGsyuA1
-	2rI5tWxdKzAvg1cCdy69SJaSspiG8WCrUVfhauTm2yVduHhUmnwQw/Xdlxr6T1nxJXo=
-X-Gm-Gg: ASbGnctoeXoo0rcGMGccspwCTGQnUv3DeM8zKyiiq76Ypq1f71IWVaoKHlR4zkwzFBn
-	DGe4N/sb5O0iO3Wy/EmIOLYc+6SZ+FMt9kDR8BDb4zxflCC3exfofNIpJoSCbX6ew4I5fMK3noh
-	VFR118pr1s52OYKo13ZKv7UrV265qI4TmRiNuKA4wJoRkqos02Lx6dZs5tb2Q5K9u3jkngs0Wqd
-	X4bDDqZZspisI9dl3SW2GIefGpXOlgLIfh5vWzDJ5G1h8Qwifjn5ffXC/2nzqLJ9pK3u7IDD6hc
-	vcZEEtrYYYOA5mLRBGihiifGi3bki00wb7TkY/ZGbCblfiHhR2Cq3/cJEOtb1WgphyHGnwGy2VO
-	0OmjLA13JRq9B9TcRQ05Lv8SQkSg945/wPxaYTyit/sHR7IFroauujdz55U31ajoggf63KKFlsi
-	yhjbEJ28tDRJ9aAMLm3VRnWYs4Ayg=
-X-Google-Smtp-Source: AGHT+IE/1JX/nps0nusBrJi7ArbL72409Zg8vYjuZAApbr5lk5tocgbNd/CCB5XgbxxXSuP2QUkiXg==
-X-Received: by 2002:a05:600c:1c98:b0:477:6e02:54a5 with SMTP id 5b1f17b1804b1-477c01bcf3cmr104847785e9.18.1763964300525;
-        Sun, 23 Nov 2025 22:05:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763964356; x=1764569156;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rZqOLfNt4NNjM4szCLBdWh2M6zRj7620Z1ksv8HS62c=;
+        b=t1QEVJe2YkxORBa2R0QrkFVjAjerlOB2xbeuuDTbSj4YiFuKyurZT4I7g7oABSfey8
+         ufpBHxmU2EA/unuU1rf7Chz7TYmS5QNH3fwxhl6o/xrc+cEI+MGOErvkZ2WJ8BCRQJJB
+         pjs+xW+wtnQasVSpuIN+1ayzXXdIvNs6WYLy+Ip3gMNedzBaHB3kYdmsGjSvX/LsBvEJ
+         SHtcD7CUUw6bMs6YNrhGsk06IpKRkWKIFivmaY0ZsvUqhySKNWk7rzodP/CtBeTDFBeP
+         f675cwne+GddUDMPWRscFIy1WXbPGSN8Xm72ZCC+WQFQJ+xkupzSMnrZ1V3gzcZEN7Q6
+         jrLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEKLm2DoNhnfHFxEoFZ9WFMKhWHQa6V1UXGCh043kyMZc/TjSKuZ+n2OabQaBNlPaojY43CksMsI+p2SfKfMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylC250exIKKlsQTZTFVM1E5DWYUlhfDGdNBXAbFu/Bmxep/lGk
+	xIbZPFTwv2Xaq1+RCkXwMGwCR90TFOPutpV7akrmQ2v69u2DQI+EHwk3+YZgXG9LgQTn5hsGOlj
+	YaXp8
+X-Gm-Gg: ASbGncvfq7QDsvtMt38VX5UwRDRtaT1BJVK/I/AjflYzMk3E8Qb0+TRuTKntrUNAXSs
+	xXpAbTSFBgaWTMTRbmXvK9X/uB8bo02waCv4Tl0+Yz0YR7SZn83vVd0AkEgKMP1ercd0C9NYnqn
+	wGptnMpWrTMqGRn/7aAiqKxjtUWHymkcFdUki/ni1tmRy+7CcXfFfoxJ+C87mNupl4E/I9yNX0+
+	tpW6fP00cesaeWcGFh+k6r1nW23FDzw4DKTiXP6cW2fzW2+d9Mi/+OZa0jF7r0EJ6IzHIqJu5qS
+	THGoXSiJvabJBhmjohLxsAW6AmTBrJ044MJ/KOrxMe7O1sGRhWr56kD+FzrhWYogrI8NRChPjEe
+	aA/emNly1krBCuPI/6lERFukhhmjMhWfb8oHPi85SYBp4CiZPBVdwgDx7pSluvdxVQP9BD5YqWa
+	556Hc2ggEd8rSWfGQp8dmyKCnXNQY=
+X-Google-Smtp-Source: AGHT+IFTj6UXP07vA5yQa/8SUGDxXg+ZGMMepdyy1bTa4eJm35XddA65LTq5vpooyvG9kjtwauYocg==
+X-Received: by 2002:a5d:5e01:0:b0:425:742e:7823 with SMTP id ffacd0b85a97d-42cc1ac9401mr11186194f8f.12.1763964356070;
+        Sun, 23 Nov 2025 22:05:56 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7ec454csm25365196f8f.0.2025.11.23.22.04.59
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7fa35c2sm25166281f8f.25.2025.11.23.22.05.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 22:05:00 -0800 (PST)
-Date: Mon, 24 Nov 2025 09:04:56 +0300
+        Sun, 23 Nov 2025 22:05:55 -0800 (PST)
+Date: Mon, 24 Nov 2025 09:05:30 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Luis Henriques <luis@igalia.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] fuse: Uninitialized variable in fuse_epoch_work()
-Message-ID: <aSP1iMPil7wTnboD@stanley.mountain>
+Subject: Re: [PATCH next] fuse: Uninitialized variable in fuse_epoch_work()
+Message-ID: <aSP1qs4SOHrDE0tO@stanley.mountain>
+References: <aSBqUPeT2JCLDsGk@stanley.mountain>
+ <873467mqz7.fsf@wotan.olymp>
+ <aSCkt-DZR7A8U1y7@stanley.mountain>
+ <87ms4ez7q4.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,40 +78,35 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <87ms4ez7q4.fsf@wotan.olymp>
 
-The fuse_ilookup() function only sets *fm on the success path so this
-"if (fm) {" NULL check doesn't work.  The "fm" pointer is either
-uninitialized or valid.  Check the "inode" pointer instead.
+On Sat, Nov 22, 2025 at 10:23:31AM +0000, Luis Henriques wrote:
+> On Fri, Nov 21 2025, Dan Carpenter wrote:
+> 
+> > On Fri, Nov 21, 2025 at 01:53:48PM +0000, Luis Henriques wrote:
+> >> On Fri, Nov 21 2025, Dan Carpenter wrote:
+> >> 
+> >> > The "fm" pointer is either valid or uninitialized so checking for NULL
+> >> > doesn't work.  Check the "inode" pointer instead.
+> >> 
+> >> Hmm?  Why do you say 'fm' isn't initialised?  That's what fuse_ilookup()
+> >> is doing, isn't it?
+> >> 
+> >
+> > I just checked again on linux-next.  fuse_ilookup() only initializes
+> > *fm on the success path.  It's either uninitialized or valid.
+> 
+> Yikes! You're absolutely right, I'm sorry for replying without checking.
+> 
+> Feel free to add my
+> 
+> Reviewed-by: Luis Henriques <luis@igalia.com>
+> 
+> Although I guess you're patch could also move the iput():
+> 
 
-Also, while it's not necessary, it is cleaner to move the iput(inode)
-under the NULL check as well.
+Yeah.  Good point.  It's cleaner that way.  I've sent a v2.
 
-Fixes: 64becd224ff9 ("fuse: new work queue to invalidate dentries from old epochs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Luis Henriques <luis@igalia.com>
----
-v2: Move the iput(inode) and re-word the commit message
-
- fs/fuse/dir.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 761f4a14dc95..73a46b0be09d 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -199,9 +199,8 @@ void fuse_epoch_work(struct work_struct *work)
- 	down_read(&fc->killsb);
- 
- 	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
--	iput(inode);
--
--	if (fm) {
-+	if (inode) {
-+		iput(inode);
- 		/* Remove all possible active references to cached inodes */
- 		shrink_dcache_sb(fm->sb);
- 	} else
--- 
-2.51.0
+regards,
+dan carpenter
 
