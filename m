@@ -1,114 +1,90 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F14332EC4
-	for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 18:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA992DF6F8;
+	Tue, 25 Nov 2025 20:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764097176; cv=none; b=P0TVPR/go/lvdnh2zcZTWd0QqjEfAW9vWP8SAJGLHRQgAUqLY6EwnsTWC5TOlwtlBcRQBZLD1Ljl2yXNkrC+rNe/2Jc8EQuMpxWNXQm9wu3AcGseMR8fl0XWyO7X6xorn6/8geH/rUlqf/VTBmXNExKygjZZWl7pCzRP8Nvb9oA=
+	t=1764101075; cv=none; b=rbSD4lhbcHmdQjKSqPLNb/rrWgUkDL8MMBXiWVfh+BOsSWPpy68hAPI3aDeD5YbMNPJAKYYyWM5ZvYWw20BEpzVtTTRVYuNni321PhvTI9XhWOWWRV5gw3sgPsrVj1xyypo25t2+Qim31Ri0bPfGCTyHbERIQfTsNE03iJ09xe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764097176; c=relaxed/simple;
-	bh=yOFucbp8qhMoIw4wLHpUT/X36VLPm5l//pIaGkCFQlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAj6LrxsjkZYWjp3K/HBhpmQaXIWGg3mp8GXwt+ExfA27hQImuahIweOnWFotqdO6WQdTuqLGevpMYIwiypV6/oXjdR8U63lwmTuGgaC/SoEhGZN//OoC49741LeGsozTYvdQcG6Ltggeveyw8LJJ5KAFcmG3bvmDeIN+iIXnl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbXAotmH; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764101075; c=relaxed/simple;
+	bh=s3OwkiUygWqkp2XV+p98wy7/crwoMebdN4qr+pxto0Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bEQ3ReRyfucIw83/9l10YQOWee0ArgyEtr5fAXHdwC4Z5yvm6n2eYreseSMl2oyyGqCECkVK0EmAFIXpkP++MI91c0t9l9Pt8BWqT3RSV8nboPV0eSgIlQew7CRfHmVbRnoYNTQMOe7B2PYHwJsTIyfa2V6xELoBt5KgmiarjHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cegwzniZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbXAotmH"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4779d47be12so45379315e9.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 10:59:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764097173; x=1764701973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmBPXp4FX8VWv8A/1xzlTIxHcprYvbnP+acWiPY5y1E=;
-        b=fbXAotmHJzXgQSEsgW+pJhTBf0VTk25s9Pbubk/fe2wjlSe0WZ6bN8Sai+3yDW4mtb
-         kbRPdtWiwhSrQ3GKQ6OPMTapkKyoNyySoobjZ5HVjFsc8gmdMGe7/l2fzS+7VWwXnKvH
-         iFfAz05oe2TqwV/pN42aRk0KrILZtugLiIp/Xw85HDb/9jUQgn0g+2gN2N74VSYW9vw4
-         wciQv5i/Zzvz+wyIJ/LypuNzf9mg9Q7sBHmNgk9aqoQBlS2jBQEFM3gaFq0QuWGLKbxE
-         jG9+wLXUJpR+c6YpBsSy5tUduoTs2Df5Se6l2rxg0JmYkc96H1BADpNtnmP/L2aeB5bD
-         K4jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764097173; x=1764701973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jmBPXp4FX8VWv8A/1xzlTIxHcprYvbnP+acWiPY5y1E=;
-        b=Eg+1lfbxMyS1kdSC0+SJkkcz2YGNfrpdIHH817MkhhehaG8vZKQBgl6WQSOvuQkb+N
-         G0XdvMe/z0S0xUJgjms81dQLQ/6alFbmXtG6Et9cCkI3w+cyMhmm+RaSbCvo546mecLT
-         C4DJaKADWxBPObQ6sSne38CZycvI2rLfDF4hLW0phPg9L/q9Fy08gLyyeKrQNhQxiuh7
-         9TJv6ZfUwfx37Jk/2Gt0dW4p/arsdet9Rol7+wjvWiam1sCFeaIzYFvXIBA8z94vBlIc
-         2e3loHp9QW6HQ98UURXiRNnmgMtzSoxhPka/KEcEZhdghVuV5451zAahoth6kKt6A1Rv
-         9ejw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeIzZF42dToC5fuBXPymEs3XpSM5zEWLP8hcP40sAFAdgNI4gOFYJxEV9DbkMJWb4zeI3oOpwneIAqSl78R50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJg4LpY1okExyaY6w+ldmZa4PTT0/091b32XKC3akIr1zuq2fC
-	vHJp3iaM5yUGKe4Yl+IvKk4qpRTNQu+Jda1w/OZEteWMTtlaMT2e+fys5ZUyPGZlYCc2Us5tqzU
-	iIws4
-X-Gm-Gg: ASbGncuv3T47DqrmzCIGEZMYaalcJKgAwYvnN/yuIioVrhqA5zoaIcs38R91VNnBL0T
-	zszIxJea0a+rc/Lcgg6TvPV+137Pf6W/+SSbMxhire1hPRFMkNMEc3iadixyvBNiT4uC0bdmHNy
-	7PNm4wMGFjm0FVTlr9JC/Qd9bY8vJgGjUJMlN3xgAn3bfjyGuVNkc4Ul+Pu1wqD8tNDnjmEfVSi
-	/hMYViibEomZaRSfZOsY1FEurjF9SJekT3s5H8Yrc23+zf+BAgwiHUL0F2qTUIJ8lz6YK2FPykD
-	fqpmcITqi43Wnp7oNLrhO1SpQI22KrXT2T+Glk8xUDyGmVk9yd1Z+z4M51pu3MsSLVBrUvLbfqc
-	5pvdDwlLCWdE1Qp9qjtL7l8AQ4/Wr5xWex9AloTCxiyfFMGg6/SEXTL1zq0vt3ax/EmgujesxsC
-	FetRU4IAb1weTgXnMh
-X-Google-Smtp-Source: AGHT+IHwbKRr1pvKyNsFNGaFEvgiVnbE4yxn0br2mGaIpqkjm2b1jEyBexkRR5mnkMzoGLfDWc+rGg==
-X-Received: by 2002:a05:600c:46cc:b0:477:7b16:5fb1 with SMTP id 5b1f17b1804b1-477c0174856mr167233485e9.7.1764097173292;
-        Tue, 25 Nov 2025 10:59:33 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4790add4b46sm4117085e9.4.2025.11.25.10.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 10:59:32 -0800 (PST)
-Date: Tue, 25 Nov 2025 21:59:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] nvdimm: Prevent integer overflow in
- ramdax_get_config_data()
-Message-ID: <aSX8kcQT3z-iD94M@stanley.mountain>
-References: <aSW0-9cJcTMTynTj@stanley.mountain>
- <6925db85a9343_63977100fd@iweiny-mobl.notmuch>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cegwzniZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D4CC116D0;
+	Tue, 25 Nov 2025 20:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764101075;
+	bh=s3OwkiUygWqkp2XV+p98wy7/crwoMebdN4qr+pxto0Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cegwzniZgVpRPk6OmHNiV8BbnzVI930hoBC2ScGOULPsaGXp4l+0YY4jwc0PtHjRw
+	 tQtPkHJS+gmr2eaJnerfmXSMPRgYk9J5RcA9r7SFk5y9pmZjs/B4gGUNtsCMepXRWa
+	 OcvV44gGka+gA9QPq5wzgGdEvCW/OcZsshAPCZQ7evRZt0iKP+SMdk1hVFyUZFlqN/
+	 5XVXr5Jx86QX0YvVgL18gnmT7d5rFtRXr8JD/ZYpi/ceUlBcczrZprnm+SCLpWZVgg
+	 2Sr0hSv4VElQj1dM7y4OQZd7kxKRG7ArTkWg/L1j62FrlSXgVjcgE7F6WB26aTeqdP
+	 0Kc/7plAtqbCw==
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Maciej Strozek <mstrozek@opensource.cirrus.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Vinod Koul <vkoul@kernel.org>, linux-sound@vger.kernel.org, 
+ patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <aSW1UOgMCiQIaZG8@stanley.mountain>
+References: <aSW1UOgMCiQIaZG8@stanley.mountain>
+Subject: Re: [PATCH next] ASoC: SDCA: Fix NULL vs IS_ERR() bug in
+ sdca_dev_register_functions()
+Message-Id: <176410107279.92145.4201490086454262320.b4-ty@kernel.org>
+Date: Tue, 25 Nov 2025 20:04:32 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6925db85a9343_63977100fd@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-On Tue, Nov 25, 2025 at 10:38:29AM -0600, Ira Weiny wrote:
-> Dan Carpenter wrote:
-> > The "cmd->in_offset" variable comes from the user via the __nd_ioctl()
-> > function.  The problem is that the "cmd->in_offset + cmd->in_length"
-> > addition could have an integer wrapping issue if cmd->in_offset is close
-> > to UINT_MAX .  The "cmd->in_length" variable has been capped, but the
-> > "cmd->in_offset" variable has not.  Both of these variables are type u32.
+On Tue, 25 Nov 2025 16:55:28 +0300, Dan Carpenter wrote:
+> The sdca_dev_register() function never returns NULL, it returns error
+> pointers on error.  Fix the error checking to match.
 > 
-> Does ramdax_set_config_data() also need this?
+> 
 
-Yes.  It does.  These are from Smatch warnings, right.  They take a few
-rebuilds for the taint information to propagate from the ioctl to the
-ramdax_get_config_data() function.  When I rebuilt it, then it propagates
-to both so I would have seen the ramdax_set_config_data() tomorrow.
+Applied to
 
-But they're called from the same function so the taint data should
-have propagated to both at the same time...  WTF?  I don't know what
-happened.  Anyway, I will fix that and resend.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks for noticing.
+Thanks!
 
->  I'm not quite following where in_length is capped so I'm inclined to
-> add size_add in both set and get.
+[1/1] ASoC: SDCA: Fix NULL vs IS_ERR() bug in sdca_dev_register_functions()
+      commit: 80339b3823bb76d383c82186b55ac836fed3f586
 
-I meant that the  if (struct_size(cmd, in_buf, cmd->in_length) > buf_len)
-line checks that cmd->in_length is okay.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-regards,
-dan carpenter
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
