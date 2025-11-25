@@ -1,74 +1,71 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E706246BB0
-	for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 13:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6817925A320
+	for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 13:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764078852; cv=none; b=PbOdCGD/wSDEFqfoCR32LHnOrMfgqoK40U/DaFgfUB7fi1P78U1v2LH1opqBmiMLp/r+VFSS4yCjexS3MxUxuGel+XoDDruzis2NYhEvOfvtGb6CgxNOZhG1E6Zh8RTx5if9hDJArmHkxHjDL8CiWWKfLJKQWrDReA+K/LwNlcE=
+	t=1764078927; cv=none; b=pKRIO8UEaQlkCLV1V58BDdo6Zne7v2ADimYO0V/ox4AL55OoC7wKdm8Y+wU1ryyyzMSseREtmDgTF43F/DYP9tpr5l9U1tyXbb1sYRz5AUZcZ6gSkNW97bV7kl88BqRV3GbmIEeLqpujC6Jfp4eaF5yIGFisZtEdL6ZY1TCDDfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764078852; c=relaxed/simple;
-	bh=l6KJEbEVM5y7rexEcKSpqScYa9AjmZUzszGRaxbfMbw=;
+	s=arc-20240116; t=1764078927; c=relaxed/simple;
+	bh=ojcJW/WkscbkfFpX31lO1PLLIJu+wCGNE6fCS14Bl30=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EEQ7DEVPx9YB3FJW3NLvLYCECWH0xOxErNQo2N7Y45KrRZYOwWlNI7k4qx2Upx9g9vTWGVCgbUNaERNL65d7Anaxycqq0zlhoUYjR8efTmWHDoHJ5ESHNFjQoCqfI+tYKSjMEZvm/b4cWpKgCUpiMgzcOVpL6A2dm15AVLmEt7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HqJu0BFW; arc=none smtp.client-ip=209.85.128.51
+	 Content-Disposition; b=DTCtkTmHbcbgyA8blydQJcUMNx0FgoGTjCMgNMzZCnqEvOQDuieSv/YyiHDTRo0ufgshaonmg8jy8lXmOmW9RwQb42r1WvPYkfMwvP5LpKwMisKJUCr6MtqVo8AozlZ3ab2sTTmtHT17XTxqzAskPEfd9Jdcf3OEI7dK0cLaomk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kVebjkyX; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HqJu0BFW"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so39563295e9.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 05:54:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kVebjkyX"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477bf34f5f5so32035205e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 05:55:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764078847; x=1764683647; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764078923; x=1764683723; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PfZmCnQkSgXm6bGG1U92mqMyyCoId2oi/fIXBdd/gDE=;
-        b=HqJu0BFWe9MX0qrV+e/NVyrsEUydEMR85WYJ4asEA8FTDuB/EBQD5OECI9VG1MERT2
-         km7KIBGNQ8T7smH2Brj7tfpScbljbanTXgoR+BZlnUqBjgkybHAClgPvkHz0GcuIOLcn
-         M8OYDvUOkQR3urYeh1DLVmqusMWbsDM32cOeSBN9L/mU3YNyzD70IzT570SFnuO/Sni6
-         MX2w1ckDcrb9k/mQDQdzXOtZkgc4mwEF6+VvcxiEih2OLb0oTmlgyKRYKJO4p3/r9G+J
-         9PF/V/+tRhGbLl3m0RQVazcKk9Undz4yw9a8RFYtre2VuJoMUvem5pgtbKMMNe4Bpq5z
-         yv/Q==
+        bh=OZUPcDyU6xr3mdB7gZ6zkmVa9aLNEQrMFyb5L16xk/E=;
+        b=kVebjkyX4X3ANANzh8BG44q33exDDMtE5VqdkXX8sW/iERvT+e5nV8oJV0iulaiViV
+         IzcEIOQM13d5F/YP8/gy4wFaK/KEp56aAhOcIsBX47HgDvwK9przbRcvr849J8qpOocq
+         4Kfn6XI8Sb1aBaAZzbjhSO/tljveTP5i9d20scez80eG8jsILsaHZ7vNpvDdoN7kzjcC
+         M1KJDtFDlPcKr8o9Thmp6t+4pO9BFvJ8jOfRO4x9y4yiUdJ2gY2psxvcb2q36iKs4bvE
+         H4n2WUbQ3ODtChdBfn74zVWo9hQL7UTcW3HUBkDI6CRvXv6mTUCOKX9XeyDXY0EYE2CB
+         zo0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764078847; x=1764683647;
+        d=1e100.net; s=20230601; t=1764078923; x=1764683723;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PfZmCnQkSgXm6bGG1U92mqMyyCoId2oi/fIXBdd/gDE=;
-        b=W3A7la/7CjWj7VP90vutwqq5H+pMCfyrjVL9RDPezTmemyaJgIpM4AdNOfZu/zCUbM
-         UhMLIzBcZ9sbDEisyNoh+y7FOJnHN1htyanICzBOuGXwlm4fLi1uB/kZYMhLzrSz7w+R
-         Fl8fMhZ/mig1yxUdWHPg8xMiaOlpEopnHC1SWh3sQ4mmlp4bdq5pCtjysZO8Z1giDn5I
-         B6cmb9FD54lExbdsj80FK6UHnxTJQcfdFFwR8kTWhpkGA8hoNK1dYMpUpv6e/AgrgcX8
-         o26R3rbWyx+UoOWYJAFILSQkqS9kqN9wlenKRKrn6FUDgRsjXeSgMd4go0p6ccRIpJjZ
-         6XJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXH4KNffoo9wa//u/7SnObPq0PPXoyNkure0xdUfTeRG8V09VLuTDvRNxHARGG9DYLZfnDRRMIHc5SjlJ87Fjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwON4mDVng5FkpnfZ0ic+7PEbL2Qeh1XuDXwanDRjpaMaxTqmdY
-	vifRzyM1yW3pfqwAOdb6AWPYLn9V0P/5Ha4BEsVg7phTe5hH3aAiC5lkHUYn2G5/ens=
-X-Gm-Gg: ASbGncuZbt40x0FIb+mStW223J5Hhv+4tIdcYhHz71sBq0Zo7ABaPcwA4eQnFO3HeVh
-	b25Kh6haJp7PFsLAOfSe/oJ/+DHPLKX7jVVYNHxajeZxlX8t0ERQCilcz7KXxBMu7qQ5s9b3uRu
-	ZzVLS2wtwp/qIxurHAOdn0Wl1pC6YGx3OOzLooMNp3UAJl7qQwNeyPSo2BHXypINmNmNO/tP6rO
-	Ax5ycoQ/YOOtn8qqwSmEalXIR/lZAx1Y6aWMwZjE8ORUOKK8aEWFyfTV7z2TMuswd9hrd+OYA3N
-	7YEXZ626+CcP8WdVX2vyLtiQfcOQMnVO3dRPdQ4xBwT9I19EKjkrrEz4EejLY3PkTbJ5PdIv8/p
-	JD/ABSXkzTPTj7V1Xpa3yCuw9Ai9aSZ+7BxYEnz4lYt2fd738XPNgsU8Fj+IvJ+v52cAT4disir
-	xkFnZDd1sfucoEEm4s
-X-Google-Smtp-Source: AGHT+IE6Z/i4LBBFZymostPyZofb9RWGBQcEhAavUgAtLmc+CAwBQkdpZHZEouVOs2i7Ai+1mMZV8A==
-X-Received: by 2002:a05:600c:3b9c:b0:477:af07:dd22 with SMTP id 5b1f17b1804b1-47904b24243mr26387045e9.28.1764078847095;
-        Tue, 25 Nov 2025 05:54:07 -0800 (PST)
+        bh=OZUPcDyU6xr3mdB7gZ6zkmVa9aLNEQrMFyb5L16xk/E=;
+        b=koAei+aIY351c7b77VCOD7Grt4BDwKmSfyc6Dd6d1R+rrvDEKKXxKV1SRsRLOT0BGV
+         upG4Icahc7GsZTnJWA78Vh2CAn+lJb++7lPqbwSKRZwGIN+iX9xLY5hVJsd2Ahj8S5Rf
+         /S6YB556Qks7pxYyruDPpa6OjJrZ7Tmte9+PYWLsVpCKcx8IXchUljW6CKuht7NQSGdi
+         Uy/ZiBWivJgVk54Mqd+GTibz+m5SUAz5++Wlk/owuSANRlphIWZob60T4lheNMsmOymi
+         Kwq2mKcMMxKeUh+EulbWg4zTy3y2MpTySzI36TU6LU6OU0CMwcWaNZLVElDLzcq5u0AK
+         Z4CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVT6sUTtjBeuqn0OcjgQLg7LRSXpXxHWSeZRdl+YrmyElK4Mhx1Z2TzyZlG5e9Yk9ZPuExaRTZ7ez8dXv1KwEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzupcLcTVA3qBrJ1QkPyXZm54O+t+OpsptCztOX5wsW32g+lO8A
+	NfdN2xLi2MC67BgpMH/1oPfGm2R+HWcYrGSlKHTM4Qm38olsrQuIRnPGkZHQqIFmtPQ=
+X-Gm-Gg: ASbGncvbnkgI938iOAGB/3osoRR4nsbUXugUjcrRZRzkoiMJevmZrEE/2ESNjfaJFz6
+	ZfQAMEQVYq7HXsmf/I77BFNavfLli0nDzZdqZ9SodpNwGKmR6FtORP1Z/8rH11BhmJznjM903kq
+	2DJHzTajl25QI1jjgXXEH5FA2ZxvbDCvDedpoEhU83P9LDYq5aAFd/vMzFtMxbwxES3eakt2YX5
+	BL7BlMDWkmiY70bioHITo6AwmmYgzoZtl2ueTF1TFo6dut8JaJRLpB758iwCbarXUBP3nTW2Pmm
+	SqU+adgY2JuVp6wFf85fWuPEz7ax6pneeBya8PqaqJRLpdncguiL7XDkY02Y8In7qHEBqIufpgN
+	Q+Nt1I6QJb/7Sp6vGArbSqO5/l66riTs1tKTBpXuU+olDARuwKp5qEhgwweNzdCvp4YRgNltc0t
+	wsOlwgPVIGQij/GFeM
+X-Google-Smtp-Source: AGHT+IGOdvw3USM3p9Dabw1EjvJTknTEGkReBA7/KiqIqk8VtB6dVoTn1QMFTGxLgVyawmDqGUyuzg==
+X-Received: by 2002:a05:600c:3107:b0:477:7b9a:bb07 with SMTP id 5b1f17b1804b1-47904b2bc7emr28643045e9.35.1764078923506;
+        Tue, 25 Nov 2025 05:55:23 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-477bf22dfc1sm250227535e9.12.2025.11.25.05.54.06
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-479052c9621sm17162665e9.5.2025.11.25.05.55.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 05:54:06 -0800 (PST)
-Date: Tue, 25 Nov 2025 16:54:03 +0300
+        Tue, 25 Nov 2025 05:55:23 -0800 (PST)
+Date: Tue, 25 Nov 2025 16:55:19 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+To: Malaya Kumar Rout <mrout@redhat.com>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] nvdimm: Prevent integer overflow in
- ramdax_get_config_data()
-Message-ID: <aSW0-9cJcTMTynTj@stanley.mountain>
+Subject: [PATCH] timekeeping: Fix error code in tk_aux_sysfs_init()
+Message-ID: <aSW1R8q5zoY_DgQE@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,31 +76,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "cmd->in_offset" variable comes from the user via the __nd_ioctl()
-function.  The problem is that the "cmd->in_offset + cmd->in_length"
-addition could have an integer wrapping issue if cmd->in_offset is close
-to UINT_MAX .  The "cmd->in_length" variable has been capped, but the
-"cmd->in_offset" variable has not.  Both of these variables are type u32.
+If kobject_create_and_add() fails on the first iteration, then the
+error code is set to -ENOMEM and that's good.  But if it fails on the
+later iterations then "ret" is zero, which means success, but it should
+be -ENOMEM.  Set the error code to -ENOMEM correctly.
 
-Fixes: 43bc0aa19a21 ("nvdimm: allow exposing RAM carveouts as NVDIMM DIMM devices")
+Fixes: 7b5ab04f035f ("timekeeping: Fix resource leak in tk_aux_sysfs_init() error paths")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/nvdimm/ramdax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvdimm/ramdax.c b/drivers/nvdimm/ramdax.c
-index 63cf05791829..faa6f3101972 100644
---- a/drivers/nvdimm/ramdax.c
-+++ b/drivers/nvdimm/ramdax.c
-@@ -143,7 +143,7 @@ static int ramdax_get_config_data(struct nvdimm *nvdimm, int buf_len,
- 		return -EINVAL;
- 	if (struct_size(cmd, out_buf, cmd->in_length) > buf_len)
- 		return -EINVAL;
--	if (cmd->in_offset + cmd->in_length > LABEL_AREA_SIZE)
-+	if (size_add(cmd->in_offset, cmd->in_length) > LABEL_AREA_SIZE)
- 		return -EINVAL;
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 0c8b77ee4a3a..3ec3daa4acab 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -3087,8 +3087,10 @@ static int __init tk_aux_sysfs_init(void)
+ 		char id[2] = { [0] = '0' + i, };
+ 		struct kobject *clk = kobject_create_and_add(id, auxo);
  
- 	memcpy(cmd->out_buf, dimm->label_area + cmd->in_offset, cmd->in_length);
+-		if (!clk)
++		if (!clk) {
++			ret = -ENOMEM;
+ 			goto err_clean;
++		}
+ 
+ 		ret = sysfs_create_group(clk, &aux_clock_enable_attr_group);
+ 		if (ret)
 -- 
 2.51.0
 
