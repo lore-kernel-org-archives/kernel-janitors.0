@@ -1,76 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1844E1E9B35;
-	Tue, 25 Nov 2025 03:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D382D8390;
+	Tue, 25 Nov 2025 09:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764040259; cv=none; b=jWU9cwY8bsSsRfgWb2HZyJhJsUOMT/YV/wyeaSc6VNvNMN+uUPJo/b1jZ5OMAnkHLEn7ddSlHKdNarAH/+cGyxU/dxBjhRWCndNVZQyK1wHoRKgtI1l/4DFlgpPUGhjSLWrBKqVyQiwnaLrmYd8kRMD/pRTKDKA/I2Z9iVFK65U=
+	t=1764061901; cv=none; b=jA5YcE03ZtulMPkKiEMjSzmov3BDp8V2mZILaDcrvxTgCmzCzTRKEKm+R6w8IMBT6/juKp5X+Qn2LIUXg4xsl41xwQPcOEQ7U7ztiX/VmPvTBm59cO7eIMSm5k81tNdISG8kAnhc6Y1l+KnuvhLyFVlidPTrOZScprdfm4O3pbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764040259; c=relaxed/simple;
-	bh=9yTLMeCE6/5L2p8IaQYF/6/kfLa5biw61uFeneajF/I=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nTfGkQdl+XrASef4IN3C8vnjRjplHTrKbd4gyPnlo+TJKR0/BZelVZPwH2NvS8lj2H9RAP75TEXB6c4+RwLuDR89cad2ra9S7+5QFsTVxWlodsVASt+fe8QYM2oyVB+ei/W55ueDLy508cxoQ/bsVD6WB39J7fxBHAchg48zSa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=homdYzWj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764061901; c=relaxed/simple;
+	bh=Lt7MOuXQCBXf7CcgK3PFOt3m/RHaxkeh7Eam4VFIZGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gxCkJRpST3Hp2yb/ggvLHFrV86DJoHMP9zUxF5F9yoCu45aYAbPI4+1HaVpnArC09bxwG97cEGsY3d2CyXaExVGcoGMagY0v8t1J5VtF3vljhEZy3Egs8THN2dv6yNL2KkHVBT0T9Ic4k89LNgPOGsikv0YRptJi5kTdu9aEgi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsL+/1r8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="homdYzWj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A887CC4CEF1;
-	Tue, 25 Nov 2025 03:10:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsL+/1r8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7288EC4CEF1;
+	Tue, 25 Nov 2025 09:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764040258;
-	bh=9yTLMeCE6/5L2p8IaQYF/6/kfLa5biw61uFeneajF/I=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=homdYzWj5mRV/DLvH/Nc3ngLqF6GCQDCG6QNksYomnbwFcp7ELKwgDC9pxF6Naz2y
-	 GIdanGOEAXccbK5lVzhIGCyGZKuFMh7Tn0+lPY8CUIqZq5pKJYPWiQBwBPAnxmfCY2
-	 wgsktSTw8ojQFdsHLHasJPdzt/fyukdnt48u95l+pt/RH2qkV/rfP7gEGWHhy4iAVs
-	 xaz2+szqXWQ73mgVaZnmZznBwT2OVcks3BLJWaEwHIE1WHdefNK2W9SDUGva/GLd6q
-	 E5KL7knNZ81RBoZxgu15J74FzMYmiybHjruL9p+XDKacrlNErrwyaKP431XuzeV90+
-	 QH8q3/r2PNwJA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF9B3A8A3CA;
-	Tue, 25 Nov 2025 03:10:22 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1764061900;
+	bh=Lt7MOuXQCBXf7CcgK3PFOt3m/RHaxkeh7Eam4VFIZGk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nsL+/1r8eQN9afWpNCIstV7EVG/y+S7m6XVNqORXF9hrhOAIszmWqpZzLcYL2E/RL
+	 gkRHDXMOTCPA7uBSlwXEgmsxtklrjaAPp3c+EvOscVd+FUdHICQy7MgZ+ms9YnMNv0
+	 ErAWfRWSPkkdgHMmLS+kiUJyPy17kq2BwVcqpbxtBZaCgJPctmHGq5v8gG8eS7JTMp
+	 OVBmRa1dzvvEAC7SLa3OKbEzuAHDYPOuTvhDGGfZtRBqubGdEURMMEANKLq+2Kgi2r
+	 qzuU9yX/pp9gO+xi/FUDjfTmQVkIHAwyluTAuroFP8tBcVj8WRxXMKhaOWMl0kdSxD
+	 9F6+vscTzWBRw==
+From: Christian Brauner <brauner@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	patches@lists.linux.dev,
+	kernel-janitors@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/splice.c: trivial fix: pipes -> pipe's
+Date: Tue, 25 Nov 2025 10:11:30 +0100
+Message-ID: <20251125-hinunter-laufzeit-b6a3a4c0efab@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251120211316.706725-1-safinaskar@gmail.com>
+References: <20251120211316.706725-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=848; i=brauner@kernel.org; h=from:subject:message-id; bh=Lt7MOuXQCBXf7CcgK3PFOt3m/RHaxkeh7Eam4VFIZGk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSqFh3/yBJbdmzuqSvfC/c3n4ncGGf5qfWx23zeNbpa5 rLrA5rfd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk7XxGhlm93C0/Nj7xakn8 zmysWve0LfU60wzmS8vE5lmkyPN/fMvwV9Aj5fTm8OBuN+VZvIL+Xe5BHlP3SNU0Mb38+mnO3Ir bHAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] i40e: delete a stray tab
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176404022124.167368.5823229144968982813.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Nov 2025 03:10:21 +0000
-References: <aSBqjtA8oF25G1OG@stanley.mountain>
-In-Reply-To: <aSBqjtA8oF25G1OG@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: mheib@redhat.com, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 21 Nov 2025 16:35:10 +0300 you wrote:
-> This return statement is indented one tab too far.  Delete a tab.
+On Thu, 20 Nov 2025 21:13:16 +0000, Askar Safin wrote:
+> Trivial fix.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Here is the summary with links:
-  - [net-next] i40e: delete a stray tab
-    https://git.kernel.org/netdev/net-next/c/ef0b78b5b6cb
+Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.misc branch should appear in linux-next soon.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.misc
+
+[1/1] fs/splice.c: trivial fix: pipes -> pipe's
+      https://git.kernel.org/vfs/vfs/c/bef0202fb77b
