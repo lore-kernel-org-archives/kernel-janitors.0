@@ -1,71 +1,79 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6817925A320
-	for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 13:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A76E25D540
+	for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 13:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764078927; cv=none; b=pKRIO8UEaQlkCLV1V58BDdo6Zne7v2ADimYO0V/ox4AL55OoC7wKdm8Y+wU1ryyyzMSseREtmDgTF43F/DYP9tpr5l9U1tyXbb1sYRz5AUZcZ6gSkNW97bV7kl88BqRV3GbmIEeLqpujC6Jfp4eaF5yIGFisZtEdL6ZY1TCDDfA=
+	t=1764078936; cv=none; b=Xi6dMTw+9J+glSSRwx7XrDgj/olDJ9iUqMfehyRpC4ZmiFYebgshSnXFtNd7v9GQwB19pyHfTlP5cMLx6B7ZZBHXTB1MBhVwbX2RXXKP4f64xeGAt2t94SmOeUsF4tspQwmjMKTJ6zraDVTSb6EUGIvDuazVGhkP7RXyhqkaM4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764078927; c=relaxed/simple;
-	bh=ojcJW/WkscbkfFpX31lO1PLLIJu+wCGNE6fCS14Bl30=;
+	s=arc-20240116; t=1764078936; c=relaxed/simple;
+	bh=ZpJV2g4pswmR5fsLqMMJdtUaMVZFpU0lNRhxLnBhCuw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DTCtkTmHbcbgyA8blydQJcUMNx0FgoGTjCMgNMzZCnqEvOQDuieSv/YyiHDTRo0ufgshaonmg8jy8lXmOmW9RwQb42r1WvPYkfMwvP5LpKwMisKJUCr6MtqVo8AozlZ3ab2sTTmtHT17XTxqzAskPEfd9Jdcf3OEI7dK0cLaomk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kVebjkyX; arc=none smtp.client-ip=209.85.128.44
+	 Content-Disposition; b=nXvoV3PxaHvIVfLF59xmKBRMC6uxz/mOPKdGusvg+Vug2Y6ham9O4uxHPKItkrciqlVuEUL+dqqCHKGvhH5Drj7PTZQ1VvMchDZ9zr5T+PoSzWDiAFa6tnZIjMhjhQ+l45Ow8bkG27B9AofhAUmRhChc/o1q6AjNa1lNmAnOQyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ueksEoO1; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kVebjkyX"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477bf34f5f5so32035205e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 05:55:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ueksEoO1"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42b31507ed8so4693342f8f.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Nov 2025 05:55:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764078923; x=1764683723; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764078932; x=1764683732; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OZUPcDyU6xr3mdB7gZ6zkmVa9aLNEQrMFyb5L16xk/E=;
-        b=kVebjkyX4X3ANANzh8BG44q33exDDMtE5VqdkXX8sW/iERvT+e5nV8oJV0iulaiViV
-         IzcEIOQM13d5F/YP8/gy4wFaK/KEp56aAhOcIsBX47HgDvwK9przbRcvr849J8qpOocq
-         4Kfn6XI8Sb1aBaAZzbjhSO/tljveTP5i9d20scez80eG8jsILsaHZ7vNpvDdoN7kzjcC
-         M1KJDtFDlPcKr8o9Thmp6t+4pO9BFvJ8jOfRO4x9y4yiUdJ2gY2psxvcb2q36iKs4bvE
-         H4n2WUbQ3ODtChdBfn74zVWo9hQL7UTcW3HUBkDI6CRvXv6mTUCOKX9XeyDXY0EYE2CB
-         zo0Q==
+        bh=Qj5l2CM22fDA1fw+7YXGuZnpUGxoc2eRov5FmLwIscE=;
+        b=ueksEoO19hUTXGB4rL8xhRm6EbWa4xy0G7duVxt2CWVHeTc6Cu2ZFdQ1umK3fAcnCY
+         v0CaKBjLoH2wTJXlSzieVmKG3XGXPVEqEQWj8R5mTlL24hikbcPhkxrl+Ozd7pICvP9B
+         439wv0g3vfM5xMnm/xVhMTNyamayipgrRQnH/cTgpndUHBsHRfY1NDpwxH9gdQnDpcen
+         r9NODBDkqDMsZbAoU/eib0ymbgJRSaoOvOaowoW+mNQ+h9ap1NOQ5AbqF/VIJQqthxw3
+         mynMdmRHLRXYii+pFn6ifQmce+5nt48Q8fFt/jsmivMKv1N1t7ixzdZ09muVpQbsQIxn
+         cfcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764078923; x=1764683723;
+        d=1e100.net; s=20230601; t=1764078932; x=1764683732;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OZUPcDyU6xr3mdB7gZ6zkmVa9aLNEQrMFyb5L16xk/E=;
-        b=koAei+aIY351c7b77VCOD7Grt4BDwKmSfyc6Dd6d1R+rrvDEKKXxKV1SRsRLOT0BGV
-         upG4Icahc7GsZTnJWA78Vh2CAn+lJb++7lPqbwSKRZwGIN+iX9xLY5hVJsd2Ahj8S5Rf
-         /S6YB556Qks7pxYyruDPpa6OjJrZ7Tmte9+PYWLsVpCKcx8IXchUljW6CKuht7NQSGdi
-         Uy/ZiBWivJgVk54Mqd+GTibz+m5SUAz5++Wlk/owuSANRlphIWZob60T4lheNMsmOymi
-         Kwq2mKcMMxKeUh+EulbWg4zTy3y2MpTySzI36TU6LU6OU0CMwcWaNZLVElDLzcq5u0AK
-         Z4CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVT6sUTtjBeuqn0OcjgQLg7LRSXpXxHWSeZRdl+YrmyElK4Mhx1Z2TzyZlG5e9Yk9ZPuExaRTZ7ez8dXv1KwEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzupcLcTVA3qBrJ1QkPyXZm54O+t+OpsptCztOX5wsW32g+lO8A
-	NfdN2xLi2MC67BgpMH/1oPfGm2R+HWcYrGSlKHTM4Qm38olsrQuIRnPGkZHQqIFmtPQ=
-X-Gm-Gg: ASbGncvbnkgI938iOAGB/3osoRR4nsbUXugUjcrRZRzkoiMJevmZrEE/2ESNjfaJFz6
-	ZfQAMEQVYq7HXsmf/I77BFNavfLli0nDzZdqZ9SodpNwGKmR6FtORP1Z/8rH11BhmJznjM903kq
-	2DJHzTajl25QI1jjgXXEH5FA2ZxvbDCvDedpoEhU83P9LDYq5aAFd/vMzFtMxbwxES3eakt2YX5
-	BL7BlMDWkmiY70bioHITo6AwmmYgzoZtl2ueTF1TFo6dut8JaJRLpB758iwCbarXUBP3nTW2Pmm
-	SqU+adgY2JuVp6wFf85fWuPEz7ax6pneeBya8PqaqJRLpdncguiL7XDkY02Y8In7qHEBqIufpgN
-	Q+Nt1I6QJb/7Sp6vGArbSqO5/l66riTs1tKTBpXuU+olDARuwKp5qEhgwweNzdCvp4YRgNltc0t
-	wsOlwgPVIGQij/GFeM
-X-Google-Smtp-Source: AGHT+IGOdvw3USM3p9Dabw1EjvJTknTEGkReBA7/KiqIqk8VtB6dVoTn1QMFTGxLgVyawmDqGUyuzg==
-X-Received: by 2002:a05:600c:3107:b0:477:7b9a:bb07 with SMTP id 5b1f17b1804b1-47904b2bc7emr28643045e9.35.1764078923506;
-        Tue, 25 Nov 2025 05:55:23 -0800 (PST)
+        bh=Qj5l2CM22fDA1fw+7YXGuZnpUGxoc2eRov5FmLwIscE=;
+        b=O7IeLPhtEUXnzWorD5AwQFEt5cC+LpA9LdHqr5ML+XVG2V4N5xawhw8KmvzpRopm3A
+         CVBZXBdqOY4yBkp0SwHA6icWKdbcgT+ByyJ6cirD7p0s/DbAvzCXQQ1wgDWvm/a+EAgF
+         6rafcUUe0ezJ15Bgq79cLr46K2v4l2HyFYHRR+PWqNwLaF0I4jjMUHRb5WO7HLnic6sE
+         hyrJIgHsEGr7z9TGhWAZ0gh3p/7ud/VoO9uN29RkCt4bN8SbU6UB/2hRKFKvEW8n5nfU
+         yi3tGMRZSwQI7D8JBaJVVIEiqUBHHMM2qom2XURWTYHhsPv3LFuYRTr89UQLK+5M46QT
+         2/Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWpF5hObA/rPSVhZ6HGm4TOr4n9hMfcZoQht0clD6QyCvaf9ymgjBWIOCaC7iGn91jGB/HVygQ/jaXapx6Dz64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpGf7iBNL6NVbSnZ8nIliWTazJpBTz6+QaASDq4e+Wb102mdqi
+	2/ZoRm+u01N/GiWtj9MTZGm4pdqxdyb68O0cSk0CT92w5ohFn6yvpE4nqLbMYTmbg4I=
+X-Gm-Gg: ASbGncuvkW1j5AjcdXNs0hsz9F5TLtNk6zWQ1oLd+vM3D5znQO3mijxaVQ9e6LzMJSQ
+	oRRN8qryGlmvm2fiSN5xnbELzycC6rhan9JJZG6TzEoJmvk7/Tyxt989TWgICPkBSjOKTxQYdWc
+	1yXgpfZR3IQCCPdwrRr+lbVUMaRgys+xVCop+gaz2PaWaSe1VngR4nViTejf/3Ba/ohc3F8dDgp
+	bGv0Ai2rvaqE7YsQCpxMCyKJd4dEqf8gF0Y+eS0uwcotOMN5ZFagrl7IhVh6CU5b/76/olvBb52
+	kuNRTj2gHSAoRK9WdruVfJFpd3B1sOTMR/CzBso+afupKoo3wqelgKOKCRStG3wQnDTnTYATbbK
+	R0xMsDrwIrQC6HVzQu0mahtmsDZhp4DT9tw5NuKNzq0NHyqT/UAO6UB2aPHObfIUxuPi9moOV5D
+	n+56bvNGcEE/4INGBI
+X-Google-Smtp-Source: AGHT+IEoviEwOKyAo/e7XcJ+LgAsfut7GBUDSalEwMV+33vddcxo7V7q+O0kWwVd3H/WFPuLBKzd1Q==
+X-Received: by 2002:a05:6000:1789:b0:428:52c7:feae with SMTP id ffacd0b85a97d-42e0f3492bdmr2780337f8f.32.1764078932198;
+        Tue, 25 Nov 2025 05:55:32 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-479052c9621sm17162665e9.5.2025.11.25.05.55.22
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7fd9b45sm34841588f8f.43.2025.11.25.05.55.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 05:55:23 -0800 (PST)
-Date: Tue, 25 Nov 2025 16:55:19 +0300
+        Tue, 25 Nov 2025 05:55:31 -0800 (PST)
+Date: Tue, 25 Nov 2025 16:55:28 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Malaya Kumar Rout <mrout@redhat.com>
-Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Maciej Strozek <mstrozek@opensource.cirrus.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] timekeeping: Fix error code in tk_aux_sysfs_init()
-Message-ID: <aSW1R8q5zoY_DgQE@stanley.mountain>
+Subject: [PATCH next] ASoC: SDCA: Fix NULL vs IS_ERR() bug in
+ sdca_dev_register_functions()
+Message-ID: <aSW1UOgMCiQIaZG8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,33 +84,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If kobject_create_and_add() fails on the first iteration, then the
-error code is set to -ENOMEM and that's good.  But if it fails on the
-later iterations then "ret" is zero, which means success, but it should
-be -ENOMEM.  Set the error code to -ENOMEM correctly.
+The sdca_dev_register() function never returns NULL, it returns error
+pointers on error.  Fix the error checking to match.
 
-Fixes: 7b5ab04f035f ("timekeeping: Fix resource leak in tk_aux_sysfs_init() error paths")
+Fixes: 4496d1c65bad ("ASoC: SDCA: add function devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- kernel/time/timekeeping.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/sdca/sdca_function_device.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 0c8b77ee4a3a..3ec3daa4acab 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -3087,8 +3087,10 @@ static int __init tk_aux_sysfs_init(void)
- 		char id[2] = { [0] = '0' + i, };
- 		struct kobject *clk = kobject_create_and_add(id, auxo);
+diff --git a/sound/soc/sdca/sdca_function_device.c b/sound/soc/sdca/sdca_function_device.c
+index 91c49d7389db..c6cc880a150e 100644
+--- a/sound/soc/sdca/sdca_function_device.c
++++ b/sound/soc/sdca/sdca_function_device.c
+@@ -96,8 +96,8 @@ int sdca_dev_register_functions(struct sdw_slave *slave)
  
--		if (!clk)
-+		if (!clk) {
-+			ret = -ENOMEM;
- 			goto err_clean;
-+		}
+ 		func_dev = sdca_dev_register(&slave->dev,
+ 					     &sdca_data->function[i]);
+-		if (!func_dev)
+-			return -ENODEV;
++		if (IS_ERR(func_dev))
++			return PTR_ERR(func_dev);
  
- 		ret = sysfs_create_group(clk, &aux_clock_enable_attr_group);
- 		if (ret)
+ 		sdca_data->function[i].func_dev = func_dev;
+ 	}
 -- 
 2.51.0
 
