@@ -1,88 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9519F33F8B7;
-	Wed, 26 Nov 2025 19:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC05342158;
+	Wed, 26 Nov 2025 20:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764184365; cv=none; b=cqRRR+dZHHwWHMrs7JjOT//3+bLckbkhu5dnIgcvVBwQ3yasBFXgMutzzpBF4o6ETPyt8/PEeeE+/BwJlUkXFpv5OpVAN7gJW/CIlNkijjWgaEtqS/xsJswiHqG5VpQ8h6u5jOpXrfIUgGtCqLWzEuQPZqf1w0HHxevMvtBe8x4=
+	t=1764188856; cv=none; b=jGdFhELLfHhVHsSH84LHenLyHjLshC/EDTs7vKYzcwVpQaWs5Qn18xtdnfWl7sYonF22Vf2xDcnD5iEinokXisDHo3VF3IQwYZhw5/qZwIQD4s+FVifR7PifW4Jcg/99ttoAfkttj5GRQMzJcE22ST0Oa+jfQ/HDXWg95QTrXgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764184365; c=relaxed/simple;
-	bh=sWWXp3sv6vfsWvCEZUjz8CmJ0VK8ViosU6u8p8WK57w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l8yCwXf89V9FJZgpmc3G6y8pokdtft8LhX7yOLtqA/+cKIrpt8HeR7WEsG8yK3/JppA0QwbibUq2ZIGyr9WcECrn2YHDi8am2JJ6viggYkRGMGkO0YuRUVM6LB7kzSDtllcEJ5RndU/F3xXgRrk+FRatqI7TWJ9xl+9s+BklQfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ju2pT6Az; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764188856; c=relaxed/simple;
+	bh=OpcbLyKYxZlxHhsaZdpZh0uLt6gJOnXWPmZWcJ0p0KY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcJEPLvQDu3agjUs8JxXg3RvULMHrIUpW6GFxtVDVasDtOv+XUwkYbfAtle+J3iIrGPriA9olePCNUUw/wuG9Vrplp1yMw6eT6BLujE7ehzyW9TZCKBkDSEQFMBQkLMQ0nmX8zY5XE+IiSIXqP1O793ajLttt2NViNEohvbCi2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ok95PXRf; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ju2pT6Az"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9736C4CEF8;
-	Wed, 26 Nov 2025 19:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764184365;
-	bh=sWWXp3sv6vfsWvCEZUjz8CmJ0VK8ViosU6u8p8WK57w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Ju2pT6Azp7yo6k1D5f0cG+rlRn5zuLUrevCfMZNmQuf+hzPNgPcMbQwwKwNSgiwc5
-	 UaBtW2k2+qFOkRTCxJImD00d+gDOQDBLj4pS67mxN9hNnQ2/Er1zx+dwhJfVJejMtY
-	 Q0qODMulspHUVxNjpAYZi2Dc0s91nKUxFPHO5lXbJyAyDcdty9L395tp6j6okow+Qc
-	 DBD4ox4lV9U+BMwC4nNIpuwU8Fnnap7QuG7mWXrJj2wdjYb1c8Nunlo2PcmKunIwaH
-	 jtUJVfMWIX2oqJhnYkipmt4PWd+BY5h4dFRWml/jEe/OtjlvWzqXd4BxYKCImlvJZd
-	 Zrq37EJ3X5RTA==
-From: Mark Brown <broonie@kernel.org>
-To: Cyril Chao <Cyril.Chao@mediatek.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aScUKqCEhSIZoOmg@stanley.mountain>
-References: <aScUKqCEhSIZoOmg@stanley.mountain>
-Subject: Re: [PATCH] ASoC: mediatek: mt8189: remove unnecessary NULL check
-Message-Id: <176418436269.117076.14309249489407966858.b4-ty@kernel.org>
-Date: Wed, 26 Nov 2025 19:12:42 +0000
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ok95PXRf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1764188851;
+	bh=OpcbLyKYxZlxHhsaZdpZh0uLt6gJOnXWPmZWcJ0p0KY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ok95PXRf1zTCFm0YnE0co+79ZEXCN6iHKtdfeBvVFGEnFfol70oUDdzQnxPoNtNhA
+	 4vgiQgF8zBakJ4YELldWOM95ZlndMvGGD6x9j6wPtfZqb0VQM7QS0ZfQYA4Zq2aAZg
+	 B9VNerwVPKXD2Isn7jYFoVYmkbVLzAvmDo5AGTYlgMgiqqIi4wWYdJp0nIWMuAundz
+	 GBE34vN2Borx3yFEHTqArWTmMki2+u09xe+JI123WkPlp0YFyHt6i6W6PtO1FO48Ci
+	 TT/dGWd1oEhVvzp7yJxUPwhCPH5O0eV3b2mb7Gf79I6HsLVJKpvrX7/ENQ1NyaHeU+
+	 ehucfjHs5TzgQ==
+Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E64117E101A;
+	Wed, 26 Nov 2025 21:27:30 +0100 (CET)
+Message-ID: <f53af05d-ac10-43d5-8563-dadafbeb2379@collabora.com>
+Date: Wed, 26 Nov 2025 21:27:29 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] media: rockchip: rkcif: fix off by one bugs
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Hans Verkuil <hverkuil+cisco@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aR17UkYsfAxCZ4fe@stanley.mountain>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <aR17UkYsfAxCZ4fe@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-88d78
 
-On Wed, 26 Nov 2025 17:52:26 +0300, Dan Carpenter wrote:
-> Smatch complains that the call to snd_soc_component_get_drvdata(component)
-> will dereference "component" so this NULL check is too late.  The probe()
-> function will never be called with a NULL component pointer so just
-> delete the check.
+Hi Dan,
+
+Thanks for the patch, good catch!
+
+On 11/19/25 09:09, Dan Carpenter wrote:
+> Change these comparisons from > vs >= to avoid accessing one element
+> beyond the end of the arrays.
 > 
+> Fixes: 1f2353f5a1af ("media: rockchip: rkcif: add support for rk3568 vicap mipi capture")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
+
+Best regards,
+Michael
+
+> ---
+>  .../media/platform/rockchip/rkcif/rkcif-capture-mipi.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: mediatek: mt8189: remove unnecessary NULL check
-      commit: 9d3fcd0ebe91c2079b4aeaffc7493a0bb2ad45f2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> diff --git a/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c b/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c
+> index 1b81bcc067ef..a933df682acc 100644
+> --- a/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c
+> +++ b/drivers/media/platform/rockchip/rkcif/rkcif-capture-mipi.c
+> @@ -489,8 +489,8 @@ static inline unsigned int rkcif_mipi_get_reg(struct rkcif_interface *interface,
+>  
+>  	block = interface->index - RKCIF_MIPI_BASE;
+>  
+> -	if (WARN_ON_ONCE(block > RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
+> -	    WARN_ON_ONCE(index > RKCIF_MIPI_REGISTER_MAX))
+> +	if (WARN_ON_ONCE(block >= RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
+> +	    WARN_ON_ONCE(index >= RKCIF_MIPI_REGISTER_MAX))
+>  		return RKCIF_REGISTER_NOTSUPPORTED;
+>  
+>  	offset = rkcif->match_data->mipi->blocks[block].offset;
+> @@ -510,9 +510,9 @@ static inline unsigned int rkcif_mipi_id_get_reg(struct rkcif_stream *stream,
+>  	block = stream->interface->index - RKCIF_MIPI_BASE;
+>  	id = stream->id;
+>  
+> -	if (WARN_ON_ONCE(block > RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
+> -	    WARN_ON_ONCE(id > RKCIF_ID_MAX) ||
+> -	    WARN_ON_ONCE(index > RKCIF_MIPI_ID_REGISTER_MAX))
+> +	if (WARN_ON_ONCE(block >= RKCIF_MIPI_MAX - RKCIF_MIPI_BASE) ||
+> +	    WARN_ON_ONCE(id >= RKCIF_ID_MAX) ||
+> +	    WARN_ON_ONCE(index >= RKCIF_MIPI_ID_REGISTER_MAX))
+>  		return RKCIF_REGISTER_NOTSUPPORTED;
+>  
+>  	offset = rkcif->match_data->mipi->blocks[block].offset;
 
