@@ -1,130 +1,109 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622872D6638
-	for <kernel-janitors@vger.kernel.org>; Thu, 27 Nov 2025 17:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3A92E7BBA
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 04:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764264599; cv=none; b=OHxFCD8Cyx/7FBQTf7gJ9QmJl6v4JpXUZgjvUaMUgWTm4uTIWFNTTMgB0APGpF9FyHvt88u/k3uYlwe9fiB7+pv4MYaLhVwFPd4o0u0xtR5GiCbrKhj8Urpf35SPrTGYJP7gloIFKn9T5KOn6LB3UFi7kfMOFen3Jk3ehTAtizs=
+	t=1764303127; cv=none; b=UvYzxWYwOxCYRN/OWrSgZvo9II4n55vBDsjDL/b+zLI9pUraAFzkEPxZdNOLIGqCk/tnRqD+gXNexkxI85FNA2k0JSKULECdZo/5Ne/pcdMzIC6mCtTqhlWRtDyECinQKPFQuZQuLMvA+1MeAAUO5fT0RbrPurg51Wc9oAxfmLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764264599; c=relaxed/simple;
-	bh=QfbR+EE5VYLX4PrknRSxLaUPAYmhW9QeadeKjSV8cbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BggfGYCOWkZ0bVRkTvjsuddx7M+Ot19y1SxdbSmZQ9p82WUdtldj8TDYUKWkGQFooyVxvrfG6VlwsZuHgqwKsgzf9O9rH002k6x3GgNfsBq/FaZEXRKDAxdAxZTzxpUwaDquhEDBM2vHg90zUT/dxd3yUWBmpNxAhG+YNTrVyuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yFXUX8ga; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C/2zGpsv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tq65/nWL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FMw9QUNr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1764303127; c=relaxed/simple;
+	bh=1OkvqsnuHvvKMtxEdIDU0jBVTCmEE/rE0VnSDZkSX60=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LbDQwpDxB/s3SUV42mcoTsFUJ/KPgNwVCo9eEc5vK04YrDSev3BYkpZvzP6LVCmOpijkUo1qo3TgcS7V9BMk67i9WlUx/GcKHh6wnAl8l6VkHf2Knw6ebkNjntq/UpDJsarMl5iPckl7f3X39mx67kr4QdozAhzMmE/ibvfftIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOa1UOKH; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yFXUX8ga";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C/2zGpsv";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tq65/nWL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FMw9QUNr"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6FC615BCCE;
-	Thu, 27 Nov 2025 17:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764264596;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dv7Er5eKp8o4/p31I0vEXQw0yd0+ikq8MbRyCebNX8w=;
-	b=yFXUX8gaFJ/6Y9QqCt6+HJXyO5kJ+P8cz5etH0XOitlFubGu/saoupGqgmL7RGDIg19bza
-	4OcEVUQp21glwKvO77qwzhAilQqbicOf44D/geHX7Vsqwr++c95YT/XeoUS4tRuhlUc8cS
-	VWpj/zTmFTUHzR1qy5TchO9AsVx99Sg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764264596;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dv7Er5eKp8o4/p31I0vEXQw0yd0+ikq8MbRyCebNX8w=;
-	b=C/2zGpsvg9Dym4SYOeK0Rgxsv+zpwto87fhVvuP0PFvRU7ti+fDIjWW/xuN2nEUrppL+ED
-	W69E1lg8OdQVXUDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764264595;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dv7Er5eKp8o4/p31I0vEXQw0yd0+ikq8MbRyCebNX8w=;
-	b=Tq65/nWLs8tbHraXtNFOFljN3K7wbNWckH0vLE43iAmbMd84Q6MY4WXOiHDrlCSbdnxZtI
-	v4c8stm6AHoZ4/UkFEAP8l7LxYzSN5GPcF3GXk3Iuz9uK7LIGYUNIV6Q45/w4EKNpyT6r2
-	W39OXfaClqeQ7pneEnszInh5dZg/fYY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764264595;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dv7Er5eKp8o4/p31I0vEXQw0yd0+ikq8MbRyCebNX8w=;
-	b=FMw9QUNrvv4y2toUnZuDvnhz2ITLzjF63LcERqTofRklSkzXm+AQxlj+k26fiQX1XLBFC9
-	CGkrwmFP6j1/sDCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60D043EA63;
-	Thu, 27 Nov 2025 17:29:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id I7BrF5OKKGk3PgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 27 Nov 2025 17:29:55 +0000
-Date: Thu, 27 Nov 2025 18:29:46 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sun YangKai <sunk67188@gmail.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] btrfs: tests: Fix double free in remove_extent_ref()
-Message-ID: <20251127172946.GD13846@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <aSf6UHCbZrgZCQ1L@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOa1UOKH"
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-299e43c1adbso2363405ad.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Nov 2025 20:12:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764303125; x=1764907925; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Zh2ZhVb3HKdajlhfDvy/KK05hekc0IF7Em5Uv94QADo=;
+        b=QOa1UOKHPGiUKjc4S+1v0vplO0gDx9obBRuscQvMvZLRxkVBhCyrl8nar8Pjg0erM4
+         Cf0Z/s0ueUpG8/YeLrnfmAEZXEvRFk3W8VLlBd9sg8fq5PzCFogX/hn9vg5gi9rJo9f+
+         IgwpB/4gRKIa2C5Pa2IcWGS7/WJNgruTpZts/fgDZ+b472UNiL31HOBH6m5Mrnmbv12y
+         ZyrKxiwCO1pcf5QAUSQTbNgunWCFJOJ0+a5U/jaAQD+IrctIJRtX2FibW1ddekSkakBb
+         UqH3xGajciTfqdSdb61mz+InNI6P5zNwF82l/AFnhbuzZejKOURtUbTkuL9Ffo71pKXn
+         L62w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764303125; x=1764907925;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zh2ZhVb3HKdajlhfDvy/KK05hekc0IF7Em5Uv94QADo=;
+        b=ObSFR/m5cQIj1tCdTaNi4Hg1hQws1GkBYzCbVNamK06pmVZv41sxtplTC6NxetNeo/
+         y6/dNiOJ9SAZ996MgNKLh1kcXTc2yiaRZFwyAUKYpgI3/DaC3xs+xd7t7x7F0ilURuq1
+         ON8cW3/iLdtyzu6Y45ncEyIA/ObRbuFn4HgIsE3yWSJ12vW83IPewSHs5UGKBINK5TUh
+         iFIXK2DeAgZT9m/HNzhlsdCbbuIYCvZMVjJWYiWzqjSyVzQ0beMB/n5Rgspb+qfhg2YT
+         hf1UZXjfitpThYmhIhXXmMPWe97GSBxLDsrZgjwfLnzzlH/fAwy/yfL8+S0iZsuWuhdF
+         AnHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgGC2CfxZFp5B4dRFckDZ8UkdHwMLbXBw1s6IPjfVbDO9iweZcyWQvNj5qO/3eGnerIrpkAAPqFcIAPFLxsYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzgG1A7MOSmOwQn7rIFsufubNANhiMV+VZvo0y5QGJy+yJOrxJ
+	ISLks6R1mrO0SazEc1CSHQd8NLpPGrNnpYPrteNvdoGMYz8K/lvf+SlZ
+X-Gm-Gg: ASbGnctgHO1uFr2p9zUNdsRUftXxvAUMVPFN6PvW7+E+mBeqfUocauh+dfyoMxsGXRc
+	UPmcgIPPV6CCLAEQodJx7W+AxuJQ3cU4RYVZgsfp/mV6DHp8qOx3qifu9BbJ3303cSo+d8kryLD
+	l6nVUXwoFvrMCtVnXPj71ixhplir1RBvHPifZvxSXtkf+H99ZOEuHZnq+09iLYqUWUpnEuFgejE
+	681Kbt9ZwrIE8amQoJjcumSXBQiXtq0zsMj4aHRb5m7QdmsBDbGQm7hdL5U+y6BiciVdI7SYmK9
+	z6m1I/AQsX3quF7Px96sU7yZC9j7/8hOtp2KhRkcKlhhXwNm3fdYJdyo35nk8TJwO4rzlNDyHn4
+	Pox5/5ngoGgQYvqm4aGSAkv8G7MDO6DaTTbDBftoqN621YAdNueuui9nkSXRA8tApQAYppamcW4
+	XoV9cS/WIEXUSDYc7P2Z5zTWqg
+X-Google-Smtp-Source: AGHT+IGz6a7BqLZK9rwwKjC8VIcpixC76pih5ajsSv8w8cggc9y//rlM6htS2MH52W2TF9bXc/KI2g==
+X-Received: by 2002:a17:903:1b05:b0:295:70b1:edd6 with SMTP id d9443c01a7336-29b6beae519mr177542275ad.3.1764303125334;
+        Thu, 27 Nov 2025 20:12:05 -0800 (PST)
+Received: from [192.168.1.13] ([45.144.167.102])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce478762sm30721415ad.45.2025.11.27.20.12.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Nov 2025 20:12:05 -0800 (PST)
+Message-ID: <4c96af12-cf44-4028-b3c4-4ce9314c4733@gmail.com>
+Date: Fri, 28 Nov 2025 12:11:59 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Sun Yangkai <sunk67188@gmail.com>
+Subject: Re: [PATCH next] btrfs: tests: Fix double free in remove_extent_ref()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aSf6UHCbZrgZCQ1L@stanley.mountain>
+Content-Language: en-US
 In-Reply-To: <aSf6UHCbZrgZCQ1L@stanley.mountain>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[gmail.com,fb.com,suse.com,vger.kernel.org];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:replyto,linaro.org:email]
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 27, 2025 at 10:14:24AM +0300, Dan Carpenter wrote:
+Thanks. My bad.
+
+在 2025/11/27 15:14, Dan Carpenter 写道:
 > We converted this code to use auto free cleanup.h magic but one old
 > school free was accidentally left behind which leads to a double free
 > bug.
 > 
 > Fixes: a320476ca8a3 ("btrfs: tests: do trivial BTRFS_PATH_AUTO_FREE conversions")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  fs/btrfs/tests/qgroup-tests.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/tests/qgroup-tests.c b/fs/btrfs/tests/qgroup-tests.c
+> index 05cfda8af422..e9124605974b 100644
+> --- a/fs/btrfs/tests/qgroup-tests.c
+> +++ b/fs/btrfs/tests/qgroup-tests.c
+> @@ -187,7 +187,6 @@ static int remove_extent_ref(struct btrfs_root *root, u64 bytenr,
+>  	ret = btrfs_search_slot(&trans, root, &key, path, -1, 1);
+>  	if (ret) {
+>  		test_err("couldn't find backref %d", ret);
+> -		btrfs_free_path(path);
+>  		return ret;
+>  	}
+>  	btrfs_del_item(&trans, root, path);
 
-Thanks, I'll add it to for-next as 6.19 branch is frozen.
+
