@@ -1,71 +1,72 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C582144C7
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 07:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D182D6621
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 07:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764314234; cv=none; b=dfKaKZDWV//ZBde0XSLPOGN356oKGc2Z2Yl78X8Rdntt3xRZONgoOxJ5KWz8MxUz5OuitFsosaFrbAxIlM6GM9smCOxSaM+mHvfg0UwG83plPYDPXWscpV7Chv0CmIeQgPafo3jr7oXpSUFoAxp5wxNiByk/CbotiCFSWeVFNB8=
+	t=1764314277; cv=none; b=h7HYDVrLpSvoNVN+R8CPR7oy+b+Y2lG9FsYHx51yUq2IojVzRniXm3EytX7vA6ep/E1Ac4sWh+UYA9qaZzsH8/d0ejVxxRogZAAA25/RI8L6tghRJqj+NBMiQculjwGpQ5V4GcBQuO/fUZ1mmWAmvjRxX8wPaKt6xFY50TRYznM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764314234; c=relaxed/simple;
-	bh=q3Pyh0mPfhHACxJpnFH02ODrDqfs/HGagIlO+IJ5DUs=;
+	s=arc-20240116; t=1764314277; c=relaxed/simple;
+	bh=KoHI54xKO6w4vhThwhJrArEjSn2FRb5H0Tw2vvN1TzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c9QggabU7x2k5OZEngI8dF+17lJN8kz4iaMEQ9Kp1pipaFHPOrn9mULPpHTEeoPdllkJohpf/sUqN7lGjWQY50E1ANHeNO4JBH/l/vOoitpiYldESV7fU7FlZZeATcOOVBxnZCnW8p/Q6nI97QJBlquHMaH80Zerb+F/NYX1h6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OGnYRGaV; arc=none smtp.client-ip=209.85.221.45
+	 Content-Disposition; b=SzzMbDtxtqzg0DfLWKiJLBUuD9cY2hr9mBj99PCpRde9FI5Hy45rYU3QPE2HZFy02QxECac/IYB6cAZ5Lj86KPx5TZSJjmDf3rxK++apgQE7aYnh2abmEWll/p2c0cgdZeExNBl5y79u+mNy4f61mVdXQr6WJuh8zY8sZVRDXt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xu2aOICF; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OGnYRGaV"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b39d51dcfso981180f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Nov 2025 23:17:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xu2aOICF"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6406f3dcc66so2766767a12.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Nov 2025 23:17:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764314231; x=1764919031; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764314273; x=1764919073; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QECuucpOB7mGdCP5CNDlQP92tCoOeBkJ5Et2tCmqPGs=;
-        b=OGnYRGaVawR+DbLGlLs6I1WrzWes6l/hxz2uEGeRke4g+AADmvJJ4Zlr6BiidockMX
-         T/VV5ZI9LlgYjOheuozpqnK/nkYLkzuoi2dITck9Q6eQaQuDyWLY2VmZMH/8EWjSl6D3
-         7XcWuhjkrfwy3Xjg8MuOsTzMYJTqajvXarcQwpUYXfeLP9RH96IHtv+IiQonnT4Q/sdE
-         fxjMwGgs+XtxvAWHl/YkPH/jeUjvWw7BQUufSYM2UrlB/w6kdbXhmMEU5oUxTy7YMMHL
-         SLFki1/odgjHb7sW6df+tlwtF8j4fbaEPHTHnFNxk+xuR6oDp9YbnLnxjf2LPB5K2o/q
-         di7A==
+        bh=lWBXP38Y0RctBSxgnReoDAFsYXDk+HV4r4KizoiM/N8=;
+        b=Xu2aOICF7fjzCqdUJHKiMGZhgJByTzHUCQrpqYUskV/uw9ijbyFmSA5CVPAwPnfGvy
+         /aYALz6XIu+6LdB8y5om3ogS8dgppr2y3/Tj3dAyAfAMl7GzRmouCgnWQ3VD8PiwKaZG
+         HCn0LuH/ThQjryr2KLhyVwNbXT4V6c7qzo7QphfT2s4ub+petc0yYxXNEbUn6ZI9NKyP
+         o0nLwW88OUlSZMRpu4puSK2PoGlSd2Szd08DRihxnCrNxcRkfFyf1iDofujOgzxK2Ayc
+         RKcODEeXyWTUG+1q42WklUHFPeHgK7S4xKKgfmYPiAZczAWhR4EhkzackjXTJL1Zq3dW
+         DNQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764314231; x=1764919031;
+        d=1e100.net; s=20230601; t=1764314273; x=1764919073;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QECuucpOB7mGdCP5CNDlQP92tCoOeBkJ5Et2tCmqPGs=;
-        b=qQNNgRQLIduETZOv8sxQ/hu/mmsCj5idHq005n2RbMhYVLTrfXWZa6SbBi5kbAuixD
-         NX9QLJfRSKSrLb5/Nps1FQCTWBUKgxrPzEtV6IFLNzb/UeD0mo/5MGBqJuohklEYQKob
-         itkIZrOMOC7No3YcxP/8szhG+ubHH2gN3sHg5rp+jGNYKeZ+v8d5yU0MMs4RCbHKH2cL
-         jPtog6GgDvCXhFKZXXoe8ZiFeTieAPwYd4jEEhocVSXFljTmXK6OzHGhNH66Qi6pqw+1
-         0DWTZBb8MKwjRK5YICIE3NUfh6bwFV8i7crUq/UN/9xjZ1YNJN1AImbvOcy2TaUhaGGE
-         UbKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgHW5kVLZc8Px68bz84AwI03uv8AC/2DKIUlq9q4nAsIqTKDDoFpWqhHCK5rvxu7sqjB2+au5EfOnSfy7ZUI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywobp/ukpHY0jer2MsLJF2W6mSgfU1b1DgGT1YIlCKTjQ1tt50t
-	CYsohBi9zZVyQnnAN/hP+oj59vVNHVS8UcXKkDFfd3bKDimynI0wRD2eFENMUpTHC48=
-X-Gm-Gg: ASbGncv0radVudCM4GBtgh85PJi/6OP5/T/A14dDJus1WrtcLZfEdsTpfdae5vMwY+l
-	APsM6UST4OUNfKbPv+vwPyG+d1NDRCT1MctEc708fJ2vpbgTzOSmQbtxuGBwjOGrJ3mNyCG1zDJ
-	3L8tV56LeLfcATLhnjdyIUYY0MWVRWpnGGhApsKReafaNxrvil35ZE0Emgge1yVuqKMK68WMs8i
-	QdMTITBj2Sirskr7I4bXL3fFPbGA3vwOGsKaBy6//9xZHWQsDPjB0MctUtNTBFVKQt8Wv5kGTx4
-	tJYaLdT2gSplvTJrrrlP9ekMwI2I/snZLnLtDxxDY1jNx79XRvc3ymzbEjNC4ge8XTz7iT9wm4L
-	i6yxJqsbcqg65A/eRAvMHBo1RXqT6uhGR3eGCOrg/c78iILQRVONHOB68wfcSty2GdspEAI/8Yl
-	ZAPCAZIku5JqObUDrc
-X-Google-Smtp-Source: AGHT+IF0PX+LalGUwW39EyN2VoluiKmvZRTiqaELlbwHxhz/OePewRHVvuqqnMneHZUO9bajq2AVFQ==
-X-Received: by 2002:a05:600c:4f82:b0:477:952d:fc11 with SMTP id 5b1f17b1804b1-477c11175a9mr311346275e9.16.1764314231084;
-        Thu, 27 Nov 2025 23:17:11 -0800 (PST)
+        bh=lWBXP38Y0RctBSxgnReoDAFsYXDk+HV4r4KizoiM/N8=;
+        b=aeXlkQgW7KNOVu1nz5kYol6gLCiraTzPoVfs4VhuhvoJJOorkR8Luv3FvqAtcMlUSn
+         BsLRJPlhB6PojbB3fSrILPodUvnuQCLitum5nzZMFjRxIiBfvPLPFtQNonm5+gPy7TYE
+         m/RkJYb4Qt8tPsejJV9JgNo3ffsXr/FGsfnG10wTQcWPbRAVkY0ZMJlYwrVYID8rLl5r
+         QSX8kJBBAgBOXYlQ7scCl/Zuh1CY5eOLFumICw/dn+85QX04jmRZZjQbrgLbtKaf2Bg+
+         3Ckcom9UOZ62Q5bPvX2CiziBHiJD08oAVgwUppg7W7h02I2Gg+reelgncwcCQnUgq1xz
+         sRdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9INq1W7ch9ydYo4KgvZ4YxCx1wyuSFCCO8gsjLco6xPm1BXxA7Tz8Ifx0xswePcr2HMt2w4z2sFL73meIWoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZsL+Pm7FXMHlHBoaq2xqMs/YaT7XhaNTHSGjJ6dE5UNaV1hVF
+	+1MXZ2IWlQGEEhTYOM9fiWE7PU+4k7n67EAPLwgmTmCdCf+AGnZo4us/vURILcUn9jo=
+X-Gm-Gg: ASbGnctIlUFvpZMAYNY3QbpTjCRJUMGe3N3sUMTKu0xuw4bbq8IC+EcrAcMG2+ksTT0
+	PHwcj6NDE05poAajMfDMLsj37EZ3jixpbCOMjLQOEPH2F1HUvroXRk2l/ddjlkPmQhoV7sFEo67
+	/VtmfkKt2gl9V2HSbQzM8nH0iRwYAChGTgnu/N3/WwSQxJE5UvqvB747/1CgTb/U2gWhyST9kqE
+	rqiwVZVtd0APrKisCzSBK8uNU892rXFd90id4Ca1IwhNlfd08jOsRRf3z6ew7mb1fNa8uJsZCSI
+	EgXwpXtH2cNNXFBlHkk2ZrkCEQex5VbWc6ZRYMgEKpvGXzsXUgPD9G0jd/NGhiwEDC8Rx0cl9Qd
+	E8p3E5zKdYhhOw+3h9oIGIuZNgSR173AAyKDGx4KptzDsXy1xN5rnbro7q0aAI3baLOwcz8z7mY
+	yuihqMryZSTvsVucxP
+X-Google-Smtp-Source: AGHT+IHy8geHvQVdEZJYbb402+U4bD4Z1Mesx4KgjWzi1r4SNNgcwDUHQRL/pHelc2R7Ugk+0s5ETw==
+X-Received: by 2002:a05:6402:4313:b0:645:d3fe:8c57 with SMTP id 4fb4d7f45d1cf-645d3fe8d77mr16473812a12.18.1764314273417;
+        Thu, 27 Nov 2025 23:17:53 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4790b0c3a28sm140159725e9.9.2025.11.27.23.17.10
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-64751050a63sm3611118a12.24.2025.11.27.23.17.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Nov 2025 23:17:10 -0800 (PST)
-Date: Fri, 28 Nov 2025 10:17:07 +0300
+        Thu, 27 Nov 2025 23:17:52 -0800 (PST)
+Date: Fri, 28 Nov 2025 10:17:49 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Mike Rapoport <rppt@kernel.org>, Pratyush Yadav <pratyush@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Rubin <matchstick@neverthere.org>,
+	Paul =?iso-8859-1?Q?Retourn=E9?= <paul.retourne@orange.fr>,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] liveupdate: luo_file: don't use invalid list iterator
-Message-ID: <aSlMc4SS09Re4_xn@stanley.mountain>
+Subject: [PATCH] gpib: Fix error code in ibonline()
+Message-ID: <aSlMnaT1M104NJb2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,50 +77,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If we exit a list_for_each_entry() without hitting a break then the
-list iterator points to an offset from the list_head.  It's a
-non-NULL but invalid pointer and dereferencing it isn't allowed.
+This accidentally returns 1 on error, but it should return negative
+error codes.
 
-Introduce a new "found" variable to test instead.
-
-Fixes: 3ee1d673194e ("liveupdate: luo_file: implement file systems callbacks")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202511280420.y9O4fyhX-lkp@intel.com/
+Fixes: 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Presumably, this going to be folded into the original patch.  I just
-added the tags because they are harmless.
+ drivers/gpib/common/iblib.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- kernel/liveupdate/luo_file.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/liveupdate/luo_file.c b/kernel/liveupdate/luo_file.c
-index fca3806dae28..86b4d274d9aa 100644
---- a/kernel/liveupdate/luo_file.c
-+++ b/kernel/liveupdate/luo_file.c
-@@ -561,17 +561,20 @@ int luo_retrieve_file(struct luo_file_set *file_set, u64 token,
- {
- 	struct liveupdate_file_op_args args = {0};
- 	struct luo_file *luo_file;
-+	bool found = false;
- 	int err;
- 
- 	if (list_empty(&file_set->files_list))
- 		return -ENOENT;
- 
- 	list_for_each_entry(luo_file, &file_set->files_list, list) {
--		if (luo_file->token == token)
-+		if (luo_file->token == token) {
-+			found = true;
- 			break;
-+		}
+diff --git a/drivers/gpib/common/iblib.c b/drivers/gpib/common/iblib.c
+index 7cbb6a467177..b672dd6aad25 100644
+--- a/drivers/gpib/common/iblib.c
++++ b/drivers/gpib/common/iblib.c
+@@ -227,11 +227,10 @@ int ibonline(struct gpib_board *board)
+ #ifndef CONFIG_NIOS2
+ 	board->autospoll_task = kthread_run(&autospoll_thread, board,
+ 					    "gpib%d_autospoll_kthread", board->minor);
+-	retval = IS_ERR(board->autospoll_task);
+-	if (retval) {
++	if (IS_ERR(board->autospoll_task)) {
+ 		dev_err(board->gpib_dev, "failed to create autospoll thread\n");
+ 		board->interface->detach(board);
+-		return retval;
++		return PTR_ERR(board->autospoll_task);
  	}
- 
--	if (luo_file->token != token)
-+	if (!found)
- 		return -ENOENT;
- 
- 	guard(mutex)(&luo_file->mutex);
+ #endif
+ 	board->online = 1;
 -- 
 2.51.0
 
