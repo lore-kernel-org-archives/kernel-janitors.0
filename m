@@ -1,94 +1,100 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E601721CC44
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 16:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7605923EA94
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 17:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764345727; cv=none; b=M27BgLRrgyGvYsLl5/2KowQ4GaaZjCj8ra0X2jpoLXnNIaOj5OWscBh8LECXyuK84YXDvxR009zq5I9h7U9lQgdrNnrxWjP1AUaz661uqoQhkvvcRqy2y2RBLxikZrnP82+49jO/rAEoR89zt7MGw/cyQDo9NDGPFpfmca6sfqU=
+	t=1764351267; cv=none; b=grWwyO8QKTj5wnw2nBdKTod+egaPpGq0Ace7xrgArLXrr288JgVad24zPvZIbAkk6RV8BEr2QL3EL/P4YxXnA0t6S81W7lk7eRBNU15hktVcE0HJ6MgQxyeDTjBiSaxgumwKZ5+fMoV1YhcOdVYCNIkbfV/2wrYqmXVQ282v9Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764345727; c=relaxed/simple;
-	bh=TMMmgOQgbpewBnsq36W/7DVUydqERT9TKpdf3BBghG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n01FOdehggunN0vOV3KHHjBV3pu50l8spD3x06VC1S3WrYLAKLcaYMInCA8s1admHCN0EttomS3u+0zRDoaUt0KIV+G7CtNTMv4+YkqLJdsRANGP0lOc1iPKFya5IQBA1QYq59wyaJPuRQZRebdyilD6ruWhCSiZsHn+ei4Z4pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dbyXe6yv; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	s=arc-20240116; t=1764351267; c=relaxed/simple;
+	bh=NgDFq9cuCpSo6J1hvLf9P9F4t2vw0nLtfbfK3/gf2R8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HRvLpa8mioqkGay6cG4sivsTIuvug0ZVV5Y8hhvYx9/boeA1uA7gwy09+JSjLxAsW7mvl1qfIHuG0RR9t5xtjj39vRi62uVhD1fIqWZjbjwmIZP2G5QC781k7HTS6rH5PaZyTuVHo533CGFMyFr0YmAXcf0c9IC6wAEVEnG2dco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFAmMmMR; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dbyXe6yv"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso4001829a12.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 08:02:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFAmMmMR"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3d4d9ca6so1865701f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 09:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1764345723; x=1764950523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TMMmgOQgbpewBnsq36W/7DVUydqERT9TKpdf3BBghG8=;
-        b=dbyXe6yvZLg/SRKz6VuDrkSxoGFaZ/dXuJOyxfphiRX6Jbx9p/F/VA5zIZUd0AnHfH
-         stAyl2rJskGSS3/WfduQCptJCxlHupU38/ys/+mrKODaGllhQI9+Pps1fRAKnnvFrVmi
-         gfrS49b0JA8qoyxtG1J7fE4f79w9Vkj0s0ZbUUmqMCeyWGx4fkUIYi2HS6l+QPIiNu6E
-         uIjaMHMRy4WCaPo/mFo+HPZsF5tG0w+oA0HQlGUUtXCkJYPrUKalYk87K94TzZJwIpsZ
-         UEAMHTpkEsJmeM6tAK1PXvgHHObZeHaGrS04fJEDih50LOXPFGv6WCP+sEdFIlxgGjbP
-         xL0g==
+        d=gmail.com; s=20230601; t=1764351264; x=1764956064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5sgP7CtXkJBmpniv++l9Jyi2R5Im8Yl1+Q4ukLyH+Ms=;
+        b=OFAmMmMRZP2G1hwp2tpntujLbmg6OA4/Vak3rgdpyD1+TDIa4PGhSKEJdo58FK/MwT
+         qj9jYKDST79MKdAuMg5SSZWCDw5PcYzEKox6rN3J55G8bRYvkzqOvIJZzMT6pU/g21Y6
+         a0OPQYsTrJQbyQnweiiVfcip0Ef+u/m3VlpwP+MwZlxru09FhrxOZL3zRzLnk68Px+Ow
+         fcrgVNWcKSkghAwh8LIApLZxEnQd80XyjmjTwcipVcSughmsgPrN+xY4T6Zs8vPCLpw+
+         GhGNK0SCu5KChKbfutCsiA5se+UZBmLOCJMKCzvS029lJ1gkyTVoJecQMpHprFTeEYQk
+         0G5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764345723; x=1764950523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TMMmgOQgbpewBnsq36W/7DVUydqERT9TKpdf3BBghG8=;
-        b=GJxxuC44pib1ivjHBzaYtmAWomvKcyTDMFDJQw/7P3rdayw94kKBMAKL9OqDVOHdIt
-         VSmiDIcgvj84P5X9r5qmGBHfyJM430JUp2RVj/9BI+eSnOumtGmDais6I/8W9GHmq1+/
-         LKu3s+Be3m3RY29d2HY1+oMQKtWvg4LmeUg1RDIiyTeYxOkXBpHvtcsYGRJ1kDHeEOLd
-         KP4LZYpd6HgGoWAXPnd8IyAeReZqJF3pB38Xs4Qc16OI5FLKnjF8qNgbJ7rCWYQdGwcE
-         6LnOBeVb7UJ5+tGxPWxdFgEfURkbUpDINLry/pjH1XCdgjvIP+Uep+lpRfsbIr5P6AEP
-         YYeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXCx6imNaFTSEq44iM3HizQ04BbvTK+sBDn+Bof/6gx+6eJTr/DguQhFciPMD0Oav/O+PfdMckGFyvU8hoJoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHss7p+4KZD/OEdyTe70eX8dkTkl6AYRtgc/MuVlyBLuvyGVW0
-	PCVG7ZjUTUJaUuIldq0X9DxA/7bgQrYNJNSaYgGUinCoNELgN+kY4zGTL6EBODQHFgI4VHRfc5C
-	XRCwatsxsvJhXB0dAvAW0DAXC/jRapjtZd4VTpVTY6g==
-X-Gm-Gg: ASbGnctmQKidvml3RUFupPLzycJLcKKvB1yzjXFfiekvvjisX/dfEcOi2wWuWRHP4Bi
-	rXNi5SLcldz1fnyHi7YFDLbpkxQ0+wh1aewdCINhsGyKeEryaIrym/ERAM+K1F3UMJeJFCJie2w
-	PGjummS5phK6Nb1bfvXI4nabu3H8HlZh03Ofgj8fHlLRH9Db66rPO3u/ldkuHYJoO4BIa+RtDbf
-	ZssWpYkx84WsA77ITHjxuVc13OrOnepTBxnNlgqvTcBtcG+SvWCqZVdOO25BchOoQ6Byx6FVRNW
-	9ps=
-X-Google-Smtp-Source: AGHT+IE8DhdaQ7zFI8SJagCVL8O86a4JRp320iHOQrA2ytc4viByD0arOT33ZLl18J0Yj5cIfVdVHaVTF2BzJjl6fNw=
-X-Received: by 2002:a05:6402:23ca:b0:636:2699:3812 with SMTP id
- 4fb4d7f45d1cf-64554817594mr24017558a12.0.1764345719949; Fri, 28 Nov 2025
- 08:01:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764351264; x=1764956064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5sgP7CtXkJBmpniv++l9Jyi2R5Im8Yl1+Q4ukLyH+Ms=;
+        b=TuXfSP3fKBZje3CgFTsZN2BKS07FVKnKSPwn722QeQxwCEyI7NgtfBcjG74AekPAIc
+         SFXQ2sZEMe2mnZm2tK0RNXHtCMMjqA8Jd06Sa2HeM2VEVkgGSKZMNy+MCI1ieDXrhkvt
+         KjNinfnQbRphBFZxoaSKywD9HHa5pKgW3bds24EOAkY26B/MMb9RmvG4V79JF1GGnHoa
+         oFebcizJ7L4fSL/5ZJJmaSGsIA8xoywHEDzcfhogcjCEEJckcDvmaHbxNEZQx8e6n1Mm
+         nwgNXoXp27sUQEn7A0srKkmj8nERDqhgcY8d3JkAAjJhKq0E721V2sHpwkyAdsJlni5m
+         KtBg==
+X-Gm-Message-State: AOJu0YxetLRsCo80gDf8fkD4lX1B5/57ekHZv/fcNFxCJy75bn4XUuc7
+	53+lLHNX4EIObviVR3ZQEETZ3TMdwQ6o8mSv80Tbtr2R2qCe0zMdwrJV
+X-Gm-Gg: ASbGnctA/1nyCadVNCffdF9Z6mkJxjqFK3fmQ3k8Ga3Eq+wdCPenbY2bLP8Qh8YqNML
+	t1tTTmyEs7Lvqgr+psbGbdjEq63T5egJSYCxJguYwxSonbDE4Zw+meAV0WIzhUxqwcMJnq9a38O
+	yI6jImoN580IjiGz+aH5Sb6eHVhcEiyKqAN5/0txYXjgHM/v986QTief+xETp880fzZXfnbtGuB
+	L/YQT0wusA1vtOwwQVWlX+jvoxys3ft8tuCGrmsr64SDtrYutExWSisEPf2qFu5X0m+lXWRMgtj
+	6iWEevm4QcTI7a1rcbYrKlrHxhtUXDFaNFkSvBONsp8seraONEaegA1a4LEvHWaUU4fLqmMn1WQ
+	kTl0rEcFzk/P818AnmC3CFNU0MP0a7BXTuU4tRL4Ez1jm3vil+rtvqNBKEJ+sjPCMsTggZ09SJb
+	il6viASamB6Q==
+X-Google-Smtp-Source: AGHT+IHyxSGG3hgLl6lCY8Xa7muEnfLqEs1ko+keZ1C5MJZEIG9/+bd7IyzXr7/0ynf0jrFlO0/yVw==
+X-Received: by 2002:a05:6000:2c11:b0:42b:3131:5436 with SMTP id ffacd0b85a97d-42cc1cedb16mr30013813f8f.16.1764351263575;
+        Fri, 28 Nov 2025 09:34:23 -0800 (PST)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1c5c30c4sm11410535f8f.9.2025.11.28.09.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Nov 2025 09:34:23 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andreas Kemnade <andreas@kemnade.info>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: fp9931: Fix spelling mistake "failid" -> "failed"
+Date: Fri, 28 Nov 2025 17:33:29 +0000
+Message-ID: <20251128173330.318309-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aSlMc4SS09Re4_xn@stanley.mountain> <CA+CK2bCtFFcRGrtJ2PAkaCiBge6HjXRX9F5oiyBtCjEOOiQ56Q@mail.gmail.com>
-In-Reply-To: <CA+CK2bCtFFcRGrtJ2PAkaCiBge6HjXRX9F5oiyBtCjEOOiQ56Q@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 28 Nov 2025 11:01:23 -0500
-X-Gm-Features: AWmQ_blbGSAsvhUdsh0PMLH-1wul_WDrFTyBNTlDMevan86dpXjBCsrHWcbLebo
-Message-ID: <CA+CK2bAy5JO_jX_vTZ4RsYjUkb9sAjh6zgaEDvVje6062er7=Q@mail.gmail.com>
-Subject: Re: [PATCH next] liveupdate: luo_file: don't use invalid list iterator
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Pratyush Yadav <pratyush@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 28, 2025 at 9:38=E2=80=AFAM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> > Fixes: 3ee1d673194e ("liveupdate: luo_file: implement file systems call=
-backs")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/r/202511280420.y9O4fyhX-lkp@intel.com/
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+There is a spelling mistake in a dev_err_probe message. Fix it.
 
-Given that this patch is already in nonmm-stable, it should be OK to
-apply this fix in one of the RCs.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/regulator/fp9931.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Thank you,
-> Pasha
+diff --git a/drivers/regulator/fp9931.c b/drivers/regulator/fp9931.c
+index 875d875d1a50..fef0bb07fd5d 100644
+--- a/drivers/regulator/fp9931.c
++++ b/drivers/regulator/fp9931.c
+@@ -444,7 +444,7 @@ static int fp9931_probe(struct i2c_client *client)
+ 	data->vin_reg = devm_regulator_get_optional(&client->dev, "vin");
+ 	if (IS_ERR(data->vin_reg))
+ 		return dev_err_probe(&client->dev, PTR_ERR(data->vin_reg),
+-				     "failid to get vin regulator\n");
++				     "failed to get vin regulator\n");
+ 
+ 	data->pgood_gpio = devm_gpiod_get(&client->dev, "pg", GPIOD_IN);
+ 	if (IS_ERR(data->pgood_gpio))
+-- 
+2.51.0
+
