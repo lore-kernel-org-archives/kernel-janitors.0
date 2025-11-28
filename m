@@ -1,72 +1,71 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D182D6621
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 07:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98702D6E61
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 07:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764314277; cv=none; b=h7HYDVrLpSvoNVN+R8CPR7oy+b+Y2lG9FsYHx51yUq2IojVzRniXm3EytX7vA6ep/E1Ac4sWh+UYA9qaZzsH8/d0ejVxxRogZAAA25/RI8L6tghRJqj+NBMiQculjwGpQ5V4GcBQuO/fUZ1mmWAmvjRxX8wPaKt6xFY50TRYznM=
+	t=1764314284; cv=none; b=TETo0ffcqCOqPfuQjt6I1mDY3mJJ8vf7TfjU+YzI1g5sATCVfspNybg1HJDGrnQ4JLzgILtiQ+IRs60RaZWmFO2IXRCPR9mRPPSRY2xHvlbIKNd10dPzflgMGTbewgWYGnBxOgxPrNHTjD/NA2INZXq+JUFfyZ4dJKXlG6W1kzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764314277; c=relaxed/simple;
-	bh=KoHI54xKO6w4vhThwhJrArEjSn2FRb5H0Tw2vvN1TzY=;
+	s=arc-20240116; t=1764314284; c=relaxed/simple;
+	bh=fGe+nHBgqjnuXX4Zgz4nOkEHxwuFtR0ZX4+FNRv7TYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SzzMbDtxtqzg0DfLWKiJLBUuD9cY2hr9mBj99PCpRde9FI5Hy45rYU3QPE2HZFy02QxECac/IYB6cAZ5Lj86KPx5TZSJjmDf3rxK++apgQE7aYnh2abmEWll/p2c0cgdZeExNBl5y79u+mNy4f61mVdXQr6WJuh8zY8sZVRDXt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xu2aOICF; arc=none smtp.client-ip=209.85.208.49
+	 Content-Disposition; b=c86jpa8dYYMgKWAnSSTrdS98078WoDVluj48sPB+idX0GywWf2vNOzXdPQ6cVoAxam/CxMvb+mHdblr8x0TzLp4VQweFn3/WC6c7C7BDe+yXZIhq8Oj0jmEKfO+xKiUuM4hG8q2/cb0tmLikrDB03VIW3nOhSU0snOhiuKVnuX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sv2G0ORk; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xu2aOICF"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6406f3dcc66so2766767a12.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Nov 2025 23:17:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sv2G0ORk"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b38693c4dso570051f8f.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Nov 2025 23:18:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764314273; x=1764919073; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764314281; x=1764919081; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lWBXP38Y0RctBSxgnReoDAFsYXDk+HV4r4KizoiM/N8=;
-        b=Xu2aOICF7fjzCqdUJHKiMGZhgJByTzHUCQrpqYUskV/uw9ijbyFmSA5CVPAwPnfGvy
-         /aYALz6XIu+6LdB8y5om3ogS8dgppr2y3/Tj3dAyAfAMl7GzRmouCgnWQ3VD8PiwKaZG
-         HCn0LuH/ThQjryr2KLhyVwNbXT4V6c7qzo7QphfT2s4ub+petc0yYxXNEbUn6ZI9NKyP
-         o0nLwW88OUlSZMRpu4puSK2PoGlSd2Szd08DRihxnCrNxcRkfFyf1iDofujOgzxK2Ayc
-         RKcODEeXyWTUG+1q42WklUHFPeHgK7S4xKKgfmYPiAZczAWhR4EhkzackjXTJL1Zq3dW
-         DNQg==
+        bh=c1lnMlPJCV6DA11oj/bOj969pPM/KGvJxcxKxlFLMzs=;
+        b=sv2G0ORkjoAaPN4k99IlCMKzvBZfe5MSHit0yF2hstCccycV6PFKrElmXfrT04aXRx
+         avY5k1ovgWXpxq9X0ebm4PPS6Iwpn2tIvqZWhLlBGNRuzEBquJ5hPKinM8+j6urMl3l3
+         Hzm34hgyddUSI8NH2N5txqXkdEhtfMyZr0sgTiSlFCP1MpA8ylbB57YMWetJVtB52Ics
+         HMvS42o4A8GH/CDSlqyzITjlNrBrhCzi6N2OyLFAvVr5CyNCYVbuJc33F+VlaPRBOvwK
+         XtNvcO3eXcuaWqpTGV0ogq1EXA4tmH5e7dw6GHwRkrr99HPjE3EQ7lakXggy9PJ/EyDF
+         CcTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764314273; x=1764919073;
+        d=1e100.net; s=20230601; t=1764314281; x=1764919081;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lWBXP38Y0RctBSxgnReoDAFsYXDk+HV4r4KizoiM/N8=;
-        b=aeXlkQgW7KNOVu1nz5kYol6gLCiraTzPoVfs4VhuhvoJJOorkR8Luv3FvqAtcMlUSn
-         BsLRJPlhB6PojbB3fSrILPodUvnuQCLitum5nzZMFjRxIiBfvPLPFtQNonm5+gPy7TYE
-         m/RkJYb4Qt8tPsejJV9JgNo3ffsXr/FGsfnG10wTQcWPbRAVkY0ZMJlYwrVYID8rLl5r
-         QSX8kJBBAgBOXYlQ7scCl/Zuh1CY5eOLFumICw/dn+85QX04jmRZZjQbrgLbtKaf2Bg+
-         3Ckcom9UOZ62Q5bPvX2CiziBHiJD08oAVgwUppg7W7h02I2Gg+reelgncwcCQnUgq1xz
-         sRdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9INq1W7ch9ydYo4KgvZ4YxCx1wyuSFCCO8gsjLco6xPm1BXxA7Tz8Ifx0xswePcr2HMt2w4z2sFL73meIWoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZsL+Pm7FXMHlHBoaq2xqMs/YaT7XhaNTHSGjJ6dE5UNaV1hVF
-	+1MXZ2IWlQGEEhTYOM9fiWE7PU+4k7n67EAPLwgmTmCdCf+AGnZo4us/vURILcUn9jo=
-X-Gm-Gg: ASbGnctIlUFvpZMAYNY3QbpTjCRJUMGe3N3sUMTKu0xuw4bbq8IC+EcrAcMG2+ksTT0
-	PHwcj6NDE05poAajMfDMLsj37EZ3jixpbCOMjLQOEPH2F1HUvroXRk2l/ddjlkPmQhoV7sFEo67
-	/VtmfkKt2gl9V2HSbQzM8nH0iRwYAChGTgnu/N3/WwSQxJE5UvqvB747/1CgTb/U2gWhyST9kqE
-	rqiwVZVtd0APrKisCzSBK8uNU892rXFd90id4Ca1IwhNlfd08jOsRRf3z6ew7mb1fNa8uJsZCSI
-	EgXwpXtH2cNNXFBlHkk2ZrkCEQex5VbWc6ZRYMgEKpvGXzsXUgPD9G0jd/NGhiwEDC8Rx0cl9Qd
-	E8p3E5zKdYhhOw+3h9oIGIuZNgSR173AAyKDGx4KptzDsXy1xN5rnbro7q0aAI3baLOwcz8z7mY
-	yuihqMryZSTvsVucxP
-X-Google-Smtp-Source: AGHT+IHy8geHvQVdEZJYbb402+U4bD4Z1Mesx4KgjWzi1r4SNNgcwDUHQRL/pHelc2R7Ugk+0s5ETw==
-X-Received: by 2002:a05:6402:4313:b0:645:d3fe:8c57 with SMTP id 4fb4d7f45d1cf-645d3fe8d77mr16473812a12.18.1764314273417;
-        Thu, 27 Nov 2025 23:17:53 -0800 (PST)
+        bh=c1lnMlPJCV6DA11oj/bOj969pPM/KGvJxcxKxlFLMzs=;
+        b=E/BBXvv7839MxmKT322id7lmMJ9Z3kA+DCWOCl1w5L4GXd7fxgvu/3IEqhQ3mLzTbM
+         wSEXH+pTlBPFGZybAI8KMf8HxRaTU227UVrMEfMYzXwpUKLtBlM0tXmPp2L8KjiIwMJs
+         TwBIxJ+vIJ8m/JkpU8OQn32nI9iCNYz1sAjD+VwOC4nOB/IxY5pKc4vJjBTGcdgCkSLl
+         RVW7BNUhNiuP9/c7qATKOEULdbRHrmKqYD0VhIAYbnRTe3DQXCHf+3/EN9OJKhgY7xKz
+         nDgKQXBGvHePb5WGXYZQvfQFU1BhsIUe+4mVTFQ/Vvmezwcam7O/OrJ2NNbdujfvuloC
+         H0qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUe0vZWE3r+DJWaa5CHmd0r8RqNuhF12jmpuE2s+FLj5c7SKPZDiHWWKX+HKiyIst/WAuD0xLa2keIRyNpzQnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzREb9QDBVuNDweRbU8XIwdVbNB/s2p0b47hzZ30zowU6kiBiCI
+	DmvnEh7u0epGUzRNM3dopZOe6svbVnsg4EocQAvk13sF6/Yvxtm3jE6JD/PEXSpCELs=
+X-Gm-Gg: ASbGncvqGPxUPFEnGok+FWtmLCurB29MoyHaHguVgTDbnZ4r8n2jDtshVunwHsDz3G3
+	ce96CInemdUfE+IO3RLT1d/hnnRNy7RflQZ4fzaavAUpyTQ5QIAhO15lYEvCJnr/lv8GhrY73Mx
+	TwUpV1Swq5WzKSvzgPNWFsQafKyJ9D6a61izB6ZUoBr0FUWFDoW6D7UPej28jIkrR03aQC1GgTy
+	wpqmWLw2AYHgt4p9Zde90g72T1VKADQvwwK+d4+t02j1VJTHjjW+BpSINbrQa3Xtgxg6Dz2Fxgw
+	00wq/p375xFX+fzqDsZABssZ/Ql9ae2fruQcYW4MPwxlRj0RKWvbzjyxj+qJoeJBpGG8TFMyK5+
+	m5zztbDqHkkJy7Exfw9wOBdJHaaagpWxsedcb7GW0qXySOhH2UlIKAPMfYJKrY6NnCbUtdLCNtU
+	DXIfIIhyDF7Fp1gMJJ
+X-Google-Smtp-Source: AGHT+IE/vF207ynThbqS/gDZLvJNkmiYWvWDCH+AiSXpAgbbcaT5jU5/c/AmtDqFX8SL4gsnjq1wgQ==
+X-Received: by 2002:a05:6000:1862:b0:42b:3ee9:4771 with SMTP id ffacd0b85a97d-42e0f22a21dmr14964083f8f.23.1764314281092;
+        Thu, 27 Nov 2025 23:18:01 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-64751050a63sm3611118a12.24.2025.11.27.23.17.52
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1cab9af3sm7899692f8f.41.2025.11.27.23.18.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Nov 2025 23:17:52 -0800 (PST)
-Date: Fri, 28 Nov 2025 10:17:49 +0300
+        Thu, 27 Nov 2025 23:18:00 -0800 (PST)
+Date: Fri, 28 Nov 2025 10:17:57 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Dave Penkler <dpenkler@gmail.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Michael Rubin <matchstick@neverthere.org>,
-	Paul =?iso-8859-1?Q?Retourn=E9?= <paul.retourne@orange.fr>,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] gpib: Fix error code in ibonline()
-Message-ID: <aSlMnaT1M104NJb2@stanley.mountain>
+Subject: [PATCH] gpib: Fix error code in ni_usb_write_registers()
+Message-ID: <aSlMpbE4IrQuBGFS@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,33 +76,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This accidentally returns 1 on error, but it should return negative
-error codes.
+If ni_usb_receive_bulk_msg() succeeds but without reading 16 bytes, then
+the error code needs to be set.  The current code returns success.
 
-Fixes: 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
+Fixes: 4e127de14fa7 ("staging: gpib: Add National Instruments USB GPIB driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpib/common/iblib.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpib/ni_usb/ni_usb_gpib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpib/common/iblib.c b/drivers/gpib/common/iblib.c
-index 7cbb6a467177..b672dd6aad25 100644
---- a/drivers/gpib/common/iblib.c
-+++ b/drivers/gpib/common/iblib.c
-@@ -227,11 +227,10 @@ int ibonline(struct gpib_board *board)
- #ifndef CONFIG_NIOS2
- 	board->autospoll_task = kthread_run(&autospoll_thread, board,
- 					    "gpib%d_autospoll_kthread", board->minor);
--	retval = IS_ERR(board->autospoll_task);
--	if (retval) {
-+	if (IS_ERR(board->autospoll_task)) {
- 		dev_err(board->gpib_dev, "failed to create autospoll thread\n");
- 		board->interface->detach(board);
+diff --git a/drivers/gpib/ni_usb/ni_usb_gpib.c b/drivers/gpib/ni_usb/ni_usb_gpib.c
+index 1f8412de9fa3..fdcaa6c00bfe 100644
+--- a/drivers/gpib/ni_usb/ni_usb_gpib.c
++++ b/drivers/gpib/ni_usb/ni_usb_gpib.c
+@@ -566,7 +566,7 @@ static int ni_usb_write_registers(struct ni_usb_priv *ni_priv,
+ 			retval, bytes_read);
+ 		ni_usb_dump_raw_block(in_data, bytes_read);
+ 		kfree(in_data);
 -		return retval;
-+		return PTR_ERR(board->autospoll_task);
++		return retval ?: -EINVAL;
  	}
- #endif
- 	board->online = 1;
+ 
+ 	mutex_unlock(&ni_priv->addressed_transfer_lock);
 -- 
 2.51.0
 
