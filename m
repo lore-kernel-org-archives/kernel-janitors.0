@@ -1,73 +1,77 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82A7333446
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 17:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3425253B59
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 17:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764351539; cv=none; b=U1lGQwbCQA25pxCyqi6VJgColVvLdkjiZyHpBlyzb33gS6SwI6NTf8lJRk4/ABpH25qZ6Anrb3HsgtxX8PEbAvhfFUe0zjvw08lZKH+puTJuRDnaqmX4ADKXj2IoCvhEASdzk4gb4f2P5C7ErvOxwMVBtjBV+ykNwjfWpO+WYCM=
+	t=1764351927; cv=none; b=n05DAlswY0TPj3pMm7ljeoC4R8DF6nwG72RCQcLx1ZSRLf91lYSDjiHMnxN4JhuECWc4WIYPvyJOUCRiM52NzuLKOE0AE0ux9SZ0TQ7SIXsOOfLgawPHwUy72NbFdt4a4eKtbfTxNBhiVkIUAuxLxavF84w/jdTasa7c46hh4Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764351539; c=relaxed/simple;
-	bh=QUnXh9qGetYUOjtOOcXn3XHKSE/rNqBL6HF7oEFfcz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pyMcEEgZ+XKgSjDkp2rHxdxrwPicHCvWxFLKeDgDT4AD2UTg+SKrBuyr0+ZVuR/h26je47WA/7Hf2rOcCxFe78tFkO0ATtGPS1B00ynmz5my0N+wN4vZ9o/reN545dne4dbHEkAQl/Ks6wtoJSJjjwNYH2Uah215MJnrNw2XJ5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFcoUDTj; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1764351927; c=relaxed/simple;
+	bh=cinn32iWphnWN8tkX8ucGWRbObOOYK553n/IUZDTZQ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hYD+j5NeKD77eNOjFYWi/b7YibkXGhE9lkyGIUZH3R5d+9Hcv0k/yG1Ud6atSzzyva8dXX9LoscGzHb5dQZqpRWpT6AXvavfVsefuDGhJUuIWDygHTpZdfKbsHqEPEEWnGj3611OlPZCWoNUg19gWqX/Bxtti7jjKuqxqdKgt24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JN36sN/0; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFcoUDTj"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47774d3536dso17392985e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 09:38:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JN36sN/0"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477770019e4so16827845e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Nov 2025 09:45:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764351536; x=1764956336; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764351924; x=1764956724; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjEu74j7ESkiTPga1dBh7HPK92+GF0ak6Eb0e4LqHbI=;
-        b=OFcoUDTjIavuLVQ3rwAh/RgglkZdsUkZEV5lWeMzidvVC6ESKxeN9IX1O/Lo6j2nLu
-         euUFL1uen2TxGDuMm2xS8GcFsBXo1Dh0BHoEzEIFvtAUwbXSCTchW87ynCm7JTaqBOr9
-         RFQq/qlEvZKwHAeSKccSPGQYzM8Cgg4aRNUy9Imuu9jzyjDyNiWGnNhtPJ5VjueTYPyI
-         oq15K4ZSznkyY+w972xnxGm3mytai1bRfL94lJv2F1Y6+3gyNX9NMh2+nYv8spYgrXlr
-         KHYAPE0sjps54HKpYoJ8CElSxxQ0MuUmNN7u+0h8VxJR3P/5Fx7tM85Xh+6LolFXhTRP
-         EJ3Q==
+        bh=lSM32csH2X23xXw6xgAstXFSe1ZcOlrmsYctqKwHp88=;
+        b=JN36sN/0Albrxkp0J67v9tgCcxOMaw2kpFRHYBYnxeGTFE9Jq2zXdIW11uL21T7DkQ
+         A2xe+GWHeCkx3NUPqfUcdlrC1ixAyE7ENOPGnzVBVRCdHSgS3OVba9wn4kuXeFxMyRCq
+         it4lX5BBYT0fd975Lo56Uu9L8fmLFWtHDqG4wRZaLY4rK6WAxyDOL8O4GJi44AahhvIr
+         wV9IwAX0XDMH9bETHnKHh+m73Nhcatr2p+H9oa+kWl2gpZ767bV0/JHCStaqhtCsy1nX
+         ahJ7H4B28RJtbsvMgIhd/3dqR4jB5OUhY6cvp3JiDT0PvvEeFPNmae9AaZsUy0zDJfz+
+         5g5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764351536; x=1764956336;
+        d=1e100.net; s=20230601; t=1764351924; x=1764956724;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xjEu74j7ESkiTPga1dBh7HPK92+GF0ak6Eb0e4LqHbI=;
-        b=kKYuZL4fl3Bu53q/krZ0tz+/Rp6nATetXjYUndXHvIgkLSYu47TbOJf7zzp3LGY4Io
-         HW1x73Qh5A646M3nDifyEqdv2oWTpHKMbiwxnCG2cETV7Hj7vs9TwDrfWq5iJ0RcpghM
-         1iX2+qf6L374bzaiq+pu5QcY8D9PAvEAX/ip8qJ8z7bV7sHexKx8Kw215I04bpiWzjqM
-         xUNkHxe4VHdVrajGqjUF2G9bvk2z2CgEYMsJd+HtBdnum+qWKUbNvmYfdg/brQUcJNrD
-         0G1h82NZ+Q6jp4tRj/QbuPD05r8CZ2T2gjpUAHUUM1aFZyF5ImK70eykzxfGnmf6E5FP
-         YRsw==
-X-Gm-Message-State: AOJu0YzRdajfPw80hIBFzfeqqGUopCc5GJNb/rvbBm5/7nLQJRH8AeWV
-	GEiTJlT5dmsBX06vSM1PsCJq5sxT0PPuRTUmm5S5g5dtr1Enj+zcRI0OB3c4sg==
-X-Gm-Gg: ASbGncvVJ+fLq4U/i5rkg4IzW0MNd6+4YP+g4Av9rEfcxlSQadNKSOdxlEB58wH+8nD
-	+Y6hn3hePAoLmVDAM90DxnyIstUMMl1e3LuIp7BdFKmtN9pYOCFxJgoKZE/57LJhzcI5ag7qh2x
-	fQgiyZ9Oqjb0QsdIDSp7bXiQzfinslWISBtW1x/FEEwVKgLi9cJdZZY9fgq4aw2ohgu0ElOW9Zn
-	wQ83uhoywHq+HR9bI1013Dk4i6nWqT5OhvFNcf7uyX6AqqHsyHWuI0yjOvHm1p0tvRUS+DF5oDZ
-	HG9RqIEOnwvl05zoJAQGH6iM38G4xrCag1fIg+rLRONCn4Hh8nqS+kXhF3JVfTQPSYW1/Q4+84c
-	/WEIsCfSH6YxEWnDi/WH+DcHVSgRngO5pl333i9X6aN+CuA6lVwmBd8Um+IJH8TFiPxKTj/cfC8
-	dGsd83hWM1gfNZBlSTpj5M
-X-Google-Smtp-Source: AGHT+IFfI8+LhNUchm6lNdP3OTNYYfpmwebmq+D8mt8pAS1EWBIP+ZRllpr/kZ9Vk7Z8yD9n85j8lg==
-X-Received: by 2002:a05:600d:17:b0:477:9cec:c83e with SMTP id 5b1f17b1804b1-477b9ea35b6mr255404735e9.1.1764351536093;
-        Fri, 28 Nov 2025 09:38:56 -0800 (PST)
+        bh=lSM32csH2X23xXw6xgAstXFSe1ZcOlrmsYctqKwHp88=;
+        b=AOV6rpwITXpy/SC2mOE8jDP1+1nmvACjQslzPBkjoiJs9D13A/3tmNfWt/6U9v74Vt
+         hmt5i4DDm3FXroYcX5Esz8T/7HM4/BPgfVWGHLd51rKcofhHTel2vM79wFsjnipYpEAc
+         NZsRJy+jsJI8d1emr2/dqXf+JpCsx6UBoOG8v9jkiJu+oW+e3tYrpCuEldkCMHVnG7C9
+         bEU76kQwWezZKsyyAq9wYzhuGZ558XkKJXscZPIVLIjqwVe8uyLRue8xlcu/YvIbTrfw
+         Omhft0IMFFkdqIoB76AyDFFdDxnrQU5Mjr4vd7XoNr+Ewpv5buLZAd2aZdePrmmazl2a
+         9U5Q==
+X-Gm-Message-State: AOJu0YxFO4ZCEgsjZ+GQfCkZymo9PH+K105AS6rXf0ByxXUvTk/W+GGp
+	CrwrGE0LAWLYdDo9tmMK6LnPMNvUt8CQiH4VwYXGxFhBtzA8Rvk+v187
+X-Gm-Gg: ASbGncuTxXJqKOJVFWbRpop+NyB5CTwneZxbYZZZHY1aosLQA84pB24Cfl56C8lR5BS
+	RYcT06yUjsnTMaLkT1wh5YwQcqYpHFrFJu/LUnuL6FmYU+xyzk7jXUjD2H3yZVuBjziV4YuxkQS
+	lXEuGDrCYyGqpgB0nYUWDAbhOD6dt38RaBEUDYeFK9/oVy+KgjXAYoVRld3Hr9eia66zosS8lTP
+	JGYlD3oOzLFxzAElkk0niASowFCu8u/q0w7F9/jnL3cFH/A1cDSIaAf2Bw+PCAgZgCxOj5T4Dyl
+	mDacqYIXHpv/CU1T3LrpGY1/Caljq2PznIcSnxKbNcFgkGlZra9zFv+OElsBETTIyE3M3Gn7K+p
+	W5jB6hJiGyKY8ux8nUcssdFeIGzU/UqAYBFo0UCe7HT4z8OGECExCZzsX8NugRkt87I54gQpi3b
+	EHGaBwr8Z6WAgUvb8DwRmw
+X-Google-Smtp-Source: AGHT+IGr8jf1cEOxcEb6EeKeJchwsXTCgWnn9x2mUsKIoWiq9E4Ha2G7avXXtjB+xtyEdcahgOM1nA==
+X-Received: by 2002:a05:600c:46d2:b0:477:54cd:2030 with SMTP id 5b1f17b1804b1-47904b1afcemr162142095e9.21.1764351924189;
+        Fri, 28 Nov 2025 09:45:24 -0800 (PST)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4791163e3dasm96851735e9.11.2025.11.28.09.38.55
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1c5c3c8csm13452898f8f.2.2025.11.28.09.45.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Nov 2025 09:38:55 -0800 (PST)
+        Fri, 28 Nov 2025 09:45:23 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Donald Hunter <donald.hunter@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-wireless@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ynl: samples: Fix spelling mistake "failedq" -> "failed"
-Date: Fri, 28 Nov 2025 17:38:02 +0000
-Message-ID: <20251128173802.318520-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] wifi: mt76: mt7996: Fix spelling mistake "retriving" -> "retrieving"
+Date: Fri, 28 Nov 2025 17:44:30 +0000
+Message-ID: <20251128174430.318838-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -78,26 +82,54 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in an error message. Fix it.
+There are a handful of spelling mistakes in various warning messages.
+Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/net/ynl/samples/tc-filter-add.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt76/mt7996/npu.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/net/ynl/samples/tc-filter-add.c b/tools/net/ynl/samples/tc-filter-add.c
-index 1f9cd3f62df6..97871e9e9edc 100644
---- a/tools/net/ynl/samples/tc-filter-add.c
-+++ b/tools/net/ynl/samples/tc-filter-add.c
-@@ -207,7 +207,7 @@ static int tc_filter_del(struct ynl_sock *ys, int ifi)
- 
- 	req = tc_deltfilter_req_alloc();
- 	if (!req) {
--		fprintf(stderr, "tc_deltfilter_req_alloc failedq\n");
-+		fprintf(stderr, "tc_deltfilter_req_alloc failed\n");
- 		return -1;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/npu.c b/drivers/net/wireless/mediatek/mt76/mt7996/npu.c
+index 29bb735da4cb..1422533e59c7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/npu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/npu.c
+@@ -120,7 +120,7 @@ static int mt7996_npu_rxd_init(struct mt7996_dev *dev, struct airoha_npu *npu)
+ 			       &val, GFP_KERNEL);
+ 	if (err) {
+ 		dev_warn(dev->mt76.dev,
+-			 "failed retriving NPU wlan rx ring0 addr\n");
++			 "failed retrieving NPU wlan rx ring0 addr\n");
+ 		return err;
  	}
- 	memset(req, 0, sizeof(*req));
+ 	writel(val, &dev->mt76.q_rx[MT_RXQ_RRO_BAND0].regs->desc_base);
+@@ -129,7 +129,7 @@ static int mt7996_npu_rxd_init(struct mt7996_dev *dev, struct airoha_npu *npu)
+ 			       &val, GFP_KERNEL);
+ 	if (err) {
+ 		dev_warn(dev->mt76.dev,
+-			 "failed retriving NPU wlan rx ring1 addr\n");
++			 "failed retrieving NPU wlan rx ring1 addr\n");
+ 		return err;
+ 	}
+ 	writel(val, &dev->mt76.q_rx[MT_RXQ_RRO_BAND1].regs->desc_base);
+@@ -138,7 +138,7 @@ static int mt7996_npu_rxd_init(struct mt7996_dev *dev, struct airoha_npu *npu)
+ 			       &val, GFP_KERNEL);
+ 	if (err) {
+ 		dev_warn(dev->mt76.dev,
+-			 "failed retriving NPU wlan rxdmad_c ring addr\n");
++			 "failed retrieving NPU wlan rxdmad_c ring addr\n");
+ 		return err;
+ 	}
+ 	writel(val, &dev->mt76.q_rx[MT_RXQ_RRO_RXDMAD_C].regs->desc_base);
+@@ -159,7 +159,7 @@ static int mt7996_npu_txd_init(struct mt7996_dev *dev, struct airoha_npu *npu)
+ 				       &val, GFP_KERNEL);
+ 		if (err) {
+ 			dev_warn(dev->mt76.dev,
+-				 "failed retriving NPU wlan tx ring addr\n");
++				 "failed retrieving NPU wlan tx ring addr\n");
+ 			return err;
+ 		}
+ 		writel(val, &dev->mt76.phys[i]->q_tx[0]->regs->desc_base);
 -- 
 2.51.0
 
