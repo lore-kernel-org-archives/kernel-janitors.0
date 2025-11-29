@@ -1,107 +1,125 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB2430FC29
-	for <kernel-janitors@vger.kernel.org>; Sat, 29 Nov 2025 14:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BCE36B;
+	Sat, 29 Nov 2025 15:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764427891; cv=none; b=Gay9qnU4FF2grk4+yIstuWnRlMTtgw7XSiKunwBjywaqmsAqRjoCarTkQxtREpe0ag+ZjJJ48Hudk2dCDF6st2SlAu7Ocg4dA7TpzyXEYHSOy4gSbvIMWmLvSJoxHly6A/81HceHqly04/gNOxtVe2rZT0xwNjIfIHDIZXObmjE=
+	t=1764428558; cv=none; b=iXP/QhH5jaBqoVbe+Hzri9MuVsrk3XgB/SeVmqW44JgtF2BX8vHXqNNXL9Byjdqjp3u66slFdlJNfCpa9wtZRTQ8lyKMne10eRVwe9nDzS+RF6AGOeC2t23f8MWNXsb6cVzYS6UtNB+fsheA3o/Bsf0RGqaBoLDQKpLe98caAM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764427891; c=relaxed/simple;
-	bh=yXuzbB5K11aoAVf/PdUJHMtRCcNu/HBG6yFSLwI7cz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uW7GdbVPdRF6xOsg9UVL8JI8xy91UkV7e6e/mAYbh+Bcl2paVebbveiztKrOVUKQYJWuIUO+Ykl3N9OL2y5BHbj5ZYoS8byEbX1bC23jLUbX1v2UJdpmaYB5q3DL2d2/INmqtcaKtb+NaarV92OQnAbjf25tYLi+kTSYIfJPMZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yI6hHpiD; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764428558; c=relaxed/simple;
+	bh=qiA+6Cw2Eb6VF/wWR+gVw+poPZhOqevBOfSTS/Lh0Ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R4QVlcmE2FoJHoMlcoyTtzifh6xqLknwqoNuJXQ76t9IN8v6eeIlV5HfCyLgMWt4u1tz8K6Xqsefas6RKl42/YkVxxflX4joqx9wQB6+BiX+U16TZHurW8o3n2TlH7NMbiYZNtIRUbbDtFs3AM6WJPKDKMywKljryH8rA6py9v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDPAnkkj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yI6hHpiD"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47796a837c7so17705745e9.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Nov 2025 06:51:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764427888; x=1765032688; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xQXSoEpDQmDeEVkRT8hWvYNMqUAKPz+YQ9lwivzZSic=;
-        b=yI6hHpiDZYiY8sH9G6K4TD3LgzDVhEiRTQkDIlmGtfKljEOnrlmLGUcpyAhMttZqh5
-         KMiL/V/kB/39iDelyQCgwBKp5USNS2/Y4dwKI0de6A/7ta6U7y8Q9WwVgdwHjEEN05bz
-         +9jyyrodsrEvoyRrA+kR0q4edLVnNWti6KoHi/wu2K1o8N+44ZYCFZcJS8Z5kdG/fjxn
-         6SxsEZy6SqUlA35ml+CX6seO6V6rLsOXspnH4WNTj9m/iSpwoh5wUSv4MDC3/9vLF8SF
-         g80GLyA+3zW5UUAARk/eLT9y+32QM4uUgyxOUQIabIG1E15A/rZfSLXWKOjyD/63NISQ
-         ydWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764427888; x=1765032688;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xQXSoEpDQmDeEVkRT8hWvYNMqUAKPz+YQ9lwivzZSic=;
-        b=LrSi/1lzUXoPowqS38NCE4aA6Zb3m9vzB9z9z5/LgTw+wTGrz6t96hxncfRdzAVOAE
-         9GfKy0asLVdxiDuM/WTKPRhtGFTZNxby7w07JKqcKtfdQ5K/eg1waBSeCT7up9XFqtHR
-         8OEnAgCb5+Xn4dxVngCOCYmermjVzVn9GA7Ss2aoRNpds4kXt+9n3Swy00WwKHxNbmye
-         KaV3lFUcsKjECrS9dWOMPJd7Mvc5+rau3U3EkIe7v8KBWhXpzF6Mddeo+H4xaV7peX4L
-         hx9Wh5mtzE11oOmlIM6Ejs8De1jjg3+aP+O5ymOLVb2NkxBXmM9vS+hjzC7/XGJzS69M
-         UmOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWORFux69+WEn45zwIcH6alIMgg1SF11gyG9+TtAo0ZhSQCB0YSLm1HQ2UAX98nBU+WFcT4SzN41eY76n5iMf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBPGI8yhGq92LMqR+LkeqRBsrk+/oF4IMsekz1KxJZmw/YxwF3
-	CY3fQT/oI/VKwg/qBPfiqNwXWC1JqsJ6wfCb0D3Qz8G8orA1JQhmZQ0Lc1VEXFOyAMc=
-X-Gm-Gg: ASbGnctNhMWV0lbs6KDQR6Ds9apJja4QaqUyCj4EzKOvFWQ9jhJB6BxGhcGpF/bMjws
-	1k5mbMef6g3OHhC0NXX3u1SsR1NiU56mTmLDbxnED+oCzJ9HfAGZcBdqwINDY8ysRVsFlJBnrAj
-	HPfYXT+81cU/NY3tTFeTBxEHoNS2jpRV6zdD+7Lwr+rn4O5sGlsYJ1Ah6nMUaWJppZV1+2JAwUo
-	niTPdnrNq+r1PZJE1jf0xtDUfPz4aZ0+EYZd66La+Sx7h/jqregvTeEI2mQNxSZsiH385yQSZRh
-	Glhy9xK4KM6euFf4riFBqBYO7v5dptFBIFXmK33zeGSmK12KJtMOnScvQa1LjiS6G4LKc2I2+QG
-	FkhbXMwhl3YLswFw5zIgY9HC78exSjSfXcf3Yo1QOEobcAELg/IU8/OF6MtoonNifGZHiQTVlZ+
-	dxb9cpSqEJ1kbIqknL
-X-Google-Smtp-Source: AGHT+IFCRIwwQjXEGnr5KMD8PEnIqaChZkTl9rQxhpXbO/SHWmtpUVHAMBf5uCzKP5Ao1WMgSwS/nA==
-X-Received: by 2002:a05:600c:1c13:b0:471:786:94d3 with SMTP id 5b1f17b1804b1-477c01b201fmr310642095e9.22.1764427887618;
-        Sat, 29 Nov 2025 06:51:27 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1ca4078csm15519763f8f.29.2025.11.29.06.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Nov 2025 06:51:27 -0800 (PST)
-Date: Sat, 29 Nov 2025 17:51:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Haowei Zheng <zhenghaowei@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] serial: 8250: longson: Fix NULL vs IS_ERR() bug in probe
-Message-ID: <aSsIa3KdAlXh5uQC@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDPAnkkj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7241EC4CEF7;
+	Sat, 29 Nov 2025 15:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764428558;
+	bh=qiA+6Cw2Eb6VF/wWR+gVw+poPZhOqevBOfSTS/Lh0Ok=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZDPAnkkjm9vErYhrfjfY55Za4c/z59Q2eN3/tPGC3aDiBBsjxSDlEa5E3vgKYM6A6
+	 tdnpZT/TWTMOQDb1PfUyeB+3baMUr9qPhzA9ZYl8IYjCE76/ESwJI+d5A56cFKjdpj
+	 cV8Ed9j/i84y22kq2WsOtCj6FCxY6Uws5S3DT1At3B4KwBzvwe9qQXDp/7xtgyuuyv
+	 j+Gly7eIN81hWXlzOno23Oh6EeVm+4aYE5CzDeHkl1RPzZdh76dKsqxE6BPz8RIxWd
+	 Lg7mNU35QFy0Ur4Y/dLk7z6TKo7kgDGZ4WY2iAPOZhyxgWIcH7J70XFDCfISi6KpnD
+	 FbQTDUUoPldxA==
+Message-ID: <5a4d8f52-f03d-4498-a488-813b0d0b2d24@kernel.org>
+Date: Sat, 29 Nov 2025 16:02:34 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] mux: mmio: Fix IS_ERR() vs NULL check in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Rosin <peda@axentia.se>, Andrew Davis <afd@ti.com>,
+ Thorsten Blum <thorsten.blum@linux.dev>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Thomas Richard <thomas.richard@bootlin.com>
+References: <aSsIP7oKrhKfCUv3@stanley.mountain>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aSsIP7oKrhKfCUv3@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The devm_platform_get_and_ioremap_resource() function never returns
-NULL, it returns error pointers.  Fix the error checking to match.
+On 29/11/2025 15:50, Dan Carpenter wrote:
+> The devm_kmalloc() function never returns error pointers, it returns
+> NULL on error.  Fix the error checking.
+> 
+> Fixes: 4863cb2b0f50 ("mux: mmio: Add suspend and resume support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/mux/mmio.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
+> index e4ddb1e61923..3409af1ffb80 100644
+> --- a/drivers/mux/mmio.c
+> +++ b/drivers/mux/mmio.c
+> @@ -101,13 +101,13 @@ static int mux_mmio_probe(struct platform_device *pdev)
+>  	mux_mmio = mux_chip_priv(mux_chip);
+>  
+>  	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
+> -	if (IS_ERR(mux_mmio->fields))
+> -		return PTR_ERR(mux_mmio->fields);
+> +	if (!mux_mmio->fields)
+> +		return -ENOMEM;
+>  
 
-Fixes: 25e95d763176 ("serial: 8250: Add Loongson uart driver support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/tty/serial/8250/8250_loongson.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I wonder from where Thomas copied this code...
 
-diff --git a/drivers/tty/serial/8250/8250_loongson.c b/drivers/tty/serial/8250/8250_loongson.c
-index 53153a116c01..47df3c4c9d21 100644
---- a/drivers/tty/serial/8250/8250_loongson.c
-+++ b/drivers/tty/serial/8250/8250_loongson.c
-@@ -128,8 +128,8 @@ static int loongson_uart_probe(struct platform_device *pdev)
- 	port->private_data = priv;
- 
- 	port->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &priv->res);
--	if (!port->membase)
--		return -ENOMEM;
-+	if (IS_ERR(port->membase))
-+		return PTR_ERR(port->membase);
- 
- 	port->mapbase = priv->res->start;
- 	port->mapsize = resource_size(priv->res);
--- 
-2.51.0
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
+@Greg, that's a fix for something in your tree.
+
+Best regards,
+Krzysztof
