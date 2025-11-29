@@ -1,72 +1,73 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6139C262FC1
-	for <kernel-janitors@vger.kernel.org>; Sat, 29 Nov 2025 14:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB2430FC29
+	for <kernel-janitors@vger.kernel.org>; Sat, 29 Nov 2025 14:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764427847; cv=none; b=OV44T7wDA9qWq/mJ2kyvOAL3+GoedqPHXzWki5lNFXz/gq7CUwWLA2JJ7xNWjtpL4JTr/AE6XpI0rcRFqjzOO0AlWEpXhRInVPymY0E/0kdaaQ/qPlvMNXrCk7DjyKhGXp0fkzn786i+OF8WaTfdEb/snDrU1eLr51Sx0H2Wj+I=
+	t=1764427891; cv=none; b=Gay9qnU4FF2grk4+yIstuWnRlMTtgw7XSiKunwBjywaqmsAqRjoCarTkQxtREpe0ag+ZjJJ48Hudk2dCDF6st2SlAu7Ocg4dA7TpzyXEYHSOy4gSbvIMWmLvSJoxHly6A/81HceHqly04/gNOxtVe2rZT0xwNjIfIHDIZXObmjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764427847; c=relaxed/simple;
-	bh=J5zPGbJTnILt+tpvDM7cBZAP5RPjho+gmkFk+nltQzM=;
+	s=arc-20240116; t=1764427891; c=relaxed/simple;
+	bh=yXuzbB5K11aoAVf/PdUJHMtRCcNu/HBG6yFSLwI7cz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DHkYGRR3IPCR4Y1TTv2fohVKMniM5cBIik7Sixp0xumBir9NGIa4aZ19rHFoiBD2+K3L3t+gUX1PvAxyoREfMahl40XuaYd+QpKiJ7Vdub9ovteu8UqJ+JG8TAmnZyjEC7qeCnZPPwtRBRhYtJ92eqK9iIDXTIHJ0sg1ZIlWfKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u/hVpss+; arc=none smtp.client-ip=209.85.221.48
+	 Content-Disposition; b=uW7GdbVPdRF6xOsg9UVL8JI8xy91UkV7e6e/mAYbh+Bcl2paVebbveiztKrOVUKQYJWuIUO+Ykl3N9OL2y5BHbj5ZYoS8byEbX1bC23jLUbX1v2UJdpmaYB5q3DL2d2/INmqtcaKtb+NaarV92OQnAbjf25tYLi+kTSYIfJPMZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yI6hHpiD; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u/hVpss+"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42b566859ecso2592725f8f.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Nov 2025 06:50:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yI6hHpiD"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47796a837c7so17705745e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 29 Nov 2025 06:51:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764427844; x=1765032644; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764427888; x=1765032688; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=m+0Wdrus7bMlJRqb6V1pME87+u16xr1L8R/gLBLUKRI=;
-        b=u/hVpss+JAswZ1ZM/KEAnUOOqJ+mH3ZPwrH1u1VqEXwRLox+YH7hCApQSzXrzaQVO1
-         Dx1OKG0r2OazK0hn66splmpcUZNnoydY9t48uH5Ry7RJuor161684g2OocWrb4/KTj6y
-         3yJRia1HNe2nqYhKinSPMtRVLJ3LCUCb+g2WyVafV1W2ucblOtS5BzmS5NXRyCmiP+zC
-         L6ePNkNcPXBdg3s2x7CWIrKxvDRmWWjDBGuYGDsCld1Ny/ve24cbT0NiMtyEhzIXtEuM
-         J68dPyLAzXM5KM/gU6mqPxCVpVUn+HGLHH4zIN1sIIsNsx4R3sMi+2uciVkOzal+MyPR
-         0yTA==
+        bh=xQXSoEpDQmDeEVkRT8hWvYNMqUAKPz+YQ9lwivzZSic=;
+        b=yI6hHpiDZYiY8sH9G6K4TD3LgzDVhEiRTQkDIlmGtfKljEOnrlmLGUcpyAhMttZqh5
+         KMiL/V/kB/39iDelyQCgwBKp5USNS2/Y4dwKI0de6A/7ta6U7y8Q9WwVgdwHjEEN05bz
+         +9jyyrodsrEvoyRrA+kR0q4edLVnNWti6KoHi/wu2K1o8N+44ZYCFZcJS8Z5kdG/fjxn
+         6SxsEZy6SqUlA35ml+CX6seO6V6rLsOXspnH4WNTj9m/iSpwoh5wUSv4MDC3/9vLF8SF
+         g80GLyA+3zW5UUAARk/eLT9y+32QM4uUgyxOUQIabIG1E15A/rZfSLXWKOjyD/63NISQ
+         ydWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764427844; x=1765032644;
+        d=1e100.net; s=20230601; t=1764427888; x=1765032688;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m+0Wdrus7bMlJRqb6V1pME87+u16xr1L8R/gLBLUKRI=;
-        b=lYB7CyHVtAmN58/5foOk4qEL1m+w1fhkKbT+3+qdlN6gQ6ZK0gAkH1HPvuPJ8Qh0Co
-         /ik2QOKz0SpHiw1PlgWkS+nzyX+eQO1vMTqWYEkA3z1ffjv3WnVHPzq/HW4hdprVIKIQ
-         rnx1G3HvX3SlLt2tdYuEZpM8qEckEpUQsGY6cXbG7DJQunbGq9bvycRQLTlPa3IU4RwE
-         lPvmhXeVOdEDsWmueE4Y7DyDTt38FCPihxWYXGsQ0C9KPqttiTChMdOL34unz1u+QTHJ
-         Yz4hWMqnYH2LA2hLE1btuesnN48SgTU0qt9yRAwK36ptNS0x8z2PqvQGqJ4yv/IEKWEu
-         YxKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUElfVvBjLEjsGU8MhGlV3xen8JayJ+Wo3u2GSmA1iuM8+WQqpD+g0xjICQOx/aRJU0xF6NQzRiIvaYekI4cjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLAMGApOnDMHXXbQhyr82uENw49/xcpOQomG5DPvbLESxHvxPA
-	3rIyG+GtA5W6gR0i2LRHQAEsSHvabdKoCNco8s0pnjx/+zLiDzJV7X30eahOvXPhWrA=
-X-Gm-Gg: ASbGncuPaoXUs3NEpKdXL8y/KpeUPIs6rICgK5IcNGZ9vmuFXU+82sZS5M3tdxBzuMg
-	gyY2YOlqpoQ9tph7d+Ovynt5bRgOYRkgY55XnCGMKcRSY9K4L7Ow2F07KdqI7fhIl6X0fE34q+z
-	Gv16gS4orjMrRXKRChKuGCedV9tiQwc6SNyIUTxJZY4SGP/ueaHw1b0U/jvixUxyJj39yq5ogUV
-	CVckJH4kD2HSISYDICxJyXHSVxbZMmltniWpW/XYQ946GjdS/HlymxOLjx3ql2gOyTm32l6lPCN
-	9wTxqBU2SST9ROthKGmU0/fvqHZmgGZ2laNJ8JBrDhraxojUIBSkC4ejnFkNXjy42TSmm9UMCfV
-	L08ul7J9wvGBauUewm7GnAMNfj6Lqed3FZABD6hNW+ouHw28R1oWrFEF190i8nKC+cITcS7Jfk9
-	vXSiLGmTtgXcyBNC/Y
-X-Google-Smtp-Source: AGHT+IH4TkVKjgwG9GJixr3YdNDKWfYNOqAZur0LDZWb7kXIBUGv/MfkS8v7aEbUV7sbsGFPBt3PuA==
-X-Received: by 2002:a05:6000:3106:b0:429:cda2:9ffe with SMTP id ffacd0b85a97d-42e0f1fb97amr21173345f8f.7.1764427843628;
-        Sat, 29 Nov 2025 06:50:43 -0800 (PST)
+        bh=xQXSoEpDQmDeEVkRT8hWvYNMqUAKPz+YQ9lwivzZSic=;
+        b=LrSi/1lzUXoPowqS38NCE4aA6Zb3m9vzB9z9z5/LgTw+wTGrz6t96hxncfRdzAVOAE
+         9GfKy0asLVdxiDuM/WTKPRhtGFTZNxby7w07JKqcKtfdQ5K/eg1waBSeCT7up9XFqtHR
+         8OEnAgCb5+Xn4dxVngCOCYmermjVzVn9GA7Ss2aoRNpds4kXt+9n3Swy00WwKHxNbmye
+         KaV3lFUcsKjECrS9dWOMPJd7Mvc5+rau3U3EkIe7v8KBWhXpzF6Mddeo+H4xaV7peX4L
+         hx9Wh5mtzE11oOmlIM6Ejs8De1jjg3+aP+O5ymOLVb2NkxBXmM9vS+hjzC7/XGJzS69M
+         UmOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWORFux69+WEn45zwIcH6alIMgg1SF11gyG9+TtAo0ZhSQCB0YSLm1HQ2UAX98nBU+WFcT4SzN41eY76n5iMf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBPGI8yhGq92LMqR+LkeqRBsrk+/oF4IMsekz1KxJZmw/YxwF3
+	CY3fQT/oI/VKwg/qBPfiqNwXWC1JqsJ6wfCb0D3Qz8G8orA1JQhmZQ0Lc1VEXFOyAMc=
+X-Gm-Gg: ASbGnctNhMWV0lbs6KDQR6Ds9apJja4QaqUyCj4EzKOvFWQ9jhJB6BxGhcGpF/bMjws
+	1k5mbMef6g3OHhC0NXX3u1SsR1NiU56mTmLDbxnED+oCzJ9HfAGZcBdqwINDY8ysRVsFlJBnrAj
+	HPfYXT+81cU/NY3tTFeTBxEHoNS2jpRV6zdD+7Lwr+rn4O5sGlsYJ1Ah6nMUaWJppZV1+2JAwUo
+	niTPdnrNq+r1PZJE1jf0xtDUfPz4aZ0+EYZd66La+Sx7h/jqregvTeEI2mQNxSZsiH385yQSZRh
+	Glhy9xK4KM6euFf4riFBqBYO7v5dptFBIFXmK33zeGSmK12KJtMOnScvQa1LjiS6G4LKc2I2+QG
+	FkhbXMwhl3YLswFw5zIgY9HC78exSjSfXcf3Yo1QOEobcAELg/IU8/OF6MtoonNifGZHiQTVlZ+
+	dxb9cpSqEJ1kbIqknL
+X-Google-Smtp-Source: AGHT+IFCRIwwQjXEGnr5KMD8PEnIqaChZkTl9rQxhpXbO/SHWmtpUVHAMBf5uCzKP5Ao1WMgSwS/nA==
+X-Received: by 2002:a05:600c:1c13:b0:471:786:94d3 with SMTP id 5b1f17b1804b1-477c01b201fmr310642095e9.22.1764427887618;
+        Sat, 29 Nov 2025 06:51:27 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1ca9aea3sm15375037f8f.35.2025.11.29.06.50.42
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1ca4078csm15519763f8f.29.2025.11.29.06.51.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Nov 2025 06:50:42 -0800 (PST)
-Date: Sat, 29 Nov 2025 17:50:39 +0300
+        Sat, 29 Nov 2025 06:51:27 -0800 (PST)
+Date: Sat, 29 Nov 2025 17:51:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Peter Rosin <peda@axentia.se>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrew Davis <afd@ti.com>, Thorsten Blum <thorsten.blum@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mux: mmio: Fix IS_ERR() vs NULL check in probe()
-Message-ID: <aSsIP7oKrhKfCUv3@stanley.mountain>
+To: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Haowei Zheng <zhenghaowei@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] serial: 8250: longson: Fix NULL vs IS_ERR() bug in probe
+Message-ID: <aSsIa3KdAlXh5uQC@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,37 +78,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_kmalloc() function never returns error pointers, it returns
-NULL on error.  Fix the error checking.
+The devm_platform_get_and_ioremap_resource() function never returns
+NULL, it returns error pointers.  Fix the error checking to match.
 
-Fixes: 4863cb2b0f50 ("mux: mmio: Add suspend and resume support")
+Fixes: 25e95d763176 ("serial: 8250: Add Loongson uart driver support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mux/mmio.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_loongson.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-index e4ddb1e61923..3409af1ffb80 100644
---- a/drivers/mux/mmio.c
-+++ b/drivers/mux/mmio.c
-@@ -101,13 +101,13 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 	mux_mmio = mux_chip_priv(mux_chip);
+diff --git a/drivers/tty/serial/8250/8250_loongson.c b/drivers/tty/serial/8250/8250_loongson.c
+index 53153a116c01..47df3c4c9d21 100644
+--- a/drivers/tty/serial/8250/8250_loongson.c
++++ b/drivers/tty/serial/8250/8250_loongson.c
+@@ -128,8 +128,8 @@ static int loongson_uart_probe(struct platform_device *pdev)
+ 	port->private_data = priv;
  
- 	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
--	if (IS_ERR(mux_mmio->fields))
--		return PTR_ERR(mux_mmio->fields);
-+	if (!mux_mmio->fields)
-+		return -ENOMEM;
+ 	port->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &priv->res);
+-	if (!port->membase)
+-		return -ENOMEM;
++	if (IS_ERR(port->membase))
++		return PTR_ERR(port->membase);
  
- 	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
- 						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
--	if (IS_ERR(mux_mmio->hardware_states))
--		return PTR_ERR(mux_mmio->hardware_states);
-+	if (!mux_mmio->hardware_states)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < num_fields; i++) {
- 		struct mux_control *mux = &mux_chip->mux[i];
+ 	port->mapbase = priv->res->start;
+ 	port->mapsize = resource_size(priv->res);
 -- 
 2.51.0
 
