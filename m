@@ -1,134 +1,75 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB3431353D
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Dec 2025 14:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1802690EC;
+	Mon,  1 Dec 2025 20:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764598319; cv=none; b=OHwazf+4OCTAPAcFzsUuIbf24c2JdlKHnYIVNSkINiAL+rsYOkDHlLnr02KFEDJrCoEL1HvHt+wCUSj1oezkZgiFzZRlMEuAqK5LL8Ls3KtHf8+hacV1PpZXrCw6zAflpZSwaaWIUkWtOhcyMMrzSkSOxAPtmE42jVYe/M7HUJ0=
+	t=1764619394; cv=none; b=clcuum6qWd71nl66dOFFPJVs7bpNc3Ex+NxA/SE/hhKY3VtzxVwu+OpcGMm6X/0Szm2JkebDaij7JjGfTUcglomIHZIwLIfIZ2sWdNtzfgY2CGfdE4ARwxk5ZTQaMK+aQHyOdDYE2SdJF4ATl0x1nA6ufSEbB3gCxnx3vb5+CHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764598319; c=relaxed/simple;
-	bh=BVJmf3Xuu3fw/WPzSDZ8T/wbnfKxhSBCsKNf/k4giqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTawcPgDyelIiiBeoS4e49k0hcVmG7bxXswI2Y0F0tketcNVz1Hngil25JRrgwBrFoaq1mFMfPaartuvupfyAM+Tq5wJX2dkaGrWe3ipl3QZ09KPyMh3qsLplU0jc0jmGEOd752JwyUov7t51Yd/nf3ahusNCjle8QuO1Fi4/aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbwrnzZE; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764619394; c=relaxed/simple;
+	bh=zHnQ3chVyuroLaH4riIs+G3BrbfWr/05Sqp3NMVu/fk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=eKZr1E4hGpzAGRR1Cep6CU31hAXZdQM+0F/37N+i3mvZ2oTclCciHO70sE5pAjkRD32RnDD/9MI+EM02t7TlN58BZR8qQplq3Zs+X+IexUQ/vNPq/cUq3ojeC3QGfoFogosARy5XQQpSW+ylKoTgEcCGlt1x/vSqNozIbcsz19I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSdmWilS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbwrnzZE"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42e2e239ec0so1130304f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 01 Dec 2025 06:11:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764598316; x=1765203116; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lHAOpqQKKIfRCCbc3jkSqq0l7D4yj6gzTY5ZBvFB9Vk=;
-        b=VbwrnzZEX16pcL/NqTF+tLJeNEjJiRFM+X06CXHk8a8FcQmqxEMNAyo6jMLHhpR7Ei
-         glmvwlTrq3vJL8rljo4yNpWWcyL7JXqwzN+fthXFaBDpWsVaTA6khpf68ft/U4gAmEBn
-         JhQ87ozczr2+rZX+irQoBjBgUeRoBJKWRUuDIow4CNLe6IABqeM/+8qnLK9UVwylsBlG
-         quqFS31S3JdMHcvU8Sj24klFfIogWbe3KWf484gRXItA8q+P0a3Tknx0mpr2/qBBIRvh
-         fjco5KXvBBVBL4ePhf4Kuj4RfrGDZIj7DMBc/G8ZUa/mGpxsd1YbsH23nRHWcVhHq9fE
-         FBoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764598316; x=1765203116;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHAOpqQKKIfRCCbc3jkSqq0l7D4yj6gzTY5ZBvFB9Vk=;
-        b=t7UVHc5zNvH0Zzb078O8XA7npv9IY7MzgckGFmUYN5/nhMu8lWDqRSlHw61PEgiPnB
-         7VPpYAeudJ26FhU4O8Tf4WWr/54JcpfdD32SCoFiZBc5tFAcnZRUEpYnuRJxDBhS7xtP
-         t+rCAsYw90AP3XhPQ9x3deH4uF4Z5zoZL9raFaBbUuQVOwlAASR86VzQRYdKxBZ3zIrE
-         vtL2LaMfC1mjaQn7mZyYNKDDtBzTIz156MunI33M+wK+DpHJVRfu3si6qd6SdYi/1D/L
-         UI40zyOVbd8Lq+OCgBsMZdWEldF+U22+x3fBBazeojphh+sm8pi/b+n0dAvCkyIwEti5
-         UB9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWWx8Qt2QbdZiQsvJIbwdQCaDtBLgp45VzpPRWP5PrwBCMa9aOHlOFXwnuSUeubr2ONCBSogdfQlPFIhhHb/Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3ama2EZ6/9no548K/TTrOM7eDJnk4S2HdSlMZJqaUhT5yimYU
-	b25apWgE2hxwtqWUt+aZce4aQBx5Yf7bbSbGrt0LvWnLCK9c/eJykWzZ
-X-Gm-Gg: ASbGncvv/o/3myVKZZwiYzPF989mkp2HsNsF6SPSm9N49yxWuLMWMI5m8BEv/ej4M85
-	uEGjXTLlvPpxvSF82u+s+nnPg6CjRHmS+//EzD5+oUiBD28cZqgwLHMSfJLizgPOq7D75Eq+JzM
-	EMYGmLuM0ZLKKuuJFE6wIJ7/P1yZellzeQw1pcbqBw/wsjJDfks4s2G3tZGpR69gs5kMshYVoTQ
-	V5OBTJuGA6HRTC+kG7uREWHBBErvU9AWTP+G0gZsPPXhX8wrCJf0WGsviPN3oI0Zq/xXXF9LPwn
-	Cx50nBi+XDNcolFGcqAoXGQMNa+frswebJC6VHphwPiBu+nt8gGqyiyqtXgQwQTV6MwYiVG00IG
-	hOlPdaUhGiFLPpAIOSvDZ4YEAQHFgyeTbj4Z9/M/gbUyC6vNOGKpjJVviXuWR76HKVoHnvowNAJ
-	aOEKnppiRPktaMiCvaXgOobJMYGKHyU/6LMvseBj2XdIrjsHVoeEDpPcJtVvH6Jc+De1ufQBoB2
-	cMcCGX0YdZI
-X-Google-Smtp-Source: AGHT+IHEWXHNm4jgi3iEqgIv+q3HmZbNeQU4C1w3dyTpiZ7UGgjCSsuVYY08grV8BGGXUiZK0VrsYg==
-X-Received: by 2002:a05:6000:2385:b0:42b:2e65:6576 with SMTP id ffacd0b85a97d-42cc1d51b47mr36718531f8f.50.1764598315408;
-        Mon, 01 Dec 2025 06:11:55 -0800 (PST)
-Received: from orome (p200300e41f07e000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f07:e000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42e1ca1a310sm27546394f8f.26.2025.12.01.06.11.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 06:11:54 -0800 (PST)
-Date: Mon, 1 Dec 2025 15:11:52 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Shubhi Garg <shgarg@nvidia.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	Jon Hunter <jonathanh@nvidia.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: drop unneeded file entry in NVIDIA VRS RTC
- DRIVER
-Message-ID: <svixpfd43ntolkh7qflmlry5u6xsbffzyqcvvjx5ddnnhxoflc@wucgay3en4md>
-References: <20251110073544.443816-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSdmWilS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4253AC116C6;
+	Mon,  1 Dec 2025 20:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764619393;
+	bh=zHnQ3chVyuroLaH4riIs+G3BrbfWr/05Sqp3NMVu/fk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HSdmWilSAF3MLa3S5Jk/PG5YdXpT1fU5+bWlEb3HKzpWAxwilg7kMHH+oX+qeVNAV
+	 NuU1UzbH82bPaWlgJDxNTYR5V3/V8AGSMfVqe9SOmoMMFqaNbbrEKdPUrOZrfflCcB
+	 /xwF4Riqkfy6evrAaPct4bBw28KqFAlzK2b4Z3unvWh/UDxx2AIDj3O4+GGpZmNFgO
+	 gjZCqE6aGc8I9YdIxa5GYl37QTBWoMVh11ncFNUelzukzvioXdLlnZLCdIdjr+382m
+	 FJjX/qgmldnqGVSk5/k829KWjqWbr6g2CX7a8fk/AV6uXCo+JB6IgeTxVY4Ovrhb2D
+	 5Cjd0hGMQZc1g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 787DC381196A;
+	Mon,  1 Dec 2025 20:00:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2fsv5t4iejnahkav"
-Content-Disposition: inline
-In-Reply-To: <20251110073544.443816-1-lukas.bulwahn@redhat.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] ynl: samples: Fix spelling mistake "failedq" ->
+ "failed"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176461921302.2515760.15026787498303072378.git-patchwork-notify@kernel.org>
+Date: Mon, 01 Dec 2025 20:00:13 +0000
+References: <20251128173802.318520-1-colin.i.king@gmail.com>
+In-Reply-To: <20251128173802.318520-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: donald.hunter@gmail.com, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hello:
 
---2fsv5t4iejnahkav
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] MAINTAINERS: drop unneeded file entry in NVIDIA VRS RTC
- DRIVER
-MIME-Version: 1.0
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, Nov 10, 2025 at 08:35:44AM +0100, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit 9d6d6b06933c ("rtc: nvvrs: add NVIDIA VRS RTC device driver") adds
-> the section NVIDIA VRS RTC DRIVER in MAINTAINERS, which refers to the
-> non-existing file include/linux/rtc/rtc-nvidia-vrs10.h
->=20
-> Note, with the changes of v6 to v7 of the patch series adding the driver,
-> the content of this include file was moved into the driver file, and the
-> include file was dropped from that patch. It was simply missed to adjust
-> the section in MAINTAINERS that was newly added with that patch.
->=20
-> Drop the file entry to this non-existing file accordingly now.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Fri, 28 Nov 2025 17:38:02 +0000 you wrote:
+> There is a spelling mistake in an error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
+>  tools/net/ynl/samples/tc-filter-add.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Here is the summary with links:
+  - [next] ynl: samples: Fix spelling mistake "failedq" -> "failed"
+    https://git.kernel.org/netdev/net-next/c/7adf0efb41fc
 
---2fsv5t4iejnahkav
-Content-Type: application/pgp-signature; name="signature.asc"
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmktoigACgkQ3SOs138+
-s6HFuA//UXHErOTCDPmmtxQcXOB6bKl7xnjaUSYWgpNbxFW9X8mim+q8QUeylFwH
-ZUw9gzo42SaWY+gJWKIBUhx4DBjNLHTU4ZOBsqpVhgS3qFbkFEzExdj4eQF7khH8
-ambbPnXHOvfdorpaUPKJd3mMvbB5LjX+2HgRA8itb/bS9zBR64dqBSEwtQaLTBTk
-MKRSLamu7YgJ6m+wXkLiPhuCHqIXgS0pGFoNqBU8/j/TrmuTo0C7XFAZAKG0Vz8a
-hn6/Uv6K8yE1QLvjCF9iLa7AiZG0XCuR2vIUMto898TpSu6QjfW480MVLOf45U3G
-7Xa6Yxhsn5bibBDeTBcEMisAIZTW8+g6XFmb15bQ5DJ5vAKDfBa63sEgzLfgSxlw
-Pgbvbq6g9ICbO5kNpPiXL0La0yKnYMHYaHJmQyOkx0DLJqfZOnFTN2dY97EIT7Xp
-fKPZMQgGI/Y6I5MC6zAP0+0eGXfnGtAFjJIFYw00RbprnXqQpQbh5ccG7dqYs9gd
-m6CvnRk5TZ9eiV1YSH89ZEAqT8Rd8sz9M/32kNt2ygX4DBEV+vAdSN1uMTLclbDz
-BHm0KyxU5i9YQmZXZIwQSd292ZWsDgUFxtFrUatbuqM+y3xYbZYLCDX+K9JDFyv7
-Bu7Xl+EAQzQ17mgS1lyT7m75DWUWbRYm+w8vsLja4uLSDb2zldA=
-=qhJ8
------END PGP SIGNATURE-----
-
---2fsv5t4iejnahkav--
