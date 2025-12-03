@@ -1,72 +1,76 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FDE2F291B
-	for <kernel-janitors@vger.kernel.org>; Wed,  3 Dec 2025 11:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B90346E61
+	for <kernel-janitors@vger.kernel.org>; Wed,  3 Dec 2025 17:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764760496; cv=none; b=eWXCCMcSLAV2PFAfJvI/aAA+hBnDZVDgdM1O88g5ZHFsGkWTMbvtJCSfa9lckpjZAjm9+ZU7R4H7AJtqD6gACmMFCzBzQul+IGIEfsn1T9V+zqLCaPTxWpQnCwhPK+UfnogJDoo8gZ3N+c6UQso7CyQ0jv/YqZ12BW7TYYxtmiY=
+	t=1764783332; cv=none; b=WFxN6wlRiEE8PCZFbeG1/OIHAK+k2xXu+IfV814OTiCwXNrG19lX+YxxgycFK+52tjjYrHJqQmiJQDHp6cv58Y61lGomsJNZtZw2RLw94jcJmg6LVlMAePfY2oEQFIvDdfrs1lg5GB4R4k/76AWK90wEoBvSkPBHNY/o5gGSOqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764760496; c=relaxed/simple;
-	bh=FVTaTUHkj0hCiF/8oDz0IRLJk2VFfDYMXcQ5TgtXHuU=;
+	s=arc-20240116; t=1764783332; c=relaxed/simple;
+	bh=WVD8x3Fl7busnR/BI5+KZ6AUTxJK/tA0FIbCJx1+Woc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NG347YOJABuwytTeJLQwjL1arlY6s3veoK/5+i5W7/ssNkQVoGx5K40TuHKciqQ/cwuF9xp9IwNa5GqfDTm5t/VsK17GgjeGd8diJCF77osZMXgtERRuZAKPDFxQz3mM+VS0Zft6tnGBL2oKl4Y/UnimblJJjpPY9eKrEvqfKIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kFrm2sag; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=MWcrY4XBv+RlVXOk/qizKJ+PLsGcYqhXQN/3OXLIvEw3hcReXKeix71oS9URu1gxIwTu9RZe5zB14dNa+ZXDHOF3WwzY0U54N4KylPar1NPPyoE/SynOUxL8wuNPXWXw4vfZ9LRdSEH4UkPfoOaaaJlEu3c0E//3UH9uWcI4oaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m2hLeeA9; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFrm2sag"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4779a4fc95aso5614905e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 Dec 2025 03:14:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m2hLeeA9"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47755de027eso223675e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 03 Dec 2025 09:35:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764760491; x=1765365291; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764783327; x=1765388127; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PQuU8GXO4td5lpFMJSEuUSNKl2naOb+LA1iRC4+QgDE=;
-        b=kFrm2sagbDxhNjqHenQQgXdwOYRol2V95Ma+rx8SCQzHc99psuBEwzuACRECl/sLno
-         hTqt/p0bolW+OY9i3PqVGG56Kl56WufaDzGuw7aIoDVBez6BFH4VoGP/6poWeMv76LXS
-         /VYYwmx5GZm7e5aTZ4bD/wCTvoSrdVkx8M+91eNmqhBs6jcNOXYnnyWBUFuzSu4/9e67
-         1wugbaTd8T+/KLARBOP9GUyOies7G7jPdFAoDqEyxGnmKH3isvO7MrfSRm6Sbj0B/oQC
-         nXVa2ceYrxmzPhfFmcIr2YXd9/20+s1H5Jsw22LnrzuvtRL+GerDzzMDo5LCC6vfecDZ
-         gAFA==
+        bh=nKJI8GMtAjNrzKnACSkzNNj+w+iIpDqT7iblY7Qxnls=;
+        b=m2hLeeA9Rk0IJEYPN7kuldNnlppPCSCd7tYqqBFIaS4OahDJZoCh1tyDSbLAxyuV6I
+         n5g3K9iDKtzPSgN+0lAf+/c7GdYjjOq/OUvFUpKHkYBhlxqrOwVWQTONuSRWq2/Rcg8v
+         ultr1lAvFyPAE5a2qlg4umGiTTFRBp974+usLnERVv3l8a+R8XsoZjcITyG5elPzBSIU
+         Sm0EptERMRibi7OaAB8ILivs4Ze9LYUCzA9K6eOGgR8RTj6mRdCqCxVwaPO+e8fY/2rQ
+         miCtnRkBQ+syX/pg80s66VagJGII9erg1G/wFKjW/nZCh6DWkZxvYYe/9yNw+7bYUWY4
+         vdMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764760491; x=1765365291;
+        d=1e100.net; s=20230601; t=1764783327; x=1765388127;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PQuU8GXO4td5lpFMJSEuUSNKl2naOb+LA1iRC4+QgDE=;
-        b=LOA4BCVMgyaXQ1OMgOgPs7oF4Fwe7RrzEt1gGIilKVrjTkTFCFGg7mCzsIvvTP8iz2
-         50Y5ImXTeWAwkcI04GAdoa8S9NuR5VfNR2Y8W+2i0CRAFJY/HbgG0ylqts9i8V7BvV8U
-         9jwrbReW/aqoE9xAcTTRfu3Nv0nDsy4ABzR+pt2S4DayjyEdq9FrPX+Q81ZjH4oLSpi4
-         mYVC6v5atq6mtYQnwGkY4Q1MQmu6IRBG7R0uOoTPjIcaZcwlS4xvuB7y2xe8hmBguLgJ
-         ZxzuFdVwd+epk0Pg9n0l/qXWSqboqVO3mQe5ZlGMOfSCSGco01OOGkkINqtevmnyfWP1
-         whww==
-X-Forwarded-Encrypted: i=1; AJvYcCVJd0RkRshefmo7NjpXntuRE4yUz4TXemS+GeBmyBpO54KGQlYqyLgVbpVHJLYP3z7kJRB1lWWLeUgAqGvnuHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz65riuCH8ZuUW192IvjoZ17xXEEA6DXjOTwGiesUMg4vGr9FC9
-	xlmcSbQGDxR0aIH3SdpillAgZsdixk1cRGauHUH/k9b2fi+cE41J5wj9LCA23cQ1emE=
-X-Gm-Gg: ASbGnctPxwhUB1XR/OBLrqrWzkITPeIjR5FrDSwQeK2GgAjcdCJH+lERV+NZNlFzAc8
-	7G7kTtrnATbiw39W0jzl39RkY129tF24GhtfmQXwaNxAsskmmTU6K4JLEngHNpVg7RTSJQ+AGZ1
-	OcMLTHUDEJEDMDPTtAUndgfYLb+CHIP1C5ft8ucRnP8rEc3ZrkP9G6Kt/7HmfGcgmAhqM+u2Qbw
-	qGf5fNnGzn8n2QH6BsNIX/v8lZz1MvzvBp/fNJcDFl3TafbPS6aWHt5mJF7AAZER/SqWbQdFVF3
-	d5roQyYo8ENxlEmwDl/y360B8fVUeyrznBdyBhlLP86Fc+auzeXOzgErzq02sIOWNoaXlM/Cu4Z
-	kgNdmxfVBvXi174CttHoeKaSnsEYtORsbRhVSWE+eAiSXd9wlSyyVo4ut8PEtwo7HxhZSMy0qC9
-	mjWsjUDXBUm6zsdEJK
-X-Google-Smtp-Source: AGHT+IFvxMW0hrVy7sS2LWr2Mu2vPFg5Y67EUhHisjMmxypFuUsGFVIcK/2jhTXExouZzHZBW8uIaw==
-X-Received: by 2002:a05:600c:4fcc:b0:477:a289:d854 with SMTP id 5b1f17b1804b1-4792aeed1b5mr21815965e9.5.1764760491023;
-        Wed, 03 Dec 2025 03:14:51 -0800 (PST)
+        bh=nKJI8GMtAjNrzKnACSkzNNj+w+iIpDqT7iblY7Qxnls=;
+        b=o14U6zV5s6nh4oVsUVPwoajjnP+0UQoEZ9t7ATSgMOvIdahONyhoNWuGgysVcO9Qp5
+         ueQx7276NuhFqV3XPPOebCsBOQ2dN8Ge69vSYiZnAmoxv4XoxkEztr+2B9U1o7+g/CJB
+         iiL13oEhaJqJY1GoNBG/oEAS8uyIrvyvl4ojkYlgATn0Bd6h5utQCwqA4iDr1yVQK2Rp
+         eHQBDV4WL81tXxPWd8Zgp3AHkRB1hCej1/4EQsWDjqq0TDNmJif0/0D2LOW/Oa226f6k
+         oDKA7GAzCpHTxJ9yNxH3MT65SH//sC2dHRppthn3zfIfIifADmnIgATLF5aX++eMiW6g
+         lxvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXJUj2vJ3HUI6+V7bvRx+qtZTVlJzHn7EY1wiJvc+3ItyptCmdltFuEtvwLNRH0FTSNIvnGLTD8SsJyHRE8TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2VCGtsGbWotis4GN86dhv7SQDYc8lXx+kFEnqyQwGyzdRnLib
+	23v79pwjCDthIxRdc1MLZ1sddqFkl0uYU/GHTJMaycBSgcotl8RXWjJjStQt/qvh8ng=
+X-Gm-Gg: ASbGncth30JNgUrmEeQldPtAtMMaPDuHBCpSXCnRdYLiHeQFOPWSFLEoiGThDflQziq
+	/tGpD0lhN7PACD6F9hHeKT2/VXq9NxhVIiVOyZl6Cd5ptkR3WjwA+nn5ehLUO1+E6saHSa+gqRW
+	TJTU+8QfJcHuBdPq0QV/o/zilGpmI15dfBNVpB6Qjb61pBNx/XTbCekOUQZDC7ArsHN2nw0kF00
+	pAvOXbpBEBsPG+Jy83XgbsOPSeczvrSYkhPgLCjtP8xNyGq3RIx5Ol1S/CEoH9y/kNbhuYWfZVT
+	koVjlTfWnp5WDOPhCirFbJV82LBTAN3Pu0EgdjD/oHROO0abHikTJ3GaidTMBlKWLpGoi2T500X
+	/MVyuxvphULWmPQbGVUVtRmxgj/TzPz+dZHIzzvGRtGPgxzDD+zz9MZ/dfUAKODBEpN/9l0MM6z
+	YA/unsh6Uq8OwGUcKv
+X-Google-Smtp-Source: AGHT+IEudFPB8fqTRUYo9jAjw9iQXj8WoOA1AJGB7dducQ+6U4yMLLe6rwsDuMAuj36q/yWs6CIXUA==
+X-Received: by 2002:a05:600c:45ca:b0:46e:4a30:2b0f with SMTP id 5b1f17b1804b1-4792af486d7mr35170365e9.29.1764783327011;
+        Wed, 03 Dec 2025 09:35:27 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4792a79ed9asm41687785e9.6.2025.12.03.03.14.50
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1c5d613esm41252875f8f.11.2025.12.03.09.35.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Dec 2025 03:14:50 -0800 (PST)
-Date: Wed, 3 Dec 2025 14:14:47 +0300
+        Wed, 03 Dec 2025 09:35:26 -0800 (PST)
+Date: Wed, 3 Dec 2025 20:35:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: qgeniecore@qualcomm.com
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: cfg80211: sme: store capped length in
- __cfg80211_connect_result()
-Message-ID: <aTAbp5RleyH_lnZE@stanley.mountain>
+Subject: [PATCH] drm/plane: Fix IS_ERR() vs NULL check in
+ drm_plane_create_hotspot_properties()
+Message-ID: <aTB023cfcIPkCsFS@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,28 +81,38 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The QGenie AI code review tool says we should store the capped length to
-wdev->u.client.ssid_len.  The AI is correct.
+The drm_property_create_signed_range() function doesn't return error
+pointers it returns NULL on error.  Fix the error checking to match.
 
-Fixes: 62b635dcd69c ("wifi: cfg80211: sme: cap SSID length in __cfg80211_connect_result()")
+Fixes: 8f7179a1027d ("drm/atomic: Add support for mouse hotspots")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- net/wireless/sme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_plane.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index 3a028ff287fb..4e629ca305bc 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -910,7 +910,7 @@ void __cfg80211_connect_result(struct net_device *dev,
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index f72bfbdddf23..6ee752c90380 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -338,14 +338,14 @@ static int drm_plane_create_hotspot_properties(struct drm_plane *plane)
  
- 			ssid_len = min(ssid->datalen, IEEE80211_MAX_SSID_LEN);
- 			memcpy(wdev->u.client.ssid, ssid->data, ssid_len);
--			wdev->u.client.ssid_len = ssid->datalen;
-+			wdev->u.client.ssid_len = ssid_len;
- 			break;
- 		}
- 		rcu_read_unlock();
+ 	prop_x = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_X",
+ 						  INT_MIN, INT_MAX);
+-	if (IS_ERR(prop_x))
+-		return PTR_ERR(prop_x);
++	if (!prop_x)
++		return -ENOMEM;
+ 
+ 	prop_y = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_Y",
+ 						  INT_MIN, INT_MAX);
+-	if (IS_ERR(prop_y)) {
++	if (!prop_y) {
+ 		drm_property_destroy(plane->dev, prop_x);
+-		return PTR_ERR(prop_y);
++		return -ENOMEM;
+ 	}
+ 
+ 	drm_object_attach_property(&plane->base, prop_x, 0);
 -- 
 2.51.0
 
