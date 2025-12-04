@@ -1,120 +1,99 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C530B539
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Dec 2025 06:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF1313530
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Dec 2025 08:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764831542; cv=none; b=dgESHUV7K00AKGrwvTvsMe18VDLhgH3h0KGLCWtmcnwF3c13NtlbgvBH+/9t7AOOWW3/oJnbLW/uboPe1XzfMQ/fXwy1jnhYD1ux5EF3etqFpwXRs2kxzY2LD+nF2EjBFw5wpJsYXjbAqXI+7jQqiKXTichE4w4eyjSq5As3Zr4=
+	t=1764835227; cv=none; b=CRwCAp3+9qpCIWbfDu8eNAHFIxUR5LrkYFzur1AKcOm0qvp096JfpU5J1LUurjnf4dkxON0G+hMuGHOsaWUKerZfI1MRCpPzM2hmQXCRZ3sRA5SsxP8XDw6rwDM9SAuPcD6pT0tmxOzE7b0X0/v5B7NL+8kznRKZhb8vSgacwg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764831542; c=relaxed/simple;
-	bh=FLVYwv45ELn/07TAYyC+eU+BsaL9KbK13lUXzd/xqdQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hTC3SJm4VgvBGh68rspulXldAwNFLA5AbrCzW6vUgKEnj8xCm+zpwcmd72Vw8Qzc6OmTecHuToGKxNbCg2YeVdZCq9OE6TLI0zi9EwwNuhf1GfO8eKz9ucG6uQcjrxsdM+zXR4XMoWk9ZRJp3yFELobWvZducBw72dza6vPW6/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W4CD8DwD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=n9hYZPfl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1764835227; c=relaxed/simple;
+	bh=mpXehTimxHuWE6mnLV4ozTZQoHXKjbajrye4tph+rFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n0cJm1o+yCBS8TG84/Q+o5XSeCyXg3TCt83fN1Sso8hZwJp9Pd7fztZhZ7NZUFIPisQGnQ8vYglcC9xvDP4RzhrkRurTetVpCY21gac/nU/IputXbj7wqK/pF5+zqqn8h/hE60Ko0Ed6/mcslaM/2lNemCNw6B+hbOGsibydzGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jkdW+wqi; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W4CD8DwD";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="n9hYZPfl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764831539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b1dUiMKw0m9OgEVcpxGNs60yf3zzRP2Q8ePCg7lCbBM=;
-	b=W4CD8DwDwa3P1RbzQugIZWMWcNsvEqiDaY29IUnn1HJeV3Us8EgPDbuspYJ9VWUkk1V5m/
-	auxYZ/WBZ3wikS8h8M0A05tp8t/UAK0YvpRIi8VmjTXAjpBZuvD7sRn2Qfz5mqsFKxobig
-	gofg3yhME9OSPK4A3F8/n7RYtqECiiQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-E_dQEBc5O0Wn5TsSGkWZ-g-1; Thu, 04 Dec 2025 01:58:58 -0500
-X-MC-Unique: E_dQEBc5O0Wn5TsSGkWZ-g-1
-X-Mimecast-MFC-AGG-ID: E_dQEBc5O0Wn5TsSGkWZ-g_1764831537
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4779b3749a8so3959385e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 Dec 2025 22:58:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jkdW+wqi"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so4480275e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Dec 2025 00:00:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764831537; x=1765436337; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b1dUiMKw0m9OgEVcpxGNs60yf3zzRP2Q8ePCg7lCbBM=;
-        b=n9hYZPflNXLp2hoA4j98NWqAmH3GEOWjOFle5G6QddxodndiC9N81rSets/XVTqw4d
-         Cn0ttHoroPARom0bjySBE0Rkhuqz/sTmHHRjIIh/A0mZd48mfwWIBwxVmYT5akptU6hR
-         bs68wSy7slEOyKZTOnxj9s3YyVLG6fu/CLOgvx056LfXcG9g0AgryVJKJYGMCjkzMcux
-         KMPL/s7HkQSPWOkErmN4nfxWyo7qLAFWp3Xv23L9xPgbCy3Azr32i8wo4/9MfT0vQO/5
-         0EJxhNPkvJHRs1rF2yzQ0fC95VtI7DUCxN1t6ML4BYQeKp6G03qF1lLRsLGuFtEuBEY4
-         sGTg==
+        d=linaro.org; s=google; t=1764835214; x=1765440014; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QEa29b69GI0rC02Aibnushx1/FXePKSOU65F2tmdXo=;
+        b=jkdW+wqijDvQqXLEQBBnu7maV3vpgMya06CWTb9+JL8j7WGZ/KnDsx+Y7XqrJZldUH
+         iLiAVBgHzS5vhEPbX3qtQ9So69FWdQQ5ZNEIWX5XF64/SRD9v18rGsTLsDEjrctH71PP
+         nk+Q+a/xRL2TLfpn4br4sAv1UERU2QhLa1MCcCPANYNUF8AWtJxsnmwitYdqbRMaJYq2
+         3zoidnLxc9l3a5QibWpvOzTOqkehg6GeXLcCjJqJxcu73qaNjvNHAl9r43Oa0H4qEay/
+         l/+6C1hAspMnM9PwyYqZhhEyhrcHXfZQx68iPkOpVQ+G3N439+VhkDheAnbPr8n+KF0+
+         xB8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764831537; x=1765436337;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b1dUiMKw0m9OgEVcpxGNs60yf3zzRP2Q8ePCg7lCbBM=;
-        b=Qag25OJXTTM8m+0g/rKRfdW18bvS96aztKi22kyJxsnwFYc3AYmuCPQ9Rp5qnXzGdi
-         oSp+OalDPzNu3VjBPKdTWRxm+7ScN35+BlB+ipzFwehT3ZOKiy2Zg1xTwZhTR2TIJfJK
-         i8lysDaPTfescdjAjTg5ei4R7HAAQpOVEykxkk0Bpo8gRvlRVbS2VXf7alGZAQ+TNCr5
-         kZX6XBz04orgOTJEsQWrtVrZjSjHdx5xsOh6uUIup/qF6X+okY3UkMwtMtqrQWZEhr5+
-         +14HjpdWB6adeBVsfwE3NOjqM01RTwNk77jnLOVSvofR8kh+HdjeiGDj9IdMkRUNRFho
-         Uf9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVz/7ilCUXcQ+NugRCiyFOEaAYP0tgMILvN03Qa9KHNldOiIHlk+dR0SHkMOP6EiLInH5j91RguRKTnmugIQGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0QSqBVau2jOsmKERAkGGF6o1ZR31VJRdYH3OxBqA6qI0B7QuS
-	FPXpiLkQd50fkATLfuzfledbsvXdJEONkmrdNpqr3O+DVXlHDdhxVIu7CgpTvyyFlWpCWCZFwAF
-	ZxoZYUSXt0euWZE09HmBVKGXfSd8m5t7u/Jg6bjfvGJAzU4ruf4Yi4BDI4Q+lYi/pikVWjA==
-X-Gm-Gg: ASbGnctbFhBPogNh+qgb9STGOEIY/Tkoo3eBPwO7v0kFAoFJBpOTVraBLcgqO0moAIL
-	5wJFdnqloGJI61ZguKhhEsuD4sN6NTguDpHc0FUs3cy4O39fsq7VeJFZ1QwsZO3ywNWQLpCpM55
-	eLM58yKoFqCrbo7udDZxWasXZgo+UU3okc5MeVOHd23CxSJovvjpiU1YAT9xMZPfqolp+RDNAAA
-	DG9sGDvjvS/TIe85lCta7vhKL8tQ4A8Qzf4l1GrVOUAlqwl+nrrRdLkOrJrtSwJhDcxUclWJ4KL
-	8cjiKGu3IvLTSA+TgilF7M9BE2ZE+hSW8Y9mvyW4wKrx4Py+nxf4Dc/L7OIPZWogdIf1JoflzRp
-	3m4bbguLiDJJzmHOUfke47+px6n+UP5/j3+e9T3ISd0gfGJHgisyBF88yRujmM52kFcZH
-X-Received: by 2002:a05:600c:470a:b0:46e:396b:f5ae with SMTP id 5b1f17b1804b1-4792af34f62mr57868295e9.16.1764831536892;
-        Wed, 03 Dec 2025 22:58:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJx2MgmvBWhxcwH/t9cq4qgpf/8RWK2dAXWuJnkHcfFWb6Y2/9+dXROv4VUqnLVPbmKN7bDg==
-X-Received: by 2002:a05:600c:470a:b0:46e:396b:f5ae with SMTP id 5b1f17b1804b1-4792af34f62mr57868115e9.16.1764831536503;
-        Wed, 03 Dec 2025 22:58:56 -0800 (PST)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4793092ba4fsm17681925e9.4.2025.12.03.22.58.55
+        d=1e100.net; s=20230601; t=1764835215; x=1765440015;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6QEa29b69GI0rC02Aibnushx1/FXePKSOU65F2tmdXo=;
+        b=Im+eGEMi0aHrobDKovxgG0yyfGBnlPfLlWLmYjp4Ju/15YA7nHpPhiQcJmHcpEY0Hk
+         Z93TFARoL+nfmEfscN0CaLONuunxdkWpTOWWqCNHA8hxy5oX/sdENnm2T7T9gtqD8SSY
+         0ZGnVccfzq1aRUBXtPpyt/TWlig+QkkoCyDf4JwGVGG6YLQ2/f+BjMFAJ9CMn+FIc1KU
+         P1Hcqvu+NFCNDXxoJHLFhIPgaaqOG83Tu/dHa8yB+r0xahftVzDZLIjsmEYFFvvTW8uz
+         IJWUueByPXPU20l7h156ITlYYnWgAhssXLWaFLt6niyKvuwinSrlRlNgahCLM1Nrdjhc
+         eAQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWi2kPZiJaGqgekMMt5xRcYtWmn8AU5X+1rRdmoLHhEI7N1bZgxrBT7dQRO9WCOD5kPITlAQBorC1YeF0pxkdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzspW860yHYOxD85trsCOsAkDxbEoPgVuN3biyMqSoZPTJww/8l
+	MwzIGwDEwq0oiggqEDecCVkH5vkyUng33dMQZJY2YKxjRoEvFkDjrc4z3q8fnFPN0U7AHwmxvQg
+	KV6Uk
+X-Gm-Gg: ASbGncvSoBcSpAo1qvSIY/A1d/Ckw0xrlS6B5tU4dAzSjYMC3E5SKyrHd/xZb4/lx0C
+	uNeBZ//gC9ndL7lMEhHj3J42tPsA6u99nvNGVuDxqjScBPCxgceLZO2gtrmYUFzfmKBr/qDXlst
+	zjeDv6P/+rY8VTjZ0nnsBCScdxV7+pahc048XLU4ZMdRNGEr0Kg/ETghEJPbu6TYqs0uJChFtiR
+	uOvPBpUF5Wh5qpIbySJf4CrT/Zw15tAiXAnA0uIc+BIqCGRGCQou+BP4WMLefp6/02UQV9XIJ2i
+	wSZX9JqbD04jqlUYAkFuChogR2hBSxtfkzL3XgB/kQ07DtFhQGVXl9IDZ0rIr+I8Q5DjJ/W3S5b
+	AR7Q3mbgVM6lj++BOmgJ5Yol36RRZlJxPGfuUHcLDZJ2UdBxtbYXeTuHgWG35jUK69gy3DMn04a
+	Y0xq8Z0JN4ujxD6HyD
+X-Google-Smtp-Source: AGHT+IGx5G8xtyphAgFt4tRJbC9NrnKU8miK7j8D7kDLQyGFN6stlYrbqZkU/BhypULqvMfdR89/XQ==
+X-Received: by 2002:a05:600c:4fc5:b0:477:a977:b8c5 with SMTP id 5b1f17b1804b1-4792af505ffmr62760335e9.31.1764835214446;
+        Thu, 04 Dec 2025 00:00:14 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42f7cbe9065sm1740877f8f.8.2025.12.04.00.00.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Dec 2025 22:58:55 -0800 (PST)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Zack Rusin
- <zack.rusin@broadcom.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/plane: Fix IS_ERR() vs NULL check in
- drm_plane_create_hotspot_properties()
-In-Reply-To: <aTB023cfcIPkCsFS@stanley.mountain>
-References: <aTB023cfcIPkCsFS@stanley.mountain>
-Date: Thu, 04 Dec 2025 07:58:54 +0100
-Message-ID: <87ms3ypwb5.fsf@ocarina.mail-host-address-is-not-set>
+        Thu, 04 Dec 2025 00:00:13 -0800 (PST)
+Date: Thu, 4 Dec 2025 11:00:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rolf Reintjes <rolf.reintjes@web.de>
+Cc: qgeniecore@qualcomm.com, Johannes Berg <johannes@sipsolutions.net>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] wifi: cfg80211: sme: store capped length in
+ __cfg80211_connect_result()
+Message-ID: <aTE_iu1lAA7ww4g0@stanley.mountain>
+References: <aTAbp5RleyH_lnZE@stanley.mountain>
+ <3204ebc0-4432-467c-81fe-9f09427b1671@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3204ebc0-4432-467c-81fe-9f09427b1671@web.de>
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
+On Wed, Dec 03, 2025 at 06:57:42PM +0100, Rolf Reintjes wrote:
+> Hello Dan,
+> 
+> Am 03.12.2025 um 12:14 schrieb Dan Carpenter:
+> > The QGenie AI code review tool
+> 
+> Could you tell us more about this tool? Is there a web page of this tool,
+> how do you use this tool?
+> 
+> I found https://qgenie.ai/ but this is not a code review tool.
+> 
 
-Hello Dan,
+No idea.  To be honest, I think it CC'd me by mistake.
 
-> The drm_property_create_signed_range() function doesn't return error
-> pointers it returns NULL on error.  Fix the error checking to match.
->
-> Fixes: 8f7179a1027d ("drm/atomic: Add support for mouse hotspots")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+regards,
+dan carpenter
 
