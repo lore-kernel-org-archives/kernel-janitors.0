@@ -1,78 +1,72 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C627531353C
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Dec 2025 11:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240C032C305
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Dec 2025 11:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764932975; cv=none; b=sNTv0sF2z1d5SIjVQfmBc4YrQJ++7B9ljTs/YdWROUIwOIL1scisOU2U5eSYXhZcSgloMXdXWNrshcvT+HuC/2NElgyWpegkDy7riOVo6Z+4aAxB3KZDWZpuPBU7FJ1jXfZANpEcWIFdFHJhKz1dJRbNScxvdG+rvkVGk42mnQo=
+	t=1764933027; cv=none; b=jL4jw74zdq6mWt7L/C6yqQSmXsaQoH4CKW45ehpPas+FqNGaCJwKGtEzLa2o/SER+K7Jtta5HDl9RPstRGc89KkIkJaExRwPZyEGqRfAKyjwYZwCis8OHqCUhKv8uPKhsVq8Fy6RP5RpaWuEAXFOxZtvU+Yy38+VQJNHcYvHDIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764932975; c=relaxed/simple;
-	bh=HQEN6OeKnX1NuKSfZHIbuNkIh3NrW5bHqOizNUsFAbs=;
+	s=arc-20240116; t=1764933027; c=relaxed/simple;
+	bh=cTaP3uQ/pEL+ga+iy9DqlzB47VJBZvrr8ZoqekBpfaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FZ/RkLO7PNgz0JNG6CHNgZn2P2sffpg/ZYtjO6I2XQrr8wq7Z59pF1t/1Zb3vRJaaImQ3nU1yokwYKKbTw17JXdARfyxQBIAz/9V4ArauUFHuqsRdUZ2pcUvNP5qnhFT5jLpsqkEcrTFmhR2tKdGySJW3D4qgHFyLBQDEjNYafk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPLJYvsw; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=DO07gs2M9dGbNcVQZtLsRHt/dQ0UiqWAXkaUIfGzlA8j2IAR73jB1Jm2QjHMngT+kf0o/T0R062nOOv75LM42k0xC5FU6NQg60J79yeVqh+e0KR3QCs/6BzH5Xq2lPwD5sUScrEnW2kbkEYoezru9Qz4KTylaTRGszEPfhRlotk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fq+rOa+Q; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPLJYvsw"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso25491035e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 Dec 2025 03:09:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fq+rOa+Q"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477a1c28778so27401315e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 Dec 2025 03:10:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764932970; x=1765537770; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764933020; x=1765537820; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=p/C0PagtTMInOFxe3qelV765/5mfYdQN+er9ThsJgfE=;
-        b=KPLJYvswEribdTCcfMAIfjQ3Gw5DpoyzSYrfb7OE3ssBevV6V2XnSbeVBCdsozajEN
-         02JR6iY5NZp7gizNdFPP+zl5w+pxU5nJ7p61BTwtHoMXy4jJkhZBiLOFa5DhsU+vGrRS
-         3/jrd2y0kzBMQrpnBLQINTlOZY8IOTuU/7swPijwqyQWdKJhmuEy2GznYJGbFG3MCnJF
-         zJyeGrfeMaEyPHslA3VwMqJeoT+/AwNbXxsOAiw1J078zflFbXDHZFQKVGb0T2i7kP5P
-         ED80htgxQNwp8yv07iiMtvU1XziVOSd84ljTKOdBFJiNJg5dtpo2iM0kfM9OqmcD4oSA
-         V9QQ==
+        bh=oMabrmVU5jaPqm7GY62CMhlbea5RlGobfNxDCb6Dgmw=;
+        b=Fq+rOa+Qn3s0FwwpiM7keD0xdUi3MoeNXiNRLsbsKgYiyCUg4IgtLH6I7V1j3tlcYC
+         zdD3Mox0ICJpJ+fPeajW8KV9ZcSkjEq/CyVEQfmJKG0OhOvsHrAO7sAcbmahmSFWp5jf
+         WLQSYhaWJ6D0SIHcZsaDGIOdJ2CZU7rSFfFnroyYOPrcKhtCWU2B5/KA7YeHDQ35g0zg
+         /8jOsMaWsVxNU/l6qBhlgZlSlkdQSoxJd9ZJHS5yH6t7oML2LpddXxnytrilAM6kYxKi
+         iClyYjQkKZ6515+Ae87dID2g+JsOCPXCz0FoczymlYqsRqL4EIigpF8K3i5HUI4bcB+M
+         ngFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764932970; x=1765537770;
+        d=1e100.net; s=20230601; t=1764933020; x=1765537820;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=p/C0PagtTMInOFxe3qelV765/5mfYdQN+er9ThsJgfE=;
-        b=h/qylTnmMvqREbjp1W1IJucIDKjyRtlks+24HOWQ/l86R8JxGQ07vrX/TdgTLHTuTX
-         XOE72HJ+QVAPR2OcfpD7LRXsXrEuOrIM/M7nSqMg+rjAc0Q4p3RHwq/dt6tsL0mRkarx
-         /3SxlI3PsQS6DabPrCLPKBjhv+HxdY/S3vXZr8wYy32kCuXIPVxuffl9BTHZ7L8iQr09
-         ZsKs3dpYFdq0nGr0v9SZ+SyHOuNPw6j72FaXcWlyAxL3B9+bhw0JPvNG1dPl1PwwbaXk
-         XZodbBNWy05YJwByMZ7yTUB2ajRgXW/PILTxzTzHP0w3qvQKu5nl6aXMZRNB+EJSvtxd
-         OOcA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8N1i1/Y0rVlGod6B2k6WMc/KER2Toiy/N3/L2R2MWb73wxcKWYNfjHPDduKh5eZQp+z+UAObMlV8PqH0hC+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsk3Oij2DWfzzFfP36GKT6cTB/UjjQ9xMLynaP/V6kR8CDvEP8
-	U8ORuq3JvrtfWXs7xZPXJ417QITbedxvaklVu7Cq4Gr+FHyxfYBAKRRqh5nzMWYCgxA=
-X-Gm-Gg: ASbGncsXhCV32ZiNz59xeGFGrCqFfTZjI/IIx74BXJvj6Vjvt8+cLYr1IKiiIkCpRo+
-	xVdldmmyDHXqwMRKNuDflzbqrZNcY3IwyXrWM8rXa4bzglig1BzvqgZUNXmgcwr5CmWYDenLDjn
-	8nt+u7vdbhvtdrKhRRDnxzXOtfo80Mo4nh1ZXkc2yeJnl429opjtxNOEVeZjKBY3Axeqyi56y1W
-	8+wWu7wZxEUIJv8evfyBrieZd4Q/Zm/YNT+SKbLz7/QF7GrajBUKwmwkEUNJwMSb2BJn5jBgvH6
-	C5UkAr1ttrIRX+g+V5JaQNY5PwY1YdCxRcj4uxPjecRc9OQiQfjdg3jlYptAbjzQiNbZCbxShx1
-	UkUye42MIHPf5km9Y01f/iUZnySP1Be023MPFbOEN2mjArGcBQ2sD3RJb1QbYdsEdWq8slLohU9
-	YSsaH3PY9hTOvZoaMR
-X-Google-Smtp-Source: AGHT+IHCkU5CgfbT6Uz9t3Nb4ylQ2nrafmcxdx4Hm3Q2PBKnBoGZ/U3wVfqkqFkieDHCTVyrSxNH0A==
-X-Received: by 2002:a05:600c:1d0e:b0:46e:59bd:f7d3 with SMTP id 5b1f17b1804b1-4792af321b8mr94681325e9.20.1764932969765;
-        Fri, 05 Dec 2025 03:09:29 -0800 (PST)
+        bh=oMabrmVU5jaPqm7GY62CMhlbea5RlGobfNxDCb6Dgmw=;
+        b=OktRnTgViSEIgJbo06dH44U3q+L6qH5e0yKhyES/jQ979Pbb2oVceM2q/mCsXqwFGe
+         s9RkpxB+7MNWsSepwZqp07Pq8ojfZzSbwU8bmx8ZLoanyDeu4QqF1YQq1xjvrhomjYlD
+         WiBdyx3QZ8LOVPrwcsAVVzbXxZzVq0i6DikHtTuaR1NVRagmA7FFGSQqZKuzg5FYzSeu
+         d0hjeWJgo6G0u/gYwW5YwsXi3GAqrn/24sZZdseawnakYRTtFNb8d7j5UQ+X9bnCHbhp
+         tIPPwdTEqtSIdzuPa9ihaMYFo2ADI7noNQTdRRvBTFIa8of+aJqd46mAZsVLCrqviqhO
+         38DA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoHMHotD3iPK2nwdFbfuGloCUXPGyfyiJFuqOrYkxlXNsFsoSopRcCnsMp1vAtTblNx6TJ4ZaXBF4afRYx4mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtfAuXi+dQ7veSeRAY+sn2dPqs90x4HxU1Mahd0Il+9XoChe63
+	h7J/1ZWtr+gO2AuVkhlSKNmF/L0DX0/1iFKT5TOYXQ0CwdhMfXbSEsRLiD+EKOYWIdv0YvN5yvX
+	pAfcU
+X-Gm-Gg: ASbGncsDV5NDr79jCgjfDfZwRqMyK8SI6wBPYMkcoBUWTHNO2kecUkdwBzvG70WwpvQ
+	iygowRP9++bgcDsvq7WzZIjSJC2oJ9buJaf+ejq+hZoeBf99dvvvqeLV5NaYvY8gZnv1ejRsXv7
+	W+HpIZA1LlP6Lwrwqo59xP8k/yc4mv2i3BRy2PgZ7vxu4DR4itcY2aDuFw3LEYl5HNKyTgHPohP
+	d9ArDnsgHsZIFg1Bt7NMeADl824sh2nXVVvtdfaCo/EI3VeAdL8rOkEsNkFTGfaJWbZCEvIa6VI
+	cVcbXq7ZYXa1/OrL0HY6wGzrv2SXTBwoGiDFUyV2K4uy7rC7cse8AmCd6b3+CZwjejaCDItNnUJ
+	aZT13oJwtUPykBvlMSwplLzAllS9DCHgrZHMso+PwU6GFQO7KaJYw+NrFV5jz34UbDclF4cUh8V
+	ze4SLptoETHp0J5vN3fyr5w3+LMm4=
+X-Google-Smtp-Source: AGHT+IEREuSiwKiK8EKFbQwV5t/3IxHIeztts9FpeYEKYzY9N/1JP404bWiT/KbtFzPB63kwLtqj/Q==
+X-Received: by 2002:a05:600c:204c:b0:477:76c2:49c9 with SMTP id 5b1f17b1804b1-4792f244ce6mr46574015e9.2.1764933019521;
+        Fri, 05 Dec 2025 03:10:19 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-479310b8e70sm78214345e9.5.2025.12.05.03.09.28
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42f7ca4f219sm7915521f8f.0.2025.12.05.03.10.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Dec 2025 03:09:29 -0800 (PST)
-Date: Fri, 5 Dec 2025 14:09:25 +0300
+        Fri, 05 Dec 2025 03:10:18 -0800 (PST)
+Date: Fri, 5 Dec 2025 14:10:16 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Harry Wentland <harry.wentland@amd.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Simon Ser <contact@emersion.fr>, Alex Hung <alex.hung@amd.com>,
-	Sebastian Wick <sebastian.wick@redhat.com>,
-	Daniel Stone <daniels@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/plane: Fix IS_ERR() vs NULL bug
- drm_plane_create_color_pipeline_property()
-Message-ID: <aTK9ZR0sMgqSACow@stanley.mountain>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+	Aristeu Rozanski <arozansk@redhat.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] EDAC: fix a limit calculation in calculate_dimm_size()
+Message-ID: <aTK9mKTphPwuR7qb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -83,31 +77,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The drm_property_create_enum() function returns NULL on error, it never
-returns error pointers.  Fix the error checking to match.
+The snprintf() can't really overflow because we're writing a max of 42
+bytes to a PAGE_SIZE buffer.  But my static checker complains because the
+limit calculation doesn't take the first 11 bytes into consideration.
+Fix this for the sake of correctness even though it doesn't affect
+runtime.
 
-Fixes: 2afc3184f3b3 ("drm/plane: Add COLOR PIPELINE property")
+Fixes: 68d086f89b80 ("i5400_edac: improve debug messages to better represent the filled memory")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/drm_plane.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/edac/i5400_edac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-index ce76c55913f7..e32c7ea8551c 100644
---- a/drivers/gpu/drm/drm_plane.c
-+++ b/drivers/gpu/drm/drm_plane.c
-@@ -1867,9 +1867,9 @@ int drm_plane_create_color_pipeline_property(struct drm_plane *plane,
- 	prop = drm_property_create_enum(plane->dev, DRM_MODE_PROP_ATOMIC,
- 					"COLOR_PIPELINE",
- 					all_pipelines, len);
--	if (IS_ERR(prop)) {
-+	if (!prop) {
- 		kfree(all_pipelines);
--		return PTR_ERR(prop);
-+		return -ENOMEM;
- 	}
+diff --git a/drivers/edac/i5400_edac.c b/drivers/edac/i5400_edac.c
+index b5cf25905b05..81c93ba957a0 100644
+--- a/drivers/edac/i5400_edac.c
++++ b/drivers/edac/i5400_edac.c
+@@ -1033,6 +1033,7 @@ static void calculate_dimm_size(struct i5400_pvt *pvt)
  
- 	drm_object_attach_property(&plane->base, prop, 0);
+ 	n = snprintf(p, space, "           ");
+ 	p += n;
++	space -= n;
+ 	for (branch = 0; branch < MAX_BRANCHES; branch++) {
+ 		n = snprintf(p, space, "       branch %d       | ", branch);
+ 		p += n;
 -- 
 2.51.0
 
