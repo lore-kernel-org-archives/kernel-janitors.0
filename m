@@ -1,72 +1,71 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240C032C305
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Dec 2025 11:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F332B9BE
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Dec 2025 11:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764933027; cv=none; b=jL4jw74zdq6mWt7L/C6yqQSmXsaQoH4CKW45ehpPas+FqNGaCJwKGtEzLa2o/SER+K7Jtta5HDl9RPstRGc89KkIkJaExRwPZyEGqRfAKyjwYZwCis8OHqCUhKv8uPKhsVq8Fy6RP5RpaWuEAXFOxZtvU+Yy38+VQJNHcYvHDIA=
+	t=1764933037; cv=none; b=BjLmMNhPEi5HOCZrO9kkVSPTTVVi/NUOaXdksCeN4kDazml4F1WUnWHnV2h58sADGSSAaY/f8YAho1mhSFU62Emdxfiv4s+Upf1+Ylvp/+zyZG+gNH0uc3k5IzX6EFjGt+G10fdyWTkLlmNsQcxhsvB0o3rnOGenVBBxasfWDpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764933027; c=relaxed/simple;
-	bh=cTaP3uQ/pEL+ga+iy9DqlzB47VJBZvrr8ZoqekBpfaw=;
+	s=arc-20240116; t=1764933037; c=relaxed/simple;
+	bh=FIqRbn0iSd4HWbkmd2425iWGFEgDgReDrwM0rbsXrfU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DO07gs2M9dGbNcVQZtLsRHt/dQ0UiqWAXkaUIfGzlA8j2IAR73jB1Jm2QjHMngT+kf0o/T0R062nOOv75LM42k0xC5FU6NQg60J79yeVqh+e0KR3QCs/6BzH5Xq2lPwD5sUScrEnW2kbkEYoezru9Qz4KTylaTRGszEPfhRlotk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fq+rOa+Q; arc=none smtp.client-ip=209.85.128.54
+	 Content-Disposition; b=Z1zGCgenoHxj7/5MgeTAhrYYcxPtZmkpwRHZ6VaQ0l6PtsdSalHBJCHJ4J2nVX2pTc5f4JgK+71SKWiw3ynS0mQ44MSYA6KArEUEBVZumTZOGz8uCQLsvWzfalpY/nt36h7JFQPUm1DPY/XMhpPL1560K/jVt+L7X9dkPjH24dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=trTJNZ53; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fq+rOa+Q"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477a1c28778so27401315e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 Dec 2025 03:10:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="trTJNZ53"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47775fb6cb4so15816335e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 Dec 2025 03:10:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764933020; x=1765537820; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764933028; x=1765537828; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oMabrmVU5jaPqm7GY62CMhlbea5RlGobfNxDCb6Dgmw=;
-        b=Fq+rOa+Qn3s0FwwpiM7keD0xdUi3MoeNXiNRLsbsKgYiyCUg4IgtLH6I7V1j3tlcYC
-         zdD3Mox0ICJpJ+fPeajW8KV9ZcSkjEq/CyVEQfmJKG0OhOvsHrAO7sAcbmahmSFWp5jf
-         WLQSYhaWJ6D0SIHcZsaDGIOdJ2CZU7rSFfFnroyYOPrcKhtCWU2B5/KA7YeHDQ35g0zg
-         /8jOsMaWsVxNU/l6qBhlgZlSlkdQSoxJd9ZJHS5yH6t7oML2LpddXxnytrilAM6kYxKi
-         iClyYjQkKZ6515+Ae87dID2g+JsOCPXCz0FoczymlYqsRqL4EIigpF8K3i5HUI4bcB+M
-         ngFA==
+        bh=A2Dv02xDxln81ZjHynp+AfkUOxA71nmnU4NFvPsIXnQ=;
+        b=trTJNZ53ErYVRzayyFCeg09FYlcPiO/fVPg8wonb4YDCeZbmCPe0TfQyug2eLqy7Cp
+         lQglICdBrFuJYYQBPSD2VJqCC/eqi63mkNCW96gLLvHR9ZfOIJSQNFv6x976gdK/PHaX
+         8ZLtwlb8JPl96RqtTSHvWJtW+U2f50KCG5rSX70NwM4doaN7fg/fVfLFSMom976QfY3/
+         e0oIaMo6Q/L/1cesohqAfR7wB3amh7i+P+QB8GVwZB8c7nCkH43kCSoxSGMTYlk/nBA+
+         qy14JzBXgpf5yExKsDYL3rg8om4meoRebT1Af1rojaFq4Ci/tsfYob66GIhsBGQ8C5TP
+         0Dcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764933020; x=1765537820;
+        d=1e100.net; s=20230601; t=1764933028; x=1765537828;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oMabrmVU5jaPqm7GY62CMhlbea5RlGobfNxDCb6Dgmw=;
-        b=OktRnTgViSEIgJbo06dH44U3q+L6qH5e0yKhyES/jQ979Pbb2oVceM2q/mCsXqwFGe
-         s9RkpxB+7MNWsSepwZqp07Pq8ojfZzSbwU8bmx8ZLoanyDeu4QqF1YQq1xjvrhomjYlD
-         WiBdyx3QZ8LOVPrwcsAVVzbXxZzVq0i6DikHtTuaR1NVRagmA7FFGSQqZKuzg5FYzSeu
-         d0hjeWJgo6G0u/gYwW5YwsXi3GAqrn/24sZZdseawnakYRTtFNb8d7j5UQ+X9bnCHbhp
-         tIPPwdTEqtSIdzuPa9ihaMYFo2ADI7noNQTdRRvBTFIa8of+aJqd46mAZsVLCrqviqhO
-         38DA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoHMHotD3iPK2nwdFbfuGloCUXPGyfyiJFuqOrYkxlXNsFsoSopRcCnsMp1vAtTblNx6TJ4ZaXBF4afRYx4mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtfAuXi+dQ7veSeRAY+sn2dPqs90x4HxU1Mahd0Il+9XoChe63
-	h7J/1ZWtr+gO2AuVkhlSKNmF/L0DX0/1iFKT5TOYXQ0CwdhMfXbSEsRLiD+EKOYWIdv0YvN5yvX
-	pAfcU
-X-Gm-Gg: ASbGncsDV5NDr79jCgjfDfZwRqMyK8SI6wBPYMkcoBUWTHNO2kecUkdwBzvG70WwpvQ
-	iygowRP9++bgcDsvq7WzZIjSJC2oJ9buJaf+ejq+hZoeBf99dvvvqeLV5NaYvY8gZnv1ejRsXv7
-	W+HpIZA1LlP6Lwrwqo59xP8k/yc4mv2i3BRy2PgZ7vxu4DR4itcY2aDuFw3LEYl5HNKyTgHPohP
-	d9ArDnsgHsZIFg1Bt7NMeADl824sh2nXVVvtdfaCo/EI3VeAdL8rOkEsNkFTGfaJWbZCEvIa6VI
-	cVcbXq7ZYXa1/OrL0HY6wGzrv2SXTBwoGiDFUyV2K4uy7rC7cse8AmCd6b3+CZwjejaCDItNnUJ
-	aZT13oJwtUPykBvlMSwplLzAllS9DCHgrZHMso+PwU6GFQO7KaJYw+NrFV5jz34UbDclF4cUh8V
-	ze4SLptoETHp0J5vN3fyr5w3+LMm4=
-X-Google-Smtp-Source: AGHT+IEREuSiwKiK8EKFbQwV5t/3IxHIeztts9FpeYEKYzY9N/1JP404bWiT/KbtFzPB63kwLtqj/Q==
-X-Received: by 2002:a05:600c:204c:b0:477:76c2:49c9 with SMTP id 5b1f17b1804b1-4792f244ce6mr46574015e9.2.1764933019521;
-        Fri, 05 Dec 2025 03:10:19 -0800 (PST)
+        bh=A2Dv02xDxln81ZjHynp+AfkUOxA71nmnU4NFvPsIXnQ=;
+        b=gjUFTOICvaJRIKpF1Fab8xFo9mx+F/C09btV3fWLbDvDIPbMa47SrN29zX6zSKHejN
+         tLZK/0fdkH5mRLz9cb7fiyV8/LMyxnfzsTVHzPD9YrdPCc0SMuNb1IsQHa4YXNnLjV1i
+         z4Naqf9StP+2vdkSAgIBYusBM6sYfUzZKhvojv5zP3xE2Wn9ibA1Hmyj65ju8cX6+b5v
+         fuTRimjl/L+Z2zvtDC1cLR6qO4y9mEZgqNC5OVif5Yc92MpcGLVW18m9fBAmdYrieX9J
+         TmXC+No90z21hflht8mjwmNVmWxbmB1amIOKS1R0glCDNb8XT1z7QdhVVBCGjyeG5xDD
+         qgEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXR1b1jZn59hG966dnicVyuQyMZdg75NhyzWv7LAdarL++5WjNV9iAWU7JHA86sJqPw9AU6ASl9xbva+4LZPwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwkMbKCSVJF7CcYfJYRpIqa3dWMJGev2a13pyYVn/UnWuXKfQo
+	Q/OXQu0ATjLLXbIf7jEZbQrMrPVy1w+04mQ6V76akAQowCeiM+/ub/iidWhITKcp2Yc=
+X-Gm-Gg: ASbGncuCz0zftMCWoQwgQyRuJonJmfaPZEbgbUsFSyICRaxElT60GpOk1LUrrahERjK
+	ObwsaagKgbAoXMNSNtSM+w+E7xf+fnTa32GtrTOT4cmOHJhanoh3VQXrSgi9ZMJAdj9zR/5BpSI
+	zA7Yuuy2z3NiDMpcjkA7HC3BBAsvhmYtDeJflKrCg2A2saneg/atcsqL2euoTXxVKAsqHoGjJLM
+	rhTQIVyHLi2+GeQjTT8Iq4p8Mg3vapr+fPgzhxtXWJB9NNvnlLNbL/hXZQXUyPzv8TC1/s6TV9L
+	sR7qWnRad0rL8tAqa87JkIxZl2V5n3r0THqk88lF66fKW+WVV+UwhG+pDRCB4/wL9YKJsCK9mnV
+	cWM7d1aUkP0wnhIVoKJNuzzgQeK3OPWuAUwXGEjk1KNeXOsycd1Ce3Q96MARhWL6OejTyTXwTpW
+	IhpDtlEGb9wHRAUBwW3TwsS8YFERw=
+X-Google-Smtp-Source: AGHT+IF4cZwMgYUn5BppW3VrmacPI7X5JRdwSyYMQ8T8eEKTmMfQncgG00M1U3s8j1O3a01skm5S6Q==
+X-Received: by 2002:a05:600c:4f90:b0:479:1348:c65b with SMTP id 5b1f17b1804b1-4792af34f30mr83682085e9.26.1764933027960;
+        Fri, 05 Dec 2025 03:10:27 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42f7ca4f219sm7915521f8f.0.2025.12.05.03.10.18
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47930cb6a96sm77241035e9.15.2025.12.05.03.10.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Dec 2025 03:10:18 -0800 (PST)
-Date: Fri, 5 Dec 2025 14:10:16 +0300
+        Fri, 05 Dec 2025 03:10:27 -0800 (PST)
+Date: Fri, 5 Dec 2025 14:10:24 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-	Aristeu Rozanski <arozansk@redhat.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] EDAC: fix a limit calculation in calculate_dimm_size()
-Message-ID: <aTK9mKTphPwuR7qb@stanley.mountain>
+To: Li Chen <chenl311@chinatelecom.cn>
+Cc: Dongsheng Yang <dongsheng.yang@linux.dev>, Zheng Gu <cengku@gmail.com>,
+	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] dm-pcache: Fix some indenting in cache_info_init()
+Message-ID: <aTK9oGAZuWBfedTh@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,30 +76,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The snprintf() can't really overflow because we're writing a max of 42
-bytes to a PAGE_SIZE buffer.  But my static checker complains because the
-limit calculation doesn't take the first 11 bytes into consideration.
-Fix this for the sake of correctness even though it doesn't affect
-runtime.
+This should be indented a tab instead of five spaces.
 
-Fixes: 68d086f89b80 ("i5400_edac: improve debug messages to better represent the filled memory")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/edac/i5400_edac.c | 1 +
- 1 file changed, 1 insertion(+)
+It was changed accidentally in ed79b300272a ("dm pcache: fix cache info
+indexing") but it's not a bug so there is no Fixes tag.
+---
+ drivers/md/dm-pcache/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/i5400_edac.c b/drivers/edac/i5400_edac.c
-index b5cf25905b05..81c93ba957a0 100644
---- a/drivers/edac/i5400_edac.c
-+++ b/drivers/edac/i5400_edac.c
-@@ -1033,6 +1033,7 @@ static void calculate_dimm_size(struct i5400_pvt *pvt)
+diff --git a/drivers/md/dm-pcache/cache.c b/drivers/md/dm-pcache/cache.c
+index 6d5001548628..f02c7c4148c9 100644
+--- a/drivers/md/dm-pcache/cache.c
++++ b/drivers/md/dm-pcache/cache.c
+@@ -42,7 +42,7 @@ static int cache_info_init(struct pcache_cache *cache, struct pcache_cache_optio
+ 	if (IS_ERR(cache_info_addr))
+ 		return PTR_ERR(cache_info_addr);
  
- 	n = snprintf(p, space, "           ");
- 	p += n;
-+	space -= n;
- 	for (branch = 0; branch < MAX_BRANCHES; branch++) {
- 		n = snprintf(p, space, "       branch %d       | ", branch);
- 		p += n;
+-    if (cache_info_addr) {
++	if (cache_info_addr) {
+ 		int index = ((char *)cache_info_addr - (char *)cache->cache_info_addr) /
+ 				PCACHE_CACHE_INFO_SIZE;
+ 
 -- 
 2.51.0
 
