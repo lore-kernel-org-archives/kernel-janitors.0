@@ -1,74 +1,77 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B96732BF25
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Dec 2025 11:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B91F326D5F
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Dec 2025 11:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764933045; cv=none; b=kzArWEhIvax1QJqbGPdoa9JD7XEPhABXIVaqJC4D0KS58Whn8ywrFesQ90v0sHDAScK+ANWEu+FS1y0IzIvgP2hnyyBryR7lXwjJ4bARkH8WrwcnLpbxLgZrl+fZTQ/ewZiWw8nq6dg5FD0Sb4mH03TJhQfNONE1lnnQN1Y2g9U=
+	t=1764934753; cv=none; b=X9QFo0T2uovRGc1qEKHKvLeccfdl8ki8+xTvKKZn75FiG5fQkdFbhvmT71fIQfmbam9VjK6eba0NDa2f4TL5TTTjNhOvLI1uEbTIHEcndby3+qAJ5bVbpVj51uZHMYiX5aCPC7yX9BjMPk7UUkXejxZxrX0fRkPmen2HKrSv1jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764933045; c=relaxed/simple;
-	bh=IBnAVWidb7zN/GLjeF3/xNaqrdPlXS2icM7IIaBqrjM=;
+	s=arc-20240116; t=1764934753; c=relaxed/simple;
+	bh=TVVtGnBO/kgt+MW43a4WOfzk9YnJRjsgyZDeLmIwQUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dbuwJgeECnBY79+CiodmQEB9mbWT6t+M78t31cjFaWyNbqhefw/SrpjrHeifxopuRyUsOzAlDv4sSQYdei2nvz6mWYxf+fGcCm9QjnKsP797CO1ACEMj9wpiCjlQpbrmxch9StQyK7sV/xM5JgCw6YSZ50X6Di+DS8nxLM0E8/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w4LS8n/S; arc=none smtp.client-ip=209.85.221.49
+	 Content-Disposition; b=Puku15TjVNjPotLSEIFcNTlo/PYFBIgyzlhOk9l7/96lxAfXoX4QQP82EizkzIRzZG9jFXHXtiOnSDE8dtlwzU9SgcX0yjpJf4cR8C9ZRXBD7PwmUl1/UvGpLCEA+F1GTdR4Vd6Z2jTrLAyFKeB5KbxSOOvd7TWCSQBvoVPoS3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3QBIYmS; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w4LS8n/S"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42e2e3c0dccso1180533f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 Dec 2025 03:10:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3QBIYmS"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477a1c28778so27782145e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 Dec 2025 03:39:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764933036; x=1765537836; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764934747; x=1765539547; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zh3HlpbXaEbsFU72svAbecwrRCi03W2DYbr0+25RALI=;
-        b=w4LS8n/SKcb4x3xTmdgtOM7enrPjBiThYpIqo2YhRurT96eelEJE0kkAhQcTZW63J4
-         ak/K+0sSzsWTO/J11y/vONS2ye4FDimc+edpSxuuVuETaUHnqnN1zHZ2H+Q1i/QafFwN
-         1szlGvmRwp1dzsx4rWBVeRceU77sFXjIj9FJZVt+1STJ+rcN0fkG89uR0XVBy/RrCM3E
-         oODgtTSpdUKnh5L3gwPIxvPI9JCCzCWnbfXmtaKhXRyhEz4bH3fWA3kD+n28pa6cRSLm
-         yCnGKVoqHevkx5MVN47b56wRht/AhWZH9oTtkUPBFdA5lnhw/AZf71qkcwF2NqjlksOm
-         RviA==
+        bh=8aX+EX0NpaccXweXp78xCHa7QYL2+QD6+NVQreKl8cY=;
+        b=d3QBIYmSN37tc31xE3YCK4tMVilfQQUiOPnkcvanqKSw4mCnNTIuNxQgQRf+jEBOHM
+         LqZU98xvdWE7V4Y5SgNB0zbMxk3UK8L4KplJbZkBpFpDXXumMZTWu/u8avM/UpIdiTJJ
+         GKaiRiB74Odu7iWWB0RW06Ix7evS6B9RNi8QvG8lTNuKmGU5yxb1Ur4rPT5cTEP3bahj
+         1fu5UxotxPwZ992HGoZNE2N9Juo8ZD9xzvnCys1hiVxivBojeVo6S2aVj8uo6h3xa1T1
+         P8lefDST7YfAJcj1QdIaOwXOaMgs5ocIncYq9HVIm6afIhWJb+/agHFX94WmBx7l/7sr
+         a9ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764933036; x=1765537836;
+        d=1e100.net; s=20230601; t=1764934747; x=1765539547;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zh3HlpbXaEbsFU72svAbecwrRCi03W2DYbr0+25RALI=;
-        b=p7zcV/0Bi9u0kENgWCwnuznHfald8dSrz7rIRZKUV2g7n+cpUYRQY7lPktWAaWlazz
-         LoIyolUw4BPIBVHr4QAOe+HLRYITwtUS+dp8x7sdktI1jq25ezPglzEcN2PgeEd+aqXl
-         Tq51knUbk7apNB5WXdgVnou0ImZZRv2OKe9TPXscq92qhaajLDNeEeYCOrfCipnh3s1D
-         f070oM6598g4IxukiA3KmlpLmC6sQb8i0sNOr87lRI0ZDg6kUKHAku14K9MX4q5vuG7W
-         RBMa79yoE/JYNWdKBxHqJEXvlfovgrbEmyn18YcNBQz3AmA+NV91tZJJUUTrQLWm4OH9
-         t70A==
-X-Forwarded-Encrypted: i=1; AJvYcCUziYKhZabOLCJrCncM9IiH6gKhfZSZ9g66z5Ho9tAp8hDeIomQ1VmNiPR/fcWPCrQv6m1EofwyrskFGHD3sXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzURtVAlxoY2knbQa1R23vywlOSDjKtrlu4xIteFyJYy8U6eHyj
-	SYV5mJgW2iGRZGMSED9b+6jla7qPY2ZzR8EB5E/tuZkaMcVP0m/BowrXkyJMZJS03lk=
-X-Gm-Gg: ASbGncv3nUJHpa38NYK0E/iDwPHs2og9PBYKPrhy6CWakMLx0DajxQ/XIHERAC+LBgg
-	FOz+Z7G+fA5QCcVZDV/IbFJQ0klnY4KUhUBp9+DXfFfWBfeNuDtNdxbs9VSrpLcafgWjTzLPEAa
-	u9hy9k45y0v0mI+EbLDpatl6hjtfgDKY8V2vDciC4FYcruj0oVLKXhkhrEmutwDpV1EiNlUMQsO
-	HJvVaHZNz36UbJf74JhbFVMjICzmdw9pB0GlNNxylNYFRpc2klc3eBCnfRBGtONTiksAmATu5VE
-	HvVQIPzhqpkqoTus/NFkE5Xj2qT7rmchZXaEwB4N5urrT0nW9lYo8eDxCQfuDumOz+5YRx4SGW2
-	B/sbEFxRjOfqcT/4h23oHzQKBvUrMYAWItKoKoBcHBkrSxE9wyLXXGGr4HRSn+RrK56aS41LtWV
-	k2nWBOw1EoZTQDBmMyS76aLG5T5Pc=
-X-Google-Smtp-Source: AGHT+IFBPmoLYadSLlgUwTUBgvI/LNUXNDFZy6frbQ03ZessPie4IT5h/pfwlVJys+MolOQK0aUa6w==
-X-Received: by 2002:a05:6000:22c2:b0:42b:3c25:cd06 with SMTP id ffacd0b85a97d-42f731729b0mr10031252f8f.22.1764933035867;
-        Fri, 05 Dec 2025 03:10:35 -0800 (PST)
+        bh=8aX+EX0NpaccXweXp78xCHa7QYL2+QD6+NVQreKl8cY=;
+        b=K+tvBJ+frWRqYnvdtt7vljmouAS8MxeKbyH4kv/fS1XFFi/Qc7UOe64HFvdC0NdBBt
+         9aatr7dQEm3J4G0HIzKG74C168OMzy+cD0rwsojM7mzWFPrvxhnDCNDmf+ITEjd1d3jb
+         xZ7BzdrLOwz6Riwqoq1DVvO2DbQSJqXpiiUwSD+nQ3zbghy2g62wc2+G/AaMnNj2Tw7d
+         3qnfQTWKqg+Bv1+Mda7dktTEjwGy0fgpstRcfVmdDAurOFmZkarQJk6pfjv/0z7M9/bV
+         Qv3yQzuwPaTSLV7kXvDotcIDDbMgxGIaq0tYH/al1SMuf9mSdE87RLgFecH9i/fKHrg9
+         gFsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcDzdo5ay8mouZPDLCBdhOArAaVT533McDEVNJyZ1Bw3JXqsGY4PxgbnDVISTgFISdt8GvRjuelFR0N1YDmCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtisbCIbo1cVrJVp3ha1ThkzGqO+eiKhag53/RT/rR/kr4yCN9
+	5k5l4p8QM6GNn0Q/Vfc/E3ifB0Wxkr+cWIOxcsZy+sy84+ygZwLkbssJeCP0eIQiuhQ=
+X-Gm-Gg: ASbGncsYIyL6kxJcGFvypsxNUr+UAPXUs1Gd9SB1RYxJysVx7TItUM9oKqdBS47k/Ri
+	215uaJjjHXpxLkRXxAwbU82wxDtXZHYrwKR/GYT5nAg7ODjLrIb7LMMwrwPl6A7dzn/MQkhKKZo
+	2D9cQ9FhT4EuRnlIWy5eEjThTlSxQYZjM3jn2AodGHZcR3hP/9qvJB80hFsCA3umX11c+Ub0YT7
+	boQXvZ6NhnJ4+dRIDzuisTcj2uXaTV8IJiCcMxJ2EJxj5WvP7W6ibe62mlehIxLM3TSxq2BI9uv
+	nV/x9EYDQ2taqQYeI44IrfSrGL0jUkc3/u9uLOuLpvyb3G+E3K9TjQioGQE3JhSHMYc3IBnSUZC
+	XvRnlDJ1dVFxuQfrecfL2x/adc6O1J7YWODUCIHqV6N9I+wi7g5Tjz2Xxg9nEGvv1TTjbU66FXD
+	YcbpnfJMueVOYoizYk
+X-Google-Smtp-Source: AGHT+IETbivJfBcDFqX/qYauRBKsQ++55ebaSqc3KEhL3Ernui7SaVmRbHIyHQmMXTPmCfMZXsNxvw==
+X-Received: by 2002:a05:600c:4584:b0:475:dd89:abc with SMTP id 5b1f17b1804b1-4792f25b843mr62826545e9.11.1764934746896;
+        Fri, 05 Dec 2025 03:39:06 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42f7d2231dfsm8337840f8f.26.2025.12.05.03.10.35
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47935fce542sm23520885e9.0.2025.12.05.03.39.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Dec 2025 03:10:35 -0800 (PST)
-Date: Fri, 5 Dec 2025 14:10:31 +0300
+        Fri, 05 Dec 2025 03:39:05 -0800 (PST)
+Date: Fri, 5 Dec 2025 14:39:02 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
-Cc: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/xe/vf: fix return type in vf_migration_init_late()
-Message-ID: <aTK9pwJ_roc8vpDi@stanley.mountain>
+To: Alexey Kardashevskiy <aik@amd.com>
+Cc: Ashish Kalra <ashish.kalra@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	John Allen <john.allen@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] crypto/ccp: sev-dev-tsm: fix use after free in
+ sev_tsm_init_locked()
+Message-ID: <aTLEVmFVGWn-Czkc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,31 +82,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The vf_migration_init_late() function is supposed to return zero on
-success and negative error codes on failure.  The error code
-eventually gets propagated back to the probe() function and returned.
-The problem is it's declared as type bool so it returns true on
-error.  Change it to type int instead.
+This code frees "t" and then dereferences it on the next line to
+print the error code.  Re-order the code to avoid the use after
+free.
 
-Fixes: 2e2dab20dd66 ("drm/xe/vf: Enable VF migration only on supported GuC versions")
+Fixes: 3532f6154971 ("crypto/ccp: Implement SEV-TIO PCIe IDE (phase1)")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/xe/xe_sriov_vf.c | 2 +-
+ drivers/crypto/ccp/sev-dev-tsm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_sriov_vf.c b/drivers/gpu/drm/xe/xe_sriov_vf.c
-index 86423a799d57..1b75405b8d02 100644
---- a/drivers/gpu/drm/xe/xe_sriov_vf.c
-+++ b/drivers/gpu/drm/xe/xe_sriov_vf.c
-@@ -226,7 +226,7 @@ void xe_sriov_vf_init_early(struct xe_device *xe)
- 	vf_migration_init_early(xe);
+diff --git a/drivers/crypto/ccp/sev-dev-tsm.c b/drivers/crypto/ccp/sev-dev-tsm.c
+index ea29cd5d0ff9..06e9f0bc153e 100644
+--- a/drivers/crypto/ccp/sev-dev-tsm.c
++++ b/drivers/crypto/ccp/sev-dev-tsm.c
+@@ -391,9 +391,9 @@ void sev_tsm_init_locked(struct sev_device *sev, void *tio_status_page)
+ 	return;
+ 
+ error_exit:
+-	kfree(t);
+ 	pr_err("Failed to enable SEV-TIO: ret=%d en=%d initdone=%d SEV=%d\n",
+ 	       ret, t->tio_en, t->tio_init_done, boot_cpu_has(X86_FEATURE_SEV));
++	kfree(t);
  }
  
--static bool vf_migration_init_late(struct xe_device *xe)
-+static int vf_migration_init_late(struct xe_device *xe)
- {
- 	struct xe_gt *gt = xe_root_mmio_gt(xe);
- 	struct xe_uc_fw_version guc_version;
+ void sev_tsm_uninit(struct sev_device *sev)
 -- 
 2.51.0
 
