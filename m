@@ -1,95 +1,80 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AC1F9C0
-	for <kernel-janitors@vger.kernel.org>; Sat,  6 Dec 2025 07:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D792E8B7A;
+	Mon,  8 Dec 2025 16:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765005009; cv=none; b=X/BvGU2+3cVZZIF4dICnjucjJPsKuWWb0QLF0ppnfixVqg0EoDbC7ZyOMWl0DHaQa0hJvSp4D82rSnI9BcONudIj7R3322xGKd+/l+kGbcsZe70PJ8Qp0WPpoSavNmk+PxsvFuGR8B5cVeSOCgcCnZjlU3Y8Ii1kh506vcNIMzo=
+	t=1765210995; cv=none; b=NM2T176aUfQCt2pS4YYgvvs/Nd1hPiJ5O3fDDlZwki02VD33ck6O1sPMd485ch5mt8/O1zOSdKDk1BXHI7lehyyRYOliePEbBFnzBqhMI28SvKAkdPLK11NpXauejabNsohNMRkQiOImSgBNawrWHiQCIEVX8QgVsuZl+zHLTX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765005009; c=relaxed/simple;
-	bh=stfioGmUs1ZhVtq8QNOmxk2R4LbbiQ5+8qUVwVZYscs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O27yY6gIpl9BTMiihjsWFwAx+X3dhU2KgOAbISJ8Ugk8UKIjqaqzHw94Xc+ioAl1Fg0v0r8p5em8Vo+Z8bSak5O2h1J0tN1FxuCUbUhAQZvB04MeKbnURLUSiV7HlJvKOriYFM/MS3hsORz7UYI/GR+QMAnau7UDb4ekeIWV0M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kem8hJVv; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1765210995; c=relaxed/simple;
+	bh=+NtQkaPiW9U2Wn9e0OyvKDvF2to4uVN5uoc1DZKXqtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Av7pAbxjzlI8yQJgrxcK28CwPBtFF17zK8cy9cNvwHgDKLB877h9hqCNG+xM6oXZ5ZYZ7ka8nl3vtLG1R7qfFHQ7HcJjKPaxTnvq0YTRRDvATAVcyJKoyTRgU7qmME7SIAY25yweN68zVzDJXMV9RmO0tjP6Z1DcpdAm7ZJufuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2wXssGH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kem8hJVv"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id RmPXvzLmS5RZgRmPYv7HRi; Sat, 06 Dec 2025 08:08:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1765004936;
-	bh=uArb2xwIvBEfMxd5lGqAD8yvq3B86ljlyalO1SXl21Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kem8hJVvFlG0ZMPpau1QVBa8vi2FdPRyAluKksXdUPVWI8YLM3T/GnykKo4DcTain
-	 DEKmMCaMV9j+a8n6VC7eBVxeEYOg9BbSuVNi5ALOS6eCmMzM9WIHpUdezMtNBasP4R
-	 fwmKOictTO6DrfmxbutA7lGGGCE5x+ADxNaoxhtDMM/r8OHh6yo2cGzI1GSktiXTl/
-	 QjQEt91mBCm5rohYDRYThX+XRAutMKhj36NsuV4g4rSQgNjmTzFwLTt+Lbt5K52sOp
-	 77CQtFyDZ3bE22aX8O7o23hOQ+MBjd/e3TQWbdMnxxOgbVVBNm9qAaXHA3cREFwllG
-	 KoQx0rAicta+g==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 06 Dec 2025 08:08:56 +0100
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] gpib: fluke: Add some missing dma_unmap_single()
-Date: Sat,  6 Dec 2025 08:08:52 +0100
-Message-ID: <6bfe7399c41d8b50a05b050832c6061d3fc04762.1765004907.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2wXssGH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08AD5C4CEF1;
+	Mon,  8 Dec 2025 16:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765210995;
+	bh=+NtQkaPiW9U2Wn9e0OyvKDvF2to4uVN5uoc1DZKXqtI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I2wXssGHjalB9Jkwov9594Yx4tM8Zx94Ats0PRMzozd9QRiXK1S3qyZSm/qnvThb3
+	 KdG2wCdNNBf1eDidzhOC4MqVoLKekWdMRiUY/Id0nOpe8BDNISMfNl4Vi7heSYKSfB
+	 CYl5iDIkCQNOLeH/ckOu3U/9cIKR1j3KzEJNP7TYR6IPTfzyK1QmQdhnQ6r/vJ3PQG
+	 a+JTfTmetqQJLDOGM4sybzL6F/XY2hgtXj+6QUSweV+ras01OboWBCQ991fGjT5AXu
+	 iH0vw8h21B0Z5nKHn0j1ES09eoQvmY4Y1AxL2HuA9oqjiiJMBLMCwRXAAmSH94WDfa
+	 xRQpfrgHaVFqQ==
+Date: Mon, 8 Dec 2025 16:23:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mark Brown <broonie@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: microchip-core: Fix an error handling path in
+ mchp_corespi_probe()
+Message-ID: <20251208-pounce-scaling-42dd8a174901@spud>
+References: <a7aaff1f28a83303a288de2914724a874fe1a11e.1764969247.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZjQYG6il/wPDbo31"
+Content-Disposition: inline
+In-Reply-To: <a7aaff1f28a83303a288de2914724a874fe1a11e.1764969247.git.christophe.jaillet@wanadoo.fr>
 
-In some error handling paths, a dma_unmap_single() is missing.
-Add it to avoid a leak.
 
-Fixes: 55936779f496 ("staging: gpib: Add Fluke cda based cards GPIB driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is compile tested only.
----
- drivers/gpib/eastwood/fluke_gpib.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+--ZjQYG6il/wPDbo31
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpib/eastwood/fluke_gpib.c b/drivers/gpib/eastwood/fluke_gpib.c
-index 61eca22dc2b0..1ef5c16a81ba 100644
---- a/drivers/gpib/eastwood/fluke_gpib.c
-+++ b/drivers/gpib/eastwood/fluke_gpib.c
-@@ -454,8 +454,10 @@ static int fluke_dma_write(struct gpib_board *board, u8 *buffer, size_t length,
- 		retval = wait_for_sids_or_sgns(board);
- 
- 	*bytes_written = readl(e_priv->write_transfer_counter) & write_transfer_counter_mask;
--	if (WARN_ON_ONCE(*bytes_written > length))
--		return -EFAULT;
-+	if (WARN_ON_ONCE(*bytes_written > length)) {
-+		retval = -EFAULT;
-+		goto cleanup;
-+	}
- 
- cleanup:
- 	dma_unmap_single(board->dev, address, length, DMA_TO_DEVICE);
-@@ -641,8 +643,10 @@ static int fluke_dma_read(struct gpib_board *board, u8 *buffer,
- 	 */
- 	usleep_range(10, 15);
- 	residue = fluke_get_dma_residue(e_priv->dma_channel, dma_cookie);
--	if (WARN_ON_ONCE(residue > length || residue < 0))
-+	if (WARN_ON_ONCE(residue > length || residue < 0)) {
-+		dma_unmap_single(board->dev, bus_address, length, DMA_FROM_DEVICE);
- 		return -EFAULT;
-+	}
- 	*bytes_read += length - residue;
- 	dmaengine_terminate_all(e_priv->dma_channel);
- 	// make sure fluke_dma_callback got called
--- 
-2.52.0
+On Fri, Dec 05, 2025 at 10:14:10PM +0100, Christophe JAILLET wrote:
+> mchp_corespi_init() calls mchp_corespi_enable_ints(), so
+> mchp_corespi_disable_ints() should be called if an error occurs after
+> calling mchp_corespi_init(), as already done in the remove function.
+>=20
+> Fixes: 059f545832be ("spi: add support for microchip "soft" spi controlle=
+r")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--ZjQYG6il/wPDbo31
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaTb7awAKCRB4tDGHoIJi
+0hwAAQCozyor2O9vx8dRHp6weQondI1wDiYt/OVfxZMH/bYYAgD9F3KYY5fcF6ux
+Upcw2qVwoE55Y7lVoWv6I2lHImySVAE=
+=ffMp
+-----END PGP SIGNATURE-----
+
+--ZjQYG6il/wPDbo31--
