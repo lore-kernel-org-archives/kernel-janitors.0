@@ -1,45 +1,48 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102842E2852;
-	Mon,  8 Dec 2025 22:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B827E2E4258
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Dec 2025 22:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765231745; cv=none; b=GQ0fU/Ty3gHIJq9sm2hDakYlrZcb8WB4Eu15w4W1xJT4O+i/G9w02dIKk/mWwbevWQbVrDaBoAS0auimx1t6qzYwGIpG1IVfo2ACfjC8O01RsIz1bseMb6AcZHu/upT7xJdHNnHzVL6GogZekntNcoXaKN2cl65M2flxgvZ5/5U=
+	t=1765231780; cv=none; b=A1Dkr//kSIvc28SMO3vzmvVMAn9ukAvvwGRWS5WFqpP8d3+UFpeYHQVNUeW5QDiGqUKgQXV/qnHBrkwPtq1vW6wvQWOlsJkGoqE+Q2SMZyBX7ztko/GJpjBDPGpBrz+rpKVTwYnUFaZf+gwzukzMOtuOwkK3/KBcCdd/P4Mrz28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765231745; c=relaxed/simple;
-	bh=DUqRli0nxSti2hkeyVHxCVSXpcipRk9bFxGZ4j9Pqss=;
+	s=arc-20240116; t=1765231780; c=relaxed/simple;
+	bh=p3sg78l1Rmo9cpHzmTNgyENt0ymd3EOPwxRutKTml6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T4PG4askIoVojv8hxdSWaiDQzfId0WNqjjWo4bJES7SCs7gzFMdNNqOeq5NkV4h6Tcs+sUciHslLibnRArcYmJWdrQmLIDGIr5n6rkIbwywRB5xwTMMYRlMsF0WibubaCQDKiab+HKcS9RXx653fYFZn+ajYpGffTdhPAvzfcs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ga+j6OHg; arc=none smtp.client-ip=185.171.202.116
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUjJSA1uTfGMwpHpIkJBFiR7z3N2WkAHKY+y/be5hIhA85sIcqZTRj0n8g+ktrcfAuXUpMWP+Gj/NKq7AKN/w50CTOJIA2R391CfQplqujkirI29bSSCCBbiQSQMTlIa2YalZn3NyMG+GFZdfWQeir2C3SgmkU6UmOaU0rZ+eto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=b5YDvEUS; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ga+j6OHg"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="b5YDvEUS"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8FAD6C180D1;
-	Mon,  8 Dec 2025 22:08:37 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 1DD571A2041;
+	Mon,  8 Dec 2025 22:09:35 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5767C606DD;
-	Mon,  8 Dec 2025 22:09:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3068B103C8E29;
-	Mon,  8 Dec 2025 23:08:58 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E1AC4606DD;
+	Mon,  8 Dec 2025 22:09:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 75C45103C8D5C;
+	Mon,  8 Dec 2025 23:09:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765231741; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Lvs4pRLHDrzl0zfJuB5oUtLIpOt8kqAlRKlem7ApBJ4=;
-	b=Ga+j6OHgGeFcquoiwCI5Am3F218oBBicgyW5/o+Ic2xqO7tTj+z6wO27WYnHCIcI14Ffx+
-	FD1QeDazr3bsgXW91SPARFz/O4AHnUk6ixoARwr5om9PzGbmIaBSqlJF1Pkpk0RmE6cbVY
-	UC97T6GTRGtFn4KXUFenjmRGRT5CM+QC9sW7obNeWg9KriAM92QC+ALwwCx8UckFUZZFGg
-	vPBG+XH0BoKGQR/GGOJmMLGX7BSPK8qfEsLsm7++hyDABzujfKCa/4/8UO8ooCFbbm6O68
-	qNTUeJtH0iJj2RL4ud0veZYz02WC/9DxSl8mFAQ25TTxNEexzRlECsCYecliTA==
-Date: Mon, 8 Dec 2025 23:08:58 +0100
+	t=1765231774; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Z6XLQIPaEq+Nxc+Cv2PclK3uy5FDDYP1taw5UsNqkeE=;
+	b=b5YDvEUSH70h4yPmATFM9NyVPYlvv07FU0Y1H2efa4IpejTAOjgKZNE4aYtS14rUGjAPjU
+	F4L9FGCysc/LzVO0VbYwgQQOxaU0uH8Mk4lnm65/i8LWVR4J3htEdvUD0Ubq6Mi+HvDZvz
+	Tv5Yj2aLILnzbjIjWm3TPRPhcNJN6NO/kpZa9xTQSXfotMBEwUWZVD+1t7Gtb1sgGKLjXH
+	/I/xpeUkaaAlPwpSegIkB6ysVv9cVrbWU9RuOvy79pY+RhcgBgZ1STNlIZIqWfUM2BW9Cy
+	78oSQu+/NoqQnEn3Wgc6WtDEsLty6ieTgBDSw/gS0CiZHSlhnDZxtEmbxjPuaw==
+Date: Mon, 8 Dec 2025 23:09:33 +0100
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: CL Wang <cl634@andestech.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] rtc: atcrtc100: Fix signedness bug in probe()
-Message-ID: <176523152356.342815.6072782957739777163.b4-ty@bootlin.com>
-References: <aRxPGBEX8hbY6sjV@stanley.mountain>
+To: Shubhi Garg <shgarg@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-rtc@vger.kernel.org, Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: drop unneeded file entry in NVIDIA VRS RTC
+ DRIVER
+Message-ID: <176523152347.342815.9191977208772431822.b4-ty@bootlin.com>
+References: <20251110073544.443816-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,20 +51,25 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRxPGBEX8hbY6sjV@stanley.mountain>
+In-Reply-To: <20251110073544.443816-1-lukas.bulwahn@redhat.com>
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 18 Nov 2025 13:48:56 +0300, Dan Carpenter wrote:
-> The "atcrtc_dev->alarm_irq" variable is an unsigned int but it needs to
-> be signed for the error handling to work.  Use the "ret" variable
-> instead.
+On Mon, 10 Nov 2025 08:35:44 +0100, Lukas Bulwahn wrote:
+> Commit 9d6d6b06933c ("rtc: nvvrs: add NVIDIA VRS RTC device driver") adds
+> the section NVIDIA VRS RTC DRIVER in MAINTAINERS, which refers to the
+> non-existing file include/linux/rtc/rtc-nvidia-vrs10.h
 > 
+> Note, with the changes of v6 to v7 of the patch series adding the driver,
+> the content of this include file was moved into the driver file, and the
+> include file was dropped from that patch. It was simply missed to adjust
+> the section in MAINTAINERS that was newly added with that patch.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] rtc: atcrtc100: Fix signedness bug in probe()
-      https://git.kernel.org/abelloni/c/159a740c768e
+[1/1] MAINTAINERS: drop unneeded file entry in NVIDIA VRS RTC DRIVER
+      https://git.kernel.org/abelloni/c/40d8123ff749
 
 Best regards,
 
