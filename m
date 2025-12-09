@@ -1,107 +1,106 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B0C225415
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 13:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEAB27BF93
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 14:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765288085; cv=none; b=dE6dNXky4SJQ0W7OZMucuqsIRd9pU1TuJ/b6FgAc7uLQrPl5nU6aLF9mjX7YQ5H2IzUwKyFITi5h6EGCu6lx/fibO/AVhRVs3agTPLcXrDE2IOnGgyCx/U75ZXfmhJpiPEyzlVmOZDOV2Vd8QRtw/M2zVDrJWl+DR2VMn3wCSto=
+	t=1765289683; cv=none; b=GkFSUCVU5tehLce68X0ba4kwVAk6pvKodksS//DY9zxhQRtFGCtuaGPaQYUG7tlcU6J/dch4y6pKKn8Yf3vGeRKzusZiQ/Khu2NO/abErmf1Yebyv1msly09CaFoV5LstPpf6Yq54zro879/IX3youCh/DExc7/d+zyYNtEIufw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765288085; c=relaxed/simple;
-	bh=yMlkkS909suSag+J4bubDDFfhJhvtrF/Tlj2/vEeWuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwOlCB5TX9iq0JKShUg/rhrpGMAvw+EuvEl5ougRywlLRcvknszGBwdNdQGy0/UzZQKZ1YOUd9fryjNTzfEeOxU10TZSyFHKxltQ2Cxsq8yaIYR9gH6/4YDSJm89/zDhtWrIx59PNeN4/EOhpvsU8guNqtkx02n5q7yjIwysxp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tjVPklxd; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1765289683; c=relaxed/simple;
+	bh=p+MnXMxY2ieuINKDW+qcU42qclFHOt/7ycs9gddmvKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Drx+O0rbT8P2AzzgcyFgxHncz47825pQiSsIWpiYP4y6opw5/nNr7EGU3HwOR8I+uOTosGs4HR1/WRAtluFQciS53bA9FOfQffJxRF7qD4Zf+XS/4nWSl3KBngZhmpg/CYsyGtbKfpi5qTh6YCwMx6IcWcYQD57W9RFVErWN+mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJrzUsLW; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tjVPklxd"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47796a837c7so50749615e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 09 Dec 2025 05:48:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJrzUsLW"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b72bf7e703fso964897366b.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Dec 2025 06:14:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765288082; x=1765892882; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gR9Rp7xfBuo6EIdux6kY6lOwHf1l3aXnIwHH3gmXlNk=;
-        b=tjVPklxddEWxCtq3lZEMc0vbvTruwUNbuh6y5GO4BYWK2ZMUn/uP1rOhT9V0xPDfE0
-         BPBnYQIqxNdmRZHGk5jVuq4eGosTH74cfOmy0ENfjK3WQB6Db9HZQdHXAHjfg9Qy2Bx0
-         8w9CmUxunle9cNI51poDC7++OHokjJEQN1aC0nF//hYgX3iq1uv8FjeAP9V47n9wpoWy
-         3iQ8O3z2m4gDej4LkUqX+YJTwZduoF4U1YY+Vv5p75bFlqUl2wmj0PtSbQqe/l+wmddD
-         EU19vLrvVbYSci85SoZ2AmDUNdHFkZh7ymxx43n7VBTappyB341aEX0zxsyJ8eMJi5Lw
-         jNfQ==
+        d=gmail.com; s=20230601; t=1765289680; x=1765894480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FmfJkbH7xP/snHtbfubSpeIYpZRSL8H97Un9pUNUfhg=;
+        b=nJrzUsLWcWVtPph2cTv2gAxxL3vJpcVU2HosFhlnRRmcojvudV5pdPvg696LPN7lGj
+         y4kMnRC5xYXbHf9fqDBHE9wjyFULunpHMLxMnwjiBpeg10TUhPdqj2Dd1uX+zZM5f/nb
+         U27R6Zh/3/BBK6MyldQoadI8DeFF7LGDVhu+fOGq8K2l17U6qYgVnKMVxulUOVw9Q3yY
+         uQeXJRAWL9+PkzGDDqCtRyppGCUMRahQPJx1FJRLUkPqOiqDCzOd/bNz4V3StsYy9mDr
+         aodVT1V/7NuQ8nyMwsl8xVH1g/58ylAyycgKKO9MIOPCcPQ9Om9Ne69uv/izsS1n7qxW
+         ZkSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765288082; x=1765892882;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gR9Rp7xfBuo6EIdux6kY6lOwHf1l3aXnIwHH3gmXlNk=;
-        b=ig0dTKr+VWGw9IUCDA855KrVLERKuq/yw+mpb1AexYZ5lmOdnBygmwOlMwnJPcXMHw
-         exO3BjZpeODoaFzr9n7XzkNRru9/fuIelw+xtHXkswgbvzs/Ad7UCb/tQfdNB8vsmasi
-         uFE2F4azI6vpjYBmvM+HtnT+UFFRF4WFDC3FjArv9tA2m6ozX3EYahZ27f9W2ZODhkcL
-         7w+9Djr2j4YWVxuGOmfCrBQ0m+tfsvI1oL1gjarujFYITNcuPTRDhkGpndE/xzzEK/8e
-         Pg3EBodFZUpk/WrQXRML4Z0fac3oJ+8FrXMRrJDVQ2mGlMYCREb9tgZIu807wKaBCmhi
-         vgFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVs2ECS7UCPMF17IzuPnYBSpTc/41YtcbKXccgraf3JoGKhdng8OBV0EHvUWi7+usFlrU11KG7nR/RRoms7ayM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7PSzBsYSBkcvh/4T8sS55nSdCjKv4C/EOFrw0/jA8dsENF29L
-	grz5nXqfnuAYjhlCjx2Nz0jU8EOfN2n6QL8ssI6WzucYoXvW4Pc2TcGpU6MFxw+9iBSg+ycknBa
-	qIhfH
-X-Gm-Gg: ASbGncv08bGxPK86RQVEMDFAMVfIHLCAZWxlFpzpCNoXDeEQedyo6NyvN/9Nnzrhimm
-	wyTzmiML6/rUWamnw6V8p/47LveeK5e3NuthpR5mPOmc86pCqgwNzcQ+QI+eLwtwHyCW+2bgsBY
-	gl0dyzmoW4kyLE8E83tYvO0wrhwDQuKpnkNnbPrDElel5uLUO0Ild/PJo8Xw0N4+Ts+cFlapqnj
-	LK43U+h9Q07F73Be/Pn2l0ubObXGQHz23Seilw6km9BKpkS4Qy8E2YuZEL9Lt2Ej6D23FXmLuNr
-	dyY/1w831TPdPMucMNXwTNJo/jE4BHhIESUMVHwXOSJKXJx9wFS3XUBY8Dsf8L3XiERfRrhqCFD
-	XcA1gCMj6eUctsVqU76nkc1y4EvHUr7rLCFC2pK6DJFQFFj/iw28vVmJX2HdaElfdE1FITiz2tO
-	sA+7p6OiO2vdWRHusqycQEGc27CL4=
-X-Google-Smtp-Source: AGHT+IGef5yYlyo7EVp/T9KJWfVo8Fc1RNlqYKs7x4HdPy+PgaaGEreDgsueryhczBIbI7R/rUEPaA==
-X-Received: by 2002:a05:600c:3588:b0:479:1348:c61e with SMTP id 5b1f17b1804b1-47939e1f683mr127692875e9.20.1765288081964;
-        Tue, 09 Dec 2025 05:48:01 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7d682f10sm44245995e9.0.2025.12.09.05.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Dec 2025 05:48:01 -0800 (PST)
-Date: Tue, 9 Dec 2025 16:47:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gpib: fluke: Fix an error handling path in
- fluke_dma_read()
-Message-ID: <aTgojlpyUwqBrQLh@stanley.mountain>
-References: <a7b70a8c5dda16c2ddfab4309b4371b91d0ebc34.1765004481.git.christophe.jaillet@wanadoo.fr>
+        d=1e100.net; s=20230601; t=1765289680; x=1765894480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=FmfJkbH7xP/snHtbfubSpeIYpZRSL8H97Un9pUNUfhg=;
+        b=oStiqPQKVBfIGviBbteozZiJQjD7vttoryWLQ2MjvtXLo0n6Wc9wPfBWA6s2q5pDxr
+         3kT9AllWSJSwYP5kBhJjgsxVO86WvEA+HGZxdU52qETaaZHITRYrNbl0JNRx4sVcR8bv
+         hvspah/jlJPMLkV78BThGofe0x71A/o/y6L99B5F6+ioAErBGaEuIqeYJbPcmd0ks6Qj
+         BgQmMb9pjrfb1Mrf1Axk0D4KJ2LJfvkl+FSEuceSRefxR29CbcAiKCx64oDw88NB2hcg
+         o+5BE58egyrQXfIkyaRVmP7c8m7z/9xKhodAx6ImIeXRxQXm1ovvbWpHCsNIfrnPvDbQ
+         v53g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzUbqTilGXQQCS0qvRO+JOpCxUeXu19U4gMwi3bCM/Ar9OyEyw1Ez/HUImoG5Q2E0YxrWEIXNkCDyDZBynz5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1i2rBJh5YXxo0N/mnOzg5kYN3O/1NCCM3R+7Iq+k+ECwsqJhc
+	OHdaFiBUZLtbu6XOZIWcN8WfiybyXq2Xh8odgkWDgO2q8G2syBd7s+WuJ9s3Suwl7N4U/eRoIIy
+	ckM8mL0wuUo02SZBPRevQAzkvARXhHx0=
+X-Gm-Gg: ASbGncsMy7J4bd9+HWkXpklpbTPGgcN7/DJuyDG65O/sa7VodCfRHCPCUJ2lRV3vD1r
+	0bJGdUIuxEPJLUfxJf494Z10EtOrC5VtFvMXq5ncPYOFC13mDvuGUD/SnfRcfAc+1ooS+j5sijm
+	pRbqtb6Q9e+stLbXq9OY9nkEce1JKsXb2JJsZNZmhKdaf63qqX4mPB9C8LSs2iRa16tbr/gY7vx
+	THWG4MvaRJs9Ak85SY9CtdUw3/kqG9MosDQPQgbZiT/DSOjG0onTk3PPyNoBIkZ8v+RmegwjzL0
+	ekdCiw4TL5r28iGdijFtfPkJEYzYtkwf7a9NHn7T6JRAJ/92LAc0/9wPe4X8WEfWs+Tb4mY=
+X-Google-Smtp-Source: AGHT+IF5UkCJdJKXlr6Gth/qwcAe2dPAWhiuJkFRY5Ifo8BeEAGB6I3vdou2q1Tu4uhuVuZOOpDIp5dIYPVIef5NDe0=
+X-Received: by 2002:a17:907:9707:b0:b53:e871:f0ea with SMTP id
+ a640c23a62f3a-b7a247f6120mr1199899066b.56.1765289679946; Tue, 09 Dec 2025
+ 06:14:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7b70a8c5dda16c2ddfab4309b4371b91d0ebc34.1765004481.git.christophe.jaillet@wanadoo.fr>
+References: <aTfIHE_2-iKIrwqv@stanley.mountain>
+In-Reply-To: <aTfIHE_2-iKIrwqv@stanley.mountain>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 9 Dec 2025 16:14:03 +0200
+X-Gm-Features: AQt7F2rhjNP1srDjpyNtylnlt2n4nXE0BQJ1nV4SdGEvG-2omw-a6EWOmFv0S24
+Message-ID: <CAHp75VdHEVsj9o1UPSS1ikJYofDuiA7KwUaj8v79cJ3Xs=N5xw@mail.gmail.com>
+Subject: Re: [PATCH] leds: rgb: leds-ktd202x: Fix error code in ktd202x_setup_led_rgb()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kate Hsuan <hpa@redhat.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Hans de Goede <hansg@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 06, 2025 at 08:02:25AM +0100, Christophe JAILLET wrote:
-> It is strange to call dma_unmap_single() with its 'dev' argument
-> explicitly set to NULL.
-> It is likely to crash.
+On Tue, Dec 9, 2025 at 8:56=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> Return -EINVAL if the "reg" value is invalid.  This is unlikely to
+> happen in real life because it comes from the firmware, whether from
+> device tree or ACPI.
 
-I've added the assumption to Smatch that it will crash.  Which as you
-say is not true, but I think it probably is the correct assumption,
-right?
+...
 
-This is a one liner in Smatch.
+>                 if (ret !=3D 0 || reg >=3D chip->num_leds) {
+>                         dev_err(chip->dev, "invalid 'reg' of %pfw\n", chi=
+ld);
+>                         fwnode_handle_put(child);
+> -                       return ret;
+> +                       return ret ?: -EINVAL;
+>                 }
 
-regards,
-dan carpenter
+I think the better fix is to split the original conditional to two.
 
-diff --git a/smatch_dereference.c b/smatch_dereference.c
-index 15ad885af085..acd70ef9dec4 100644
---- a/smatch_dereference.c
-+++ b/smatch_dereference.c
-@@ -34,6 +34,7 @@ static struct deref_info fn_deref_table[] = {
- 	{ "__fortify_strlen", 0, "$" },
- 	{ "spinlock_check", 0, "$" },
- 	{ "devm_platform_ioremap_resource_byname", 1, "$" },
-+	{ "dma_unmap_single_attrs", 0, "$" },
- };
- 
- void add_dereference_hook(expr_func *fn)
+And make the message something like
+"can't retrieve 'reg' property of %pfw\n'
+for the case if (ret).
+
+--=20
+With Best Regards,
+Andy Shevchenko
