@@ -1,79 +1,71 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A684F23F417
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 06:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EF52749C4
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 06:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765263224; cv=none; b=bpeet+KWAEUytDoq39I8i8H4rKbDkpoCtKGFK3TZFHXWedhG10/MyvmYI2TrVynj+NZotkyLDrp29irD7nY1rgN3OeYvSP+v+aOReZP7QMo/17GdtPpwru5/yl6kN5OZwLn7QRq/gdWeyDcPvRFzCqKeTI9U+XRo7hPxpCy8830=
+	t=1765263264; cv=none; b=g4+bNKKsFTKKGK3xF78o49AQIHHZxJ+PNcVLhOkNhbK/a4fnVWA8Yt+0rXUyROtMPEvaCshAVzKNGPRXe1wroWBD5CqE2nYp/vdBRjD+I2skvM4fh/LShNo4vGwrH2zE6AgN54A0OYrlSzaZSXCWC/UTj3ELw0PlpoIzXGvP790=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765263224; c=relaxed/simple;
-	bh=RQdSipf+jBAPbiSIsJI0pwPZWKZWFVvk+g5Ue5AgVgA=;
+	s=arc-20240116; t=1765263264; c=relaxed/simple;
+	bh=hn2o08cYQrDfV3tQqT9H+rDfpVyTSZK15G0g+VQZnTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ash6s9F+ApzYSoHOe9hBrRFpmyE+dUv5qBWRb40GrOBYrgPbkj8n88uh2aooZ13uliN2LvVHg5IopyZzqwEDW7aoyWzm+FPoOPWBXbpDzzAwpMWZmlB8gZ7TDMFkkx71c/h58HCvUvbwyrYLR82H3uYfk4jrsszhKALXeflXEvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ut3G1IEw; arc=none smtp.client-ip=209.85.128.42
+	 Content-Disposition; b=V14QKr52JrHr2Gg3ozrTC4jnoCIOFcpWeE5u4CHpEUMmrky+b50ufeNeeyuqO5jDdYX5imsLpWoX3Du64jNHhARWxtUU3KgDbBUr4OwgUEgzsgp5n1ymagjKGF5GYCTO20NpwS2HYvNI5b9PxN10wUWOIrffJM7zO++2EBQRVCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V/WbV2pU; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ut3G1IEw"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so40627765e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Dec 2025 22:53:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V/WbV2pU"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477a1c28778so66876825e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Dec 2025 22:54:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765263221; x=1765868021; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1765263261; x=1765868061; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qpimlZdEDtuP7WR2mZA0+z1H7nFjtx/bFty3v8hsXUU=;
-        b=ut3G1IEwoFQpjkDL6t56ZC3IYdP5GI9p3Qs2ct0o4kRKj0H6iMf50VTzOd6Mda8Kbk
-         28/3rPgVMBLL6nRcL6crtqvHwDLKlnMGCdfKe+3lVzgPaoHIFWODkNi3jVJ9lOqMCBSD
-         gvhXBRzlH5rA59SxDb1vtAqOhzjrBAHiX8ztPUl5rSOe3lkkpv9nUuNndolkI+WHcJw0
-         Gv/L1VXYgy5p/OHWTIjkc1usb6zColsQACj+yoyQTnYTxxfVOleWx/7Blr/r+8MzvLak
-         ho/h0fjYhPe+/Q3YVyGqQEUUoROi/e/csIk9xNCkQRGD1NYKQCFvCk2W/3N1tMhqqvqS
-         bW7Q==
+        bh=LrpXhu7xOFIDAiCO1bWkupxvjMEzxIC/867vkdzs4XE=;
+        b=V/WbV2pUsErdFG7eVuq4BenaT1JHWXizpPV/Ik3/xJ15sk3GsjxshjZkWko3PvvoDW
+         +cJEzZV7aUydq5k2HUbi78BpBJVimjv8heZSkPqhKiUTmoE1wTJytOVobpD1AmXROcSu
+         vFrWUYSalrc4jiWlsIhSZpCGGiwB+/XOBunNNAdvn+ckE/Anl1b8o65aotne29Qu4uJf
+         ITrO8ZheGjuC5njizV6lpKK9hw+cDsB2Zbgk3nFd5PfZ4JA9dvSGFFwv+LcIne2kAdvj
+         MDAirXDofQQ1vx6bwGhK3xTkQlCiXG04hfCbHWYDSqwkQo1IjdHh+QScQL10oGLA/Uv9
+         yPzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765263221; x=1765868021;
+        d=1e100.net; s=20230601; t=1765263261; x=1765868061;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qpimlZdEDtuP7WR2mZA0+z1H7nFjtx/bFty3v8hsXUU=;
-        b=NrqKQeJWXXLtWyokXdNLZUTxRk+P+KdR3lRuu52myy2W5Wh67c/aJinsuxzZKYgrHl
-         HtOVU1YJVQfB5hN1JCQYzFAt47akcznh+fN0dkR48ioWGnQIHSykbhSifUoEAqpSGd8w
-         bQ+QNo8IRzIAqXlpl1rQSsf9MKu+OA9J4LzWUEQYcmjpGN5FMpnVisya8bcelG0tZ06c
-         zvSXlQw8gyqqALadAGJKr6H3GBvJUDXCxteasyfWjtoPuBpEGfWM/UFor+BouGI9Cjuh
-         2NGnHV37kWnMXSqEcLVabF5YCiyVBYJAcHGEASqZgzGxYwob/A+Sr1mlPXxcPprs9+Dk
-         7N7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXCZerPU+ZtrysU9U7KHredG6YRRBTk0BrhbKTQAJIfJVhqW4OIERBILGP8Zu/m4dtmo3BcIP/YLjofYbbyivI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzXzf/pUeUAw/Yc3ZlJf4qjc6n0hUxWcAWCBxgd++2DMstoul2
-	5kw112ruiHaKK81Bx5wfBV9s2UKKU7JhIJUQA2iogTsLoHncRzfwMqAR8kPXMHnu92I=
-X-Gm-Gg: ASbGncuHxN1vysrDLNsmEgEKUTx9xFQvnfZ7Od5e42GxoN8dcoDJMdTicDi2TKZsbSR
-	d/LzwVVkMi+ilcpfrkqYILn8ihvo2hdf/I2JDIORCZZJLnp+wFNdBsyW+rYEl0LCuW3cTI7GJmT
-	7s1faGvFMzVTikxLQeFKuMkAncMo5E+Wq0D8dG82LqP6oPzvePm2r7/kK9+/MML2DpTGMufJ2j5
-	Y+Wf68LaE7zcXLwlhFSluptPHpc71BFj+gf4j44GT+KAWqXw1F67Bt/mqmkAR6/gy7EhZ4raI02
-	kiTV/bUIIPygYSt5fAZ8nTT/Bg3FxI2G4Mft627UTYoYk3uvs+LuIeytz49LvrvgdRCf7BWOVXX
-	HKdfvtq1f55/SF1APhNlS+8j+VeV1Ph59YlY0/jwtPNNlbH1zS96785mjILrmDT0gcQAjuqohPi
-	b9ry+LDt1BYlGg5c/o
-X-Google-Smtp-Source: AGHT+IGaTnV6DUM6NZ8B996sUpARBrir70sGaGW5NyYdRK9/TvpgGM9K+ozidhKmYpB4+XkFZ3zK7g==
-X-Received: by 2002:a05:600c:1990:b0:477:73e9:dbe7 with SMTP id 5b1f17b1804b1-47939e4d013mr112666895e9.35.1765263220857;
-        Mon, 08 Dec 2025 22:53:40 -0800 (PST)
+        bh=LrpXhu7xOFIDAiCO1bWkupxvjMEzxIC/867vkdzs4XE=;
+        b=kcLj7z1Fao8+Hq09w6ZzA1kXjDKCq/H9JsVkJ8mDghtpOkNfH45rA8kHLC0h/5UHdH
+         pOj7Yr0mEIAq59MRQEnPJwtIBz790KWneneFCXhO9NOq3rTAFoYrE66Gnok/JgfJpbta
+         c+zGE8k+HuKdI+K87VqO5ja5WFvFnclTnDgj4U2SQ5ipnJRDtWrCCOtGqoliTY9holzA
+         r4wNWVioQJHGuYPNo6yURfU1jDllw58sJxlUIB/flxmfwN2BAUqyEcOx7ovdHQegUk91
+         vpG9Zc4dJ47FotCnvxQvwcbV/qHHKuj/8zUt2sb54qZvkcZv9ZHgNEYO+/HNxK1Nz53h
+         GAIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8F1HapmUKOaPGQWDMVdhUuwdfHoNJD29q5IelfF4UcX98P5SVJdylU9zp3leJmauw7z0u662r8pBjHDgQF3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwvQfcAGXplJ5K/YFEsl36XW0jpHiVFtVTdCSZQmpgAFlD57TD
+	Lb+Youh63z9JaFQP6WHo6oH/kt473gVYBRW8rzVvbLc1SM4kqUXLx1eXZZg7+GPnyDo=
+X-Gm-Gg: ASbGncuJCHDw+InAtcOVTo4evFthKrpJa47xOF/cInjii7QUbtqKGuwgwdkV3WBNTkq
+	266EobPg3W7086/pcFhtwpwNizfdtlwWuLhaMzd6j7YOWXpcSADOm7ILMHMorBL/dTkATTokr6l
+	I4/qzQnBGKUsqqz+ZkGJsd0N0DdK4eXMzILirbhY/Vh+XMiQR5IPs5UNlR2TwGkRUjAxWSnv/2X
+	kRha1aWjNP3XPD/D/SIA/nZect2UIWFKjxz8+rZ7wZiizFLX2FKpfBpIBuiEa1geB/QXO2WjM8J
+	5GN0S+QWudmAf574xOcZitKWBWFoMqBz1wghkZLGoFRDQ4sdIgEf4LaKNglAh9oC769ecK7IfV7
+	rhQc3uM4AxDSn05Aak11APNKbHr1AT65eiL0nGm+0HozjjGP4sKs0oHpdyTDFyqYwdV5j3/nAYr
+	pBCcqNMMuCVZQyYJL5+dr1PV8VOMI=
+X-Google-Smtp-Source: AGHT+IFBOp5hL9jg9TvJQOI4BfDjItpdTFn6DjQubuLwhWGI1xvay3ngK24RTkv5+aMtVyoGM7FLpw==
+X-Received: by 2002:a05:600c:a00f:b0:471:14b1:da13 with SMTP id 5b1f17b1804b1-47939dfdfe8mr111271245e9.14.1765263260606;
+        Mon, 08 Dec 2025 22:54:20 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7d35713asm11916255e9.1.2025.12.08.22.53.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7d6969d3sm23265865e9.12.2025.12.08.22.54.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Dec 2025 22:53:40 -0800 (PST)
-Date: Tue, 9 Dec 2025 09:53:36 +0300
+        Mon, 08 Dec 2025 22:54:20 -0800 (PST)
+Date: Tue, 9 Dec 2025 09:54:16 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Fengguang Wu <fengguang.wu@intel.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] phy: stm32-usphyc: Fix off by one in probe()
-Message-ID: <aTfHcMJK1wFVnvEe@stanley.mountain>
+Subject: [PATCH] irqchip/mchp-eic: Fix error code in mchp_eic_domain_alloc()
+Message-ID: <aTfHmOz6IBpTIPU5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -84,31 +76,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "index" variable is used as an index into the usbphyc->phys[] array
-which has usbphyc->nphys elements.  So if it is equal to usbphyc->nphys
-then it is one element out of bounds.  The "index" comes from the
-device tree so it's data that we trust and it's unlikely to be wrong,
-however it's obviously still worth fixing the bug.  Change the > to >=.
+If the irq_domain_translate_twocell() function sets "hwirq" to >=
+MCHP_EIC_NIRQ (2) then it would result in an out of bounds access.
+The code here checks for invalid values, but doesn't set the error
+code.  Return -EINVAL in that case, instead of returning success.
 
-Fixes: 94c358da3a05 ("phy: stm32: add support for STM32 USB PHY Controller (USBPHYC)")
+Fixes: 00fa3461c86d ("irqchip/mchp-eic: Add support for the Microchip EIC")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/phy/st/phy-stm32-usbphyc.c | 2 +-
+ drivers/irqchip/irq-mchp-eic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
-index 27fe92f73f33..b44afbff8616 100644
---- a/drivers/phy/st/phy-stm32-usbphyc.c
-+++ b/drivers/phy/st/phy-stm32-usbphyc.c
-@@ -712,7 +712,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
- 		}
+diff --git a/drivers/irqchip/irq-mchp-eic.c b/drivers/irqchip/irq-mchp-eic.c
+index 2474fa467a05..31093a8ab67c 100644
+--- a/drivers/irqchip/irq-mchp-eic.c
++++ b/drivers/irqchip/irq-mchp-eic.c
+@@ -170,7 +170,7 @@ static int mchp_eic_domain_alloc(struct irq_domain *domain, unsigned int virq,
  
- 		ret = of_property_read_u32(child, "reg", &index);
--		if (ret || index > usbphyc->nphys) {
-+		if (ret || index >= usbphyc->nphys) {
- 			dev_err(&phy->dev, "invalid reg property: %d\n", ret);
- 			if (!ret)
- 				ret = -EINVAL;
+ 	ret = irq_domain_translate_twocell(domain, fwspec, &hwirq, &type);
+ 	if (ret || hwirq >= MCHP_EIC_NIRQ)
+-		return ret;
++		return ret ?: -EINVAL;
+ 
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_RISING:
 -- 
 2.51.0
 
