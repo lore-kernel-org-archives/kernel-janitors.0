@@ -1,76 +1,72 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A2627EC7C
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 06:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3C527B4F5
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 06:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765263396; cv=none; b=bvljfBYt96uI9pgwpnXGzAxD+ebQDf2UwM6U0UNY5JmcFhuB+zb3wzgUcQcQZpiLAOkju6lwDM2/ToraG/39q7VBWmymBrXqLWv7C7+C9YPIlOccNOCBY3pmcD6It9SYI6/OHiV6z+fI2Ij/l8XTPh8bxA2gCRlXhUvacicxNzM=
+	t=1765263405; cv=none; b=SwxU/0LkDQbqJpVJbqVqfxiPjqzb+pET8szJV9YumKxn5hzgrumhw9WozrhBuiB9CQ7oFgiT8yzOQS3Tfz6e7rodIL9JMp8f4G1ilI3yMxzWtZv8OPqCFFSwb9lPfT+j805gUZEzCCOoKKL14vV+Ex2O+xZKIyl2TqLvqJ7G9hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765263396; c=relaxed/simple;
-	bh=6iFRA45dPKiXNveZ1wXay7FvVPKi5iIumQ5qYPzeCM0=;
+	s=arc-20240116; t=1765263405; c=relaxed/simple;
+	bh=BkTB8790tHyQvmqq4IjYxjq69PW1c+RO81orB7i99pM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qiiInK1TtyIwi9w9zcsShPBeY+pJz9x9P6shkZfPX5ZIzDZI35sd806m8oVT+OYZ4V+xZ1EfZXuy9AHX3Kq+QpvCb+/W6YCbBZCPuiNiWPTYGLupY5sk/OMQ4WeFNIf2RirEyUqkP3qKeeWrZyrAvQTuPMM1Rfb/Lo2f/k7b8KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iRAeg8LH; arc=none smtp.client-ip=209.85.128.52
+	 Content-Disposition; b=INvWZzWa8nOXRj7M+wGae6VFB2DCERsDBh09sMCH61VDF8nBYX1AsGb/FJun0kwadBpbbEsMtOp/yhZhJVYKnQ8Zw4i/R+eIlC6JMwKgcBO6y5Y627MBkQeA//Z2h/4or6bb6si2SWO1/YuYqCG91RdNUtc8MNMOaoWeBzdF+GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PtwxwBAq; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iRAeg8LH"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-477ba2c1ca2so68318525e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Dec 2025 22:56:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PtwxwBAq"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477770019e4so55553735e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Dec 2025 22:56:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765263393; x=1765868193; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1765263403; x=1765868203; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=sHIRJtJwasNsdM3LPTiBUAFA6xA3CvX5kgG0LlrG2hg=;
-        b=iRAeg8LHh5av5qRUAgYIXTyWApRzZvcL4/lwtwHK0NpPt0jqD6HiL06BYAmF874A8b
-         ugqHAqTg7syPnWxNM1YaMNBLh+LpR9eWTzW7Z8Bs99et5Q+6HpGEGHOiBhl41NFFRXjq
-         5TycuDZhRqFh1SGixCK+aBiZ8NHw7smimGWRfUuExNNA68vlLfYx4rRg2rp67A8+DZ20
-         kf4miUEEWbQgTN50GvRbkwWJMwVq83Do5FmIXH4nwmwYerljcrtuBZZIh+iPly1Ttd4f
-         QEqlM35pL0CA/HhpziNUAR7BH+jwjW+c/aJlLaE1TOVlZAbfDta+NPfzwUFFszdmPLmg
-         b2QA==
+        bh=GjNG6xVzRAmntQfwOjlrSFL+esIKWya6rAztReNCRwE=;
+        b=PtwxwBAqGRSaLpJ4Urakr+AViDWm8Bnve1Kk4yGi2yc/msbE19A+FxRMLSsJFSDMXm
+         QocIRmON9mfGAoaLNjj1jfhmpU+JqFkiXSqH/OvMib7mm90m3roC0Lg3rqG5m3M0xlcK
+         mrm5qJ88Y0DL0iHqR3F0FlIKIr2sc/5FOKmg82IOVvB12eSsww4upvkt6uXxcSRGFADq
+         K/Ah/EGjb101MG5PCqaJXXv8mlCKfRJUXuZnvJbJrPScsaALMRjc7gpUMgZLHBZFZm6H
+         DIbDeO8vwJOMY1z0qqf/wOOiLdrjwNQthc2myMpMPhZqrtCEDEGXUCksDx+m+Fgzn2rv
+         LhRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765263393; x=1765868193;
+        d=1e100.net; s=20230601; t=1765263403; x=1765868203;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sHIRJtJwasNsdM3LPTiBUAFA6xA3CvX5kgG0LlrG2hg=;
-        b=aSGvkMJZRVISUfcozCn5C2w7SIket0q8i566Zv71Vh6MPliKf45Yl0AA1G/uCZzCLX
-         QrDWYto7Tc0T4P2KYqJiCLLQBpT7n1XrBvFZ5GRXjvN6Cr6ifT3hKhGZonO0kpxR7+Lo
-         /cZnmkAnkEe8PSAmq1R+wu8hMaA6Pf7+T6LB1Q4FOzy6xwVIBreaYwtKswZW454NxpFZ
-         kM6/K7th8bO9YdJIs3vw64Qr7bazNyze7rx0DWxQs+Jqd7u9PGyAmnl+zfLSfudT+mbZ
-         adK9dKL7yxL2VF8i1R2y8QOq/Uu5Lvht3+7ezDhSK1xF/IEQBBX74D3abaoiuPMHyHws
-         9jnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuffyrW49LdBVaWsiShUtmOXHTPAo3kJVhvn/Px8DtsSFhaWvPMKu6WvOZM78navsQBuXZJ7u+bmirWEX39dM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycmI5MvrH2ghNIRm59aDZ/FhOWrTbJfQb7XAZ/VFkW8tRr5WEe
-	mxuLdmt87MjAshyYxInAB74loa1tLm539KB5ZJZifFP8ABWg/yaN1FoQgokFQwCpoeU=
-X-Gm-Gg: ASbGncujzMaV46/i5M5ah0n+Jyhav3mJAfApIFjbPytg3wEA0e1e2RMqtY2oB7DgCiS
-	L4bd7ZQ0kYl81y0pjxMqDN/2Bps6DiRNGymkDH/awT/XM480hhHKziXe3ZkVtuS6TsXRqd43MOv
-	Op8LcDVjSW2/M5Quq1k5W0Sa4wTdjPKLx2NBy1iocPdl8ZOKLRjZ4aM5Xk9RcxZEw61w9WeRK64
-	UzDkWZHa8TaSY3w0os7a4BqQMZL81MLIR65PRQrwzJLGgR0OBzNuKTBkRZTBXN7W6GZThJSIyrk
-	gVC+v19Wjf840gk83cBqm0eEfDy8gBWMFcXU9CPyo2uXr6oNOahb8DUFq4RgGdYpf9kLz1KluJk
-	GKO1zNIcV7VD3QhKJSLcSmjteW/4/5J/9wekELwLaO6Qk3ejbyQogaVHKSqPaLRyeO5RL9AEnOP
-	3m02sBY/lQ03SAuaCm
-X-Google-Smtp-Source: AGHT+IEUTCsh2YjbuWgwjA9kSB0ES+TnIdyt4FuUa3p/09Hcq5GxbqSJOTL2WUyG6So5dXKx25k28A==
-X-Received: by 2002:a05:600c:1384:b0:477:28c1:26ce with SMTP id 5b1f17b1804b1-47939df1478mr118585015e9.7.1765263392577;
-        Mon, 08 Dec 2025 22:56:32 -0800 (PST)
+        bh=GjNG6xVzRAmntQfwOjlrSFL+esIKWya6rAztReNCRwE=;
+        b=Rhz7RZC1eS7dUKNJKPKQ6NSxc9aUy5Y4dr7o6Ums6yskoSdngNxZFbCV+dce//AkSr
+         Ojz0vWxVA0ZIZpQADWRAvbzZVy4CcUY/XTwiIZITegz1Jf0QIwvdr4CBvlOsl1y2HWOK
+         GZT7YxlEfj1IDM+mF6yz5uTTWrdm98q+r/A5nvsUNB22dqjvjZEpu3CZt71ehnEcObdx
+         +Z3rd5x1O9iPfSfszdzZ3jy9GG/wu3T+6DVwHEZdNTrtS6ndKJCyS9jrd+t9c/3JbFfk
+         no0Cr101BDBR6UDO3jLq4F6JwmvYzIls4kyLCwGAqhKr18/qm+H2lqUJ9E5/ewVdo83w
+         qOuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgIEib1MkXQsH7M66kIMbNLHvg8E0vtZa9aQsy+HjaTeP59/vH8oTQCbdutsqhbANlAxC97am+ylCtILVeLP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRcrZzh7Sk7jFLkG4JR3pomVY+vuLMECGHLSSOHUs4CR1lVzri
+	Xnx0oz6Tu9lxvfcml+BaSkEgqd4H7/R9LmBHnqgcz1bSK6EIpvjquIFxYg/Tipc1dRyW7wnn+w9
+	J8OMh
+X-Gm-Gg: ASbGncso8f7Bq88HOKl+VVndp4A2AAQ3DRsyxRu+CGAp3qxWMfwhv1w50FP5LEJxgfo
+	Z68s/A6CJPJms/jjhoFI2f9ZSWaf72tiR3NdEpJ/pfxnQalfPKE1Wd/AfC7lTP270NFgtse56tY
+	BDorxSURSasZnHXKNXn7H4DLGeGagjAs1Dqo85GV5fzk97X+qrfEHxTXALrf9n2mB608VrJ/hEy
+	Rujwt+ouNBMXkxufV4YFXJEr1SzRw/GvQyZGfCibe5qnQ9bGTWT2NvlVsRMcput6k4vzf0xp6Pp
+	lJ1DywTjkyY22O/0mpqgrvvDvkgvvZd/VoxsCNM5zwbksDzWc7+Vcpla8zXBfO4N5MJyTJF+ZUP
+	1c1cg3a4rvB5LeqiXjhVjY1xX+UerNYMV4gduI5F7DiLaS9G55mW3L+GSmuDkSuO64XWU8Q6vHi
+	7e0rDmRkT3EQz1Intj
+X-Google-Smtp-Source: AGHT+IEncnB1FaGNSKPHTzhN7ebiCnWQF3J9Qs/HjMyOnTYCImY9uSlSJG1pNfOpXJedioGuLMApqg==
+X-Received: by 2002:a05:600c:4e02:b0:476:84e9:b571 with SMTP id 5b1f17b1804b1-47939e02db1mr117597215e9.14.1765263402635;
+        Mon, 08 Dec 2025 22:56:42 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7da2e4c2sm9447925e9.18.2025.12.08.22.56.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7d682f10sm24836475e9.0.2025.12.08.22.56.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Dec 2025 22:56:32 -0800 (PST)
-Date: Tue, 9 Dec 2025 09:56:28 +0300
+        Mon, 08 Dec 2025 22:56:42 -0800 (PST)
+Date: Tue, 9 Dec 2025 09:56:39 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kate Hsuan <hpa@redhat.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Hans de Goede <hansg@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Johan Hovold <johan@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] leds: rgb: leds-ktd202x: Fix error code in
- ktd202x_setup_led_rgb()
-Message-ID: <aTfIHE_2-iKIrwqv@stanley.mountain>
+Subject: [PATCH net] nfc: pn533: Fix error code in pn533_acr122_poweron_rdr()
+Message-ID: <aTfIJ9tZPmeUF4W1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,29 +77,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -EINVAL if the "reg" value is invalid.  This is unlikely to
-happen in real life because it comes from the firmware, whether from
-device tree or ACPI.
+Set the error code if "transferred != sizeof(cmd)" instead of
+returning success.
 
-Fixes: f14aa5ea415b ("leds: rgb: leds-ktd202x: Get device properties through fwnode to support ACPI")
+Fixes: dbafc28955fa ("NFC: pn533: don't send USB data off of the stack")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/leds/rgb/leds-ktd202x.c | 2 +-
+ drivers/nfc/pn533/usb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/rgb/leds-ktd202x.c b/drivers/leds/rgb/leds-ktd202x.c
-index e4f0f25a5e45..3b7f2272036c 100644
---- a/drivers/leds/rgb/leds-ktd202x.c
-+++ b/drivers/leds/rgb/leds-ktd202x.c
-@@ -410,7 +410,7 @@ static int ktd202x_setup_led_rgb(struct ktd202x *chip, struct fwnode_handle *fwn
- 		if (ret != 0 || reg >= chip->num_leds) {
- 			dev_err(chip->dev, "invalid 'reg' of %pfw\n", child);
- 			fwnode_handle_put(child);
--			return ret;
-+			return ret ?: -EINVAL;
- 		}
+diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
+index ffd7367ce119..018a80674f06 100644
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -406,7 +406,7 @@ static int pn533_acr122_poweron_rdr(struct pn533_usb_phy *phy)
+ 	if (rc || (transferred != sizeof(cmd))) {
+ 		nfc_err(&phy->udev->dev,
+ 			"Reader power on cmd error %d\n", rc);
+-		return rc;
++		return rc ?: -EINVAL;
+ 	}
  
- 		ret = fwnode_property_read_u32(child, "color", &mono_color);
+ 	rc =  usb_submit_urb(phy->in_urb, GFP_KERNEL);
 -- 
 2.51.0
 
