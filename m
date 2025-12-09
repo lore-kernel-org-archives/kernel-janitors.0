@@ -1,85 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A408B2C0270;
-	Tue,  9 Dec 2025 10:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B0C225415
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Dec 2025 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765275727; cv=none; b=eteDqa9vEIV9fjq3WnSi4vKReBIm7jRpGxEZ6oivSYq+uOs1/arn21IQJnpKDH+JjS6GyrhNeolKDu3WUbUq4E/BOUhO+h4Dtqtyv+Ia03kDvZ9Ax4GEgp7sroauARcdGepQBF4GenJ4I7WMnFS7KPpmkr2tbbtVxpfClc6cVIQ=
+	t=1765288085; cv=none; b=dE6dNXky4SJQ0W7OZMucuqsIRd9pU1TuJ/b6FgAc7uLQrPl5nU6aLF9mjX7YQ5H2IzUwKyFITi5h6EGCu6lx/fibO/AVhRVs3agTPLcXrDE2IOnGgyCx/U75ZXfmhJpiPEyzlVmOZDOV2Vd8QRtw/M2zVDrJWl+DR2VMn3wCSto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765275727; c=relaxed/simple;
-	bh=BxGEzqB4zTaHJ1wmuJwo0vF4iXtuYZcWRVJf54n45lQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DpkJetEatiM5ZxHQADh8OS9VnsVWh7kxeagUwc25jsRKSwTSzOuSh12xIhH5OIS3ZQ2p70hLPtKIQkpDqxX97ruMND72+FZm7Hc5JzdI6nCLvOs/DgonL70H5cQmtOk/ir2fCOzwERhVMd+H37f+tx+gR7dvVF/TuM+Zrrg9nek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFPYuGCy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765288085; c=relaxed/simple;
+	bh=yMlkkS909suSag+J4bubDDFfhJhvtrF/Tlj2/vEeWuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwOlCB5TX9iq0JKShUg/rhrpGMAvw+EuvEl5ougRywlLRcvknszGBwdNdQGy0/UzZQKZ1YOUd9fryjNTzfEeOxU10TZSyFHKxltQ2Cxsq8yaIYR9gH6/4YDSJm89/zDhtWrIx59PNeN4/EOhpvsU8guNqtkx02n5q7yjIwysxp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tjVPklxd; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFPYuGCy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF6F6C4CEF5;
-	Tue,  9 Dec 2025 10:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765275725;
-	bh=BxGEzqB4zTaHJ1wmuJwo0vF4iXtuYZcWRVJf54n45lQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YFPYuGCyu9pk/PDSNSWtUslxpVcvbKmCKh0RjP0r6nj77Vnx/L7qTfki4sKd43Ljd
-	 4X5f4sY0EtJW6H2zGA2trFgl+HK5oEW+G0NEjiCZnLP9l57WDx0VS+YjE+20in0a3g
-	 z17WUtkluL5506+wsY8psPGaKteMb0hyL5ARW7XUmvqXyeIaj/PPUhp1jSt3nxvpiD
-	 m5Us24nUYOroK9FSp1h4nM6rlx4UPdfj/H0cpOCnxfP+Pcc9OGm1tp7/Qmv2X372O5
-	 3zb9FWgfMbejhUNI8gUlohInY2cmFrslJuD9nm0TwZT1LqmbH7UDuuMVQ0Krm3n4vL
-	 J2XH3FdafLDgg==
-From: Mark Brown <broonie@kernel.org>
-To: Conor Dooley <conor.dooley@microchip.com>, 
- Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-spi@vger.kernel.org
-In-Reply-To: <a7aaff1f28a83303a288de2914724a874fe1a11e.1764969247.git.christophe.jaillet@wanadoo.fr>
-References: <a7aaff1f28a83303a288de2914724a874fe1a11e.1764969247.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] spi: microchip-core: Fix an error handling path in
- mchp_corespi_probe()
-Message-Id: <176527571937.622968.1155008972776537715.b4-ty@kernel.org>
-Date: Tue, 09 Dec 2025 19:21:59 +0900
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tjVPklxd"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47796a837c7so50749615e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Dec 2025 05:48:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1765288082; x=1765892882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gR9Rp7xfBuo6EIdux6kY6lOwHf1l3aXnIwHH3gmXlNk=;
+        b=tjVPklxddEWxCtq3lZEMc0vbvTruwUNbuh6y5GO4BYWK2ZMUn/uP1rOhT9V0xPDfE0
+         BPBnYQIqxNdmRZHGk5jVuq4eGosTH74cfOmy0ENfjK3WQB6Db9HZQdHXAHjfg9Qy2Bx0
+         8w9CmUxunle9cNI51poDC7++OHokjJEQN1aC0nF//hYgX3iq1uv8FjeAP9V47n9wpoWy
+         3iQ8O3z2m4gDej4LkUqX+YJTwZduoF4U1YY+Vv5p75bFlqUl2wmj0PtSbQqe/l+wmddD
+         EU19vLrvVbYSci85SoZ2AmDUNdHFkZh7ymxx43n7VBTappyB341aEX0zxsyJ8eMJi5Lw
+         jNfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765288082; x=1765892882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gR9Rp7xfBuo6EIdux6kY6lOwHf1l3aXnIwHH3gmXlNk=;
+        b=ig0dTKr+VWGw9IUCDA855KrVLERKuq/yw+mpb1AexYZ5lmOdnBygmwOlMwnJPcXMHw
+         exO3BjZpeODoaFzr9n7XzkNRru9/fuIelw+xtHXkswgbvzs/Ad7UCb/tQfdNB8vsmasi
+         uFE2F4azI6vpjYBmvM+HtnT+UFFRF4WFDC3FjArv9tA2m6ozX3EYahZ27f9W2ZODhkcL
+         7w+9Djr2j4YWVxuGOmfCrBQ0m+tfsvI1oL1gjarujFYITNcuPTRDhkGpndE/xzzEK/8e
+         Pg3EBodFZUpk/WrQXRML4Z0fac3oJ+8FrXMRrJDVQ2mGlMYCREb9tgZIu807wKaBCmhi
+         vgFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVs2ECS7UCPMF17IzuPnYBSpTc/41YtcbKXccgraf3JoGKhdng8OBV0EHvUWi7+usFlrU11KG7nR/RRoms7ayM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7PSzBsYSBkcvh/4T8sS55nSdCjKv4C/EOFrw0/jA8dsENF29L
+	grz5nXqfnuAYjhlCjx2Nz0jU8EOfN2n6QL8ssI6WzucYoXvW4Pc2TcGpU6MFxw+9iBSg+ycknBa
+	qIhfH
+X-Gm-Gg: ASbGncv08bGxPK86RQVEMDFAMVfIHLCAZWxlFpzpCNoXDeEQedyo6NyvN/9Nnzrhimm
+	wyTzmiML6/rUWamnw6V8p/47LveeK5e3NuthpR5mPOmc86pCqgwNzcQ+QI+eLwtwHyCW+2bgsBY
+	gl0dyzmoW4kyLE8E83tYvO0wrhwDQuKpnkNnbPrDElel5uLUO0Ild/PJo8Xw0N4+Ts+cFlapqnj
+	LK43U+h9Q07F73Be/Pn2l0ubObXGQHz23Seilw6km9BKpkS4Qy8E2YuZEL9Lt2Ej6D23FXmLuNr
+	dyY/1w831TPdPMucMNXwTNJo/jE4BHhIESUMVHwXOSJKXJx9wFS3XUBY8Dsf8L3XiERfRrhqCFD
+	XcA1gCMj6eUctsVqU76nkc1y4EvHUr7rLCFC2pK6DJFQFFj/iw28vVmJX2HdaElfdE1FITiz2tO
+	sA+7p6OiO2vdWRHusqycQEGc27CL4=
+X-Google-Smtp-Source: AGHT+IGef5yYlyo7EVp/T9KJWfVo8Fc1RNlqYKs7x4HdPy+PgaaGEreDgsueryhczBIbI7R/rUEPaA==
+X-Received: by 2002:a05:600c:3588:b0:479:1348:c61e with SMTP id 5b1f17b1804b1-47939e1f683mr127692875e9.20.1765288081964;
+        Tue, 09 Dec 2025 05:48:01 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7d682f10sm44245995e9.0.2025.12.09.05.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Dec 2025 05:48:01 -0800 (PST)
+Date: Tue, 9 Dec 2025 16:47:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] gpib: fluke: Fix an error handling path in
+ fluke_dma_read()
+Message-ID: <aTgojlpyUwqBrQLh@stanley.mountain>
+References: <a7b70a8c5dda16c2ddfab4309b4371b91d0ebc34.1765004481.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-47773
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7b70a8c5dda16c2ddfab4309b4371b91d0ebc34.1765004481.git.christophe.jaillet@wanadoo.fr>
 
-On Fri, 05 Dec 2025 22:14:10 +0100, Christophe JAILLET wrote:
-> mchp_corespi_init() calls mchp_corespi_enable_ints(), so
-> mchp_corespi_disable_ints() should be called if an error occurs after
-> calling mchp_corespi_init(), as already done in the remove function.
-> 
-> 
+On Sat, Dec 06, 2025 at 08:02:25AM +0100, Christophe JAILLET wrote:
+> It is strange to call dma_unmap_single() with its 'dev' argument
+> explicitly set to NULL.
+> It is likely to crash.
 
-Applied to
+I've added the assumption to Smatch that it will crash.  Which as you
+say is not true, but I think it probably is the correct assumption,
+right?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+This is a one liner in Smatch.
 
-Thanks!
+regards,
+dan carpenter
 
-[1/1] spi: microchip-core: Fix an error handling path in mchp_corespi_probe()
-      commit: 8cef9b451dc6fdf86b92c7a35d55a47465d500db
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+diff --git a/smatch_dereference.c b/smatch_dereference.c
+index 15ad885af085..acd70ef9dec4 100644
+--- a/smatch_dereference.c
++++ b/smatch_dereference.c
+@@ -34,6 +34,7 @@ static struct deref_info fn_deref_table[] = {
+ 	{ "__fortify_strlen", 0, "$" },
+ 	{ "spinlock_check", 0, "$" },
+ 	{ "devm_platform_ioremap_resource_byname", 1, "$" },
++	{ "dma_unmap_single_attrs", 0, "$" },
+ };
+ 
+ void add_dereference_hook(expr_func *fn)
