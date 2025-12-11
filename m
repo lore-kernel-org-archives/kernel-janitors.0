@@ -1,67 +1,86 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9CA2D47EE
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Dec 2025 07:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432E028CF56
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Dec 2025 07:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765439156; cv=none; b=irlKlT7rLQ5R2fmTOKGXJLv8DCnvlPHJiTIRPh5SiPyb7nMiw9sC2lMXxlSz02LH7tfQKFawZPLlAr9sfvi+6Q+Dv+D87lEG5IOtMtLMQVZoKs8fnwsmHDMsZ+jYcwCksBzR6i/8NmBNlKo6LaOFTCGL+xkXy2mHcesFibUBR+k=
+	t=1765439457; cv=none; b=FVObtkEH9NP2xy1ytZVAj70zGZ/NynUdEMVfA1nZVhgybjEvXLyHVZA8eG5SzjKzOOkWO53I6wercdfELuaAc2KghIIDaPa0ZBU3fnlvhynUD0rEmvaQyt7peaIKftb49YrTeWwW8F0qk3uRZoChY1T5ShGEB3jmJ97x810LR14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765439156; c=relaxed/simple;
-	bh=9mvg3H/c8i6Vw6drMjILUPrnDLVQ4fS3OBd1K9POmt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HaRxRupIhfjxEPxmaXKTA6qvcF4zXW1otJ9AgybtYdoL6uRgtW7/zRelQJw/0x/wmI4aF3pSAbUiRW02MfIleIv8bcFNAjPJ6b7cS5U0cRlXYhzoQUYb+TrzSsEncI7eTCqqPinSTiFy+gofMNXdh9Jm2wTptxQFGy3QDvxxWsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHBTkAsB; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1765439457; c=relaxed/simple;
+	bh=Tdaj27oj3uUmgl9B6hjdaVnC0Z/17Xx96phCTkl90B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUILovlTAitabRO4fy6rHMMPZ0vcxG4kY4D+OrHU1bj1aAEds9w9ehCmIgJexe00UMCb5BkttZrd/eAbhVgn3eDpQnZv0DJR2mFTzu38qqb07EqbPyOd/4t6QwmDaYKpxecaewUTqx/BqBNV2jrfuzVT22dxRR8azbWg5YZcmKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GVitsYzR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=smI0YqLN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHBTkAsB"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso6241615e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Dec 2025 23:45:53 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GVitsYzR";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="smI0YqLN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1765439455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1julX6+lHM93SRmQtBaRqoKkJXlGzuQZ/nqcTrNS9W8=;
+	b=GVitsYzRRkOluXQJQFd6zxkmyLxs38X1qvXm2hvQph0GGDq7rnc8k3ZrRTwieRh5/UQDTj
+	Ld0NvuMzbOeic7uKdzZIrUP7ZZ1BzyiQyz/xiTjlT69zQ8z/gfntqTnA9Lnrbr72nHCegc
+	y1C1VpviDrwiUuXxh+O5CTQlPb6JWFo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-V17B_y69NZm-DmLg1h99bw-1; Thu, 11 Dec 2025 02:50:53 -0500
+X-MC-Unique: V17B_y69NZm-DmLg1h99bw-1
+X-Mimecast-MFC-AGG-ID: V17B_y69NZm-DmLg1h99bw_1765439452
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-477964c22e0so3606145e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Dec 2025 23:50:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765439152; x=1766043952; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X5PFu97mrs/j5hiZkT9fpEkRD8VCD4PVmKLSzKLxEz0=;
-        b=JHBTkAsBs6CLKKp65u0MNvEQmof6eP7cSBEhmIip3P7oBLrJG+h1vgLgipmMeUP+0V
-         M9QacK5AksgwkrNtQtewDCaL8GRYlMLEfsjLV1V/0av2J7Cd8KQXi0MpH2k8Qf7LIJrr
-         3O49AYU6AN3jjpOMc/dbHnJ/UuW45obE2LES6DNA5A7q6tvJ69v96WSMh2Vwyxb2J+eu
-         2UUG7mJ9x5rM5Tq/5K4YO4+B9cOI86whdebY7no8M5lUPJz1mvAE0DRlkmKQutfViEuc
-         5Ngdt6aIJx2m0qZPepCPV+n1Il5alkzZxC7oAHe6IAdnmIITLNXMaNQcOS/661q1WYqg
-         WJ7A==
+        d=redhat.com; s=google; t=1765439452; x=1766044252; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1julX6+lHM93SRmQtBaRqoKkJXlGzuQZ/nqcTrNS9W8=;
+        b=smI0YqLN0caaqEi8xK7wSUiFiGk2rr/IGovPcOkVd9MuiGJCbEYiTlohjSNhhI1Nki
+         bNs24xixCkHqeeHZL9hTzuaE1oS+pn92lek342phV8TnjQh1O6FIptxR8VpfmvB0Llmd
+         i7kvl1S4Xbly2xrwXv8MPQNN/cAP1IZYhFnOhdlrJBc9syjktwXRJw8yRMULuvE9bCWN
+         zGNAyO94iC30BeH2ggNmj5iVMdIqt155Uj4kw4AvxW45WWK7AGUTfXSDd37OoFdiC277
+         I0z1kguWE9x5jSl1QNgLKx4mUXGKTITEO2qj+Lq/Ca9GGA0qAu1RIkqMCWm+khPlrQxg
+         IpBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765439152; x=1766043952;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X5PFu97mrs/j5hiZkT9fpEkRD8VCD4PVmKLSzKLxEz0=;
-        b=De0FelbMyr7lC9OhsRf7Vn6Q7epo3tnQEzYwKNpkARiyH1w+zy0PE+aPQMLJAzHPZI
-         6Txgt1YYyVY5QVY4rzNLmuPS3HVVgXaTK2z5lyh3g0P53wD/qfxIdbvORbQQ/e4w/EDf
-         rQv/kLtMqgvpEpsbU+MVG5i5mx8Mw2EPtzXxYAR+JHh/Dq1Bfe1l5pCsp8qxTxu9TD8t
-         KDQ6rstiWUvkuByVAfeNoannQ5Ej8QT9Aq8BSRLo8cosnWBqMVrKg+aR+8MH82RScLdI
-         bGQBT1W8XFefT9xrdj7G/qzegE6SjlofcKQE0Fh0cXF75qT+DKPjeg0ebHAWLPlP6+ix
-         FRvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZc9tPW5PE61VLOulPYRoGR8y46bkqQALHWpeJwrIkf8WnMi4a8hKJHlEVs7pWOYebPz9PHSpenAFhMhvXsc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycriEPmkSie/x/R1V9rwGyWTryPRzhhRfKDvfJ57dON0r2LuCl
-	CeyYFbX/f/QJOlQsXWD6Qj2Haaxp5YdSqCDSG6UvbYC1VMO/78WRf2PdkLBv+pM5xWM=
-X-Gm-Gg: AY/fxX7h4edqCVUJrQh/NP16lrHYfbxgl6JxcWzO7gcYdhO9la4yUpYWHcqaxVrebXh
-	8RsdysehxkV7N9rIyLHIk8iZ91mT67tOfGoIKWtQ5rgHXB9U2HlxD9eY8ElAqLADMoE2L2xpmsF
-	RMJMs+4EfSUpJpv+Kjvv3edxyp/Xw9MYjDSmjVj79on7s+InmCaOW6wx+561i+IK0pbQTQ5RAE7
-	N8ij4yf+5GwO8Cq8aHWBrxeiAdKB28DjXyPknw0Bo4gBRsVaaLuwQNrop/XDS52hUdHYdjJGsUk
-	mq6z0VDUhH3NPZNm+GH5doXN/jD9g1kzFTMnQT2m/nsOzsLWWyBAWO42kPaBKsGJlP5O2e+jco/
-	JesZOaS1R99Kw55BMBkJDQMC0gbkWTVErqSu0iX3JAr/npqmkwxXEjFxtN7JsXBajBCP6MkOBqg
-	yVCDHjggjQnzPX8g7g
-X-Google-Smtp-Source: AGHT+IF7TmgbE+Uw5kfOPicBWaMZFFELImJD78GoXEDw+MdgM7iNhig2tJYwraCIhaxT+6NDNvyhbA==
-X-Received: by 2002:a05:600c:630e:b0:477:ae31:1311 with SMTP id 5b1f17b1804b1-47a8375a1f6mr46323505e9.13.1765439151697;
-        Wed, 10 Dec 2025 23:45:51 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a89f8c145sm19182315e9.14.2025.12.10.23.45.50
+        d=1e100.net; s=20230601; t=1765439452; x=1766044252;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1julX6+lHM93SRmQtBaRqoKkJXlGzuQZ/nqcTrNS9W8=;
+        b=nHGtZoT5p8/Q+JHtvZz5nEc0iRgVHLa+Vnn2Mq/qEZ8y8IyS7QuhgQPRhKY5U/jDoN
+         9q9I+5f8wVq2BKWxiKUp2YsSvnpXE0j8DfDv4BsBgjFzgGzkx1WeFMKLUPOFAViD5B5X
+         EuX5uurDEtFP8KDX0eokR3FQ4VaQENvE76xSn9hWBh3wgRq+akJX6NWhqMKMJ9kqfLlq
+         4YFnbQsElZiC65DlpaYSj8o0Uy9QZkG+YJSqC4QDg+PkSdhfERKkbNSc5SpJlLzvkxl5
+         Prc9Qo8ttW2h3VWX+FMZzgtPBj+RNHZWL5nq9EO898J8NOCgD8cCfp+oQniGriXMmq4C
+         OYsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhKMPX86R99Yx6QMGmy88iHsJmM+T/kE/AKbm99mNnJkqHIuR3QAXbbpShKxavJzcztSXBcPnS/DXvliKQ0Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgOotUM8wKohrjaJ6+9WWcdBhRmkRch5W4TSVw/MCUK8B6LRT1
+	jaMvCucF32ox1ovLHL9eWBr/0SdAlSBbztQc1/hkehMNLTCp131jPo5E4eJW2/4iQuGFKgxwsM1
+	pFabl4a/NZIVT3iaQZXEl1XekkHC7JximQT1tmd6yQCCWH1sZW8/KYHo2wzOHeE3wQxkQLQ==
+X-Gm-Gg: AY/fxX7OdwEhM6/bCh25p85QTty/0wXmUVxnHwNum+/5eVh0MVg/ZVwR7jkVtPtex5c
+	FB1tbRvCyr3vtvhxmMgP5h9PCFPTn6M4kygfNEdw4JijMmOP0vrjupNdKJT9W9UOSTDEXU+arit
+	nMBot7jM7xHdSM+3F7KEQh6Q9IV373QJf2AGe7xCA+8VKyTAiOOgxw/7TN7K32djW9U61cRZib3
+	pXUCyhrTAhaaqSHS6kxm4kF2v7vgEaQ35l30Deb3CdIcJ7Pm4hRUZLvoSV4V3gAZGnnsjs43eB7
+	EJOhOIwp294xCsrTx2zbPnZ0DGOlKuvTIiLHn7HczoZ6AwMr54EufMojYjeYjOtnpKUtu5wO++Q
+	tFW6Z3APkMzUuk8ZYfj33bug25Yp0VAg=
+X-Received: by 2002:a05:600c:c101:b0:477:7588:c8cc with SMTP id 5b1f17b1804b1-47a89da461emr8884075e9.7.1765439452369;
+        Wed, 10 Dec 2025 23:50:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEqSjcn3rTA9O8e0vbxus6mZdzQZ1RPlwK+jJom7NtOKCUAyJXsaTZy7V9armCUnMlhTK9Uqw==
+X-Received: by 2002:a05:600c:c101:b0:477:7588:c8cc with SMTP id 5b1f17b1804b1-47a89da461emr8883815e9.7.1765439451922;
+        Wed, 10 Dec 2025 23:50:51 -0800 (PST)
+Received: from redhat.com (IGLD-80-230-32-59.inter.net.il. [80.230.32.59])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42fa8b96c70sm3927469f8f.37.2025.12.10.23.50.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Dec 2025 23:45:51 -0800 (PST)
-Date: Thu, 11 Dec 2025 10:45:47 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+        Wed, 10 Dec 2025 23:50:51 -0800 (PST)
+Date: Thu, 11 Dec 2025 02:50:48 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
 	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
 	Stefan Hajnoczi <stefanha@redhat.com>,
@@ -71,9 +90,10 @@ Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
 	Simon Horman <horms@kernel.org>, virtualization@lists.linux.dev,
 	kvm@vger.kernel.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] vsock/virtio: Fix error code in
+Subject: Re: [PATCH net] vsock/virtio: Fix error code in
  virtio_transport_recv_listen()
-Message-ID: <aTp2q-K4xNwiDQSW@stanley.mountain>
+Message-ID: <20251211025034-mutt-send-email-mst@kernel.org>
+References: <aTp2q-K4xNwiDQSW@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,33 +102,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <aTp2q-K4xNwiDQSW@stanley.mountain>
 
-Return a negative error code if the transport doesn't match.  Don't
-return success.
+On Thu, Dec 11, 2025 at 10:45:47AM +0300, Dan Carpenter wrote:
+> Return a negative error code if the transport doesn't match.  Don't
+> return success.
+> 
+> Fixes: c0cfa2d8a788 ("vsock: add multi-transports support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: c0cfa2d8a788 ("vsock: add multi-transports support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-From static analysis.  Not tested.
 
- net/vmw_vsock/virtio_transport_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
-index dcc8a1d5851e..77fbc6c541bf 100644
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -1550,7 +1550,7 @@ virtio_transport_recv_listen(struct sock *sk, struct sk_buff *skb,
- 		release_sock(child);
- 		virtio_transport_reset_no_sock(t, skb);
- 		sock_put(child);
--		return ret;
-+		return ret ?: -EINVAL;
- 	}
- 
- 	if (virtio_transport_space_update(child, skb))
--- 
-2.51.0
+> ---
+> >From static analysis.  Not tested.
+> 
+>  net/vmw_vsock/virtio_transport_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+> index dcc8a1d5851e..77fbc6c541bf 100644
+> --- a/net/vmw_vsock/virtio_transport_common.c
+> +++ b/net/vmw_vsock/virtio_transport_common.c
+> @@ -1550,7 +1550,7 @@ virtio_transport_recv_listen(struct sock *sk, struct sk_buff *skb,
+>  		release_sock(child);
+>  		virtio_transport_reset_no_sock(t, skb);
+>  		sock_put(child);
+> -		return ret;
+> +		return ret ?: -EINVAL;
+>  	}
+>  
+>  	if (virtio_transport_space_update(child, skb))
+> -- 
+> 2.51.0
 
