@@ -1,77 +1,50 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-4396.protonmail.ch (mail-4396.protonmail.ch [185.70.43.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D57A2F998D;
-	Thu, 11 Dec 2025 09:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD67315D26
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Dec 2025 16:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765446202; cv=none; b=bk3Epr/aEyFtBsrpMEE8rxx8tBI0dYG1XEVOLFsaNZXNeSxQKCPTmsQjOm3p0xpySkwu4b9FxHoUnvWaIcn22MCqTbuDLM3wrlJ+Np5t1oWvTv1hGL+3ZWTMhCcDufYmodB2LZBx0DmJqSVplDFCXfeCcC6SQed4k3Hc22xgKIQ=
+	t=1765471231; cv=none; b=uki9aRSbOK+uprUOPmamYabYCscWYEGhpPcK2TugCdWQstk6rvmsitecwhLrvQvE4fQvga6EsXtqU9mpGLALghGtB5GEq+neKNKa/UPkQmpp3J/Cr8IKDu3ZGGT/h98uGXS6wZtMe18JFD/6FZOK2IWYwzvGDeOH7sB1aTDpWHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765446202; c=relaxed/simple;
-	bh=QoXUSLb6pF12kg5hciMRtHaloEECSFceLd048LFulQM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PyiQHz7aUPzIcEx6IOM+DG3fafbnwQfQ936YMrxItRCv80FSVWC6A4cy6gZJ/Ut+9RH3hIY9cE3EkUOgieJU+eIxarcEJCp7udX1Ou6KPt5nWxO3aQEda7wonmXxNKrCmnlmWicOzU4yoICrse6VFAsIq0MkhfbuHWcU8aXA6mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvGQMGID; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765471231; c=relaxed/simple;
+	bh=HfYGMq/eC8FJidMtkQ8oj3FKImNrKd5wnRrpAfmbGf4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mn4OdCJJGcrnx2vZpBNWCKYYMGCUp+MbxApab/EC8G9MGaKBtqBdGrm60cqv7SjeDVOpdbf0jD7HfbfG28ixKbVO4mF+3mQsa8HBIzmwlXKNdT3QULXlFKOiYIftrBBPKZKvpXUt0yCtiL+A/MiyWjw2RJt+I/mn+Y3yvUcPzS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=tKUrmg/A; arc=none smtp.client-ip=185.70.43.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvGQMGID"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB074C4CEF7;
-	Thu, 11 Dec 2025 09:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765446201;
-	bh=QoXUSLb6pF12kg5hciMRtHaloEECSFceLd048LFulQM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kvGQMGIDtcuZd9G+/xzRI8ijlR/uGiSUN/c2J27EdwuRAe3VB8he+V7UQEX5/aFfI
-	 t1LXxvpWfOCqvZIRujWtl3npakUo2R9b6/2FuyCSzBLWGC5j3vdck0OHpwf0oYIXUo
-	 97oylUkaZPL7EPnRXxmS2pXflmzYlW3WRXWusWsiBVkspG+ov1a3VxKeOE/FIlrfnf
-	 KJ58aKY5LsLv8zBdkPNOZCTq7uaLOvYjkRQF4m4rrgjZr0KdGEKjoVF3fyJQJ7SbuQ
-	 BpjekZrp8f2p41ex1TZy/FoeP0sThBjvTU+GaoES7ZlKUhLtgxKv3DyhDLb94SIZKh
-	 CkHy8bMbfNtcw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3B9213809A35;
-	Thu, 11 Dec 2025 09:40:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="tKUrmg/A"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+	s=protonmail3; t=1765471219; x=1765730419;
+	bh=HfYGMq/eC8FJidMtkQ8oj3FKImNrKd5wnRrpAfmbGf4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=tKUrmg/AxFBnSzzdok+YzybYUdRyEGDqGowWLPYfiTl0b0AWXbnRdLVC4GQUcBcuZ
+	 6mlzCap5q9rRYzGMFyHPhrhyQM5aag+Tq3WLyl3vwKMP3SXaWIabH2yQeeZbFNQWxq
+	 SSDseSxG7FmboorbxynA36a7B4kVMtIwj1dawb3pnFjsKXSgqDxZH+Y1Ic+DC4TYaO
+	 BF62uIuBIjEpvMrsQQvU6vu6qM00t9jjitJKDFjhWamlYZbdTw0WoT7MlqnAsdIEHl
+	 gwqVf1SSw+KxqLPUIZtykZLQxiwuQv3rAc7YaDTo010vxfTmlGujFLw/XETYtTQ4lv
+	 dMCJORdrPrIpw==
+Date: Thu, 11 Dec 2025 16:40:15 +0000
+To: Dan Carpenter <dan.carpenter@linaro.org>
+From: Simon Ser <contact@emersion.fr>
+Cc: Harry Wentland <harry.wentland@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alex Hung <alex.hung@amd.com>, Sebastian Wick <sebastian.wick@redhat.com>, Daniel Stone <daniels@collabora.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/plane: Fix IS_ERR() vs NULL bug drm_plane_create_color_pipeline_property()
+Message-ID: <JgyhoN6h3UMhM6E3z1092ZDRNRDlyrrQnpUsMb_ldKowPZ4kvmeTm_VmzkrJLJw67DUW6R9r8L53hThH5DCdqwVW2ggQnRoA3Jm84bN2iEI=@emersion.fr>
+In-Reply-To: <CN7gZcz0WnfFN-FgfhFlSwX9naLEVoV-H6FCniOPp3glGzIEFRK1-SXlVbb5S_B34TxYnCOBQZj4ldqZNCl-Igw2zyPeUnaruX2ngu__loE=@emersion.fr>
+References: <aTK9ZR0sMgqSACow@stanley.mountain> <CN7gZcz0WnfFN-FgfhFlSwX9naLEVoV-H6FCniOPp3glGzIEFRK1-SXlVbb5S_B34TxYnCOBQZj4ldqZNCl-Igw2zyPeUnaruX2ngu__loE=@emersion.fr>
+Feedback-ID: 1358184:user:proton
+X-Pm-Message-ID: 41222457666ef806f0cc23ef76f7ca273fb936d7
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] nfc: pn533: Fix error code in
- pn533_acr122_poweron_rdr()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176544601478.1308621.1840268156177987089.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Dec 2025 09:40:14 +0000
-References: <aTfIJ9tZPmeUF4W1@stanley.mountain>
-In-Reply-To: <aTfIJ9tZPmeUF4W1@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gregkh@linuxfoundation.org, krzk@kernel.org, johan@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 9 Dec 2025 09:56:39 +0300 you wrote:
-> Set the error code if "transferred != sizeof(cmd)" instead of
-> returning success.
-> 
-> Fixes: dbafc28955fa ("NFC: pn533: don't send USB data off of the stack")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/nfc/pn533/usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [net] nfc: pn533: Fix error code in pn533_acr122_poweron_rdr()
-    https://git.kernel.org/netdev/net/c/885bebac9909
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Pushed, thanks for the fix!
