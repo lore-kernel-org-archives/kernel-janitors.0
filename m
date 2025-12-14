@@ -1,48 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C737428C00C;
-	Sun, 14 Dec 2025 10:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C9421CA03;
+	Sun, 14 Dec 2025 16:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765708980; cv=none; b=EuvK3XoBEzVXA4haVGFHDoU26Qfsq259vZiw2T3xumyW5OItFSCoBpe9/xHv4qXm547Gl7OY0IFdkafUbnAWa3V+QKZlYLPbmEOsEfqRkNQjNhAF7HvOUtkuSjboorLVCgunzevakjZ6YXtwcr7Pe++0ns+C8aAoBwb9mllazEA=
+	t=1765731204; cv=none; b=YaWKcPhigrHzVyxobrPC5wWU7ed1qh4BOYJAaONQuzBycYs9qwdlVuXRxMKScXEh4Fi2gTGOjeTWbPc97lpuS1bNzOPO1Oj3k6d/4wsphlhWP//MtjSHwojY2xiG2VRd1Qg1YOEl/DT56blQTc9GkPc7BmcXUnDg1FxRrLAU//M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765708980; c=relaxed/simple;
-	bh=5JooT3MpOltGwpqeZtnacQ7Nq58pEpmM2KO/VVz/wlA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hsBfqZ7hgTZhRPec/7Yh+U/LBkezYViO0dZlXIU853f107Mki6hukHfGJlhzSSuw2uv9KQQcdPL6+LwZ2DYp11A3hPLUMl/YsedqKmj4VY4jWzVVnMxmYMzHPoVeZQOkx/UROQVQKGuhZ6Sy7vBD47Av5liZVFglwLx/c0IQ87s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=m1/9PSyb; arc=none smtp.client-ip=80.12.242.16
+	s=arc-20240116; t=1765731204; c=relaxed/simple;
+	bh=ihRV2+lJdQUC5dqs92CsuBUKuy3VbMgZTcqqUhAEORk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dJ+EJcaksfofmY5Ue4FyVDLAOkceywT4Zz4btr1qeT3EY96Dxw8jU13Jxy8BPc7VDfdDkwqXKR5W1ahlbjMoJrwL1d0h9+4pD/Er4lakILHBpdgrQFFxP1J4ViDyPreXQIJBw4HFDdZRsVttEgWmBdNWyhz7RQiIzfIDdX9c9pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OXijsay1; arc=none smtp.client-ip=80.12.242.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="m1/9PSyb"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OXijsay1"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id UjXqvpLx6SRHBUjXqvSQ3I; Sun, 14 Dec 2025 11:41:45 +0100
+	id UpCjviAbSl1edUpCkvyHZ1; Sun, 14 Dec 2025 17:44:20 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1765708906;
-	bh=pSMGFfbEMTi3vXdP/hdOHRHQpHJMksJsg2ZATHnSZFc=;
+	s=t20230301; t=1765730660;
+	bh=RBMlKerY6DIW1kq8lcAvwPe4ONKkpAi0jjadljVCmQQ=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=m1/9PSybZ6bftV22kDPPMe8PDsxLFXpOohRYeBeN5klu1u99/bTCSVqytYHPCtKXc
-	 Flbs7Yzk5q6JgXEIvyspHHx3bzf36oeBeGDXwnhiT9/C3G+0JFBG47Um8IcPdRJCoF
-	 /T59FxQDPth5vT5JEBPlr0NcCv09E1nmpaKXbN3TGZrk4ldA8LyyxoWcQPD+d8dCTh
-	 0axbvbXNsTq639UuClB2B2JA0FzzdC5ftYYuklL1kS28QFM88tUbVFlW/3hfZ6PCp2
-	 8+BU3ZZBnL0bBQmrU9rfDH9KgsORAYXmE4W1x6PgHheBxb4+imAFUPuWvrggs8DRUe
-	 seW9FSEFcrtzA==
+	b=OXijsay17pwhtSBn4ZRgje5S9XsRyUKRqgALyHo0cw40slgU6384UqiNZfo1QRnvE
+	 zBNVjXpQ5S7pf3Z2lL3onNo9yg+eaucjU4l8UKDKEui5A8QBgMxPk6a+xvjL+WvWSM
+	 /mjOQXXe/X7MO3l2MWXeBvcLhdYJxZnhuFZyX7IICWFJXIRwjs+SZoaNUc64MH9qgR
+	 DXTPIWJysC3yvF2Wka91HGcAXm/8vQ3xz3FHR46jMIvhI8kw51g5AJlhXlHfVShDUx
+	 oP8+iSMiSqj0XU41x8heMjRn9PnOt7W0X93JW3I6NaBYTSao03Bb5WuQv+1219f5OK
+	 YWLnLsll52fhg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Dec 2025 11:41:46 +0100
+X-ME-Date: Sun, 14 Dec 2025 17:44:20 +0100
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>
+To: Alexander Aring <aahringo@redhat.com>,
+	David Teigland <teigland@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	ocfs2-devel@lists.linux.dev
-Subject: [PATCH] ocfs2: Constify struct configfs_item_operations and configfs_group_operations
-Date: Sun, 14 Dec 2025 11:41:35 +0100
-Message-ID: <7c7c00ba328e5e514d8debee698154039e9640dd.1765708880.git.christophe.jaillet@wanadoo.fr>
+	gfs2@lists.linux.dev
+Subject: [PATCH] dlm: Constify struct configfs_item_operations and configfs_group_operations
+Date: Sun, 14 Dec 2025 17:44:14 +0100
+Message-ID: <5b7ed5a152307c7df3dbcf39b32b7c23fd8f522f.1765730638.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -63,12 +62,12 @@ On a x86_64, with allmodconfig, as an example:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  74011	  19312	   5280	  98603	  1812b	fs/ocfs2/cluster/heartbeat.o
+  29436	  12952	    384	  42772	   a714	fs/dlm/config.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  74171	  19152	   5280	  98603	  1812b	fs/ocfs2/cluster/heartbeat.o
+  30076	  12312	    384	  42772	   a714	fs/dlm/config.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
@@ -76,72 +75,61 @@ Compile tested only.
 
 This change is possible since commits f2f36500a63b and f7f78098690d.
 ---
- fs/ocfs2/cluster/heartbeat.c   | 4 ++--
- fs/ocfs2/cluster/nodemanager.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/dlm/config.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-index 724350925aff..8e9cbc334cf4 100644
---- a/fs/ocfs2/cluster/heartbeat.c
-+++ b/fs/ocfs2/cluster/heartbeat.c
-@@ -1942,7 +1942,7 @@ static struct configfs_attribute *o2hb_region_attrs[] = {
- 	NULL,
+diff --git a/fs/dlm/config.c b/fs/dlm/config.c
+index a0d75b5c83c6..82cc3215663f 100644
+--- a/fs/dlm/config.c
++++ b/fs/dlm/config.c
+@@ -324,39 +324,39 @@ struct dlm_member_gone {
+ 	struct list_head list; /* space->members_gone */
  };
  
--static struct configfs_item_operations o2hb_region_item_ops = {
-+static const struct configfs_item_operations o2hb_region_item_ops = {
- 	.release		= o2hb_region_release,
+-static struct configfs_group_operations clusters_ops = {
++static const struct configfs_group_operations clusters_ops = {
+ 	.make_group = make_cluster,
+ 	.drop_item = drop_cluster,
  };
  
-@@ -2193,7 +2193,7 @@ static struct configfs_attribute *o2hb_heartbeat_group_attrs[] = {
- 	NULL,
+-static struct configfs_item_operations cluster_ops = {
++static const struct configfs_item_operations cluster_ops = {
+ 	.release = release_cluster,
  };
  
--static struct configfs_group_operations o2hb_heartbeat_group_group_ops = {
-+static const struct configfs_group_operations o2hb_heartbeat_group_group_ops = {
- 	.make_item	= o2hb_heartbeat_group_make_item,
- 	.drop_item	= o2hb_heartbeat_group_drop_item,
- };
-diff --git a/fs/ocfs2/cluster/nodemanager.c b/fs/ocfs2/cluster/nodemanager.c
-index 6bc4e064ace4..c5e83c774d73 100644
---- a/fs/ocfs2/cluster/nodemanager.c
-+++ b/fs/ocfs2/cluster/nodemanager.c
-@@ -396,7 +396,7 @@ static struct configfs_attribute *o2nm_node_attrs[] = {
- 	NULL,
+-static struct configfs_group_operations spaces_ops = {
++static const struct configfs_group_operations spaces_ops = {
+ 	.make_group = make_space,
+ 	.drop_item = drop_space,
  };
  
--static struct configfs_item_operations o2nm_node_item_ops = {
-+static const struct configfs_item_operations o2nm_node_item_ops = {
- 	.release		= o2nm_node_release,
+-static struct configfs_item_operations space_ops = {
++static const struct configfs_item_operations space_ops = {
+ 	.release = release_space,
  };
  
-@@ -638,7 +638,7 @@ static void o2nm_node_group_drop_item(struct config_group *group,
- 	config_item_put(item);
- }
- 
--static struct configfs_group_operations o2nm_node_group_group_ops = {
-+static const struct configfs_group_operations o2nm_node_group_group_ops = {
- 	.make_item	= o2nm_node_group_make_item,
- 	.drop_item	= o2nm_node_group_drop_item,
- };
-@@ -657,7 +657,7 @@ static void o2nm_cluster_release(struct config_item *item)
- 	kfree(cluster);
- }
- 
--static struct configfs_item_operations o2nm_cluster_item_ops = {
-+static const struct configfs_item_operations o2nm_cluster_item_ops = {
- 	.release	= o2nm_cluster_release,
+-static struct configfs_group_operations comms_ops = {
++static const struct configfs_group_operations comms_ops = {
+ 	.make_item = make_comm,
+ 	.drop_item = drop_comm,
  };
  
-@@ -741,7 +741,7 @@ static void o2nm_cluster_group_drop_item(struct config_group *group, struct conf
- 	config_item_put(item);
- }
- 
--static struct configfs_group_operations o2nm_cluster_group_group_ops = {
-+static const struct configfs_group_operations o2nm_cluster_group_group_ops = {
- 	.make_group	= o2nm_cluster_group_make_group,
- 	.drop_item	= o2nm_cluster_group_drop_item,
+-static struct configfs_item_operations comm_ops = {
++static const struct configfs_item_operations comm_ops = {
+ 	.release = release_comm,
  };
+ 
+-static struct configfs_group_operations nodes_ops = {
++static const struct configfs_group_operations nodes_ops = {
+ 	.make_item = make_node,
+ 	.drop_item = drop_node,
+ };
+ 
+-static struct configfs_item_operations node_ops = {
++static const struct configfs_item_operations node_ops = {
+ 	.release = release_node,
+ };
+ 
 -- 
 2.52.0
 
