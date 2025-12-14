@@ -1,48 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-79.smtpout.orange.fr [80.12.242.79])
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86992C11DD;
-	Sun, 14 Dec 2025 09:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD12D3B8D7D;
+	Sun, 14 Dec 2025 09:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765705268; cv=none; b=tfTD/9zpv6YsL1VfE+hKBV57UtLeKffPYIyIybA5c3BXRasP4CJgwTrX2cnb9BZwqh9eWmxVq6QQimkkipqB29dZz59OS1kFhHgdoDOUTsT4+pBA7ZE+WuAsR/PulwOYArHOyrEP8k/3CZ22I6dC7zX/QmwZeU7R7tF2xue5SEA=
+	t=1765706084; cv=none; b=Th2dX7yYEXhuG6Tomxuwwhju/V0/+8/T4zSO3YuLpA1nA81miqUCMlp5fQSuKhklIlS2lUUJ6vzoltvnslEKlRfQSfy0iOhSaWgYbCVppo4UUFvI//2Om2V72Nkw32p3bmw81FtFwWIG28N7zdG+dE9FVCOw9jT6zUGKo9D+hQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765705268; c=relaxed/simple;
-	bh=0hwOfhAp3UTL+iR2tyBdVops9IcCIdCfHjICSSG+9YI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hc+3WUM/I5CBPHOOv6SkKf4oBWPmCeukI4HG7qVjafEsI6VFzgboC8UuwoWxV4WpQ7O5BE8NWAa59v4sRO4Vm4Qk99aqgTDy4u7AUtyNBWuCxs1MLHzYYqhYdChx1JBb36yN89jVBX1vOI8g8aUlkY9xZg6QCSr/IByR9ULB1mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=q/vLTEym; arc=none smtp.client-ip=80.12.242.79
+	s=arc-20240116; t=1765706084; c=relaxed/simple;
+	bh=MiLYoG6Ha8Ec/c9s/f0uvsanOJ/j30qQus8nDksp+IY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lTIjQD2030r45V1vxqI+kJIla4Ao0U10EFEV0btyNvHjZlcZrr5Hys56NXU79XDeIKDTR8lB/J7b3S5Ihrd2vtjVdbXhIeLcJM6iP0H4iqJDt8I6sbtP/EKbLj3s8D0X62Fx5J/g+fSMik7X0OeG64GD6jWO5OTxuCps95no8ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lCJ00w6B; arc=none smtp.client-ip=80.12.242.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="q/vLTEym"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lCJ00w6B"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id UiS8vIWZh3uKaUiS8vNd9F; Sun, 14 Dec 2025 10:31:45 +0100
+	id UifTvmqh4YUkFUifUvMFRl; Sun, 14 Dec 2025 10:45:32 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1765704705;
-	bh=msBpPCdi77sPTHHajIHtie7l4GqzHly2h9Y2kEQTlB8=;
+	s=t20230301; t=1765705532;
+	bh=nLHwS7D5TJkT1/L8Qlt5PBuPvdd4HPre2Bq5lOBMk0c=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=q/vLTEymif60zEam0GCBQw6LpG3kcLqwBeQ7B/AWhvHUN6fNb07Dkx004gGMdyifi
-	 pf97yjvLgwJLYigHEsXCa+Web/Lw5C5vi9rNFGfEkHLlD7h5ApDbHQgidSJYyLKxZ+
-	 JhRkwjhex/Wo2PKs4nrvG0SzBQJ7EX/fjdollsIe83EanUvwGk+vy3zLFKlY+xZFkg
-	 lWOBkfbnYofFdSYEgWTIoa/b6vvnX2G0PvIKYpwlmYVJ8+Aabc2RaYR2I2vqRJBTdp
-	 k0/FVzHkE5IQA+nBJli/ENX9o425d+LtBXcYbjritTzYFs3g/XKbPEQie/NczJP0Gb
-	 SdEEfGpPBEjMg==
+	b=lCJ00w6B0kznumKwcfEFK4G9+8MYLYTbfq/QOJaNEqCQAuxCYw/zifkMFwH8/1EXN
+	 q49nx4tmERu6UKDlrTeyEFenrrznyAmpWYngKRsb4zKi6wThGHIqRkc7TUXY1hl/+8
+	 wvKOVNNI3RyJl3KSLBSbyhk+AJyLNX/WRE/in+MW45LBhpeX5+hWAEnxj+avFaoO4G
+	 t5wnLykCapbQGR3Si5bPaQyODzvDWRNE+LBPzuXJbnlrJXChylPvmfuxDkjLJ2UB2H
+	 SjzWj3OHNJf4T+LqULeunaYcP+jBSJaBrcLIC87Yoqac8f5mIEYPPtNHl9rKMgau0E
+	 6QlamZSiXdgTQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Dec 2025 10:31:45 +0100
+X-ME-Date: Sun, 14 Dec 2025 10:45:32 +0100
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] gpio: Constify struct configfs_item_operations and configfs_group_operations
-Date: Sun, 14 Dec 2025 10:31:40 +0100
-Message-ID: <ccb5155342ce6dbb89cfbad0687b448860d8e8f0.1765703044.git.christophe.jaillet@wanadoo.fr>
+	linux-pci@vger.kernel.org
+Subject: [PATCH] scsi: target: Constify struct configfs_item_operations and configfs_group_operations
+Date: Sun, 14 Dec 2025 10:45:29 +0100
+Message-ID: <f1f05f6c1bc0c6f37cd680f012fe08c525364968.1765705512.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,22 +54,22 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 'struct configfs_item_operations' and 'configfs_group_operations' are not
-modified in these drivers.
+modified in this driver.
 
 Constifying these structures moves some data to a read-only section, so
 increases overall security, especially when the structure holds some
 function pointers.
 
-On a x86_64, with allmodconfig, as an example:
+On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  43935	  11632	    384	  55951	   da8f	drivers/gpio/gpio-aggregator.o
+  27503	  12184	    256	  39943	   9c07	drivers/pci/endpoint/pci-ep-cfs.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  44191	  11376	    384	  55951	   da8f	drivers/gpio/gpio-aggregator.o
+  27855	  11832	    256	  39943	   9c07	drivers/pci/endpoint/pci-ep-cfs.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
@@ -76,151 +77,58 @@ Compile tested only.
 
 This change is possible since commits f2f36500a63b and f7f78098690d.
 ---
- drivers/gpio/gpio-aggregator.c |  8 ++++----
- drivers/gpio/gpio-sim.c        | 16 ++++++++--------
- drivers/gpio/gpio-virtuser.c   |  8 ++++----
- 3 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/pci/endpoint/pci-ep-cfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 416f265d09d0..a4cd32674a96 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -1226,7 +1226,7 @@ gpio_aggregator_line_release(struct config_item *item)
- 	kfree(line);
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index ef50c82e647f..034a31c341c9 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -85,7 +85,7 @@ static void pci_secondary_epc_epf_unlink(struct config_item *epc_item,
+ 	pci_epc_remove_epf(epc, epf, SECONDARY_INTERFACE);
  }
  
--static struct configfs_item_operations gpio_aggregator_line_item_ops = {
-+static const struct configfs_item_operations gpio_aggregator_line_item_ops = {
- 	.release	= gpio_aggregator_line_release,
+-static struct configfs_item_operations pci_secondary_epc_item_ops = {
++static const struct configfs_item_operations pci_secondary_epc_item_ops = {
+ 	.allow_link	= pci_secondary_epc_epf_link,
+ 	.drop_link	= pci_secondary_epc_epf_unlink,
  };
- 
-@@ -1247,7 +1247,7 @@ static void gpio_aggregator_device_release(struct config_item *item)
- 	gpio_aggregator_free(aggr);
+@@ -149,7 +149,7 @@ static void pci_primary_epc_epf_unlink(struct config_item *epc_item,
+ 	pci_epc_remove_epf(epc, epf, PRIMARY_INTERFACE);
  }
  
--static struct configfs_item_operations gpio_aggregator_device_item_ops = {
-+static const struct configfs_item_operations gpio_aggregator_device_item_ops = {
- 	.release	= gpio_aggregator_device_release,
+-static struct configfs_item_operations pci_primary_epc_item_ops = {
++static const struct configfs_item_operations pci_primary_epc_item_ops = {
+ 	.allow_link	= pci_primary_epc_epf_link,
+ 	.drop_link	= pci_primary_epc_epf_unlink,
  };
- 
-@@ -1292,7 +1292,7 @@ gpio_aggregator_device_make_group(struct config_group *group, const char *name)
- 	return &line->group;
+@@ -257,7 +257,7 @@ static void pci_epc_epf_unlink(struct config_item *epc_item,
+ 	pci_epc_remove_epf(epc, epf, PRIMARY_INTERFACE);
  }
  
--static struct configfs_group_operations gpio_aggregator_device_group_ops = {
-+static const struct configfs_group_operations gpio_aggregator_device_group_ops = {
- 	.make_group	= gpio_aggregator_device_make_group,
+-static struct configfs_item_operations pci_epc_item_ops = {
++static const struct configfs_item_operations pci_epc_item_ops = {
+ 	.allow_link	= pci_epc_epf_link,
+ 	.drop_link	= pci_epc_epf_unlink,
  };
- 
-@@ -1328,7 +1328,7 @@ gpio_aggregator_make_group(struct config_group *group, const char *name)
- 	return &aggr->group;
+@@ -508,7 +508,7 @@ static void pci_epf_release(struct config_item *item)
+ 	kfree(epf_group);
  }
  
--static struct configfs_group_operations gpio_aggregator_group_ops = {
-+static const struct configfs_group_operations gpio_aggregator_group_ops = {
- 	.make_group	= gpio_aggregator_make_group,
- };
- 
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index a83f5238427c..437b4500f56b 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -1384,7 +1384,7 @@ static void gpio_sim_hog_config_item_release(struct config_item *item)
- 	kfree(hog);
+-static struct configfs_item_operations pci_epf_ops = {
++static const struct configfs_item_operations pci_epf_ops = {
+ 	.allow_link		= pci_epf_vepf_link,
+ 	.drop_link		= pci_epf_vepf_unlink,
+ 	.release		= pci_epf_release,
+@@ -662,7 +662,7 @@ static void pci_epf_drop(struct config_group *group, struct config_item *item)
+ 	config_item_put(item);
  }
  
--static struct configfs_item_operations gpio_sim_hog_config_item_ops = {
-+static const struct configfs_item_operations gpio_sim_hog_config_item_ops = {
- 	.release	= gpio_sim_hog_config_item_release,
+-static struct configfs_group_operations pci_epf_group_ops = {
++static const struct configfs_group_operations pci_epf_group_ops = {
+ 	.make_group     = &pci_epf_make,
+ 	.drop_item      = &pci_epf_drop,
  };
- 
-@@ -1433,11 +1433,11 @@ static void gpio_sim_line_config_group_release(struct config_item *item)
- 	kfree(line);
- }
- 
--static struct configfs_item_operations gpio_sim_line_config_item_ops = {
-+static const struct configfs_item_operations gpio_sim_line_config_item_ops = {
- 	.release	= gpio_sim_line_config_group_release,
- };
- 
--static struct configfs_group_operations gpio_sim_line_config_group_ops = {
-+static const struct configfs_group_operations gpio_sim_line_config_group_ops = {
- 	.make_item	= gpio_sim_line_config_make_hog_item,
- };
- 
-@@ -1494,11 +1494,11 @@ static void gpio_sim_bank_config_group_release(struct config_item *item)
- 	kfree(bank);
- }
- 
--static struct configfs_item_operations gpio_sim_bank_config_item_ops = {
-+static const struct configfs_item_operations gpio_sim_bank_config_item_ops = {
- 	.release	= gpio_sim_bank_config_group_release,
- };
- 
--static struct configfs_group_operations gpio_sim_bank_config_group_ops = {
-+static const struct configfs_group_operations gpio_sim_bank_config_group_ops = {
- 	.make_group	= gpio_sim_bank_config_make_line_group,
- };
- 
-@@ -1549,11 +1549,11 @@ static void gpio_sim_device_config_group_release(struct config_item *item)
- 	kfree(dev);
- }
- 
--static struct configfs_item_operations gpio_sim_device_config_item_ops = {
-+static const struct configfs_item_operations gpio_sim_device_config_item_ops = {
- 	.release	= gpio_sim_device_config_group_release,
- };
- 
--static struct configfs_group_operations gpio_sim_device_config_group_ops = {
-+static const struct configfs_group_operations gpio_sim_device_config_group_ops = {
- 	.make_group	= gpio_sim_device_config_make_bank_group,
- };
- 
-@@ -1589,7 +1589,7 @@ gpio_sim_config_make_device_group(struct config_group *group, const char *name)
- 	return &no_free_ptr(dev)->group;
- }
- 
--static struct configfs_group_operations gpio_sim_config_group_ops = {
-+static const struct configfs_group_operations gpio_sim_config_group_ops = {
- 	.make_group	= gpio_sim_config_make_device_group,
- };
- 
-diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
-index 37f2ce20f1ae..090f5643afaf 100644
---- a/drivers/gpio/gpio-virtuser.c
-+++ b/drivers/gpio/gpio-virtuser.c
-@@ -1631,7 +1631,7 @@ static void gpio_virtuser_lookup_config_group_release(struct config_item *item)
- 	kfree(lookup);
- }
- 
--static struct configfs_item_operations gpio_virtuser_lookup_config_item_ops = {
-+static const struct configfs_item_operations gpio_virtuser_lookup_config_item_ops = {
- 	.release	= gpio_virtuser_lookup_config_group_release,
- };
- 
-@@ -1692,11 +1692,11 @@ static void gpio_virtuser_device_config_group_release(struct config_item *item)
- 	kfree(dev);
- }
- 
--static struct configfs_item_operations gpio_virtuser_device_config_item_ops = {
-+static const struct configfs_item_operations gpio_virtuser_device_config_item_ops = {
- 	.release	= gpio_virtuser_device_config_group_release,
- };
- 
--static struct configfs_group_operations gpio_virtuser_device_config_group_ops = {
-+static const struct configfs_group_operations gpio_virtuser_device_config_group_ops = {
- 	.make_group	= gpio_virtuser_make_lookup_group,
- };
- 
-@@ -1729,7 +1729,7 @@ gpio_virtuser_config_make_device_group(struct config_group *group,
- 	return &no_free_ptr(dev)->group;
- }
- 
--static struct configfs_group_operations gpio_virtuser_config_group_ops = {
-+static const struct configfs_group_operations gpio_virtuser_config_group_ops = {
- 	.make_group	= gpio_virtuser_config_make_device_group,
- };
- 
 -- 
 2.52.0
 
