@@ -1,155 +1,119 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49C02F60CB
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Dec 2025 09:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6219A32F765
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Dec 2025 11:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765791970; cv=none; b=ZU90cXjlk+kuxnTjCSO2zDI634skFp1QsdIOFnQIoeSl9HqLFs4kmDLHQQaK4M6whOR2BufyF3PAnDw3oDQ7j5fn8bq1i1N8NVdLuIkF9kzN5ryr7SNPB6IBzGoaeLmjV/G7kQ3AyWOPhVfOm6cdWTMKd++cFz2JsEQxbD530vg=
+	t=1765799573; cv=none; b=BKk4jLQJk8uWw1XvfCtR+zYl0SXafreo7CdOI3pQEZSHNpuG53buPnmD3TNjY7bVmAaO7puvfZSHI9RhkL1xWtrx6ueRmGEyRtm9XSSzAWG7rurQbKtRH5MY2LCF1cXuXpbGgGN6poEdClvj84hYpmnKQz5iHFPQ05tOxEehwo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765791970; c=relaxed/simple;
-	bh=O8kp7KeDGrS5MqVHvKtrJtm16JqmYGDsHKfZ8siI2m8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zd7uQ2UVQEiRBq/OXUB9vQVTawayNJl1ahz/4OFToeERVo3aAx1L+HT5Y1WPcpya7wRK1kTiSXncGMF1+UGE7iU3Muxr1oNtZ4zAYb1tOIwcetZOjGm2ACzROsD+3GaIqM8x6lRIoxJE+R9LqsYSWrN6DfRsTyuD303om+Rqpqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXZhbtpX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1765799573; c=relaxed/simple;
+	bh=gg2nDCJ5hbYN62aROU8/7xo8tJxmcA93Qo5+tF6uz6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IlWyb7UtrjUKV44lqoHPPnVV9rSCjVEZLWDIj/nOIzNwQiTIqtrxKl9VcMuvgsvj64s4zK+JSkg1lTYy591AgZ6qjZwB2BR5Sl81TpR1HYKtojaEHgRHG+sTK3jn20L5DgUF7cEHIP95wktl2TJN0HDAQtxwPugYL6++9TMRBkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRpFQ+8J; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXZhbtpX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765791963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H6JuG3oC6UyZ6UYfFXXU2BOdbDcpLEkG2dlhV74t068=;
-	b=FXZhbtpX8bwmIAuxm0MjltxbJM1TGGAdOiWjU9rg3lfm6+ZQ34Z718yftUQgr1p7Y4/OOp
-	dqk9Ti7m+/huI5rU7l7DSzXehjVlviTlFr2lob7dPeIo6dNXs97x7LJFLDM2iy9fbvHKR6
-	UFg4YPIk81/XqPATyewcKaXfJ+Wtpz8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-XQ5UHsUTOs6KeEbIa0Ilig-1; Mon,
- 15 Dec 2025 04:46:01 -0500
-X-MC-Unique: XQ5UHsUTOs6KeEbIa0Ilig-1
-X-Mimecast-MFC-AGG-ID: XQ5UHsUTOs6KeEbIa0Ilig_1765791960
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A812C180062E;
-	Mon, 15 Dec 2025 09:45:59 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.95])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF45919560A7;
-	Mon, 15 Dec 2025 09:45:57 +0000 (UTC)
-Date: Mon, 15 Dec 2025 17:45:53 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: coxu@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	kexec@lists.infradead.org
-Subject: Re: [PATCH] crash_dump: Constify struct configfs_item_operations and
- configfs_group_operations
-Message-ID: <aT/Y0UjrIdij7f5X@MiWiFi-R3L-srv>
-References: <d046ee5666d2f6b1a48ca1a222dfbd2f7c44462f.1765735035.git.christophe.jaillet@wanadoo.fr>
- <aT9uwXK8XFdXei/L@MiWiFi-R3L-srv>
- <b1c7b612-5c5e-4234-9aa5-a83105d01c52@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRpFQ+8J"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775ae77516so40268325e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Dec 2025 03:52:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765799569; x=1766404369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLPAAzkZX672SPFPNzY//QzztDCRnjOssmaLt2g73S0=;
+        b=bRpFQ+8JQztAXAcQ4M2W60GDT8M70vnhPRYFtAPcnnQJU9upAvf8v+aTaRNp4/Kf0P
+         am2hC/wM4W/XA4diKvf/bn+HnK9KDBZPL9kvCdBjNIl7KFjslHj8NPU3QLFTSIoNTStw
+         8jxVJ8puEB+vq2qj7ksCP3ypBOWgAliiY8DAb44mCnRi02037voB5evfc9+pVPR9ZHPM
+         qdwYFq+mvzg9BEnpKJCJ5Ye49vgNB3pcp7ns3L0XB6TJ4q1swUv5RwUfO2HJSxJg+c13
+         Nnm97z3AIVnM6hHv5Z4h20Et/qBUCHgnytGIQPTNwsXI9g9HHCYZhW1/HUKJdCVV4Rlu
+         kHhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765799569; x=1766404369;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HLPAAzkZX672SPFPNzY//QzztDCRnjOssmaLt2g73S0=;
+        b=WqfhZTLbrow7rIHqLN1oflBsYuX28k2KfVs96wxnY6ZamKnzciz6vPqhtJiOgtUVhE
+         qv4ZkEAF74pbrdstfP2MuSWShbD8BxJxr/sHvAzytGInNeMrvoyNRDkDFYW5gAOLV4HU
+         l28WAS6wJE1+TeNjnIr0z6vruvpFbfy718gGSX5MEiIDYGI9F1zK4ZTtT8ZlotCY8mM/
+         TgxKAUzIwQTIvtMHWvJhkiWpQIga12nbVqUGG+VYF960faOV+2LcDVsTE8Y9jHqVFR4I
+         k18hh1qRKHVa64xU12U0tQF7rrKTxYLXnSq5BbZg9x1QlGWbFfomVux72MLYWhNGDBl/
+         5Hpw==
+X-Gm-Message-State: AOJu0YxdFbvxDUlNl07X9BnmDm1uIBTRkcWa3lKzVO0jZzQL8Wpwnx9Y
+	mBwlOEjr3Rkn7Z4rbfqVORYfWcKaNP+NryNayo6lEQnFm6NQ9v8j0Oxm
+X-Gm-Gg: AY/fxX41l7i2yKL4vNqvyGmD2pCvRb10Nmk7W+RPczTSlokSikZE7WqSGrVZoVMwHbS
+	UTE2SnDbTmDYxBPDIneJQXNFGF/lo9RmlBTGickcdE+wvv3c8FI7boWgdBiCy0sN1qeFLl2OEpm
+	5dWanHDMWceV3wB+erJwimE3Ugf4cdiI20VilFGqhF2jPBGlsICSUBNd19FYAnUYlvXUnLFfidT
+	FnZvuHSGQOIcSgRNzHwoxuVKWJuT//bnm5ut+EICWPsTPTXxgZy5DQ0JvBvx+oeHQTHO70Y1fuh
+	ipFIEpMskDhrDAKfBFq8rshd6f3FSofNqHv7LDpc/3bhYLCCHuUE6r9o1xwylCbNxnHe64oABUq
+	7UnBdDXJ8ccJFp47ufO8bWh5q5xgVHEmKPrFpSWJwK+IHvhaurgepqWLZs2U9GZ16amCwFjcZfg
+	+WhGi4I7+ymg==
+X-Google-Smtp-Source: AGHT+IE7KWwtiusfSz6ItVQJ6jWC1LkkJEmabme0vGMp/wCpVgK/njPeo+/ZPD4RDxUphEA/jNlIVw==
+X-Received: by 2002:a05:600c:4f84:b0:475:dd89:acb with SMTP id 5b1f17b1804b1-47a8f904528mr113128355e9.22.1765799568419;
+        Mon, 15 Dec 2025 03:52:48 -0800 (PST)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42fbc6e3392sm17181159f8f.13.2025.12.15.03.52.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 03:52:48 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amdkfd: Fix a couple of spelling mistakes
+Date: Mon, 15 Dec 2025 11:51:50 +0000
+Message-ID: <20251215115150.3581277-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1c7b612-5c5e-4234-9aa5-a83105d01c52@wanadoo.fr>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 12/15/25 at 08:19am, Christophe JAILLET wrote:
-> Le 15/12/2025 à 03:13, Baoquan He a écrit :
-> > On 12/14/25 at 06:57pm, Christophe JAILLET wrote:
-> > > 'struct configfs_item_operations' and 'configfs_group_operations' are not
-> > > modified in this driver.
-> > > 
-> > > Constifying these structures moves some data to a read-only section, so
-> > > increases overall security, especially when the structure holds some
-> > > function pointers.
-> > > 
-> > > On a x86_64, with allmodconfig, as an example:
-> > > Before:
-> > > ======
-> > >     text	   data	    bss	    dec	    hex	filename
-> > >    16339	  11001	    384	  27724	   6c4c	kernel/crash_dump_dm_crypt.o
-> > > 
-> > > After:
-> > > =====
-> > >     text	   data	    bss	    dec	    hex	filename
-> > >    16499	  10841	    384	  27724	   6c4c	kernel/crash_dump_dm_crypt.o
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > 
-> > Sounds not bad, leave this to Coiby to test.
-> > 
-> > > ---
-> > > Compile tested only.
-> > > 
-> > > This change is possible since commits f2f36500a63b and f7f78098690d.
-> > 
-> > I don't follow here, why do these two commits have anything with this
-> > patch?
-> 
-> Without these patches, it won't compile because "struct config_item_type"
-> needs to be tweaked to accept some const field. It is what is done by these
-> patches that have landed 2 weeks ago or so.
-> 
-> 
-> Without these 2 commits, you would get (with French messages, sorry):
-> 
->   CC      kernel/crash_dump_dm_crypt.o
-> kernel/crash_dump_dm_crypt.c:231:24: erreur: l'initialisation abandonne le
-> qualificatif « const » du type pointé [-Werror=discarded-qualifiers]
->   231 |         .ct_item_ops = &config_key_item_ops,
->       |                        ^
-> kernel/crash_dump_dm_crypt.c:306:25: erreur: l'initialisation abandonne le
-> qualificatif « const » du type pointé [-Werror=discarded-qualifiers]
->   306 |         .ct_group_ops = &config_keys_group_ops,
->       |                         ^
+There are a couple of spelling mistakes, one in a pr_warn message
+and one in a seq_printf message. Fix these.
 
-Ah, I see now. Thanks for the information.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c               | 2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> > 
-> > > ---
-> > >   kernel/crash_dump_dm_crypt.c | 4 ++--
-> > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/kernel/crash_dump_dm_crypt.c b/kernel/crash_dump_dm_crypt.c
-> > > index 401423ba477d..0d23dc1de67c 100644
-> > > --- a/kernel/crash_dump_dm_crypt.c
-> > > +++ b/kernel/crash_dump_dm_crypt.c
-> > > @@ -223,7 +223,7 @@ static void config_key_release(struct config_item *item)
-> > >   	key_count--;
-> > >   }
-> > > -static struct configfs_item_operations config_key_item_ops = {
-> > > +static const struct configfs_item_operations config_key_item_ops = {
-> > >   	.release = config_key_release,
-> > >   };
-> > > @@ -298,7 +298,7 @@ static struct configfs_attribute *config_keys_attrs[] = {
-> > >    * Note that, since no extra work is required on ->drop_item(),
-> > >    * no ->drop_item() is provided.
-> > >    */
-> > > -static struct configfs_group_operations config_keys_group_ops = {
-> > > +static const struct configfs_group_operations config_keys_group_ops = {
-> > >   	.make_item = config_keys_make_item,
-> > >   };
-> > > -- 
-> > > 2.52.0
-> > > 
-> > > 
-> > 
-> > 
-> > 
-> 
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index 2f66ebb5b029..adffa44fff2c 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -830,7 +830,7 @@ int kfd_create_process_sysfs(struct kfd_process *process)
+ 	int ret;
+ 
+ 	if (process->kobj) {
+-		pr_warn("kobject already exsists for the kfd_process\n");
++		pr_warn("kobject already exists for the kfd_process\n");
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+index 5f8cda4733f9..d7d37f01f51c 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+@@ -1115,7 +1115,7 @@ int pqm_debugfs_mqds(struct seq_file *m, void *data)
+ 				break;
+ 			default:
+ 				seq_printf(m,
+-				"  Qeueu node with bad user queue type %d on device %x\n",
++				"  Queue node with bad user queue type %d on device %x\n",
+ 					   q->properties.type, q->device->id);
+ 				continue;
+ 			}
+-- 
+2.51.0
 
