@@ -1,136 +1,155 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570D022CBC0
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Dec 2025 08:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49C02F60CB
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Dec 2025 09:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765787626; cv=none; b=fp08/e7srXjZDB4UTfo/w0XLQAoCrmmbugSDaOGbJjxUaCwW0VXwUNN9bs9C08gCjkPgM4RH1JhNOCZK5hsaO64Aw34W/CzzhGsvvSAWqp2sXaa1E32vPZYNPpCLTmaaNGuSpEJafmCgVnbjtOURudE33regKoIH9JMezB6yJXA=
+	t=1765791970; cv=none; b=ZU90cXjlk+kuxnTjCSO2zDI634skFp1QsdIOFnQIoeSl9HqLFs4kmDLHQQaK4M6whOR2BufyF3PAnDw3oDQ7j5fn8bq1i1N8NVdLuIkF9kzN5ryr7SNPB6IBzGoaeLmjV/G7kQ3AyWOPhVfOm6cdWTMKd++cFz2JsEQxbD530vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765787626; c=relaxed/simple;
-	bh=re/J2u5kW+iYFobhHys3ZYJFb/BDqlJM/16+S9FipJE=;
+	s=arc-20240116; t=1765791970; c=relaxed/simple;
+	bh=O8kp7KeDGrS5MqVHvKtrJtm16JqmYGDsHKfZ8siI2m8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbZW4ducGgJTsUzwfooXuYNQw6aWRCxzYAYH4ZBQwZ5DKZSdyRyOqYa94al3uAzW++YBB83QBttPgpmAtDVpKnH/9ntoboNelAoK3Thr5EuJKQ8mOI1aWoZzQSiHUVZpnNw2cbwrF5nwhs3nleuKTTuFnvtBC+zlNDHDn07Jrkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LAIm4Ueq; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zd7uQ2UVQEiRBq/OXUB9vQVTawayNJl1ahz/4OFToeERVo3aAx1L+HT5Y1WPcpya7wRK1kTiSXncGMF1+UGE7iU3Muxr1oNtZ4zAYb1tOIwcetZOjGm2ACzROsD+3GaIqM8x6lRIoxJE+R9LqsYSWrN6DfRsTyuD303om+Rqpqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXZhbtpX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LAIm4Ueq"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b3c5defb2so1899557f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Dec 2025 00:33:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765787623; x=1766392423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KqNsmeS8+YWAkdie5NFeKUkBgtpn0Yqa9GJN2uw9A6I=;
-        b=LAIm4Ueq+MKrowywXebssjCj7deHMn3nRJ92DQK6X3lCORRWeQy2sn67/kpP6AugwW
-         NUiJ1H2VXdbSIV6RnlKwMpxcR/ZcRdy52N8PiCE8s6LiUOplyMEsmSZLB36rbyV8NKSd
-         RdDzQbrM0gX20FJL7WIeh6TbcFVWKwom3c/BzFcHzdsiTdikAGwyqVMGUm6qp1Y44JL3
-         EFNKio42bb6cAS6DHgPfhyF9gMtXvBzwfrYIOC4ApJxT0oT/ls0jc5ykQbDu/wwQK8SX
-         vXC3OcBZlQuXLWmuNxFGIJeZ2UMvItYHIbS/rzREDbvpfmhykEGHj2t4t375ddQo6LvI
-         sdSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765787623; x=1766392423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KqNsmeS8+YWAkdie5NFeKUkBgtpn0Yqa9GJN2uw9A6I=;
-        b=X5CmrfXfNrO2uk7LdFEcOBbjY4LoDDWe2SBtUi3pcOJ/qIpvb/qP1nQSE9C2zpwFtA
-         Y8grr3OuJZam2oyOx2AFtzU5rcFwu/AflsRR7d8BV1CnCWkUh4/zYhvE+WUdhBNcJbMK
-         BMSk2iudC8E4ZBNQUq9xSwF6pZXWvnfFDCeDiL+cwr88rK1RPa/USOzg3Z5y5f4YTZPX
-         NwZfaonv9hBGdAwGDsFIi1QnA+2iQzHNS4Ts17zSPcmdT7rzuVolwD3O5AjXJ0PwCPtm
-         h2mHOajmZ9Y0k4yn+gdVQSoQl1+tMOXP8rQ6ZXJcBkdCo8nlAGVfVXCA0WhNtwAn0M9k
-         IIsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2io1Qtquo8iGN/pekVmOKO2cnXYHchd6nHHnpGLK5Aw/K2uMzxQCFSnRODpJcoYHS20Iw2F6boTgOxRrA5FE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFNFvz5vA4TUu+LltA8fNlQ474OQwocjTyHEFuB8uHo1XbdzEQ
-	dnOSOVqtmwDSLLEyDwVhNzRJTgYw59mvr1+qByw/0luMmQvXKcboV2JFKra++xBSh7M=
-X-Gm-Gg: AY/fxX6VgHxhVqN0NjShr1vLODtxRbbAZrpPWfJL8pqntGqR56W0AV3mUZTaQhmRv6/
-	9ilBfkHO35+oa6T9Uh5r5Zg9Yk3MO3ws94H2U8FpwREF4Q7iRxS+DDjIg8ggio9fMAS5TVesBzq
-	FQSoozyC9wnD0a3/y2F1pB3u3h4WblaSCErL5WaPNde6J6bjqiX94lcHkuanyAd5JUjV6tEPYhd
-	DqQtsyE1Vd7Qe/gGsacuTSuZT7XRpUFPm5RwjqyZvhMGmVJ+I7M2o4B84GZc4DpGEDVnm855j7C
-	/zP1n6f64hq/vF6ldx5SwZz3wVeUUdiLzwkQLgcFNhYIIYvEgufRaOko0haVh916runJnxtT8EQ
-	gJ4W/ASRsLM+uvBGqnZQSrpAESBOsbZYMvtw/bQjTDFJ/JgKvDkRU/rwldBwlpVl6eYAABEOttV
-	CWa35snjt5SZci7ez6
-X-Google-Smtp-Source: AGHT+IG4+XfIn0mjObpdlgl5MILZfrqvfE1FP5G+Qu4VQUIjo1Xf6YK5qSrSpnlntD5Ncnv7tT4dGQ==
-X-Received: by 2002:a5d:6ac6:0:b0:42f:bbc6:edc1 with SMTP id ffacd0b85a97d-42fbbc6eeeamr5907976f8f.1.1765787622553;
-        Mon, 15 Dec 2025 00:33:42 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42fb0fc8d5fsm20370114f8f.2.2025.12.15.00.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Dec 2025 00:33:42 -0800 (PST)
-Date: Mon, 15 Dec 2025 11:33:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] thermal/cpufreq: increment i in
- cpufreq_get_requested_power()
-Message-ID: <aT_H4m28SuAwuQzp@stanley.mountain>
-References: <a7c1fe73-b40e-437c-8ccb-7b3baad04df7@moroto.mountain>
- <67159a18-3923-4345-bff8-ade49cc769ba@arm.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXZhbtpX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1765791963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H6JuG3oC6UyZ6UYfFXXU2BOdbDcpLEkG2dlhV74t068=;
+	b=FXZhbtpX8bwmIAuxm0MjltxbJM1TGGAdOiWjU9rg3lfm6+ZQ34Z718yftUQgr1p7Y4/OOp
+	dqk9Ti7m+/huI5rU7l7DSzXehjVlviTlFr2lob7dPeIo6dNXs97x7LJFLDM2iy9fbvHKR6
+	UFg4YPIk81/XqPATyewcKaXfJ+Wtpz8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-XQ5UHsUTOs6KeEbIa0Ilig-1; Mon,
+ 15 Dec 2025 04:46:01 -0500
+X-MC-Unique: XQ5UHsUTOs6KeEbIa0Ilig-1
+X-Mimecast-MFC-AGG-ID: XQ5UHsUTOs6KeEbIa0Ilig_1765791960
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A812C180062E;
+	Mon, 15 Dec 2025 09:45:59 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.95])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF45919560A7;
+	Mon, 15 Dec 2025 09:45:57 +0000 (UTC)
+Date: Mon, 15 Dec 2025 17:45:53 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: coxu@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	kexec@lists.infradead.org
+Subject: Re: [PATCH] crash_dump: Constify struct configfs_item_operations and
+ configfs_group_operations
+Message-ID: <aT/Y0UjrIdij7f5X@MiWiFi-R3L-srv>
+References: <d046ee5666d2f6b1a48ca1a222dfbd2f7c44462f.1765735035.git.christophe.jaillet@wanadoo.fr>
+ <aT9uwXK8XFdXei/L@MiWiFi-R3L-srv>
+ <b1c7b612-5c5e-4234-9aa5-a83105d01c52@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <67159a18-3923-4345-bff8-ade49cc769ba@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1c7b612-5c5e-4234-9aa5-a83105d01c52@wanadoo.fr>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, May 06, 2024 at 10:41:52AM +0100, Lukasz Luba wrote:
-> Hi Dan,
-> 
-> On 5/4/24 12:25, Dan Carpenter wrote:
-> > We accidentally deleted the "i++" as part of a cleanup.  Restore it.
+On 12/15/25 at 08:19am, Christophe JAILLET wrote:
+> Le 15/12/2025 à 03:13, Baoquan He a écrit :
+> > On 12/14/25 at 06:57pm, Christophe JAILLET wrote:
+> > > 'struct configfs_item_operations' and 'configfs_group_operations' are not
+> > > modified in this driver.
+> > > 
+> > > Constifying these structures moves some data to a read-only section, so
+> > > increases overall security, especially when the structure holds some
+> > > function pointers.
+> > > 
+> > > On a x86_64, with allmodconfig, as an example:
+> > > Before:
+> > > ======
+> > >     text	   data	    bss	    dec	    hex	filename
+> > >    16339	  11001	    384	  27724	   6c4c	kernel/crash_dump_dm_crypt.o
+> > > 
+> > > After:
+> > > =====
+> > >     text	   data	    bss	    dec	    hex	filename
+> > >    16499	  10841	    384	  27724	   6c4c	kernel/crash_dump_dm_crypt.o
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > > 
-> > Fixes: 3f7ced7ac9af ("drivers/thermal/cpufreq_cooling : Refactor thermal_power_cpu_get_power tracing")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > This is based on static analysis and not tested.
+> > Sounds not bad, leave this to Coiby to test.
+> > 
+> > > ---
+> > > Compile tested only.
+> > > 
+> > > This change is possible since commits f2f36500a63b and f7f78098690d.
+> > 
+> > I don't follow here, why do these two commits have anything with this
+> > patch?
 > 
-> Thank you for the patch. I have analyzed the code and why it
-> haven't trigger an issue when I was testing it.
+> Without these patches, it won't compile because "struct config_item_type"
+> needs to be tweaked to accept some const field. It is what is done by these
+> patches that have landed 2 weeks ago or so.
 > 
-> I looks like the function get_load() which is called above that 'i++'
-> and takes the 'i' as the last argument is compiled in 2 versions:
-> 1. for SMP system and the last argument 'cpu_idx' is ignored
-> 2. for !SMP where we use the last argument 'cpu_idx' which is 'i'
-> value. Although, for !SMP system we only have 1 cpu, thus the
-> initialized 'int i = 0' at the beginning of that
-> cpufreq_get_requested_power() is used correctly.
-> The loop for !SMP goes only once.
+> 
+> Without these 2 commits, you would get (with French messages, sorry):
+> 
+>   CC      kernel/crash_dump_dm_crypt.o
+> kernel/crash_dump_dm_crypt.c:231:24: erreur: l'initialisation abandonne le
+> qualificatif « const » du type pointé [-Werror=discarded-qualifiers]
+>   231 |         .ct_item_ops = &config_key_item_ops,
+>       |                        ^
+> kernel/crash_dump_dm_crypt.c:306:25: erreur: l'initialisation abandonne le
+> qualificatif « const » du type pointé [-Werror=discarded-qualifiers]
+>   306 |         .ct_group_ops = &config_keys_group_ops,
+>       |                         ^
+
+Ah, I see now. Thanks for the information.
+
 > 
 > > 
-> >   drivers/thermal/cpufreq_cooling.c | 1 +
-> >   1 file changed, 1 insertion(+)
+> > > ---
+> > >   kernel/crash_dump_dm_crypt.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/kernel/crash_dump_dm_crypt.c b/kernel/crash_dump_dm_crypt.c
+> > > index 401423ba477d..0d23dc1de67c 100644
+> > > --- a/kernel/crash_dump_dm_crypt.c
+> > > +++ b/kernel/crash_dump_dm_crypt.c
+> > > @@ -223,7 +223,7 @@ static void config_key_release(struct config_item *item)
+> > >   	key_count--;
+> > >   }
+> > > -static struct configfs_item_operations config_key_item_ops = {
+> > > +static const struct configfs_item_operations config_key_item_ops = {
+> > >   	.release = config_key_release,
+> > >   };
+> > > @@ -298,7 +298,7 @@ static struct configfs_attribute *config_keys_attrs[] = {
+> > >    * Note that, since no extra work is required on ->drop_item(),
+> > >    * no ->drop_item() is provided.
+> > >    */
+> > > -static struct configfs_group_operations config_keys_group_ops = {
+> > > +static const struct configfs_group_operations config_keys_group_ops = {
+> > >   	.make_item = config_keys_make_item,
+> > >   };
+> > > -- 
+> > > 2.52.0
+> > > 
+> > > 
 > > 
-> > diff --git a/drivers/thermal/cpufreq_cooling.c b/drivers/thermal/cpufreq_cooling.c
-> > index 280071be30b1..a074192896de 100644
-> > --- a/drivers/thermal/cpufreq_cooling.c
-> > +++ b/drivers/thermal/cpufreq_cooling.c
-> > @@ -249,6 +249,7 @@ static int cpufreq_get_requested_power(struct thermal_cooling_device *cdev,
-> >   			load = 0;
-> >   		total_load += load;
-> > +		i++;
-> >   	}
-> >   	cpufreq_cdev->last_load = total_load;
+> > 
+> > 
 > 
-> Would you agree that I will keep you as 'Reported-by' and send a
-> separate patch to change that !SMP code completely in that
-> get_load() function and get rid of the 'cpu_idx' argument?
-
-Yes, please.
-
-> Or I'm happy that you can develop such code and I can review it.
-> It's up to you.
-
-Happy to just get a Reported-by tag.
-
-regards,
-dan carpenter
 
