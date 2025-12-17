@@ -1,128 +1,128 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2336A2EBB98
-	for <kernel-janitors@vger.kernel.org>; Tue, 16 Dec 2025 15:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0452D63E3
+	for <kernel-janitors@vger.kernel.org>; Wed, 17 Dec 2025 05:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765898957; cv=none; b=HAjg5OmtCy/IzQ4v8jN9yRpBTGOWWvYcv1gGPpyUUK+l+WdAHB6p5MaS2BjTkUTFpMjYZgBrAjR0x3AHy6GfeAlCZGBFAeht5zew+15iTdI80wtkbLyh2oqijjsRFacfhU5tTzoSB3giAtWNcPzCzN+49/jTbkjDxnEeL6Ty0KE=
+	t=1765949959; cv=none; b=R0xOe/dUbm/jb5OoliVifAWyDmM4s8i3Tu8pYen2JVlcjNbIxUteK+HTso8oqIRA+Q0kSGipZf1D8X/vUMSIG+Ja7StC9aofORXyIGBPb/j2zDakFUnK+SsQlbp53lUajUw0eBmSpO2vMwV9Y8R8S21A/FQhUznpWCx7AhQw2sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765898957; c=relaxed/simple;
-	bh=vwDFUYvsCNqJMP0vjXS2tVbvCp1Jq8R1ZVQNJG9YU14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EdvGJtYhjQ1KPUjtOykaUu+xemy09khKB5GsVEYmk/DvM2ilJJQry4AnaI9rtSe0uSQR2EqQUX0kK+oPnRSfDma9TADIovdAINB4Uf4/gXCmDosINCHZto/FwC9X55uem9ylO0besdwG81/pW3Rbp9DAvwtctDflvI5UCX7/Tlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQV0n763; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1765949959; c=relaxed/simple;
+	bh=ICVrHzpxTFLnlMS9+yeaLXGfGOfU7AbnEDn1gUGe6k4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kxyYULWfCAdLMq8mL3ytEzKKBRFifTr3JUIboRTGi5PPsGORD9gsZ3uWeMe61pTmVi5BLzIwi57fU9wlw0Q8VMy91OqyNd8KiH0bg7nqnF/N69QHZBGb8KwHWXXdfb1qOQVQwVUPu+wfxhlp/BJmbd41tFlEius+kRYTW5mLDeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0EVMAH3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SRHIqEAX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQV0n763"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2a08ced9a36so8331945ad.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Dec 2025 07:29:16 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0EVMAH3";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SRHIqEAX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1765949956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MfHguFmOKJ8egmSeOGiDVI9siRkTN+9TzeEpJWkbFvc=;
+	b=T0EVMAH3NZaL/oK0UdIRmmqRKKcmATmFLyGiGoO8dIMdwHQQ+y8WVisHHqNxcARNgpT0ku
+	4lwUmSLSRh3ohB0cIC750JA4PSp4paA2U1IRpOTq9vdQlVG3qBmwAHti8YvFqYEyO7z9Uk
+	hzhhCjvTff0Axi3nrKaSI7olQYRz8Hs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-696-lngMyPlzM8a1_ts7deKJmw-1; Wed, 17 Dec 2025 00:39:14 -0500
+X-MC-Unique: lngMyPlzM8a1_ts7deKJmw-1
+X-Mimecast-MFC-AGG-ID: lngMyPlzM8a1_ts7deKJmw_1765949953
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-477563e531cso36478045e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Dec 2025 21:39:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765898955; x=1766503755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zr3Gof58u9YJPfboarrtkfLOPQXqGnwnePKk7JXxizs=;
-        b=UQV0n763pPBWXAI9rgOzpKxfTeQ5g1f33XbtebI85sg0UDsml0n+QbaucypnB5/Py0
-         ShPTkrr8buep+u/Mh+8Jt+VLa9ZCMTZ8mrOEg8pvEGQTqsW1FbUSEKb3L6JrQqfOZ2i0
-         LRoufsQKLJ6Jojd65LYTaWkefZFBuJ3q/kccgviyuf8bpvJ5vxF9vUpcGYfkUstcqT3k
-         YVjgtmwy8XhhPVQnFyY3uvPxIYZVlNJqr+mpTsv/Wl7HNBy3KWNvQCJJRC4QDEsLh+H/
-         vBiYllBCdfooZ6kRjbooJ5KiV/HJKFnRkSQT2OhYaEspO0pQsGvkt71dpdTQ2KF6mxsa
-         hScw==
+        d=redhat.com; s=google; t=1765949953; x=1766554753; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MfHguFmOKJ8egmSeOGiDVI9siRkTN+9TzeEpJWkbFvc=;
+        b=SRHIqEAXXgjSdzHxW5Z3y4aenUQwrOHnBS0vLg6BnrdxLuRthvu3XjTKXyAbUPO6tr
+         CBWb3bNVpmxgE2c74yg+8wuwpyQSf9a36Vwyrcp9jPVkNcUxR27RaQOVlJKFapVdQel+
+         H130sBaP0oCHwQfZ2pLUDNriIjHOclrO0Elcj2oYbdEyGOVy2J4YrM1u/ZHu8zbaTpJd
+         Y925XqJgNVRwwLaQc5xRo9OTpD15eFlQYmrFsgEBRrJWeukn542BHQ5+Nd0wTRjkFpKR
+         9eHbsXtX2ArlUm4z5ikBqhxdqsVqpyiBgw4FWTR3gfcCseyMed82JTKa9G9ptjjxfaRH
+         qHLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765898955; x=1766503755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zr3Gof58u9YJPfboarrtkfLOPQXqGnwnePKk7JXxizs=;
-        b=hgUNWBEGJldSzUc0Dg2qHv+INFTorC1H0HW67nEn1l/ILdN1tOr2WsNlStWxWUq7oR
-         +mRdfPsEx/X2+a876pKsKmgY3NZA8dPjVnhoIZ5IL2B+gV9yBg1aZSJDXqnR3bGT+oSX
-         QsqlmAIkNZ/AB2qkEJ+EbtOoli7533UrDDgNLe72Ekt0axZJzPYxfc0mtPgjYmFokz1h
-         2RFnM2FlpJq/9PmxDOLnOEaZEpU6xr4MAu88hrTA1AfqFiWSnPQzoaYYcAoAiZVGKqqG
-         sqf4SYXVG9+1vI6P3eW/3qaeIyr2MVduk+St1TCC4CuOfOQ/w0HclAuKNzLZEfd3augw
-         VyAw==
-X-Forwarded-Encrypted: i=1; AJvYcCV58nmpvkBEIK3Gn9ahV//j9GBQu1bE24I8YmsgSzniOOGO/VXoyUPA6KzA2ET/7dqS96EUM6uMNm9RwCpoQcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYdgvrz2vKx/g9yJF4J5VIAuSGQTCNix9l9NQm+yUQxMx+qW/b
-	cWstiRdhJBPnDZhmOOD479S0LjV3Qb1pi5IzHYc4tThhuxsnBYMFLk6vpXP87m1gYSZ86xcDfWi
-	hryaQV+GNPoMbldKWh/ldIg9r6L2IBEE=
-X-Gm-Gg: AY/fxX6tPWwE8ykCQDBI3738RQ3YwV3iW061qXKIP+wJQz+xK4NUx9qLNZXXHJeM+vp
-	UODeS2V3zv3ORIRA8ytL0dshYA8HlsrZ71gzi2+PrX+H6e3IYIayj5MPdrYV4S8wrLLRPJcAm3W
-	AN6cwtTh8rj+gDJH7r20i6dzoodICeoZ2a2shdVYQe8XPwxGNVryw69btn6ilcRpvfU8rpMpkfY
-	SIz0763MAAbpnuvWEyJ/p9+uZOrqSeV+3NMOvrxbXbx3FvW9b5E/jDljlM8VNzise70/x3B
-X-Google-Smtp-Source: AGHT+IG9kcUP8Pi9U9VCe9+jqy+e35rih9Qd+GyQTJbDh/dChPu3EK/0GXGO9bipWaTXTvNU+Tefi0oHy/HN/K4UjYE=
-X-Received: by 2002:a05:7301:2e32:b0:2ab:ca55:89bd with SMTP id
- 5a478bee46e88-2ac30218330mr3818312eec.4.1765898955375; Tue, 16 Dec 2025
- 07:29:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765949953; x=1766554753;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MfHguFmOKJ8egmSeOGiDVI9siRkTN+9TzeEpJWkbFvc=;
+        b=Bs8j1I+ekrHLn8DS7aj831RhcXYAcMb8tlNNbARErOTdxXP2CGNQpyvNnsTe1fMd7I
+         MowCLgO6gJrpr12Sz3t0HtKzXMtEuQnpbK0aMn1Lyunb2PjRT6JLd5MbpFJQuclS6lK5
+         f1WxhsR3noc12K6d34JGkhrNvfTJdsR1GXpDEXiOQy/TVgMe9gMuESyxilrqESbU6maN
+         jdPiT/ZyXPNN8FSo0TS4H6v7hOXTyrNEivU9bfG6EATwZ4MgQGoyU6nCrKA7hDwwrMIK
+         /2W6ftuLAVKZWYLiihWnLTiAlsLFQHytnW0nusb+S9x6xBVVITTLEG2VhkZKwYy6qHjF
+         VjeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2w9duDfEKi3Q+epwXd/2mhuxa/2cqOQ92KSFn52SmAc3OH+PDNxbqPDAJa3a+XXOtttivXDXVwyvfOnLrcmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/k4r8Zwy3duQsvS3CD13EFip0zRDOaD9D6lzYDtuHAXDALOpF
+	TcYWW7RtHLVr4nRxzFaWjUg2YUJOPd1+AhXfd9NMKAM4fbGROcvBRNCJaSyxvFt4Ij4nvTGhbfx
+	UASykh44H12azAGwtY6f15AlI3GaQYxWzmSJvtwGFwv4hI1b3BZSQJUIqy6F67vBJWJbZbQ==
+X-Gm-Gg: AY/fxX6tf1b7ZcLilO3/iXotrvka12fH2KtA/7DYGudDhoXmhprqk010BHhAXnZb8UD
+	jZFNPPD9qAtXrpn00Unli1rZwXgl3KiJSmKWVWuwO3zrE7YUM1nBIv3VEKu11RSMj9xJYgU2ZDC
+	miwQCNVamx3DBZm0xyt50oPtLUkDBMGsubzO1bF8I5zemJ3K80yF2DDV+ueqMFUkat3qgusRPbs
+	C7kpxaU1FS/iRuIpzB6xvPVf6IZ/83i8cdr8TDsHtapQHvX/3amO9BjvMFmp9COG8hAElHC4aj0
+	x4Z9uSvRYapX/0Z75OnA+umdB+wc3Q7/W0YDAOdFCJeNnMpR99A5a8pbIXXFUjKWt6VvSGQyO3y
+	mzy5mXHGQT5pLMfuWXBHvdKFzAtVegoSHDgrGrnQjUn+Sy6mH6ucNxxW+es8=
+X-Received: by 2002:a05:600c:4f86:b0:46e:4586:57e4 with SMTP id 5b1f17b1804b1-47a8f9057fdmr170987655e9.24.1765949952982;
+        Tue, 16 Dec 2025 21:39:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHEx5fvsD+G3+YOmaMIqHtD1zdB5R9Uc/kbSe5br0XYQYAFsyvp8IO7zRMhmqnAoZ1gBzb6WA==
+X-Received: by 2002:a05:600c:4f86:b0:46e:4586:57e4 with SMTP id 5b1f17b1804b1-47a8f9057fdmr170987545e9.24.1765949952587;
+        Tue, 16 Dec 2025 21:39:12 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47bd9936809sm23649465e9.6.2025.12.16.21.39.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Dec 2025 21:39:12 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Ryota Sakamoto <sakamo.ryota@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	David Gow <davidgow@google.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in UUID HELPERS
+Date: Wed, 17 Dec 2025 06:39:07 +0100
+Message-ID: <20251217053907.2778515-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215115150.3581277-1-colin.i.king@gmail.com>
-In-Reply-To: <20251215115150.3581277-1-colin.i.king@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 16 Dec 2025 10:29:02 -0500
-X-Gm-Features: AQt7F2pxZJSCVbxZ9Qp5L5e3UwMyuAGBb-cNval3Rs_27mmLOu4PrjQHbXJDINc
-Message-ID: <CADnq5_NRO5KqMq33yK4Bc04yC2wAPbhb0FvL+9D5T4PFDW6i_Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdkfd: Fix a couple of spelling mistakes
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-On Mon, Dec 15, 2025 at 12:51=E2=80=AFPM Colin Ian King <colin.i.king@gmail=
-.com> wrote:
->
-> There are a couple of spelling mistakes, one in a pr_warn message
-> and one in a seq_printf message. Fix these.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_process.c               | 2 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/a=
-md/amdkfd/kfd_process.c
-> index 2f66ebb5b029..adffa44fff2c 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> @@ -830,7 +830,7 @@ int kfd_create_process_sysfs(struct kfd_process *proc=
-ess)
->         int ret;
->
->         if (process->kobj) {
-> -               pr_warn("kobject already exsists for the kfd_process\n");
-> +               pr_warn("kobject already exists for the kfd_process\n");
->                 return -EINVAL;
->         }
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/dri=
-vers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> index 5f8cda4733f9..d7d37f01f51c 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> @@ -1115,7 +1115,7 @@ int pqm_debugfs_mqds(struct seq_file *m, void *data=
-)
->                                 break;
->                         default:
->                                 seq_printf(m,
-> -                               "  Qeueu node with bad user queue type %d=
- on device %x\n",
-> +                               "  Queue node with bad user queue type %d=
- on device %x\n",
->                                            q->properties.type, q->device-=
->id);
->                                 continue;
->                         }
-> --
-> 2.51.0
->
+Commit e61d3add3e7f ("lib/tests: convert test_uuid module to KUnit") moves
+lib/test_uuid.c to lib/tests/uuid_kunit.c, but misses to adjust the file
+entry in the MAINTAINERS section UUID HELPERS.
+
+Adjust the file entry in that section after this file movement.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3dd2ce39e43a..8db7f553fd2a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -27264,7 +27264,7 @@ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	include/linux/uuid.h
+-F:	lib/test_uuid.c
++F:	lib/tests/uuid_kunit.c
+ F:	lib/uuid.c
+ 
+ UV SYSFS DRIVER
+-- 
+2.51.1
+
