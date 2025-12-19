@@ -1,58 +1,100 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9443009EC;
-	Fri, 19 Dec 2025 10:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789ED2AEF5
+	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 10:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766139803; cv=none; b=E2Jk2eLyMvdu9RLikj9WCr0LZQz7EX4UphhXQ1JlZsJhPzKnG4+jJskDcMhMVoiVpLMrCuAkJanyFLGynTOURjSGq7guDLDL8aeHTYqvoXB8mhGZXlN7dnLDG1FYPw1OpqVN5NQjzS4Y+a2VIaATpeC0Qy3TsxaKOIrT9f2j6vk=
+	t=1766140381; cv=none; b=AOannLfaeCMFmpB6S5anl4JSlZ5DEXD8xukD1Op6QrEUob3SK5RYQxtO+Z2Nf2ShySEMXAvDN8ePgxlIFDo4Tapcuer63VT23QOTnIWJRJQ6sHYQvswqSxuKxQb3CAjEmLYBV0Yx+fjYWhVxWtwTfpYKJAKE7ld9hDiSwRvK7So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766139803; c=relaxed/simple;
-	bh=7/UBfiSjJHCk3d/eClQWxcvtcMLARV3TdPSysrahr/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXL/kMMhgMO9Y2USlQmqkHixdKzwBlCSJG72egQzirKFepAvhoqeiQeMriMDq4lL+kpKHGkzumfp1zxki5BrtuyvaP8qCWauDGZN6jmvsStnWcf5uHh/2rYWliVsSCj5FjKbpSpd7tpjRJRBithO30rzcB3p/FwC0IRYj7Mqzzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fIktc7xB; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1766140381; c=relaxed/simple;
+	bh=N9a29ixQhoodI4K0FcWH4qF4uc/vPwrZEztDP4/6UYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZpRUHSWP3XmezSJ+EJdBabMX8TzwBRWgHcFqg6Se5vIqYiDNSCSi7co6K/MT038j7uYUZh3bm7bCCDX7Xu1zreGgyBembjjdWBGI/nb7WedxN7hs/UftzwTPo6haDBnQvlbMCCtoxroEEngICzCWcJRd7Gkz2buZqaHqaP9Tsac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXUzW7Rt; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fIktc7xB"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t9Ji2/3IS5K6Tm7mohQ34Rfgo4OLEb7vUfPczENKWY4=; b=fIktc7xB0ykPMsrsS0AKL9dHG+
-	ErbB9YOhe6XHpRpIY2GKrwwt4pW9jw0NYD86/zsOTbxIopLHoboF7r2lxOftpItNVx34EYBgxDbRG
-	LMVecB3A1I135mYiymFz4GbIVwcaVdbPSAR5s/kI55CsojKbJv++zh7Vtt1ncnPxKhXaAs5o4PKJj
-	DQhPJJBzwzOgKJHf6MckUYy8MrntUBB549kJjhNGsqSk3KPlOyg76cai/+eiKzH4rFfKfmr8iujsO
-	x3eR4cpy/89f/JB03ZP9dvGWoM/ww+ETpy/rEdcPwR14u5WcsDiQPBQeB5KiwxeP5EUHM5TWId9V6
-	lmcYeuqA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vWXeR-00000003Sto-3rBL;
-	Fri, 19 Dec 2025 10:23:59 +0000
-Date: Fri, 19 Dec 2025 10:23:59 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mqueue: remove duplicated ; at end of statement
-Message-ID: <20251219102359.GY1712166@ZenIV>
-References: <20251219101941.463509-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXUzW7Rt"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so10941795e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 02:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766140378; x=1766745178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LN0RiP4VaJKIkZXx4Id9qUPVqdrFmfSMAyYyiGl4w1A=;
+        b=UXUzW7RtedJLE4fiLy/JdxHcyoqD5sWoB2P33PUqLDzgVQ+goH1JFKfcdcNO+ZarOK
+         fBATS/THCCbZnmXA8vrvk1ZXFqP3eQ6jdIU12E+RG4FYemWH6KBzv1KwlgFdzbZcu/J/
+         320XmOZijDQxnpmC1xb6/ZrKnQhdHDJEhV5Soq9a+EWhKxid4Ld9srGtIqhtKdqhVz1f
+         70ktvyELJ4ochYROkbRWUpa8ncoSotUXZS81eqtqA/zmktj/p/U+907y6kL65X5ONcyh
+         1YYv1xqfEMnH+eSFoBNq2W+xnTogw4SuFtBm6DW92OnWHgcACGp9jmPs/rUkRepGPJGD
+         kQZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766140378; x=1766745178;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LN0RiP4VaJKIkZXx4Id9qUPVqdrFmfSMAyYyiGl4w1A=;
+        b=I/eKcfCuc5s+zPTZ42SzmI3ZNmLcFPJ206Wyh6Wx/g4BQtB2a1qBR6HlSYQgvFi3eh
+         MbYudDMzOD44JuMBFVYjqcZ+0ThTiAqSPREfJDfZGoCfOalb3G9BwBuMe59kKHMjjtCI
+         gUN3UH9cNjFb1TMFFbSPWMa5Z1hb35HHT2RjiulqR5G4RqdR8TSCHUWgdRmeZrNDu3yI
+         /gJVtSh+8JsYvu0ydy/TtY1+iljromaDZlB4Hob8bcPQind5Fd3nbyOR8gRraEhQDAnw
+         XEOWQ1bvx3UVcLQTHDgO3hdgTGCI0plhJpErM1GA+1pUSvhly8U6MwZyf5UtQkoa2/ir
+         05Iw==
+X-Gm-Message-State: AOJu0YxJHcksKj2J3iu4N5jDs54cxMBOq7UwU54QlT21HcxyzrurM184
+	OX2kqe4lJC/iOPweYqsriOVQJqkdCe26ha28oFKQDw+Oq+KE/e+DU36o
+X-Gm-Gg: AY/fxX63/5fSkcVPXZOpUMVURT8KAc9VhWFG/tgJaAz8u9ti6mo1u4nbKhn4RKdpl86
+	QGf+iRdm0mwNmYxkkDH5uGELG6YAGT7K8hCmXmox0SrSProCDnRNYtaUoDAH6r5cd6AmBONit/C
+	HBDxUPVnOI55smP8ieQUejWU6fjAge2AeQEd7QceZ+/E5y3jVQ++VEp4MA3k9IuET0aat0xpDB8
+	mgMvBJ50Jo2o53uolqxopCxkQLxwKhIDWKz3/TqD5Pwn0K4faTuOH4Is8m5uNtchYJBVuRa37Qe
+	glNZSpgIHkSTWU/Cyn8zP4E9HpVqy3/CSFFbhuHrIknKA91+sR+o+PNz9ScDxjLRM/K0kaVlowT
+	PgNBVPeJzh7u+HmoZjYiF5t1EAAf6fNPPtY4VD/Fa5jmfmWD0uQVij2Ahf9IdS3/EyrxCJpc2rS
+	A+XvnpKyiPDQ==
+X-Google-Smtp-Source: AGHT+IHYSFDlihEYg4HnC8bZnP0/P9xZlyj7AJRApPf5PBdUXAv16BVjv2N0J46NcNZ0tjReuEEsrw==
+X-Received: by 2002:a05:600c:6211:b0:45d:e28c:875a with SMTP id 5b1f17b1804b1-47d19598fdemr20194665e9.31.1766140377663;
+        Fri, 19 Dec 2025 02:32:57 -0800 (PST)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47be3aa7cd0sm35078965e9.8.2025.12.19.02.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Dec 2025 02:32:57 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: fix spelling mistake "duing" -> "during"
+Date: Fri, 19 Dec 2025 10:31:58 +0000
+Message-ID: <20251219103158.464213-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251219101941.463509-1-colin.i.king@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 19, 2025 at 10:19:41AM +0000, Colin Ian King wrote:
-> There is a duplicated semicolon at the end of a statement,
-> remove it.
+There is a spelling mistake in a btrfs error message, fix it.
 
-FWIW, that's dealt with in the series I've posted lately - see
-viro/vfs.git #work.filename, if you prefer to look at it in
-git.  I'm going to put that into -next this weekend, assuming nobody
-posts objections.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/transaction.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index 206872d757c8..41e04c808d27 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -1623,7 +1623,7 @@ static int qgroup_account_snapshot(struct btrfs_trans_handle *trans,
+ 	ret = btrfs_write_and_wait_transaction(trans);
+ 	if (unlikely(ret))
+ 		btrfs_err(fs_info,
+-"error while writing out transaction duing qgroup snapshot accounting: %d", ret);
++"error while writing out transaction during qgroup snapshot accounting: %d", ret);
+ 
+ out:
+ 	/*
+-- 
+2.51.0
+
