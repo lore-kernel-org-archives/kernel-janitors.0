@@ -1,114 +1,101 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A342652AF
-	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 08:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046002D838C
+	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 10:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766131411; cv=none; b=E6XG9bW2/yk7W8UtAp870bCOfrvYALtYjWNblrIql1kDBV8pQXNbb1Ig2AZ0P3dOo5wyX6NiFD483yHpHwZUPYWUlIiLLEF6Tu0y9Ak83hce8jarHi+3NqHJ9Dtq8NwezDVwG66G03RLFR1807rMm/+WN2FibJ2cB+TWfuOC67Y=
+	t=1766139645; cv=none; b=cUsDLg6h80Z4KHfnTYTUin1UWND1GLOXOqFAuDaVnTpsn8GgttJsT3OvZckQcqsWeC6jzoX9OAcpQgyd+OghoNPtufm8kQLlS6ihPKiXDwH2HfLEMUSEpG35Fr+irbjJJXaBQ2/QC0082Cn5xDI2Znh2OzOo4G3nj5U//0yKQGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766131411; c=relaxed/simple;
-	bh=/bGIY46cuc38cb1abi/sHCeSyn+CEKg0h0yfcmVi7wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmrZhZxTT6Ixb349cCZzMKB7j6WuT09Xdj5/5d89h9CT3JPlvBbbYXn+x2eCD1EkPVxJ1oQnNgu8JFN1Yq82k2FQUtQOL4Lrzp2NCJC/XvNLVLd1bo9atTUknmP9YuqJKe1e1CLyD7VAwHmhB8628y/estJxByimS8+yGl7uP+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iLmpEgbr; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1766139645; c=relaxed/simple;
+	bh=EtA1UvQXNDSrbu36LBg2FInciYHKXGPfHiCSB7Mq5pc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jSZAdGKjOUrjmKrlkJdGBuLPf450RexJ4z3J4jdq5sJURqrZgqgUkGbWvXjZUaVK5sRf5NSUeS7LYj7t+jfJvD2KDRt7fXnokoSarBuUb+xauLMcPjEa7RKV6yIlqB9kiY7qqeYXBYUOpgh0wI51HCktbKLHHELJJ3lpd6mG/Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxdtvyX7; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLmpEgbr"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso13781305e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 00:03:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxdtvyX7"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so10846095e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 02:20:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766131408; x=1766736208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+/ZRMSQfz2Pe5W3+kCSEEPyZ++ydw0qjFUACnxc7Hc=;
-        b=iLmpEgbrNkqpJeLCyEr9TjVU+3Jd3Tf/BfK6tpxbTLl0EFjGPuuIFWWF4DM8I209KD
-         Y36n73zfJ2AcLx7QWIqk0y2EQh70ls8vhkZJiecwfTON/TwATsW/x6B75KKUl4ojMwnD
-         JwEqH1HkDuYf5RhndIQTQ2yyVBdt6SxnGpxZHnNJBIMFjfl4eXNggDN+hjZ1kVN0YuwA
-         8u37BLy1JNLPQ5MLFNT5rYS+cTjbq6wM2KSTy2YK1a0AWi1EP6imoZTLNCj+6imfImaX
-         FtzE9SRZl1MabzIX+jIJr0Yt/sUJYbX84TR3fKb4MvqcHI+cJil0CN+1U1YmmrlqLtJZ
-         z48A==
+        d=gmail.com; s=20230601; t=1766139642; x=1766744442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vKmQW2VL0lP4jQVJJLKVMF6y7hK6YF8gQUYY7g/64lg=;
+        b=LxdtvyX7KZO/WnVWrMaoncULjf/x2SmSeGLAGTWJ1/8j0TMrMdId0jlkGD7raWOURx
+         j7jmtBf3Pj5vHvhIlppdzOvoIJQG/iIYjJziwsajrKxWEVIKVgSM2eG6bPenmNhQyF4D
+         sf+2eRVtsGDvob75mveCsWfFlxWNAmDzxpyy/LQFb8mefNe0YOW2fdK+JiuPij9hUPl9
+         FV6nQUTtXYDPngBPc1DwDadlc1HcfebvlLi74cKkxl/8/Aas/xo5TUWz+e9NnytKr9wQ
+         Bygu96eZ2d2FZWsLopS1sl2sk/AhLOuvVtptSgEvcSGdyHV2oQsXI9dvZ2ROKXmezrlj
+         f1ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766131408; x=1766736208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+/ZRMSQfz2Pe5W3+kCSEEPyZ++ydw0qjFUACnxc7Hc=;
-        b=w5JaNCLdhedi8gO0SpVyeflpYex7uThT0V4PKKvMmzilvnEfTywz+OGhZ7oLEvNwRW
-         6gjCCOoLO4fqaUuncbAum4VaJs3GuEvfR2bC8blf3KEMmrD9HgMLJggoxpZ6TbsufZcz
-         9Y+6p2hmm2WHQIrZRD6pRYp9uUODvGkSnYxFcu3KesI2UkmIXTImtzM3IxDjzoQ4q/DF
-         z8Xn8mU6Lfmucp6WHD24Ap9YVNPrlwGJx5XTEKvOoCNUG9WeRUR4IWf+wQEFq9IO0ZUp
-         xCMq36wDCD8iiv6G7rnORzElTVQWDxqVYkbv33REmXeJqFAqVuZCAgmtp+8MzBF6gg6h
-         bETQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtdsrLybrG0/qeZ0v92YstZ9BDQpt7qNTFKsRCCkLqRoxuD2XGt7u1YDMnjfiDwY70F4qa0A+el3U+6OEosAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX6Bzp3XcV3OVyUJ5jGnYNw2mzrZH28TB29HaB7AASm+1tVh/g
-	01gJ34G75DOCblY3+XhdwEd6Tc4pfBjpDkASE/3nt61QeD65lx8VDk60vmxrEG8jJ1Y=
-X-Gm-Gg: AY/fxX7Pq1vqlDo6HQ6p3uXOCmsl0km+7kFbQGUbgtlQRaL/HzTa5JeAfeMtxKkhXiR
-	Xho5ChewUZyy+TLNvYwGqfTwMo+ToqPYA+7mFyVssvHn04K2N/f1lnb+nb+9D5gwanc0b3oGMc3
-	iU5koSmYpoRlysTUXxD68j5fkF5pPnHHvljTQ09yMugf+r7ZZ9L6qrQK3WJGEE44ETUkzUN8fst
-	9LlvjEUeucsQAPkq7whyvvOwS9AeSafdJMgH79bceBa+MlOR92ARQendjbwVGz3K/jT4BRwoRXb
-	3ERdyFcy6dsSg7rm1e3UNvbnVGaZBOKcxhDm6G3SToxsVMtNVCy+qwQnIPfwWIvwkK60hHNrj3O
-	C6QF+7Upeu5aIuLYxqhvg/pTvkIfFq4QKj8vVeJGWb8ns1RZApHEiywwEdqbmq3+DWPq8MQMq7c
-	aB10PH0Sf8jJNSPGn/
-X-Google-Smtp-Source: AGHT+IF2eEWgioDzK9v88hc7zvDgUmt9tMsxScJV1o/NErRD5qEO8zTzXYks9Hy32CtcRV+DzuDAtw==
-X-Received: by 2002:a05:6000:2303:b0:431:342:ad42 with SMTP id ffacd0b85a97d-4324e50d6d7mr2001778f8f.44.1766131407550;
-        Fri, 19 Dec 2025 00:03:27 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324ea1af2bsm3644036f8f.1.2025.12.19.00.03.26
+        d=1e100.net; s=20230601; t=1766139642; x=1766744442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vKmQW2VL0lP4jQVJJLKVMF6y7hK6YF8gQUYY7g/64lg=;
+        b=jUtLnuvJMbZxJpFihSGwf+zQdKPUch7x4XC7P0zXoo4CHki9XwGAiZ0YhqtFm5CjOh
+         ElJw3mAtoWXAGmSkDEXJGmVKdqRLLDev0M+hVCN1Ya14cjT5AkRL385NVYq8Cs5NZtXv
+         J/xvzHvbKGvl/oEHKKBXATP2HfsJPk7g9Rtv6kAhJgb3l7sM/LLCZUpLScK/beFr6MYZ
+         pLseK/Ul1T5kUjrFLy+LLBMaJGY5r79CUDMBGjuPqCPF+CAz3D48b2nXI28a/HdNVN1Y
+         dBsIVBi2gusZ/Mlscpp8RUQP4fMNqdJB1GVVirtC1LAhO+KMpEyOMckvH3c+NCArV2/8
+         Hrgg==
+X-Gm-Message-State: AOJu0YyPdLsqI9BgDGe0L9i5/FKRorcQzt6CV0gS94w+5oBKGDjEmBIi
+	Fq0MBeNu/blK3pGIip0oJu5DLi0Q+WW2xQi2ls1iUuLK85Vk0DLmGN0R
+X-Gm-Gg: AY/fxX7WBFEGmzC/Oy+mDQ2GYzNl6l1AlUbSYAbwess06E0C7ZZncm/hi9aGDQ+lt7y
+	G3KrnVr8zytzUXU/vjivvsbRepPfmipq4hMd2jRJ8TVf54L1KCXsDlOZf7hAgi7zMi/KteSfl2u
+	65kFA1XRlp7kVX8lZvOUF6SVqM6sko3pGg0wK9yCVOYP1deW2LXh4X/pj/t/VLdBU73cRWt6kiE
+	xH+Eg3ytQpzMshQqgnRvWZr2RFBtbt148tpwZhlYDT4f1s969csC3i/0mHVX1tgNyAl99p6b5JM
+	i+Vz2wM3iV/PIFeCs0u53lb3/OkV2zxrmK8qU0WoeXQ+lQ3AsCftakZTFxVaP8iWo+K8U8bD0I/
+	Zg3tHgWQKqXr+sqEMT+FwkfEf1m3wSKLztTUN5K7oliUm1+q8WCmexev0pamc2eH0XcWs5d4pwL
+	hasJXL7Vp6WsRNGXrXBeiK
+X-Google-Smtp-Source: AGHT+IF/viNctiITZ/Iq4gzTfBEhhKTG+UOx4RyQbQKXp+W9fu1haO9i+dGSFoj+fYG6pr4WxlhJ0Q==
+X-Received: by 2002:a05:600c:8588:b0:47b:deb9:f8a with SMTP id 5b1f17b1804b1-47d19975bb7mr14433925e9.30.1766139641960;
+        Fri, 19 Dec 2025 02:20:41 -0800 (PST)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47be26a81b6sm90643935e9.0.2025.12.19.02.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 00:03:27 -0800 (PST)
-Date: Fri, 19 Dec 2025 11:03:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-Cc: Harsh Kumar Bijlani <quic_hbijlani@quicinc.com>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Ripan Deuri <quic_rdeuri@quicinc.com>,
-	Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] wifi: ath12k: clean up on error in ath12k_dp_setup()
-Message-ID: <aUUGzCA-M-D3VFj9@stanley.mountain>
-References: <aUOw1J0TU4VgeXj6@stanley.mountain>
- <1fa108fc-a06d-a9cf-a56a-c905e4982b41@oss.qualcomm.com>
- <aUT8KrV36wF8ITIK@stanley.mountain>
+        Fri, 19 Dec 2025 02:20:41 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Christian Brauner <brauner@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mqueue: remove duplicated ; at end of statement
+Date: Fri, 19 Dec 2025 10:19:41 +0000
+Message-ID: <20251219101941.463509-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUT8KrV36wF8ITIK@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 19, 2025 at 10:18:02AM +0300, Dan Carpenter wrote:
-> On Fri, Dec 19, 2025 at 10:54:03AM +0530, Vasanthakumar Thiagarajan wrote:
-> > 
-> > 
-> > On 12/18/2025 1:14 PM, Dan Carpenter wrote:
-> > > Destroy the rhash_tbl before returning the error code.
-> > > 
-> > > Fixes: a88cf5f71adf ("wifi: ath12k: Add hash table for ath12k_dp_link_peer")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > 
-> > nit: The next branch in ath is actually ath-next.
-> 
-> I'm working with over 400 different branches, right?  I can't keep track
-> of them all so I just put "next" if it's in linux-next and leave it
-> blanke if it's in Linus's tree.  It's automated.
+There is a duplicated semicolon at the end of a statement,
+remove it.
 
-For automated QC, it's really easy to automate on the recieving side.
-In some ways, since there is only one place which recieves code and
-does QC and a hundred different people sending patches, then it makes
-more sense to do it on the recieving side.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ ipc/mqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This rule started with Dave Miller.  He was handling a hundred patches
-a day.  Everything in networking except for wireless.  Also Sparc and
-ata.  This was before I invented the Fixes tag, so that wasn't an
-option.  Greg and Andrew still handle that level of traffic but they
-just use Fixes tags to automate their process.
-
-regards,
-dan carpenter
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index c4f6d65596cf..b4f671b76cd9 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -912,7 +912,7 @@ static struct file *mqueue_file_open(struct filename *name,
+ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
+ 		      struct mq_attr *attr)
+ {
+-	struct filename *name __free(putname) = NULL;;
++	struct filename *name __free(putname) = NULL;
+ 	struct vfsmount *mnt = current->nsproxy->ipc_ns->mq_mnt;
+ 	int fd, ro;
+ 
+-- 
+2.51.0
 
