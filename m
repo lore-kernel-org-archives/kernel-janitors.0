@@ -1,102 +1,95 @@
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91AF2C0F62
-	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 10:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A2526B973
+	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 10:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766140438; cv=none; b=mfCjMHB8CTpbt1KJDiMWJbhUq2CSj+vXJOievIr6JDsuuHWXhdWWbY1tniKmb3KH4VfEMQmoBx7Iwn0V/c0Pm/XljvgbNJ8cD5JqDnFmOH+s0dCNFA0kv5Hmhnc49ioAGkdOtOc9CNbe93jvlVQw56zxALKeA17Oui8etJBCay0=
+	t=1766141584; cv=none; b=g5L7vcEklzfTEAiQ6Mj+6UechrXeXrO9bdXgCzRNJ+fyxQryY+hO0RlHX+GUTtSMBXpw6U/mNzD0lqF8NN0+DQ7hoZebWk5ADydZUgMzVcwWUzY2elWOhENQygc+NOD/ZBLPmeOiq1FeTXF1LF93mACxt1IvZ3jzfPrCSsby4UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766140438; c=relaxed/simple;
-	bh=UDuRjaW4UHD1XjxUMKeFo2Bc9z32SZef334KEZG0PAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VvHcFEfXMnCeifLINV5qEMXW7XhjqdG4A+gKIwRiEnMBs7zmePrTLTYoOc/Og4Bsi5tGGSM6LAdY1VxvDK7IxCluD+ACaejTJpsvFRlNGOPOWyeJorqy1ruJ7QHfCUF6pGIl5DZP9rLqtVlDhHBHqI/+EYULZcojO7TpA7YhYhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h6shGhl6; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1766141584; c=relaxed/simple;
+	bh=P2htuzTiuxkZEcIkM2qukJEGvzvzHJ5BQue4QvVYFYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X16m0w1F79hEAaPIZKZRyp5ZMHReVuhCTg7nI6RvgobHLC5XK65ShjWd2qA0F/HKj/YnZV7U8J8b31BJ6EyoLc7YyQIb6cGS5kIiYZ7U5Db9bSjoX6vxUJqhb3NPYUPEauXnyE8G1Jduw4loYubzVlD2qPtQbiU0gqn6cZaA80c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQAw3C3U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h6shGhl6"
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-477770019e4so13854675e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 02:33:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766140434; x=1766745234; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1wJvVM05EsH+BpysKJZDNgRttkxy9i5ad4KGF/bGMt0=;
-        b=h6shGhl6QEoWm4MS5sh5sy9Q1Cc3fX/9lpKauzQ6MdJNL3KNWrxlqFT3Y94E1UlXj8
-         XdmHjZ1pEGjXK5oLSGjv904z2dm7UQ076knPCUPMyfs9Jr0SCH+P6QU/gT507lf93jsL
-         FOceCe9WjUYLMRNL4RoVr2rX5De+DEvVeflIWGcUbOiiLrv8Gpk1KeL5tBU3gPdsQYiP
-         dnzBPq5jgVQVuF/IJAEHZd1V9sSX1bVK2uP/rtB6PhZEMq6VhzU30uDuSSVrtz+f61JO
-         RyBdtZQ4BEXZGcp3p4B+TEtZ/CHTX8VP/o0Ed5mU2epMjbHJjDn9qbJDqMmryEbmpsKs
-         d8tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766140434; x=1766745234;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1wJvVM05EsH+BpysKJZDNgRttkxy9i5ad4KGF/bGMt0=;
-        b=U5lLDPjMQAy4QVZaLMRm6Ompa+To3x7tI0ja1q5ESShoVSCI6EB2l5eBooSKQGb4H+
-         1aja4Jb9SAp58q7dmT97n/Ng4OOXe/pS2R4+kXTP2kqJo7Sy5RtT9uBTajfX3p/Bmx43
-         AF7pun7pJsgt8M9CkKVtO6wNwpkAz4uSzfxLcM7Q7fPiZcBe/Vdjuzm9kxh0Eq2botl6
-         pI/vGRCNOHq9gseKFCH4YzsC+06wT12o2LjV3AbWv8z/kKpy3oU5uuYdpj69NLXUvUYB
-         XMP5txhKgwEMeaAmxL0pFaXLeTPVBoVINHhvxXnfWsoK8xf0BFo6n0RSbWZDZui5YZt1
-         a+dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMWoqxGwiesnH4H/Tu06CaoYlzhFF/exyQyVhGW5Ya8yc9vaZbGyyo78O94ooa0HdQxjeORSAwDW7gajTiO9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZElXTudOVmFecTCLZA67+9cxqzOZH3c9oVrSXmAeZ5vNA4itC
-	fDIkCx/oLsTpJxk8yIhs04nLzKjx9wyaE5rhOhthuoAGDqsKo0JffNmY2k6+NuJvneY=
-X-Gm-Gg: AY/fxX6pIaBUIGLCQHRuwc2Ksd9Z5sYOMrEIpc1tNdCt98fKPacG76rJ+5rNgXH9vyr
-	2PIGg6qICdD6CW5hU/6MG50UkEXQbAnJ4oUxQQOEJFZgTi4MqGf/89GftpeIAIt0fwObwy8VyOx
-	n/rkpjM/XjmZfs7CqNTpyq7DpotP+cZmJ2PWL3z0o0X61qcoWyhVAWYLv0Ool2X+UnRdrP5Uh9V
-	jBuDKEAlz6hrChOxU6PHIvDMNNyZGBrA7hmGsDEdus8W/zdeUR+jfUScJDmCX4WuHONPOFcjL2u
-	/c3pwNLd/UeeJJy5meznTU8a7v16ovdzJNQ0wCQ+fUjml3t4ICFO1SxhY/8x6Tn9pJd71LYqbzI
-	U981d22s3a6dyaHIig/6PdH602a2ple7ji3MeR8DMESMWr+F/+vJsrybDOje+Vyv3mSFlH1pW91
-	mHg6o1qAidGAW5sqqg
-X-Google-Smtp-Source: AGHT+IHiqVq0rJ/auLlAHgLqJJMP2FoFH8HfQSTnPppwr65hFDgnc6phLfstgUGrNAed4ocU7KP+rg==
-X-Received: by 2002:a05:600c:3b8f:b0:475:e09c:960e with SMTP id 5b1f17b1804b1-47d19593d0dmr26265495e9.32.1766140434206;
-        Fri, 19 Dec 2025 02:33:54 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d19346e48sm36722545e9.2.2025.12.19.02.33.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 02:33:53 -0800 (PST)
-Date: Fri, 19 Dec 2025 13:33:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] xfs: fix memory leak in xfs_growfs_check_rtgeom()
-Message-ID: <aUUqDiGqwfmDcY_p@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQAw3C3U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCA25C19423
+	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 10:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766141583;
+	bh=P2htuzTiuxkZEcIkM2qukJEGvzvzHJ5BQue4QvVYFYo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FQAw3C3UtoI5HsVvMx3gtWLzYiemR1vD8576t+KAleReWL+qMBhllPcckxedR70m0
+	 aXUrrJCFkn5DIi7+kSl4aRp/CPFzmaNUq5GRhAQEmfEg9XkXmmsoaBwy94hnj6YkTk
+	 LH9sTjAiSyp0U50X8q7EZWwQk9r29AnimhcEUS5bCETrNDlSvQ3rnu1x2GyA1CzvVL
+	 jx9lG2LcbFq5UfDkrxjAGWmYnZHhv6XeuY4t+w3/KXNiJJTTXirHgc9NfKcPOtfcJx
+	 XooSkRkvqYcVt3kd4WIyn0uYmTNJxw/owDjD8gTkRvfKrTw6lenG3PXW0BQhbyRauR
+	 GPT2dPat5zBcA==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b7ffa5d1b80so196417066b.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 02:53:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXaZ1CH4CyBzSdL8FDGCB5NIbjB24KfL1TURU3HgoXExbqGr+FPZkDnFHBI573PL4tCWOZDiA2VLOsx2tGu1zs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwucoWXWsdS7zdLE2quCwgPuEY/IA4epd2iqPTLJsFLTT/YqAT
+	K7rwyhRN5FPIIIYhVqZpigtr5zpUTbVnnvJHL07fhwIKvRIkRq0FVVlxarE7ut+U3OFxIg8vLDx
+	iU4QdlofXtyd8qX8C+HVBAVwhRQ9whRA=
+X-Google-Smtp-Source: AGHT+IHBbRyP0qULADeGQny2YpM4j1RdcK7iD7xeIdYsXOKHaMfamONPHD01nixQyPOtiqpU6eBH872aI3qooKLm2yA=
+X-Received: by 2002:a17:906:fd84:b0:b7a:1be3:a583 with SMTP id
+ a640c23a62f3a-b80372590e8mr227053066b.64.1766141582320; Fri, 19 Dec 2025
+ 02:53:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20251219103158.464213-1-colin.i.king@gmail.com>
+In-Reply-To: <20251219103158.464213-1-colin.i.king@gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Fri, 19 Dec 2025 10:52:25 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H4_DvxRKJs1Z-o2AMQ51XTMc1ebCd4UxtX_gOBOThX6fg@mail.gmail.com>
+X-Gm-Features: AQt7F2qK9LzVve5krmy0RuX0DyzSDOyHvex_3tgkrf5_jt1ZmIAUhZiPQk1imk8
+Message-ID: <CAL3q7H4_DvxRKJs1Z-o2AMQ51XTMc1ebCd4UxtX_gOBOThX6fg@mail.gmail.com>
+Subject: Re: [PATCH][next] btrfs: fix spelling mistake "duing" -> "during"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Free the "nmp" allocation before returning -EINVAL.
+On Fri, Dec 19, 2025 at 10:37=E2=80=AFAM Colin Ian King <colin.i.king@gmail=
+.com> wrote:
+>
+> There is a spelling mistake in a btrfs error message, fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/btrfs/transaction.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+> index 206872d757c8..41e04c808d27 100644
+> --- a/fs/btrfs/transaction.c
+> +++ b/fs/btrfs/transaction.c
+> @@ -1623,7 +1623,7 @@ static int qgroup_account_snapshot(struct btrfs_tra=
+ns_handle *trans,
+>         ret =3D btrfs_write_and_wait_transaction(trans);
+>         if (unlikely(ret))
+>                 btrfs_err(fs_info,
+> -"error while writing out transaction duing qgroup snapshot accounting: %=
+d", ret);
+> +"error while writing out transaction during qgroup snapshot accounting: =
+%d", ret);
 
-Fixes: dc68c0f60169 ("xfs: fix the zoned RT growfs check for zone alignment")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/xfs/xfs_rtalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As this is in a recent patch not yet in Linus' tree, I've updated the
+patch in the github for-next branch (David will later update the for
+branch for linux-next).
 
-diff --git a/fs/xfs/xfs_rtalloc.c b/fs/xfs/xfs_rtalloc.c
-index e063f4f2f2e6..167298ad88dd 100644
---- a/fs/xfs/xfs_rtalloc.c
-+++ b/fs/xfs/xfs_rtalloc.c
-@@ -1265,7 +1265,7 @@ xfs_growfs_check_rtgeom(
- 		uint32_t	rem;
- 
- 		if (rextsize != 1)
--			return -EINVAL;
-+			goto out_inval;
- 		div_u64_rem(nmp->m_sb.sb_rblocks, gblocks, &rem);
- 		if (rem) {
- 			xfs_warn(mp,
--- 
-2.51.0
+Thanks.
 
+>
+>  out:
+>         /*
+> --
+> 2.51.0
+>
+>
