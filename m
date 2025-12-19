@@ -1,77 +1,77 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063CA4C92
-	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 21:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7A21E5207
+	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 21:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766180077; cv=none; b=eSbAhljsNVYeLwi04IfYKPJZgAwpnvBy3o4bkezxwANDloFSIVxgQJrHywRDS+2DBdc4pmlfUxrfUJxVbEa/l1rmiTMDVIQi6i8CHcYlzTYIpayOsJ3vwuPir8MrV3dBrpHDOyKLfRnmmbvgmkNc9kWcSVW0tDiIc5uBoTYy8MY=
+	t=1766180730; cv=none; b=qLiskrauHnQu7BEBryICjP0Z8XIG6mH5nX8f1IpxwtA+5xc1HQnhSjbaNV9xcL9RVYzx3CDc6p/nk9jZSnCut/r48/HtWtJ6U9isz+2FxoY30Ji+YT/QeWSQaOhA6dJUgzYvYURWEBSUsP4Zz5D3BkF0olXc47T0CrgaBmTICl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766180077; c=relaxed/simple;
-	bh=8FbHIXHWfLuxgf3xtxTNzDgOnCSoEu0+aZpZJeQ9mWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7nqT0P8jrwV1tOJN56PY4PBsvN3sihLKfMl+5QIUqmfD0UVzNzy1Ck1eh/ZbL789EQLK6u7E0rYOuwys25kJj0gIa7yndLopjY6RwR4Ri4eIR1cBemkx35hNyNN2PY6ugAcn6cunif9qRFNWX8HXOah6YjLGvbFmSIr1swjWCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exx4xAj+; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1766180730; c=relaxed/simple;
+	bh=E/tyVze7GjvOR6oKmycXNTHZRcGUr0IVK21VJQSKidE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWtb2xg8Ajw4rcis/Gz4PqNwJJjGoNmFOqGYVvePC/c/OnhNVyC4GIANhKtiEpHifmEQScKjUmoBjsMvoM5dKZxFHJ9y3ETZ/BO6Yt29zzTBmoRj+qkToilivH6IDUO+4tAOPtXD4eGHeKyZBf+6BdHLT3OvaiAP8ptCRUh6AyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScEfxe9z; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exx4xAj+"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47774d3536dso18499845e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 13:34:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScEfxe9z"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42fb5810d39so1074262f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 13:45:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766180074; x=1766784874; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766180727; x=1766785527; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OZLj05sYwE0LA7Tdl5LEJ2p4mWbQLxeYVPVLaNXSCeg=;
-        b=exx4xAj+4LABQ8uJfDlhJh9oZ43aFxdbM44Hs3pVLoSNwCsmujKj3ZasvHcBodTyYY
-         cay0HcxOc338owC1xZCzztDg7g57toE4JnbPbSyx9GPoVvIZ3pLAe3B/nNzDUTquzYOt
-         JdPZaFFYjCnuPUxAm4sGAGrbxkSMGy+4McTajS51T3qHK1Y0gnocvn8Ky156Ib23lzWw
-         IEsPc57Owt/w0yQWKv2bA812F3A0PdLiWs+JeWB/7sSa5hejKONwQWqJpv9aBNSbNc8i
-         PTwE1q7ZTvQZNRtk3O+3Wcpyh8wt4VLkdj76mUS6xloC6SQomwCXyXdPbIWIZKv8ROHW
-         3Dag==
+        bh=ZV5l3aK94WjBMd234KR2t67rjid2aTdUenY4d4w/l6o=;
+        b=ScEfxe9zXZg7hZtWBG6pPp0CoMf1gj0QvZAyHlHskpSaLCQ0Cf1xr7XL7of8HrtYaL
+         +1DwSb9peIXSXg0DBBqeO2mvIHhJymWkJ/AMg9Aentoa7RppQKHYP91ug+Uf8aC8xYYF
+         D3VXU31TWPc87/sc2JNRAQrfny6M28E7RsTgu1Meh8GZMsRi61p4mZpxJAVRI7oEoA5j
+         iZXeCLcI6igkfBY77ixiwNWHmgG5HTAyG2vBsBH9gAiwzGjNkE9JJDCkkpikmRMoIb7m
+         r3MIW4SLLnlzg9gEuKLshQeznKY488YY1nza0COMGUTFCT5iIKuKmvpJZUC8aOu6DCHP
+         97ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766180074; x=1766784874;
+        d=1e100.net; s=20230601; t=1766180727; x=1766785527;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OZLj05sYwE0LA7Tdl5LEJ2p4mWbQLxeYVPVLaNXSCeg=;
-        b=BEQgUUyBucCN9kaXiaI5Y6ML7wb+EkHS2Aqf5pfauf0UyYmHoZKKlJjwH7jU6GU9+p
-         77n8LXw7SFgYE3f1KKysM7ZjCAVG05A/JKzStuiTdxoslNiuuWHVl6anWk+rvvbkkTEd
-         D8XEayO5phk7gO3vE6iEHALVmG+h4ZMf6uzHLMAPPv8GVM7cfguWEedbqDt03UgA86mK
-         oTq2f4gtj6W3RBUZfrLvhyC2Ro/HHw++IjPCOvf14XAql+Qm8U69RdY4QEywLWNHdmYH
-         1s1lj/67k521eV/pgWyTnuCwUBj5K8XtAvSUSBho8RcS2VxAyx8KY+dYyyxQdUAiPjyo
-         zwMg==
-X-Gm-Message-State: AOJu0YydDYUGBMHGGb+fRdVOwgeG9mM4fZeT3ajp894So50EKXAzEE6h
-	+T0Rje0w2AaDMqM1WveCYE1SAImQGFwqhm5ll2Vr16DAAcRNko6XosMs
-X-Gm-Gg: AY/fxX5KMxSnUu6fvZ9vRBoDzW+AwFO94N0K7P6vt8CR4us+EGOUjyXqUKKa6w0tUh2
-	fDJ4/o0M8MwwK22ESRi4UXaLT3PosG0z0fNHrQrP2H0OtPw5ejbGSgMxbWRjBPTBEE98j8hXNdV
-	nlQOUq8GRMq8BqsW7+MBHhnaYHK10RqbNAZoRk8StnZvFBKMKiG3rYbRHWSuUzNjmbp6Mq3Zkt3
-	3HtZFlMz9qpFvGREJFTYpqouWAgih6BQ2kiO9iBGy40SyvtnwmWTX+cL4iw7vlwBYAiAndxHo9l
-	aj+VdpBPTi/FA5fASspPvRjY3shLc2vyNNt8jkrA6cVAOsxOQG/rDfuFvXQrjco2hwp7T1FHEo2
-	WS5gvDQEAvaLpb1LlHGYUPz58+UNV0rYsuAZO2W1bQbXPCCD/2YDS9eFk+9cIITxMzeqtpMiLSB
-	78TthU7nniWgO01Hqgcesv
-X-Google-Smtp-Source: AGHT+IFMgP/enUl1la1BBSXs4ST33XxJjubSW4ZkC2dvmsZAfgmmEbWX+svxAlb0q4PiUvjqAs9RIw==
-X-Received: by 2002:a05:600c:1c85:b0:479:255f:8805 with SMTP id 5b1f17b1804b1-47d18b8307amr51508005e9.4.1766180074216;
-        Fri, 19 Dec 2025 13:34:34 -0800 (PST)
+        bh=ZV5l3aK94WjBMd234KR2t67rjid2aTdUenY4d4w/l6o=;
+        b=B5HqFOJTMtzpZWTsK48XEUvRkNnHu3nH9/OvWHF6b3+yICY2L01724kILszOV4T1hR
+         CMhL2DIZ7sH4aio5COb5dsVAAy782wASIHue0sHSC0WYwacEsxKEFqhuW4nDh7jp5GYi
+         3W7qh2rizU8CBk28SPsX9tljHSye/aVAIg1WYWcR5J3MYcvfVxsmQP2GCmbjKTRrLa9i
+         uFvB85hDjzjnGjN2kT6/hXxTr/0a14XhTNZzFH3shpdKRI4RUMCqIfwLLRbaF53lO8Mc
+         YR5kHbem/bRq91dn4K9FX/8/xGdCDVNHHk3EwABanM3xnGERj02enof+ALWY+nvhCppN
+         8hYQ==
+X-Gm-Message-State: AOJu0YzgNtPP+5+n1HVVy1343wxdBFxKmcliW/ZW0mnrAyGclT1cLPJK
+	pF0MIf33NvYYqctm1J/8FytDcCtEH1dHxP2fn4C3a+WmdgJu2jWA4l1d
+X-Gm-Gg: AY/fxX7RN3ccPvzO/4FhTjDqvPCC7XJDuTP166AgK60QIg8ywVgf8+F4Etbl0nbQ3Sy
+	VlY62R9wxtrYGuLz7auOwpit71gWWOKX4aoVITauwxoOhD470bRENDwGIW0oYT/DcFxus6jgydC
+	x3fHuAmtKVoFKIzOfPOap1XXcYNl3dZzllEDUrbI6Ux/7IoTeBhi9WVqfTmTzeZ7yRBrupJJiip
+	VZ0wcJupINi0VloR+60EUYeVBHd+LJZtWHeaLpSauXzY5uhtp8RkttjSuHDf8KoyOV8QJWuvmG0
+	l6gSZQiVXgBnv9Bjd7KFN3IXd7fxH7EwY+/zIyGfDvpPeo7E3iezWW9fE2KYjJcGdf5muhorUsk
+	nP1u+BgnXsdNrawrgN5pYK2H8kOs2pH1Z5JYTr6pLsfrK1Qe2fqmpFQMyg2wtTjCKNX7S0ciyPC
+	Vn+IXG18fTwjQKfQauAKll
+X-Google-Smtp-Source: AGHT+IH6/ztrcn+SlJfyVJT63am/rH1xZvx6X/K4m0kF1MT0B91G4kSCAcxAARG8TFZiP/ksh381nw==
+X-Received: by 2002:a05:6000:2211:b0:42f:bbc6:edab with SMTP id ffacd0b85a97d-4324e4fb405mr5082384f8f.29.1766180727224;
+        Fri, 19 Dec 2025 13:45:27 -0800 (PST)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47be2723b2bsm112596665e9.3.2025.12.19.13.34.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324e9ba877sm7013078f8f.0.2025.12.19.13.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 13:34:33 -0800 (PST)
+        Fri, 19 Dec 2025 13:45:26 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org
+To: Peter Wang <peter.wang@mediatek.com>,
+	Chaotian Jing <chaotian.jing@mediatek.com>,
+	Stanley Jhu <chu.stanley@gmail.com>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-scsi@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: dsa: microchip: make read-only array ts_reg static const
-Date: Fri, 19 Dec 2025 21:33:34 +0000
-Message-ID: <20251219213334.492228-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] scsi: ufs: host: mediatek: make read-only array scale_us static const
+Date: Fri, 19 Dec 2025 21:44:28 +0000
+Message-ID: <20251219214428.492744-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -82,32 +82,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array ts_reg on the stack at run time,
+Don't populate the read-only array scale_us on the stack at run time,
 instead make it static const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/dsa/microchip/ksz_ptp.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/ufs/host/ufs-mediatek.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/microchip/ksz_ptp.c b/drivers/net/dsa/microchip/ksz_ptp.c
-index 997e4a76d0a6..839b0202076d 100644
---- a/drivers/net/dsa/microchip/ksz_ptp.c
-+++ b/drivers/net/dsa/microchip/ksz_ptp.c
-@@ -1088,8 +1088,11 @@ static void ksz_ptp_msg_irq_free(struct ksz_port *port, u8 n)
+diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
+index ecbbf52bf734..66b11cc0703b 100644
+--- a/drivers/ufs/host/ufs-mediatek.c
++++ b/drivers/ufs/host/ufs-mediatek.c
+@@ -1112,7 +1112,7 @@ static void ufs_mtk_setup_clk_gating(struct ufs_hba *hba)
+ 	unsigned long flags;
+ 	u32 ah_ms = 10;
+ 	u32 ah_scale, ah_timer;
+-	u32 scale_us[] = {1, 10, 100, 1000, 10000, 100000};
++	static const u32 scale_us[] = {1, 10, 100, 1000, 10000, 100000};
  
- static int ksz_ptp_msg_irq_setup(struct ksz_port *port, u8 n)
- {
--	u16 ts_reg[] = {REG_PTP_PORT_PDRESP_TS, REG_PTP_PORT_XDELAY_TS,
--			REG_PTP_PORT_SYNC_TS};
-+	static const u16 ts_reg[] = {
-+		REG_PTP_PORT_PDRESP_TS,
-+		REG_PTP_PORT_XDELAY_TS,
-+		REG_PTP_PORT_SYNC_TS
-+	};
- 	static const char * const name[] = {"pdresp-msg", "xdreq-msg",
- 					    "sync-msg"};
- 	const struct ksz_dev_ops *ops = port->ksz_dev->dev_ops;
+ 	if (ufshcd_is_clkgating_allowed(hba)) {
+ 		if (ufshcd_is_auto_hibern8_supported(hba) && hba->ahit) {
 -- 
 2.51.0
 
