@@ -1,106 +1,110 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583F92DA771
-	for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 22:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621C422F772
+	for <kernel-janitors@vger.kernel.org>; Sat, 20 Dec 2025 08:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766181604; cv=none; b=FqeImrm9QScniyJmBMWc9G8kyS01AuKs01Uk26MUvulcz1bwKiTi7hr/mZoAtjtaAIFNp/kUcg3pyVdLg+nHJ5TdNC53nRPYPTkiB9j3i3BUalAJFssIXsz09+bnGEq/rzfTmBmjdq/cmIECrd/IsM8OVd/MpJGUbuGTs27dEY8=
+	t=1766220347; cv=none; b=fxbahC3dNDihcL8I6fc4mZmQewj1nMkKE98mR6Ee8EIspiGTxjGihyVK/km4IUJZBXfgLt7MuFWRzBnEOUKjAE3LAzHEx1fry1Cr9tK3rsUP8Vcu4CIrjYiUqr5kTLthSQ9JWjxTPNZDyhPdhngKdg6AbNsRVkyEPYNkcra/aao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766181604; c=relaxed/simple;
-	bh=p5ZBx2fO8dMf8JhJxD/15gLwQL2iG+/xA9SMwVPva7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GA9xbRTdiEk6rP8HhQIQQoOfJNIoIx3gRwJR4dTl5oP0n2pGh7Oq+X68Qgp6MFIowMM5pPoHtxHn6W4eSuLXG+y8LKZRDez5uCgi8gUPWNyOSi5OrkJOkKz6ukBBjgWkIR7WuwWa83Sqts6NmR/zltRJDY1xMoPA+VpYMTgiihs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSV1GRxN; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766220347; c=relaxed/simple;
+	bh=+S85M7vZcdB2shypININVpHOd4FTUrPIPOTRXmCXQiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Nxwy36O+UdIR8lvn9KiRfFv41e+XCdzaYcg2hSwA12hZjf00MvG7FyVm1EHkzrR9DSi27BHMm+ZT+07b3U8X9WV22ymr5IwCKs+F/01oEsqFnQNk4Qaw/3dckPofotCT+Yzl7o5FLbfTe3eh+zb7X9uoER9Bgb1qCamHq8ycA3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=utvggR5z; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSV1GRxN"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42e2e628f8aso964030f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Dec 2025 14:00:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="utvggR5z"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42b3d7c1321so1441963f8f.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 20 Dec 2025 00:45:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766181600; x=1766786400; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bz/5KtDyRfV7d2ZpZVgNC/lWm9kf2lu1z7gPSFjPPXQ=;
-        b=LSV1GRxNdXYYzhgcVUJ8xdY/gZSC1wgszBeyrBz6TDvJ3D9edX8S6DrczgLmK6LdSX
-         7RvDwSC4IcFKzDER/N7P6MLG/KI/K5fVMEQ2/nQRwmAn1XlBZW8ZRGK5rWPiM5QqTPig
-         5HvVEWd13hDdWb8cQfSUPccXAji6FioQe4xePSZARTcvss5vTmHFth3YJMj0nrTuGwLy
-         N6MqoK/K9mPwrbRYCmN70xf2dLD1CCr6D0zgemFL+GPEAg4o61mJfKMeHZb+QnvpkafT
-         3RfrWTj+KUmF0Gu36d0liQArJhcztxg1YhmF7WnyJI56rXfJvqwoVdjGL1tB0uOBxExh
-         c3cg==
+        d=linaro.org; s=google; t=1766220344; x=1766825144; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6BUTU7KENszCvbPNcK9L3kbL2a9wKFYRCwPwVT9719s=;
+        b=utvggR5zzuTIhNmN3WxghVSwaB4UHsm3dD6u0NQal46cN6AzPOnfts2gAHcYOrGxHf
+         ACwnXzWtghQmt1+wupf1LC9pMOMxZr0sUb5aMZDWvkeynaOlHEe6yQl56E56eXq9wKtw
+         7XmxHSJPiuJbEqU2hXAM6l2OeppY7WaQHIw/xCZs5gjIefIfHe6ZY8q35tpSibCg/Q4p
+         ZpgSULygILRZsVcD/LP1TOumaHbv7vUv8aYErmgpzERUNcNrAHNIW0LuNpMzcXSfMLFz
+         79Fk1Omx84nkWbfoJJZA8lNRoAgSgmgyZMC+m36JHkh1lEW8pCfmPbYaJEHghpDwkEkT
+         ukIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766181600; x=1766786400;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bz/5KtDyRfV7d2ZpZVgNC/lWm9kf2lu1z7gPSFjPPXQ=;
-        b=TqFf+8LYweK1BxdrIPgSktlOOKQTN/yuleK2OcbZIQPf41gNseMG4gX33m4idI4gFq
-         bhqOe2l3PRAH6i2KIOrptV4dyj4E1UxN9SaCwsP6oMv0mxOcQOOqsbl7AXUlprgoGAr8
-         AayvxMWKFM3+ZLSjJliR3kAJiVnKSR2PshG5XfJhFtqS4jp77KRMJEgfsHnX/7EGwaGR
-         StwQfJIur8dRvdXiQdULVhQVpBot1mp7YYu/YVvnM6a58h4zzseqyo2hsjLu+wYsls0/
-         /m6j+BVuVTa/kpUruPaGIM3JwyE+3+ruNZfhggW/xRpMqhOQDGILH2j0hnrJkpoqljhj
-         58cQ==
-X-Gm-Message-State: AOJu0YwZWYbpO7d14b5Lyth62YTkCLYuuJ62R1bv+OBgSGHkVquzpMzt
-	psE2wf9IUu3XnCb7dgUZGyKowOEPSeR/3D8cHNOG+12e1dEeCWJ2Trfn
-X-Gm-Gg: AY/fxX4sLmHuGv7KMsf/gaoiCVTriAQ/DmZxvcLC5JU5BMYW358neIYmz7323r/CUJ0
-	W0dUMBh1HPe0HsnEcALredBa1OetjJ7JGGOb/QBmbmUQUhs4exHzwgIu+YgUkbpbflSUfbve473
-	gVUMlgZWXh0IhI/74K9QZHhwmTURaHabmIg5pMPUSPudKbEF4j9PvTHd1jcV+AXX7e5e2E8yJ3d
-	032EF9B61ef5TDn5OrsccYbJVjGOhutZZnmnpHgJxtlmhzxg37fhWVfF7AizQR9magQVSf9Etln
-	x5jkJES9FlrW6gTQRR2BOh7eshPiXIM/XPsoHGljdSrLObC92zyChtUklHCwm0fYcW8M9Gzse7J
-	jxAVLS6UqayhK+b/BG8+xzp76K4KOJdraTPiVczhm1jn9b3J4VluhNHO8fLF2aqU8e0pCqQstf9
-	kfzHTOpNWMQpfXx1IgXFWD
-X-Google-Smtp-Source: AGHT+IHa4QBBFGtyb79vsIJvGHrCndRLRO0iu/waUiiuJ/ecEaNRWqeL9eRxWmgxsvmevKs3pD56mw==
-X-Received: by 2002:a05:6000:1ca:b0:431:7a0:dbc2 with SMTP id ffacd0b85a97d-4324e5035dcmr3998214f8f.31.1766181599315;
-        Fri, 19 Dec 2025 13:59:59 -0800 (PST)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324ea82fddsm7154835f8f.25.2025.12.19.13.59.58
+        d=1e100.net; s=20230601; t=1766220344; x=1766825144;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6BUTU7KENszCvbPNcK9L3kbL2a9wKFYRCwPwVT9719s=;
+        b=AzVyJKWbDwnXV32Tw2YQsrRdGVVKGUYyys2nIc49RzgekzHS65G+XicYlWp0u/TknI
+         kjKP/AUX8kfRTKdjZPdpfwANa2sN/YXHAj/+C11qqD6v/5HXujV+gGLcKPaL24xTs9IF
+         re7awiGn+i9nD7tQCsfSy98AAbSEozTOl/iO1lNVDCEP5zVK8UjbI/wJHmXUFFWf68Zf
+         jZPASQms9QAzOJTV/7gQ0/Zdsaay+xOPMaSGzfasdQL05koFYA7jw+RuF1eDSJP8CbyU
+         NF+xc8hnNGqf8+rLZVvaAupsSyiHVTmjNoZbLdaliQBMn7AYmALh9WvH3cJAfa2BZILI
+         BhLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdrB+RAGqJo9DsiN1oELM8y+idik27ohIr31Up9wUxTakltbErBtZ9s5j36zw46whUsRy8jW1r9VDVnZlfXbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdIScY52r4TkdAquFX6hpWBFe5cgb7izq5nMw0hD4GdqsDr7Pf
+	eIZP1A/G6vy5UVDnYZimGjJg3jSbqPd5fquSvBtXvtiJHTD/ZiC66G4527Z4rzc2vIk=
+X-Gm-Gg: AY/fxX6YlsL7AtDzzw4UO7maZckto0zJ0m/1snYnD29JoNxmDgYQt5hlWFvY5fOoELg
+	sJ8q38iI5nvDZC8TXyRVqzVUF/LwJYj86vnhZv0tCZwPgcIHujrv6kKeLuiesQqRe1Kv2IZMfqn
+	H7SQD3T++LqwCW0foKPR6AY5Bsztu0lVdCalRGVXd8MTw+zvY+PPXob0TX70uolvoNQB3NOY3DU
+	t7VLtaEVjTuIF1aHX0+pVZUVSjYkdFxRFAEkN2JSk7Nkau3wOf7oL31YyXTRBNUjiRxlUx2IP98
+	8Anz4imFG6/k7g11Xy0pDhfjSXj8U8PCHk0gI19naxU2XUJv2bn3lNFAHDpAOK1XIQKZIAiCpYx
+	TEFXt+tC3uqakQxuhOcaP8+iOFd8r+SYAVIKszBZnPfuhTALZNx1i6lsjNcoJ67d+RosR2WUabC
+	9TULG5+4tsQE+Yppym
+X-Google-Smtp-Source: AGHT+IH2hmS7gnHrym6BlZDJPvms24FqDpXh/5usVOeYZs9oX/On+LAvByornqMlQyiobOiJjnzxJA==
+X-Received: by 2002:a05:6000:400f:b0:430:f742:fbb8 with SMTP id ffacd0b85a97d-4324e4cc56amr5628044f8f.21.1766220343511;
+        Sat, 20 Dec 2025 00:45:43 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324eab33f5sm9530459f8f.41.2025.12.20.00.45.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 13:59:59 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ACPI: APEI: EINJ: make read-only array non_mmio_desc static const
-Date: Fri, 19 Dec 2025 21:59:00 +0000
-Message-ID: <20251219215900.494211-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Sat, 20 Dec 2025 00:45:43 -0800 (PST)
+Date: Sat, 20 Dec 2025 11:45:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Shuming Fan <shumingf@realtek.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] ASoC: rt1320: Fix retry checking in rt1320_rae_load()
+Message-ID: <aUZiNJ7pzuahXFYE@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Don't populate the read-only array non_mmio_desc on the stack at run
-time, instead make it static const.
+This loop iterates 200 times and then gives up.  The problem is that
+currently the loop exits with "retry" set to -1 on the failure path but
+the check for failure expects it to be 0.  Change from a post-op to a
+pre-op so that it exits with "retry" set to 0.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: 22937af75abb ("ASoC: rt1320: support RAE parameters loading")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/acpi/apei/einj-core.c | 2 +-
+Technically now the loop only tries 199 times after my change, however
+I am okay with that.
+
+ sound/soc/codecs/rt1320-sdw.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-index 305c240a303f..f5bfdffe1e43 100644
---- a/drivers/acpi/apei/einj-core.c
-+++ b/drivers/acpi/apei/einj-core.c
-@@ -679,7 +679,7 @@ static bool is_allowed_range(u64 base_addr, u64 size)
- 	 * region intersects with known resource. So do an allow list check for
- 	 * IORES_DESCs that definitely or most likely not MMIO.
- 	 */
--	int non_mmio_desc[] = {
-+	static const int non_mmio_desc[] = {
- 		IORES_DESC_CRASH_KERNEL,
- 		IORES_DESC_ACPI_TABLES,
- 		IORES_DESC_ACPI_NV_STORAGE,
+diff --git a/sound/soc/codecs/rt1320-sdw.c b/sound/soc/codecs/rt1320-sdw.c
+index 9447e742c672..c0acb6ac462d 100644
+--- a/sound/soc/codecs/rt1320-sdw.c
++++ b/sound/soc/codecs/rt1320-sdw.c
+@@ -1480,7 +1480,7 @@ static int rt1320_rae_load(struct rt1320_sdw_priv *rt1320)
+ 		/* RAE stop & CRC disable */
+ 		regmap_update_bits(rt1320->regmap, 0xe803, 0xbc, 0x00);
+ 
+-		while (retry--) {
++		while (--retry) {
+ 			regmap_read(rt1320->regmap, 0xe83f, &value);
+ 			if (value & 0x40)
+ 				break;
 -- 
 2.51.0
 
