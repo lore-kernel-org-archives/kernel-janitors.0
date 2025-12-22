@@ -1,138 +1,124 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-79.smtpout.orange.fr [80.12.242.79])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B1832ED23;
-	Mon, 22 Dec 2025 10:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE57B3161A1;
+	Mon, 22 Dec 2025 11:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766399158; cv=none; b=HOp0xiApUNpKBcwzWfNthe4K4IAxCHz6d70h8EfbEKiHaRfEF0xtl7ZJc8kLtMa5N9+vngnCkSdhcrnZb6YTZ7dAjYcSixwfllEmNbexJWAry9v9gcucxZl3DMChErz7lROXazG3IB5xqU7hdfDLlxLRZkJVlOXJi1oNxXwRrOU=
+	t=1766402958; cv=none; b=Oxo0QSEWkPxcp7rWrCgspXpeiO06AAn8BN13cFuWcKd0U3WdE33ugMybvqlCCwcw0u8r04lk+vambY/cF+38s/WcX7wzkkFK4kNT7ZkQqAqmXaQ3C+eakd2UOnUfgP9BhfRdzw/ElChMXv5OFeWztI28BIyIL15Z3E8/cvvOfAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766399158; c=relaxed/simple;
-	bh=62taOR2EI0MqLH+HSIMWwZvEtr5H5VJiNu+vI3TqvDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npIqfe68igHTQQ6ZmiTJTfoLh1F1cUVB27OxCxI9u/gYIDOXaOMqqckJKUk7MBd++mSjCMj/zB2DGOzTRbBc9e6OTW9pyL3n4gQfQ8nkNSSM11kWtE+b+MLE6DPWF/zp/QMoKzLwaloPGFQE8lAHxs3CG+ajNAKHFLiJ7yOUpg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXUGH507; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1766402958; c=relaxed/simple;
+	bh=JpIavZ2AUtsWkzJJuBvg8jaS3rMqo5akFEf1gFRC+Os=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cp4gJxC5xvDttw9YXzq4tJhJ7dzskE7NZxTLGGBS6B9WzVegv+lmhNecPAkELXSbIuVYgcHCetK+8Y7Ie35J4mKdDivQRFIqdhYFbJ2DrQE6rra6bY3jshIt2YSiZe0BWm8He2gy7NQ8EqH2c40RX3o2pv91Es1Cp5mio+cspos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lIKaoAnm; arc=none smtp.client-ip=80.12.242.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXUGH507"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766399155; x=1797935155;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=62taOR2EI0MqLH+HSIMWwZvEtr5H5VJiNu+vI3TqvDE=;
-  b=EXUGH507ssVqSGPykHptYrKegQItq23E6Lfz35yDRQiFdg1PnXV24++k
-   bbGL7PPWNEgnQQCcW/wtVdqaNOr0m9HpgTGRqGJ+XFqy35fWoexIcjxiN
-   0+xECN1xOIqO7J8LCI3Aea+FbZnXYjCHbtoC+y2Y4GZWKtbKHdYN6Z2Ut
-   y1eJzJGPXIHZa7GoyViVTHsQBAnErC2XeGI2Fd/pOU4BPVadqXIIAiLYt
-   d50aZv7KkCyABQCpSjr2+KPHuAhrpUIMRRhNSc4JkmkbSJ2thabP6AUKl
-   Zwwg82CeR3kwtATporDY7ZsCr/5yQefXjQNMoxDuPDmCkrjsS8ycFYi1j
-   A==;
-X-CSE-ConnectionGUID: RW42BWYrRGKuHX5EjJH5kA==
-X-CSE-MsgGUID: ULpzyhL6RvKapPtdtin1zA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11649"; a="68297226"
-X-IronPort-AV: E=Sophos;i="6.21,167,1763452800"; 
-   d="scan'208";a="68297226"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2025 02:25:54 -0800
-X-CSE-ConnectionGUID: fAWCdZUaR5q2u7vr4ATdJQ==
-X-CSE-MsgGUID: 5u0tkOQdRAmhs1RBOjgFlQ==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO dd3453e2b682) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 22 Dec 2025 02:25:51 -0800
-Received: from kbuild by dd3453e2b682 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vXd6L-000000000Nt-051A;
-	Mon, 22 Dec 2025 10:25:34 +0000
-Date: Mon, 22 Dec 2025 18:25:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dan Carpenter <error27@gmail.com>,
-	Harsh Kumar Bijlani <quic_hbijlani@quicinc.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Ripan Deuri <quic_rdeuri@quicinc.com>,
-	Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
-	Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] wifi: ath12k: clean up on error in ath12k_dp_setup()
-Message-ID: <202512221824.sz1jZjhH-lkp@intel.com>
-References: <aUOw1J0TU4VgeXj6@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lIKaoAnm"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id Xe54v6Lg6Mx35Xe55vBBs3; Mon, 22 Dec 2025 12:28:06 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1766402886;
+	bh=XRzZpavEbBXNqBowMoqVM+56I2klO3UFZwg2QvNDSDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=lIKaoAnm0vgunNfCitt5ywrm9FVuIAjz6Omedb41mdSkcUuOkI6rgZcILcKcDeiQ+
+	 /1YwAxLFJMsCxGEPvvmWWspuQQZdIrwwuRUpq9+dEuooyZZhg7HrAVE9WvtD9o/A9Z
+	 cKAbuszv++ggmXz+7BH6zsmSX6zCZQMVkQEvCi/XfpaDahciRiNcpNO+X6VMQlgOom
+	 R8o8zmBNPkfmjUpjZmRU16aRlZdmJfYEeAug2lYLMhWpXVNhU6iT+OI6QPVkbcesHX
+	 MHTKoet5oqf3lwMEK3k5bJChCsfn/O3ZBqr7IpAek4PUzfg++EyhK2OMoLT8NdHOXB
+	 M1y3gFGthUoLA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 22 Dec 2025 12:28:06 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <265df0fd-7427-45d8-85fd-a487baf1521d@wanadoo.fr>
+Date: Mon, 22 Dec 2025 12:28:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUOw1J0TU4VgeXj6@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl: Slightly simplify emit_target_list()
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-cxl@vger.kernel.org
+References: <589ee57cfc275c5249885e1eace22e9bf3a9561d.1766326481.git.christophe.jaillet@wanadoo.fr>
+ <aUjAcQZ5JCxnk7Qp@aschofie-mobl2.lan>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <aUjAcQZ5JCxnk7Qp@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Dan,
+Le 22/12/2025 à 04:52, Alison Schofield a écrit :
+> On Sun, Dec 21, 2025 at 03:15:04PM +0100, Christophe JAILLET wrote:
+>> sysfs_emit_at() never returns a negative error code. It returns 0 or the
+>> number of characters written in the buffer.
+>>
+>> Remove the useless test. This simplifies the logic and saves a few lines of
+>> code.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/cxl/core/port.c | 10 ++++------
+>>   1 file changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+>> index fef3aa0c6680..b77c1600beaa 100644
+>> --- a/drivers/cxl/core/port.c
+>> +++ b/drivers/cxl/core/port.c
+>> @@ -151,7 +151,7 @@ static ssize_t emit_target_list(struct cxl_switch_decoder *cxlsd, char *buf)
+>>   {
+>>   	struct cxl_decoder *cxld = &cxlsd->cxld;
+>>   	ssize_t offset = 0;
+>> -	int i, rc = 0;
+>> +	int i;
+>>   
+>>   	for (i = 0; i < cxld->interleave_ways; i++) {
+>>   		struct cxl_dport *dport = cxlsd->target[i];
+>> @@ -162,11 +162,9 @@ static ssize_t emit_target_list(struct cxl_switch_decoder *cxlsd, char *buf)
+>>   
+>>   		if (i + 1 < cxld->interleave_ways)
+>>   			next = cxlsd->target[i + 1];
+>> -		rc = sysfs_emit_at(buf, offset, "%d%s", dport->port_id,
+>> -				   next ? "," : "");
+>> -		if (rc < 0)
+>> -			return rc;
+>> -		offset += rc;
+>> +		offset += sysfs_emit_at(buf, offset, "%d%s",
+>> +					dport->port_id,
+>> +					next ? "," : "");
+>>   	}
+>>   
+>>   	return offset;
+> 
+> Can this can be cleaned up further at the target_list_show() call
+> site which also checks for an impossible rc < 0 (twice).
 
-kernel test robot noticed the following build errors:
+I missed that, sorry.
 
-[auto build test ERROR on next-20251217]
+target_list_show() only add a guard() and a trailing \n.
+Maybe, both function could be merged.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/wifi-ath12k-clean-up-on-error-in-ath12k_dp_setup/20251218-154554
-base:   next-20251217
-patch link:    https://lore.kernel.org/r/aUOw1J0TU4VgeXj6%40stanley.mountain
-patch subject: [PATCH next] wifi: ath12k: clean up on error in ath12k_dp_setup()
-config: riscv-allyesconfig (https://download.01.org/0day-ci/archive/20251222/202512221824.sz1jZjhH-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251222/202512221824.sz1jZjhH-lkp@intel.com/reproduce)
+Is it ok for you  this way ?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512221824.sz1jZjhH-lkp@intel.com/
+CJ
 
-All errors (new ones prefixed by >>):
+> 
+> 
+> 
+>> -- 
+>> 2.52.0
+>>
+> 
+> 
 
->> drivers/net/wireless/ath/ath12k/dp.c:1767:8: error: use of undeclared label 'rhash_destroy'
-                   goto rhash_destroy;
-                        ^
-   1 error generated.
-
-
-vim +/rhash_destroy +1767 drivers/net/wireless/ath/ath12k/dp.c
-
-  1734	
-  1735	int ath12k_dp_alloc(struct ath12k_base *ab)
-  1736	{
-  1737		struct ath12k_dp *dp = &ab->dp;
-  1738		struct hal_srng *srng = NULL;
-  1739		size_t size = 0;
-  1740		u32 n_link_desc = 0;
-  1741		int ret;
-  1742		int i;
-  1743	
-  1744		dp->ab = ab;
-  1745	
-  1746		INIT_LIST_HEAD(&dp->reo_cmd_list);
-  1747		INIT_LIST_HEAD(&dp->reo_cmd_cache_flush_list);
-  1748		INIT_LIST_HEAD(&dp->reo_cmd_update_rx_queue_list);
-  1749		spin_lock_init(&dp->reo_cmd_lock);
-  1750		spin_lock_init(&dp->reo_rxq_flush_lock);
-  1751	
-  1752		dp->reo_cmd_cache_flush_count = 0;
-  1753		dp->idle_link_rbm = ath12k_dp_get_idle_link_rbm(ab);
-  1754	
-  1755		ret = ath12k_wbm_idle_ring_setup(ab, &n_link_desc);
-  1756		if (ret) {
-  1757			ath12k_warn(ab, "failed to setup wbm_idle_ring: %d\n", ret);
-  1758			return ret;
-  1759		}
-  1760	
-  1761		srng = &ab->hal.srng_list[dp->wbm_idle_ring.ring_id];
-  1762	
-  1763		ret = ath12k_dp_link_desc_setup(ab, dp->link_desc_banks,
-  1764						HAL_WBM_IDLE_LINK, srng, n_link_desc);
-  1765		if (ret) {
-  1766			ath12k_warn(ab, "failed to setup link desc: %d\n", ret);
-> 1767			goto rhash_destroy;
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
