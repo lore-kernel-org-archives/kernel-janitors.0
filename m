@@ -1,71 +1,107 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660803398A
-	for <kernel-janitors@vger.kernel.org>; Thu, 25 Dec 2025 12:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68766277CAB
+	for <kernel-janitors@vger.kernel.org>; Sun, 28 Dec 2025 06:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766666798; cv=none; b=p8X5khpSlN1ISN+mk6VwACgqAaVB4hSufj5iNTpv+OrB6MCMVfojbL3fiNvacPWFZbBmeIolbRrZ32Q2l28qe7vaVR0uB5hTXi5XStlQxvINdc4/2/OpIzJB6u/4mGx+DBIf7htvO16brI2ngOrwGD/GBd7CfJVT+ku5THN5v+4=
+	t=1766903691; cv=none; b=Kl4DhH37a/d+qbxRgwL+zTT1X+cDOTNNUM8fc3wnyeKnJlvDSDZu0oDVoMYkeVDGKbOkDz+/QeQAqHaJFRlLHZueJSrDq5yoA1oOcWOqKiCSgGxY04OOmQ8ZY+95g0WrBKe0F4RxdPvWVTjrriHduiua/SK9JhbLw82Ep7G9kvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766666798; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iCkJQSPZEw54K4fkgPuJHxB3XHgeKyaCPB212NSnHy+OfcZAZ9FI/yy3n3DjMGxvPfL1PxHOxt35X7/sP1AC0X6geMmGdbdjVGHw3lDWUzS8P/wn/O29z/uuDZLqLsy8cCiUHn0pTl1hk7l4Zv90RHdAHmIUzBtJKfAyX06gNIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	s=arc-20240116; t=1766903691; c=relaxed/simple;
+	bh=+dBgwafK1WHE+TP5vVX3Fb6vaal8og5lmnIAu5wHwks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mU7ig9RWNaXPZsGbcdLVJJs2Jq3H1mBihPf1Hx6Fi4xK9IYyZFeWAP8gUII48yNogUqbD9FZUl3oY3utVCSEbF5IkuL/gLVKOdoS4njzoaJY+o2YgO4q6hktLIIKe57DXBN+QUbmbaWhIB5fm2FU6+fj68XHMV3Fdf818ndoheg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2euG1Gr; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47774d3536dso51719795e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 Dec 2025 04:46:36 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2euG1Gr"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-59b25acdffbso3649645e87.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Dec 2025 22:34:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766903687; x=1767508487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ze4JDOO+w/8r4IHqJTt1vUQMM6G2qXdySjviR/vKtk=;
+        b=K2euG1GrWIb87qXR/NYqDvJvxGFTu3UPgKgF0huDV5PJYXARvAKPkGfBYf6B8WH9oC
+         JWk/fDXB7jxr0mPyiuC1mvLWfGhdw6lRYO1FT79BriWg8o4O/Y+kcGkH+uz3tKUV96lW
+         TRUSsngWMmn2f6Qf6FN/cbWKTceJREyp3zTFCtGkv6KagUcwyMFLc2fFKQgrikSPJNEd
+         1YitzQg1WQgjA3nWMDAZ+aVJ4Ey3/N+9fpQZPH6hr4E2p77CA3Q8PhkjrS7Dy2SFdexF
+         482zQgy3EYfJ7Mt13ZM97TP2ZQXwwnnxcTnIaCWTtUEDgCT3Lr6gxcN+n0Tp5Vm+sGEN
+         9Xcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766666795; x=1767271595;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=NxQUbPL/ePT6VqonZvGzv/5VEHTYce2ggOGD13E4NwzweuUKpxo6hP8q5jFXTLutD9
-         hsygsCJRxV6DUpRvo9We7rD64fZMKz25J6LR+mbGTb2UYjFZHJHmav4OAk15uCRUx6aY
-         h27oPDcRL1NVSO84XrMbds4ICP8kpRlGCCGGY/2vWD0qTjespX/MnU2aadd8aiOIFhKO
-         2XAssNCiAy3zeN2o004AAVbeWDlOMO/oMb1MFYfHO2eMafHvtXqEXQzjecIEfcHZfHQr
-         a9LyV24ry1c3YRKtwhCciXq/WbTySK9etT3jHhiXa7nZuMUzXw6lMIU9rYF8paFZIkkR
-         gvVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsfL4AArBqPCs+eGWz1WD5WZPr7NjVx33fPXHFGgjorkmmta3WU3QO3DESe10o7c0eSIMAjzkz6ayWT38O21s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweHDLfCaA0n53wErHU6K25iCDo9hEoQaU3Sjy+JKnHFxUkpmCj
-	0wC33evkXHWgmrSHnxY3Sw0DWpDZ2I2v7cG3dOXjrFHtbI3J4jhhaQI2
-X-Gm-Gg: AY/fxX4WP1nUNcCkk5m5sg7K/XWXg8Pr26zC+64Hb/I8ZaCy7NnsfP9Z9MDd0VInL/8
-	wL59EWUBj7N9r8PrDTbHKEUFjBzvmyu9vMK64kCvDBf20XgwX1LbJDVdZys6i1kuALRjVGDSvX+
-	9vqNTfxmTJQhWrH8hu3JEFpFuNz90Eo2+2FycVBd3nAyYJ5YcE18byt5YhPvlcD8QnQ4FEeKpZj
-	LeGC5Igd3jinnYY0hVhJEi4JKdF6HPgcy1mN/fnFHmBSAMOgHJwjg89BTMMaE/jC2+MqFdD7g9B
-	znDOzBAQR0+8vcY6qugLntrEMpokNBeGWac5eADkkvbjbl8CfUh7QKJjKf0vlXP+P0i8eS4n/j3
-	ptygXU1nFkBvLHmLOjt7+a4zNW1YUoWMYDYnnoVnVoTn/NKsRasMuO9oycOFYwUta9if96c9744
-	QX6puXJ2ZsX0JxVbnRML8llPdFEcWfKnxjI9arcGZ/otdIAw==
-X-Google-Smtp-Source: AGHT+IFMtQ1sqZdBUrgI0SJXLgWsJAarACSScxm7CXp343IWCyeVA4MPu5bOnedvwQOS60f6G3wRGw==
-X-Received: by 2002:a05:600c:8b82:b0:47b:deb9:163d with SMTP id 5b1f17b1804b1-47d18b99b99mr200246125e9.7.1766666794684;
-        Thu, 25 Dec 2025 04:46:34 -0800 (PST)
-Received: from [10.100.102.74] (89-138-78-197.bb.netvision.net.il. [89.138.78.197])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d1936d220sm371990775e9.8.2025.12.25.04.46.33
+        d=1e100.net; s=20230601; t=1766903687; x=1767508487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ze4JDOO+w/8r4IHqJTt1vUQMM6G2qXdySjviR/vKtk=;
+        b=YuaLD16+3ssp1EFjXxM4OPuyUY8D+1eSvZAgRrqKHY/EoQeLS6v2frg2MeXKmYb8Ox
+         a2Oc6fimUPWSvkAdJH8RGY1yG90Hy7Wpu8BAN/G7UR2xAm3Osx72ahFGwE+phNg18XWb
+         NALZyY3h2VgxCTtButtgRvVnD+xbYUiQi8FgUeeOv3kGvQ60FYFolhkK6iI71RdEB3Xh
+         nYPbIeYPFwMqTyLLQ3SaFS4iC8yQLi8oHYPpAL0T37Q4rxA9Bp9Vewt7FrDE0y0tdfZ6
+         /wxP7sTtp02pMyyG9wqUAfO39pvSYJS1mYNRus6TEjXknhgbwVkA66XvO0nM8smYPqd3
+         O0Ag==
+X-Gm-Message-State: AOJu0YwhMXcn82vgj6tA/e/JLORL94yHMWMzWbe8lEOKSlnz0BTDAha1
+	C9lu5FFhyeUvlV4ORfZjlDaDmvD6xPhgjgqP5d5tSXR5T5mpHVcTCE/J
+X-Gm-Gg: AY/fxX4NpIyX4NVGrahDdIo6L9mlbdGqkVSHyWpuOqtzd+92HSfbWR0Loj+BXVVoQWo
+	nvv2vR36MAKDAZhODI0PA8aQ+Yi3alRy3KyDPX+nkz93sUeSqMzHt0KS7s71lxAatWoM30TlqPL
+	/gdQ70aBojEFLRPll9GETCYxm2u0pQYxdfa+IS0ZoAxItm0ntPJ8DoVGQZPK8nkcMkoQ08mA0R4
+	jykR6yNZGeKUkfmHElPWkCYq1k47E2juKjtS5RVPDnL7xkyBmdkRvDoxA1Yip2m6U+I5vGRXdD0
+	q+evqi5vjoF/4zYW6XizfP/UAyd/ggEYabODutUgfRrIPT/xmrtRm6w/rdu9KCT0eusKH3/0HIm
+	zk/I+bmoNaGeCDzU4g65dAKkeIpJZmNCrlDQ4yN/8nFvBHEBTmlUQyn7bQTiIeGkakeJUMdS/qa
+	oYLGrSRXvv
+X-Google-Smtp-Source: AGHT+IEScK39qWney1DbtmJfqqJaGXJZQS1q/KrTQSNAdJiqhkIYncms5uKKRBKKHWTE3Ts9fsYWUQ==
+X-Received: by 2002:a05:6512:3f26:b0:599:fe3:785 with SMTP id 2adb3069b0e04-59a17d65082mr9941339e87.52.1766903687301;
+        Sat, 27 Dec 2025 22:34:47 -0800 (PST)
+Received: from localhost ([194.190.17.114])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-3812268ec5csm66332301fa.48.2025.12.27.22.34.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Dec 2025 04:46:34 -0800 (PST)
-Message-ID: <fad46b60-f7e9-43d1-9d4e-8007a5b312f1@grimberg.me>
-Date: Thu, 25 Dec 2025 14:46:33 +0200
+        Sat, 27 Dec 2025 22:34:46 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Magnus Lindholm <linmag7@gmail.com>,
+	linux-alpha@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH 0/1] alpha: trivial: remove ^L chars
+Date: Sun, 28 Dec 2025 06:34:39 +0000
+Message-ID: <20251228063440.2623595-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet: Constify struct configfs_item_operations and
- configfs_group_operations
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Christoph Hellwig <hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <82fd284cf70cffd374f5889a5c2a1f3800bafab3.1766495484.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <82fd284cf70cffd374f5889a5c2a1f3800bafab3.1766495484.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Remove ^L (a. k. a. \f a. k. a. form feed a. k. a. \x0c) from arch/alpha.
+I'm attempting to write my own tool for parsing kernel code.
+And these characters complicate this without giving any benefits.
+
+Askar Safin (1):
+  alpha: trivial: remove ^L chars
+
+ arch/alpha/kernel/core_cia.c      |  6 ++---
+ arch/alpha/kernel/core_irongate.c |  2 +-
+ arch/alpha/kernel/core_marvel.c   | 18 +++++++--------
+ arch/alpha/kernel/core_mcpcia.c   |  4 ++--
+ arch/alpha/kernel/core_polaris.c  |  2 +-
+ arch/alpha/kernel/core_t2.c       |  2 +-
+ arch/alpha/kernel/core_titan.c    | 10 ++++----
+ arch/alpha/kernel/core_tsunami.c  |  4 ++--
+ arch/alpha/kernel/err_common.c    |  4 ++--
+ arch/alpha/kernel/err_titan.c     |  2 +-
+ arch/alpha/kernel/pci_iommu.c     |  4 ++--
+ arch/alpha/kernel/smc37c669.c     | 38 +++++++++++++++----------------
+ arch/alpha/kernel/sys_marvel.c    |  4 ++--
+ arch/alpha/kernel/sys_titan.c     |  8 +++----
+ arch/alpha/kernel/time.c          | 10 ++++----
+ 15 files changed, 59 insertions(+), 59 deletions(-)
+
+
+base-commit: 9448598b22c50c8a5bb77a9103e2d49f134c9578 (6.19-rc2)
+-- 
+2.47.3
+
