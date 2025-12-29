@@ -1,690 +1,160 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116C91DF26B
-	for <kernel-janitors@vger.kernel.org>; Sun, 28 Dec 2025 06:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905BE2248B9;
+	Mon, 29 Dec 2025 08:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766903715; cv=none; b=fdUQAc5Wc2v0LnHU+0ROf9yjoRaN6Wl0gjUFXPPDuYg2C5aVkZgRaKlYPJQe6g0fnRXkyXAEnYknFZrwhdVrOxCXWxTumz6+icXDYw6SuWG5vw2xjjuLbsHhiSUCc0QU4QA92voXa4895Z2Tj3WYrD7Lfw0Vj8xClE4DPFFeWkA=
+	t=1766996395; cv=none; b=S2DpV6RbSWVvnDbqPW+nZQJLgCpyQlXgsxokI4L3OoO3zNNbGdzQAk0qCCh6FUDU8tbFNoP4Pz3x7TowgHQQAY8VcWoN0+BMI9qThQaexFEaZ4tzuZ3JDH8+z9NBte+H64931sQUr96NZZhLq6x5etTSk8gWLCAz2OfNX/nhjrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766903715; c=relaxed/simple;
-	bh=rS2h+ZCMdpPwTIzNg0Jb7vTkc8+4gj++h6kcd7OKP+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jL8a9g+LvorvRrW6xQ5iDBmzucJfpISBnVgxNKEgXpZlX6rmjl+iysye2nyXZfwFF5nIpd8cQAF/7ieRlO9SHY6VDhXxzwNvAwFAoEbNRkej+XhxzWkKWtWkcIhKpGL+O/pZqKYpYAI/ptAC4yQVUhMmNnd86AeM/UAYNdGDIak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMgrTEFM; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766996395; c=relaxed/simple;
+	bh=D6LPhPx5OVM4VCDlCYNJgnzInPSWs7gL5XZvB7Y7/lQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=I8FhsHcISjhBcJ0nETZ96cfFcgCXHwJymr/g6qRPNj/QDlC5aTrleKrImiZcvPL4mKZzMKxZhvf9Kb+bHcjGGFYMvkX1HJ+F2GZYCWfpy2AQxitRMOmJne9/el7lNTFpWdnVFrzB8uT4/OLRUnDXJtFPFJb+cCNlX+MA3luNj9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lLB4sm14; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMgrTEFM"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-59581e32163so9661992e87.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Dec 2025 22:35:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766903711; x=1767508511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRYg9SV9y5XYK7dTy3OiE1QQQSIADoBHA5Qhld4xKiQ=;
-        b=fMgrTEFM6MyMcIUbjUXBogOWMHsMfaM5Q23IDJUtPiqUBnUDlD8IOcChCyJY3iMRN/
-         p/BzpAT1/dJQ+So7M9bKVuzTvhs17w6vsfFd/nytChsc4pTaWdhQPRLuXW8E+I2ecxMt
-         Z6OCPfwxsEoPlMbenZlQbdx5oBhOrJD1BB3H0Jcl93WB/jAvvz4dA8sYhgZTxc8BZ7mj
-         XH5PfMgK+VSVR5/70xwKNT8kSW++Q8nUgXx+QWLL/VZMTwDsAiLDjbRPVAiWZH44HmQe
-         aqay0bqqMSe7DNyw5KlDpLf6TiwAm2rRsVKxbqBmE/9RouZPEJmaxEjwWr5ka86MhElv
-         TwbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766903711; x=1767508511;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nRYg9SV9y5XYK7dTy3OiE1QQQSIADoBHA5Qhld4xKiQ=;
-        b=vMGyrhGgpjzPrf4FvF6fgFB5w24FAp8B6MJ9p+tH3TtWpzCVBNH8HFRa/baEF6JHvx
-         /tSWPxpz2ac/gP8Q/JVPlulBG2W5+iKsH1fvPaEG3znJ6IrhVqwUIcVOQMYZOmYmZ7UJ
-         AAS5WuMQlIufW0PyjMEs8R2Hoq0g32ke88Q350nIPpTVmivlZCsAgBNQoKbJAOCCbX5t
-         dxOb6vngAw1m1DbB8oIOHOZ235og8H8h1eYpFemvWLPJYvqCmxkdNBt77+lAy0mKqF9P
-         upxL9e16oZLs/SqPOcjbcGRVwNF3PCAkwHH9716o4+t/FeHkQKUZlxcgqXP23+Z/S1wF
-         18bQ==
-X-Gm-Message-State: AOJu0YyAW5zFDAEC5VPP0WE3IdHymG7syE1QNCYaiS5l3UUtK0xGqj6e
-	+ESZqSasKrXMYFL0CPl8h3v9zqRry4Z3tKlPyy5Py/KcFbknH62kDSsMjOpykQ==
-X-Gm-Gg: AY/fxX7ESXV0i/yZURH7te4cmQA7bEYb6+syoola6KzoUGMiNq0GBaLfTCDc3PA17W7
-	HNJ7qdm54g0kmYyxg+s9v4NArs+6RqeGaFPmzU0MisHWGiDOWLZp0zZeRe1AIYr7Cdn9esKLs3W
-	ykaqx8qW1wZ+7PfQU2JqcFO1rcP67bmOCH4wK0fOZzYapE/vw+ZiEpOuPSg8VUKFioEPM7frC4E
-	S3EEO+4JfDUSDekZhzHu0aXSI/jOzdvG4z793RAcG/of6JEk1IgWuHTnYCvLpyUxC/gv6rtdFIt
-	rnoAZa0xYD3KZbRbpZhZXQltOI8ygGBkhj8hbxCa3hppr7DHMnYGyZHWgoo4Jx2s2rTwxUs0tDo
-	XwWxoW60lbUDur1Gm+WqNg+mZpTeRNT7tmWFh+0OW1UTaIsK4I1Dc/mujt/IpjhwLhYeahgPFv/
-	jw6teZDls+
-X-Google-Smtp-Source: AGHT+IFX1z1K0LJWfAF6kH+lJnxetC8ouTO9QlOH+1r7iPoOX0QCTQu6tJ9aQNKR7aHOZMn4g3QLkw==
-X-Received: by 2002:a05:651c:549:b0:37b:8f05:13bb with SMTP id 38308e7fff4ca-38121635cbbmr96623351fa.27.1766903710930;
-        Sat, 27 Dec 2025 22:35:10 -0800 (PST)
-Received: from localhost ([194.190.17.114])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-381224de67csm71612921fa.9.2025.12.27.22.35.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Dec 2025 22:35:09 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Magnus Lindholm <linmag7@gmail.com>,
-	linux-alpha@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH 1/1] alpha: trivial: remove ^L chars
-Date: Sun, 28 Dec 2025 06:34:40 +0000
-Message-ID: <20251228063440.2623595-2-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251228063440.2623595-1-safinaskar@gmail.com>
-References: <20251228063440.2623595-1-safinaskar@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lLB4sm14"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1766996379; x=1767601179; i=markus.elfring@web.de;
+	bh=j1ThLRQyHIDweVLjfaoObSeSIbqtv2WtMM+/ZLETnkM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lLB4sm14jcy+RafUYX/8f9iZdJPD6oPCWeZ0/izkWFoIIXTzQNHOYgFUPF2Xaxai
+	 Sr3ev7Hrk9dgHMEOktdl6UG0KpUpthdJrK1H88GOSlnAPinQBe95npKWWZzRk318v
+	 x3snUapF3BhCPy4/OOoIPxqRj2K8pn8ksHkuTnWHChNHJe82+8spX0SsplPAq4mGC
+	 bNQqncAbzEOvPpyq3a7t9O/pOo1sr2iYDaInd6zQClPJ08WdpqoI8n3hdOgaoQTEa
+	 x5mnWWCr1lt0EFPVsJxZXNAfTck7yxc97+OGfsqqr2nf6GC2l26mE9rjsAVYBR/HI
+	 faBsYJXKZGoPjx9YjA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.231]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5UkQ-1vxvrE3Img-00quKN; Mon, 29
+ Dec 2025 09:19:38 +0100
+Message-ID: <1d9b46ba-728e-459a-9d82-0f49e2fe08b9@web.de>
+Date: Mon, 29 Dec 2025 09:19:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Jianhao Xu <jianhao.xu@seu.edu.cn>, Zilin Guan <zilin@seu.edu.cn>,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20251228162636.3829733-1-zilin@seu.edu.cn>
+Subject: Re: [PATCH v2] soc: mediatek: svs: Fix memory leak in
+ svs_enable_debug_write()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251228162636.3829733-1-zilin@seu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2R9t5g8+vO1RbE9qB5N19dDxuB5vRmvjLbdSqc8I0XWu0qdCIme
+ vARL+ww0knbI2Zn/XhhqaSsjSexRFnrcuT6JFcXdYd654Dxgoj09xzeJc0wi8TzK6RfAtxU
+ RWCES5d7SnWYum6UGe+odU2RW5yOgg2cwSEZcGcTcKFj7YUyJTuSVcMLGK35y0YDl8zd3Mv
+ O8gbpYcEKJX/q7QYngRPQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:U94XEdgalC0=;N3iDBY5+lejSgasMT00dIntgiat
+ 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
+ FYwlHtT9IBBWDWE/Bt5/Xbsd/5dTP+cJo9T1sI
 
-Remove ^L (a. k. a. \f a. k. a. form feed a. k. a. \x0c) from arch/alpha.
-I'm attempting to write my own tool for parsing kernel code.
-And these characters complicate this without giving any benefits.
+=E2=80=A6
+> +++ b/drivers/soc/mediatek/mtk-svs.c
+> @@ -789,7 +789,7 @@ static ssize_t svs_enable_debug_write(struct file *f=
+ilp,
+>  	struct svs_bank *svsb =3D file_inode(filp)->i_private;
+>  	struct svs_platform *svsp =3D dev_get_drvdata(svsb->dev);
+>  	int enabled, ret;
+> -	char *buf =3D NULL;
+> +	char *buf __free(kfree) =3D NULL;
+> =20
+>  	if (count >=3D PAGE_SIZE)
+>  		return -EINVAL;
+=E2=80=A6
 
-Signed-off-by: Askar Safin <safinaskar@gmail.com>
----
- arch/alpha/kernel/core_cia.c      |  6 ++---
- arch/alpha/kernel/core_irongate.c |  2 +-
- arch/alpha/kernel/core_marvel.c   | 18 +++++++--------
- arch/alpha/kernel/core_mcpcia.c   |  4 ++--
- arch/alpha/kernel/core_polaris.c  |  2 +-
- arch/alpha/kernel/core_t2.c       |  2 +-
- arch/alpha/kernel/core_titan.c    | 10 ++++----
- arch/alpha/kernel/core_tsunami.c  |  4 ++--
- arch/alpha/kernel/err_common.c    |  4 ++--
- arch/alpha/kernel/err_titan.c     |  2 +-
- arch/alpha/kernel/pci_iommu.c     |  4 ++--
- arch/alpha/kernel/smc37c669.c     | 38 +++++++++++++++----------------
- arch/alpha/kernel/sys_marvel.c    |  4 ++--
- arch/alpha/kernel/sys_titan.c     |  8 +++----
- arch/alpha/kernel/time.c          | 10 ++++----
- 15 files changed, 59 insertions(+), 59 deletions(-)
+You may reduce the scopes for involved local variables,
+don't you?
 
-diff --git a/arch/alpha/kernel/core_cia.c b/arch/alpha/kernel/core_cia.c
-index 6e577228e175..af571073266c 100644
---- a/arch/alpha/kernel/core_cia.c
-+++ b/arch/alpha/kernel/core_cia.c
-@@ -246,7 +246,7 @@ struct pci_ops cia_pci_ops =
- 	.read = 	cia_read_config,
- 	.write =	cia_write_config,
- };
--
-+
- /*
-  * CIA Pass 1 and PYXIS Pass 1 and 2 have a broken scatter-gather tlb.
-  * It cannot be invalidated.  Rather than hard code the pass numbers,
-@@ -555,7 +555,7 @@ verify_tb_operation(void)
- 	alpha_mv.mv_pci_tbi = NULL;
- 	goto exit;
- }
--
-+
- #if defined(ALPHA_RESTORE_SRM_SETUP)
- /* Save CIA configuration data as the console had it set up.  */
- struct 
-@@ -626,7 +626,7 @@ cia_restore_srm_settings(void)
- #define cia_restore_srm_settings()	do {} while (0)
- #endif /* ALPHA_RESTORE_SRM_SETUP */
- 
--
-+
- static void __init
- do_init_arch(int is_pyxis)
- {
-diff --git a/arch/alpha/kernel/core_irongate.c b/arch/alpha/kernel/core_irongate.c
-index 05dc4c1b9074..a47b4c48a7d3 100644
---- a/arch/alpha/kernel/core_irongate.c
-+++ b/arch/alpha/kernel/core_irongate.c
-@@ -160,7 +160,7 @@ struct pci_ops irongate_pci_ops =
- 	.read =		irongate_read_config,
- 	.write =	irongate_write_config,
- };
--
-+
- int
- irongate_pci_clr_err(void)
- {
-diff --git a/arch/alpha/kernel/core_marvel.c b/arch/alpha/kernel/core_marvel.c
-index d38f4d6759e4..5ac99c6b0d17 100644
---- a/arch/alpha/kernel/core_marvel.c
-+++ b/arch/alpha/kernel/core_marvel.c
-@@ -30,7 +30,7 @@
- #include "proto.h"
- #include "pci_impl.h"
- 
--
-+
- /*
-  * Debug helpers
-  */
-@@ -42,13 +42,13 @@
- # define DBG_CFG(args)
- #endif
- 
--
-+
- /*
-  * Private data
-  */
- static struct io7 *io7_head = NULL;
- 
--
-+
- /*
-  * Helper functions
-  */
-@@ -194,7 +194,7 @@ io7_clear_errors(struct io7 *io7)
- 	p7csrs->PO7_CRRCT_SYM.csr = -1UL;
- }
- 
--
-+
- /*
-  * IO7 PCI, PCI/X, AGP configuration.
-  */
-@@ -468,7 +468,7 @@ marvel_kill_arch(int mode)
- {
- }
- 
--
-+
- /*
-  * PCI Configuration Space access functions
-  *
-@@ -596,7 +596,7 @@ struct pci_ops marvel_pci_ops =
- 	.write = 	marvel_write_config,
- };
- 
--
-+
- /*
-  * Other PCI helper functions.
-  */
-@@ -611,8 +611,8 @@ marvel_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
- 	csrs->POx_SG_TBIA.csr;
- }
- 
--
--
-+
-+
- /*
-  * RTC Support
-  */
-@@ -673,7 +673,7 @@ __marvel_rtc_io(u8 b, unsigned long addr, int write)
- 	return ret;
- }
- 
--
-+
- /*
-  * IO map support.
-  */
-diff --git a/arch/alpha/kernel/core_mcpcia.c b/arch/alpha/kernel/core_mcpcia.c
-index 74b1d018124c..e7f5ecb31991 100644
---- a/arch/alpha/kernel/core_mcpcia.c
-+++ b/arch/alpha/kernel/core_mcpcia.c
-@@ -241,7 +241,7 @@ struct pci_ops mcpcia_pci_ops =
- 	.read =		mcpcia_read_config,
- 	.write =	mcpcia_write_config,
- };
--
-+
- void
- mcpcia_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
- {
-@@ -249,7 +249,7 @@ mcpcia_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
- 	*(vuip)MCPCIA_SG_TBIA(MCPCIA_HOSE2MID(hose->index)) = 0;
- 	mb();
- }
--
-+
- static int __init
- mcpcia_probe_hose(int h)
- {
-diff --git a/arch/alpha/kernel/core_polaris.c b/arch/alpha/kernel/core_polaris.c
-index 75d622d96ff2..797b1bda0ec8 100644
---- a/arch/alpha/kernel/core_polaris.c
-+++ b/arch/alpha/kernel/core_polaris.c
-@@ -142,7 +142,7 @@ struct pci_ops polaris_pci_ops =
- 	.read =		polaris_read_config,
- 	.write =	polaris_write_config,
- };
--
-+
- void __init
- polaris_init_arch(void)
- {
-diff --git a/arch/alpha/kernel/core_t2.c b/arch/alpha/kernel/core_t2.c
-index 3d72d90624f1..82887e882667 100644
---- a/arch/alpha/kernel/core_t2.c
-+++ b/arch/alpha/kernel/core_t2.c
-@@ -321,7 +321,7 @@ struct pci_ops t2_pci_ops =
- 	.read =		t2_read_config,
- 	.write =	t2_write_config,
- };
--
-+
- static void __init
- t2_direct_map_window1(unsigned long base, unsigned long length)
- {
-diff --git a/arch/alpha/kernel/core_titan.c b/arch/alpha/kernel/core_titan.c
-index 77f5d68ed04b..3a217dc3bb3c 100644
---- a/arch/alpha/kernel/core_titan.c
-+++ b/arch/alpha/kernel/core_titan.c
-@@ -52,7 +52,7 @@ static int titan_pchip1_present;
- # define DBG_CFG(args)
- #endif
- 
--
-+
- /*
-  * Routines to access TIG registers.
-  */
-@@ -76,7 +76,7 @@ titan_write_tig(int offset, u8 value)
- 	*tig_addr = (unsigned long)value;
- }
- 
--
-+
- /*
-  * Given a bus, device, and function number, compute resulting
-  * configuration space address
-@@ -197,7 +197,7 @@ struct pci_ops titan_pci_ops =
- 	.write =	titan_write_config,
- };
- 
--
-+
- void
- titan_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
- {
-@@ -438,7 +438,7 @@ titan_kill_arch(int mode)
- 	titan_kill_pachips(TITAN_pachip0, TITAN_pachip1);
- }
- 
--
-+
- /*
-  * IO map support.
-  */
-@@ -571,7 +571,7 @@ EXPORT_SYMBOL(titan_ioremap);
- EXPORT_SYMBOL(titan_iounmap);
- EXPORT_SYMBOL(titan_is_mmio);
- #endif
--
-+
- /*
-  * AGP GART Support.
-  */
-diff --git a/arch/alpha/kernel/core_tsunami.c b/arch/alpha/kernel/core_tsunami.c
-index fc1ab73f23de..e3452b38e12a 100644
---- a/arch/alpha/kernel/core_tsunami.c
-+++ b/arch/alpha/kernel/core_tsunami.c
-@@ -173,7 +173,7 @@ struct pci_ops tsunami_pci_ops =
- 	.read =		tsunami_read_config,
- 	.write = 	tsunami_write_config,
- };
--
-+
- void
- tsunami_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
- {
-@@ -195,7 +195,7 @@ tsunami_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
- 	mb();
- 	*csr;
- }
--
-+
- #ifdef NXM_MACHINE_CHECKS_ON_TSUNAMI
- static long __init
- tsunami_probe_read(volatile unsigned long *vaddr)
-diff --git a/arch/alpha/kernel/err_common.c b/arch/alpha/kernel/err_common.c
-index 94e1b3dcf6d4..877b5231953d 100644
---- a/arch/alpha/kernel/err_common.c
-+++ b/arch/alpha/kernel/err_common.c
-@@ -24,7 +24,7 @@
-  */
- char *err_print_prefix = KERN_NOTICE;
- 
--
-+
- /*
-  * Generic
-  */
-@@ -77,7 +77,7 @@ mchk_dump_logout_frame(struct el_common *mchk_header)
- 	printk("%s  -- End of Frame --\n", err_print_prefix);
- }
- 
--
-+
- /*
-  * Console Data Log
-  */
-diff --git a/arch/alpha/kernel/err_titan.c b/arch/alpha/kernel/err_titan.c
-index 0ffb2feea42a..d5c4c690209e 100644
---- a/arch/alpha/kernel/err_titan.c
-+++ b/arch/alpha/kernel/err_titan.c
-@@ -581,7 +581,7 @@ titan_register_error_handlers(void)
- 	ev6_register_error_handlers();
- }
- 
--
-+
- /*
-  * Privateer
-  */
-diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
-index 955b6ca61627..9d49908ee2dc 100644
---- a/arch/alpha/kernel/pci_iommu.c
-+++ b/arch/alpha/kernel/pci_iommu.c
-@@ -55,7 +55,7 @@ size_for_memory(unsigned long max)
- 		max = roundup_pow_of_two(mem);
- 	return max;
- }
--
-+
- struct pci_iommu_arena * __init
- iommu_arena_new_node(int nid, struct pci_controller *hose, dma_addr_t base,
- 		     unsigned long window_size, unsigned long align)
-@@ -810,7 +810,7 @@ static int alpha_pci_supported(struct device *dev, u64 mask)
- 	return 0;
- }
- 
--
-+
- /*
-  * AGP GART extensions to the IOMMU
-  */
-diff --git a/arch/alpha/kernel/smc37c669.c b/arch/alpha/kernel/smc37c669.c
-index a5a6ed97a6ce..8f7a4520771f 100644
---- a/arch/alpha/kernel/smc37c669.c
-+++ b/arch/alpha/kernel/smc37c669.c
-@@ -1093,7 +1093,7 @@ static int SMC37c669_xlate_drq(
- );
- 
- static  __cacheline_aligned DEFINE_SPINLOCK(smc_lock);
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1189,7 +1189,7 @@ SMC37c669_CONFIG_REGS * __init SMC37c669_detect( int index )
-     return SMC37c669;
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1421,7 +1421,7 @@ unsigned int __init SMC37c669_enable_device ( unsigned int func )
-     return ret_val;
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1625,7 +1625,7 @@ unsigned int __init SMC37c669_disable_device ( unsigned int func )
-     return ret_val;
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1702,7 +1702,7 @@ unsigned int __init SMC37c669_configure_device (
-     return FALSE;
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1789,7 +1789,7 @@ static unsigned int __init SMC37c669_is_device_enabled ( unsigned int func )
-     return ret_val;
- }
- 
--
-+
- #if 0
- /*
- **++
-@@ -1861,7 +1861,7 @@ static unsigned int __init SMC37c669_get_device_config (
- }
- #endif
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1938,7 +1938,7 @@ void __init SMC37c669_display_device_info ( void )
-     }
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -1981,7 +1981,7 @@ static void __init SMC37c669_config_mode(
-     	wb( &SMC37c669->index_port, SMC37c669_CONFIG_OFF_KEY );
-     }
- }
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -2011,7 +2011,7 @@ static unsigned char __init SMC37c669_read_config(
- 	wb(&SMC37c669->index_port, index);
- 	return rb(&SMC37c669->data_port);
- }
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -2046,7 +2046,7 @@ static void __init SMC37c669_write_config(
-     wb( &SMC37c669->data_port, data );
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -2175,7 +2175,7 @@ static void __init SMC37c669_init_local_config ( void )
-     local_config[IDE_0].irq = 14;
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -2222,7 +2222,7 @@ static struct DEVICE_CONFIG * __init SMC37c669_get_config( unsigned int func )
-     }
-     return cp;
- }
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -2274,7 +2274,7 @@ static int __init SMC37c669_xlate_irq ( int irq )
-     return translated_irq;
- }
- 
--
-+
- /*
- **++
- **  FUNCTIONAL DESCRIPTION:
-@@ -2325,7 +2325,7 @@ static int __init SMC37c669_xlate_drq ( int drq )
-     }
-     return translated_drq;
- }
--
-+
- #if 0
- int __init smcc669_init ( void )
- {
-@@ -2340,7 +2340,7 @@ int __init smcc669_init ( void )
- 
-     return msg_success;
- }
--
-+
- int __init smcc669_open( struct FILE *fp, char *info, char *next, char *mode )
- {
-     struct INODE *ip;
-@@ -2365,7 +2365,7 @@ int __init smcc669_open( struct FILE *fp, char *info, char *next, char *mode )
- 
-     return msg_success;
- }
--
-+
- int __init smcc669_close( struct FILE *fp )
- {
-     struct INODE *ip;
-@@ -2378,7 +2378,7 @@ int __init smcc669_close( struct FILE *fp )
-     }
-     return msg_success;
- }
--
-+
- int __init smcc669_read( struct FILE *fp, int size, int number, unsigned char *buf )
- {
-     int i;
-@@ -2404,7 +2404,7 @@ int __init smcc669_read( struct FILE *fp, int size, int number, unsigned char *b
-     SMC37c669_config_mode( FALSE );
-     return nbytes;
- }
--
-+
- int __init smcc669_write( struct FILE *fp, int size, int number, unsigned char *buf )
- {
-     int i;
-diff --git a/arch/alpha/kernel/sys_marvel.c b/arch/alpha/kernel/sys_marvel.c
-index 1f99b03effc2..4c38ad39fd37 100644
---- a/arch/alpha/kernel/sys_marvel.c
-+++ b/arch/alpha/kernel/sys_marvel.c
-@@ -33,7 +33,7 @@
- # error NR_IRQS < MARVEL_NR_IRQS !!!
- #endif
- 
--
-+
- /*
-  * Interrupt handling.
-  */
-@@ -432,7 +432,7 @@ marvel_smp_callin(void)
- 	for (i = 0; i < 16; ++i)
- 		io7_redirect_one_msi(io7, i, cpuid);
- }
--
-+
- /*
-  * System Vectors
-  */
-diff --git a/arch/alpha/kernel/sys_titan.c b/arch/alpha/kernel/sys_titan.c
-index b1f3b4fcf99b..1af0d909f436 100644
---- a/arch/alpha/kernel/sys_titan.c
-+++ b/arch/alpha/kernel/sys_titan.c
-@@ -36,7 +36,7 @@
- #include "machvec_impl.h"
- #include "err_impl.h"
- 
--
-+
- /*
-  * Titan generic
-  */
-@@ -255,7 +255,7 @@ titan_dispatch_irqs(u64 mask)
- 	}
- }
-   
--
-+
- /*
-  * Titan Family
-  */
-@@ -337,7 +337,7 @@ titan_init_pci(void)
- 	locate_and_init_vga(NULL);
- }
- 
--
-+
- /*
-  * Privateer
-  */
-@@ -359,7 +359,7 @@ privateer_init_pci(void)
- 	return titan_init_pci();
- }
- 
--
-+
- /*
-  * The System Vectors.
-  */
-diff --git a/arch/alpha/kernel/time.c b/arch/alpha/kernel/time.c
-index 4d01c392ab14..1ed69632b01e 100644
---- a/arch/alpha/kernel/time.c
-+++ b/arch/alpha/kernel/time.c
-@@ -80,7 +80,7 @@ static inline __u32 rpcc(void)
- }
- 
- 
--
-+
- /*
-  * The RTC as a clock_event_device primitive.
-  */
-@@ -129,7 +129,7 @@ init_rtc_clockevent(void)
- 	clockevents_config_and_register(ce, CONFIG_HZ, 0, 0);
- }
- 
--
-+
- /*
-  * The QEMU clock as a clocksource primitive.
-  */
-@@ -199,7 +199,7 @@ init_qemu_clockevent(void)
- 	clockevents_config_and_register(ce, NSEC_PER_SEC, 1000, LONG_MAX);
- }
- 
--
-+
- void __init
- common_init_rtc(void)
- {
-@@ -245,7 +245,7 @@ common_init_rtc(void)
- 	init_rtc_irq(NULL);
- }
- 
--
-+
- #ifndef CONFIG_ALPHA_WTINT
- /*
-  * The RPCC as a clocksource primitive.
-@@ -275,7 +275,7 @@ static struct clocksource clocksource_rpcc = {
- };
- #endif /* ALPHA_WTINT */
- 
--
-+
- /* Validate a computed cycle counter result against the known bounds for
-    the given processor core.  There's too much brokenness in the way of
-    timing hardware for any one method to work everywhere.  :-(
--- 
-2.47.3
 
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.19-rc3#n262
+
+Regards,
+Markus
