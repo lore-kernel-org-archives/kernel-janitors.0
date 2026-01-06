@@ -1,374 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A625D346FA7;
-	Tue,  6 Jan 2026 13:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86469248F68
+	for <kernel-janitors@vger.kernel.org>; Tue,  6 Jan 2026 16:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767707682; cv=none; b=G9XBjmOjYr0tLTnSqgqI7A3lDIM8Er0SWMLrzNjI+FwkITF5oO8teB1Oo4qIrZEIGCwuDZk4F5ZUaATH8ZmjCQBMWyK//s1k/V64gGbfGy4OINSnnn4qaP5TS07hQoHZPLKayb3fK6ze+Z5LeII0lyyGmgZqt1x3VArYptuJ1Zs=
+	t=1767717027; cv=none; b=QVrmjQwH/5AJd2W47kbcf3jKWg+sL/5VC3irAPIsMbkNfnGf3ZT7h12Kix9rJClv8sEJ71yOVKyOL0V4R6taJUDjXnaIGCDm7U+cmgV006wJNxy3Pp51rSuojz7cm0p77CD4BxznNd+BVChWhBGAq11Ifh9Gm50wkLiYTh3pry0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767707682; c=relaxed/simple;
-	bh=ga+M/2DyrKHDPq3klxkY7Kx5M/XnEgu0cyltA0WyEOg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vy5O/xH20TZ9G22UYkDu2TJyocgBmZuAeVl9VuuXfdxGxqfx3rquGMqrCDsnuZxLTWWswzGfhck1ldltDJ8m9vE1YFbnQibcmUOcyiPNbc6BsWzAp2baJAjOeuKmVOh/aEswkAUTgmkEDX4lTb45rX8gmvRHJESVpqOLEfn/SSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJt2KVgI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767717027; c=relaxed/simple;
+	bh=U0j51mleQ1XhvbVqXphZJy29E+snKGgnLb9jc3YD3Fk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rus+Kr1hj/NzjMNcr+3xVU+sfQUiNNbBcu6JNUEoQp6d+XPfxUqbkh7TvocuK2oWFPPCMCBr4GfUysVFxPuZUOss6GghvU/KE49giYODmrvlgD6vRj87ioUKAXPLingLzmnU8o6LId3B3gy1Ti6N1uMFD44s+JUzJ9GioBfQdg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kg6tEjkV; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJt2KVgI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED33C116C6;
-	Tue,  6 Jan 2026 13:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767707682;
-	bh=ga+M/2DyrKHDPq3klxkY7Kx5M/XnEgu0cyltA0WyEOg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OJt2KVgIvIa2R8WGGkU6haFmDbO9NGaBDhfzRQOQ+Xm/4627RFLoyEz9yHxAqkpvX
-	 V3Z/nVorulih+ihvwj8vE+MQ7h5An531c6jgAHLxsrNqP07wr5RgsCrVHKLiDuVJPZ
-	 6LD+3udgLppuESw5RKshihohqW7Zk2KElqcJFSHdbkEJ7o17ODc7KQn6TGFmpSwTxN
-	 Q+jI6w8brCk7f135xxGR9JajF4exHpADOYGP5hiQa0H4yEyqWGa5+GdVDAKdFpxUaj
-	 wxcHrfrUs9T0FmCFlgMXoQ/izNhWvMH6VfVkiAHwY1S04dK5Q8dr9jj4Sj6QgBmzIv
-	 TApUQvcA03Meg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vd7WB-0000000HMAk-3YIC;
-	Tue, 06 Jan 2026 13:54:39 +0000
-Date: Tue, 06 Jan 2026 13:54:39 +0000
-Message-ID: <86h5syn8ww.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Lukas Bulwahn <lbulwahn@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] arm64: Kconfig: deprecate redundant ARM64_USE_LSE_ATOMICS
-In-Reply-To: <aVwkIYMyoe7OpeUh@willie-the-truck>
-References: <20251223110730.121239-1-lukas.bulwahn@redhat.com>
-	<aVwkIYMyoe7OpeUh@willie-the-truck>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kg6tEjkV"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b734fcbf1e3so240503766b.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jan 2026 08:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767717024; x=1768321824; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFywE2icKNJ+cB7uTyuGoCkXxbifngq0AAd5tIXgGGI=;
+        b=Kg6tEjkVXeWggMleNA4u1nE3Elaq0qOy6IJ9HN5XnUzZ8v7iVTjBghY+RFmI59/0e1
+         81ViLmRLAnO4oGs3DOI+gsaGXXblp1Foq4aDEJuJzycXtsOk7XEjL1l7w8RHcWUzKGSJ
+         cO+6hd0PSt+tvnDaGODYdtGaqs0VVARxusywnvb96HZQHy2yUoyxYXY7SCqL1kLCaXnz
+         7G1BbEoaXRCxfFLiONXXsCiGVo3ceR8pKUMk2h9ED2XsB73ef6nCtYfZlLJVbWaIT9nG
+         z5lRhCGwn7NbvvE8j1DjwkBQEk5vPKSLf2ZZ+C/I/huwWr9moXgY1r5zbljmToXBOeWM
+         4nrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767717024; x=1768321824;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YFywE2icKNJ+cB7uTyuGoCkXxbifngq0AAd5tIXgGGI=;
+        b=W1pIVChVI9AFZ5NqWjv66+eC+ERimZci07Tk5R1/xWNNamxfaRhdWniVR/bTvbn7iW
+         ju9AuA4WXSbpPmsKA50j3g7jhsjMcLBQcFxCvvhplvBMjnRe3oD4h6guxzpZTmQiBDpm
+         ladUpSbT1+ogYXo+lfjcXNiPYSv0Yg3wPtDW9yrdDBsO3JjcoV17lF1wi/pbUyIApESG
+         mbEjIORxybOfSspXtozTjF3i8+Rwv9+tDOtHkTUeOw3fx0NHiqosuuLDAvgOR65n++Fn
+         X8gj2UOoDX5TePHZOFL8e1sjtzhLcqGUVTxy2CNDlJdxxr42J/ruebIp/TIB1iKrNT+t
+         74+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9FIKvrB/qz/CI++ViXFHe5DG7E9+Y7YZlJ1KHRgVKwK3LZMSDTCl/464kKfI1iJ7rqJWmoZyK+jsHVBzLTjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu9NTeh2SDbkgBbDPIStwz2m5XDbSW9x/tbXdBZaFFpI/orjEA
+	3o/3T3u0yYQ+qqKVTIwGPtd3eWpQe11gPXrWagYw1j4fdXH0iYj5eStuGufBjvfHlQ9yuBv+wL3
+	ir3Pmzyy+i0Ye+9HdwzE5aeOUJmS9AdP6iEV3
+X-Gm-Gg: AY/fxX66NHMOIzndGDjBJB7wmHJVUkCVc8vY+giqckwCVyHv83CG0eU5ZgqkXwFXr4I
+	8+yyp8SJ7ijsojTgLXPunpbqrQOLMxqR1CFOGUGb3V0vXUuWIp67N55630fuE7dXPj7ixg7HrJx
+	8cjrd+q1+gDfMbr/cROJz70nt+F3lEzCihU91I/wahiEEbbnEPoj0x8HX2ObyEwwNoTCHmwcLge
+	J2WSw+oWeZM9DfykHg2vAltWnfjpHzN1qiztQsaJSh8EJGNvb0PtHAReHJhBRWbzs+CqV3m
+X-Google-Smtp-Source: AGHT+IGiqs1gDfUISyBczs4HyJmVzzzKZpgRC6NkJpj6fa6eM1SDvFi4fb2rgcGA7Eu/T1LDB0EY4X8+Kh2dwLV669s=
+X-Received: by 2002:a17:907:c15:b0:b7c:e320:5232 with SMTP id
+ a640c23a62f3a-b8426a49324mr367887766b.5.1767717023650; Tue, 06 Jan 2026
+ 08:30:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: will@kernel.org, lbulwahn@redhat.com, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, arnd@arndb.de, vegard.nossum@oracle.com, kees@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20251228063440.2623595-1-safinaskar@gmail.com>
+ <20251228063440.2623595-2-safinaskar@gmail.com> <CA+=Fv5Ra7fFTd2wA77iM_6X7NooApfoMJX5z1j60cXex_uxm7w@mail.gmail.com>
+ <alpine.DEB.2.21.2601061310110.45251@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2601061310110.45251@angie.orcam.me.uk>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Tue, 6 Jan 2026 17:30:12 +0100
+X-Gm-Features: AQt7F2ryRckCS1QLF5YuAHz3r2RQu9Pt7ESbBtlhCipsrDrEYweGbF2trlCO0MY
+Message-ID: <CA+=Fv5Rw3vJGLsEyuKOBMyZTcQd=ayV5jT6bhWNn=uzXKsw13w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] alpha: trivial: remove ^L chars
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Askar Safin <safinaskar@gmail.com>, Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 05 Jan 2026 20:50:41 +0000,
-Will Deacon <will@kernel.org> wrote:
->=20
-> [+Marc]
->=20
-> On Tue, Dec 23, 2025 at 12:07:30PM +0100, Lukas Bulwahn wrote:
-> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> >=20
-> > Currently, the config options ARM64_USE_LSE_ATOMICS and ARM64_LSE_ATOMI=
-CS
-> > are equivalent, i.e., ARM64_LSE_ATOMICS is true if and only if
-> > ARM64_USE_LSE_ATOMICS is true.
-> >=20
-> > Prior to commit 395af861377d ("arm64: Move the LSE gas support detectio=
-n to
-> > Kconfig")---included in v5.6-rc1---only the config option ARM64_LSE_ATO=
-MICS
-> > was defined, and the check for gas support was done in the Makefile. Th=
-is
-> > mentioned commit then introduces the config option ARM64_USE_LSE_ATOMIC=
-S to
-> > be the promptable option, and changes the semantics of ARM64_LSE_ATOMIC=
-S to
-> > check for the gas support.
-> >=20
-> > Note that there is then some minor refactoring in commit 2decad92f473
-> > ("arm64: mte: Ensure TIF_MTE_ASYNC_FAULT is set atomically"), putting t=
-his
-> > gas support check into its own config option AS_HAS_LSE_ATOMICS, but the
-> > logic remains the same. Since every binutils version defined suitable f=
-or
-> > kernel compilation then eventually included the required support, the
-> > config option AS_HAS_LSE_ATOMICS and the dependency was dropped with
-> > commit 2555d4c68720 ("arm64: drop binutils version checks"). This then
-> > makes ARM64_USE_LSE_ATOMICS and ARM64_LSE_ATOMICS equivalent. Hence, one
-> > of the two config options can be dropped now.
-> >=20
-> > Considerations for the decision which config option to drop:
-> >=20
-> >   - ARM64_USE_LSE_ATOMICS is promptable by the user since its introduct=
-ion
-> >     in 2020. So there might be some Kconfig fragments that define this
-> >     config option and expect that this then implies ARM64_LSE_ATOMICS t=
-o be
-> >     set. However, within the kernel tree, there is no existing config f=
-ile
-> >     referring to that option. So, it is unlikely to be widely used.
-> >   - ARM64_LSE_ATOMICS is used in nine places within the arm64 directory=
- in
-> >     the current kernel tree.
-> >   - ARM64_USE_LSE_ATOMICS is the only config option that contains the i=
-nfix
-> >     string _USE_ to enable support and use of an arm64 architectural
-> >     feature. However, there is not a very stringent and consistent nami=
-ng
-> >     convention for Kconfig options throughout the kernel tree anyway.
-> >   - The use of the transitional attribute allows to simplify transition=
-ing
-> >     to a different Kconfig symbol name, but also adds some intermediate
-> >     definition to be removed later eventually.
-> >=20
-> > After thoughtful consideration, keep ARM_LSE_ATOMICS and remove
-> > ARM64_USE_LSE_ATOMICS in a two-step approach, first deprecate
-> > ARM64_USE_LSE_ATOMICS with the transitional attribute here and then plan
-> > to completely remove it in two or three years with a further dedicated
-> > commit then.
->=20
-> Marc was talking about removing ARM64_LSE_ATOMICS entirely the other day
-> after it bit him with a KVM change. If all supported assemblers understand
-> the LSE instructions, let's just do that?
+>  As a matter of interest, why would the presence of ^L characters cause
+> any issues?  That is just another instance of white space and it has been
+> commonly used across some source code to separate functional parts, e.g.
+> in the GNU toolchain.  It can be ignored unless you actually send the code
+> to a printer (which I suppose hardly anyone does nowadays).
+>
 
-That'd be my preferred option. Having config options for things that
-we can detect and patch at runtime makes coverage a lot more difficult
-than it should be. I'd also love to kill CONFIG_ARM64_PAN, for
-example. In any case, here's my take on this, based on -rc4.
+I guess you're right, at this point it's mostly aesthetics. ^L is just
+whitespace and the compiler ignores it, likely a relic from the old
+days. Some editors display it a bit oddly, and most of the kernel seems
+to have pruned these over time, but a few still linger in arch/alpha,
+which fits the age and heritage there.
 
-Thanks,
-
-	M.
-
-=46rom 3ab18194eefd2017fb1cea6764adb0634f5946da Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Tue, 6 Jan 2026 13:44:14 +0000
-Subject: [PATCH] arm64: Unconditionally enable LSE support
-
-LSE atomics have been in the architecture since ARMv8.1 (released in
-2014), and are hopefully supported by all modern toolchains.
-
-Drop the optional nature of LSE support in the kernel, and always
-compile the support in, as this really is very little code. LL/SC
-still is the default, and the switch to LSE is done dynamically.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- arch/arm64/Kconfig             | 16 ----------------
- arch/arm64/include/asm/insn.h  | 23 -----------------------
- arch/arm64/include/asm/lse.h   |  9 ---------
- arch/arm64/kernel/cpufeature.c |  2 --
- arch/arm64/kvm/at.c            |  7 -------
- arch/arm64/lib/insn.c          |  2 --
- arch/arm64/net/bpf_jit_comp.c  |  7 -------
- 7 files changed, 66 deletions(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 93173f0a09c7d..b6f57cc1e4df8 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1873,22 +1873,6 @@ config ARM64_PAN
- 	  The feature is detected at runtime, and will remain as a 'nop'
- 	  instruction if the cpu does not implement the feature.
-=20
--config ARM64_LSE_ATOMICS
--	bool
--	default ARM64_USE_LSE_ATOMICS
--
--config ARM64_USE_LSE_ATOMICS
--	bool "Atomic instructions"
--	default y
--	help
--	  As part of the Large System Extensions, ARMv8.1 introduces new
--	  atomic instructions that are designed specifically to scale in
--	  very large systems.
--
--	  Say Y here to make use of these instructions for the in-kernel
--	  atomic routines. This incurs a small overhead on CPUs that do
--	  not support these instructions.
--
- endmenu # "ARMv8.1 architectural features"
-=20
- menu "ARMv8.2 architectural features"
-diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-index e1d30ba99d016..f463a654a2bbd 100644
---- a/arch/arm64/include/asm/insn.h
-+++ b/arch/arm64/include/asm/insn.h
-@@ -671,7 +671,6 @@ u32 aarch64_insn_gen_extr(enum aarch64_insn_variant var=
-iant,
- 			  enum aarch64_insn_register Rn,
- 			  enum aarch64_insn_register Rd,
- 			  u8 lsb);
--#ifdef CONFIG_ARM64_LSE_ATOMICS
- u32 aarch64_insn_gen_atomic_ld_op(enum aarch64_insn_register result,
- 				  enum aarch64_insn_register address,
- 				  enum aarch64_insn_register value,
-@@ -683,28 +682,6 @@ u32 aarch64_insn_gen_cas(enum aarch64_insn_register re=
-sult,
- 			 enum aarch64_insn_register value,
- 			 enum aarch64_insn_size_type size,
- 			 enum aarch64_insn_mem_order_type order);
--#else
--static inline
--u32 aarch64_insn_gen_atomic_ld_op(enum aarch64_insn_register result,
--				  enum aarch64_insn_register address,
--				  enum aarch64_insn_register value,
--				  enum aarch64_insn_size_type size,
--				  enum aarch64_insn_mem_atomic_op op,
--				  enum aarch64_insn_mem_order_type order)
--{
--	return AARCH64_BREAK_FAULT;
--}
--
--static inline
--u32 aarch64_insn_gen_cas(enum aarch64_insn_register result,
--			 enum aarch64_insn_register address,
--			 enum aarch64_insn_register value,
--			 enum aarch64_insn_size_type size,
--			 enum aarch64_insn_mem_order_type order)
--{
--	return AARCH64_BREAK_FAULT;
--}
--#endif
- u32 aarch64_insn_gen_dmb(enum aarch64_insn_mb_type type);
- u32 aarch64_insn_gen_dsb(enum aarch64_insn_mb_type type);
- u32 aarch64_insn_gen_mrs(enum aarch64_insn_register result,
-diff --git a/arch/arm64/include/asm/lse.h b/arch/arm64/include/asm/lse.h
-index 3129a5819d0e0..1e77c45bb0a83 100644
---- a/arch/arm64/include/asm/lse.h
-+++ b/arch/arm64/include/asm/lse.h
-@@ -4,8 +4,6 @@
-=20
- #include <asm/atomic_ll_sc.h>
-=20
--#ifdef CONFIG_ARM64_LSE_ATOMICS
--
- #define __LSE_PREAMBLE	".arch_extension lse\n"
-=20
- #include <linux/compiler_types.h>
-@@ -27,11 +25,4 @@
- #define ARM64_LSE_ATOMIC_INSN(llsc, lse)				\
- 	ALTERNATIVE(llsc, __LSE_PREAMBLE lse, ARM64_HAS_LSE_ATOMICS)
-=20
--#else	/* CONFIG_ARM64_LSE_ATOMICS */
--
--#define __lse_ll_sc_body(op, ...)		__ll_sc_##op(__VA_ARGS__)
--
--#define ARM64_LSE_ATOMIC_INSN(llsc, lse)	llsc
--
--#endif	/* CONFIG_ARM64_LSE_ATOMICS */
- #endif	/* __ASM_LSE_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index c840a93b9ef95..547ccf28f2893 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -2560,7 +2560,6 @@ static const struct arm64_cpu_capabilities arm64_feat=
-ures[] =3D {
- 		ARM64_CPUID_FIELDS(ID_AA64MMFR1_EL1, PAN, PAN3)
- 	},
- #endif /* CONFIG_ARM64_EPAN */
--#ifdef CONFIG_ARM64_LSE_ATOMICS
- 	{
- 		.desc =3D "LSE atomic instructions",
- 		.capability =3D ARM64_HAS_LSE_ATOMICS,
-@@ -2568,7 +2567,6 @@ static const struct arm64_cpu_capabilities arm64_feat=
-ures[] =3D {
- 		.matches =3D has_cpuid_feature,
- 		ARM64_CPUID_FIELDS(ID_AA64ISAR0_EL1, ATOMIC, IMP)
- 	},
--#endif /* CONFIG_ARM64_LSE_ATOMICS */
- 	{
- 		.desc =3D "Virtualization Host Extensions",
- 		.capability =3D ARM64_HAS_VIRT_HOST_EXTN,
-diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
-index 53bf70126f81d..6cbcec041a9dd 100644
---- a/arch/arm64/kvm/at.c
-+++ b/arch/arm64/kvm/at.c
-@@ -1700,7 +1700,6 @@ int __kvm_find_s1_desc_level(struct kvm_vcpu *vcpu, u=
-64 va, u64 ipa, int *level)
- 	}
- }
-=20
--#ifdef CONFIG_ARM64_LSE_ATOMICS
- static int __lse_swap_desc(u64 __user *ptep, u64 old, u64 new)
- {
- 	u64 tmp =3D old;
-@@ -1725,12 +1724,6 @@ static int __lse_swap_desc(u64 __user *ptep, u64 old=
-, u64 new)
-=20
- 	return ret;
- }
--#else
--static int __lse_swap_desc(u64 __user *ptep, u64 old, u64 new)
--{
--	return -EINVAL;
--}
--#endif
-=20
- static int __llsc_swap_desc(u64 __user *ptep, u64 old, u64 new)
- {
-diff --git a/arch/arm64/lib/insn.c b/arch/arm64/lib/insn.c
-index 4e298baddc2e5..cc5b40917d0dd 100644
---- a/arch/arm64/lib/insn.c
-+++ b/arch/arm64/lib/insn.c
-@@ -611,7 +611,6 @@ u32 aarch64_insn_gen_load_store_ex(enum aarch64_insn_re=
-gister reg,
- 					    state);
- }
-=20
--#ifdef CONFIG_ARM64_LSE_ATOMICS
- static u32 aarch64_insn_encode_ldst_order(enum aarch64_insn_mem_order_type=
- type,
- 					  u32 insn)
- {
-@@ -755,7 +754,6 @@ u32 aarch64_insn_gen_cas(enum aarch64_insn_register res=
-ult,
- 	return aarch64_insn_encode_register(AARCH64_INSN_REGTYPE_RS, insn,
- 					    value);
- }
--#endif
-=20
- u32 aarch64_insn_gen_add_sub_imm(enum aarch64_insn_register dst,
- 				 enum aarch64_insn_register src,
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index b6eb7a465ad24..5ce82edc508e4 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -776,7 +776,6 @@ static int emit_atomic_ld_st(const struct bpf_insn *ins=
-n, struct jit_ctx *ctx)
- 	return 0;
- }
-=20
--#ifdef CONFIG_ARM64_LSE_ATOMICS
- static int emit_lse_atomic(const struct bpf_insn *insn, struct jit_ctx *ct=
-x)
- {
- 	const u8 code =3D insn->code;
-@@ -843,12 +842,6 @@ static int emit_lse_atomic(const struct bpf_insn *insn=
-, struct jit_ctx *ctx)
-=20
- 	return 0;
- }
--#else
--static inline int emit_lse_atomic(const struct bpf_insn *insn, struct jit_=
-ctx *ctx)
--{
--	return -EINVAL;
--}
--#endif
-=20
- static int emit_ll_sc_atomic(const struct bpf_insn *insn, struct jit_ctx *=
-ctx)
- {
---=20
-2.47.3
-
-
---=20
-Without deviation from the norm, progress is not possible.
+Magnus
