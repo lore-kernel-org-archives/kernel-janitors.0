@@ -1,181 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFF049620;
-	Wed,  7 Jan 2026 18:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2920257830
+	for <kernel-janitors@vger.kernel.org>; Wed,  7 Jan 2026 19:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767809413; cv=none; b=uSLXNowTrT/+lQkAqZ54JvGav071f9lEnlsWMFuUxGe86ghPXM6d2DD21zd4QkLvlPkwTxpowbdQpMEqDXVmpLmXBActZPI+f4341lzrlmfGCfIK8qKpOUcO4akfuCdL2YZAVrmM/+WTD8434T66qycCydnqN+6IVztvBjhD0fM=
+	t=1767815347; cv=none; b=IenhIqB4BzM0GqbYiu4xjoNQeJAlZmMXC+ue4vOlwxnEltPd9CGiVsYoflLMr99MM22QVC0rwEodnId0JtsZCGHFBop61TrU8bgCQxehyr9hKEzY1JYJmbTrHU12Pls2tF9jpOB6L+3VeLV/CfyfpGB7ioH15HbOLKkXp85sUjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767809413; c=relaxed/simple;
-	bh=PFsvF3uhSGjY1eiFSePwQw+5Hfbwu2S30URjOMhpGsE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o2OsEbrV1fiMwRh3OMoLv9kgf7zb3AW89X/5/ZQcOsuvsexnxGqty+muS23gS7ojgOKLq/dde1MClNcw97xW/wZDqpC4XQCEyyKjUMXj2OiDWDtS6m4BKXg4CCXdt60Br3XX2ixIh9fqsUuM94+GTnB/fEqmefukGIpTLgEb6qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY0zi4Tf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767815347; c=relaxed/simple;
+	bh=mz8YJmNMg9axppZD5Mkowwu9SHcTRUKTKAh/4XNozAc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMmGgAPXjTrHFRDOD3xXoROD2WUj1tRWqKLPp3Bt8H8Km/AZxzibOl0wItNpZVdyasULkqTT+VboaP0uozRFPGBV1ON+9iLBsFbqzS2//MD0/mb5atmAi5NJRD3479OKl+sQ7i8TWytQO+7cztF12Nz8daUBksgpvvHpVKotHEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heQV1eGI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY0zi4Tf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3C1C4CEF1;
-	Wed,  7 Jan 2026 18:10:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heQV1eGI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3FE2C4CEF1
+	for <kernel-janitors@vger.kernel.org>; Wed,  7 Jan 2026 19:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767809412;
-	bh=PFsvF3uhSGjY1eiFSePwQw+5Hfbwu2S30URjOMhpGsE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dY0zi4TfG9yoBqj5WUxApBt37f1tTN5BXtN2X6Z/BNba0Busula53kHvnSWeyjrlN
-	 Qtqh6LUX7CidrZvbZu4ZR5WZzOndVn+Py7MwOaWO7u4rqwfmCwgLrjGQhsWcz6Ts81
-	 mAgze10yov4ht+GNCEM5czqo//D72gkEYCvZ1YguC9dhAFqVveyUUHjojjjECnISbd
-	 psOPCqdunIsq+CaRHQONXLrnCV8JBs/XL8hCh9Hv8gJDamUs9lmQuGOP8kO1l8r48U
-	 PLllmQLS0y0b9dVUga37praImpd13A8tYh8HMcCr+Ml1MrOr8S3AbYQpXrpuolXQWM
-	 XcvZlVDOaEesw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vdXz0-00000000AIB-38GO;
-	Wed, 07 Jan 2026 18:10:10 +0000
-Date: Wed, 07 Jan 2026 18:10:10 +0000
-Message-ID: <865x9dmgzh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Lukas Bulwahn <lbulwahn@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] arm64: Kconfig: deprecate redundant ARM64_USE_LSE_ATOMICS
-In-Reply-To: <aV6CpBCvr37mcv7W@willie-the-truck>
-References: <20251223110730.121239-1-lukas.bulwahn@redhat.com>
-	<aVwkIYMyoe7OpeUh@willie-the-truck>
-	<86h5syn8ww.wl-maz@kernel.org>
-	<aV6CpBCvr37mcv7W@willie-the-truck>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1767815347;
+	bh=mz8YJmNMg9axppZD5Mkowwu9SHcTRUKTKAh/4XNozAc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=heQV1eGIu3HPUISuHrm0EO8BfsIH9xuZMALJwd/FIvZeWCgzPHaYnMcpvgWt7QTqs
+	 UFSCyurBn1QZ6Kqpmn8pYzQc0gCzoFzyaJtGWC09/Mklqjw40n5X0+YrGlvE8nO73O
+	 MPQCFD/P8s/ha+j+egFgeXv0MAWobtgyG8w9ocuXlu0rF9TngEOzkffvrMWmRpdb+x
+	 X4sSpEbRYT6BmzTmt2b1rVuwzS8HiX0miNAFWXVfIMAHGYFnGbdnoe6YF5/hDYA6vX
+	 dp6S+rl3APn9Q7uH2DfYaUjYD+dt/y6gKB3W0Ym3MhqqZTtkbtJAg6O94rhmKGM/Lo
+	 l+C7dUVbYz4/Q==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-65cfddebfd0so1304962eaf.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 07 Jan 2026 11:49:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW/g8rxSXrQ8V4rUaRLDBrEV7nxk08qO7XWIc6l0QRRv4wqPwxmoJLKuzHVeycX3kOgkoFDjNNyiqOTNIbB+lc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUw0knq+k6cQ8NOrtjj0JoBvpmIF4FDGOnnd0fh1Gi9H92yhF+
+	dJ+9JE46JQuDF5MgEHXtNfRP9MKfEW3+7Sr3gJrYJ7uIu/VXpgvgv1AGVFnzq37bUrRVkgWHwHQ
+	CK0SQnhuk+mkwkhQaX7HLw0UiEDPeQeo=
+X-Google-Smtp-Source: AGHT+IEVVjTmgyrGLLr9drmZT8Bk/YxNSpF//ZxNjjlKxG1iyY++EwxxMM17zdnPVMl9XcwpEZrVZ09VNRLMI33uYVU=
+X-Received: by 2002:a05:6820:615:b0:659:9a49:8f05 with SMTP id
+ 006d021491bc7-65f54f36f8cmr1608006eaf.22.1767815346098; Wed, 07 Jan 2026
+ 11:49:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: will@kernel.org, lbulwahn@redhat.com, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, arnd@arndb.de, vegard.nossum@oracle.com, kees@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20251219215900.494211-1-colin.i.king@gmail.com>
+In-Reply-To: <20251219215900.494211-1-colin.i.king@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 7 Jan 2026 20:48:54 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ijqOXipqW4APEZb93Vas1ng_J_jXWdc2mrZBg0ZUAZdQ@mail.gmail.com>
+X-Gm-Features: AQt7F2peqv02-kyxkAFPN6bu-FVu65CC--U-yiCrGha37tTGIfyuuztT7OL4fLA
+Message-ID: <CAJZ5v0ijqOXipqW4APEZb93Vas1ng_J_jXWdc2mrZBg0ZUAZdQ@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: APEI: EINJ: make read-only array
+ non_mmio_desc static const
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>, 
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 07 Jan 2026 15:58:28 +0000,
-Will Deacon <will@kernel.org> wrote:
-> 
-> On Tue, Jan 06, 2026 at 01:54:39PM +0000, Marc Zyngier wrote:
-> > On Mon, 05 Jan 2026 20:50:41 +0000,
-> > Will Deacon <will@kernel.org> wrote:
-> > > 
-> > > [+Marc]
-> > > 
-> > > On Tue, Dec 23, 2025 at 12:07:30PM +0100, Lukas Bulwahn wrote:
-> > > > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> > > > 
-> > > > Currently, the config options ARM64_USE_LSE_ATOMICS and ARM64_LSE_ATOMICS
-> > > > are equivalent, i.e., ARM64_LSE_ATOMICS is true if and only if
-> > > > ARM64_USE_LSE_ATOMICS is true.
-> > > > 
-> > > > Prior to commit 395af861377d ("arm64: Move the LSE gas support detection to
-> > > > Kconfig")---included in v5.6-rc1---only the config option ARM64_LSE_ATOMICS
-> > > > was defined, and the check for gas support was done in the Makefile. This
-> > > > mentioned commit then introduces the config option ARM64_USE_LSE_ATOMICS to
-> > > > be the promptable option, and changes the semantics of ARM64_LSE_ATOMICS to
-> > > > check for the gas support.
-> > > > 
-> > > > Note that there is then some minor refactoring in commit 2decad92f473
-> > > > ("arm64: mte: Ensure TIF_MTE_ASYNC_FAULT is set atomically"), putting this
-> > > > gas support check into its own config option AS_HAS_LSE_ATOMICS, but the
-> > > > logic remains the same. Since every binutils version defined suitable for
-> > > > kernel compilation then eventually included the required support, the
-> > > > config option AS_HAS_LSE_ATOMICS and the dependency was dropped with
-> > > > commit 2555d4c68720 ("arm64: drop binutils version checks"). This then
-> > > > makes ARM64_USE_LSE_ATOMICS and ARM64_LSE_ATOMICS equivalent. Hence, one
-> > > > of the two config options can be dropped now.
-> > > > 
-> > > > Considerations for the decision which config option to drop:
-> > > > 
-> > > >   - ARM64_USE_LSE_ATOMICS is promptable by the user since its introduction
-> > > >     in 2020. So there might be some Kconfig fragments that define this
-> > > >     config option and expect that this then implies ARM64_LSE_ATOMICS to be
-> > > >     set. However, within the kernel tree, there is no existing config file
-> > > >     referring to that option. So, it is unlikely to be widely used.
-> > > >   - ARM64_LSE_ATOMICS is used in nine places within the arm64 directory in
-> > > >     the current kernel tree.
-> > > >   - ARM64_USE_LSE_ATOMICS is the only config option that contains the infix
-> > > >     string _USE_ to enable support and use of an arm64 architectural
-> > > >     feature. However, there is not a very stringent and consistent naming
-> > > >     convention for Kconfig options throughout the kernel tree anyway.
-> > > >   - The use of the transitional attribute allows to simplify transitioning
-> > > >     to a different Kconfig symbol name, but also adds some intermediate
-> > > >     definition to be removed later eventually.
-> > > > 
-> > > > After thoughtful consideration, keep ARM_LSE_ATOMICS and remove
-> > > > ARM64_USE_LSE_ATOMICS in a two-step approach, first deprecate
-> > > > ARM64_USE_LSE_ATOMICS with the transitional attribute here and then plan
-> > > > to completely remove it in two or three years with a further dedicated
-> > > > commit then.
-> > > 
-> > > Marc was talking about removing ARM64_LSE_ATOMICS entirely the other day
-> > > after it bit him with a KVM change. If all supported assemblers understand
-> > > the LSE instructions, let's just do that?
-> > 
-> > That'd be my preferred option. Having config options for things that
-> > we can detect and patch at runtime makes coverage a lot more difficult
-> > than it should be. I'd also love to kill CONFIG_ARM64_PAN, for
-> > example. In any case, here's my take on this, based on -rc4.
-> > 
-> > Thanks,
-> > 
-> > 	M.
-> > 
-> > From 3ab18194eefd2017fb1cea6764adb0634f5946da Mon Sep 17 00:00:00 2001
-> > From: Marc Zyngier <maz@kernel.org>
-> > Date: Tue, 6 Jan 2026 13:44:14 +0000
-> > Subject: [PATCH] arm64: Unconditionally enable LSE support
-> > 
-> > LSE atomics have been in the architecture since ARMv8.1 (released in
-> > 2014), and are hopefully supported by all modern toolchains.
-> > 
-> > Drop the optional nature of LSE support in the kernel, and always
-> > compile the support in, as this really is very little code. LL/SC
-> > still is the default, and the switch to LSE is done dynamically.
-> > 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > ---
-> >  arch/arm64/Kconfig             | 16 ----------------
-> >  arch/arm64/include/asm/insn.h  | 23 -----------------------
-> >  arch/arm64/include/asm/lse.h   |  9 ---------
-> >  arch/arm64/kernel/cpufeature.c |  2 --
-> >  arch/arm64/kvm/at.c            |  7 -------
-> >  arch/arm64/lib/insn.c          |  2 --
-> >  arch/arm64/net/bpf_jit_comp.c  |  7 -------
-> >  7 files changed, 66 deletions(-)
-> 
-> I think we should go ahead with this.
-> 
-> Initially, I thought we'd need some surgery to cpufeature.c so that
-> cpus_have_final_cap() could take the _likely_ path for LSE but it looks
-> like that's only relevant for KVM's AT handling and the common atomic_t
-> APIs use alternative_has_cap_likely() already.
-> 
-> If we do something similar for PAN, then system_uses_hw_pan() probably
-> wants the polarity switching from unlikely to likely.
+On Fri, Dec 19, 2025 at 11:00=E2=80=AFPM Colin Ian King <colin.i.king@gmail=
+.com> wrote:
+>
+> Don't populate the read-only array non_mmio_desc on the stack at run
+> time, instead make it static const.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/acpi/apei/einj-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
+c
+> index 305c240a303f..f5bfdffe1e43 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -679,7 +679,7 @@ static bool is_allowed_range(u64 base_addr, u64 size)
+>          * region intersects with known resource. So do an allow list che=
+ck for
+>          * IORES_DESCs that definitely or most likely not MMIO.
+>          */
+> -       int non_mmio_desc[] =3D {
+> +       static const int non_mmio_desc[] =3D {
+>                 IORES_DESC_CRASH_KERNEL,
+>                 IORES_DESC_ACPI_TABLES,
+>                 IORES_DESC_ACPI_NV_STORAGE,
+> --
 
-Ack. Series posted at [1].
-
-Thanks,
-
-	M.
-
-[1] https://lore.kernel.org/r/20260107180701.2858276-1-maz@kernel.org
-
--- 
-Without deviation from the norm, progress is not possible.
+Applied as 6.20 material, thanks!
