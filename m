@@ -1,76 +1,74 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668E032D0E7
-	for <kernel-janitors@vger.kernel.org>; Thu,  8 Jan 2026 19:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A7E2FD1BF
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 Jan 2026 19:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767902252; cv=none; b=tBQxUZKAUliVMItkP8koXMNhlhJm1W5JrupyCCj89Jqyft7YW3qRT3sdQjShoMHUClByQROs775eVhYuDNU14KixkxrsBhEUzo4gy+cfVQ+OQyPJjNNcSlbU2EvcJ2fz21uv4acXmK+QJMvG1qCnf0O12RUjCUhff5ILj7ra1Mc=
+	t=1767902264; cv=none; b=HrAh/D0pkxVf7ZxXc9nxvk4az2L2DOT+fLpvAd9XxvHiaf6IC/48zqMlyS0uGBzhrgzp7xnPNwJ2nUZZNjqppuiiiT1eXPq8OXU6fKM9C1EXsZUbLSjC3IEtLdq+fslxLdYff+IQFnOsdTuelNCkbeEMCrFdTlYsLIyJxn0ZD0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767902252; c=relaxed/simple;
-	bh=c7jMhN8XtvfpyVorUkznyAzrFKyWQ17Srg5BEIXNWfk=;
+	s=arc-20240116; t=1767902264; c=relaxed/simple;
+	bh=SEPQdKAnhPs5qLuQcj39VfnCDYxTiNdPEOtqU1zoQRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Eozq4FHOnxIkB3SqsLzz7AqEUSD0pfIt+QaL9pjJQyMRrK1gjL0Y23SLrwBi+C3r/W2QWGjKNJK5y+NdJZT/bbN/r3iL1gHfOGJbcTSj5LkKVFGKnA4V6oweUrSElbBDubm0KA61m9MRLcKtZN+Qg/U4nsKz5QmEAkjaBlg6UXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsYvxyEb; arc=none smtp.client-ip=209.85.221.45
+	 Content-Disposition; b=Gcgh/g5YIWvhSkvIb+NzQc1B38uG2sdbB6flT9I6GkKoybyshEY5UF4owFfmozg/VMTDA/kzpWldbC0XZ/vWRkRIfV8lkt2AZlguzdGgrMtZW8jaSa7cU+/GEhjkA2Ll4Yrqhu4R3kbGZDn3YfMy8E9/lDv1nA/kGlVLmB1NMwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SVv4ewMK; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsYvxyEb"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-430f2ee2f00so1933701f8f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jan 2026 11:57:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVv4ewMK"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42fed090e5fso1918149f8f.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jan 2026 11:57:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767902247; x=1768507047; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1767902261; x=1768507061; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QCRWVLE8KYqwVCUSR+leEM1QO2iDsc6SFUmiGPEHzWo=;
-        b=xsYvxyEbzVUkGTzlfYVMFJ/vUAuvbRawquZVff+08OVYyYuDMQ7g9Dsvqk4e4UcL7K
-         ASESN3IWIMURW7YlXIbUKNH9gzZ8KUFTs9NT6ecvcOJfqKUH8lGn0OhQqGyWUNjTF1bd
-         daicfrBQPuVIWjCZAMB/1YA0O/BmKL7dEC0cF5lDabJaRIRyF5yE+5llXTiRAvaw0yOs
-         DABOchO0eGNgeVHEBLWR1korUzpoG6ydFtLm4XDbbmcHudX/P2Ij2Few21Ws5D2J+qOd
-         9/krazfEPNn3r76DDN5RXT43hy7jty6KwzaM6DpWAoWr5+QgaSWgMp0vYwn+QBlHJD9d
-         Pm6A==
+        bh=7gDf4kLAuf0qf8dByGwvVIAAHMwWtxHLpFy5fp7Ykwc=;
+        b=SVv4ewMKDYFLaBBR0a7aI6A9JomvmAP3+HlvrbqDfrnMXzj/L5Kpo6MmH9SwYXud8z
+         WaZPcwdFdwdSg67Ck7cUktr8fOXoRz1lCElZU/B6+MYiy+urk2IsxO0YI55HIrfCEzgf
+         p/8F/W5emq1umeMCW/ZdvS2N5LaP/E4UhAdJPmYwhJAq71sjRPtbHp+pL6jNdzsbGKRZ
+         Je/Bn7rmEs0eJI0PWcwwTeXjB2m36PEH/ypgAKMR2eiw5ZeR0fBnccYZKLehII5yliKx
+         To8c0sN+RHPRzT+RoajfioHBwIArOrmCoJjy7G20qZWHxkal3MxLxFegGzO0nanHowRr
+         jXZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767902247; x=1768507047;
+        d=1e100.net; s=20230601; t=1767902261; x=1768507061;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QCRWVLE8KYqwVCUSR+leEM1QO2iDsc6SFUmiGPEHzWo=;
-        b=HvQAFDKEyZTvDyJK2A8MBIJBO1JeTqeOKJLJEMHAPP8YEU6XJ1VLti2SRI4RUBSuHz
-         gVUuh9fJjYkdGKOHnIS60wB0q7RM02wrbxPnP64Mt+GDmau8wpPU5BoFH3JWktJhml9M
-         Ph4p4erw6r6P8241giHMRJGUIWuYXdt/GAXjIf7uLeZEsPZfSc9HC0cisFrz1sxbn72e
-         hmzgeJkjlgsUyjwBd/j/p0+tfsknjX4lNhcHVGfbH1vwyUl4kTqF+XniBkcUwd8ZQFgb
-         e8K3kN+1/9Nr65FC6MxkHJ5G+YnPSJXlM5tY/aeTcAOnQmsv8GAdXg33BgX5E7Hx/fmB
-         Vwgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsMQMwiwBqNX/ZLdHRq5NXYfxFNhvmqaunvELYd/ZStWqez2ghk2kXWfy7jwejqOyfEinbmEpOJ+WryeNaS54=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxi2cWhrTwBGTeZLRs7SWKvojNffE1tVYKop8z+MmlvXeb6WVh
-	ISyy6wG/W03a2bIcl0pB4An5dpEGgYj6vGAr802EwApmvu0udq5sm35gcMbQMNMjZ5A=
-X-Gm-Gg: AY/fxX6AifN09iuggcuqkND9VIgRlcMmOcplYgKhTYEcJi8AAdLxN0xZY1mxBgdml3w
-	vESShZh5VtloixodQLbP5J8GB3qAC1DuWKWs8GCWQXqBI6dcZPTAmMyVsDM6bgy0XWYEOOTlCk8
-	5VNsWW3gUVv0u+wIro1RbM+ghaRSX/SJLwKqJBuotjo7p++52BUHvKQuVo6lQzUFGS+tfDJItn1
-	Zdtll/7BJsaEy+hdlibu4JPNjSQqwO96VyccHm2rwg+oZp8nuD6c7Fgq6KrALM+Fn8J+plZU5A2
-	EpovOdrr+KGkv9sLYbdUPEW513eeZ1LqIw7CiMigk7UFCdDHq7BdtwiR7yGhvKN315zkYNEBaKU
-	HS1v65ror5x391chmYqM4RegFrz36Q5xeJlp5WrbC5OaavfTxk1btWBjyAniK4tWaQ9Z//lryNl
-	KPS2gxMh0OX2d2CrqM
-X-Google-Smtp-Source: AGHT+IFcp3VtHt/q/Alt1immzh6zHpZoD2LnzhIVd+S2uek5Z3OEZpx2nKLWt2bXAXJEShIrU12xOw==
-X-Received: by 2002:a05:6000:24c6:b0:430:f742:fbb4 with SMTP id ffacd0b85a97d-432c37a4f66mr8711115f8f.43.1767902246566;
-        Thu, 08 Jan 2026 11:57:26 -0800 (PST)
+        bh=7gDf4kLAuf0qf8dByGwvVIAAHMwWtxHLpFy5fp7Ykwc=;
+        b=xJ+0Z/63CF5aff3qm49sFILwM2WDL+ZMwKx/+TRrpoe+IJVtmJXbs98r9yaTTFYiZr
+         aSjTxPhzspd2uBLVNpEA9C5Gllb3WElWPLqbYfgtJNkDx6UImqqrk2i89p6iewB5I2hg
+         8clhA8JaW2BBlm+GSthVLmmE5Q4Xi1b3YThJjQVGmbim44wDAxhLnZIqKZ7vIEVkVu/U
+         ENQxno1wC+SPKS644cYasy+3/QpSd0woDngeE2niRPMmj3jgv8RMV8bxk5leUqeBx3Ah
+         zWQbQkb52pJUvKBex9A9Qn11l3ZgxsRZEYv4KIciCtl0CCaJm3vE2JEWINgD3VDrrfoR
+         TUCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU6+PtF1dNmL9OsZDlzb2xAd1znK0awM8T4rKt+2voJJLl+l14y/FFF7fYuCTNSvu7aXedVbzbVNXgsK/NTfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMwRGYizMKx2JIVtMckBmsPU/kTWZIJXmX8JxPQLEsLWE9U304
+	x+Q4V94g5XO3i75Sn0bfb95UDZ/mfRRD3Lm0a0D+wYUJwe5lWZslOuyauve32xC+AG8=
+X-Gm-Gg: AY/fxX4/CWHASUxSs3vzDbDdxK4iBRMtpFA2CmNMwluOv4FjMdo1ODLG9UmAfmUtL+6
+	tcxjl4HaSAAAoGvKwyw6yYNMsZZuZaQRUsAAtOhuuTZU+4LXV3VvKtWIFiS2Zym/jx263Jr2Nxj
+	BfISElZCiDa+Bw2BWo6lIyFziDBZ/F+kX3XLrgls6vcRt1etdoGw6Hq99X7eSTklUKuivqXEv0H
+	qZ/whjhFuY2MH8+3ZxzF709fEUllp46JbMMOr1IZ8XqJlvaCSiZFCSOozHWwOt5TaTMT3fwnAKI
+	maPJuHnntQIzEc6jnZ0zUb5ggKmo+SlVC+MXLpDyz1RCaVabRZj9zBVbJhQnalfoUpXZ36z31nh
+	FkWWxGMkS0TEU3Jb37I3EvJo/eaSnFxqRwgZ+omry6OXRb7KqVsJ9+bcGKPObvak6Z7HkzoDwTx
+	A+cHTCNdY0sQLNefEh
+X-Google-Smtp-Source: AGHT+IHZFBCYQJFhqky8VClr8SnHFwzl/K8CfsbIy37jcUuYeB36t9vSgMB3jS7bjLFN1WcoCrT2gA==
+X-Received: by 2002:a5d:5d13:0:b0:3ec:db87:e5f4 with SMTP id ffacd0b85a97d-432c362817bmr8072719f8f.7.1767902261307;
+        Thu, 08 Jan 2026 11:57:41 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5df91fsm18529516f8f.23.2026.01.08.11.57.25
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5df96asm17943736f8f.28.2026.01.08.11.57.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 11:57:26 -0800 (PST)
-Date: Thu, 8 Jan 2026 22:57:22 +0300
+        Thu, 08 Jan 2026 11:57:40 -0800 (PST)
+Date: Thu, 8 Jan 2026 22:57:37 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, Cathy Luo <cluo@marvell.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/msm: remove some dead code
-Message-ID: <aWAMIhZLxUcecbLd@stanley.mountain>
+Subject: [PATCH] wifi: mwifiex: Fix use after free in
+ mwifiex_11n_dispatch_amsdu_pkt()
+Message-ID: <aWAMMdynZDz1uWAi@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,40 +79,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This is supposed to test for integer overflow but it is wrong and
-unnecessary.  The size_add()/mul() macros return SIZE_MAX when there is
-an integer overflow.  This code saves the SIZE_MAX to a u64 and then
-tests if the result is greater than SIZE_MAX which it never will be.
-Fortunately, when we try to allocate SIZE_MAX bytes the allocation
-will fail.  We even pass __GFP_NOWARN so the allocation fails
-harmlessly and quietly.
+The ieee80211_amsdu_to_8023s() function generally frees the skb, so save
+the skb->len first before it's freed.
 
+Fixes: 776f742040ca ("mwifiex: fix AMPDU not setup on TDLS link problem")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/msm/msm_gem_vma.c | 8 +-------
- 1 file changed, 1 insertions(+), 7 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index 71d5238437eb..7968c2dccff0 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -947,15 +947,9 @@ vm_bind_job_create(struct drm_device *dev, struct drm_file *file,
- 		   struct msm_gpu_submitqueue *queue, uint32_t nr_ops)
- {
- 	struct msm_vm_bind_job *job;
--	uint64_t sz;
- 	int ret;
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c b/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
+index 354c5ce66045..90831a1350f5 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
++++ b/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
+@@ -25,6 +25,7 @@ static int mwifiex_11n_dispatch_amsdu_pkt(struct mwifiex_private *priv,
  
--	sz = struct_size(job, ops, nr_ops);
--
--	if (sz > SIZE_MAX)
--		return ERR_PTR(-ENOMEM);
--
--	job = kzalloc(sz, GFP_KERNEL | __GFP_NOWARN);
-+	job = kzalloc(struct_size(job, ops, nr_ops), GFP_KERNEL | __GFP_NOWARN);
- 	if (!job)
- 		return ERR_PTR(-ENOMEM);
+ 	if (le16_to_cpu(local_rx_pd->rx_pkt_type) == PKT_TYPE_AMSDU) {
+ 		struct sk_buff_head list;
++		int skb_len = skb->len;
+ 		struct sk_buff *rx_skb;
  
+ 		__skb_queue_head_init(&list);
+@@ -44,7 +45,7 @@ static int mwifiex_11n_dispatch_amsdu_pkt(struct mwifiex_private *priv,
+ 			    ntohs(rx_hdr->eth803_hdr.h_proto) == ETH_P_TDLS) {
+ 				mwifiex_process_tdls_action_frame(priv,
+ 								  (u8 *)rx_hdr,
+-								  skb->len);
++								  skb_len);
+ 			}
+ 
+ 			if (priv->bss_role == MWIFIEX_BSS_ROLE_UAP)
 -- 
 2.51.0
 
