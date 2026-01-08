@@ -1,73 +1,94 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B305332C33E;
-	Thu,  8 Jan 2026 21:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767906067; cv=none; b=R+lVzLwOUuUE480U3mBJFb7XABEeeRwZwEM/siOUxt8ft4kqxeoHQ7WeGcw+Zmz/XP1DDdW67cMZkOev/oOUCN6+RNmEVV1GzSy1M25pRAjYxYoGmFyjOytHv4TgmYCce9XMY1s8/SpXD297xyInpWT5NhCUccd2rI6+O1GpcmY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767906067; c=relaxed/simple;
-	bh=BbFOPKtICU12KDM/+ShyhCJxoX8pKD/+VzzvP5dsT4g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=vCparJ0tz4MUXCjM70sO6nKNkp1eyQ2mhWDkrHzHqhjkv78fMBiFXEUNpW82GQCRVdZUOg3UE1CwcPl69WCv611filzcMaHYVTDlddvnFax1zvQz0X/vcRxSrJUZbLSrrnAnnDL0nLW3/0Egp5YDyZRwVcll/GQWiI5HXZxSuGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CkY9L36x; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067BC1D9346;
+	Thu,  8 Jan 2026 22:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767911233; cv=pass; b=Zx+0BGpStUcsKNwETgpmMe2qA/VNRGrrGUEq6LqDmrD2GcHR/viDeCVZbn+abrNcj4Dcd6BkGAMtfSPJZ99f6zOli3f4aiO0utOJA2Wl3rCFCB4xl3fYarT+1J5BDe0mI7ELZf14/IGhmsilo3hdQ/I005qNRS5eZZxUXM3kNKk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767911233; c=relaxed/simple;
+	bh=95jlgZwd9kMfUqnotcJNiYdKdz5zCyqtwdcDbLE61FM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tgfj3Y0hH/qAsCs5BK3LtRUauntFnWmQ9aXjy3szi0Wjp2HrTDgzEnT1LTtHhFtDaf7/WyrTG0giCGtA/V3EIY/HEJMVVyNsQr/Fqz8JeDTv5N1/GT8S5StWUXzAjisYD4BftM1I2PLg+ak9tTlXuBU7jYlWdCM23wyxML/Li3Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=JMEchq72; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CkY9L36x"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=FKc/gUSESEyiCZn/ICjBaYugtGVm9hDBauiqQssLMpg=;
-	t=1767906066; x=1769115666; b=CkY9L36xLJDb0d1Q219cgaw/2ZgEkHhYIzEEw0gOzIlscgT
-	VwguF9pwF3e3RX20JKKjt84uEvnsA6KOC9gqPEydLZVXcCSksLXeRi0nJQInb5hzEacZtXAq4qhxJ
-	QsOb9y48OhKfam8DytP8NQQbd7btG2jRbZcuQ/qr1/hB4hybxpp7bhP3ouyTPH4WKLblA5TKO18zl
-	W+WtTYGOHt7xxUfktP1/1I3xyovwGdMTUiph4jVAWQwiJH06jLhSRtBqKQs0BlYixAeZ+4448Izyc
-	teAFETt5VGvdJK2aYQnmWU1Ayuhpc7BrgnWsxJoSo/cgy1ZenyUlRo0G5gJ41h4Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vdx7u-00000006j15-1fql;
-	Thu, 08 Jan 2026 22:01:02 +0100
-Message-ID: <e4f3a3d9775d975f33c307bb5b01b26d3ad9daff.camel@sipsolutions.net>
-Subject: Re: [PATCH] wifi: mwifiex: Fix use after free in
- mwifiex_11n_dispatch_amsdu_pkt()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Amitkumar Karwar
-	 <akarwar@marvell.com>
-Cc: Brian Norris <briannorris@chromium.org>, Francesco Dolcini
-	 <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>, Cathy Luo
-	 <cluo@marvell.com>, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Thu, 08 Jan 2026 22:01:01 +0100
-In-Reply-To: <aWAMMdynZDz1uWAi@stanley.mountain> (sfid-20260108_205750_303869_85C5E54E)
-References: <aWAMMdynZDz1uWAi@stanley.mountain>
-	 (sfid-20260108_205750_303869_85C5E54E)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="JMEchq72"
+ARC-Seal: i=1; a=rsa-sha256; t=1767911215; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=A8KLZpmn7MOSCJcsfyyH3yeLflAIMDcdMDuBJMnxwAE7A6vdm8Q7upgYcE9NvSKFTIqG+iDKzFOyENCboK6ZgxxBN3e1ulXQVgKuQvmLUeiMEys03WheezjFXZWqWn1O/7lQJOApQdjYEZItwsz5PXTDn/McUXefW4ixwl07rh4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1767911215; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bSajWblRK/fbmIiboDgzgrtbFO4QpuM4aaPWjj8c+p4=; 
+	b=ZZVVgsIXJKjKv0+r0g1LYxez1BqeUZHbUPKRzA2/7JpBxcPbJGRi4Wv/N+pkKKKstyOXBvydDBWwmt6poliyu9AAVjxd8U38kHMf7KTQxW+oKB34fk4bs6K1c/hQjeL++vTMhPE/4gJJ6Vuln7YQYXV3jq613fefbOBXYz0+b0A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767911215;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=bSajWblRK/fbmIiboDgzgrtbFO4QpuM4aaPWjj8c+p4=;
+	b=JMEchq72MUGGJDUGWsiDRSMTgevq35jyKN/xZWUJdigtjQ8t8+Ni10ljbabyNCJ2
+	HnzkIb8TLZURG3gOiBm1g/GPLkMUZnoacb44JdUhI1RRJEGFeeeYRfEan8Bw4EzQoi5
+	QH6jZdMJdMAu9Glpjs9yIYGBK4JdGy+S6Ha7L9jw=
+Received: by mx.zohomail.com with SMTPS id 1767911213578185.64866105464432;
+	Thu, 8 Jan 2026 14:26:53 -0800 (PST)
+Message-ID: <af5546be-50d3-404a-be76-297139988b80@collabora.com>
+Date: Fri, 9 Jan 2026 01:26:48 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: synopsys: hdmirx: fix integer overflow in
+ hdmirx_get_edid()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Dingxian Wen <shawn.wen@rock-chips.com>, Hans Verkuil <hverkuil@kernel.org>,
+ linux-media@vger.kernel.org, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aWANkxRApxDeReRW@stanley.mountain>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <aWANkxRApxDeReRW@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, 2026-01-08 at 22:57 +0300, Dan Carpenter wrote:
-> @@ -44,7 +45,7 @@ static int mwifiex_11n_dispatch_amsdu_pkt(struct mwifie=
-x_private *priv,
->  			    ntohs(rx_hdr->eth803_hdr.h_proto) =3D=3D ETH_P_TDLS) {
->  				mwifiex_process_tdls_action_frame(priv,
->  								  (u8 *)rx_hdr,
-> -								  skb->len);
-> +								  skb_len);
+On 1/8/26 23:03, Dan Carpenter wrote:
+> The "edid->blocks" variable comes from the user via the ioctl.  It's
+> a u32 and "edid->start_block" is a u32 too.  The addition operation
+> could have an integer wrapping bug, so use the size_add() function to
+> prevent that.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> index c3007e09bc9f..f054e30cbfb0 100644
+> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> @@ -717,7 +717,7 @@ static int hdmirx_get_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+>  	if (edid->start_block >= hdmirx_dev->edid_blocks_written || !edid->blocks)
+>  		return -EINVAL;
+>  
+> -	if (edid->start_block + edid->blocks > hdmirx_dev->edid_blocks_written)
+> +	if (size_add(edid->start_block, edid->blocks) > hdmirx_dev->edid_blocks_written)
+>  		edid->blocks = hdmirx_dev->edid_blocks_written - edid->start_block;
+>  
+>  	memcpy(edid->edid, hdmirx_dev->edid, edid->blocks * EDID_BLOCK_SIZE);
 
-I'm 99% sure that should be rx_skb->len at this point, it can't want to
-handle a single A-MSDU encapsulated action as if it was as long as the
-entire A-MSDU that held it, that'd likely crash (too), especially if it
-wasn't the first frame in it.
+Acked-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-johannes
+-- 
+Best regards,
+Dmitry
