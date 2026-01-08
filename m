@@ -1,156 +1,137 @@
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01B425CC6C;
-	Wed,  7 Jan 2026 22:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DCA2ED154
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 Jan 2026 18:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767823670; cv=none; b=gZ+K1OHpaD1g0swwR6vkh1yxsa+x21fEzimwp3PClK9EDLZNHDcBBGXqoUglVyRM042u+Ym7m5/S2Pp+9e/jky21S0OOL+6AfPZybq+zKhYW9493lkl0KT4fidF6dsQBHiQrW+Qx+you/yULKFQmtc4LUVpkrDCWrGEEPRE4P/Q=
+	t=1767895706; cv=none; b=b//Jgld+748yK0M5ZcXKWXQZalYfHXf39qVYJdJcqjALu4XsevstYJMdISoAyWCVeynrM48l++LUaFGa12jsRAnbzT/c4hQC0CNh4uozD6SmYMAqcLPQ6Hkai/rjpBOZe9wtIkacuaWJoONLw97NkxVlm+0DgpDLWB/SDxOGExM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767823670; c=relaxed/simple;
-	bh=QyFCCcYsTjiHEpE4lkucaEiMPObsJsUVie7vYC1jM5A=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=njeUbcTuMcYPXMukfJJsqgnzGCyHQOBjKMV4oLNHk6m5LEZgsl2nZu/9hLYMHkL76mHxecKemOzjCSQh7ulKmqStrQH7TuYACgxtKdmWMmK540yw5ZNVeUyHvhexVYlysDNgBeIUrm2ZW3sP+W508RKzBx5F23DEIQk6nDzK4wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=C29YWTci; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K1sb18mG; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1767895706; c=relaxed/simple;
+	bh=8+nP4P6uufce1/Xkb21nw0wxeSTCgFYuFU1qLyDqZRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h053jPmIb8muVv+Br4oTG3thohxwEzQb8S1tnY+e6ypCbnbKxbAWj2iy/zXAjjZEPmR8se5k+crqTDfyK8F+X6FH308FCYZBQ9R2YK8tAsEett96EEYw0XBj3DDT3jTMSe0e6yenXQq2slAuwncdY4vxgqI0tLL8lYXMMBYpB60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1iyscAY; arc=none smtp.client-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="C29YWTci";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K1sb18mG"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id BB5EF1D000BB;
-	Wed,  7 Jan 2026 17:07:45 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Wed, 07 Jan 2026 17:07:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1767823665;
-	 x=1767910065; bh=CAnAv/LJnBSH5Dae/YwF15GHzEwiA2Hav/HN+MtxZkw=; b=
-	C29YWTciMfXwBD4cOVmgUgjFp4qwDAUtrKmB1O5Luq88MnHcUqGnxzUVCvyIZkNE
-	q426bOB859Dte5NbSdNGxEvfgqE8XAaBeN7FXl8Tat6czz9ZwNAVEOJGoLSlTV7R
-	+L0Elgyuq2oT4eVhm8lCLiJH3/rU+Lkn9V34ZabmzCkE+hk/Mx98vG3/dOdty4O9
-	eyVQpSTu1v3x3xirBaazz+a7J+AI12SqedCr6JpHkKbl8o9sXGqjnY5ZUciQE4/d
-	5rZx/dQHF0P1Qn1R5LBqDe4079SdfavrbkB2DxMEH7MEKJdqLejGUJnyyZ5fnWRA
-	Rir88/LDn6OSyWDA+VH2BA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767823665; x=
-	1767910065; bh=CAnAv/LJnBSH5Dae/YwF15GHzEwiA2Hav/HN+MtxZkw=; b=K
-	1sb18mGLVllhcekE6stdN/s3CZ9HbWawIH3QiDATvp52a4BTlPCkFUwyk7vVDFfV
-	P5pWBVA2RprGpcvohlHAdemVdPYp8ZE3zx6o59GpN/fNv6CqlCgM0YqJxBUSjtZ7
-	Z1/JlQQSkKolgp7jR7uM/J4IpwjXs5tUI8w430D/YB3UyPPmqnVleOcwmDXdlSWe
-	nLqZaEfPlysKovkLDlosomRNJKEb2VwuugN769TPimgKTR5wxH+WTk3EHqR7komJ
-	CIBw6WHRQc2UJd6327X4J2oeUjyh6QaUzuG2IGvgHKuqq+ySVcNYHI+kP5JgGKZL
-	9Bhop2uAs1VcGk1GvYwLw==
-X-ME-Sender: <xms:MdleaS6IGX4ez3oVOiAk_mXHi6sUkVofqfrP3DmqTgG2t6l1KjHqvg>
-    <xme:MdleaWsjL-txPMUuYbZofuX8DYUhgfJMq1w1BPtprMEFYHqEuhs_gqWVj05pF4D13
-    jrz9QHqYVzbvsNhKOgfyrfYGrVdb6MbbRBZNme1syCvNb8Ped47WA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdegvdefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtg
-    hpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepkhgv
-    vghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrgiisehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtg
-    hpthhtohepvhgvghgrrhgurdhnohhsshhumhesohhrrggtlhgvrdgtohhmpdhrtghpthht
-    oheplhgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehluhhkrghsrd
-    gsuhhlfigrhhhnsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:MdleaaisiOkxXIfDELq7a1mY3wzv0c8Uz7pF7pr0OHanZxjZH5YLEA>
-    <xmx:MdleaW3eYdLg89neg5zDFnrdQw3D-Wlu-zB3ABNyhYM4XGeR4ElafQ>
-    <xmx:MdleadfbTtyPx4Y5xyC8TL-mHDzVLTepoFQ6aszKQHaThYKDcfo6BQ>
-    <xmx:MdleacwB-fWJ5gwo4ZCmjfqYfR9Bll3OwGF54N_UPwIStcvPoSjeXw>
-    <xmx:MdleaXetcZpqDh7T36yAsJHrsdFoop2jdPFMy4zN2ChgziLSHCdSoeMd>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3027F700069; Wed,  7 Jan 2026 17:07:45 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1iyscAY"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-2b07583340dso205713eec.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jan 2026 10:08:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767895704; x=1768500504; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DXUS0sW8xDHB4c+xLKoLwXG7WUF7jqTtXhEgI5LQ8k4=;
+        b=V1iyscAY9v2/2CZBP2RlMuhvD2aXK9N7J9YXbRWTsBciq+MzoT/iOYJ2ReACbCfO+H
+         1RVytVv2btmstKJlg/qA75a5cnua0uG0eHMYbm89lUaBxxmGU+anqjRyGWnzF1kdimbR
+         RjRy7GJH6BFqn5wQKSABf5ZMxD2IEcRbRJJG8fL0t7ARiPzinAb9Lc04PcL/4DCUyhAd
+         kL6unx+DKvg2WyLjHnR54llYb6owUFPp7+UrLGg8gzvBp88YFyn8+cVxLN1eddwg24e2
+         yDzPO2x9dfTX+WcxEl+AS9dRfyjqABYzK1pLiJIQnkYZqykQ53qgn3hmCX2GkQNFsLWM
+         ylfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767895704; x=1768500504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DXUS0sW8xDHB4c+xLKoLwXG7WUF7jqTtXhEgI5LQ8k4=;
+        b=tJgMiVFctW7lGVyLl0KOXtvqLAgWialcSNYuHKIHNR7xEDZ9JK7maL9YhHvhDTBkSf
+         AJes2FO59XiEHStwgYvKLjQou6u7EDqLjfRzGLnUCnWj5Nik52zLycMCbQK+4PBIusvo
+         A54xwjWabjUvLr78jk+JUTBOUDERKxv5GxrDDqp3QCC4+/Fth2yIZ0PNgfio8fbachG3
+         s1Q1yZ5BFWSiXRy6tKnJsDzT7O/n95OekuY2XUzSlCtBKf+X7XS2hY+sZgHdRFK/bsa+
+         EIZS1jqtseV9dcoJHXAuxnzLgMATZx4RylJ/PEXhfxNGtRbY9Z61c9beP1u1ZNhQ0MOY
+         YBJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzicLpjVlaITjzPqJ3z+JTFulLPjPbYdLkM8Q3a++B43TSoF+3d6pUFTqeob4TzekhFq42fFAG5lnZpQSrIJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysYmtqtAHlfs9nkxADH3fhGqfuAAOUeqmRrOo/GD8zA7B+zewv
+	genRcdTk2kI54KWasbee5x/IlSVahOajjjWiixkHtvoCDer4TpBPHvj7kIcdhfO/56xuL/scXJe
+	OSvwuMpJ9PLAteF+b93YY38lIaiUwRDs=
+X-Gm-Gg: AY/fxX7dn7ccLurvEg7VzNjv57wQCjoHi7BiOzIvKPy0Q1z06ZUVcaLOSk8SBIPbe6x
+	vhtg4N5UqGSws14/4aIbX1kDdqqMwl8Z9Bf4epHhk8OWHXYDRTT7hYShYt0on5zFacXtpoXlFo8
+	+jHUiFvIMuwIQWysOikRpssO15W+sm4V7OHjFN0hx2HmaxKH9voqwBh5gWOl4eumjDJOnsoEm6b
+	M6zmo+tnTSDPzQZimZnIzVWKdMthpBo8TSOB+hnIeGHNOd6HkppP/jn3zCIKUysddjTS+gi
+X-Google-Smtp-Source: AGHT+IEMxYW5olsKhaFfSHEchb/xPWvGCY1hA4pzxMkgokTlS6YbyEil5FB2/wbNWl91n/7QB6Jp9tN/G6GmQ66/ivs=
+X-Received: by 2002:a05:7022:6723:b0:11a:2020:ac85 with SMTP id
+ a92af1059eb24-121f8b7d702mr3293866c88.4.1767895703446; Thu, 08 Jan 2026
+ 10:08:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A8i1WEG3jGmR
-Date: Wed, 07 Jan 2026 23:07:03 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Will Deacon" <will@kernel.org>, "Marc Zyngier" <maz@kernel.org>
-Cc: "Lukas Bulwahn" <lbulwahn@redhat.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org, "Mark Rutland" <mark.rutland@arm.com>,
- "Vegard Nossum" <vegard.nossum@oracle.com>, "Kees Cook" <kees@kernel.org>,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Lukas Bulwahn" <lukas.bulwahn@redhat.com>
-Message-Id: <7b7ac65c-773e-48fe-a335-c49b6ef9a0e8@app.fastmail.com>
-In-Reply-To: <aV6CpBCvr37mcv7W@willie-the-truck>
-References: <20251223110730.121239-1-lukas.bulwahn@redhat.com>
- <aVwkIYMyoe7OpeUh@willie-the-truck> <86h5syn8ww.wl-maz@kernel.org>
- <aV6CpBCvr37mcv7W@willie-the-truck>
-Subject: Re: [PATCH] arm64: Kconfig: deprecate redundant ARM64_USE_LSE_ATOMICS
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <66adb62e93993ac0a70fdbe174908c36a560b98d.1766330018.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <66adb62e93993ac0a70fdbe174908c36a560b98d.1766330018.git.christophe.jaillet@wanadoo.fr>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 8 Jan 2026 13:08:12 -0500
+X-Gm-Features: AQt7F2qpeJJDtMGtlgzzhVlKAJGrFRpZjPdprLstNhcJ3aZVDrytkh8Vd6C19_4
+Message-ID: <CADnq5_N3JiRShWTa7N+C+b_-cBxOiyAo_XiDSn0W-J3LaUfqgA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Slightly simplify base_addr_show()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 7, 2026, at 16:58, Will Deacon wrote:
-> On Tue, Jan 06, 2026 at 01:54:39PM +0000, Marc Zyngier wrote:
->> On Mon, 05 Jan 2026 20:50:41 +0000, Will Deacon <will@kernel.org> wrote:
->> Subject: [PATCH] arm64: Unconditionally enable LSE support
->> 
->> LSE atomics have been in the architecture since ARMv8.1 (released in
->> 2014), and are hopefully supported by all modern toolchains.
->> 
->> Drop the optional nature of LSE support in the kernel, and always
->> compile the support in, as this really is very little code. LL/SC
->> still is the default, and the switch to LSE is done dynamically.
->> 
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>  arch/arm64/Kconfig             | 16 ----------------
->>  arch/arm64/include/asm/insn.h  | 23 -----------------------
->>  arch/arm64/include/asm/lse.h   |  9 ---------
->>  arch/arm64/kernel/cpufeature.c |  2 --
->>  arch/arm64/kvm/at.c            |  7 -------
->>  arch/arm64/lib/insn.c          |  2 --
->>  arch/arm64/net/bpf_jit_comp.c  |  7 -------
->>  7 files changed, 66 deletions(-)
+On Sun, Dec 21, 2025 at 10:31=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> I think we should go ahead with this.
+> sysfs_emit_at() never returns a negative error code. It returns 0 or the
+> number of characters written in the buffer.
 >
-> Initially, I thought we'd need some surgery to cpufeature.c so that
-> cpus_have_final_cap() could take the _likely_ path for LSE but it looks
-> like that's only relevant for KVM's AT handling and the common atomic_t
-> APIs use alternative_has_cap_likely() already.
+> Remove the useless tests. This simplifies the logic and saves a few lines
+> of code.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I'm not entirely convinced by the direction. Removing compile-time
-options and complexity from #ifdef blocks is clearly an advantage,
-but I'm a bit worried about at least the ARM64_USE_LSE_ATOMICS 
-option still being valuable.
+Applied.  Thanks!
 
-The boot-time patching for all atomics adds complexity as well, and
-being able to configure it out can be helpful in a number of
-scenarios:
+Alex
 
-- I've seen several scenarios where code size is extremely important,
-  and being able to compile out any runtime-detected features 
-  saves some space. In a defconfig kernel, this is about 1.1% of .text.
-  Being able to select just the LSE version without the patching
-  may be even more valuable these days, but almost
-  all embedded systems I see are still ARMv8.0 (Cortex-A53 and
-  Cortex-A35) without LSE.
-- We have an experimental patch set for CONFIG_XIP_KERNEL on arm64,
-  which inherently requires not patching at all, and requires
-  the opposite patches for other features and errata workarounds.
-- The amount of nested macros and inline functions for the arm64
-  atomics is large enough to slow down compilation, #including
-  linux/spinlock.h shouldn't really result in >1MB of preprocessed
-  source code. (this is a much harder problem to solve)
-
-      Arnd
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c b/drivers/gpu/=
+drm/amd/amdgpu/amdgpu_discovery.c
+> index 20d05a3e4516..b44f0710b00e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+> @@ -888,22 +888,19 @@ static ssize_t num_base_addresses_show(struct ip_hw=
+_instance *ip_hw_instance, ch
+>
+>  static ssize_t base_addr_show(struct ip_hw_instance *ip_hw_instance, cha=
+r *buf)
+>  {
+> -       ssize_t res, at;
+> +       ssize_t at;
+>         int ii;
+>
+> -       for (res =3D at =3D ii =3D 0; ii < ip_hw_instance->num_base_addre=
+sses; ii++) {
+> +       for (at =3D ii =3D 0; ii < ip_hw_instance->num_base_addresses; ii=
+++) {
+>                 /* Here we satisfy the condition that, at + size <=3D PAG=
+E_SIZE.
+>                  */
+>                 if (at + 12 > PAGE_SIZE)
+>                         break;
+> -               res =3D sysfs_emit_at(buf, at, "0x%08X\n",
+> +               at +=3D sysfs_emit_at(buf, at, "0x%08X\n",
+>                                     ip_hw_instance->base_addr[ii]);
+> -               if (res <=3D 0)
+> -                       break;
+> -               at +=3D res;
+>         }
+>
+> -       return res < 0 ? res : at;
+> +       return at;
+>  }
+>
+>  static struct ip_hw_instance_attr ip_hw_attr[] =3D {
+> --
+> 2.52.0
+>
