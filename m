@@ -1,94 +1,62 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067BC1D9346;
-	Thu,  8 Jan 2026 22:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767911233; cv=pass; b=Zx+0BGpStUcsKNwETgpmMe2qA/VNRGrrGUEq6LqDmrD2GcHR/viDeCVZbn+abrNcj4Dcd6BkGAMtfSPJZ99f6zOli3f4aiO0utOJA2Wl3rCFCB4xl3fYarT+1J5BDe0mI7ELZf14/IGhmsilo3hdQ/I005qNRS5eZZxUXM3kNKk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767911233; c=relaxed/simple;
-	bh=95jlgZwd9kMfUqnotcJNiYdKdz5zCyqtwdcDbLE61FM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tgfj3Y0hH/qAsCs5BK3LtRUauntFnWmQ9aXjy3szi0Wjp2HrTDgzEnT1LTtHhFtDaf7/WyrTG0giCGtA/V3EIY/HEJMVVyNsQr/Fqz8JeDTv5N1/GT8S5StWUXzAjisYD4BftM1I2PLg+ak9tTlXuBU7jYlWdCM23wyxML/Li3Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=JMEchq72; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BE03148BB;
+	Fri,  9 Jan 2026 15:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767971026; cv=none; b=iYxeHNUBv64v3AK4zgQaeoo8Tgf2LcNcOeABHXqEzvoWoD5GKwvZD+6pCPZmpHA6rZ6Ws/cCHy+dvfGxq9kWPQc3XCXmnWVyNfMsX8eCM4MyU5VKnapH34hxCtSF3VM55TPnPUOAr8sJKfSCtZFNCREQijjgfsf2Gmdg9mbnfcs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767971026; c=relaxed/simple;
+	bh=MU4L6YrIscxHINz9rWxdKBEEhkbpzgLsEuPMp8ps2Bc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LORIUWknqvIgRtFFihdt4XULBdrmtjj3A+naJd5uP5xiTH1mLPgW62Fa6Y7aMEV5Dv+E8Ul/Hj+LX6Ba6DmlQVrAswE0IPwTAImJjRiz5UOmxX/s9GGKogRwaMepbj3F5y0oW92+r/qwl+9MzYtKCS3jWnRSfcM0Dtzm7x1yf3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G46U0/m8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="JMEchq72"
-ARC-Seal: i=1; a=rsa-sha256; t=1767911215; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=A8KLZpmn7MOSCJcsfyyH3yeLflAIMDcdMDuBJMnxwAE7A6vdm8Q7upgYcE9NvSKFTIqG+iDKzFOyENCboK6ZgxxBN3e1ulXQVgKuQvmLUeiMEys03WheezjFXZWqWn1O/7lQJOApQdjYEZItwsz5PXTDn/McUXefW4ixwl07rh4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1767911215; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bSajWblRK/fbmIiboDgzgrtbFO4QpuM4aaPWjj8c+p4=; 
-	b=ZZVVgsIXJKjKv0+r0g1LYxez1BqeUZHbUPKRzA2/7JpBxcPbJGRi4Wv/N+pkKKKstyOXBvydDBWwmt6poliyu9AAVjxd8U38kHMf7KTQxW+oKB34fk4bs6K1c/hQjeL++vTMhPE/4gJJ6Vuln7YQYXV3jq613fefbOBXYz0+b0A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767911215;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=bSajWblRK/fbmIiboDgzgrtbFO4QpuM4aaPWjj8c+p4=;
-	b=JMEchq72MUGGJDUGWsiDRSMTgevq35jyKN/xZWUJdigtjQ8t8+Ni10ljbabyNCJ2
-	HnzkIb8TLZURG3gOiBm1g/GPLkMUZnoacb44JdUhI1RRJEGFeeeYRfEan8Bw4EzQoi5
-	QH6jZdMJdMAu9Glpjs9yIYGBK4JdGy+S6Ha7L9jw=
-Received: by mx.zohomail.com with SMTPS id 1767911213578185.64866105464432;
-	Thu, 8 Jan 2026 14:26:53 -0800 (PST)
-Message-ID: <af5546be-50d3-404a-be76-297139988b80@collabora.com>
-Date: Fri, 9 Jan 2026 01:26:48 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G46U0/m8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15EA0C4CEF1;
+	Fri,  9 Jan 2026 15:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767971026;
+	bh=MU4L6YrIscxHINz9rWxdKBEEhkbpzgLsEuPMp8ps2Bc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=G46U0/m8aaQ3uMsNZZIZ8qEMSkZf5LnjP5rlzG1edLnINv/fKLkHtJhA3dhkihSZV
+	 8MG6E6yGe/S2zeU2Avwm5pWXY/vGTUVEelAdECh9kKfgKH+L2ROnw3A4O4wbU0YVNs
+	 n3vCH3BKUr9BJaXMryWXM8h0qX5NirW9j2HrWndEq98Zcfs2w5pBylLhJsFUDdWtCx
+	 OmVEv2+6p4vaOrGMUkCMwacA1nWoegj6NIcdl6ll494U1dVCe1qmh6tXw9dXRZKYyb
+	 aT+EmJfNvQkWHlJdUNmwRK44zG3DeE3eUVAhSKko4gvJ+Rw1ABZ0waJck8W94foilX
+	 spQcnp9DY7vvw==
+From: Carlos Maiolino <cem@kernel.org>
+To: Christoph Hellwig <hch@lst.de>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aUUqDiGqwfmDcY_p@stanley.mountain>
+References: <aUUqDiGqwfmDcY_p@stanley.mountain>
+Subject: Re: [PATCH next] xfs: fix memory leak in xfs_growfs_check_rtgeom()
+Message-Id: <176797102479.430235.6714661375529863593.b4-ty@kernel.org>
+Date: Fri, 09 Jan 2026 16:03:44 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: synopsys: hdmirx: fix integer overflow in
- hdmirx_get_edid()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Dingxian Wen <shawn.wen@rock-chips.com>, Hans Verkuil <hverkuil@kernel.org>,
- linux-media@vger.kernel.org, kernel@collabora.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aWANkxRApxDeReRW@stanley.mountain>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <aWANkxRApxDeReRW@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-Mailer: b4 0.14.2
 
-On 1/8/26 23:03, Dan Carpenter wrote:
-> The "edid->blocks" variable comes from the user via the ioctl.  It's
-> a u32 and "edid->start_block" is a u32 too.  The addition operation
-> could have an integer wrapping bug, so use the size_add() function to
-> prevent that.
+On Fri, 19 Dec 2025 13:33:50 +0300, Dan Carpenter wrote:
+> Free the "nmp" allocation before returning -EINVAL.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> index c3007e09bc9f..f054e30cbfb0 100644
-> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> @@ -717,7 +717,7 @@ static int hdmirx_get_edid(struct file *file, void *fh, struct v4l2_edid *edid)
->  	if (edid->start_block >= hdmirx_dev->edid_blocks_written || !edid->blocks)
->  		return -EINVAL;
->  
-> -	if (edid->start_block + edid->blocks > hdmirx_dev->edid_blocks_written)
-> +	if (size_add(edid->start_block, edid->blocks) > hdmirx_dev->edid_blocks_written)
->  		edid->blocks = hdmirx_dev->edid_blocks_written - edid->start_block;
->  
->  	memcpy(edid->edid, hdmirx_dev->edid, edid->blocks * EDID_BLOCK_SIZE);
 
-Acked-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Applied to for-next, thanks!
 
--- 
+[1/1] xfs: fix memory leak in xfs_growfs_check_rtgeom()
+      commit: 8dad31f85c7b91fd8bdbc6d0f27abc53bd8b1ffe
+
 Best regards,
-Dmitry
+-- 
+Carlos Maiolino <cem@kernel.org>
+
