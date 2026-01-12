@@ -1,59 +1,61 @@
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B09134D3AB;
-	Sun, 11 Jan 2026 17:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1034523AB81;
+	Mon, 12 Jan 2026 01:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768154343; cv=none; b=ICVhJCy+5hnUggTMcXw4BUi+c0Jwgl/tD3cqh1MtTldQyPu5hMgrDoiAaZ+LXPqaVPDykaTr3ylllhMgLR2wM+mYz57Uu0+CY+jnLXtjMlN8QKaIMqrI3OoOQovNmSID+E/ihCkin8i/1hiLZj/MBwDoGNFoxvYy5ezeK5Iy/Y4=
+	t=1768182979; cv=none; b=qtefLlLzYNBDeUUvYq7prTJwQ4Q1TYC/Uc1VjtnlypwfhSzEcpdjFidpHN5COfjdoSfmuY0qvUmX0JnR2IAG2lpHtVGJ/UTipTZ5D47VIPSWtX1UkNXpda+X0u5VB9evPRFHZtfKjJOonP+PlPTw5hffaMMzG5sZa1kGYi0kC2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768154343; c=relaxed/simple;
-	bh=+J/nRSm2XyRHF4OmLhAPR45Cdfa0FEIlpVyqCrCHSIg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=g8iBqtTtT+QbTwitJ9+ed/IoCrXGHB3fyeSp8DXHl6vpBxDEAoMQRtz8bt97niTtBQYqaH2YPIPl8qWoJ6taCCaoKtfY8ddU7D9uqgkS8OYMIOa+XUbq7iMIUDkyT0OPGV+IPRHVX5cm1uKw+1/HcLoxtxb2SkfSA/fsUHM/ioM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 7D1F792009C; Sun, 11 Jan 2026 18:58:53 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 793EE92009B;
-	Sun, 11 Jan 2026 17:58:53 +0000 (GMT)
-Date: Sun, 11 Jan 2026 17:58:53 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Askar Safin <safinaskar@gmail.com>
-cc: kernel-janitors@vger.kernel.org, linmag7@gmail.com, 
-    linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    mattst88@gmail.com, patches@lists.linux.dev, richard.henderson@linaro.org
-Subject: Re: [PATCH 1/1] alpha: trivial: remove ^L chars
-In-Reply-To: <20260111113505.2146705-1-safinaskar@gmail.com>
-Message-ID: <alpine.DEB.2.21.2601111743490.30566@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2601061310110.45251@angie.orcam.me.uk> <20260111113505.2146705-1-safinaskar@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1768182979; c=relaxed/simple;
+	bh=DyZDhq6OpGf+3A6QGeEtyg/y1/o34+5hDXKEkLVnoVU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QfGJqceMg4C5B11qaS/l/2yvxj1iYtkLPhxEass9gjvsuBILwofNRwOplDabOaRGkyFqkHUBHVvGdEpWJ4/st7fOe82OGKSrglfaaYIvcUIgMG9/ENlS1GSBEbLfRU7ay7RQV1x4lYKfERg8+AJHNFrAQOyMrKdZSywQHMQ2Ays=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C112C2BCAF;
+	Mon, 12 Jan 2026 01:56:08 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 27B96180730; Mon, 12 Jan 2026 02:56:04 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Andreas Kemnade <andreas@kemnade.info>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20251107123621.425633-1-lukas.bulwahn@redhat.com>
+References: <20251107123621.425633-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ROHM BD71828 CHARGER
+Message-Id: <176818296415.643060.6329583569295254029.b4-ty@collabora.com>
+Date: Mon, 12 Jan 2026 02:56:04 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Sun, 11 Jan 2026, Askar Safin wrote:
 
-> >  As a matter of interest, why would the presence of ^L characters cause 
-> > any issues?  That is just another instance of white space and it has been 
+On Fri, 07 Nov 2025 13:36:21 +0100, Lukas Bulwahn wrote:
+> Commit 5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
+> adds the file bd71828-power.c in drivers/power/supply/, whereas commit
+> b838cecc2291 ("MAINTAINERS: Add entry for BD71828 charger") from the same
+> patch series, adds a section referring to the non-existing file
+> bd71828-charger.c in the directory above.
 > 
-> I have shell script, which allows me to remove given config (for example,
-> CONFIG_NET) from whole Linux source tree. To do this, this script parses
-> .c files, Kconfig files and makefiles. So, I want them to be as predictable
-> and easy-to-parse as possible.
+> Adjust the file entry to refer to the intended existing file.
+> 
+> [...]
 
- What prevents your shell script from interpreting ^L as yet another 
-white-space character?  I don't think any limitation of the tool you've 
-chosen is by itself a good justification to change the work the tool is 
-used on.  Fix your tool or use another instead, i.e. match your tools to 
-the work and not the other way round.
+Applied, thanks!
 
-> P. S. I don't see your emails in my gmail inbox (not even in spam folder).
+[1/1] MAINTAINERS: adjust file entry in ROHM BD71828 CHARGER
+      commit: 04aa3d6dddaf39ecc9735d0b62f46899db71d35e
 
- Correct, GMail rejects e-mail sent from here.  It has for a while now.  
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
-  Maciej
