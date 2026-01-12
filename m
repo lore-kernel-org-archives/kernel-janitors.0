@@ -1,83 +1,83 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FDA357A4C
-	for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 12:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA44358D1A
+	for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 12:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768222500; cv=none; b=oWZU20DbQmusW6U2ltdebLkY7enTvr3n1/NPKNdAe2NsP12nW+Vh8qCwMHSfMlRYNy3T+J/Rqe5g6od8x1JSpLnTUj9RNfX0NINZRzpb+DECrgC8IF/HpCDxV/UgltnYM8MQ0bG9hrZvh25OAi9niXs9aJOJyrXMVGBAsGo1Gcs=
+	t=1768222501; cv=none; b=t0j5EP8TJIj99PGxtdhy26kj+/FtZiVaJ8/euQG/0JKLLU+Qf8wKSFMEfbH4GTBnCLZCU+VxWosCCOzmJTcL97MuqmB5fT+HPrH8Q9nwjkMc7qNG1mjUqzztXK3+O//pHiMvZNzpFpfmCWZ4nEtuQbyYp0VngoVEcXlSFxWA6CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768222500; c=relaxed/simple;
-	bh=g9OI/f7GPo7UC+3XBPVRxdeF9Ovm1CbV3RBtTLw0PK0=;
+	s=arc-20240116; t=1768222501; c=relaxed/simple;
+	bh=9AA+6Xkc06ZNRttRTO7oNESMzk9GkeD69hB4TdB8dWk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oV7XpAfyKUxg1mckHe2MZ7VMxncPuNuqOL8p8KMnmib7uSt85mMtdg8tUmrNLNr1qLzFq7eANRIryHAw8siy3omVEH31ax+nJkoYFYxq3mjZTCFmu2N+jRtEpC0jKCXVzzC2L3ytyBHPkd+TAgkq2oSnaHrM0Lm36Jm6j0yfmZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U8qDhqm/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PGrRpuHp; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=QjkU7j9Yz1B/YGWLS15juqcJ84E5Ow9HczslGfuDXZnYQE5O1eLvIV31D3+Vb7UMFnJDGvo8LznY9mrWfi1oOnOu9ihKeuABVLUUdt13IdCOeRU4vd45kzJ+3/MWtE9BNUNy3B8h6IzMNWJg5xDcrlft94uLgUuUgLQdgKMuDl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dVu6d5Nx; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvYoMKc0; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U8qDhqm/";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PGrRpuHp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dVu6d5Nx";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvYoMKc0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768222495;
+	s=mimecast20190719; t=1768222496;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7Cm1NSak9WVWnM5l9pqLl0T/8D4EW3BK+pbycyB1csg=;
-	b=U8qDhqm/QouL+OVcKMCVWlK8Yf6s8CXGiw5AFGeaziqz6WAYnvLPcLqpbq7goo31R2ZSgI
-	4W3cLEgimLRF2gS2bKfg7kgbTEfCJaacfdcYSvJNniDoNUfRRu+exkys6OiB2twn/pUHPC
-	ByHe0vL5QCcYIkQVEsKaISGISeQK3mY=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Aw/NV8LRyH0v6ORkecK6sJJhDNFc4SC6s3IiJQNZsCk=;
+	b=dVu6d5Nx5yczr7v7xshGoVLgrFA+2+4Bx/HakJLjATpeBEAPwbJmjBVjW8WuS2ZIlwk2ik
+	RjTqfDeLQ7DEzBjW4pwZg4OENXqoq1Mb2sl2tRib+0KbJKgwxYW7IYcvxHaIBCYxyqe1Zk
+	afbROlkUdLVfuKefBa7tk0ZkOkN0TPs=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-161-Vx7TJX6bMOitoJoxWXfKNw-1; Mon, 12 Jan 2026 07:54:52 -0500
-X-MC-Unique: Vx7TJX6bMOitoJoxWXfKNw-1
-X-Mimecast-MFC-AGG-ID: Vx7TJX6bMOitoJoxWXfKNw_1768222491
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-64d251b8c5dso7562622a12.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 04:54:52 -0800 (PST)
+ us-mta-301-m3or2HuCMMeS9D62Vz0oiw-1; Mon, 12 Jan 2026 07:54:55 -0500
+X-MC-Unique: m3or2HuCMMeS9D62Vz0oiw-1
+X-Mimecast-MFC-AGG-ID: m3or2HuCMMeS9D62Vz0oiw_1768222494
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b841fc79f3eso641905766b.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 04:54:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768222491; x=1768827291; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1768222494; x=1768827294; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Cm1NSak9WVWnM5l9pqLl0T/8D4EW3BK+pbycyB1csg=;
-        b=PGrRpuHp6XAv6NVVAkpcDp21tm7nihS9zq2XYs//GwixUYEJCwpb0eEmltgx0yJ/xo
-         jxY4w0TPH2ypm5YwtIp9lwl0800/iv65+zg0+30xTQ0HmiOGQKDMORpaxmIpd0jbqmrO
-         aOpQRgp3pA4UpDAFdhmQCCXKf6AW1WyS5/XNNfk+Ir2vwoBtKtb/MiDnCbFFDoRbAXfE
-         MiI7kfETpwEORQDtijJvyLs2zeGCOhFxnHe15ATxC+o473lPMuIHl5o1H3GLtnuGKA8p
-         cresY53qFFAm8n0OEFLzh1DPj7qJedHqrAtWAHtjMxlyXonDdxMgLPfAkTgQfu0ddnjC
-         7loQ==
+        bh=Aw/NV8LRyH0v6ORkecK6sJJhDNFc4SC6s3IiJQNZsCk=;
+        b=UvYoMKc0kKHzHOlmfPz746OTgXzILzb5qA9R/0Xv7FL7h7kvLMA4nZSHablQURMXSL
+         x7t2Pzs/23OZhL4nPPY65DFjdM9XY+ac3pSA8P5mzsguFS7sC6Zy6IIM2jEZtPVbESuP
+         AqH8aiuFL7i++fRBST5zLOY1rlbwBPhBR9oQmzrnfgAKyu90ASEpyGb50fPVMt8KJ/cs
+         EbueGRx+IKpaR4x3X70Qm1Y821iO5EngzcUe9xzD5YZRBzbfpH18D/1+zdmdl9uQL2Kt
+         zKCdOFI2aokPbRcV8dnnxnWgQbk6kJ8xEpJBOVx8HQBzO5xX/t2U9RI/9oKQsU6EzIbq
+         uNWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768222491; x=1768827291;
+        d=1e100.net; s=20230601; t=1768222494; x=1768827294;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=7Cm1NSak9WVWnM5l9pqLl0T/8D4EW3BK+pbycyB1csg=;
-        b=Npt9/EQA6yE3TIgpm1Q3x478SjDna5/ctRElIcRLF/3l/LP6nqH8+1GfYKJ4/ayQTB
-         yTXxt5QTTXRz6jN9R7QYRu/s9rZIG4ZiB+INfCNWMhg4DYN2lRIy3cEBiQLvZ4KGfkOn
-         PlvlVHOHyAqwsCchIBZ1vwtMiUvSwOC7PIGoA/HaWHh0v9arNfodPNxf/00yoUxdm/+u
-         vogQIb+eWOm9zuu5RyI/qb6+jLuNSzCblNT+z3W1XnAbHMm9rHVBny6r3tGhDgkUPi7K
-         9Jd1hdMy0afc/JhSWlomhYQLyFXHTLYXQViIfb9tyvCGT+OttC7zkQyh+zZFH0etufNr
-         JD6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXaC/oKivJFoV2EhtjacXleTISQPEWTXtBkT8EKpeR0qktIHXVII6ve24QxyN3QIlKKMcPrkBwBtUTxZlbwh9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoxmdONVSC3SZZsflf+9MLFOPyYewtGnbrCKyS39ElazM/xK2I
-	+/KgOYzakf/Fkbl+GVSbWgU1td4knGVGLqxwrCIv55zG/b12N6neIJTi+nDuwTdGFL9DLSwf5L8
-	CgNWovD1nyBCd+XFtPoR9wiEK4POVIcx2dtA2C+BEKkyAzkgNf9p6vOcVQSjQdHqiuhOOwA==
-X-Gm-Gg: AY/fxX7KN1xn/TO/qBdkabQq+d18ptEJ4h46mdERQUKRxolL5A7SV8GY87GJot/MUWi
-	MXPO3yaWQvb2LHI4Ua7lyZTj/CB1Yv+JgppOsgBhVzGBz9gWkLq7rIZ+tHIYTeKP9pY/vsvbctz
-	yc/EFBJ02UhsaOmJQChCj4ANIkruUFY9wfhwgLy1sTb0kirIj4QAArlcL19UXnIWWhv7SICEg5k
-	pY4IRi9ZJsmwZ/N5/4BQEXYbubeQSFE29moXjiKR3+nrPu1wa0VHR6d38KM6lYGFNpqBaqI2TgH
-	hc6yLHiR7MIP3NIZtWmkfbmfoz9xCVZzFprNVAbQ/MnTLEMb7LGl3R+X0d6Lo9uq75ES8zQgNNz
-	EZGhpLFNDrz5XUhXQyVDvD6RcPEeDlR7LxJcYhFi2MJl+fnEyYExbbKyZHeQ=
-X-Received: by 2002:a17:906:fe42:b0:b80:3fff:336a with SMTP id a640c23a62f3a-b84451dd5cbmr1891317866b.21.1768222491470;
-        Mon, 12 Jan 2026 04:54:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH3ocOYDaQBm47WQWHUtarwXWjqqK7PcY8X+pPMPt72lDykLUFXJDGh1s3S0jmZSzBP3eyQDg==
-X-Received: by 2002:a17:906:fe42:b0:b80:3fff:336a with SMTP id a640c23a62f3a-b84451dd5cbmr1891315066b.21.1768222490986;
-        Mon, 12 Jan 2026 04:54:50 -0800 (PST)
+        bh=Aw/NV8LRyH0v6ORkecK6sJJhDNFc4SC6s3IiJQNZsCk=;
+        b=iaGNHmfJ/THG+pcV1thA+/rO7PPQbk4vYsYSK3Y2RWwsq9wzv4lmsdz3wmeNkkyB+u
+         XsH3+hFbUf32alVrP/Q/YMYM4qStv5WbchvNf+orTtOrYPxXNIINWpH4ZsVS/1LlURgO
+         Dd2SBSzjMahkFzyQA9I9tLivN1LUD17BdqI6AC4wCU8V/SCtOJ1BBdIJxSdRh9HY6hiH
+         PfCb0fo0WG06JX99wXKZwVxwxKv2urArsuaHnJNUjwbwW/EEM6QueNQGsWrDqnKb5xAP
+         d1sIRZriBLJflBjgPmwSlCcQFiCggpzJUYVnWTEvTvI+JfTf7R/wdsVvgsYchHhcFtXo
+         zGhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiNB1q56c/Yc8joFUgfBjVjMeFBEqGoYeCH119fYaay1/cxzPigvyfrR94YxK9z1ySJO9rOYC9pGXa/wh6NBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl3YxWbBfoWOkVtx/Knn27f27l4NMJZaGZG3FsoMea2YMj8sXT
+	SecoVqMvuxjWGgH/wM4gDcmIqF5fmMoBxhO4j8V6B+IC0ACZup4ZrTRjoBIDFh4iO6t4V0rLDFA
+	0DZ7obX6M5bEl/JKShnv40xQYu3xvUkZiGsWFrpgj9HOlUKMQVWOIuX9gBLVZpdv8HTAeug==
+X-Gm-Gg: AY/fxX5CM7X2LCp6jkXaaR6WR/KDgClHF3D7Yr7WdC/D5wbnR/F6SiwNsrw5/mZuPcL
+	UWSHiimCOSG53CK9CSGcJU1spaA04CQ2lrkS6tK+mEto5KOBS/M1SvdW+X6yC59mj31Ut1l6xdU
+	44ZOPt2ENhjY13SyWLIJSejkpRPSEUIrcJkpcvCRV1jTLFwOVrs6KthbaWfim8ZkC3o62cuSNe2
+	5tpXim0I9d/9SYRIiHbN1hVerE7tQjsXXia7iSCqstunUkxhL7mCTOJPUnLDg9cqwJCiPSFExhh
+	YA2HtSiFh0cFwBi4NZSeI01tp5zXfmUeboHBZvt/QXIWxpqu+nqyoOQxp8/yLWpqiPm/xeD0QdB
+	HSWi0VMtBcLSksZcWVeEnVyHeTkibVXEaA9+e02yOP49NqHUyzt8UNK95hxI=
+X-Received: by 2002:a17:907:b59c:b0:b86:eda4:f780 with SMTP id a640c23a62f3a-b86eda503ffmr427901466b.18.1768222493915;
+        Mon, 12 Jan 2026 04:54:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQQUtq3Zy/c64KpzKtlRB+1NOLYJQC+enp8zQ7vlFIka+NmHMqyup9Wyx1StgQLyix4fqkyw==
+X-Received: by 2002:a17:907:b59c:b0:b86:eda4:f780 with SMTP id a640c23a62f3a-b86eda503ffmr427897866b.18.1768222493414;
+        Mon, 12 Jan 2026 04:54:53 -0800 (PST)
 Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8706c2604bsm497062466b.16.2026.01.12.04.54.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8706c2604bsm497062466b.16.2026.01.12.04.54.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 04:54:50 -0800 (PST)
+        Mon, 12 Jan 2026 04:54:53 -0800 (PST)
 From: Lukas Bulwahn <lbulwahn@redhat.com>
 X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 To: "David S . Miller" <davem@davemloft.net>,
@@ -108,9 +108,9 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [RFC PATCH 3/5] m68k: defconfig: replace deprecated NF_LOG configs by NF_LOG_SYSLOG
-Date: Mon, 12 Jan 2026 13:54:29 +0100
-Message-ID: <20260112125432.61218-4-lukas.bulwahn@redhat.com>
+Subject: [RFC PATCH 4/5] riscv: defconfig: replace deprecated NF_LOG configs by NF_LOG_SYSLOG
+Date: Mon, 12 Jan 2026 13:54:30 +0100
+Message-ID: <20260112125432.61218-5-lukas.bulwahn@redhat.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260112125432.61218-1-lukas.bulwahn@redhat.com>
 References: <20260112125432.61218-1-lukas.bulwahn@redhat.com>
@@ -128,193 +128,43 @@ The config options NF_LOG_{ARP,IPV4,IPV6} are deprecated and they only
 exist to ensure that older kernel configurations would enable the
 replacement config option NF_LOG_SYSLOG. To step towards eventually
 removing the definitions of these deprecated config options from the kernel
-tree, update the m68k kernel configurations to set NF_LOG_SYSLOG and drop
+tree, update the riscv kernel configuration to set NF_LOG_SYSLOG and drop
 the deprecated config options.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
- arch/m68k/configs/amiga_defconfig    | 3 +--
- arch/m68k/configs/apollo_defconfig   | 3 +--
- arch/m68k/configs/atari_defconfig    | 3 +--
- arch/m68k/configs/bvme6000_defconfig | 3 +--
- arch/m68k/configs/hp300_defconfig    | 3 +--
- arch/m68k/configs/mac_defconfig      | 3 +--
- arch/m68k/configs/multi_defconfig    | 3 +--
- arch/m68k/configs/mvme147_defconfig  | 3 +--
- arch/m68k/configs/mvme16x_defconfig  | 3 +--
- arch/m68k/configs/q40_defconfig      | 3 +--
- arch/m68k/configs/sun3_defconfig     | 3 +--
- arch/m68k/configs/sun3x_defconfig    | 3 +--
- 12 files changed, 12 insertions(+), 24 deletions(-)
+ arch/riscv/configs/defconfig | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
-index 3c87c1d181a6..1955fe9812f4 100644
---- a/arch/m68k/configs/amiga_defconfig
-+++ b/arch/m68k/configs/amiga_defconfig
-@@ -200,8 +200,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index cd736a1d657e..0b99a73f43b2 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -64,6 +64,7 @@ CONFIG_INET_ESP=m
+ CONFIG_NETFILTER=y
+ CONFIG_BRIDGE_NETFILTER=m
+ CONFIG_NF_CONNTRACK=m
++CONFIG_NF_LOG_SYSLOG=m
+ CONFIG_NF_CONNTRACK_FTP=m
+ CONFIG_NF_CONNTRACK_TFTP=m
+ CONFIG_NETFILTER_XT_MARK=m
+@@ -75,8 +76,6 @@ CONFIG_IP_VS_PROTO_TCP=y
+ CONFIG_IP_VS_PROTO_UDP=y
+ CONFIG_IP_VS_RR=m
+ CONFIG_IP_VS_NFCT=y
 -CONFIG_NF_LOG_ARP=m
 -CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
  CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
-index 03eaace46fe7..879ce8fa40d9 100644
---- a/arch/m68k/configs/apollo_defconfig
-+++ b/arch/m68k/configs/apollo_defconfig
-@@ -196,8 +196,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
-index 61228b9d2c2a..bb385edfdb95 100644
---- a/arch/m68k/configs/atari_defconfig
-+++ b/arch/m68k/configs/atari_defconfig
-@@ -203,8 +203,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
-index 83fcc12916c5..5fc0f94cb64a 100644
---- a/arch/m68k/configs/bvme6000_defconfig
-+++ b/arch/m68k/configs/bvme6000_defconfig
-@@ -193,8 +193,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
-index 84d477e95fe8..d7c5cb651cf2 100644
---- a/arch/m68k/configs/hp300_defconfig
-+++ b/arch/m68k/configs/hp300_defconfig
-@@ -195,8 +195,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
-index b1e911a138a0..83d811a48296 100644
---- a/arch/m68k/configs/mac_defconfig
-+++ b/arch/m68k/configs/mac_defconfig
-@@ -194,8 +194,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
-index 0a2c3ac6dc7f..8d92432e96ef 100644
---- a/arch/m68k/configs/multi_defconfig
-+++ b/arch/m68k/configs/multi_defconfig
-@@ -214,8 +214,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
-index 2087fe4af3d6..5d4017224a3a 100644
---- a/arch/m68k/configs/mvme147_defconfig
-+++ b/arch/m68k/configs/mvme147_defconfig
-@@ -192,8 +192,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
-index 4af83b643da1..6064459bff9d 100644
---- a/arch/m68k/configs/mvme16x_defconfig
-+++ b/arch/m68k/configs/mvme16x_defconfig
-@@ -193,8 +193,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
-index 56c303097050..75ae71ed6ff8 100644
---- a/arch/m68k/configs/q40_defconfig
-+++ b/arch/m68k/configs/q40_defconfig
-@@ -194,8 +194,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
-index de2a5b27d408..75fade03e947 100644
---- a/arch/m68k/configs/sun3_defconfig
-+++ b/arch/m68k/configs/sun3_defconfig
-@@ -189,8 +189,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
-diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
-index 297b8edcff6d..cdd56ecf4941 100644
---- a/arch/m68k/configs/sun3x_defconfig
-+++ b/arch/m68k/configs/sun3x_defconfig
-@@ -190,8 +190,7 @@ CONFIG_IP_SET_LIST_SET=m
- CONFIG_NFT_DUP_IPV4=m
- CONFIG_NFT_FIB_IPV4=m
- CONFIG_NF_TABLES_ARP=y
--CONFIG_NF_LOG_ARP=m
--CONFIG_NF_LOG_IPV4=m
-+CONFIG_NF_LOG_SYSLOG=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_MATCH_AH=m
- CONFIG_IP_NF_MATCH_ECN=m
+ CONFIG_IP_NF_FILTER=m
+ CONFIG_IP_NF_TARGET_REJECT=m
+@@ -84,7 +83,6 @@ CONFIG_IP_NF_NAT=m
+ CONFIG_IP_NF_TARGET_MASQUERADE=m
+ CONFIG_IP_NF_TARGET_REDIRECT=m
+ CONFIG_IP_NF_MANGLE=m
+-CONFIG_NF_LOG_IPV6=m
+ CONFIG_IP6_NF_IPTABLES=m
+ CONFIG_IP6_NF_MATCH_IPV6HEADER=m
+ CONFIG_IP6_NF_FILTER=m
 -- 
 2.52.0
 
