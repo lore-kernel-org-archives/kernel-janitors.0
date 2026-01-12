@@ -1,121 +1,98 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829DF1E1E16
-	for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 14:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535FC2E093A
+	for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 15:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768229200; cv=none; b=bnqeSwZcaZ+Yszg5C0FOWvKHgHEaH2snj7pLIvvtrhCiuP3WrhlvnZ3AeCiuP0F/4igtWAjTQ6bpeGwiBYE9jDbuIYCUDTShiwQ40n5IZUCX+9psYelfQ1zctyvkC0EhMmE8446zQefGJ5hbBhDewvcqjVrfCsGlGzI/W4UsYS4=
+	t=1768230924; cv=none; b=l9ksllfKg+RsBtX9gRhJRlX53Iq5BON9kNRCC+nEDt3VtuqudgWXj8NHVUZ+XMvUtSKo6G/bb1X5kMnhj+OwzG4Noa+EZAkL50k+yVxlrshCsBgnPFqJpu5HjFro1+sXx7U3hGzAqYgtz0C5EhXNTPxY+vr+9ZL8tAet/6cvyWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768229200; c=relaxed/simple;
-	bh=47xNcXYtEN0ng9qAKOXBkbiW0NSFaIqHEZUXSVPjBMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LY+n1igb+klBONY01f62sOZ3vD9OahlBQW2t3QvUd60dyh8Cb157GnKn4pEXdjTalMrZsGYFwEnTPoEF5EpR184Uaw0TnpTjvpIpXXT6urjRgqhq1Ee/w4K7nWVJfPgL2yOckkB+R/zCBieWOBDiHf/PQFJMu2v29SylgPBBkEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GU5LHsf7; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1768230924; c=relaxed/simple;
+	bh=h6QudfM+BEqfTeHE7YkRJO0iiai84hHMZjRpU5X0XBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQZCXB04soD8I1AkKYgdxXK2FjIL0vQxn9vd4AZAssO1btCHjAXMas3UKw1EBiVHZl08vBJhp83KBZu0kb7iVfaICPAKuWs+kRdC0ALjha4pfIWhgAysHs3/7F+MZhaJRFhXWmX3aiHyTmUQLqd4VYGI25qKnx5nNGfBSun6/6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MDRdIALF; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GU5LHsf7"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-34c3cb504efso5072353a91.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 06:46:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MDRdIALF"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4779cb0a33fso70337115e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jan 2026 07:15:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768229199; x=1768833999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xjc6M9tmGl5hN1Yu645jKd7QvQ8TOMfGzm863v7vtE4=;
-        b=GU5LHsf75SfJ7e3SdDIgVwto3gqw+fSOz/5TyI3g//ZR/Ia23PQK/NrsMto+gQRgYF
-         nv3fEwfu1O2KEtycZRbBUSxOz9OL9EfrsrH6bcE/L2OG5bds0dEEGUDDeXvrWO7eemA7
-         z1sQzv4lhzlcBVOnH+UKUiaKfvRKuRk5rpHX1nQL8rUJccScFagjpOQKbDULI/kJ1DgT
-         Pp5vSHwC4KNke0ubOueECQfWWDKglLJZ0uO4vdEbT9e2Hcv4QkJ5mcACAnnexfHuiKAN
-         EwVT6iTSAKFOkFOrd+4sqPsPQ1KbKOCRIcJ1Uiyz3hSErk5oUwWxL4tnrzPHrYWaAw/F
-         lZpg==
+        d=linaro.org; s=google; t=1768230922; x=1768835722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B9FXlOztAQ3v1foaiiiFEOmTKWgsDAmfXBn5g4N5tkI=;
+        b=MDRdIALF7t8MXo6oF6WgMPBTdx1ByRCL6Z7NlLMt66q8Uu/3LP0/X+IQPwF+TLLQ8+
+         Oi6SAE1N5dqRSy/re0vr2sxoA0JI7ibG8Id3HkrmmNpakY6SpDZhxWQT94trxIo5WNTn
+         bkcTgb+qyP4GGWoFEKrS3L7AcDDi+3SbFS2kulvFenNil8gXAMBpDTl5RjQSoUj73RWk
+         YhCaGq5ghTpVkXvRiOs7v63mdB0lbviXssOHHSnypfpd4wAuZ0Up5Jx7tF2GT7/Ic9HS
+         RUdnvIaO3a6VQmKFu5TuXO+ZsTNpZac8HODVB0y5SYmC8UjbxyLIDNuhXoTwq2hpjIQ5
+         41Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768229199; x=1768833999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Xjc6M9tmGl5hN1Yu645jKd7QvQ8TOMfGzm863v7vtE4=;
-        b=xQjPsUWDApq/IWHof0zt3HrqbNuhJAWm+jZiu5GBcycK7GGFZAqd+NfcT+Zpubly+x
-         PLzLl8bmwDtNAjmGW0VLu35NJMDw8bV28eVbgaKNLYGPKVT6a7NYOeSgnBrgbEXa9OU2
-         kJOgIKfBCN3M3irBOz7fIqOkud1aGaB6YvEJ0oJFtWzi2UgnhIWcy9mSfNJfBcQbjhBW
-         xSbt0crIqE1v7bMAPLZp362IroewX+yaZTVdFYogDBeCYeGQYHEFO9zdGBpnrRH8Eo7N
-         ZfQzGkzADzRC8ToIAEQd5Yotje3FDIbe40PG0drZt8KiKudFKaEJTJHtM8Bqh2/nVmxL
-         EH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVD+/6f3LpEFra5mhiCoykn7qZpSV9PHLYNpFMl4rYhmEOdabuzyawF018cgOLaCANk3Td7WJAhYOGWTZI0X0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3kJOMAxGYDdjx2Mk3aadg//36VLiUGJkn1VmziQFXzSX5l9/n
-	PrqRA5wuHVvqkZSeGfryhS9/eFEYRuiEEW1OcVV+gYCNmRJ11CbbjCVN5tJNpIrG6KzwR640CNs
-	66DqOXO3RQPv3/rmAip48aNBaApJtdQU=
-X-Gm-Gg: AY/fxX6qospdBipxk38aohl2ADKH8lkrJIm7J7TcsqRQeu5DyeCjxQ/CEDPgo5Y4HO+
-	orUHzz5wlVM0mMCEjFc+BEHj1de6qpASAHsIQ5191JFcY6sPF8xlhrtaOzM1JVrQJZlWlTFkoY8
-	seAmNXH589v3DfsIcyqoNZIzho/1ffZP4lYiNiONrnWMCm+wp6XCtiwME9bdLn+cVFuSNkjFNB0
-	qG3Tfi3iYQCyTe0yaDQVUrDscnCzaUQLJd/zopWeeB/ILNcDqEdvsZUbfxUFA+HnmoPwVUPK9Sp
-	0m/LJvIYPy5RzoO+qydAkO/pvojMsVT0RAIbRwHY
-X-Google-Smtp-Source: AGHT+IGK1mIUb34t+JTkSSvIdWLdzisbXFU4RsJq4tdtJrHuJ2qQ6EEQfxsl1/i+NVAqAeTOmevUDpjDXGsQz4C25GE=
-X-Received: by 2002:a17:90b:5628:b0:34a:8c77:d386 with SMTP id
- 98e67ed59e1d1-34f68c91bbemr16314050a91.9.1768229198734; Mon, 12 Jan 2026
- 06:46:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768230922; x=1768835722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B9FXlOztAQ3v1foaiiiFEOmTKWgsDAmfXBn5g4N5tkI=;
+        b=f6a4TlvyQWj6WHFH+xX+HdH0YnmwgZa0kdudEnHMF4nuA3ajx1jhgpm1hOHzx4/yV4
+         aEl75MBeqJ495hvz11Ax3zgtWTOzwkeiVzMhPmCI8aGYfKySREJTxY0u85CqPFe79WZB
+         lJK+g8JVseWAr0Hmse+8Jezeqrt94AIb4pkHSSect8TWIfhrGfmfZm+++ruRNksZH2JU
+         WVmZ3LYcYtvooMZs1T5m2P8+IFX3PnTgWv5nQzc3GJFwgRiHbWS0+4zCX/VVV16xBw3g
+         UtJDcd7hz+LhPrWZzg+SR8K29eN1s3Lx2BFmWvGgbcRS6D75MEGhF3PyCPcPOru/9vME
+         SvEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpyfglPSk7BdnAgekpja+rzJPJPRudCuSYErDSdMeWtJVDMQZYPKYxCPrZFqfaooKKkYPRrI2ZEJa5rQMkUlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4+KYBsiO59NH/gHsS5/H9TlloeXBxZaefwyYhdseG4yz2E8ae
+	BCLARe0+Vn92GlKMDWAVzfG0ggl0u5lbyAYOAJBw23F9RSMyer4upl0XiSTpLXX0mEw=
+X-Gm-Gg: AY/fxX5IK6JlUYSQi61sAg+gQ5keKrYORk3LBCW9YjhfsK53+rTWGmPg4nj/VAVHGQI
+	vMCpO7n7KCYrIV6UuxqwnijpYKlYwblnYvtlRMcBCBXwu9eT8GDIBwIIBu8ble1KFBz2i39VrEW
+	yedeVQnmdz1DFHs4Uj1gN2ZFZRSV+Sf+ZBRTyWvlFnqFIXFawJo3IfuGGISa9kbS2mDN2UAaTnK
+	4wJJFCLKjZJktwHWnFH9+ELebxd0ZP83PJLk4at33pyqtOSJHCElEWUtbkdJjRkOS4RF3f6M7ut
+	9lgD9Fr7fWCHuNgpEavJ7iY4WnQkK/wywddFkxE5i+NtBq6O3EnXVCyN2OrT0vZeV7wnKgUuFV8
+	B/4zoZMsVFwLhx0VQX6/l7vYVi9z4E9IHaSktL2ScNBrj7gJ2I/0qlQR/HPfsGf5Br71RldrcZ+
+	PfSFjf19yJVkEzlRpF
+X-Google-Smtp-Source: AGHT+IFO0yPg5n5oM2epf+jZFSWNft4b56dzwR4qk5iFKZhjsdfcK/zEf81nvYnre7YVzrIgmZde6g==
+X-Received: by 2002:a05:600c:4ed3:b0:47d:6140:3284 with SMTP id 5b1f17b1804b1-47d88fc1df4mr187863785e9.37.1768230921406;
+        Mon, 12 Jan 2026 07:15:21 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5dfa07sm38984778f8f.25.2026.01.12.07.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 07:15:21 -0800 (PST)
+Date: Mon, 12 Jan 2026 18:15:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Colin Ian King <coking@nvidia.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	op-tee@lists.trustedfirmware.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] optee: make read-only array attr static const
+Message-ID: <aWUQBSa3dw5HOsVd@stanley.mountain>
+References: <20260109154442.421248-1-coking@nvidia.com>
+ <aWTaUvGu9dlvnJO9@sumit-xelite>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260109154442.421248-1-coking@nvidia.com> <aWTaUvGu9dlvnJO9@sumit-xelite>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <aWTaUvGu9dlvnJO9@sumit-xelite>
-From: ryan foster <foster.ryan.r@gmail.com>
-Date: Mon, 12 Jan 2026 06:46:25 -0800
-X-Gm-Features: AZwV_QjEJFTH8Bbgk4_6aa1ffC8HADv6P0jGsrQmwQ15AeggtFLkF1CcB4gKQZg
-Message-ID: <CAHtS329G-H8vVVr==DZUAetzVNc4couN2OV3tH7qH_7YDGe8xA@mail.gmail.com>
-Subject: Re: [PATCH][next] optee: make read-only array attr static const
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Colin Ian King <coking@nvidia.com>, Jens Wiklander <jens.wiklander@linaro.org>, 
-	op-tee@lists.trustedfirmware.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-This looks like a micro-optimization, const makes the lookup array
-explicitly immutable, and static keeps it out of the stack frame,
-avoiding per-call initialization.
-
-Is there a style preference for read only lookup arrays here, e.g.
-Should these variables remain local but not static, or should they be
-moved to file scope static const?
-
-On Mon, Jan 12, 2026 at 3:26=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
-wrote:
->
+On Mon, Jan 12, 2026 at 04:56:10PM +0530, Sumit Garg wrote:
 > On Fri, Jan 09, 2026 at 03:44:42PM +0000, Colin Ian King wrote:
 > > Don't populate the read-only array attr on the stack at run
 > > time, instead make it static const.
->
+> 
 > Is there any value add to do this? AFAIK, the static local variables
 > aren't preffered.
->
-> -Sumit
->
-> >
-> > Signed-off-by: Colin Ian King <coking@nvidia.com>
-> > ---
-> >  drivers/tee/optee/rpc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
-> > index 97fc5b14db0c..1758eb7e6e8b 100644
-> > --- a/drivers/tee/optee/rpc.c
-> > +++ b/drivers/tee/optee/rpc.c
-> > @@ -43,7 +43,7 @@ static void handle_rpc_func_cmd_i2c_transfer(struct t=
-ee_context *ctx,
-> >       struct i2c_msg msg =3D { };
-> >       size_t i;
-> >       int ret =3D -EOPNOTSUPP;
-> > -     u8 attr[] =3D {
-> > +     static const u8 attr[] =3D {
-> >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
-> >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
-> >               TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
-> > --
-> > 2.51.0
-> >
->
+> 
+
+I have never heard that static local variables aren't prefered.  I
+imagine that because they're often not thread safe?  But if they're
+const thread safeness isn't an problem.  Generally, we prefer the
+scope as local as possible.
+
+regards,
+dan carpenter
+
