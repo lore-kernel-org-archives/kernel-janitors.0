@@ -1,86 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B8535F8B3;
-	Tue, 13 Jan 2026 19:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F019B374166;
+	Wed, 14 Jan 2026 06:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768332362; cv=none; b=lP7x+nuXn1NmCca6bj81sPsHExtdmW2hxdKAQdCWEuV1etgQgZ2q56yAOQ3b3cxXKbST0DjlKVgjHvKMFXNdYg2qtsdb5MDyQvwtDVM5vtKsIIJZQYOF2ropcKyLd4IpIDuQ+DkHRlyepu+NBOIuWuYr+ghz2RSYDO9DEoPNlY4=
+	t=1768373600; cv=none; b=doXJ3AtxOzzWr/GEtyW0JHscvm6QDeO3FP5AvJS3PQGLPhHHreUcImvk4LXaj2P4K0Jpd/HF9AXtUya97eZAfeVJDIflbv7iwC7gITtdrxpiY9F+7DY5jUA4rrWkXi/XlMRElBrxrz+IGx7fPJd0l/TNF3MtAKhQDikIKb6eb/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768332362; c=relaxed/simple;
-	bh=QfE9tdDld62jcRONc3G5Wfpg9QgF5mvAscqXx3Y8ssg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDsNDwScwY9KSjVV+zOvI3e4vQFQ7WZnjYcNHWdneYnjEzFIratJGraGoYUWDoL2mA6+PwlTOmv+U+tFBaus9orceROL5glCXMMlThWNx+bP9Fea4p9P2B7fdZa1j1nnrq+0txm94o3tyNTe/8BNpYMkknK8ySqXQiUcducHThw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4pHT8CB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768373600; c=relaxed/simple;
+	bh=UuE2NEMPmZND9HfmUMJ62Ma7N5cw20GBidbbm4X+/qs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vl0xVWmyWTH72pQiXaVngQ/nbGArI03Ms0qzh4SeKSSoi8tulqfvwKYqrMB9yW4vSMt/Ggc3BtgKZyFD663+zXHUWnlcZwDd2LcNvxIC2Gl0Jsyk9r7nBTUKJLf23NnmgywUeOBkNutrLhyxFU+ZApL99vVb1fX7jY59svH2fak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=B/L1ox3H; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4pHT8CB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98ECC19422;
-	Tue, 13 Jan 2026 19:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768332362;
-	bh=QfE9tdDld62jcRONc3G5Wfpg9QgF5mvAscqXx3Y8ssg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4pHT8CBEdXSkeDUsLsNHhwAyrm51GavxZ/Q6TOUWzqFxBR3jZoLGJVzeajUY9Npp
-	 JPBnnGeyWBwgoPm0auCkj4pQ6P2fCYQeZLl1XwAwr3KAmmcrUdc0mHWIPhI8Irpmj6
-	 uayeg13bPvmTQMrWHR0rZD735sWFI7zN4cJ/nycB1pOSJRidYMAcpEFKl5UoLa4O3t
-	 CF9XuYyD8NUcA67hCFHtAo1UVESnKc26KvUsKzUDgw97r4RzmJIjQZ8wFPT8C9n0dJ
-	 VAWBMpGU1OQxZUYD8yNgZ91jspyPwpxkmGQq0mht5GHh6/cSUCFfcQx55MyGIN+s5Z
-	 4TOzW0bu9X+OA==
-Date: Tue, 13 Jan 2026 19:25:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Felix Gu <gu_0233@qq.com>, linux-spi@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Orson Zhai <orsonzhai@gmail.com>
-Subject: Re: [PATCH v2] spi: spi-sprd-adi: Fix double free in probe error path
-Message-ID: <24f98b92-af03-4a5a-9f22-e83045289c7e@sirena.org.uk>
-References: <176830457213.25724.9815535994112539882.b4-ty@kernel.org>
- <1c068a91-e0a9-4edd-b5d0-c7fde56999f7@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="B/L1ox3H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1768373588; x=1768978388; i=markus.elfring@web.de;
+	bh=4tlCx2XIEio4++jba8riKJqG/c7JTdEBZyiuxQvCPGw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=B/L1ox3HeGvijt7oTmtQoBz9zTO1bE+r1ZKxoWvuP0Ltw+l6t9wDAe1auFysBSJH
+	 2zbcaEP9nIL1YCHy3glGMCD3EHB1P7W2xDWbey/6U/uxVhv/UzIMalfiYm/KLIdT1
+	 qB63SQ2MRd0Bj5rk3HYHImmH1GBWvkbMG0lMisr6+pFW+SBxB+018jjhGihN3uCg+
+	 +Uy1s+OUPr71Qw1JLrFzP2jQ9Q/eE0LmbcFIpMl0ySlN7YpACT3lUpbiFPH1oNYvS
+	 i7fySqbx0xVA2yzgWcDf5HMLpOKZTDhxB1YFnzK6N+6q/YQvxRLuXx50QnFPSDnco
+	 nuheiyxxvAze7XY4vA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.218]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgibY-1wKigC18Mm-00jf9Y; Wed, 14
+ Jan 2026 07:53:08 +0100
+Message-ID: <bc0973d7-33d2-4fd7-82ac-4f3420bfd4d2@web.de>
+Date: Wed, 14 Jan 2026 07:52:37 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="O/SrnPaEPrZwexDk"
-Content-Disposition: inline
-In-Reply-To: <1c068a91-e0a9-4edd-b5d0-c7fde56999f7@web.de>
-X-Cookie: All models over 18 years of age.
-
-
---O/SrnPaEPrZwexDk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] iommu: use LIST_HEAD() for group_resv_regions
+ initialization
+To: Can Peng <pengcan@kylinos.cn>, iommu@lists.linux.dev,
+ =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+ Robin Murphy <robin.murphy@arm.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20260114055320.399056-1-pengcan@kylinos.cn>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260114055320.399056-1-pengcan@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yEAnF9F8CLNaUhSlZYSuMmIKlKmhaDTGFU2WHJsFV/iP4umK2/Y
+ uvAipuUSUa5bFFEVdZgjdFZk/B70B72pGN7wQvkht1e09SKDwKnHQITpReB6nHMv0F0xTi0
+ z/qxpQGL4McWOKHehOFCMp3QOx7IXcNJIH6DpnDoiSqQhTKL7tRxYE3KI61ueQJ+5+9IAwg
+ sSVNPLMHf6djLODpIkAzA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4EeYNVHIn7Y=;tbNCmIhw/Tztrnj7fhAW5+P26P0
+ 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
 
-On Tue, Jan 13, 2026 at 08:20:29PM +0100, Markus Elfring wrote:
+> Replace the manual declaration and INIT_LIST_HEAD() call with the
+> LIST_HEAD() macro when initializing group_resv_regions in
+> iommu_group_show_resv_regions(). This simplifies the code and makes
 
-> See also once more:
-> Check =E2=80=9CBAD_FIXES_TAG=E2=80=9D
-> https://elixir.bootlin.com/linux/v6.19-rc4/source/scripts/checkpatch.pl#L=
-3231-L3269
+                                   Simplify?                    make?
 
-Feel free to ignore Markus, he has a long history of sending
-unhelpful review comments and continues to ignore repeated requests
-to stop.
 
---O/SrnPaEPrZwexDk
-Content-Type: application/pgp-signature; name="signature.asc"
+> the list initialization more concise.
+=E2=80=A6
+> ---
+> ### Changes since v2:
+=E2=80=A6
+> - Retained the LIST_HEAD() cleanup pattern consistently across the file.
 
------BEGIN PGP SIGNATURE-----
+Can you recognise further adjustment opportunities from the presented smal=
+l script
+for the semantic patch language?
+https://lore.kernel.org/cocci/34ed442d-6ebd-4907-a77c-2c08db799411@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2026-01/msg00002.html
+https://lkml.org/lkml/2026/1/12/932
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlmnEUACgkQJNaLcl1U
-h9CafAf/XCYWfQBwsp+Cg343Z9xX5S2BrTbieAtFS/Nj8KUIkK57jjR6duOXDOjb
-PU6gfdbTZ0lx78hDMAvZmR9c16HipZOpXm2x6WWhyO7tSCyMlalXkwOkIUeFdutu
-r7eLHJiHQW2QDy2aM5Blnxt3aBN2Eh5Z2Fctim37nMyGhK88fZRktS3PZl+sc+A7
-oDSpwXMWJCqN7kyuBmqeJcYFCVqk3XJTOajxem9OysYN17v+Qv+eEMaE6kBWVtB0
-DBwAXmk3VD5cPds+EfYnslgs00KAZctzUhXE1zR/zgDkVmPyWhRIu1J9gCAcjLQA
-MBKaIpPt8E3y2mPahqPmhpVqBNI69g==
-=eMuY
------END PGP SIGNATURE-----
+Example for another update candidate:
+iommu_get_group_resv_regions()
+https://elixir.bootlin.com/linux/v6.19-rc5/source/drivers/iommu/iommu.c#L9=
+20-L946
 
---O/SrnPaEPrZwexDk--
+Regards,
+Markus
