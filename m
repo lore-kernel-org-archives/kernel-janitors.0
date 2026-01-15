@@ -1,98 +1,263 @@
-Received: from outbound.mr.icloud.com (p-west2-cluster4-host2-snip4-2.eps.apple.com [57.103.69.203])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450EB30C630
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Jan 2026 16:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.69.203
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085A330AD0C;
+	Thu, 15 Jan 2026 21:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768494068; cv=none; b=dWm/E7ET4s9fjYnE/QzSDKkHXIYMJH+JJeZrnNleKkUGki4y+Wb0xVpuyezsFu406CrUCfEO24Li7/8TS/z1AySWl5B6Fb5W1fQdSblEuYhtSV98YT+jvfilqn0FBbdb4j8YAuAss1KUjUdjYFQ/CDnJh/u1FI+SjDG1rBFkCHg=
+	t=1768510984; cv=none; b=cW+mEZI8ytKlLlXGnicCOvgJrE9KTrWHsIl8YMrsc7J9HQpjQvcfHyTDHZM4VKSQK2GlhDZ9OjBL+uPxAzvnl9QBXjNFDkIfuPsmfaRNetNuK7Wkw8iJuZVaHyGeFMOrs0oPMIj9JoCTlIatap8YIqeEtQuQPBkpPpbS/ratjcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768494068; c=relaxed/simple;
-	bh=OUyVgq7n6ocw8+tH/ttuc+fcP78f5xqqDzDaGHPrNuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iztWSLyVFmpjLdgbKmL+S2jmXHKu1qblcijdzHzr30U6kP2QpCk947JE6FsQNBVhNAEb995gxBxpf8dxo8DrSTSOKyV5Tpwis7+m01V+185YMWEnIooobW9o/5WFxUx1M/72ri42FbwZmdj2rWwDVTUtMpercZHhszgrhB/Aj3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=y-koj.net; spf=pass smtp.mailfrom=y-koj.net; dkim=fail (0-bit key) header.d=y-koj.net header.i=@y-koj.net header.b=fS91y4AN reason="key not found in DNS"; arc=none smtp.client-ip=57.103.69.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=y-koj.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=y-koj.net
+	s=arc-20240116; t=1768510984; c=relaxed/simple;
+	bh=sQmUIyHjf6/5MV5Mi+fJO40spykbutFC+hyyezTBqbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l6DpFGp7nen2f519zhgqlpMPFwh+U9Q11U/o1ZkTMIESvibg4Pt/wqBEfWdRV8C4OtYJQ2RjQEp0q3d5tRI0XaGm8+VpBu4OBzhU9XBuSTdYHkv3+vqsUhDLcGx6Gh+/Pxhl1dMFheDuc8d7hjtshLnJcK2skjRmTTzMeVgF2WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z6ObX7P7; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=y-koj.net header.i=@y-koj.net header.b="fS91y4AN"
-Received: from outbound.mr.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-west-2a-60-percent-3 (Postfix) with ESMTPS id 1A444180011D;
-	Thu, 15 Jan 2026 16:21:04 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=y-koj.net; s=sig1; bh=aH808W6yiWKX0lcyGYLe3fnalzSmDYO3ZMB253efdQw=; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:x-icloud-hme; b=fS91y4ANhGYo7yPgIAtx6NESup1ZJGceGTWF2IXmsVWXZY5AucfX5tQHfs5Fn9YmQeTCLkC+xhoOhYrdSipkFyJQgM/83Yh/ywqA0oNz4Ta8mzW6GGTy4zGiXLF9U2zOtpPTKI6geWtFd1zoSJa8KMerxyXFtd1xaPaFuefGLP/3QafqiBN/Jem5wMgwRjmgIhXIdfsoCaZVV8tb1X2j8rcb9wYi0BJ9vGv8nRV0Tp5kofPnbIgCEgIaXTY7V7P0Y74qaLDLc+GVorlRk3XfC8tPGIjQpE4UT+58vqHJwRlagDCJ43UPagXqjCYnqH/3FwhGT0WKxgpXVKU2cif0TA==
-mail-alias-created-date: 1719758601013
-Received: from desktop.y-koj.net (unknown [17.57.152.38])
-	by p00-icloudmta-asmtp-us-west-2a-60-percent-3 (Postfix) with ESMTPSA id 53EC118013D6;
-	Thu, 15 Jan 2026 16:21:02 +0000 (UTC)
-Date: Fri, 16 Jan 2026 01:21:00 +0900
-From: Yohei Kojima <yk@y-koj.net>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v2 2/2] selftests: net: improve error handling
- in passive TFO test
-Message-ID: <aWkRvBz734sa_1vV@desktop.y-koj.net>
-References: <cover.1768312014.git.yk@y-koj.net>
- <24707c8133f7095c0e5a94afa69e75c3a80bf6e7.1768312014.git.yk@y-koj.net>
- <1696424e-2092-4e47-bd4f-293e2992056b@web.de>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z6ObX7P7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768510983; x=1800046983;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sQmUIyHjf6/5MV5Mi+fJO40spykbutFC+hyyezTBqbM=;
+  b=Z6ObX7P7AWE+cYv3U1+WnCfVHq7reGXEL25phv/FEjrRDAeeL8uGCdPy
+   +dzmOJoQRMVGZTcuamwu96esyn1dRTEV1LNMUcOafLul9BSqqAsYlhpop
+   5UBNn+qzsJl+fWG8rLPYT+rg07113T2op9RpnOShlbCAjExupeHt8kWQN
+   o1oyRVVsh/MN5fWySIWWeWvEvsizyWaxIUPc66b5LwK2cO0yCnVE6Pc+/
+   HIAy52aVJlMGCjzPZ+T2EWPtane3GKLlXV+fBEo3+5EfIYArC5+BlyrUA
+   Gz7o9mmWgNTgts3ClNzTzOQvkD/U8i9S87jHAQAzNI1aOjAFme+Al5TFH
+   w==;
+X-CSE-ConnectionGUID: cePzX6j3TFGDAPXRLIDWrg==
+X-CSE-MsgGUID: aUBzlg+xStCqVaAQ44SH2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="73458623"
+X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
+   d="scan'208";a="73458623"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 13:03:02 -0800
+X-CSE-ConnectionGUID: nDuTqCgpTz6bKnlzRRNLaQ==
+X-CSE-MsgGUID: 6oBwrsiVRomIRJ1EwDXaaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
+   d="scan'208";a="204844179"
+Received: from unknown (HELO [10.241.241.114]) ([10.241.241.114])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 13:03:03 -0800
+Message-ID: <b7c46240-d0b3-472d-87dc-88cdbd8e0b92@intel.com>
+Date: Thu, 15 Jan 2026 13:03:02 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1696424e-2092-4e47-bd4f-293e2992056b@web.de>
-X-Proofpoint-GUID: Y5j5UaESNPWUHeIKiSAldqreB0UtguRO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDEyNCBTYWx0ZWRfX6PHlrvHZ3Dz2
- 7HEBRVJ3hsWICYlYguvKPxyxFgLEIMZWneK9OZ2B8PyZ1w1W7zc6smiA8TDWZjHs+Ymu85j8Xmz
- kLHDbsGei0vUk6YdOnaJ8Rv877ncQcKKfxCxMEhORHwkYdtPZw+DBFjv6oVxdljkVUSiV+rRjJq
- MwBikyLGEOHy+R5zxLPIKH0PRGpH/ypE1EdSdhpbDpMQflYUXDi7OGyYOSR9FhRxbrtZnuG61SZ
- Zq1CJDz9FpQfauPoG35rmLwcsJrm/pu9jQrQ/+xfToVGH8iKvfrApbZRbaykAeAaJs3JAA8/dMA
- oiYkwgNUjlkDSPBDx9j
-X-Authority-Info: v=2.4 cv=bapmkePB c=1 sm=1 tr=0 ts=696913f2
- cx=c_apl:c_apl_out:c_pps a=9OgfyREA4BUYbbCgc0Y0oA==:117
- a=9OgfyREA4BUYbbCgc0Y0oA==:17 a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=jnl5ZKOAAAAA:8
- a=qKQrQ7_CLwTn8uSwdssA:9 a=CjuIK1q_8ugA:10 a=RNrZ5ZR47oNZP8zBN2PD:22
-X-Proofpoint-ORIG-GUID: Y5j5UaESNPWUHeIKiSAldqreB0UtguRO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-15_05,2026-01-15_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
- mlxscore=0 adultscore=0 bulkscore=0 mlxlogscore=771 spamscore=0 clxscore=1030
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2510240001 definitions=main-2601150124
-X-JNJ: AAAAAAABetAzsSZ6/ZjHiPzpY9p5fLxX3cLwYCfpINjrrjGCVem46SQ0ppjb8Em7W+WyglCjc6BiJF35by0x9gA3/ARjj4IAqqBNiyyiW57El1mqVPmBI9pbbUdZgwccgpfbIavn0YKio8wV1AdsU/Yxny/o6LeE8P8ks4V6EwucBipZjiBRV0V4NSivMZKyVVAjvQIemah1ca7q63jwctQ3hzmPUXPq2AbCEvbd4R4oPR1ILUXUIXFC/eSFWpx2cs8OQwogxUsdnZR2duRGIQ1dkSKJyLdVg8iRfp8orKwmQxhHJYLrn8QCHdEUa58f87GHgS9zApMGf5RJOpRZlSLDOXWVoyUKqggPLAgnMQmh4W147gTU9IfA0iuF2gld25SXECmpaqxGAwqBEL2q1E4Pi3/uNpQraFVa2U+pvoo9biiaeoF4VjWcxnrucp5uHcA/k6MkljhjQD1Kj3FLE/rtirzUspyaLwlr7VOQzwQqdRHJoQxuypjtm6iWpq2zy9lPik2hNIBcQ/uND/xbfXujU/HmhhzosN48jjhO+RkWos7mNgPAr6r7pPsCR+0ukXEnvw87dpXpTbGsA/fdUMRELyeOWgVF4gM5Zy18fl/fPYRMd+VRssMJlZLG3Ey9kOxENriR0N8Sl127CBeZrxISdm7Aplww1/UJg2LZQK+j9ChAN43FdeXVKhcWT7qbjEvP5F+OO6WE6oJwrDIxxWIlJv2X6c4ZnUuAY27PH/CAOrJUYU1nInw1Y9A+1WQArEs6v9N+Ceew4wYJQg==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2] perf/x86/intel/uncore: Fix iounmap() leak on global_init
+ failure
+To: Markus Elfring <Markus.Elfring@web.de>, linux-perf-users@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Stephane Eranian
+ <eranian@google.com>, "Chen, Zide" <zide.chen@intel.com>
+Cc: lkp@intel.com, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Thomas Falcon <thomas.falcon@intel.com>,
+ Xudong Hao <xudong.hao@intel.com>
+References: <20260114193825.17973-1-zide.chen@intel.com>
+ <cda9ab9b-4581-409f-a9bb-0e8a67ad3530@web.de>
+ <32386e0a-09d9-4f13-a5e1-c6f9dd3afdfd@intel.com>
+ <25f39aaa-1e72-47ce-92e7-d6b8ecc2750a@web.de>
+Content-Language: en-US
+From: "Chen, Zide" <zide.chen@intel.com>
+In-Reply-To: <25f39aaa-1e72-47ce-92e7-d6b8ecc2750a@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 14, 2026 at 09:33:12AM +0100, Markus Elfring wrote:
-> > Improve the error handling in passive TFO test to check the return value
-> > from sendto(), and to fail if read() or fprintf() failed.
+
+
+On 1/15/2026 1:01 AM, Markus Elfring wrote:
+>>> See also once more:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n94
+>>>
+>>> Will another imperative wording approach become helpful for an improved change description?
+>>
+>> My apologies — I did try to address the feedback, but I may still be
+>> missing something.  Could you please point out what specifically could
+>> be improved?
 > 
-> You propose to adjust error detection and corresponding exception handling another bit.
-> How do you think about to take also another look if further function implementations
-> would be similarly affected?
+> I hope that the understanding will improve somehow also for a development
+> communication requirement like “imperative mood”.
 
-Thank you for the suggestion. The first objective of this series is to
-fix the misleading behavior that was caused by the following bug.
-Therefore, I intentionally limited the scope of this patch to the
-affected or closely related functions.
-
-https://lore.kernel.org/netdev/602c9e1ba5bb2ee1997bb38b1d866c9c3b807ae9.1767624906.git.yk@y-koj.net/
-
-I believe this is sufficient to prevent it from showing misleading error
-messages when the test fails.
-
-Thank you,
-Yohei
-
+For the commit message itself, I’ve tried to improve it as much as I can
+based on the feedback so far. If there are still specific phrases or
+wording that should be adjusted, I’d really appreciate it if you could
+point them out.
+>>> …
+>>>> ---
+>>>>  arch/x86/events/intel/uncore_discovery.c | 15 ++++++++++-----
+>>> …
+>>>
+>>> Some contributors would appreciate patch version descriptions.
+>>> https://lore.kernel.org/all/?q=%22This+looks+like+a+new+version+of+a+previously+submitted+patch%22
+> …
+>> Yes, that was the intention for v2.
+>>
+>> V2:
+>> - As suggested by Markus, add an `out` label and use goto-based error
+>>   handling to reduce duplicated iounmap() code.
 > 
+> We are still trying to discuss the corresponding identifier selection,
+> aren't we?
+> 
+> 
+>> - Add the original warning from the kernel test robot to the commit message.
+> 
+> It is possible then to identify presented information in the way
+> that it is probably coming from coccicheck.
+It was indeed from the kernel test robot report. I’m not familiar with
+the Intel kernel test robot internals, and I’m not sure whether it
+invokes coccicheck.
+
+>> - Trivial rewording of the commit message.
+>>
+>>>
+>>> Is there a need to perform desirable changes by a small patch series?
+>>>
+>>> * Specific fix
+>>> * Related refinements
+>>
+>> It seems to me that the changes in this patch are small and closely
+>> related, so I wondered whether splitting it might be unnecessary.
+> 
+> I propose to apply a more detailed change granularity.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n81
+
+Thanks for the reference. I considered this a single logical fix, which
+is why I kept the changes together.
+
+
+>>>> +++ b/arch/x86/events/intel/uncore_discovery.c
+>>>> @@ -264,6 +264,7 @@ static int __parse_discovery_table(struct uncore_discovery_domain *domain,
+>>>>  	struct uncore_unit_discovery unit;
+>>>>  	void __iomem *io_addr;
+>>>>  	unsigned long size;
+>>>> +	int ret = 0;
+>>>>  	int i;
+>>>
+>>> Would scope adjustments become helpful for any of these local variables?
+>>
+>> As mentioned in my earlier reply, my suggestion was to avoid doing other
+>> unrelated optimizations in this patch.
+> 
+> Will development interests grow for related update steps?
+
+Are you suggesting including this change in this patch? My understanding
+is that it isn’t directly related to the scope of this patch, so I would
+prefer not to include it here. Please let me know if you see it differently.
+
+diff --git a/arch/x86/events/intel/uncore_discovery.c
+b/arch/x86/events/intel/uncore_discovery.c
+index efd1fc99a908..8ab8f778285a 100644
+--- a/arch/x86/events/intel/uncore_discovery.c
++++ b/arch/x86/events/intel/uncore_discovery.c
+@@ -265,7 +265,6 @@ static int __parse_discovery_table(struct
+uncore_discovery_domain *domain,
+        void __iomem *io_addr;
+        unsigned long size;
+        int ret = 0;
+-       int i;
+
+        size = UNCORE_DISCOVERY_GLOBAL_MAP_SIZE;
+        io_addr = ioremap(addr, size);
+@@ -293,7 +292,7 @@ static int __parse_discovery_table(struct
+uncore_discovery_domain *domain,
+        }
+
+        /* Parsing Unit Discovery State */
+-       for (i = 0; i < global.max_units; i++) {
++       for (int i = 0; i < global.max_units; i++) {
+                memcpy_fromio(&unit, io_addr + (i + 1) * (global.stride
+* 8),
+                              sizeof(struct uncore_unit_discovery));
+
+
+
+>> https://lore.kernel.org/all/e7d74d9d-cb45-4f5f-8e44-502dd7c4bcff@intel.com/T/#t
+> 
+> Re: [PATCH] perf/x86/intel/uncore: Fix iounmap() leak on global_init failure
+> 
+> Can the timing trigger special considerations?
+
+Sorry if I’m missing your point, but it seems to me that there are no
+special considerations involved here.
+
+
+>>>> @@ -273,21 +274,23 @@ static int __parse_discovery_table(struct uncore_discovery_domain *domain,
+>>>>  
+>>>>  	/* Read Global Discovery State */
+>>>>  	memcpy_fromio(&global, io_addr, sizeof(struct uncore_global_discovery));
+>>>> +	iounmap(io_addr);
+>>>> +
+>>>>  	if (uncore_discovery_invalid_unit(global)) {
+>>> …
+>>>>  	}
+>>>> -	iounmap(io_addr);
+>>>
+>>> Can this modification part be interpreted as an optimisation?
+>>
+>> Yes, this is technically an optimization.
+> 
+> Thanks that we can come to the same conclusion on this aspect.
+> 
+> 
+>>                                           Since the patch is already
+>> refactoring the iounmap() handling, my thinking was that it would be
+>> reasonable to include it in the same patch.
+> 
+> I dare to point another opinion out.
+> 
+> I assume that backporting concerns can influence this detail also a bit more.
+
+Thanks for pointing that out. This patch is intended as a quick fix for
+a change that is still staging in perf/core, so I assume that
+backporting is unlikely to be needed.
+
+>>> …
+>>>> -	if (domain->global_init && domain->global_init(global.ctl))
+>>>> -		return -ENODEV;
+>>>> +	if (domain->global_init && domain->global_init(global.ctl)) {
+>>>> +		ret = -ENODEV;
+>>>> +		goto out;
+>>>> +	}
+>>> …
+>>>>  	*parsed = true;
+>>>> +
+>>>> +out:
+>>>
+>>> Would an other label be a bit clearer here?
+>>
+>> I’d suggest keeping the label name out for style consistency, as
+>> mentioned in my earlier reply.
+>>
+>> https://lore.kernel.org/all/e7d74d9d-cb45-4f5f-8e44-502dd7c4bcff@intel.com/T/#t
+>>
+>>>
+>>> unmap_io:
+>>>
+>>>>  	iounmap(io_addr);
+>>>> -	return 0;
+>>>> +	return ret;
+>>>>  }
+>>> …
+> 
+> By the way:
+> How do you think about to increase the application of scope-based resource management?
+
+That’s an interesting topic, but for this patch I’d like to keep the
+change minimal and focused.
+
 > Regards,
 > Markus
+
