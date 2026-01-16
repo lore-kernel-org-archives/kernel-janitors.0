@@ -1,152 +1,252 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300FE326D62
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Jan 2026 21:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297C3188735;
+	Fri, 16 Jan 2026 00:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768511158; cv=none; b=aGlRCu3IlompYk7YRg9dc/akZUgR7FvBYsfa9qErDzTH4wptwqQEYGOT9n2jQKGrA8XPpMIsZ/jWlm80HymJ6QYxKRv+DpKET7ox2nohuHsGrPJLl2pQ2WPF+Tnr0xXLG/NaSOeEXvnrWDGVmopFlNKEIYoRNr/oubeo7Zwmv0I=
+	t=1768525066; cv=none; b=ijk316FDRT3IyOVaWodt+WV1bhNUvUYLtG4fXPQv+0DGHmpa1go/NvlxM0dQ5vL8rshn8YsIqQa2ZhXpscgfju9B6gRUu1m3jagvJkGiASv3zKYldiGqLJdCd7uxIUdcL3H+7FiZS3V2ai/KrhUk/48W3F6hW2Khosahbpq33tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768511158; c=relaxed/simple;
-	bh=5RKXFxtT/VqfxeXZRvOKOi5lh5LAaosbKx9LcDIwqZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oBQTivHiQW/iskiNFwrh3hAF/Yzh9VPwofCpu5EJ5gyi+csUvLACThIb/i43wGlclS97deR3MusMTw1IKFX4kv9tIiHodhy+mxk/mpo120uWLoqxE9/N7E10qNCmUZwJurLycIj+QNkTzZ/l+0Tpjiyw7qifsz7XfVdEeVqQHzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l13oVhuM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HoDrXGR2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1768525066; c=relaxed/simple;
+	bh=o18sfMWvdqNr3iCqBoEY7pxCrYnJNFXFiIPWrTz8X+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHtxvo2fuSH556yx/xewiOJ3QXMI5oxr4TRoa86s3J0sDWX4KChWxtV5cg2OwcrZpCPtRB8pjk2uahe/vHe8LG1E76ApT2VV3u2CB9xUZfs2VbH3ZrjGWsybzlb9wZnGMDafiGXYur+FOnrPQ05ZlGsLNAIRGyqvPE5VDO4Budg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eoVHoLRK; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l13oVhuM";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HoDrXGR2"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60FFYWsb3113596
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Jan 2026 21:05:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jC8lA6B0ipWoMHR75M2AQCJx5qPi+JNV6zZXo9VKefg=; b=l13oVhuMfVG9bJJC
-	o3w4j4Dcm0fBhXvn/AW1LW9YGKandwyzAVGNoUQ+UDhD4dmAjY+hp07mdC9S1fCk
-	tAWdHZRNFtvV8YjYzEPhMhZ2EvOLvKTWgNW7wu/Vj3ofVOrkNnfDrFOo3w6VocS4
-	gBQGUxTl4kw1R3etUcDHof9VLHHrRAYtAu9MC0dopweshkNjAeEBUHBBltr4uF8V
-	qxVH/iUYv4FDWbYFYtAFXAoW8IgNeVAt6X4YL10bDJjGojxo+i99xmiCeTMn4B0P
-	cfur3HRG5GThOS/DIrNEjrXPGtwUx9kpy3RVld6F8THH9cLvG/8H7J42G9pSPFXL
-	YkShlQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bq2pm11us-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Jan 2026 21:05:54 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8824d5b11easo31572236d6.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Jan 2026 13:05:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768511153; x=1769115953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jC8lA6B0ipWoMHR75M2AQCJx5qPi+JNV6zZXo9VKefg=;
-        b=HoDrXGR2Fkk9p7NiteHvyWIaA33okKxrZPjpfLL6BXjAPAQA2u/eTMzguYRBF97xIv
-         Iuu3ItjqGXMysqTIAKjY2Ny5Cw8xQztwjugCuGh6SuYa3GhYKZp0xRLGzNRaRgLagcQV
-         1YI20pwxMlBw0spW0kmAyYrpz/nYPgfHcjaQqszJwdPj9umq+id3C0pS4Sbu5s67ZuTW
-         W+F2sUuI/VXc1tydupI8bqaroKIqXFCo2qKFwau16XGXAzO27bEpLHauaYOgqZ+Y3HBs
-         Ei1ASA/XFr2JWZ9QZsnBCaUejUCulcI2i4PDuinK8RZqQhD1WyajDmQn9mY0LW8nkZd7
-         XVog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768511153; x=1769115953;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jC8lA6B0ipWoMHR75M2AQCJx5qPi+JNV6zZXo9VKefg=;
-        b=kOy5zzYOqShGqdVTi86TWRpfv9x5oRbNlvTNvGUrWsXEwCVpAyXZUwx/Lrl8LD7kJj
-         Hh1u29I78YSEy4WgbmfOCwV4FbyLYw8pp0f5nsooVn5L5ViXkpCyhSNCIRCtcbndbI2b
-         1L7Ra5yBnyxlgyeWDYjFeUL7QENIbZYd0hFlxwhaBrl9grPJS5e1LFU8rDWfF2Vm6AEx
-         VT8V3OyBJYwSLHhOMxxqLDa47GhYKAY7miXnbU0GS9ozi5ObuJQFbwG1C5DAicbYcJ94
-         3BJofzAIsbpEIzB3dmVJqwLIPnigebzkQXo98TXRkwzcM90CRlqeOe2MVraOMoxlmUlH
-         KVAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBrUfaYlgRyioqI386lJDrGBDY4NbpYTZGHb8abPBzMHvckymYjaxSH/9NiddZ9YmZYhpq/WpYjJVgQ5BnBmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuZEwCeZCNqEWCy7OO/bS4ta6lg6B/aOLKYdY/ZQWbtDEHGH+B
-	2Yp2TwyWLuFZSZ8LF+PtiieSgV4mspv25Mrpgpn3Ua+k6G3kosYouJbZzBppEOGWUXiVC2ZEWIs
-	xFzhQrfHjiRAyjiBb2RCKvq3JWFsWSXL9Fb72B83bePZEO31fgHum6miyVFbWePfoTetzD/4=
-X-Gm-Gg: AY/fxX65iioaiTWbdfLI4ly4PanchVRd0RteTtXWkupy+SjmjF47fb1iZm+B3v27h4Y
-	6GUj+mE7zxmw+YARtCMkZobv5P76NPSzHWPA1aCNFggrg8sgNVK+SR6JAJ4jhM3eZGtfsseElI3
-	I0zVMKiED3BXYdKur4nc3G3y66jmjvxhI+G+xaBLa4rgjVnsqQZghdmaMBZa/OLc90MQtWW1NJz
-	tXcOkR2y08xXHJVCkyS0sXjBpOCL+LSHnUllAuDD2wQ0UHTgndZkt8PYh8J4qbS79mEyBzr1B1W
-	MrsUQbyzpgtLA7StCNoJY7rVorx4ejixAcgbP0xMXvuVYHtWAKwr5KKNP1yPIE+px55adRhVdE4
-	d6vU7LIzJ8PBDuY4RQXrhUDUoOn9beL0L+2JWagoIBiV4/WvTUc/hS1sCAZa4aqL1LUHbEttE2O
-	5sDw3uqF7tOOlKsos+YmkuFhc=
-X-Received: by 2002:a05:620a:4610:b0:8b2:ed29:f15f with SMTP id af79cd13be357-8c6a68d9299mr104179985a.21.1768511153479;
-        Thu, 15 Jan 2026 13:05:53 -0800 (PST)
-X-Received: by 2002:a05:620a:4610:b0:8b2:ed29:f15f with SMTP id af79cd13be357-8c6a68d9299mr104176285a.21.1768511153011;
-        Thu, 15 Jan 2026 13:05:53 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59baf397672sm155740e87.61.2026.01.15.13.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 13:05:52 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: remove some dead code
-Date: Thu, 15 Jan 2026 23:05:50 +0200
-Message-ID: <176851027323.3933285.5242543959069807337.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <aWAMIhZLxUcecbLd@stanley.mountain>
-References: <aWAMIhZLxUcecbLd@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eoVHoLRK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768525065; x=1800061065;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=o18sfMWvdqNr3iCqBoEY7pxCrYnJNFXFiIPWrTz8X+o=;
+  b=eoVHoLRKeFop150vkevHQKkRzxJKPUVQmNo5GIwHunv8YL2mF+GcSCti
+   Bgb2I39FR1xmvuFnYUpaAU6Z6Fp+EEHsQgXizNnueLuoGd1Avnj0brLMY
+   npRUF4QEJOYxpY4RuynJ0pUrlNe17AitxAGRXnmevWwfh6UZ3TlFm9ngl
+   HkDvvnl+tMVnY5ryQ5WV9RHjx8Drdqtn3yvpFfSLwGtE2Xly2JFPijxxn
+   N5W9+vEyE3G/ZoawwtuGsrQNVDzwVaD2tFz+omBiufwuOu1KtPR0AFDwh
+   HjUavDJtPdfa/4BM7A0PVzh/57N1EnEXFylBWLQGZ7WsuxibURvfpttdv
+   g==;
+X-CSE-ConnectionGUID: 1LF29uthSKa+jzi7NUKI7Q==
+X-CSE-MsgGUID: lxM4Bx3ISmaBjej9ajaNBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="69891214"
+X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
+   d="scan'208";a="69891214"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 16:57:45 -0800
+X-CSE-ConnectionGUID: +OOYUsVhRkGmQk5zQEbmrw==
+X-CSE-MsgGUID: TXy1g6FBQCmr1GrarK+L4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
+   d="scan'208";a="209245072"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.14]) ([10.124.240.14])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 16:57:40 -0800
+Message-ID: <ef00d1ec-9b0e-4204-b1dd-885245db35fa@linux.intel.com>
+Date: Fri, 16 Jan 2026 08:57:37 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2] perf/x86/intel/uncore: Fix iounmap() leak on global_init
+ failure
+To: "Chen, Zide" <zide.chen@intel.com>, Markus Elfring
+ <Markus.Elfring@web.de>, linux-perf-users@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Stephane Eranian <eranian@google.com>
+Cc: lkp@intel.com, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Thomas Falcon <thomas.falcon@intel.com>,
+ Xudong Hao <xudong.hao@intel.com>
+References: <20260114193825.17973-1-zide.chen@intel.com>
+ <cda9ab9b-4581-409f-a9bb-0e8a67ad3530@web.de>
+ <32386e0a-09d9-4f13-a5e1-c6f9dd3afdfd@intel.com>
+ <25f39aaa-1e72-47ce-92e7-d6b8ecc2750a@web.de>
+ <b7c46240-d0b3-472d-87dc-88cdbd8e0b92@intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <b7c46240-d0b3-472d-87dc-88cdbd8e0b92@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: n6UnIucethJp7K-m22hQOYFLQakoyX01
-X-Authority-Analysis: v=2.4 cv=TNlIilla c=1 sm=1 tr=0 ts=696956b2 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=e5mUnYsNAAAA:8 a=vfcw8cltYcJMyB0lYhkA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-ORIG-GUID: n6UnIucethJp7K-m22hQOYFLQakoyX01
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDE2NSBTYWx0ZWRfX2mC/RFuJj6sg
- 8hskjL/1OSTRZiumG3iE7w46GPt2m1exFlTJj7eaxYUOuptetqQAo9/+PZ/ezjVogYu6BDNLL0o
- 0mky4RMlLaSDk162pRpdbAz3seqfrzL5gQoa+GC54QmCoDFmUuOJpYRZD33n7lUjrehrovDwuPD
- mC+9GYurE5xfDrEnixK95cPVBUvViVb8OB+li85l1CkmPZGEXrnVDizgLqPwvrN1nSr4XkH2RLc
- sy57JVUQwolyTq4xCeAki2/uSt27KHcoWgRkGSxrcGP4X7QQDJi5KAfHNN3eELMsS8LBzReWpfO
- jZhcoNz7zrg+SL6ecSI8hTZ2nmLCBE/rQCAh7aZ1+FRbbUYi3MC2/Q7y1Kn/ybHSqPDyI1KGDnP
- SN7snNuSZJPN0qMgqJDKAu8M0DMbugKFv2jNq7xMStKGB4tPYvzn/x4HttyYlYZuhL9be9CqV4J
- 6aMF+H7k3/yykmo4RCg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-15_06,2026-01-15_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601150165
-
-On Thu, 08 Jan 2026 22:57:22 +0300, Dan Carpenter wrote:
-> This is supposed to test for integer overflow but it is wrong and
-> unnecessary.  The size_add()/mul() macros return SIZE_MAX when there is
-> an integer overflow.  This code saves the SIZE_MAX to a u64 and then
-> tests if the result is greater than SIZE_MAX which it never will be.
-> Fortunately, when we try to allocate SIZE_MAX bytes the allocation
-> will fail.  We even pass __GFP_NOWARN so the allocation fails
-> harmlessly and quietly.
-> 
-> [...]
-
-Applied to msm-next, thanks!
-
-[1/1] drm/msm: remove some dead code
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/37d2e108de4d
-
-Best regards,
--- 
-With best wishes
-Dmitry
 
 
+On 1/16/2026 5:03 AM, Chen, Zide wrote:
+>
+> On 1/15/2026 1:01 AM, Markus Elfring wrote:
+>>>> See also once more:
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n94
+>>>>
+>>>> Will another imperative wording approach become helpful for an improved change description?
+>>> My apologies — I did try to address the feedback, but I may still be
+>>> missing something.  Could you please point out what specifically could
+>>> be improved?
+>> I hope that the understanding will improve somehow also for a development
+>> communication requirement like “imperative mood”.
+> For the commit message itself, I’ve tried to improve it as much as I can
+> based on the feedback so far. If there are still specific phrases or
+> wording that should be adjusted, I’d really appreciate it if you could
+> point them out.
+>>>> …
+>>>>> ---
+>>>>>  arch/x86/events/intel/uncore_discovery.c | 15 ++++++++++-----
+>>>> …
+>>>>
+>>>> Some contributors would appreciate patch version descriptions.
+>>>> https://lore.kernel.org/all/?q=%22This+looks+like+a+new+version+of+a+previously+submitted+patch%22
+>> …
+>>> Yes, that was the intention for v2.
+>>>
+>>> V2:
+>>> - As suggested by Markus, add an `out` label and use goto-based error
+>>>   handling to reduce duplicated iounmap() code.
+>> We are still trying to discuss the corresponding identifier selection,
+>> aren't we?
+>>
+>>
+>>> - Add the original warning from the kernel test robot to the commit message.
+>> It is possible then to identify presented information in the way
+>> that it is probably coming from coccicheck.
+> It was indeed from the kernel test robot report. I’m not familiar with
+> the Intel kernel test robot internals, and I’m not sure whether it
+> invokes coccicheck.
+>
+>>> - Trivial rewording of the commit message.
+>>>
+>>>> Is there a need to perform desirable changes by a small patch series?
+>>>>
+>>>> * Specific fix
+>>>> * Related refinements
+>>> It seems to me that the changes in this patch are small and closely
+>>> related, so I wondered whether splitting it might be unnecessary.
+>> I propose to apply a more detailed change granularity.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n81
+> Thanks for the reference. I considered this a single logical fix, which
+> is why I kept the changes together.
+>
+>
+>>>>> +++ b/arch/x86/events/intel/uncore_discovery.c
+>>>>> @@ -264,6 +264,7 @@ static int __parse_discovery_table(struct uncore_discovery_domain *domain,
+>>>>>  	struct uncore_unit_discovery unit;
+>>>>>  	void __iomem *io_addr;
+>>>>>  	unsigned long size;
+>>>>> +	int ret = 0;
+>>>>>  	int i;
+>>>> Would scope adjustments become helpful for any of these local variables?
+>>> As mentioned in my earlier reply, my suggestion was to avoid doing other
+>>> unrelated optimizations in this patch.
+>> Will development interests grow for related update steps?
+> Are you suggesting including this change in this patch? My understanding
+> is that it isn’t directly related to the scope of this patch, so I would
+> prefer not to include it here. Please let me know if you see it differently.
+>
+> diff --git a/arch/x86/events/intel/uncore_discovery.c
+> b/arch/x86/events/intel/uncore_discovery.c
+> index efd1fc99a908..8ab8f778285a 100644
+> --- a/arch/x86/events/intel/uncore_discovery.c
+> +++ b/arch/x86/events/intel/uncore_discovery.c
+> @@ -265,7 +265,6 @@ static int __parse_discovery_table(struct
+> uncore_discovery_domain *domain,
+>         void __iomem *io_addr;
+>         unsigned long size;
+>         int ret = 0;
+> -       int i;
+>
+>         size = UNCORE_DISCOVERY_GLOBAL_MAP_SIZE;
+>         io_addr = ioremap(addr, size);
+> @@ -293,7 +292,7 @@ static int __parse_discovery_table(struct
+> uncore_discovery_domain *domain,
+>         }
+>
+>         /* Parsing Unit Discovery State */
+> -       for (i = 0; i < global.max_units; i++) {
+> +       for (int i = 0; i < global.max_units; i++) {
+>                 memcpy_fromio(&unit, io_addr + (i + 1) * (global.stride
+> * 8),
+>                               sizeof(struct uncore_unit_discovery));
+>
+>
+>
+>>> https://lore.kernel.org/all/e7d74d9d-cb45-4f5f-8e44-502dd7c4bcff@intel.com/T/#t
+>> Re: [PATCH] perf/x86/intel/uncore: Fix iounmap() leak on global_init failure
+>>
+>> Can the timing trigger special considerations?
+> Sorry if I’m missing your point, but it seems to me that there are no
+> special considerations involved here.
+>
+>
+>>>>> @@ -273,21 +274,23 @@ static int __parse_discovery_table(struct uncore_discovery_domain *domain,
+>>>>>  
+>>>>>  	/* Read Global Discovery State */
+>>>>>  	memcpy_fromio(&global, io_addr, sizeof(struct uncore_global_discovery));
+>>>>> +	iounmap(io_addr);
+>>>>> +
+>>>>>  	if (uncore_discovery_invalid_unit(global)) {
+>>>> …
+>>>>>  	}
+>>>>> -	iounmap(io_addr);
+>>>> Can this modification part be interpreted as an optimisation?
+>>> Yes, this is technically an optimization.
+>> Thanks that we can come to the same conclusion on this aspect.
+>>
+>>
+>>>                                           Since the patch is already
+>>> refactoring the iounmap() handling, my thinking was that it would be
+>>> reasonable to include it in the same patch.
+>> I dare to point another opinion out.
+>>
+>> I assume that backporting concerns can influence this detail also a bit more.
+> Thanks for pointing that out. This patch is intended as a quick fix for
+> a change that is still staging in perf/core, so I assume that
+> backporting is unlikely to be needed.
+
+Agree.
+
+IMO, we'd better keep this patch is simple and focused and then it can be
+reviewed and merged into perf/core tree quickly. So we can avoid to cause
+the subsequent backporting work. 
+
+About the further optimization, we can have an independent patchset to do
+it. :)
+
+Thanks.
+
+
+>
+>>>> …
+>>>>> -	if (domain->global_init && domain->global_init(global.ctl))
+>>>>> -		return -ENODEV;
+>>>>> +	if (domain->global_init && domain->global_init(global.ctl)) {
+>>>>> +		ret = -ENODEV;
+>>>>> +		goto out;
+>>>>> +	}
+>>>> …
+>>>>>  	*parsed = true;
+>>>>> +
+>>>>> +out:
+>>>> Would an other label be a bit clearer here?
+>>> I’d suggest keeping the label name out for style consistency, as
+>>> mentioned in my earlier reply.
+>>>
+>>> https://lore.kernel.org/all/e7d74d9d-cb45-4f5f-8e44-502dd7c4bcff@intel.com/T/#t
+>>>
+>>>> unmap_io:
+>>>>
+>>>>>  	iounmap(io_addr);
+>>>>> -	return 0;
+>>>>> +	return ret;
+>>>>>  }
+>>>> …
+>> By the way:
+>> How do you think about to increase the application of scope-based resource management?
+> That’s an interesting topic, but for this patch I’d like to keep the
+> change minimal and focused.
+>
+>> Regards,
+>> Markus
