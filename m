@@ -1,252 +1,143 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297C3188735;
-	Fri, 16 Jan 2026 00:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFB632E696
+	for <kernel-janitors@vger.kernel.org>; Fri, 16 Jan 2026 01:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768525066; cv=none; b=ijk316FDRT3IyOVaWodt+WV1bhNUvUYLtG4fXPQv+0DGHmpa1go/NvlxM0dQ5vL8rshn8YsIqQa2ZhXpscgfju9B6gRUu1m3jagvJkGiASv3zKYldiGqLJdCd7uxIUdcL3H+7FiZS3V2ai/KrhUk/48W3F6hW2Khosahbpq33tw=
+	t=1768526825; cv=none; b=L+rtfEKxx4QhfZ3Ic9BJnonBdADJDvsZUGcQWA+7WZSwlnVxWtm5bOwlypgdojS9r2j/A/zS4kpQn5QjIpjgT7TUMYpzWO+jUJEXqAjkQYi9AuyCgpE2oE8Ovmu5xrhIF8VT5rFFJQ2KH3P2LBM5QpqBgVjTA1Tri6iOpiupOE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768525066; c=relaxed/simple;
-	bh=o18sfMWvdqNr3iCqBoEY7pxCrYnJNFXFiIPWrTz8X+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bHtxvo2fuSH556yx/xewiOJ3QXMI5oxr4TRoa86s3J0sDWX4KChWxtV5cg2OwcrZpCPtRB8pjk2uahe/vHe8LG1E76ApT2VV3u2CB9xUZfs2VbH3ZrjGWsybzlb9wZnGMDafiGXYur+FOnrPQ05ZlGsLNAIRGyqvPE5VDO4Budg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eoVHoLRK; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1768526825; c=relaxed/simple;
+	bh=gwI9m6Qrn0HLwWHQ0y5FzFxHw0ZyG/ACh7Tjl2JVm+Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PseDToSENreB5FK/SNfcgHtrOOVJAy0xxP8dybjtil8yVO9hU5HsepWqTbFHaRTTC1V9AZcPCXUb2P1oIbqJ2iEGPsPXVyJdA2ojn5ukh60mdNmB2LqX2vPAwL/2aIIqyo4x2WzK1HxSbyueApEMcYDfUXDdKEw0mbYDxWGauPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=niopzYqj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=e2+rwmcH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eoVHoLRK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768525065; x=1800061065;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=o18sfMWvdqNr3iCqBoEY7pxCrYnJNFXFiIPWrTz8X+o=;
-  b=eoVHoLRKeFop150vkevHQKkRzxJKPUVQmNo5GIwHunv8YL2mF+GcSCti
-   Bgb2I39FR1xmvuFnYUpaAU6Z6Fp+EEHsQgXizNnueLuoGd1Avnj0brLMY
-   npRUF4QEJOYxpY4RuynJ0pUrlNe17AitxAGRXnmevWwfh6UZ3TlFm9ngl
-   HkDvvnl+tMVnY5ryQ5WV9RHjx8Drdqtn3yvpFfSLwGtE2Xly2JFPijxxn
-   N5W9+vEyE3G/ZoawwtuGsrQNVDzwVaD2tFz+omBiufwuOu1KtPR0AFDwh
-   HjUavDJtPdfa/4BM7A0PVzh/57N1EnEXFylBWLQGZ7WsuxibURvfpttdv
-   g==;
-X-CSE-ConnectionGUID: 1LF29uthSKa+jzi7NUKI7Q==
-X-CSE-MsgGUID: lxM4Bx3ISmaBjej9ajaNBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="69891214"
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
-   d="scan'208";a="69891214"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 16:57:45 -0800
-X-CSE-ConnectionGUID: +OOYUsVhRkGmQk5zQEbmrw==
-X-CSE-MsgGUID: TXy1g6FBQCmr1GrarK+L4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
-   d="scan'208";a="209245072"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.14]) ([10.124.240.14])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 16:57:40 -0800
-Message-ID: <ef00d1ec-9b0e-4204-b1dd-885245db35fa@linux.intel.com>
-Date: Fri, 16 Jan 2026 08:57:37 +0800
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="niopzYqj";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="e2+rwmcH"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60FMbbJx3596358
+	for <kernel-janitors@vger.kernel.org>; Fri, 16 Jan 2026 01:26:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	88rACB5TJZg2guiiJgrgY/2HQRCAqkBXUr1eDvH9nho=; b=niopzYqj7qyrGD18
+	K4Bn20x+YUCKazivETYRG1v6MGvo9W6uppS4phla4WJFV0gS1lx3reNB31XU3JWK
+	5Um5iI2OoBVJqTyD6mqk+kXatYE21agkhgyVLbd7G4auLWNUpq7CNkNjXeJOvxIg
+	dKemaGVNDxBSAYJY4kYQqhIQN6Kn2QZbFhkbU+eQJiXKVUbfWJldGWBpFjYLwe5c
+	Kj+JqaI8lciAowY/vUvTUj0EXDxUydKtMyKGC5EJq7qYixeJPiSjdgVmyIGdu35x
+	lqeTAQxPAdmstGFSgOFuZ/p/8GdAo5G2+30UHjdey+u9vtkncmSa00gjGEeEWdWc
+	OfDTOw==
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bq96rrb6w-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Fri, 16 Jan 2026 01:26:56 +0000 (GMT)
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-2b6b56e2b07so1803302eec.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Jan 2026 17:26:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1768526816; x=1769131616; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=88rACB5TJZg2guiiJgrgY/2HQRCAqkBXUr1eDvH9nho=;
+        b=e2+rwmcHxHkIsRfLgJlFaJFDZxJA8Hgh1CzdCgBFClPQq1OJ9LAiN4+3I/ey134eeF
+         HmI5kE85oaS4uGmd905xdLBL38stMU3/2FF8FphOZl4iiowbSodUZTJS4xZHvddElC5w
+         Vv2X+fcpdQo7ctmB0BJdZ4GoJI5drZdMS9zyspic/tWKHWLeAk0JxvE13eobQFvjLm7h
+         06GhfM7JBjTo9ZeWtkb0u568a3pfsU8Ra846QkpEiXkBiRLjgBhWMHXbpJJwmxk8YgIG
+         3uN75+zwyAn+JyHyU594cuMlHIPCh13V+p0N9jGiILVIIyJmGGujufP7HRVvlb3eJyMt
+         zp9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768526816; x=1769131616;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=88rACB5TJZg2guiiJgrgY/2HQRCAqkBXUr1eDvH9nho=;
+        b=bfvPV6vIP5mncJ9dVQ5Gotc+a9/iDjP5gujAyfzjC4juxC094iK1Nrg2+u0nTTGoSx
+         KbkCbXPRr6qXw27/CTYjp5RSGhuGCP6aAnDHHpAoQdQNnqIJsubug2lIOGyOlJJFr2QL
+         o3I4wjeIHPVFIEfAijUjXlV7cOwvusHRX7NvOYwKocOd2g+a4MF911NeLWBdj/MkEKbi
+         17okdr9qCgn3Wr+3phvHRM2tAKFlyLulvvmn06amDzYHI06o+zon3B+5zawtykz+z29b
+         d7Vzy77uMdNlsbsoHfTk4uCtmjaydczVwMW02NLKE110tJpprkA0JoazMRj9KdMHGvJ2
+         hkSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGj7r6UJWS6si3V7iZwk+fIQLPwAtJkXXB1th88fGioANLWM9yGX+dtVAat4lMYxdI6ky5wXt5OJERDiNU9tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYGZLakYtEux7mpYtkQTsF3Qzk46FQtm8Hq1NjGtTuSgewno3Q
+	5aTySQ8oBEqsFnT2vF+2pqGk9iQ4i+rPcXvZeD6ZzwmaA9ERAWmv/hZFj12k6QuGs71e6IWdfgs
+	DLnh+rDzuVGDCrQ/iX16fY5l+/8LbhZYblMHBvhTstOKLsla6EVAdByTmqO/ERQhE5D1f72s=
+X-Gm-Gg: AY/fxX4dBTdcHSz7qnVi4vToA3ngUgXN+vAVrIlvd/K/E8+hAE+sO1W2Dn63MpLc89R
+	15XVIyZb9OiosP9E0VrVehEmr8t5qcP0ZnuYqUgmweAMXdIUKdSqCP4bM1w/CkPlWO5FxcTvKrs
+	du7PkzXpuTTeJWKtjdDZIml7+zgs1TFPhdDYA6Ec9bRuDLpjiuGuDGK/l817Zby6Xama4vpFXGQ
+	vuyrwsK8fX+6KMTNXn+5FO1VDafxp0NUpPoKIxILoifS9QxaQt24c56UtTxTX4zmXSgqYOYbkpV
+	9+c+vQLMzCO1S3ZD9fmrkiwZraFoea7/6cB6lQ+GO+qIcqeQY2+Uubts1Kbv13Vx3Qh8y55x+NC
+	s4zibShVnEBSgd6EDlHq9o6VwPYxKG21+s4WHN7AX1WrvoKTrelLagGdlaj/YoXHW
+X-Received: by 2002:a05:7300:3b05:b0:2a4:3593:9692 with SMTP id 5a478bee46e88-2b6b3f300b3mr1322038eec.15.1768526815886;
+        Thu, 15 Jan 2026 17:26:55 -0800 (PST)
+X-Received: by 2002:a05:7300:3b05:b0:2a4:3593:9692 with SMTP id 5a478bee46e88-2b6b3f300b3mr1322016eec.15.1768526815193;
+        Thu, 15 Jan 2026 17:26:55 -0800 (PST)
+Received: from hu-jjohnson-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b6b3502c91sm884104eec.9.2026.01.15.17.26.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 17:26:54 -0800 (PST)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Harsh Kumar Bijlani <quic_hbijlani@quicinc.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>, Ripan Deuri <quic_rdeuri@quicinc.com>,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
+        Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aUOw1J0TU4VgeXj6@stanley.mountain>
+References: <aUOw1J0TU4VgeXj6@stanley.mountain>
+Subject: Re: [PATCH next] wifi: ath12k: clean up on error in
+ ath12k_dp_setup()
+Message-Id: <176852681459.1143034.3213517841557777716.b4-ty@oss.qualcomm.com>
+Date: Thu, 15 Jan 2026 17:26:54 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V2] perf/x86/intel/uncore: Fix iounmap() leak on global_init
- failure
-To: "Chen, Zide" <zide.chen@intel.com>, Markus Elfring
- <Markus.Elfring@web.de>, linux-perf-users@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Stephane Eranian <eranian@google.com>
-Cc: lkp@intel.com, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org, Thomas Falcon <thomas.falcon@intel.com>,
- Xudong Hao <xudong.hao@intel.com>
-References: <20260114193825.17973-1-zide.chen@intel.com>
- <cda9ab9b-4581-409f-a9bb-0e8a67ad3530@web.de>
- <32386e0a-09d9-4f13-a5e1-c6f9dd3afdfd@intel.com>
- <25f39aaa-1e72-47ce-92e7-d6b8ecc2750a@web.de>
- <b7c46240-d0b3-472d-87dc-88cdbd8e0b92@intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <b7c46240-d0b3-472d-87dc-88cdbd8e0b92@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE2MDAxMCBTYWx0ZWRfX5p54EDHrXqJI
+ mCNg/fZEhOT5PTFMyZgdDxt2Pw0gVC/AZBDLZTqEVXuiTLzdFSqrzYvJNW9cfTpFM0PW6UDFdD7
+ HNnPK8Hg1pNPmlpJD9lwdgcaPPF8mlmOXD74ABGP1jB7OP2/Endb+xlHEhKsg1mtkEosIAh+X7X
+ q8yDlY5CHvdvUJvNbCxDsRfKXcuIXQqeVL99c19gvPw0ngXe47NCqaDnk45Jji2KvRxaMuLMErn
+ G6JjvyRHBLDcKXryFV9zRHp2r8Pw0OEQ1EbtffQeOd2wJ1oet8EQx8j3+s8haF/Xime4+rHN14y
+ teDFdrV145U1dsJ/dIN3LieSuQ4MSP1zDcxLHCplPZ3rJuBX6gEHUGDxNpBOzKs17AjHYzlwyv1
+ 7H2nrKrXLXFWYQqZjM42JuLMXJJk30+37eNMeh9Nc5MGyJTDnbBOpivcnkWeSjL59z2kq9esncr
+ Ta7gC+nh9ipGjgORtDA==
+X-Proofpoint-ORIG-GUID: qQ9RssbhEs6HsfAv7mOfmRkCi7FkPn7y
+X-Proofpoint-GUID: qQ9RssbhEs6HsfAv7mOfmRkCi7FkPn7y
+X-Authority-Analysis: v=2.4 cv=TsTrRTXh c=1 sm=1 tr=0 ts=696993e0 cx=c_pps
+ a=Uww141gWH0fZj/3QKPojxA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=6YG70U5JATtl4AP3FOAA:9
+ a=QEXdDO2ut3YA:10 a=PxkB5W3o20Ba91AHUih5:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-16_01,2026-01-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2601160010
 
 
-On 1/16/2026 5:03 AM, Chen, Zide wrote:
->
-> On 1/15/2026 1:01 AM, Markus Elfring wrote:
->>>> See also once more:
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n94
->>>>
->>>> Will another imperative wording approach become helpful for an improved change description?
->>> My apologies — I did try to address the feedback, but I may still be
->>> missing something.  Could you please point out what specifically could
->>> be improved?
->> I hope that the understanding will improve somehow also for a development
->> communication requirement like “imperative mood”.
-> For the commit message itself, I’ve tried to improve it as much as I can
-> based on the feedback so far. If there are still specific phrases or
-> wording that should be adjusted, I’d really appreciate it if you could
-> point them out.
->>>> …
->>>>> ---
->>>>>  arch/x86/events/intel/uncore_discovery.c | 15 ++++++++++-----
->>>> …
->>>>
->>>> Some contributors would appreciate patch version descriptions.
->>>> https://lore.kernel.org/all/?q=%22This+looks+like+a+new+version+of+a+previously+submitted+patch%22
->> …
->>> Yes, that was the intention for v2.
->>>
->>> V2:
->>> - As suggested by Markus, add an `out` label and use goto-based error
->>>   handling to reduce duplicated iounmap() code.
->> We are still trying to discuss the corresponding identifier selection,
->> aren't we?
->>
->>
->>> - Add the original warning from the kernel test robot to the commit message.
->> It is possible then to identify presented information in the way
->> that it is probably coming from coccicheck.
-> It was indeed from the kernel test robot report. I’m not familiar with
-> the Intel kernel test robot internals, and I’m not sure whether it
-> invokes coccicheck.
->
->>> - Trivial rewording of the commit message.
->>>
->>>> Is there a need to perform desirable changes by a small patch series?
->>>>
->>>> * Specific fix
->>>> * Related refinements
->>> It seems to me that the changes in this patch are small and closely
->>> related, so I wondered whether splitting it might be unnecessary.
->> I propose to apply a more detailed change granularity.
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n81
-> Thanks for the reference. I considered this a single logical fix, which
-> is why I kept the changes together.
->
->
->>>>> +++ b/arch/x86/events/intel/uncore_discovery.c
->>>>> @@ -264,6 +264,7 @@ static int __parse_discovery_table(struct uncore_discovery_domain *domain,
->>>>>  	struct uncore_unit_discovery unit;
->>>>>  	void __iomem *io_addr;
->>>>>  	unsigned long size;
->>>>> +	int ret = 0;
->>>>>  	int i;
->>>> Would scope adjustments become helpful for any of these local variables?
->>> As mentioned in my earlier reply, my suggestion was to avoid doing other
->>> unrelated optimizations in this patch.
->> Will development interests grow for related update steps?
-> Are you suggesting including this change in this patch? My understanding
-> is that it isn’t directly related to the scope of this patch, so I would
-> prefer not to include it here. Please let me know if you see it differently.
->
-> diff --git a/arch/x86/events/intel/uncore_discovery.c
-> b/arch/x86/events/intel/uncore_discovery.c
-> index efd1fc99a908..8ab8f778285a 100644
-> --- a/arch/x86/events/intel/uncore_discovery.c
-> +++ b/arch/x86/events/intel/uncore_discovery.c
-> @@ -265,7 +265,6 @@ static int __parse_discovery_table(struct
-> uncore_discovery_domain *domain,
->         void __iomem *io_addr;
->         unsigned long size;
->         int ret = 0;
-> -       int i;
->
->         size = UNCORE_DISCOVERY_GLOBAL_MAP_SIZE;
->         io_addr = ioremap(addr, size);
-> @@ -293,7 +292,7 @@ static int __parse_discovery_table(struct
-> uncore_discovery_domain *domain,
->         }
->
->         /* Parsing Unit Discovery State */
-> -       for (i = 0; i < global.max_units; i++) {
-> +       for (int i = 0; i < global.max_units; i++) {
->                 memcpy_fromio(&unit, io_addr + (i + 1) * (global.stride
-> * 8),
->                               sizeof(struct uncore_unit_discovery));
->
->
->
->>> https://lore.kernel.org/all/e7d74d9d-cb45-4f5f-8e44-502dd7c4bcff@intel.com/T/#t
->> Re: [PATCH] perf/x86/intel/uncore: Fix iounmap() leak on global_init failure
->>
->> Can the timing trigger special considerations?
-> Sorry if I’m missing your point, but it seems to me that there are no
-> special considerations involved here.
->
->
->>>>> @@ -273,21 +274,23 @@ static int __parse_discovery_table(struct uncore_discovery_domain *domain,
->>>>>  
->>>>>  	/* Read Global Discovery State */
->>>>>  	memcpy_fromio(&global, io_addr, sizeof(struct uncore_global_discovery));
->>>>> +	iounmap(io_addr);
->>>>> +
->>>>>  	if (uncore_discovery_invalid_unit(global)) {
->>>> …
->>>>>  	}
->>>>> -	iounmap(io_addr);
->>>> Can this modification part be interpreted as an optimisation?
->>> Yes, this is technically an optimization.
->> Thanks that we can come to the same conclusion on this aspect.
->>
->>
->>>                                           Since the patch is already
->>> refactoring the iounmap() handling, my thinking was that it would be
->>> reasonable to include it in the same patch.
->> I dare to point another opinion out.
->>
->> I assume that backporting concerns can influence this detail also a bit more.
-> Thanks for pointing that out. This patch is intended as a quick fix for
-> a change that is still staging in perf/core, so I assume that
-> backporting is unlikely to be needed.
+On Thu, 18 Dec 2025 10:44:20 +0300, Dan Carpenter wrote:
+> Destroy the rhash_tbl before returning the error code.
+> 
+> 
 
-Agree.
+Applied, thanks!
 
-IMO, we'd better keep this patch is simple and focused and then it can be
-reviewed and merged into perf/core tree quickly. So we can avoid to cause
-the subsequent backporting work. 
+[1/1] wifi: ath12k: clean up on error in ath12k_dp_setup()
+      commit: 40feb23c726369700918b9c35db987f9fe3c6498
 
-About the further optimization, we can have an independent patchset to do
-it. :)
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-Thanks.
-
-
->
->>>> …
->>>>> -	if (domain->global_init && domain->global_init(global.ctl))
->>>>> -		return -ENODEV;
->>>>> +	if (domain->global_init && domain->global_init(global.ctl)) {
->>>>> +		ret = -ENODEV;
->>>>> +		goto out;
->>>>> +	}
->>>> …
->>>>>  	*parsed = true;
->>>>> +
->>>>> +out:
->>>> Would an other label be a bit clearer here?
->>> I’d suggest keeping the label name out for style consistency, as
->>> mentioned in my earlier reply.
->>>
->>> https://lore.kernel.org/all/e7d74d9d-cb45-4f5f-8e44-502dd7c4bcff@intel.com/T/#t
->>>
->>>> unmap_io:
->>>>
->>>>>  	iounmap(io_addr);
->>>>> -	return 0;
->>>>> +	return ret;
->>>>>  }
->>>> …
->> By the way:
->> How do you think about to increase the application of scope-based resource management?
-> That’s an interesting topic, but for this patch I’d like to keep the
-> change minimal and focused.
->
->> Regards,
->> Markus
