@@ -1,197 +1,115 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704D12DCC04;
-	Fri, 16 Jan 2026 08:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39C331A808;
+	Fri, 16 Jan 2026 09:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768550567; cv=none; b=L1CoYZgum2b41VvGyd0xgvmA2HISumxaw6uumz2oZTJ3fyA6UDEIXkfVRxat7kH5R1qBvDNLKZeaLnUzq7GgI0G5XxvaLOCeDxVhFfBxvCy44YkEPSbSGH5gtZHOMIpNDKUpZauGr0PH43m3KkEPevq5FBeLB3X1xLEBrRGzvTQ=
+	t=1768554888; cv=none; b=K+DaXbxTPv9ZtvKz7xj5v62l/n7PIEHJXJ4kl6lO/9U9R+lSPgMVZyQ9zOU/46Uz9F/+vUjxPzEIvRIIZfHz88eIE8CtBcPUfgPWCGOJqoFtH/JTO01rBX+C2W82D7lUcTg/wcB5yeRfYnpfsIiWEvJhsiMLZj3K+Zf0JA2uRho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768550567; c=relaxed/simple;
-	bh=ne2ZFD5HGicCkc7p+7LOEcg1ZVUId2Jv/p4donXEmZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q8omKB4EcQ2SbnPmnROamNxxatvjEDnA69EbRuo+WdJ0B9v4vZX5tLxshS5tu6Akz7tnwWOYbTkyoa26H5Ycj3HplMQbt5wGsRXih65NEOXM+nr7oSM14/ZqVIjfzXgDIYzzdN02LIJanZJsjT9AEbdPncqp3Qmv7htEMxXiV7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hx4z5+Qv; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1768554888; c=relaxed/simple;
+	bh=3SamNIJ/Are+C/I+gqv+kznrE4CPCwmYFAwFwqjSDhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqJaBgpgRmmxEM6qFObyvHCe1G9CaJe68A5s9X5G6VeHDjS8LJdE069M+lwOKsHojo7cxOWQXkx+SVU5CxeYLi7mG51BTO4wevmm7DmzSpfdyQ5zoyYnPnbj9dCwPQCF9arRtE73gO2DUzlXhvf7NcI4FsAhZ9jTNm5PsSv+bEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBOSwZ5/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hx4z5+Qv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1768550558; x=1769155358; i=markus.elfring@web.de;
-	bh=kGg9wrvE7Yh6khdfRYmMfQMtLdtPPTBz6zVebGaiuYQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hx4z5+QvzDcK/RGS95gNKoker9Dp1m4DwUolb99mZMyDyTl+ceawQd0MXNg/8KO6
-	 OP/ZZnwFdl1blmC/LiHbFtm1VKKyRNFBNQOMCNmYMGGtQY3ilVQXcegGFpxjJ1Fch
-	 ymceS3x358aaofwLWghnY8R/Cu19DatBOrRV4Zcd1Bqak706UIPQAVcEAq6qBws4+
-	 q2AtkxAWapw2ZBu6bHJcwcr3ydXiOIarnVkmjbcVErncy9KW2cvP2J5aSH5N2ru/G
-	 11lyQgq6FjezhlpxeQQJRLLGja/4nMwQBm8KQiQcQBeuerkvYlzCYYJmhWwyEkdKK
-	 y7FFNf5nl3sLTmLVqA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.218]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3Eut-1vfIPL2Xhl-00DwH0; Fri, 16
- Jan 2026 09:02:38 +0100
-Message-ID: <2067dfae-5399-434e-afc3-ca6a5816f78f@web.de>
-Date: Fri, 16 Jan 2026 09:02:30 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBOSwZ5/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E00C116C6;
+	Fri, 16 Jan 2026 09:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768554888;
+	bh=3SamNIJ/Are+C/I+gqv+kznrE4CPCwmYFAwFwqjSDhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBOSwZ5/znT4C3v7d3val0FA0srjWpwq2c1lnkV9kPW4CdGeKGAOWHSHL0dAD3hKW
+	 lnMvkezyjk00lbbHQ2VCEGKaD6Zlr0JFsv8Nv3LkZ6YT4oFh0JpluhmMIk7Kfq/8Ry
+	 gzNCPFVyqYOcPSKT6E3LtbUx7pRwFIJh3iAA8QP9ybnMj9sdWc89n9CQ67vB+ZLP0T
+	 X4gIr8FHD/LhcNOzZ/uf05vxH5NahwftBDSoffvzms4lIxLyn+VeAhauLnjtuqgr7q
+	 pE5FzMT+6CR3EBSGUAqS257iwqVowOak41fCjWOLj088GXxELM7JklDWaRx0/P1FPY
+	 KcncNqSygFH5w==
+Date: Fri, 16 Jan 2026 14:44:42 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Colin King <coking@nvidia.com>
+Cc: ryan foster <foster.ryan.r@gmail.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] optee: make read-only array attr static const
+Message-ID: <aWoBgt66shtVTovl@sumit-xelite>
+References: <20260109154442.421248-1-coking@nvidia.com>
+ <aWTaUvGu9dlvnJO9@sumit-xelite>
+ <CAHtS329G-H8vVVr==DZUAetzVNc4couN2OV3tH7qH_7YDGe8xA@mail.gmail.com>
+ <DS0PR12MB8294F8C07E39842AC16CBA21AF81A@DS0PR12MB8294.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] iommu: simplify list initialization across the iommu
- subsystem
-To: Can Peng <pengcan@kylinos.cn>, iommu@lists.linux.dev,
- =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
- Robin Murphy <robin.murphy@arm.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Will Deacon <will@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20260116065554.830579-1-pengcan@kylinos.cn>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260116065554.830579-1-pengcan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:W1XWhh0DN3DeVjXBWJ+DXLKoInXKwxIozuMn+yZoNWpQX55PZIB
- lfLXvflw8arY7lG4TPV5eWBdXe9i5SPnRN426RXbUUYyjTLEWK0D3NPqVDO/F5TRlbd1W8X
- S64LV9l+aBmuov4HQSVxqY+GLFS05kZTiN7BKr52IoKqJZ5LytamHtYtj8/Lttgdn+/UZqV
- HXZVvyRjibO7RLQSOSdsQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UevudTey0aw=;eNJcudXxiM2bYoRp5CGN8ohg70/
- 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
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DS0PR12MB8294F8C07E39842AC16CBA21AF81A@DS0PR12MB8294.namprd12.prod.outlook.com>
 
-> Replace separate list head declarations and INIT_LIST_HEAD() calls with
-> the combined LIST_HEAD() macro throughout the iommu directory.
-> Using LIST_HEAD() merges declaration and initialization into a single
-> statement, improving code readability and reducing boilerplate without
-> altering any functionality.
-=E2=80=A6
-> Markus Elfring suggested using a more concise summary and
-> recommended the use of Coccinelle for this kind of transformation.
+On Mon, Jan 12, 2026 at 03:24:49PM +0000, Colin King wrote:
+> I added this change for several reasons, it's read-only so making it const is always sensible.  Making it static means we don't get the compiler to generate object code that stores the array on the stack (each time it's called) and then index into it, instead the data is put into a read-only data section at compile timne and the object code just fetched data from this array.
+> 
+> Basically, if it's read-only it's good to make it const and it's not in an __init section then you may as well make it static const. It's scoped inside the function, even though it's in the data section.
+> 
 
-Some development tools can help to achieve desirable changes in more conve=
-nient ways
-and that possible adjustments would become more complete eventually.
+That's fair. I don't have a strict preference here. Feel free to add:
 
+Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
-=E2=80=A6
-> +++ b/drivers/iommu/iommu.c
-> @@ -932,7 +932,7 @@ int iommu_get_group_resv_regions(struct iommu_group =
-*group,
-> =20
->  	mutex_lock(&group->mutex);
->  	for_each_group_device(group, device) {
-> -		struct list_head dev_resv_regions;
-> +		LIST_HEAD(dev_resv_regions);
-> =20
->  		/*
->  		 * Non-API groups still expose reserved_regions in sysfs,
-> @@ -941,7 +941,6 @@ int iommu_get_group_resv_regions(struct iommu_group =
-*group,
->  		if (!dev_has_iommu(device->dev))
->  			break;
-> =20
-> -		INIT_LIST_HEAD(&dev_resv_regions);
->  		iommu_get_resv_regions(device->dev, &dev_resv_regions);
->  		ret =3D iommu_insert_device_resv_regions(&dev_resv_regions, head);
->  		iommu_put_resv_regions(device->dev, &dev_resv_regions);
-=E2=80=A6
-> +++ b/drivers/iommu/iommufd/eventq.c
-> @@ -21,12 +21,11 @@ void iommufd_auto_response_faults(struct iommufd_hw_=
-pagetable *hwpt,
->  {
->  	struct iommufd_fault *fault =3D hwpt->fault;
->  	struct iopf_group *group, *next;
-> -	struct list_head free_list;
-> +	LIST_HEAD(free_list);
->  	unsigned long index;
-> =20
->  	if (!fault || !handle)
->  		return;
-> -	INIT_LIST_HEAD(&free_list);
-> =20
->  	mutex_lock(&fault->mutex);
-=E2=80=A6
+-Sumit
 
-Does anything hinder to apply LIST_HEAD() calls at other source code posit=
-ions?
-
-May variable scopes be reduced for more use cases?
-
-Regards,
-Markus
+> 
+> ________________________________
+> From: ryan foster <foster.ryan.r@gmail.com>
+> Sent: 12 January 2026 14:46
+> To: Sumit Garg <sumit.garg@kernel.org>
+> Cc: Colin King <coking@nvidia.com>; Jens Wiklander <jens.wiklander@linaro.org>; op-tee@lists.trustedfirmware.org <op-tee@lists.trustedfirmware.org>; kernel-janitors@vger.kernel.org <kernel-janitors@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH][next] optee: make read-only array attr static const
+> 
+> This looks like a micro-optimization, const makes the lookup array
+> explicitly immutable, and static keeps it out of the stack frame,
+> avoiding per-call initialization.
+> 
+> Is there a style preference for read only lookup arrays here, e.g.
+> Should these variables remain local but not static, or should they be
+> moved to file scope static const?
+> 
+> On Mon, Jan 12, 2026 at 3:26 AM Sumit Garg <sumit.garg@kernel.org> wrote:
+> >
+> > On Fri, Jan 09, 2026 at 03:44:42PM +0000, Colin Ian King wrote:
+> > > Don't populate the read-only array attr on the stack at run
+> > > time, instead make it static const.
+> >
+> > Is there any value add to do this? AFAIK, the static local variables
+> > aren't preffered.
+> >
+> > -Sumit
+> >
+> > >
+> > > Signed-off-by: Colin Ian King <coking@nvidia.com>
+> > > ---
+> > >  drivers/tee/optee/rpc.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+> > > index 97fc5b14db0c..1758eb7e6e8b 100644
+> > > --- a/drivers/tee/optee/rpc.c
+> > > +++ b/drivers/tee/optee/rpc.c
+> > > @@ -43,7 +43,7 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
+> > >       struct i2c_msg msg = { };
+> > >       size_t i;
+> > >       int ret = -EOPNOTSUPP;
+> > > -     u8 attr[] = {
+> > > +     static const u8 attr[] = {
+> > >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > >               TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
+> > > --
+> > > 2.51.0
+> > >
+> >
