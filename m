@@ -1,215 +1,164 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DBC6F2F2;
-	Fri, 16 Jan 2026 17:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69B42580E1
+	for <kernel-janitors@vger.kernel.org>; Sat, 17 Jan 2026 11:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768584630; cv=none; b=O43L4VCDWQVN8YloSwXpdQ8tdC6fXW+kjMZIFd5RBSW7WVjMvs3KMmROAWe2dZ4mVLjceMR/VrBAjs+oj5ZCVEj+ONwLRGCCGJmuF9CDciGzTpL/3qBpObUVlRJdsyjsDuVTG66qCUWKPloZMOGlKp9zYyCBfgQrC8MgXvFLC6s=
+	t=1768649620; cv=none; b=J9a2xDR5JDXfh7C7bKw9r/6uCdUTw2wrE9YvoiLNPe8Ebn4cfSkAUjgUBLvJgpfPMM+BrTPxjDpmc44SLm4leyWUwJWI1py0VAL9e/sOyA/B+lvbGFFkwPWul5ps5Q2IyhOR7TTOlBS5Z/8cyeub3DGqFUVmDjusUFiOUCF6NJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768584630; c=relaxed/simple;
-	bh=kJpxkD9vphEDQ0O3sHFX80YVU/qa5cWMhy/NgiBMohY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ReLNXd3EL1nYXZHu0yUGQ1X3rG1SmAw2969GSP6YvspsD63m5ENWQlKXfKHu1LF6IbZ3Re3S+hZ9+WTFczLYKlKF7AotgvR04zSFdhNHDExaTLbO5VJYKiHKDjcAB5NxfOAEPG6XzQHSdXsYnstGRQYkZjKd/sypCnY+IuuIrC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IYes/QAq; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1768649620; c=relaxed/simple;
+	bh=qiGXVqfXwDoFWcpI/QBpkhZIypb80VUbaHByvSPuqVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q/jBafdJ7VzUgVU45sWRc+9kg2LIdgs7MOngModfTO5Stj9Ji+PNThLfQR7FlQqNatw9ziarc2vvx6H0et3PvS5gW5v47hAQPJ1ciRxERB1Ut/HeYRQjIdLL8zfUQSASJPSyLUN5VvZcwmkLH6p6G1f7nHUpB4Dhbr9pVXGVOoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YmrTOn6C; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IYes/QAq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1768584621; x=1769189421; i=markus.elfring@web.de;
-	bh=JqBrhbKMlj7HpPqfR/Hke9S6b2TdYZ7tJCKR4enFbV0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=IYes/QAqXeMQgl3IVWgmXRkrWouvelfoaXYU9RwXlSnN0h8Aa4uH2xOw+qX3E49A
-	 1fMZVsfIbabfVRzhRrO5ZpqD7Q5a1RI1gBMkR8eQTw0cHjJiyzOwZpwHU7M0ErAde
-	 CdOBCj48GEV1kuArYXNwYZkhC57aUfYrfuR9nQtcIxvIj2UywUUP7vdLhr+O5jpz3
-	 SiBNhmHhR5Y53qYgKRvlnql1vf1f/mqnYcRPdxoMEXNiKfI/xPNGkTnas4gwyqqkd
-	 lsIcM1rhiEBSrnj6kgQNSyO79JxWTAlya0DCeqZS32KbGuIbOGR7A+VHzgoEHVbSe
-	 P1uFDUzuLCA7ct/VLQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.218]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVad4-1vHOUz2Vzo-00PFvU; Fri, 16
- Jan 2026 18:30:21 +0100
-Message-ID: <00565b33-c47d-4529-9590-56f93ab45d10@web.de>
-Date: Fri, 16 Jan 2026 18:30:18 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YmrTOn6C"
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6611c3b147eso942853eaf.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 17 Jan 2026 03:33:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768649617; x=1769254417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iOzQ1khzRrSH94mr21KFZdEC2mQ+Ktkw7PoKvjMdSQM=;
+        b=YmrTOn6CxoRUgwpHHrRJbqNCPLDSXWCCJfmmYkm7htCr2QCaClJ1Gq1Fvo64n6dfXx
+         THMzom6nU04hyVpBS2JUy1w/C27PrLuW0XMcA6nhHvKihD/lY+ZgrESACclngcKn/E+/
+         sXKooLGXzne9sSDjtlUkbDj6GSbB39vMn0OTodo7gBABc8+4XdsqFN3yAxXH/J2Xmp2z
+         TimVnZ7ZKKlanIxgww3ONgRyaEGk2/qpN39zJ2IEolijIyYSVzC/CalrBQdRxJoOzNO9
+         OrnmTmy6JqeLhJI2CKBAOBLNMWEZjG2+O/1JyNZX69rIFRBmLGClPu1z7qD8JccEZQML
+         9s4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768649617; x=1769254417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iOzQ1khzRrSH94mr21KFZdEC2mQ+Ktkw7PoKvjMdSQM=;
+        b=Qd1CGwDeQ5wWKq/X2GwRdZFdNuWbuP+HMTJkqesn2+rIxc/DX+DJXosIAQMFB4e712
+         WwV7k0dC0iu8t/GtYJhEg87iAhKaihuik7KSDSSavYIcZR10ddAHAjTGQGYpKQXgwqjr
+         fu74LgM3DCv+7dkyQr8ZoXTcylaOq0MZu+oc/98xw9YCWhCoqFcoZPShg2QBgP4suYkU
+         qIZgzZB4A3DgfKvmKxApi7MzK+YssjKIxQMt6736uy6fkmyyW3upmpKoPBUWzE+ld9YL
+         8TvW1TmKk1DZfOJoIzx+mEzhFzJ1iEYib8i1cxCnSfzT1XKFUCrFP/YU3qcHuXjVKiQK
+         pLYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkv8RQiqoLdxnuA9q820CUoBOVUmHYkFZhZ8dPgwEVSlnS1qas0lKbIS9n0aqRuVz8X4HBDb+XrTNmanPiH5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3lMMFpHdil4MD7jHs/IbkkWGfKbHT9c1sIIuuqT1RdBn+8qaO
+	BOxdvIr7eujBTM0zk3Nn2UoNEfoY7CiHg6O8Bznz4t1Ev4d7OJmM1Z7Ewy0vFGzV2gdV2tk97jz
+	aMPezDrmDrudAq+WITcxFUf8n5a2kgoV1931UCssyAg==
+X-Gm-Gg: AY/fxX6U2xjXjxis7gf+SyJpHGWbQTaL7jHZ+dyITeZqyQ/p8eIuHkWW2wSVks7DfO5
+	mGMaeHt31fhtl+gAoDgJ9lY9CVc0SV4zz38JpQO73Y4ElH9k9pT6R4WFclEJufWASvc9ulZ2ZDK
+	8Am1lQXrzPPf2x+I9b4J5f5hYJevKCNtIJT5HR2ZZx87WxizZcoO77XEA21ROd3v/zQQ+MXTiGk
+	CeWjFRGZyioNQ9SN7N6RL4WomMyKYkKTmJvQZtNSfjylgvjIJsP84Sw3ppvo+Pahx1EUnAAB+no
+	V8nqEMxAP83Kb4eBzTy3oj6pzgzn9wi+SzqZ
+X-Received: by 2002:a4a:e914:0:b0:65f:1ab0:cdca with SMTP id
+ 006d021491bc7-661188cc3acmr2272492eaf.1.1768649617502; Sat, 17 Jan 2026
+ 03:33:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V2] perf/x86/intel/uncore: Fix iounmap() leak on global_init
- failure
-To: Chen Zide <zide.chen@intel.com>, linux-perf-users@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Stephane Eranian <eranian@google.com>
-Cc: lkp@intel.com, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org, Thomas Falcon <thomas.falcon@intel.com>,
- Xudong Hao <xudong.hao@intel.com>
-References: <20260114193825.17973-1-zide.chen@intel.com>
- <cda9ab9b-4581-409f-a9bb-0e8a67ad3530@web.de>
- <32386e0a-09d9-4f13-a5e1-c6f9dd3afdfd@intel.com>
- <25f39aaa-1e72-47ce-92e7-d6b8ecc2750a@web.de>
- <b7c46240-d0b3-472d-87dc-88cdbd8e0b92@intel.com>
- <afc060ac-0cb9-4e2f-8cdc-029ac7679246@web.de>
- <092c955c-4f27-44ed-9e88-dc721e1d2959@intel.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <092c955c-4f27-44ed-9e88-dc721e1d2959@intel.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20260109154442.421248-1-coking@nvidia.com> <aWTaUvGu9dlvnJO9@sumit-xelite>
+ <CAHtS329G-H8vVVr==DZUAetzVNc4couN2OV3tH7qH_7YDGe8xA@mail.gmail.com>
+ <DS0PR12MB8294F8C07E39842AC16CBA21AF81A@DS0PR12MB8294.namprd12.prod.outlook.com>
+ <aWoBgt66shtVTovl@sumit-xelite>
+In-Reply-To: <aWoBgt66shtVTovl@sumit-xelite>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Sat, 17 Jan 2026 12:33:25 +0100
+X-Gm-Features: AZwV_QjgSErz9k4igW8Ybil0s5E-zl_z4UBojBpjGipbHvYstM4bI01lX_YWxpw
+Message-ID: <CAHUa44ETDyE66bRS_nP-efWnFk2L3=fHW5y-ZJiwXG4o-6+XKQ@mail.gmail.com>
+Subject: Re: [PATCH][next] optee: make read-only array attr static const
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Colin King <coking@nvidia.com>, ryan foster <foster.ryan.r@gmail.com>, 
+	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>, 
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:u/xV81UCLPujAVvGeA+fPIC95eCDUv63urZ3mKombUCuB5p89va
- +GVgIhbFwW4WY72aOs47pocGOltSdZ54VCDuf0j2MB0Dt/iBQAwKR2sSNzYKltpdnKPKgg+
- T4yPlRjTXLfumWGSys8/EijGayJzBetLWrDcfwB6mnJqfP7WQD5v51OvmtW1aWgWlce4ukx
- gLRlXhgQ/lYdc3rDgGW5Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tUnjyiyJelg=;iA7JzJ3XKHGQwXrxPAaGdFviPkg
- 3wl5kdKw5tJKm8+GeIlStyzB/S+vcQIFvVq9neGFA+6tfu6cy0ovj7rsSQkRLXkWf+NsxZV6V
- bUYXIA3GbaSJKIfOSr7+WyK7iPPxs6sE7NJRlQmiAi2EtHGChkJ7UHa1AjnNs8ePEyQiwKDES
- QqQvvWMRFiFo02Er2efn7sEZ7F3tERJUQttmoOTetTgH/rCcSSLNcMeRqiqL6pVji/NqJdRW5
- 65oFpYE8stm07lZn6J1Qog4NJEUcP9GPw10NwwdjHSXCXghmdHWdjv7Ki760+bcz5lx4RInM2
- ABz2MnRnXBpk9U2adJ+cSnWwQZJme4VoHrTq+wWzhmTICWhJ/ElB84WFTLJyaMM8hr01yapwV
- PxqnoATQP8J+9Y6VUjw1zWm/CMQQHKcuiAsM/2yQIoh80jj2W0Jydy/YKo9XbWTypEzcOnZf7
- fiYTGKSLPPdcXxoPJeMX0TzEBlEoU2lYTRqnd3Dm3+VqZgQqkYWV6qiGQivU3qwXGaA8BK8jk
- 8YDrVYg1l+UTGA42/DvQIKg8TqxTzzvSg9/frPvDYOrErz3kIVinerCUa5TTf7J4+qCNSZdrR
- rZgrQHKFvDCf3qGyeRjC0zNbwGGSB2Cfq5tzIj08aw5InjkxHbb09Jd6MGyW8PtlnptjnfcBL
- y0BDGtWttXU3bdeF5/bVdPNgRENx4wDbmGQw5jWketW4JlXLelqMHA+G6bmZscs9JX6U2if4J
- gVZrtDnmKcqwaNB9h6fEUlu4cS3/HkRzMUciTyCL/yO5Bfe5RfxKRHtRzO+JSccNBbwFffKXd
- xiJ3mEsjE16sw6H2br5HQuSBhsqq1zfOrIuHVl2h9RNYhXMdUmb5QGLTTCnhy200J4KG1UAJe
- iyQBnpEykHvehx5YA+GTOowUtHZIYMe5j5fseZHI++h5726oe1TneVwVCSi37GTsr/sXe7PFq
- sqwaYoO5JG/+GnVoXglE2Osk+dYDd38H12m07MM1DAsv7yihoPkN3/NncGGM/DJcb/j1B54aT
- m2u1NqsXCclg7cymHbK7/Qk3JauDKk24UXjvmLL09HzxD0AWfbI/GskPxagid+mOMOa3m6hqz
- T7oToVBGtznjlO2kKilbAdfRiwt25aRcUezJ/6GByaOjDs62qQyCpVba3heZFDHCQ3wXV0BBs
- RKyeiNo/o9vAygG0rR1OKztmTb0g0AP+3Gfd4R0i2tGAzsopVclLmrk/qaptqE58FHiFELaRE
- BvdFUKAOrJ+c2xTHfF1DNW/W+GbKPZMoKqGgwkX2jNE0xpM7N+MNm3/FW9HGYLm/jCncAugTs
- BVTdhwtRkGJCjje8X785pPKINCpbcltT6c/Ylu6LFmaJa3luUxOQU9y2bdtLjM4bmbjHECcis
- csywEds1dFfqFXyMP5cW0kUs8HTEpXNEj3Rc6lJLN8k8y0g0hxhgboqYeYLg3Osn0t+lDjo2B
- K5kcQmwDB33Pr+V1WI2X8MKFiRTYDGtgUAibgSVQJ2CFpSsKsNp2x6AUfsLY1QoU1wjgzCS0e
- I2btVNtdnQDz8bGNkQhWRYb+W7lWil3MIasC6MLw+2ojG3ESftmCCFirquyAU9pZRWr+C/nw0
- LwIVQQazFKzOxOfQfpCXrxUefJmznNLbLD7rfdDEHOfFVzAK0jvY1egRHtJfJXmXZkSoWfUN6
- j3yRb5AK5r9ei3gTLpBxsPYpJD+T9i+w6mILzRWiSm0TxPBl4vK3CJC7j9U3qHAnR1Ls4xQIq
- WC9O3gLBfuGRBRQ9v/4rzsBCy0rx55LFd2wu9G/x7R6lUKMQo1vgns8S4XlmpfoQTxaoBmns/
- aXpBJN7vYL6kz8JLEbfrELIoLgxurHZQZu5vRtizIE1Wg16EJapR9NyQ1nRkEi2eFsrjvB3Pf
- GfuWIMyfJTM9k2K8Q1RvOfXF4ZqNJgRRJLi/1gYSFEnf4b8oVXvu3X5B2RjbRJ7h4DXZnjPjN
- 7+NaEOonqWqVa7yBAojuWAfpSxux2b+6hIQmCunP8xUn2HwcjX9tFLYWzzmqD4hCdjcpyF3/t
- AHTERCXCcxBx+ISRb/4Jztk6bQOKCzvbdgWwDQL8wkf5YLmE2tN6SXb0hoqb0/Wbmilbv245f
- ZpEcD1b8d7pr4OTNgpCBOifIsjnCqUUAiLVVY+eic7i/71UoIOikGqqDNDqqJn/YEyzFHjDIw
- 1kGwzmzh8k7STvHyHccIV+iSG5G7x2X23dnV891QEhAYkwUDPiR9CwqPkk+cvzDody4vzWRTp
- /1Bv+KQesInh9f5pfDBiaR4WSxjYOp0jecPEXCSYfn+PoEUIwoEKTD29aruXwOQ8cQLrwa8wm
- BP/jY6oQkvdN9fshnTpzG2v0WkOfWqE5C0mtAijMf2Auc0O3eYb8RbBxgkpZ7kjjJYlSW04dw
- 0Z2QW5lIqP9T1nZrqgnfwyl3lP31EuLYP/KmfLqR7qQj5agNnAud1ryus4vbgS0rHHMOK8Viq
- cpHXr9tkzNZIvk2G/hw3qmxfB+P1fSc7GSYHK0/m06kkyBvjvSczTRG8ZtPUWJVmoxBmQVRGk
- HxiFP3510XI+OjbU37igolWAyGsHMwx6oV/ub4VCx3js+1AhJnCA3sYAdwkBSa1js0toMsYt8
- sd7lylN4Nh5AY52QmBdFkphuPE9NG6YX9rkp19rzAdADb0lOFFAstVysNyXY5XD+rmYMc68Wh
- 9Tby+XIpIbzG526t1dXM+2btTI1q+/BV6KstMWGG1Q52W30BuA8RrdLHFsMNhKhryFQwBlWYM
- nnBsm5cI7oTu1yQdGEaPQbllnRzQ47bgtwwina4Cdv2bbopjzalgPXmmxOfKYoWe64kVzxFa4
- Ke6XYkqx07DZV8/Ab5rmZ2qIP0ZztSjm8O6GvAb+tlRIJPAuTQlTgka6Q83LZotq3yywZMv52
- MNifReYN9D7D8kFIARlVY8H42ZM/sZ17qn/wdcm5AtqUVF2PHtmFElI+FMQDi0mXRmX3oeZpu
- BCn6T4ED56dhz3Xk+2ZpKYO3dP7acUxmAPW1nqY4HuNMgLfjS828Ne4OeStw4Hx5vbmcEGc4/
- BWDyF2I14bv49D7I1DXHCa02qAahuANtSFwBwnzI+dD3ZDOzTdmKozEm7MBhZ5bw/YNkyXo56
- +eQieQ355sQpcOwUS7g7NYl+hlDxnnejusbtru7cPapLB6PKuauHk57k7hLVnWo8/q9q+W4mi
- pw2H8Tnucoh7Tz/PkGOFRLJUH6PJRSvmv2uINt1GQlmguwzRWbVuy0Tw9W9nXjPnuceegfQt1
- g6YF5xdrdwErxJeXTvItADfoSuTiabKhQji5qFZTI9OLOy4Vf9z/qpI6EQZNlYW4WsmKIrGd9
- jwPZW0Lm+ehd58lug943PDHai12C8wwww5wvKc+5V1oUPDmZKn3sqiIv+LqZ9dXstP1Zt7DVD
- Z7upLAipg9BPcgoEd8uUydiBa/gJoHEgvlG47UwTqqReyeL9CqS/xPNcvzgmO6864pyWD3vcu
- YzbnknxqnnQhhthqaguGMLyAhEALvd4faxtf29hH+2+U6b5wchazUvo2lZAdMs0H8eDBUPl1f
- N56mIpo/o9MOqqVxv8rMeTPk8mQP+IxxzU213R5ffPAEFsr69jR3x0QNxxaPLv+wCmA/zFuJt
- 1AAdyoLT0JY953UGZ/yVAK2LaHhO1X96dmKJDMkBRJd+MufNPebj9FWcm8lWTTPK3jxH80ATW
- A7z9yW7CA9nl9A+bNX4o8y8GaYDsqRZxjntpkfhrwPP8kSRpANF+U5TLv6uVGtXzQ/AcBUiGl
- ALFQRRBBvVT4IF29U9dn3VlvVU+G8cabG4VxfdPXcZ8JlsjJx05QYHRUeTL83aSQQ2QBCh6KL
- IrnATrd8X38fOgQ4DnEM6HAxcf+AMyvFJ0KJ6fy8lO666XtCj5Y5DZiRyonAO8DZ3M3Yz3Tf7
- nNliGuISytDSiKYsnMbKrvhGaP5N1LweDpHz/THlXYQXUlLPZfoKVBPvz6rh1/X94HwVYsNjN
- IQVlvRsDVtegAME7l26f7G53BIe3xQjUulXRn5Y6R8KIJMFbAivCbgKwr1U79PLvT8pGcOEE6
- 9p/XovwX4UgqtmCeewqB1B0E6bDiBvFZx2p5uZ3oeFMGuIm9Fn39xKa2sHLcCegSd2rR5ykhA
- DpSxDFWb/VCcffb4yFlUB2ihiFIYSJVg7fQTQF3KHwlsCMJpram+fkO5cdF+TTxueqjoOV3VB
- h1QGAA+B5urddusjUTknWzS21oDiIbBQBp8NGrLk8j+Lkx+gG8SW4RT0/cLdJB/Gk6LTzfwYG
- lCMXExVlmOKjEwOccRWMESxwjELbYPZhSTRit1KrFrbcvKNxcHqg85gtKUrZngCrUw7P9UWmt
- oePLL7uROkNHrugmSyUQdGpuT7JKa59ddDNVgg3kF0gjCVteB3j7P10Gqi4Bx2qcU9AJV68qR
- Aj4xHmaFVA2izVnkz7HZe0vxebrNQhuCK+6et884zyuKtJKMe9lCoJOtgWCIZRWpCsdsK8t92
- A38kxLvolHK26lsrg+8soWcLn7meCFSTQSzCXaBEewsbstSW9EVAb0EI9uEenZBxXEgueOk2m
- xipn1KvNE7wBHSdBQS53vlzwiSAPN3Hcf9VwXVTj734v1R2bNUaT3XGiLDLIx2ZfmL34LKEY7
- fzyjpgvUIFY/uKxDvb1hmBj5xoCTwKNytW2v3XpTnowDNflLkTzgT083j6N4xxzsRJp8hWf0L
- g3n4/5hk8s1TGiQxtCaFPIrI4HyIMu5abIy7QviUL2DXYblHVjrt1b4B3aNhNWylAqqGov9tP
- j/tGXAi5am35OPoAf6izHSfOAvDmwK0s/pvYFqM4rA0HajQ26IF2O0/1lWNZnevg2Dy8OxtFR
- YTRPgZqpghWnHoJQBoNVDUFizS0AbNkysPyTyTtQRkM2EB9l0tXD5HiObRRUj4k6I72TDCsKo
- MSXexeC82R4jfHhq8G/SVKhmPGSGzTJE7ycE92Gm62sKV5lXYmTA8An2VWIh9a3AkZB/An5Iw
- yhEtyOTE/cWwAcXjU6GupV4e8Uo9y7poILdeNFG7vExc0x/ZCg0AioEEW2yJZqHVltsjuIsD0
- 9sVuNgmFoH0ymegdAolzUmril7xsbBYmy4D63vawNfj7Mv/383xnbFq7XBUzD4KNI/E+EE2ex
- ZCQBNVm74psZb4X1jTzvRNY8ftOq3+CDZaW7EGQkhenlaNdEXx+7wGfmivM99Ney6TzrwI3SJ
- XmkDF+qwPzsRnfTz8DbGYodjb0ILC3wgLhFBDUMMJLZBxkhRnEw==
 
-=E2=80=A6
->> 3. Which text part of your change description does contain =E2=80=9Cord=
-ers to
->>    the codebase to change its behaviour=E2=80=9D?
->=20
-> OK, I see your point. Yes, it's good to add one sentence to describe
-> what the patches does.
+On Fri, Jan 16, 2026 at 10:14=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org>=
+ wrote:
+>
+> On Mon, Jan 12, 2026 at 03:24:49PM +0000, Colin King wrote:
+> > I added this change for several reasons, it's read-only so making it co=
+nst is always sensible.  Making it static means we don't get the compiler t=
+o generate object code that stores the array on the stack (each time it's c=
+alled) and then index into it, instead the data is put into a read-only dat=
+a section at compile timne and the object code just fetched data from this =
+array.
+> >
+> > Basically, if it's read-only it's good to make it const and it's not in=
+ an __init section then you may as well make it static const. It's scoped i=
+nside the function, even though it's in the data section.
+> >
+>
+> That's fair. I don't have a strict preference here. Feel free to add:
+>
+> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
-I became curious somehow if further contributors would be willing to care
-a bit more also for this wording requirement.
+I'm picking up this.
 
+Thanks,
+Jens
 
->                        But I guess this patch is simple enough.
-
-But it seems that several technical details triggered special communicatio=
-n challenges.
-
-
-> I don=E2=80=99t think this change alone justifies a separate patch, as i=
-t would
-> add review overhead without providing much practical benefit.
-
-Will any other contributors dare to add related insights?
-
-
->> The corresponding change recombination can occasionally become more int=
-eresting
->> for selected development ideas.
->=20
->=20
-> Are you suggesting putting this into a separate patch?
-
-Yes.
-
-I propose a stricter distinction between a =E2=80=9Cquick=E2=80=9D fix and=
- subsequent refinements
-at the discussed source code places.
-
-
-> My impression is that the change is simple and closely related, though I
-> may be missing something. I understand others may see it differently.
-
-It seems that we are struggling according to recurring factors of change r=
-esistance.
-
-
-> @@ -273,21 +274,23 @@ static int __parse_discovery_table(struct
-> uncore_discovery_domain *domain,
->=20
->         /* Read Global Discovery State */
->         memcpy_fromio(&global, io_addr, sizeof(struct
-> uncore_global_discovery));
-> +       iounmap(io_addr);
-> +
->         if (uncore_discovery_invalid_unit(global)) {
->                 pr_info("Invalid Global Discovery State: 0x%llx 0x%llx
-> 0x%llx\n",
->                         global.table1, global.ctl, global.table3);
-> -               iounmap(io_addr);
->                 return -EINVAL;
->         }
-> -       iounmap(io_addr);
-
-
-Regards,
-Markus
+>
+> -Sumit
+>
+> >
+> > ________________________________
+> > From: ryan foster <foster.ryan.r@gmail.com>
+> > Sent: 12 January 2026 14:46
+> > To: Sumit Garg <sumit.garg@kernel.org>
+> > Cc: Colin King <coking@nvidia.com>; Jens Wiklander <jens.wiklander@lina=
+ro.org>; op-tee@lists.trustedfirmware.org <op-tee@lists.trustedfirmware.org=
+>; kernel-janitors@vger.kernel.org <kernel-janitors@vger.kernel.org>; linux=
+-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
+> > Subject: Re: [PATCH][next] optee: make read-only array attr static cons=
+t
+> >
+> > This looks like a micro-optimization, const makes the lookup array
+> > explicitly immutable, and static keeps it out of the stack frame,
+> > avoiding per-call initialization.
+> >
+> > Is there a style preference for read only lookup arrays here, e.g.
+> > Should these variables remain local but not static, or should they be
+> > moved to file scope static const?
+> >
+> > On Mon, Jan 12, 2026 at 3:26=E2=80=AFAM Sumit Garg <sumit.garg@kernel.o=
+rg> wrote:
+> > >
+> > > On Fri, Jan 09, 2026 at 03:44:42PM +0000, Colin Ian King wrote:
+> > > > Don't populate the read-only array attr on the stack at run
+> > > > time, instead make it static const.
+> > >
+> > > Is there any value add to do this? AFAIK, the static local variables
+> > > aren't preffered.
+> > >
+> > > -Sumit
+> > >
+> > > >
+> > > > Signed-off-by: Colin Ian King <coking@nvidia.com>
+> > > > ---
+> > > >  drivers/tee/optee/rpc.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+> > > > index 97fc5b14db0c..1758eb7e6e8b 100644
+> > > > --- a/drivers/tee/optee/rpc.c
+> > > > +++ b/drivers/tee/optee/rpc.c
+> > > > @@ -43,7 +43,7 @@ static void handle_rpc_func_cmd_i2c_transfer(stru=
+ct tee_context *ctx,
+> > > >       struct i2c_msg msg =3D { };
+> > > >       size_t i;
+> > > >       int ret =3D -EOPNOTSUPP;
+> > > > -     u8 attr[] =3D {
+> > > > +     static const u8 attr[] =3D {
+> > > >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > > >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > > >               TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
+> > > > --
+> > > > 2.51.0
+> > > >
+> > >
