@@ -1,164 +1,176 @@
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69B42580E1
-	for <kernel-janitors@vger.kernel.org>; Sat, 17 Jan 2026 11:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDC4153BE9;
+	Sat, 17 Jan 2026 12:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768649620; cv=none; b=J9a2xDR5JDXfh7C7bKw9r/6uCdUTw2wrE9YvoiLNPe8Ebn4cfSkAUjgUBLvJgpfPMM+BrTPxjDpmc44SLm4leyWUwJWI1py0VAL9e/sOyA/B+lvbGFFkwPWul5ps5Q2IyhOR7TTOlBS5Z/8cyeub3DGqFUVmDjusUFiOUCF6NJ8=
+	t=1768654681; cv=none; b=f9ggp6KwRFlEZFu7qfneD9D/qy/Vx52Vlzhanhev1A0DSWdBrrbhlqmOBbAi7DSgqVkKIbfndKi3KxoKAO8poTKZcpAjGmfPxN1qLezHoShps5DAz1VOvo3jh7bqyfId4QhFJkWELBUwLrw1p1c8NZ3/dLaodfCpVKa3WLwm/Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768649620; c=relaxed/simple;
-	bh=qiGXVqfXwDoFWcpI/QBpkhZIypb80VUbaHByvSPuqVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/jBafdJ7VzUgVU45sWRc+9kg2LIdgs7MOngModfTO5Stj9Ji+PNThLfQR7FlQqNatw9ziarc2vvx6H0et3PvS5gW5v47hAQPJ1ciRxERB1Ut/HeYRQjIdLL8zfUQSASJPSyLUN5VvZcwmkLH6p6G1f7nHUpB4Dhbr9pVXGVOoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YmrTOn6C; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768654681; c=relaxed/simple;
+	bh=6ctmFzGc9uAw0XJwRwZZfDdX3usU2MzQhRothFe2tQc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=k2QxcSAdbZ0+ElW6ynDTIpCbcUs31N1k7QZjrbCu0a9fdcoIZnqpbEsRCQV34sCQdEle5Nj5ENuNe+RLnz+fV6a7eO1CSsZpemZh8pTaZrYTXI8RLq/FGJ137aWzjXZEfA9y7bISajZXkg2tzl7YPbU14vfeDQKP2d1TB2v2ytQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DKCa2bjh; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YmrTOn6C"
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6611c3b147eso942853eaf.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 17 Jan 2026 03:33:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768649617; x=1769254417; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iOzQ1khzRrSH94mr21KFZdEC2mQ+Ktkw7PoKvjMdSQM=;
-        b=YmrTOn6CxoRUgwpHHrRJbqNCPLDSXWCCJfmmYkm7htCr2QCaClJ1Gq1Fvo64n6dfXx
-         THMzom6nU04hyVpBS2JUy1w/C27PrLuW0XMcA6nhHvKihD/lY+ZgrESACclngcKn/E+/
-         sXKooLGXzne9sSDjtlUkbDj6GSbB39vMn0OTodo7gBABc8+4XdsqFN3yAxXH/J2Xmp2z
-         TimVnZ7ZKKlanIxgww3ONgRyaEGk2/qpN39zJ2IEolijIyYSVzC/CalrBQdRxJoOzNO9
-         OrnmTmy6JqeLhJI2CKBAOBLNMWEZjG2+O/1JyNZX69rIFRBmLGClPu1z7qD8JccEZQML
-         9s4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768649617; x=1769254417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iOzQ1khzRrSH94mr21KFZdEC2mQ+Ktkw7PoKvjMdSQM=;
-        b=Qd1CGwDeQ5wWKq/X2GwRdZFdNuWbuP+HMTJkqesn2+rIxc/DX+DJXosIAQMFB4e712
-         WwV7k0dC0iu8t/GtYJhEg87iAhKaihuik7KSDSSavYIcZR10ddAHAjTGQGYpKQXgwqjr
-         fu74LgM3DCv+7dkyQr8ZoXTcylaOq0MZu+oc/98xw9YCWhCoqFcoZPShg2QBgP4suYkU
-         qIZgzZB4A3DgfKvmKxApi7MzK+YssjKIxQMt6736uy6fkmyyW3upmpKoPBUWzE+ld9YL
-         8TvW1TmKk1DZfOJoIzx+mEzhFzJ1iEYib8i1cxCnSfzT1XKFUCrFP/YU3qcHuXjVKiQK
-         pLYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkv8RQiqoLdxnuA9q820CUoBOVUmHYkFZhZ8dPgwEVSlnS1qas0lKbIS9n0aqRuVz8X4HBDb+XrTNmanPiH5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3lMMFpHdil4MD7jHs/IbkkWGfKbHT9c1sIIuuqT1RdBn+8qaO
-	BOxdvIr7eujBTM0zk3Nn2UoNEfoY7CiHg6O8Bznz4t1Ev4d7OJmM1Z7Ewy0vFGzV2gdV2tk97jz
-	aMPezDrmDrudAq+WITcxFUf8n5a2kgoV1931UCssyAg==
-X-Gm-Gg: AY/fxX6U2xjXjxis7gf+SyJpHGWbQTaL7jHZ+dyITeZqyQ/p8eIuHkWW2wSVks7DfO5
-	mGMaeHt31fhtl+gAoDgJ9lY9CVc0SV4zz38JpQO73Y4ElH9k9pT6R4WFclEJufWASvc9ulZ2ZDK
-	8Am1lQXrzPPf2x+I9b4J5f5hYJevKCNtIJT5HR2ZZx87WxizZcoO77XEA21ROd3v/zQQ+MXTiGk
-	CeWjFRGZyioNQ9SN7N6RL4WomMyKYkKTmJvQZtNSfjylgvjIJsP84Sw3ppvo+Pahx1EUnAAB+no
-	V8nqEMxAP83Kb4eBzTy3oj6pzgzn9wi+SzqZ
-X-Received: by 2002:a4a:e914:0:b0:65f:1ab0:cdca with SMTP id
- 006d021491bc7-661188cc3acmr2272492eaf.1.1768649617502; Sat, 17 Jan 2026
- 03:33:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DKCa2bjh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1768654670; x=1769259470; i=markus.elfring@web.de;
+	bh=rPkr+qZWZ3VT+JUIg93ayi8cfnY2TOCQ7rFusewqjjI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DKCa2bjhutzaXffxhWZeHZ2gvNBTO0ni03xVfCwbcGB9k2BtnwLdbsUJjJaNCRHy
+	 jhgxhKgiFmF9fGgkcyox/KQXCmhX33VHcjNpLYhvFrBm+ZwiK9aEmIAOdPH9WC6fl
+	 ry9/3ZzhdF1ZvrM8ClDfl4BK1li1ruLGlXGiK+y5glsK4WKWgNBGfL+vhvLLxFB0L
+	 v58KNhcONlDNiT5Jsp2WSAFLmRmQJnsfZTNpmvlduWjAjV4sGMuEw6jAp6ckaKjkz
+	 GHkiSZp3c+fF6ZR72BC1ViitnRpvhT4n7gMACzEBqBYUMTJw2RgNCZo9SVrjDZfK4
+	 wf0y+k7eQ9j3KijwTw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.177]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmyr7-1w7enZ0D5z-00k7Ll; Sat, 17
+ Jan 2026 13:57:50 +0100
+Message-ID: <9b522c00-f403-4eac-a2dc-ed140cd3568c@web.de>
+Date: Sat, 17 Jan 2026 13:57:47 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260109154442.421248-1-coking@nvidia.com> <aWTaUvGu9dlvnJO9@sumit-xelite>
- <CAHtS329G-H8vVVr==DZUAetzVNc4couN2OV3tH7qH_7YDGe8xA@mail.gmail.com>
- <DS0PR12MB8294F8C07E39842AC16CBA21AF81A@DS0PR12MB8294.namprd12.prod.outlook.com>
- <aWoBgt66shtVTovl@sumit-xelite>
-In-Reply-To: <aWoBgt66shtVTovl@sumit-xelite>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Sat, 17 Jan 2026 12:33:25 +0100
-X-Gm-Features: AZwV_QjgSErz9k4igW8Ybil0s5E-zl_z4UBojBpjGipbHvYstM4bI01lX_YWxpw
-Message-ID: <CAHUa44ETDyE66bRS_nP-efWnFk2L3=fHW5y-ZJiwXG4o-6+XKQ@mail.gmail.com>
-Subject: Re: [PATCH][next] optee: make read-only array attr static const
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Colin King <coking@nvidia.com>, ryan foster <foster.ryan.r@gmail.com>, 
-	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>, 
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-clk@vger.kernel.org,
+ Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20260116113847.1827694-5-lihaoxiang@isrc.iscas.ac.cn>
+Subject: Re: [PATCH 4/7] clk: st: clkgen-pll: Add iounmap() in
+ clkgen_c32_pll_setup()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260116113847.1827694-5-lihaoxiang@isrc.iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/AcjH/b8ItPqnRybN+esVv33Fk12/CvakOAOBdMLPsbDv38lgRf
+ pAvZTIPPgfdKlkocZ8xV9ZH0FxdSh1mzS89g/hB8pCs+RL4LxJPdEhFrvRTCEI3o+QMb1r5
+ n6X4SqbCnPZwR+6euCt3wuBegnKdxc1jL8A5PqwRu29Io53h10gPqn/aWuWzJRXs334qiCe
+ 8CEjYVuwu3RqrKPqz3U8w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WZJFmjbGdzs=;8G6Y3kwYv1RaI9JAd02bGHrS4CK
+ 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
+ dP67GquA=
 
-On Fri, Jan 16, 2026 at 10:14=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org>=
- wrote:
->
-> On Mon, Jan 12, 2026 at 03:24:49PM +0000, Colin King wrote:
-> > I added this change for several reasons, it's read-only so making it co=
-nst is always sensible.  Making it static means we don't get the compiler t=
-o generate object code that stores the array on the stack (each time it's c=
-alled) and then index into it, instead the data is put into a read-only dat=
-a section at compile timne and the object code just fetched data from this =
-array.
-> >
-> > Basically, if it's read-only it's good to make it const and it's not in=
- an __init section then you may as well make it static const. It's scoped i=
-nside the function, even though it's in the data section.
-> >
->
-> That's fair. I don't have a strict preference here. Feel free to add:
->
-> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> Add a iounmap() to release the memory allocated by
 
-I'm picking up this.
+      an          call?
 
-Thanks,
-Jens
 
->
-> -Sumit
->
-> >
-> > ________________________________
-> > From: ryan foster <foster.ryan.r@gmail.com>
-> > Sent: 12 January 2026 14:46
-> > To: Sumit Garg <sumit.garg@kernel.org>
-> > Cc: Colin King <coking@nvidia.com>; Jens Wiklander <jens.wiklander@lina=
-ro.org>; op-tee@lists.trustedfirmware.org <op-tee@lists.trustedfirmware.org=
->; kernel-janitors@vger.kernel.org <kernel-janitors@vger.kernel.org>; linux=
--kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-> > Subject: Re: [PATCH][next] optee: make read-only array attr static cons=
-t
-> >
-> > This looks like a micro-optimization, const makes the lookup array
-> > explicitly immutable, and static keeps it out of the stack frame,
-> > avoiding per-call initialization.
-> >
-> > Is there a style preference for read only lookup arrays here, e.g.
-> > Should these variables remain local but not static, or should they be
-> > moved to file scope static const?
-> >
-> > On Mon, Jan 12, 2026 at 3:26=E2=80=AFAM Sumit Garg <sumit.garg@kernel.o=
-rg> wrote:
-> > >
-> > > On Fri, Jan 09, 2026 at 03:44:42PM +0000, Colin Ian King wrote:
-> > > > Don't populate the read-only array attr on the stack at run
-> > > > time, instead make it static const.
-> > >
-> > > Is there any value add to do this? AFAIK, the static local variables
-> > > aren't preffered.
-> > >
-> > > -Sumit
-> > >
-> > > >
-> > > > Signed-off-by: Colin Ian King <coking@nvidia.com>
-> > > > ---
-> > > >  drivers/tee/optee/rpc.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
-> > > > index 97fc5b14db0c..1758eb7e6e8b 100644
-> > > > --- a/drivers/tee/optee/rpc.c
-> > > > +++ b/drivers/tee/optee/rpc.c
-> > > > @@ -43,7 +43,7 @@ static void handle_rpc_func_cmd_i2c_transfer(stru=
-ct tee_context *ctx,
-> > > >       struct i2c_msg msg =3D { };
-> > > >       size_t i;
-> > > >       int ret =3D -EOPNOTSUPP;
-> > > > -     u8 attr[] =3D {
-> > > > +     static const u8 attr[] =3D {
-> > > >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
-> > > >               TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
-> > > >               TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
-> > > > --
-> > > > 2.51.0
-> > > >
-> > >
+> clkgen_get_register_base() in error path.
+
+Was such an improvable implementation detail detected by any known source =
+code
+analysis approaches?
+
+
+=E2=80=A6
+> +++ b/drivers/clk/st/clkgen-pll.c
+=E2=80=A6
+> @@ -829,7 +829,11 @@ static void __init clkgen_c32_pll_setup(struct devi=
+ce_node *np,
+>  	kfree(pll_name);
+>  	kfree(clk_data->clks);
+>  	kfree(clk_data);
+> +err_unmap:
+> +	if (pll_base)
+> +		iounmap(pll_base);
+
+* I find this pointer check redundant because of a previous variable check=
+.
+  https://elixir.bootlin.com/linux/v6.19-rc5/source/drivers/clk/st/clkgen-=
+pll.c#L771-L773
+
+* I suggest to refine the goto chain a bit more.
+
+
+>  }
+> +
+>  static void __init clkgen_c32_pll0_setup(struct device_node *np)
+=E2=80=A6
+
+Regards,
+Markus
