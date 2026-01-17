@@ -1,176 +1,126 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDC4153BE9;
-	Sat, 17 Jan 2026 12:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B1E1FE45A
+	for <kernel-janitors@vger.kernel.org>; Sat, 17 Jan 2026 14:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768654681; cv=none; b=f9ggp6KwRFlEZFu7qfneD9D/qy/Vx52Vlzhanhev1A0DSWdBrrbhlqmOBbAi7DSgqVkKIbfndKi3KxoKAO8poTKZcpAjGmfPxN1qLezHoShps5DAz1VOvo3jh7bqyfId4QhFJkWELBUwLrw1p1c8NZ3/dLaodfCpVKa3WLwm/Xk=
+	t=1768659039; cv=none; b=pahUOifUaFXSc0mOIuocCg2issaUVVwWofOmWkGWvOjrxOvr/gYWwC3wLWR95U3iZZ7btj44l84eU2FTaviYIeeeHLuQY32NdUUL22SZ3CdcdQtF++HJ9pCx5qT5qq2fLQoXbRb0XhT2tsQVVGaUnGEl+gkx5rG9Mj6re9itb3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768654681; c=relaxed/simple;
-	bh=6ctmFzGc9uAw0XJwRwZZfDdX3usU2MzQhRothFe2tQc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=k2QxcSAdbZ0+ElW6ynDTIpCbcUs31N1k7QZjrbCu0a9fdcoIZnqpbEsRCQV34sCQdEle5Nj5ENuNe+RLnz+fV6a7eO1CSsZpemZh8pTaZrYTXI8RLq/FGJ137aWzjXZEfA9y7bISajZXkg2tzl7YPbU14vfeDQKP2d1TB2v2ytQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DKCa2bjh; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1768659039; c=relaxed/simple;
+	bh=CA+7J/RR0nTc9It1XerSFp5SJbWoyky7hYTlZfMsQeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QhvCDvT0WrG61ljr1MEZ9HW4baHUaAlEF86P1NbgWbQRNGsHI7VymADr9ubKOQXcvbjtfrkiY415DHsRepmfx1kDL2TXGFTXUmwEZlKgKBCYX4SYYWpP6O36m2mhE14+IZf9w5I87Yb+oaTXd2wZxGC973HBpdGWfrhsi+lZDPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTkbCRhc; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DKCa2bjh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1768654670; x=1769259470; i=markus.elfring@web.de;
-	bh=rPkr+qZWZ3VT+JUIg93ayi8cfnY2TOCQ7rFusewqjjI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=DKCa2bjhutzaXffxhWZeHZ2gvNBTO0ni03xVfCwbcGB9k2BtnwLdbsUJjJaNCRHy
-	 jhgxhKgiFmF9fGgkcyox/KQXCmhX33VHcjNpLYhvFrBm+ZwiK9aEmIAOdPH9WC6fl
-	 ry9/3ZzhdF1ZvrM8ClDfl4BK1li1ruLGlXGiK+y5glsK4WKWgNBGfL+vhvLLxFB0L
-	 v58KNhcONlDNiT5Jsp2WSAFLmRmQJnsfZTNpmvlduWjAjV4sGMuEw6jAp6ckaKjkz
-	 GHkiSZp3c+fF6ZR72BC1ViitnRpvhT4n7gMACzEBqBYUMTJw2RgNCZo9SVrjDZfK4
-	 wf0y+k7eQ9j3KijwTw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.177]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmyr7-1w7enZ0D5z-00k7Ll; Sat, 17
- Jan 2026 13:57:50 +0100
-Message-ID: <9b522c00-f403-4eac-a2dc-ed140cd3568c@web.de>
-Date: Sat, 17 Jan 2026 13:57:47 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTkbCRhc"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4801bc32725so13584415e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 17 Jan 2026 06:10:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768659036; x=1769263836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UiKlHj+3mIbgnx+R2A3g/i2Ls37g5s26/ZzzGkqA/rc=;
+        b=cTkbCRhcSF7lU5JLMOi1QwuWC4OSZ0MUzUbvfv3SFzkLbOh3ROa+AdH7O2mPPcJc8h
+         Vk+BEUuGASte9uo9VmERE2KYKte8Jn3AP/KEItaBqBSt1FVe2Wdt7YJop7ur9k2BjA6Y
+         mMSAWNcq2z92QMUdbvi80NHARQ7cVc9wSLauJ4zGrlhJ4w1BR5tGRxsvOsrmrhzmgvnQ
+         tV1ISnyHiteBKslCvxmvcubA2t/9qtY4MjcrgFxCQUxBaBrAOhyhnB4AaKoBDnHjFx5D
+         HX6PydgntHzyLWL+pT0FlbiH/+GwTxcdYqX/jlrnnBTwUdlkCcpgKyPGfCfiasXmoFpO
+         dlcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768659036; x=1769263836;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UiKlHj+3mIbgnx+R2A3g/i2Ls37g5s26/ZzzGkqA/rc=;
+        b=YIWy0s6ZHLbWr16V0PW5GVO1VTLzEvy2J6zmujbK7QeaI082E7agFqz2bNCjBd8vDR
+         zRXGe2SnOPyzs+N/lHNJEzGuUoIF6zGgJXRhU3TCj8T4E+eYvJl0WeGg98HJ3y+7Syu8
+         jxy1UvlV+Y2BTgeEIRE7VCsdCk7YGzUiWkbnqn0rZ5zydmtHZBtuYu5Xq/sG5tpNsYDY
+         O05zF9JZX6MbUDFkCmJainvu7oVi7qKRSpDTV6W0GHjzZgkpuiW0Y+XnOHxAIc1Bip13
+         X5eWXYNo4AweyUiNxCSIWuR9sOqMPr/dL+Y8vYDoIgkJfn5ho4j+Rpve35tKrqJvP/m2
+         TZEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2W2G6i7RPBRr9oyfztHD6UGPxF63W3+4yWht+8c2CRgfn+U+XJiRzp2PHfTfGRbhtYcu6at5KOC8d8burfJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz98QDjDC3bmE4avPyoOaWe5EmxrrGB6ndRHk8dM6HDrs/0T1fk
+	iTONcpzVtzp2mTf6Z2Nsrcl1tV2gf/H1D1anPrWp2otGbTpWPnj1+B3k
+X-Gm-Gg: AY/fxX6LaevEkPmdWHokAflQu5Ut19IvlPR4TkWNeM8LC1IuD4wS37/tQGrRswo4K3X
+	1gMQevuZKZ1VKzjkKIAZ97xqAOY28Fl1AvkOMq6urn93fDPojwy/R5Q2PBCCwjHaCK9XroTSW9E
+	CrQECFQjeo5q5fCxGNA8kF6BUIjwUhNg7plo78zwkZZCYu7ztakzFfNHLyCktGP06o/GeOy88TQ
+	inhbVhaOhSFhX4RXruNkLlBIuHlqCsO9y8aMbRmS9gm/pLSGdt5WKaDakQ70JGrJfeb69ar+zA/
+	85hL5Ii/nzWk79Jah4A2trzK45x+AazOVt0fqweNcTZjFw58MmWnLzwJHx5iU2kQ4JkudcIiXjC
+	vCIoY2Yl9fQpCiJvRCN8GtKNU/yk386WXVHPqoX2cuFgNAkTOPeCePXnIekCAa3Qr+BHBkL5fp0
+	gbIIzFv6TZ+oB7AfMDbnDLwhiAkvNYvfbMJS/O0Uz2GAJ5T4fHlYSE
+X-Received: by 2002:a05:600c:6489:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-4801eac331bmr68009345e9.13.1768659035967;
+        Sat, 17 Jan 2026 06:10:35 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4801fd458aesm42726695e9.2.2026.01.17.06.10.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Jan 2026 06:10:35 -0800 (PST)
+Date: Sat, 17 Jan 2026 14:10:31 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Colin Ian King <coking@nvidia.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, Sumit Garg
+ <sumit.garg@kernel.org>, op-tee@lists.trustedfirmware.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] optee: make read-only array attr static const
+Message-ID: <20260117141031.1514faf2@pumpkin>
+In-Reply-To: <20260109154442.421248-1-coking@nvidia.com>
+References: <20260109154442.421248-1-coking@nvidia.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-clk@vger.kernel.org,
- Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <20260116113847.1827694-5-lihaoxiang@isrc.iscas.ac.cn>
-Subject: Re: [PATCH 4/7] clk: st: clkgen-pll: Add iounmap() in
- clkgen_c32_pll_setup()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260116113847.1827694-5-lihaoxiang@isrc.iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/AcjH/b8ItPqnRybN+esVv33Fk12/CvakOAOBdMLPsbDv38lgRf
- pAvZTIPPgfdKlkocZ8xV9ZH0FxdSh1mzS89g/hB8pCs+RL4LxJPdEhFrvRTCEI3o+QMb1r5
- n6X4SqbCnPZwR+6euCt3wuBegnKdxc1jL8A5PqwRu29Io53h10gPqn/aWuWzJRXs334qiCe
- 8CEjYVuwu3RqrKPqz3U8w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WZJFmjbGdzs=;8G6Y3kwYv1RaI9JAd02bGHrS4CK
- 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
- dP67GquA=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Add a iounmap() to release the memory allocated by
+On Fri,  9 Jan 2026 15:44:42 +0000
+Colin Ian King <coking@nvidia.com> wrote:
 
-      an          call?
+> Don't populate the read-only array attr on the stack at run
+> time, instead make it static const.
+
+For a 4 byte array initialising on stack is likely to generate faster code.
+In particular it avoid a very likely data-cache miss for the rodata.
+The on-stack array access might even shorter code than accessing a global
+array on some architectures.
+The compiler might, of course, decide to unroll the loop and not instantiate
+the array at all (in either case).
+Indeed, just unrolling the loop as:
+	if (params[0].attr != TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT) goto bad;
+	if (params[1].attr != TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT) goto bad;
+	if (params[2].attr != TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT) goto bad;
+	if (params[3].attr != TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT) goto bad;
+is likely to be pretty near optimal.
+(Collecting the bytes and doing a single 32bit compare may be better.)
+
+Of course this won't be a massively hot path - so the code choice won't
+make a measurable difference.
+
+	David
 
 
-> clkgen_get_register_base() in error path.
+> 
+> Signed-off-by: Colin Ian King <coking@nvidia.com>
+> ---
+>  drivers/tee/optee/rpc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+> index 97fc5b14db0c..1758eb7e6e8b 100644
+> --- a/drivers/tee/optee/rpc.c
+> +++ b/drivers/tee/optee/rpc.c
+> @@ -43,7 +43,7 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
+>  	struct i2c_msg msg = { };
+>  	size_t i;
+>  	int ret = -EOPNOTSUPP;
+> -	u8 attr[] = {
+> +	static const u8 attr[] = {
+>  		TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+>  		TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+>  		TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
 
-Was such an improvable implementation detail detected by any known source =
-code
-analysis approaches?
-
-
-=E2=80=A6
-> +++ b/drivers/clk/st/clkgen-pll.c
-=E2=80=A6
-> @@ -829,7 +829,11 @@ static void __init clkgen_c32_pll_setup(struct devi=
-ce_node *np,
->  	kfree(pll_name);
->  	kfree(clk_data->clks);
->  	kfree(clk_data);
-> +err_unmap:
-> +	if (pll_base)
-> +		iounmap(pll_base);
-
-* I find this pointer check redundant because of a previous variable check=
-.
-  https://elixir.bootlin.com/linux/v6.19-rc5/source/drivers/clk/st/clkgen-=
-pll.c#L771-L773
-
-* I suggest to refine the goto chain a bit more.
-
-
->  }
-> +
->  static void __init clkgen_c32_pll0_setup(struct device_node *np)
-=E2=80=A6
-
-Regards,
-Markus
