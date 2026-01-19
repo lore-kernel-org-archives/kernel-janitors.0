@@ -1,132 +1,150 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AA6350D43
-	for <kernel-janitors@vger.kernel.org>; Mon, 19 Jan 2026 09:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ECAC2EA;
+	Mon, 19 Jan 2026 09:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768815532; cv=none; b=VD9naDlaGIBp/9U+xLz9F33AY4RYmJ/TWEvMFcrIVbce3mPqUUDH1PfD9OKAuSX5r2asHXXx9ADNbuVUSHn0BcOeuLBrUZOQvrnNzYuKmu5CCvi+dh6QJckt5U4OMBaisAfBdZaQd0yPRedDnyYhWftAMZmGC9VcO4DvktMEcxE=
+	t=1768815802; cv=none; b=oZ935VYrosoDaR37Eh5Z+zV+JaR1bGjnYjyqqcxQ3b699VyJIUgglI5XNMkTLG70Aeh2F83sP4l9AoVZ5DeaIL4AbGT6Hi0MKkyytSB9nxHjOIZ7R3TjR5JCpDQzhMCpC7RMPamcpRSASMgU5MBt9wNhHeKifFPcRSzoZ8rVcQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768815532; c=relaxed/simple;
-	bh=tbqHe7nWTVVi+1lGzHiT6Rzn7QWsfhMb20Yt2chxOYA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=llebmrMEea/HAqR9UZj2yOB5olNsSAn0t0UHY392pMlO73eLD6g6W8Q8KYL7yN674jf3baXKI9gaYohWDUuIZ0thtv24IrbEKw8Mz4Eo+FE4Kw1zOdi69N6BD8eNvBrpCZIa17xjdPaPD6BZQmAm+MXygN1XycHjWxdJHElx4dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWQQhVXy; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=iobIMB+U; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1768815802; c=relaxed/simple;
+	bh=wxjztLuQlINXKaRwIhkhn5s4QVuCiOTRdabbOIeg6ns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uNw+kIsWiV8q3HgaObJWMtsdc+3W74+r9Z3yBhZerWo2yUixiK1aF6wK+nX5CgSK7Uy6tN/QUzXHraU4W0MU0zZzv4Do3LPiHoDMxasKk9lSJtEQ+AXhFl/vXfk8cdwpvRzs5rKpMT2caSXBOYpyubvVvzGpLVnqGJDgYMUnW4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OnEdZ9lP; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWQQhVXy";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="iobIMB+U"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768815523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3KLks8HumG/ct0j0oeu7oaK/KNIPQYniDI5G70s/ceM=;
-	b=SWQQhVXy0IlmZEw9WMKv8lyANVVnbmSKlLW2ZOrauAUnBRdnazVCSRKxgHvADDDoI3hwI1
-	FgEQZqfBbiPGSOfygYyCsxTlMfqf1kqLj38l9FGtn4yZp0uAKtNjGKTH89r1QLuK+BoKP5
-	HpR7KwV5+YS83knaJe/WFSSXWlJBTpY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-Y-DGk38ZPOOEdvcWOTySrQ-1; Mon, 19 Jan 2026 04:38:42 -0500
-X-MC-Unique: Y-DGk38ZPOOEdvcWOTySrQ-1
-X-Mimecast-MFC-AGG-ID: Y-DGk38ZPOOEdvcWOTySrQ_1768815520
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4802bb29400so21355855e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jan 2026 01:38:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768815520; x=1769420320; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3KLks8HumG/ct0j0oeu7oaK/KNIPQYniDI5G70s/ceM=;
-        b=iobIMB+UQLAJTXyFWmy9YiMSxkrEoo1ObbydYdFS5qkL4ZwV8Sv8dqWmC6RFBcHoog
-         L6JOAe2JS7OMNxXXBUGG/RLjI+J+lOYalhU9P5fl8v+AJbR541MrdIXQbdG4cG3IMjiE
-         HVfhsEsf5wSAGFfZNuT7arnLl8TMqtXJA6VDdQtvgvNqRKexTwdD+NM9cAgc8tV10url
-         tsXnYOVOuBjCv+XAnK31rJ5ASjZBFec2TL2ZM7/Be7xG0s5yP5v2J1b43kAh/6ATon9R
-         G3f+AcxwaITTCfdWUFuP1cdyVtTi9r9tqshhhNm7orHrnpOl2AQ+fBp4HbA3QBf/99lh
-         Gzug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768815520; x=1769420320;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3KLks8HumG/ct0j0oeu7oaK/KNIPQYniDI5G70s/ceM=;
-        b=GZf76Z5equhm7vxEHw1G99AX4N41CDTE+6jTtIYGtL2/bxvg3qUAKobLxDGjzmqeGu
-         mRLItdaPJRU09lbyAQJUa9anbDe2akHci6Q1r8M6I3uNtQnKM64Udjwcv0OiW6vUlGcp
-         gOS9o0HLRW02LQYObdVJV6nAx/qJP3cm/bFGqfk/bV2LengNTDzs7ZfMbFrWRRmgGmLP
-         mrcQZYW6ZEGqN9n3xwPSYOXVjp/sxkXrAcYr0K/kNRHvCF3okcguPyvic7/WXZU0w9EP
-         s7SfcdQ6nK8tgey1RKgGK4eIRKZdNDIBcnqHBlx+tRdI3UbvBIt01yra/Si1weyG3TDW
-         SUUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgw1xWvP8q5pXvtg0jNhVbnwl2gBP6pLTZz0XTEijkGDuHBmbHGF1It8Ycw7T+dmhKSSTA+mfohIT8CmS5UYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHrILD5YJLTz74XF9zwJKtXI9CIIHzpPh4WKaSFdLLbbDO9e+Y
-	73bIOq8/8y+J+BUXdvJmyVcjPCFjgIF8cUX0aFbCmKv+GE/5MAHb+MfGzRWRW2OTXGmF12cb480
-	HQ5rgta5e+PLUbDltcfrHK2SVjy8uHspyn+9EwdhuhE4BXQH9U+iRzxhVNHgnz9kIibdIzw==
-X-Gm-Gg: AY/fxX7L++jxYjcBPxpBbRQ/NCYlhIdUWu+64DP/dY4iWqya2tunH3TiFxLR8l0Naow
-	oPJEB6C0XyZJrn2Dpu+4XK6fUD4dLktmLLyNDfKTTHMQ6sFZo/FuPGoh6M3IcY1tL1s/95AHbff
-	/2PYiWtkW8Dw9lSnvNu6Cp9XVLlx8i9v03QwKqxzO3uLZ9lGMSeT8Y6bMjQ05JzSV3QOpcBJYqq
-	czmLtDVJXhgm4JyqJ/xBVr9ThYyXIcZznIq1MC6QohvBtqwh0lTEEzc62hmGVxvehPbwRe8/kjt
-	1ozkYDGKjFuCrcR3Fie13C6yPRoHKJcDlIxcLIGu93dBid2ShUv868HY/vpSECjG3287wPERZuD
-	T78kWyqB9ObOY5cwYi22OtNoLgLZkTCsDUIuR90ALfSnJ+Ts+1DHs2gdE1UA=
-X-Received: by 2002:a05:600c:4e43:b0:47e:d943:ec08 with SMTP id 5b1f17b1804b1-4801e33dc26mr124166325e9.28.1768815520298;
-        Mon, 19 Jan 2026 01:38:40 -0800 (PST)
-X-Received: by 2002:a05:600c:4e43:b0:47e:d943:ec08 with SMTP id 5b1f17b1804b1-4801e33dc26mr124166015e9.28.1768815519854;
-        Mon, 19 Jan 2026 01:38:39 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996cf33sm22661810f8f.25.2026.01.19.01.38.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 01:38:39 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: "H . Peter Anvin" <hpa@zytor.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	linux-sgx@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in INTEL SGX
-Date: Mon, 19 Jan 2026 10:38:35 +0100
-Message-ID: <20260119093835.114554-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OnEdZ9lP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1768815777; x=1769420577; i=markus.elfring@web.de;
+	bh=AMPRjZ+Wk7UcebFKSnffBtFf4cqRKVy/5sk84iuJUl8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OnEdZ9lPFcJgp+CC5zV4L1hRt5oDlaZBZnOG57Exden5eHKgMcyaFjZCSTTPwbQU
+	 N0k75tRg0+AzbJ6nnJsdbfogyxBz8shd1cVxFVshnLDAWilbb/FmMCdIuCNufmgX+
+	 i/8TJrg3O3uOAHG7Ej8wzcTWAguAo1yuc6U/CSabUEAakTvQ8S7+7P56oeqnfoJXD
+	 SA4I97tawA0KRc0/U+VRDQ5UzqfSSXvrtXsF894GgD5VDAaGl/ZWEn2bcXNwOZwvz
+	 OpYabiAVRBYAMeYDb2KVWPzoc9W0jF7c2O0x2I9MwWKPj++LRcBAn86LINccjB3gg
+	 hMxo9XOEXsPJWxMt8Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.178]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQxo5-1vTev00LGZ-00SquG; Mon, 19
+ Jan 2026 10:42:57 +0100
+Message-ID: <e3f1974d-5e88-4824-8466-6abea6359c19@web.de>
+Date: Mon, 19 Jan 2026 10:42:29 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ocfs2: fix NULL pointer dereference in
+ ocfs2_get_refcount_rec
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>, ocfs2-devel@lists.linux.dev
+Cc: stable@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Joel Becker <jlbec@evilplan.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Fasheh <mark@fasheh.com>
+References: <cfd0e0eb-894e-48c7-948e-9300a19b9db7@web.de>
+ <20260118190523.42581-1-jiashengjiangcool@gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260118190523.42581-1-jiashengjiangcool@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OL0fUYJ1zpuhwC811qK9Vc2dBXCR17HPn6BQMk5pYEuSgwZX3aW
+ jxBjLmFSTMLT25waajz73ipaKLHotplbF9xfaQ+koxlR+0Le9EGFEXahOw8BTfWuxEdiecV
+ NywABXm/+JAqo5dWAB5D6kVqFE0j8npeE6L50fqt9dfeJfCPj/p+6mabOqD97gYesCbHdtf
+ 3uDRijVh+jYp3PhfOEUzA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:30knBD01OkA=;4TPb8pDIEFbgWSt8v6fI+GZZRIV
+ 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
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+=E2=80=A6> This patch adds an 'else' branch =E2=80=A6
 
-Commit 693c819fedcd ("x86/entry/vdso: Refactor the vdso build") moves the
-vdso sources into common, vdso32, and vdso64 subdirectories, but misses to
-adjust the file entry in the INTEL SGX section of the MAINTAINERS file.
+Thanks for another contribution.
 
-Adjust the file entry in accordance with the file movement of the commit
-above.
+* Does anything hinder to follow a corresponding wording requirement?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.19-rc5#n94
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Can it be helpful to append parentheses to function names?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 14a06f856b81..68f5fec91f96 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13105,7 +13105,7 @@ S:	Supported
- Q:	https://patchwork.kernel.org/project/intel-sgx/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sgx
- F:	Documentation/arch/x86/sgx.rst
--F:	arch/x86/entry/vdso/vsgx.S
-+F:	arch/x86/entry/vdso/vdso64/vsgx.S
- F:	arch/x86/include/asm/sgx.h
- F:	arch/x86/include/uapi/asm/sgx.h
- F:	arch/x86/kernel/cpu/sgx/*
--- 
-2.52.0
 
+Regards,
+Markus
