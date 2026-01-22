@@ -1,175 +1,138 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C40E34EEF3;
-	Wed, 21 Jan 2026 10:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD50478E45
+	for <kernel-janitors@vger.kernel.org>; Thu, 22 Jan 2026 06:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768989804; cv=none; b=REtFhQmCB5bRW4Kk5LVtg1TFmvWK5wRsOMO7s9urGqTw0or5A7X9wfDYFMgFsconYvCnAJvOEZcws5tpN1v6nWQDZZFlNJh8H+5SkaX6hAA1aRu+x0TIsjpVKHH1Fl2gB/xbO5lKXdO2an98HePW4Lh9q99XYH74I465sYvg10E=
+	t=1769061965; cv=none; b=qUi2Ee+LrYYllLOReod45IvKQ7PfVQk25Oxv6SfOzwX0Xas4/VE5+YitPy97j7G75k7vJrSnohnzHQdT8DmhEsDyxJOotqS9nYhqNOOVCQhE0c5+U/x8vBsj1+lwDwR8Jc+d0KClviuXII1GL1jrq5aNtZzYMoLWqSrnSPDV4J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768989804; c=relaxed/simple;
-	bh=FTO9/uzHNjNuNEN2VtUnN72iAI39TGwpTZSsqmbwvb4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MMRq/g/zDdxFqkobtMPmKyVCaJ5UUHHssZZeZQTJLCeU8dJBze1ZjOvSCgXdy85dtDXkwBU2ovX2dTOM/mmtTmlRhtLyTm9roa17NTacD4mdtyc+Cys4o8Mdpp5/LYl/YGmc+MObtDtz/BRkxNPUYS4eAGH79E6VBcuyuOnSUdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UJmHLl9Z; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1769061965; c=relaxed/simple;
+	bh=xOEbz33bUt9FQPy96H0PFGJJ4MHPtNrRYqYVcOnX5XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sz6QUxETMjEEjjh7Hz72bGDbpelqDKxo0JQagKq+mr/aN8Vu530A3ugVbzDLUuy0U5dsoVdjEDl2Uh0/esgErGaNcVXezCVwUxLhOVvd14YNnm22jKWOPj3Nd8HFPvqYFKBo+xVILkDqoBgPAVCvhUvgF7MVb7SV8lrqVUq6VDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L6zRyiE/; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UJmHLl9Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1768989800; x=1769594600; i=markus.elfring@web.de;
-	bh=ZsWZBFVJo9bVgvjglTOcPeP7CI265mAlH3UOdBK2uDM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UJmHLl9ZibHgE97NP5IBn1olG6U1vwJChSVUcxzQZnY5Xafzu7eZSnnC77uF9xN0
-	 UIE0pV0SoKEYA0QinMgr21Fa/osmoAIj1M3lGJnumqupf7BxlpFDDB2gHYbuSDpCF
-	 WubXnZye9PHmbfDt0LpeJw8Hct51E9FNDjhh5FmmHa2415wmGrWkPuCX/jcjjRA97
-	 pum3oJIDr0Gd2bIrxU3d/7SepaavKJF+oDHMdVQGrVJjwH0Pk/QvU4DyHNs2Q+Jtu
-	 2ZhfoZrY/8Gq3HuGTdFcRkLxXf8E9HlRRz6qCtQdkKUoEYggCPxernt5yEhirRu/3
-	 wNFhd/UP6+dDJSPaQg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9cHJ-1voBZN0RV7-00rG86; Wed, 21
- Jan 2026 11:03:20 +0100
-Message-ID: <398b4dab-ee76-44f4-9bfd-4388af954808@web.de>
-Date: Wed, 21 Jan 2026 11:03:18 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L6zRyiE/"
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-432d2c96215so459733f8f.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Jan 2026 22:06:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1769061958; x=1769666758; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dKKYv/QwjgamZm0Z+gBpDqIRHu4ljUK+NYA0+iwZjfs=;
+        b=L6zRyiE/dTOjfNvZKhIrJ8IdkTIVOiYlrlKyoQf2lT+Zc48zCOCT4rNyer/PMFlZA7
+         283xT7/eZqUecI3IDRtl9OI7QdCqkd4B5+zS82JG+iwcmfZ+Ly1twwFk2NzAPV0xZf9s
+         cHavPtHsK/C386H8b/Mg4lP5CIoLxwt+aJIW93dHvbvBe71iJytQKOOrYL1Fa3pyrw3P
+         jY9a5AVMoT065BKjHdHDgZ7EBhJSfyuuY4/G2oGB6T4hSh+WJH+x8NRjuLzRGcu8QmZk
+         9phidGmdVC2gbBtXgrTSeG1GJUrwLglYG7FHux3We+vd/QoaC/WzwGUOorgUbrQN7Q+M
+         yL/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769061958; x=1769666758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dKKYv/QwjgamZm0Z+gBpDqIRHu4ljUK+NYA0+iwZjfs=;
+        b=i5Ayw8am1RTSKERRheiHJcQcFkDun+CCupu12iFKlw7LDmGqGIWhxP8tQbM9EbudP4
+         /LalbCDfiiz6LXRCWNFRYk2ghs5SggLD1JUZsqq1yqgfk2IUc1uq4nzPC5nvNMJ6sGp4
+         DXgpPmYwfnoVDJoPuQ8+gMeU/9u5KNO6Hs5gh/0lkUH7qCD3XXahpizJbyBH3P7vrbF0
+         vkXnH1FtMG/00k7JFq8DGhDeoypOdTQ38flX21vDXZnL48wEsGNx+AGc0cqcaONXRBnr
+         iu3SktnbbFiM2IOZvbWoUb9UnrxhcESGuDn/UdRbFoT5QvITq6erIpBl1Nyat9vz0Msf
+         rwAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcipKBFBAuoIU1LhvZ8/AKYQIAvIa+pdhSVGFe518o4lgz9zCgopF3H2fLGEYuoKm2sbBk++nKzJulfGUwips=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylAPjiuHwl4xcM9AMFbX/HA7m0vgUp5+8UAENpCRzap68gzLnx
+	ICf141MNCGXTOfrL9qYDIBgHxZuheI3UhgvS25qPx2bWh82uxFE4DdADYZH1e4hobng=
+X-Gm-Gg: AZuq6aJmSCvEaO2WZrgS4mJzLjuJhC653zgHt3yTb9qzuip3GSPQYHmtd3WAgNao3Eb
+	lj9DH5YMObz0vRzpODc7Eav0j7ZbZkTGxK8KQAi8ak1ly9ejvlKse7zUL+Keh2g+covExaY8Buz
+	pxiFe74aRxTUELoWvqXg9lIUw1hA0mFbCpPqiVXYDDOmFWxDnGnR6k95bV5qfUeqDYk2CZa5oPK
+	jFOm9Oe7sNZELk2eNUklJb8O6LgmsFf96qhDtZMshlQWWbO9oJQlItsjVTLKnFxjeptVouqQlqR
+	EVUB8TjFQxI6ZLK5IsKNg6EH1iKsDk5ICwF6hTSiETuOqv7UyqJTe0fvWUi0gpUqnLKmMCm/K3J
+	FmXH4pSrPxgcmDbMPca0PQdKmKhkN//h6QWhGPVQjp4eF9uxuBdlO5NgSBzOP+fY8bGQUZgIVIB
+	tpP2vWswCGVWL948Vk
+X-Received: by 2002:a05:6000:290d:b0:435:ad52:31d4 with SMTP id ffacd0b85a97d-435ad5234ccmr515333f8f.26.1769061958037;
+        Wed, 21 Jan 2026 22:05:58 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356997ed8bsm42957976f8f.36.2026.01.21.22.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jan 2026 22:05:57 -0800 (PST)
+Date: Thu, 22 Jan 2026 09:05:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/bridge: synopsys: Fix an error return in
+ dw_dp_video_need_vsc_sdp()
+Message-ID: <aXG-QjoniNS825an@stanley.mountain>
+References: <aLaPyJrFsSFuqC1R@stanley.mountain>
+ <5f9e8942.7fec.1990997b4de.Coremail.andyshrk@163.com>
+ <aO4GGyJLCZEwFYL4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-clk@vger.kernel.org,
- Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: stable@vger.kernel.org, kernel-janitors@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20260121012223.186199-5-lihaoxiang@isrc.iscas.ac.cn>
-Subject: Re: [PATCH v2 4/7] clk: st: clkgen-pll: Add iounmap() in
- clkgen_c32_pll_setup()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260121012223.186199-5-lihaoxiang@isrc.iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PBi0TVponyOI0FoKecOdSGrK6m2hflb5zk6sTYt+XLvXsHwKRCN
- A/uhhnw1wUv5pUrGieLCGgW/I9QgNbed37LHVYPQUDeyPoGiaU5eGUNLVgUCD0rq3aWxSK8
- Tho5ILN/IVVia+0BmePnsxOlG0DpKAGFZeCAVXjtbCjKy4dQD/E4lJ1DVtqCrWg0FTQ2T1K
- 41Hu8x3yBN2d+8nGz41Tw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dxh2jFcCtJg=;XXfBi4TIpFByW6y5cz3bGC0exQt
- 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
- V0eYtacHLqfW6Uf+aWtXOkGZ5i5Rh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO4GGyJLCZEwFYL4@stanley.mountain>
 
-> Add a iounmap() to release the memory allocated by
+Ping again?
 
-      an          call?
+regards,
+dan carpenter
 
-
-> clkgen_get_register_base() in error path.
-
-Was such an improvable implementation detail detected by any known source =
-code
-analysis approaches?
-
-
-=E2=80=A6
-> +++ b/drivers/clk/st/clkgen-pll.c
-=E2=80=A6
-> @@ -829,6 +829,9 @@ static void __init clkgen_c32_pll_setup(struct devic=
-e_node *np,
->  	kfree(pll_name);
->  	kfree(clk_data->clks);
->  	kfree(clk_data);
-> +err_unmap:
-> +	if (pll_base)
-> +		iounmap(pll_base);
-
-* I find this pointer check redundant because of a previous variable check=
-.
-  https://elixir.bootlin.com/linux/v6.19-rc5/source/drivers/clk/st/clkgen-=
-pll.c#L771-L773
-
-* I suggest to refine the goto chain a bit more.
-
-
->  }
-> =20
->  static void __init clkgen_c32_pll0_setup(struct device_node *np)
-
-Regards,
-Markus
+On Tue, Oct 14, 2025 at 11:13:15AM +0300, Dan Carpenter wrote:
+> On Tue, Sep 02, 2025 at 04:42:41PM +0800, Andy Yan wrote:
+> > 
+> > Hello Dan,
+> > 
+> > At 2025-09-02 14:33:44, "Dan Carpenter" <dan.carpenter@linaro.org> wrote:
+> > >This dw_dp_video_need_vsc_sdp() function is type bool so returning
+> > >-EINVAL means returning true.  Return false instead.
+> > >
+> > >Fixes: 86eecc3a9c2e ("drm/bridge: synopsys: Add DW DPTX Controller support library")
+> > >Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > 
+> > 
+> > Reviewed-by: Andy Yan <andyshrk@163.com>
+> > 
+> 
+> Ping?
+> 
+> regards,
+> dan carpenter
+> 
+> > 
+> > >---
+> > > drivers/gpu/drm/bridge/synopsys/dw-dp.c | 2 +-
+> > > 1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > >diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> > >index 9bbfe8da3de0..33be4eae2b20 100644
+> > >--- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> > >+++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> > >@@ -1149,7 +1149,7 @@ static bool dw_dp_video_need_vsc_sdp(struct dw_dp *dp)
+> > > 
+> > > 	state = dw_dp_get_bridge_state(dp);
+> > > 	if (!state)
+> > >-		return -EINVAL;
+> > >+		return false;
+> > > 
+> > > 	if (!link->vsc_sdp_supported)
+> > > 		return false;
+> > >-- 
+> > >2.47.2
