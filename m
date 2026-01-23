@@ -1,127 +1,146 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7475A3B9602
-	for <kernel-janitors@vger.kernel.org>; Thu, 22 Jan 2026 07:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E478730C361;
+	Fri, 23 Jan 2026 11:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769067984; cv=none; b=P+vhgBU3gmrmAbfK/w44CdybtfeZvvK2v9DqIH8ngOKrcjMEdIr2JlOjoPsT99f98eXdQLUf/8ZrlEdvvD4Vv2F7pcVHKBwzUdIv4/zbwqsDs9vaeum592f6FFuSCvgUbQiWwDgv+VzuqkAbEhXLAd91pgq/ZMRHGixn8PFJeRQ=
+	t=1769166958; cv=none; b=px7rd77f0scHsTcTOvH+PlvuVADpLRcX7pg7dlXI2XCEJdXtVl5nh66hsupgU8RDzPVqBbNuyU/jQB68Vie2NsUYtc29H1m2LgnUqGdoDPJs6VqU0XmIeTpQpYOCLbRwEHhbmE44rxpYgBo79fKuCsrCjxcrQxzqFaXek9mKjnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769067984; c=relaxed/simple;
-	bh=Mh6GmTAcC6CCH1HP0aQQaSTCLqmkUkcVsNO8jNHEmLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SgrUgMo6SOrsh7qrItmK9E2mDgOm0ha1lbDjkRo4S3eqYHLWtxkm+CF0I5T6szLS+pynjwB8dSyamI3O0yUU+DAKG93cCk/QgcQOrBMOiPRdITZEiPYniR3kwJKcwvMYyCFgz1AO1V/KzctEitfqLJy5hsdPC3mMXsSb/3YgAOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P3mL5tce; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=r2+qbaSM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1769166958; c=relaxed/simple;
+	bh=hbCCTTqf/VoHgYXOFS2JZ/4Xv1Ar1ZhaMccriHZ9cGo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=LGrtnzGj9KfL0RTt6hAj9EZyl0EFkNNew884/kpBc2cXBMWe+CPsnufnQFQ9bFSWzVxZn1wxPiUBDJ7nCfauQMRYHIPaWgzdygDTMCSvPGyChdbcmFGVR3gM42nSM8K1OikPCbLwD9IGyabtQY0mR9aXsrZpuPDcdvJDHWr+1QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SDSVETuy; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P3mL5tce";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="r2+qbaSM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769067978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=t9dKCUHIDcz6wnU/JJwI6d22joS1LJKYpB/XmCytXco=;
-	b=P3mL5tce5duRpy9KWfvcdTNXOn6wcXH8pOy2bk8QkHL6BrqNRmX2jwuEsKsgIg70LLLnB5
-	APTZErHYsYPMVCid61Eno5adgfj32wyulGW4g3uV/nzPk9PVNTIyuobXiQkp4EgYGQqAf4
-	zwAdK0fewmxa7P3zmeA1orhgK9AzUz0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-rEqVl5y8Nw6t0g93O8bxhg-1; Thu, 22 Jan 2026 02:46:16 -0500
-X-MC-Unique: rEqVl5y8Nw6t0g93O8bxhg-1
-X-Mimecast-MFC-AGG-ID: rEqVl5y8Nw6t0g93O8bxhg_1769067975
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-477c49f273fso5927795e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Jan 2026 23:46:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1769067975; x=1769672775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t9dKCUHIDcz6wnU/JJwI6d22joS1LJKYpB/XmCytXco=;
-        b=r2+qbaSMmTV7KsscSYKPh7Va/vQ7sqyKXu1QlAp+uHtubnGaWhztE7WD30AVBh9Guf
-         qDgm85TAh5Aw1oScUHe3O5F/5IqfiA7SRdPu60d03KgssYtpRUzRkciZFjvmRBp05q5G
-         Tn/OopfO+zKV4KfQfQnpA1zeKkhkP7R65kILhO5s7twhJw88Qh2DhffsFNbe5SJDReoI
-         iO/mPU2K1COPap39MEkiGDO3fRL6VGQaD0Noa3VoWnBq/rMZXV270bG2QNpll/3dIe3O
-         AyponrlqKz0+Xf40n2FEbGKlWBqDJin42MQ2w6Xj9HGhTcOfWvpulnAaa854bSQTOhob
-         hmGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769067975; x=1769672775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9dKCUHIDcz6wnU/JJwI6d22joS1LJKYpB/XmCytXco=;
-        b=mBPom1oqKG4dNVyJEJbSb2TZupQ3Mhaa0xB6z7WzI8ZtQRffLSbFNqoV0cUwhw9WkI
-         /aceu/qjiuPhCHzjlzjroyuz9XCsy4hpyDH/6+Aet32qqTQ3638fdRVU2aJ/YFR8SVvE
-         ct2GtGqEzlz/M9Z9vNZ9Yg+JfDCwUFzQMuQ6gthv5rYmRx8rW9I1tV7Zmh7vf7mhzMUu
-         4KzihrCDZVBdHCLWbUty+j/5G4tqsQkOIFhfYT/AcJfgkyupFuXEZ+spAFoE+w74HZWG
-         WieOVldJqN8kAEe8RddJp5IEj24Ef8RBRdy/JWAEOaJ82MgCl5RUF7GzkCXN+hCyuGqB
-         5+YQ==
-X-Gm-Message-State: AOJu0YynOmDjTgGXAigagpV4nxRAvxg+tJda8RRdP8T85aP21mwHIRET
-	IzWIuzEMY+FtApP9NDPHh1K9fIp2hbEJV//HsPqIpRMTp1ppr1VBHKBFXgT1ZgIHYGi3k6mKoM5
-	b1ht9BJJYW53+ngSQ90g9jOT+cLI3PZcMh4921XydPmhd1xaBsxuNNGmuQdEbw0z3RqrJNQ==
-X-Gm-Gg: AZuq6aKJ/tADgCcn5++YgmULZvolW6dhvMnJlUYz3+pYix3wC15ZkGcWewN2U2GabKc
-	P4PdEwGHKBE8exwWzfSZ52ZZGpslC/1uUyisgXX4mCi3vtirfN3Zzub8Y0w0Y/dBer5FloX30aB
-	uTzY0QDhjh0n0N77LP/EgdE3QSA2l9rRqSFjQmqh2DPUeaeFbKUa9yiwv3O0zx291d6iCi8vYy1
-	hobLU8tPgeq0YmmI+mAtWAw9cfUVtP79WTzSvBL5wFNHKVC8iV189Kon9HwXSxDOZT2CEu/kXOJ
-	GtIHfVc99I1k0OsYikC+WaEfoBRbdcqgT2kOPk66tg57Lm2ro7SShgfIPF6BvhjPJCp9f9AjkB6
-	eKjVgoVX+HoKJey3KN9+Oft8BFdKp53NVd2uZGgE1v0uV+UWgIj7ynEKwv4A=
-X-Received: by 2002:a05:600c:5291:b0:477:b0b9:3129 with SMTP id 5b1f17b1804b1-4801e2eef8bmr250977575e9.3.1769067974932;
-        Wed, 21 Jan 2026 23:46:14 -0800 (PST)
-X-Received: by 2002:a05:600c:5291:b0:477:b0b9:3129 with SMTP id 5b1f17b1804b1-4801e2eef8bmr250977175e9.3.1769067974509;
-        Wed, 21 Jan 2026 23:46:14 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804702876asm50954025e9.1.2026.01.21.23.46.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 23:46:14 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Ethan Nelson-Moore <enelsonmoore@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: remove obsolete file entry in NETWORKING DRIVERS
-Date: Thu, 22 Jan 2026 08:46:09 +0100
-Message-ID: <20260122074609.151058-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SDSVETuy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1769166953; x=1769771753; i=markus.elfring@web.de;
+	bh=yde3Mjb8oaKQZAJ6rJRhWjZDacDDPtcd49QgFCiCTvk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SDSVETuyz5mWgUkhsW1FfpH+T8mZmKBMunWaWsMez11VKExVAPqXKHeNNB5zQ/WU
+	 +icqQAp0+1+fsi1gLD9ZStJWxEtJYg9mI7S2GQxG+ihmZt5uIMg8pjacYYAKdDbFC
+	 Z/iNnIfa/YiEXRJ7gNg24OKJq+ZOL0TwKg7UR4bXNBlHeCdkTZT1lyjWWyiCsW71h
+	 S4AItWwoSEjGLzibTOkiY7LVAErLX2LXYfPdQcQhTUeklR6E6kLHP+EEOR5hHia0E
+	 GTLzF9fjAjaonNPjZocLjhPcHzHcmUEOZLZPsKHUBe6PggsZ/Yvn0oLGt66QI/w21
+	 P2FlMoxdGvYDda5I7w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.224]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKuKH-1vUb4O0wcn-00XIHz; Fri, 23
+ Jan 2026 12:15:53 +0100
+Message-ID: <969082ca-8af4-420e-992d-c6f4cc79f6c6@web.de>
+Date: Fri, 23 Jan 2026 12:15:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Weigang He <geoffreyhe2@gmail.com>, Suman Anna <s-anna@ti.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: stable@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+References: <20260123035648.1441763-1-geoffreyhe2@gmail.com>
+Subject: Re: [PATCH] mailbox: omap: fix reference count leak in
+ omap_mbox_probe()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260123035648.1441763-1-geoffreyhe2@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:M61XyfDR2DFHbhcNrHQMpV1v3J20XO3AFTt+nm6BqdfLPsNqrGG
+ RAqKYOTuYSNq8xjsrZOH+hHvYfeIjSVI3Fa0O1vN1+w1sz3Tz6+RhbJLYVRkwgOkwit6awq
+ 7cN5RbkO50raTmQQ0srS7clsaqoB2o8oVnEN2CEV16mOECRHbzsnVnsasVbD/zIu4lRdESN
+ /Dl3hq3rQnMMSx/J2F1RQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NIImDBBm9k8=;65Bl88vc3IWUXws9oLZuUPUBFWO
+ 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
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+=E2=80=A6
+> 1. Using goto-based error handling to ensure of_node_put(child) is
+>    called on all error paths within the loop
+> 2. Adding of_node_put(child) after the loop completes normally to
+>    release the last child node reference
 
-Commit d8f87aa5fa0a ("net: remove HIPPI support and RoadRunner HIPPI
-driver") removes the hippidevice header file, but misses that there is
-still a file entry in MAINTAINERS referring to it.
+How do you think about to increase the application of scope-based resource=
+ management
+with another patch?
 
-Remove the obsolete file entry in NETWORKING DRIVERS.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a56f8f00aebb..350e7c64e12a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18275,7 +18275,6 @@ F:	include/linux/etherdevice.h
- F:	include/linux/ethtool_netlink.h
- F:	include/linux/fcdevice.h
- F:	include/linux/fddidevice.h
--F:	include/linux/hippidevice.h
- F:	include/linux/if_*
- F:	include/linux/inetdevice.h
- F:	include/linux/netdev*
--- 
-2.52.0
-
+Regards,
+Markus
