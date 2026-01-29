@@ -1,115 +1,98 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F66533A014
-	for <kernel-janitors@vger.kernel.org>; Thu, 29 Jan 2026 16:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB403273803;
+	Thu, 29 Jan 2026 18:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769703138; cv=none; b=Ssm2eCRtWXJplZuwqYX6bEngPy3wnGckGaqr6EXsZztkNg+syHCBqk7NyE/EKKTq+XkmL5Fda6Wi6+PfvsPlqfA2g8YGb+QPaBOuS4Q0t3wV7dWANRqgdVZ4I3tMD/QDw/VbBG513iN9SptaK6EspCuc6mCjxq7PWVhygodkDec=
+	t=1769711074; cv=none; b=qxK2oV0jOLNb2+zHvWQWrkHS2ICswsVLoOYqj/ExBZ4ChV0Uv9R4mQ9LdAO4FmxJ4MOQ6Z9LVi8pZxGm9QfRWGZ3Gfqii8GXGSO48q8qqFoXPA9MpGtj4H5TgoWDFTKq17MO1iqAzxhAEa//NMjKl2XlWfiT/O8OgSktqQECVhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769703138; c=relaxed/simple;
-	bh=QH40RDUeKpt5r31k8MiwmTN5CwlPV8u/qUOIpL2Opbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gVu5yie2bX6AXxi81vhFzcy46y/ZsyrAlcb/Zh9q8RAmJXIiXvbrBSkGRHXZxhABxZ4QKjTXiKzjsFxiCuE6azSUxku9h/epsEdJwa/vjcMV6hFZTyds/k7T92MlfH8lfO6hq2Yhtm6btSpIkx2474r1A+oaw2rriA328/NawsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z65dhBKU; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1769711074; c=relaxed/simple;
+	bh=JNUcput7wLytfKldYqT97RMfdVuiojaMfiZdLUMOCWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c/RVSvXXHD6QRfxZONL05x3IKAuzuF/XWP0JmiXLnqI3t7IVDa6HfVRlFvfMCbXfKVwvlu5ZY4/+EYUYiRYF1y1dpCmDMx8ZFElx14452pqUJ4CeMHyQxjfiYZIae6oGw9ZFtfZdIGFTu5vNE8MZQS6jZ6cAraa77n55r7k4Zp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l07dOdT6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z65dhBKU"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47ee0291921so10739425e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 29 Jan 2026 08:12:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769703134; x=1770307934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T54lN/2f0AojvVlsbKqfRuQ4ek75UA0m33GBdVgd0ok=;
-        b=Z65dhBKUzNVABn3Igv4BWuFO18tBdX0zmxYXh1e39vbcGoOmGxwxVRAzlGcR40tHYE
-         6tnZNGL0vNi6zmpsOPZvluipCkNnhxm+OZ5ENE7iaz74hhPZMTD/dIJyB0NRbli0RwNr
-         vFk3hR89Zh+4nmJRGwGJXcI4vqfQZRL95fHFs4uQxakoRQ86UAZ6w2FkQKttk+10ibSR
-         GZ9rpCl5vPICWmdT7eSmddl4NvHSz5XKU/RXCYTAh+C4xD2eIJQFUBzF/S9bK/A/IXHb
-         8LEoWPXxbGjimYczI+afArCGYtuZPoRqD9hO7gCTjMgTPbatVz/hxJbP919/oR7FfaNK
-         GbAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769703134; x=1770307934;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T54lN/2f0AojvVlsbKqfRuQ4ek75UA0m33GBdVgd0ok=;
-        b=ig0KuSXYRsXYpDhuXeveyG4qPwiWSoy9JnXgnHxUYeoqmH7LtOKx1zgsgLQarXP4CN
-         kZC2A5yutFATqPqamTTKgPzCCPIW3Lfekust7UZGUAMCIEbno3uEuFeH3MGBHJ0KzUmE
-         DynhGkA4yPvZxBsEN4FAEjftevm6P/84kQ+c4u93t+15lbWn7zOX53OkBaJpjuVQ8i+X
-         D1OCxyp+abKP+06NGT/QHhu5thQ9SRVEnh9lRvT7O7zUftY5wxswtj46ikNgs3bULY4W
-         W8O5EdpNfButuIMc9EsF5qq6ifI7yn1hTXgChXcDSjyQrIl2Z2SqDj+NoyENeA6kVxAs
-         LkLw==
-X-Gm-Message-State: AOJu0Ywkkfi2iMXGsaZTnGXO17kgmqvD6aCpEZBiXaRjhaV/6kWPmeJB
-	Qy3BZ0fr3g2Q0Oc/oV+b53N2xxMuioG89o3HPEwDptW1q7UWPCEtfo5h
-X-Gm-Gg: AZuq6aItw414PUPM0D/bhS30E4H5k8nDhfNg5G7ksyieZtFZkqd8Ghm3dsmvlFOtFSy
-	M+D2ZtYiIFCk/No+PzG8qpbZvmEm3woUcP+52OJFG2LkSydYJRMC7qko3sP861O8CvXfFgDZ4Ih
-	MJ4ou0OpP0L8s4sBC7upZMsaVHyh6KLeiV49eyCHeR39yueSC3Whax66hhQYDI6WwjPKrx3AKS5
-	ULCW0RWROY+3hhDI6hmRLtIOVXmlCQbXUtfzEuQbNRqaENI2LuOhtDqltBiJG24Us6qtToMxd+8
-	+3pWdqIrxdh64AhRZkcmMZCF6cdYIsAAqjBkqbez4l+rAWj/XhltLJ0+eVqUoO4rh9UyhsPQuNE
-	WnzoSTIpydQFZVRbHMOBfJ7KczIqpoxIsQn5/nrUHnbov/FhBsfkwacDDOQ80hwvZLUkaDIsM9P
-	JL6R7QiwbhrA==
-X-Received: by 2002:a05:600c:530c:b0:477:7b16:5f9f with SMTP id 5b1f17b1804b1-48069ca23e3mr129097865e9.31.1769703133577;
-        Thu, 29 Jan 2026 08:12:13 -0800 (PST)
-Received: from localhost ([87.254.0.129])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-481a5dc8d41sm11135e9.13.2026.01.29.08.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jan 2026 08:12:13 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hansg@kernel.org>,
-	linux-staging@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: remove redundant check on status
-Date: Thu, 29 Jan 2026 16:10:58 +0000
-Message-ID: <20260129161058.197372-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l07dOdT6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D62C4CEF7;
+	Thu, 29 Jan 2026 18:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769711074;
+	bh=JNUcput7wLytfKldYqT97RMfdVuiojaMfiZdLUMOCWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l07dOdT6oby0Qk+9McnBZf5IYX9FtsbFKu3SRErnQF/aKPSTzFPwTENqS+x9vu1i9
+	 mL2yTPaHWeEfoNkWysbptXT7Mk1i5+TZtL+ighOP0KieiIzEfA6e7VafGxl4+f41bz
+	 eUJKsqxCj4LBsOCc3Xvz1wBoDUTQfe5s6+O4i//ip44/euoVLPKDC1WHn8xn0hObu3
+	 Lev8Xn5Z65adrnERw3K6CylMNlRv07xzE2+khwj9zTL++rnmQJf0xM9eY7JLBkx9CA
+	 USlueR4VXfh+XAtGrl0OCb8CmuCNTpGVuGfjIwT42nhg1gyXr3aprFdvb4NellvS7K
+	 3U2nYjBAh0iZA==
+Date: Thu, 29 Jan 2026 18:24:24 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Gustavo Bastos <gustavobastos@usp.br>, Andrew
+ Ijano <andrew.ijano@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ error27@gmail.com
+Subject: Re: [PATCH] iio: sca3000: Fix a resource leak in sca3000_probe()
+Message-ID: <20260129182424.2c0b1cfa@jic23-huawei>
+In-Reply-To: <5703036f-fcff-4474-9adc-5b1438295b7c@oracle.com>
+References: <20260128064953.2952714-1-harshit.m.mogalapalli@oracle.com>
+	<aXnbcNYWaf2u9I4u@smile.fi.intel.com>
+	<5703036f-fcff-4474-9adc-5b1438295b7c@oracle.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The check on status can be removed because all previous
-assignments on status are followed by a goto statement that
-bypasses the status check. This minor issue was detected with
-Coverity Scan static analysis. Remove the redundant check and
-some empty lines.
+On Wed, 28 Jan 2026 20:15:06 +0530
+Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
 
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 7 -------
- 1 file changed, 7 deletions(-)
+> Hi Andy,
+>=20
+> On 28/01/26 15:18, Andy Shevchenko wrote:
+> > On Tue, Jan 27, 2026 at 10:49:49PM -0800, Harshit Mogalapalli wrote: =20
+> >> spi->irq from request_threaded_irq() not released when
+> >> iio_device_register() fails. Add an return value check and jump to a
+> >> common error handler when iio_device_register() fails. =20
+> >=20
+> > LGTM, but I would rather converting this to use managed resources.
+> >  =20
+>=20
+> Thanks for the review.
+>=20
+> I=E2=80=99ll follow up with a separate patch that converts it to devm-bas=
+ed
+> resource handling. Maybe that helps in a way to keep the fix and
+> refactor separate ?
+>=20
+Yes.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 884fcce50d9c..606fc6726155 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -1265,19 +1265,12 @@ unsigned int OnAssocReq(struct adapter *padapter, union recv_frame *precv_frame)
- 	else
- 		pstat->flags &= ~WLAN_STA_SHORT_PREAMBLE;
- 
--
--
--	if (status != WLAN_STATUS_SUCCESS)
--		goto OnAssocReqFail;
--
- 	/* TODO: identify_proprietary_vendor_ie(); */
- 	/*  Realtek proprietary IE */
- 	/*  identify if this is Broadcom sta */
- 	/*  identify if this is ralink sta */
- 	/*  Customer proprietary IE */
- 
--
--
- 	/* get a unique AID */
- 	if (pstat->aid == 0) {
- 		for (pstat->aid = 1; pstat->aid <= NUM_STA; pstat->aid++)
--- 
-2.51.0
+> > So, if Jonathan wants to take this first,
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > =20
+Applied.
+
+Not that often we get changes for this one. It was one of the
+earliest IIO drivers. Anyhow, nothing wrong with modernising it
+if you want to work on it!
+
+Thanks,
+
+Jonathan
+
+>=20
+> Thanks!
+>=20
+> Regards,
+> Harshit
+>=20
+>=20
 
