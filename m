@@ -1,73 +1,63 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860D935CBB9
-	for <kernel-janitors@vger.kernel.org>; Fri, 30 Jan 2026 17:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241272737F2;
+	Fri, 30 Jan 2026 21:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769794000; cv=none; b=c/Ob1DeykRQ1Bj2meL4lGwVeINuD3wjmnwJ13PuNJiEoa2XmfojQlsIDA0HrqTRSIPCZ9IAWI39IVOyALqxoFIlbvzmGWXjkNx3nfOuw/jwSqjyuO8aPIZlcXanZnTIjp3b3EMMlBkx8JR76JyXrzQSdzkFkQnTnQ75D9IXdneQ=
+	t=1769809418; cv=none; b=LgiMIoX0B4gnRwI5w7+/93KLDbZNDXs8Ix4n3OGdUKLYpD4Iv6UiqcDLu8LaBmQFEg9+wDy56WU5BJsQgAU5xEO6U7tSUxVMLHpPdVkreyviskKwu3Ouqg5z3MU/QrpTUxSkDjGLJyRhtOjvjzlFPATJj50uEdF//Z/PItmGaQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769794000; c=relaxed/simple;
-	bh=AquEAXT+C+5JpRHmCkvrPolWBh5PP+PFQtO7aSkaXnI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BBqRlldy3GNus2GAIshZRXV+SOAnPOXeVjTD4Czhd9dKa6sb6WBv0lc2Vv0IwVU9APjU5snvUjzrA2/16Y9eldyK+otuJP69KMrGJmIuqC4o94xzU4qe/hkT43B/dXnVx7SkV6UcD8kqNGJ1PicYQnlxMvLTIVbSuIIpuQ4Ek3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4I+77K7; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1769809418; c=relaxed/simple;
+	bh=s1duCevx9ED8cwFST775ZmvAyciLKSI/4LpNZCByZU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RzoZrMAoqQ862Ga3tw2PV2vyZR01KJ+GH74GwwBqdBUZR/DlyxBE0KXiqxmgiHNUJxGF0qOg5H4RLdTSLnRvi781xffK4hH0Ga5sHT7W7p3QA7VIv4SLaMu69CzfDsffyc0kGNTwMPIK2MVm+vG81+Lmb3gXIR4NBVokVgtdVzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nQaCULKs; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4I+77K7"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8230f2140beso1899681b3a.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jan 2026 09:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769793999; x=1770398799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qd6QkPLzD+VnXxMDV1WB+xh9ioLPxpSE8CTC7dEP/9w=;
-        b=S4I+77K7TY2T+cXpET8Ro6K2vUmxOv4QcLH42nJpMFEUri7jnBo1w4nFq96q7KyLqE
-         DfzOAIal7uCVs7B34IaBxgHfpW2HhTAI0G8Fti2NkHiZkGilWDeJMk8fQlYpfMzqq2Bo
-         YihkIvYCdMmWbx77gwtK3vXmEnExLrvxwzMLo20lgG9gvMvmXnsta6jVKDjFfNdB60w1
-         CPrYMBrt0zpcKfjE7HGkQ1o5APP9q34eXt3SUG23ByEy4wpze52wwwEv9gSlSF/qYH0o
-         m7LFaM7bUzf8K6SJ68ZJgH05LBJCuxucEi2hvbbthW3ug87T0SXrgJZt8GZJnsXh6bnY
-         QQrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769793999; x=1770398799;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qd6QkPLzD+VnXxMDV1WB+xh9ioLPxpSE8CTC7dEP/9w=;
-        b=BvIIC2+FrpzE8Q0btzX/W1eXJCWgp4CN9gVImO/60g4JA+Zqg69bahJmIOIY6drBva
-         ewYPGWGxcyln20ZyADNNcybTA+xsVUhmHqm5N8pk8TAXLaCbc+/8NbWv4sF1E0PAyJVR
-         kFLt9TsCkjV4RmivOFQqzf6bU+pfWNBGHZ/R0Yz2N9qoqPJD5lq1novmDTu2C5D3po+k
-         kqQlGhDrAYdgLgUJTdUrdg+kRbHZNFp1bmKrK7HMb0ihbhcFGvGVoJOnvhhA8ZcgYkWr
-         hS93+3OXdJ2chDl1QFFDQg7hLmANRvM03myWT5hJ6d1GH34mhfTSJb4SBKXMjLuAZXpc
-         40CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhmDPe+2WUzZdfZhnIyxW5GL8cC4HTF8OHfczmA4Y2AfGSaxZChoTH2vYydtU8huEA1jOcoplWgCF2PztW6DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaVDlYcDCnXGzsWX2TS9f6hBZB5IxdFIatoao78BMFFCaOnD09
-	2M8pFxq8ACDzsL9PhO0q2q6Sej/kdf2vGUqRZUo+ejZQN17eUJ1c3b9Q
-X-Gm-Gg: AZuq6aJpnJvh7vt6O1Wcs207smOPgoPSK0UxqXqsXHkjeAYFZtgQ6myPTvmIIr/j2CE
-	R8ipcFKSdRus9veW7v48Yk8oCKWxS4Zci6AE78mIhfMs82VxvuTHCCVPymL1lzwtQUABinvYQCp
-	z4LOoEyNvUx7hcNjLSTjMlQfU3MrvmraP5/rM1k9TIHyaEWSPfG0v6RFPKe5su0RGPigSE+1Ijb
-	TsCHgo8oCWT9kN+LDUMN82bGFnJwhWHTM/erOpces5O+olGXOFjVGWPyYCMUKcka44xr+QPiu+d
-	kucNA1yn2DG6LTEColxmCyKBjcX6XxA7VT1OgrCjRwHVeufL12BA4lf8EB7vrBoKvG/cmt+CwTX
-	E+bqe3EPK56nzsUwBNsSkPbw06R3G9sAupwuMQAqyGwGjcqifcoZoCMGRgJ9vuXqUF5xZYqNEUk
-	4LGGzSdO2blzHotDU6Sw==
-X-Received: by 2002:a05:6a21:e083:b0:38e:9e19:6c6f with SMTP id adf61e73a8af0-392dfc12dddmr3454783637.35.1769793998648;
-        Fri, 30 Jan 2026 09:26:38 -0800 (PST)
-Received: from HPVictus15 ([2401:4900:1cb2:d02b:4761:c62a:859e:e20e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b413c1asm72715405ad.28.2026.01.30.09.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jan 2026 09:26:38 -0800 (PST)
-From: SAJJA EASWAR SAI <eshwarsajja20@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	iryuken@duck.com,
-	kernel-janitors@vger.kernel.org,
-	SAJJA EASWAR SAI <eshwarsajja20@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] staging: rtl8723bs: remove hardcoded dead debug code
-Date: Fri, 30 Jan 2026 22:56:32 +0530
-Message-ID: <20260130172632.130898-1-eshwarsajja20@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nQaCULKs"
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60UKDKPV3538474;
+	Fri, 30 Jan 2026 21:43:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=ZnG6cFf1MkU1zbeE4QVhjFikCIte1
+	JZeHq5RQwlUEgo=; b=nQaCULKsA7vOqFX+73pOFwApMf8MxEpz3uPFZNLQWg6a5
+	c3up8bA+9Q0V2bBrSobHZXwJ/VxBs+ZrDxbsKlf50VRhFwu6wmyrzUJkNXaBH72x
+	VzF0ezaPmYpvUByBTjjBslWndt5BJgKklRJMEbsJ40TPVBYXMnffzfJABKg2W4UK
+	a8ZN0hDGbHiYDgK0UHXOonl76dlojVqm+0tJ9uI+0vevXukhMOBYvlbemxu/UPdj
+	NYZmdMCnYuOUgV9xkG83/jGP1UygrtCRN2DcuTqr2HmskFRgjHFv/LtYUQPqU2an
+	qCajW4wSBeepZGJJPXthtfsJCEdldtGRtTYSbERcA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c10b2reex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Jan 2026 21:43:29 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60UJKVCa036073;
+	Fri, 30 Jan 2026 21:43:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4bvmhtg535-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Jan 2026 21:43:28 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 60ULhRte035490;
+	Fri, 30 Jan 2026 21:43:27 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4bvmhtg52e-1;
+	Fri, 30 Jan 2026 21:43:27 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Andrew Ijano <andrew.ijano@gmail.com>,
+        Gustavo Bastos <gustavobastos@usp.br>,
+        linux-iio@vger.kernel.org (open list:IIO SUBSYSTEM AND DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Cc: kernel-janitors@vger.kernel.org
+Subject: [PATCH next 0/4] IIO: sca3000: devm resource management
+Date: Fri, 30 Jan 2026 13:43:07 -0800
+Message-ID: <20260130214323.236389-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,46 +65,58 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-30_03,2026-01-30_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=933 phishscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
+ definitions=main-2601300178
+X-Proofpoint-GUID: 24OWVxKle8S6t0pyqbVEUZctbceB6oBS
+X-Authority-Analysis: v=2.4 cv=BLK+bVQG c=1 sm=1 tr=0 ts=697d2601 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u4Q87A9SPbUeVB_4iAEA:9 cc=ntf
+ awl=host:12104
+X-Proofpoint-ORIG-GUID: 24OWVxKle8S6t0pyqbVEUZctbceB6oBS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTMwMDE3OCBTYWx0ZWRfX9DxeOTGdmxcN
+ q32cXj9VY2iZqnKibdGWmFssZolIdT2DvuScdnaG2KOs09PHELmyaUORssqGnKjAAmy9sp6evKC
+ w9WFyEPibnS72ov337PuZYDDwnjfmBzqBupb1ycA7Ld6P61G5yITW59APFaHDWp58GGpm+fzw3f
+ r6bHVFjD0h2eLu2jq7AahEAs1vxTAR7xbO864e09fMX/oao3GJ6Z3SajX7sR55/mwpcQnJM6l8f
+ sOCj49O06737RzKgxn/8ktURJRGTBBXSy+fCc2JfKvNv0lbAN8uMSbX2hLqMC++XQKmOyPFO8y+
+ boZsOfVEoV2P9tqHy7HqZt2b/+TnqaJxAlXVMYBsShxXRrGEpge8Gvdrh//O05PGXxD7OQldgZ1
+ cbYjSUCKoyerepnAv2zOs+x4kq9TIN3xrNPL5LXZIjQGmkT3Mta1qhR5a7/57CaiR0FvzNbQlQT
+ o3MpIW14ChT8aymd0ePmxw/KxMEaPOGulP17uxpc=
 
-The debug code is guarded by a constant false condition and is never
-executed. Remove it to simplify the code. This also removes the now
-unused variable 'pattrib'.
+Hi,
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202601302336.Jt5bRreu-lkp@intel.com/
-Signed-off-by: SAJJA EASWAR SAI <eshwarsajja20@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 10 ----------
- 1 file changed, 10 deletions(-)
+This is an attempt to update sca3000 accelerometer driver to make use
+of devm_ based helpers where needed. I have split it into 4 patches.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index ac49bfbaa..ae16f045b 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -1849,7 +1849,6 @@ unsigned int OnAction_ht(struct adapter *padapter, union recv_frame *precv_frame
- unsigned int OnAction_sa_query(struct adapter *padapter, union recv_frame *precv_frame)
- {
- 	u8 *pframe = precv_frame->u.hdr.rx_data;
--	struct rx_pkt_attrib *pattrib = &precv_frame->u.hdr.attrib;
- 	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
- 	unsigned short tid;
- 
-@@ -1865,15 +1864,6 @@ unsigned int OnAction_sa_query(struct adapter *padapter, union recv_frame *precv
- 	default:
- 		break;
- 	}
--	if (0) {
--		int pp;
--
--		netdev_dbg(padapter->pnetdev, "pattrib->pktlen = %d =>", pattrib->pkt_len);
--		for (pp = 0; pp < pattrib->pkt_len; pp++)
--			pr_cont(" %02x ", pframe[pp]);
--		pr_cont("\n");
--	}
--
- 	return _SUCCESS;
- }
- 
+Patch 1 does some refactoring and simplification.
+Patch 2 switches request_threaded_irq() over to the devm helper.
+Patch 3 converts iio_device_register() to its managed counterpart.
+Patch 4 replaces the remove() callback with devm_add_action_or_reset()
+        while preserving the existing iio_device_unregister() ->
+        disable interrupts sequence. I would welcome an extra look at
+	this patch.
+
+The series builds cleanly and I have performed static analysis with
+smatch checker and haven't tested on actual hardware.
+
+Thanks for your time.
+
+Regards,
+Harshit
+
+Harshit Mogalapalli (4):
+  iio: sca3000: cache SPI device ID in probe
+  iio: sca3000: switch IRQ handling to devm helpers
+  iio: sca3000: manage device registration with devm helper
+  iio: sca3000: stop interrupts via devm_add_action_or_reset()
+
+ drivers/iio/accel/sca3000.c | 92 +++++++++++++++++--------------------
+ 1 file changed, 42 insertions(+), 50 deletions(-)
+
 -- 
-2.52.0
+2.50.1
 
