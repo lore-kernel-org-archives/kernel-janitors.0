@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5546D2253EE;
-	Sat, 31 Jan 2026 16:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185B2155757;
+	Sat, 31 Jan 2026 16:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769876896; cv=none; b=uO6vN6neLeLW6AXMj+dmWAAbA7p3Tpc7h1rzEAGomQtF0NXrbu0US2PJssp5Hzlu6W2aCYu0Mn5aM5cwEqizSAbYSYYrAcUJkFnq0HpATPDKsD2qAkckvWgFYLOF8I05OWftxUE5B5bWaYunMiMwuUl/rDZagAjiGjWgh5YVldw=
+	t=1769877018; cv=none; b=ta1eTRKPmZXa2twIg+I/TtZ/6HvUm70m+9ohanlnq6HzXeigk431ziHmCVRwrLnYJjzbCIX8Q+lyqdrCvxPZQadRoUyZCGwC4J4tNgT8g1GkIN5MlPxC4ecf7Vmp/X6PNgF7GI+KsSYfFQTSUsdu/Tc5owignJAs3vKQKl2PKZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769876896; c=relaxed/simple;
-	bh=BEtBRfTit4dIELcxbKHdR2TWAhT9f10WCj8gNS10tk8=;
+	s=arc-20240116; t=1769877018; c=relaxed/simple;
+	bh=f0IaujP7pkRE6cQmdI4ypIQTQ2QjK6ZF6VdpufpHklM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l9D1ZfxeDW0rFebTbG6D0ghBJ061meAnwhGgBYWGATh+fpEAbiuFxs6oX9xGMwldQ14VMjdWhq8CKTZL9wjLUdv49mPhCXgGzAk79qb2agzQteMQRBJJkSabkajDmHcFK8rzrySzUnecGQS2GlaTTbbV6EB5ww0oL62qA69hEpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umsIXOJ1; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=oQL1dX1GXUGqpJVPwnBg/++UqXHhkRb65RbiKElykwM7AoldunWWqpWZ2eRSCedTC2eLqizP91aHYaq+ZO5f8DTiJzFsss6L5nvHiw8RsHC4VkeK9O2hwCCTgtn0v8BZJYRtpQnS2HHzFSO94au1kXqGFhFAGLLyZ7r1/h+/nbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t15OryIv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umsIXOJ1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3E9C4CEF1;
-	Sat, 31 Jan 2026 16:28:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t15OryIv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B3A2C4CEF1;
+	Sat, 31 Jan 2026 16:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769876895;
-	bh=BEtBRfTit4dIELcxbKHdR2TWAhT9f10WCj8gNS10tk8=;
+	s=k20201202; t=1769877017;
+	bh=f0IaujP7pkRE6cQmdI4ypIQTQ2QjK6ZF6VdpufpHklM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=umsIXOJ1gso9gHpoD5de8wAE+UnRgRoCTf5u00CVKCrzE+jMUmD9it+IR3epwtjJD
-	 GEtKpOCX4qutWejQHug4omdBT0r1WUrTYJRpgfnCkFWunaMniHY5WGC3A03zYZUeZW
-	 K72b+FQvMcf+YwQvbx+gJucQp79op08/Zzyi31J2hgOebkd/SeogwvTnFemUk+Ow/T
-	 tHWpmGxKTP6dFrq4dktET3WW9FagYOCyftq26CjtgnqNIs5JFgPzJeQ+II8+VKZGmE
-	 uxM06rsqGcGHyOr28MssaHgW2GIQH0SjQaguy+S7ATYiVWvlOwY3B9H272WNnRK57d
-	 /5nCf7XlCME8g==
-Date: Sat, 31 Jan 2026 16:28:07 +0000
+	b=t15OryIvE03qChiSPdtmXkrUpjWHmLqvbgJt7/JCT6ZC7nkDWW361tuH6uYHtsw8R
+	 ZqwTsoILz9p0l0FcxN4CyJAZN7laDW2sgktapsQmC5H70vB6yj/osDGKTjHP6eHsff
+	 YXJ1Na0g43bFI15OxyXXRlT4SVI+0Jl0OuIhEbnW+as+CKtZpVTK1nNW0RxPISuc9n
+	 n9aiRyK7l1xlep6tYrGqOe+FdRDKQybTg03VVtZ92CoCU2phfW/+8y7H6Iz8fiqMNz
+	 ovI15zyjCoo5EXC+71+JAxjwPdgHQv+xBtzS80jHr+oeGCCmoJfe4YPKmzJwlu2lM0
+	 82r0AXJQvzwnQ==
+Date: Sat, 31 Jan 2026 16:30:11 +0000
 From: Jonathan Cameron <jic23@kernel.org>
 To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
@@ -35,11 +35,12 @@ Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
  SUBSYSTEM AND DRIVERS), linux-kernel@vger.kernel.org (open list),
  kernel-janitors@vger.kernel.org, Andy Shevchenko
  <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH next 1/4] iio: sca3000: cache SPI device ID in probe
-Message-ID: <20260131162807.137bb92a@jic23-huawei>
-In-Reply-To: <20260130214323.236389-2-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH next 2/4] iio: sca3000: switch IRQ handling to devm
+ helpers
+Message-ID: <20260131163011.070a80ee@jic23-huawei>
+In-Reply-To: <20260130214323.236389-3-harshit.m.mogalapalli@oracle.com>
 References: <20260130214323.236389-1-harshit.m.mogalapalli@oracle.com>
-	<20260130214323.236389-2-harshit.m.mogalapalli@oracle.com>
+	<20260130214323.236389-3-harshit.m.mogalapalli@oracle.com>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,86 +51,86 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 30 Jan 2026 13:43:08 -0800
+On Fri, 30 Jan 2026 13:43:09 -0800
 Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
 
-> Store the spi_device_id at probe entry and reuse it for the name and
-> chip info instead of calling spi_get_device_id() repeatedly.
+> Convert the threaded IRQ registration to devm_request_threaded_irq() so
+> that the probe and remove paths can drop manual freeing of irqs.
 > 
-> Reuse the local dev pointer for resource managed helpers. While at it,
-> reshuffle variable list in a reverse Christmas tree order.
-> 
-> No functional change intended.
+> No functionality change.
 > 
 > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 > Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 Hi Harshit,
 
-A few comments inline but they are all about extra things to do rather
-than really being comments on this patch which is fine as a starting point.
+Minor formatting update needed. See inline.
+
+Thanks,
+
+Jonathan
 
 > ---
->  drivers/iio/accel/sca3000.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+>  drivers/iio/accel/sca3000.c | 17 ++++-------------
+>  1 file changed, 4 insertions(+), 13 deletions(-)
 > 
 > diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index 9ef4d6e27466..afe6ef61a53b 100644
+> index afe6ef61a53b..0210c716cf38 100644
 > --- a/drivers/iio/accel/sca3000.c
 > +++ b/drivers/iio/accel/sca3000.c
-> @@ -1439,11 +1439,13 @@ static const struct iio_info sca3000_info = {
->  
->  static int sca3000_probe(struct spi_device *spi)
->  {
-> -	int ret;
-> +	const struct spi_device_id *id = spi_get_device_id(spi);
-
-This is probably ok as an intermediate step, but ultimately we
-shouldn't be using the spi_device_id at all.
-
-id->driver_data should be a pointer to a named (not in array)
-sca3000_chip_info structure and so should the data in the of_match_id
-table etc.
-
-Then we use spi_get_device_match_data() which prefers the of_device_id
-table entry (which would needed adding).
-
-
-> +	struct device *dev = &spi->dev;
->  	struct sca3000_state *st;
->  	struct iio_dev *indio_dev;
-> +	int ret;
->  
-> -	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
->  	if (!indio_dev)
->  		return -ENOMEM;
->  
-> @@ -1451,10 +1453,9 @@ static int sca3000_probe(struct spi_device *spi)
->  	spi_set_drvdata(spi, indio_dev);
->  	st->us = spi;
->  	mutex_init(&st->lock);
-> -	st->info = &sca3000_spi_chip_info_tbl[spi_get_device_id(spi)
-> -					      ->driver_data];  
-> +	st->info = &sca3000_spi_chip_info_tbl[id->driver_data];
->  
-> -	indio_dev->name = spi_get_device_id(spi)->name;
-> +	indio_dev->name = id->name;
-
-This also needs an update to make it get the name from within the
-chip_info structure.  Whilst this works today it can be fragile
-if we have dt compatibles that don't match exactly with the spi_device_id
-table entries.
-
->  	indio_dev->info = &sca3000_info;
->  	if (st->info->temp_output) {
->  		indio_dev->channels = sca3000_channels_with_temp;
-> @@ -1466,7 +1467,7 @@ static int sca3000_probe(struct spi_device *spi)
->  	}
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  
-> -	ret = devm_iio_kfifo_buffer_setup(&spi->dev, indio_dev,
-> +	ret = devm_iio_kfifo_buffer_setup(dev, indio_dev,
->  					  &sca3000_ring_setup_ops);
->  	if (ret)
+> @@ -1473,8 +1473,7 @@ static int sca3000_probe(struct spi_device *spi)
 >  		return ret;
+>  
+>  	if (spi->irq) {
+> -		ret = request_threaded_irq(spi->irq,
+> -					   NULL,
+> +		ret = devm_request_threaded_irq(dev, spi->irq, NULL,
+>  					   &sca3000_event_handler,
+Update the indent to keep these after the (
+That is:
+		ret = devm_request_threaded_irq(dev, spi->irq, NULL,
+ 						&sca3000_event_handler,
+						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+						"sca3000",
+etc
+
+
+
+>  					   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+>  					   "sca3000",
+> @@ -1484,23 +1483,17 @@ static int sca3000_probe(struct spi_device *spi)
+>  	}
+>  	ret = sca3000_clean_setup(st);
+>  	if (ret)
+> -		goto error_free_irq;
+> +		return ret;
+>  
+>  	ret = sca3000_print_rev(indio_dev);
+>  	if (ret)
+> -		goto error_free_irq;
+> +		return ret;
+>  
+>  	ret = iio_device_register(indio_dev);
+>  	if (ret)
+> -		goto error_free_irq;
+> +		return ret;
+>  
+>  	return 0;
+> -
+> -error_free_irq:
+> -	if (spi->irq)
+> -		free_irq(spi->irq, indio_dev);
+> -
+> -	return ret;
+>  }
+>  
+>  static int sca3000_stop_all_interrupts(struct sca3000_state *st)
+> @@ -1530,8 +1523,6 @@ static void sca3000_remove(struct spi_device *spi)
+>  
+>  	/* Must ensure no interrupts can be generated after this! */
+>  	sca3000_stop_all_interrupts(st);
+> -	if (spi->irq)
+> -		free_irq(spi->irq, indio_dev);
+>  }
+>  
+>  static const struct spi_device_id sca3000_id[] = {
 
