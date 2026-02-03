@@ -1,65 +1,93 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC0EF50F;
-	Tue,  3 Feb 2026 17:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094DD366573
+	for <kernel-janitors@vger.kernel.org>; Tue,  3 Feb 2026 17:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770141280; cv=none; b=d6mcmPPsBoFCiKEiYYmbVAE2oOieu2crDVuWEoImYnDK1rUCoA9ZTgUD/Uj7LaHF7rBG2fbQfFwQIreUFv5XWK1j/MFUW5LjkcMV7AjromMuKFze/jMoPh+/1Wmq2c0L/e9+1fhV0wx0CMp9yYUT8YYiyroHjPj6J/9X0xFBa7I=
+	t=1770141299; cv=none; b=LNiY85lzl77RJpHl4fLUPql3bs3WVtiJ7dfzlaWK2bNZp+6e5/NH5q9wFpO5MrhKW4gpnvWWb10/PyqAvtxA8MhxJSSy4T4AH4dh+ceqKqKi2Ewr+CsnAnHfHZgy7xmcf5dO9PFh61Qdxpr7TNIdeItpYuljHL0X97fjdEZzjKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770141280; c=relaxed/simple;
-	bh=VLetFPKwHcvjdVCavcZRFp1BoK4FCqP2UIToarHeHRE=;
+	s=arc-20240116; t=1770141299; c=relaxed/simple;
+	bh=EbeudItOUlxxdZ+A3AiWDVtDb3JqRGR++QR9pByKdSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zf0IUJqK0xHpqm8vVY27p+wqh3jarcHonZUzV+u032tX4Q31CrDGp8EcI7wsTKdCFl2g7SjUfNh4v4n5l3ZnkQuBzSOczgZOR+VQI3x3uWapP3N5y4cqHrSGdALUEFh3WHhyKuaTx1hsD9dDJ+pfMoiv9Zd6l+76mGR5LpHEDSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FY1Lykvt; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRGPPnY3BErQnPSQHBatEt7ur4fdNbXpJux9RwyPfp57HpJsLldkGVlREvOyltulw3md53+/m3M3r18SPcMxEJF5Z4ukWvN8MeffIQpLjL+m/clQ3+ss05kaPrHXZNkz4aCmcDP0JqhYqShtnCjmt0bk2QyFtz171gbdufyHXBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XNJj7tdU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rpw4/rGf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FY1Lykvt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770141278; x=1801677278;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VLetFPKwHcvjdVCavcZRFp1BoK4FCqP2UIToarHeHRE=;
-  b=FY1LykvtERpLNhK65EcOs1ClLICcyXukqgo5rVrU3oSAuaEU0hj4xbcu
-   KrFw00EhfaQxzGLfATgolxi6Gxc3nSTeAxRXv1hvgz5LT1tEgPLQtbRkg
-   3gIUehVFh7wTn0B+UKOHxNoloi342MAb3u9fsGVUJnaqpk8rR8THuBURl
-   MMuruV+QV1h2h15myhm75FvXF+iN/4BE7YAudmb1zJy3vRuzppCEJXHLR
-   oRsknPidkPdUGARTdMIG2kooGMXrm2Fh45STqzQdBbmmnYJewEXdcQ7en
-   cFzg7fsd6TUeRsKEggt+Vq3si+8LV/M2vgIhZsGr9fIsUOyNnPzUxmYTa
-   A==;
-X-CSE-ConnectionGUID: TbkUcnztSVWfiKRGus1MVA==
-X-CSE-MsgGUID: L1G8zWDaRzynogxtopGLbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11691"; a="81950685"
-X-IronPort-AV: E=Sophos;i="6.21,271,1763452800"; 
-   d="scan'208";a="81950685"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2026 09:54:37 -0800
-X-CSE-ConnectionGUID: 7B4EOuIVR42ANZBIbnKxrA==
-X-CSE-MsgGUID: pm0K+k8LQE+CyXOEwsAAxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,271,1763452800"; 
-   d="scan'208";a="247515433"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2026 09:54:34 -0800
-Date: Tue, 3 Feb 2026 19:54:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Andrew Ijano <andrew.ijano@gmail.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH v3 next 1/6] iio: sca3000: cache SPI device ID in probe
-Message-ID: <aYI2WANAXteA8Qxz@smile.fi.intel.com>
-References: <20260203122109.689669-1-harshit.m.mogalapalli@oracle.com>
- <20260203122109.689669-2-harshit.m.mogalapalli@oracle.com>
- <aYIR-LAq9iJETwjK@smile.fi.intel.com>
- <a8eed14b-2baf-46f8-85c1-067481c02d7c@oracle.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XNJj7tdU";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rpw4/rGf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1770141297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TH04C7HHcDm+vfuEaUs+pyru8FvGanMszlIgowU+sDs=;
+	b=XNJj7tdUPyJZqq3rWY5ooEbbviHv91Ftg1VQ9UH/0T+9/HcZQwGgkKNzuE3F/kXe5kxZ98
+	Y978ZUAmUy8U+35hH+SlJnAYUNSwZzd/RjB2vH/ySM3p+P+pfG1FV8TzUxc7MoRPLgCE+I
+	rECcXwc/9VZLXM72ZBLPibcVhdD2bII=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-mjMNb-JQMwSaO9OqYKy5bQ-1; Tue, 03 Feb 2026 12:54:55 -0500
+X-MC-Unique: mjMNb-JQMwSaO9OqYKy5bQ-1
+X-Mimecast-MFC-AGG-ID: mjMNb-JQMwSaO9OqYKy5bQ_1770141295
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-503915b0a88so164424481cf.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 03 Feb 2026 09:54:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1770141295; x=1770746095; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TH04C7HHcDm+vfuEaUs+pyru8FvGanMszlIgowU+sDs=;
+        b=Rpw4/rGfWKFIxHQSKGNkXo3hrZtrNuAk2KG8uGJhMRWnVuHxtAuVTQuQnZjKLnEWUP
+         XkKo9nr9xGeW3hJwkIXjyeaNyDbO7Ymo8AnS9YOYLNC1eH81G8P/0YmsiBTsKDc1GxKX
+         aWHl61/zsEWxwAx54Zc+oxocL/7nKKJ6vIXFkZ88FNAgIfGIusm1Cr4ESI35azCEDN1e
+         2Zh9vNq2xG3rSrJsvw1k9v41KmuQmPVZUfQfPaG8zsHo9+hziJvjlEFsU86IY7P5AYjK
+         EmXpKNMF5GLT7fF9rqveOUfEevZ0fDPZM6t/b27lmdsdgtYFi34zT45/U63CnE9q8oet
+         lJTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770141295; x=1770746095;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TH04C7HHcDm+vfuEaUs+pyru8FvGanMszlIgowU+sDs=;
+        b=oq/y23Zel84jeH08Cy4I2HMK+r/0ia3bsiYhzzhMWOWCcCSikn4jU9DSg7AnTURc2d
+         LSuAPYk7/cjlpA4h6BwttLamG6GOxiPukwc/wMl1nM4wn9FqSQqzZ0xcp3Z+YQlTxGVM
+         3gLPKydUiXhtLqIsbaRdy4Gh5JI9rm1smamqLYtN/O1V8AwJdj+hdgf3eywtbVko0kue
+         ahE8RhEcjS+9IXrE4LwWVgBbJCJ+Xy/4f5eOPCtHOUd2lNWOxz2twEOTW0GUwCg/H1KR
+         ckBpgb6lKb0HgOBHLDeAaJuso0BTlrGfa8kXlYhuA67CHfdYKl6ANiz7gp3hHbGo3WCC
+         e62g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKcou/vNVwUP9TNpOJnY22WMZweQDG+rahLjEOcPljUwMIFwFsfwyVFF7YXvde4B+oFqgb+cikxaKXaomGIRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoaEJ5zTpAIKUwzd7UZmNVa6t6DV+xKLJsUYVb+qvaInVuY5+I
+	KMbxxFD1p54vsaKje3M2okFEPC0BfoL/s8O5XWuvk/K4StSq/l6CrmvipxW/caGp2PsyNg1Eh4h
+	CeFWAsTgIS/cmPz2h5uydi4bJSCd3GVRwUaLtwbkrXapaCUAGZSKDN+TucMdtOh1GCTid0A==
+X-Gm-Gg: AZuq6aIQl8tijUZMxYuygdAN0g04GidE/23Arv8CamFcrHjMpa87t4Z886xflrfIXF0
+	5aXATQZjEZpJ349bGcy+7MyY3I5/TdMKKQXWyHav2K0meQqwus4ATHE2X8wdXpP85WpYWZcdT/K
+	p1YmQYgmDvra6QFp11crnkycBL94r4oM6se6HI1VQFji+167lRQIAniis/a5WnJ2eqJjT+j/F6b
+	xkzUaeE87NvA7gQtKU9wDXol3F5jD7tJQDBmXZouBdR3BI4gsNFbInKSEXuQXepyZIYX4GPlCYR
+	mF85h05jziBk8jNzRxyHENO6dMDy7RFgNJ1yhcxYnuaiTbO4yEH5HABPMwio7Igpr9AboVLJXpV
+	Oebcheq+/ZjW5khJ8ndf2Kr8VmrxOwJCivL45+sZHv+kQ
+X-Received: by 2002:a05:622a:5ca:b0:4f0:22df:9afe with SMTP id d75a77b69052e-5061c18db52mr1685121cf.51.1770141295391;
+        Tue, 03 Feb 2026 09:54:55 -0800 (PST)
+X-Received: by 2002:a05:622a:5ca:b0:4f0:22df:9afe with SMTP id d75a77b69052e-5061c18db52mr1684941cf.51.1770141294980;
+        Tue, 03 Feb 2026 09:54:54 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5061c1e7f63sm658131cf.18.2026.02.03.09.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 09:54:54 -0800 (PST)
+Date: Tue, 3 Feb 2026 12:54:52 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] clk: microchip: fix typo in reference to a config option
+Message-ID: <aYI2bKIfRfoFQr2e@redhat.com>
+References: <20260203090101.348879-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,35 +96,22 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a8eed14b-2baf-46f8-85c1-067481c02d7c@oracle.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260203090101.348879-1-lukas.bulwahn@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Tue, Feb 03, 2026 at 09:25:08PM +0530, Harshit Mogalapalli wrote:
-> On 03/02/26 20:49, Andy Shevchenko wrote:
-> > On Tue, Feb 03, 2026 at 04:20:45AM -0800, Harshit Mogalapalli wrote:
-> > > Store the spi_device_id at probe entry and reuse it for the name and
-> > > chip info instead of calling spi_get_device_id() repeatedly.
-> > > 
-> > > While at it, reshuffle variable list in a reverse Christmas tree
-> > > order. No functional change intended.
-> > 
-> > Did you miss David's comment? AFAIU the suggestion was to convert to
-> > chip_info(). With that done, this should use spi_device_get_match_data()
-> > (or something like that, I don't remember the correct spelling of that API).
+On Tue, Feb 03, 2026 at 10:01:01AM +0100, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> I was thinking of dealing with it in a separate series(as documented in the
-> cover letter). Also David pointed out that if I am planning to do that
-> conversion separate, there is no neccesity of this patch, as it is anyway
-> going to be replaced soon when I have that ready. So I will drop this
-> simplification in my next version and leave the conversion to
-> spi_device_get_match_data() to another patch set. Will also include your
-> "irq > 0" check fixup in the following series. Hope you are okay with that ?
+> Commit 026d70dcfe5d ("clk: microchip: core: allow driver to be compiled
+> with COMPILE_TEST") introduces a typo when referring to a config option in
+> an ifdef directive.
+> 
+> Fix this typo.
+> 
+> Fixes: 026d70dcfe5d ("clk: microchip: core: allow driver to be compiled with COMPILE_TEST")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-As long as there is no added churn I'm fine with the approach.
+Ugh... thanks for catching that.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
