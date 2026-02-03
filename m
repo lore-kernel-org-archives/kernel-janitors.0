@@ -1,117 +1,100 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094DD366573
-	for <kernel-janitors@vger.kernel.org>; Tue,  3 Feb 2026 17:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B951E5B9E
+	for <kernel-janitors@vger.kernel.org>; Tue,  3 Feb 2026 21:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770141299; cv=none; b=LNiY85lzl77RJpHl4fLUPql3bs3WVtiJ7dfzlaWK2bNZp+6e5/NH5q9wFpO5MrhKW4gpnvWWb10/PyqAvtxA8MhxJSSy4T4AH4dh+ceqKqKi2Ewr+CsnAnHfHZgy7xmcf5dO9PFh61Qdxpr7TNIdeItpYuljHL0X97fjdEZzjKU=
+	t=1770152934; cv=none; b=n19ogdsBNy2j2V/rII2+KLkBern+oVstaLRVWf0MsyAR/FBBR0O5O22R7tOPOGEJmiSoyU96kxt67AMXbT9lRVEoOrwZdF3fVnuWSj80zEBXJLC4ypiKlXzQt7tq9ppatPpc1n6FZxjd1kbvhmkfELC1gCnXiNyHVBSbbTjagfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770141299; c=relaxed/simple;
-	bh=EbeudItOUlxxdZ+A3AiWDVtDb3JqRGR++QR9pByKdSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRGPPnY3BErQnPSQHBatEt7ur4fdNbXpJux9RwyPfp57HpJsLldkGVlREvOyltulw3md53+/m3M3r18SPcMxEJF5Z4ukWvN8MeffIQpLjL+m/clQ3+ss05kaPrHXZNkz4aCmcDP0JqhYqShtnCjmt0bk2QyFtz171gbdufyHXBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XNJj7tdU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rpw4/rGf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1770152934; c=relaxed/simple;
+	bh=VMkQsJuFLLLu7JJilTYZc97YppbBarhFslbcJBqfrQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RHwlJCvjxTmTP2L3h3FUmEW7fU1p9+z0ADL3WC45mFgaE8wy7GgDZj2kesiFPFqpIq7DutIncCT+xUPERaq4ia1Sma2Vy/VbwvGP581lISOADt9l2miTwMHNnQDvGHB6WaNSZrghVvPeBrkq6RWPIdFP9V4+DWsRq+LPNskuyrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mdFbFWPT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XNJj7tdU";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rpw4/rGf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770141297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TH04C7HHcDm+vfuEaUs+pyru8FvGanMszlIgowU+sDs=;
-	b=XNJj7tdUPyJZqq3rWY5ooEbbviHv91Ftg1VQ9UH/0T+9/HcZQwGgkKNzuE3F/kXe5kxZ98
-	Y978ZUAmUy8U+35hH+SlJnAYUNSwZzd/RjB2vH/ySM3p+P+pfG1FV8TzUxc7MoRPLgCE+I
-	rECcXwc/9VZLXM72ZBLPibcVhdD2bII=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-mjMNb-JQMwSaO9OqYKy5bQ-1; Tue, 03 Feb 2026 12:54:55 -0500
-X-MC-Unique: mjMNb-JQMwSaO9OqYKy5bQ-1
-X-Mimecast-MFC-AGG-ID: mjMNb-JQMwSaO9OqYKy5bQ_1770141295
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-503915b0a88so164424481cf.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 03 Feb 2026 09:54:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdFbFWPT"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47edd6111b4so64421575e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 03 Feb 2026 13:08:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1770141295; x=1770746095; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TH04C7HHcDm+vfuEaUs+pyru8FvGanMszlIgowU+sDs=;
-        b=Rpw4/rGfWKFIxHQSKGNkXo3hrZtrNuAk2KG8uGJhMRWnVuHxtAuVTQuQnZjKLnEWUP
-         XkKo9nr9xGeW3hJwkIXjyeaNyDbO7Ymo8AnS9YOYLNC1eH81G8P/0YmsiBTsKDc1GxKX
-         aWHl61/zsEWxwAx54Zc+oxocL/7nKKJ6vIXFkZ88FNAgIfGIusm1Cr4ESI35azCEDN1e
-         2Zh9vNq2xG3rSrJsvw1k9v41KmuQmPVZUfQfPaG8zsHo9+hziJvjlEFsU86IY7P5AYjK
-         EmXpKNMF5GLT7fF9rqveOUfEevZ0fDPZM6t/b27lmdsdgtYFi34zT45/U63CnE9q8oet
-         lJTA==
+        d=gmail.com; s=20230601; t=1770152931; x=1770757731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oOaC7ZgINNg0twPrRky8t1EuRrSsqF9vkFHbkRc80e0=;
+        b=mdFbFWPTf7cYuQ5xP5/awZMpPHdqpjYaZJtlIqcxQtghftwvSArCu8g+jaFh6+lGBP
+         7bbJ1rmFjNgpqa1hNlj6688RVIafAjBS97p03vgK4gINtv8xv1e1gvvQzUsoZIlL4P/I
+         3kusYgWZTVLpYA60KMlNW71+Rdr3pzto7fxHq7hfzhMbBBPi2LnhpZu+Diqy35I4G3hD
+         KlEATUCxmRvUaKzXD91NW2/bSslfVPHUw80Wikw7lIFjiEqkodEhD6mE/G1HaAbAGi+K
+         i0ZD3Uv1qHlw52lA2mE/5mQlVyPyrDVffCRNgik4mXsxBD3DVoR2vJnyLxbX5a0XOexn
+         D0+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770141295; x=1770746095;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TH04C7HHcDm+vfuEaUs+pyru8FvGanMszlIgowU+sDs=;
-        b=oq/y23Zel84jeH08Cy4I2HMK+r/0ia3bsiYhzzhMWOWCcCSikn4jU9DSg7AnTURc2d
-         LSuAPYk7/cjlpA4h6BwttLamG6GOxiPukwc/wMl1nM4wn9FqSQqzZ0xcp3Z+YQlTxGVM
-         3gLPKydUiXhtLqIsbaRdy4Gh5JI9rm1smamqLYtN/O1V8AwJdj+hdgf3eywtbVko0kue
-         ahE8RhEcjS+9IXrE4LwWVgBbJCJ+Xy/4f5eOPCtHOUd2lNWOxz2twEOTW0GUwCg/H1KR
-         ckBpgb6lKb0HgOBHLDeAaJuso0BTlrGfa8kXlYhuA67CHfdYKl6ANiz7gp3hHbGo3WCC
-         e62g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKcou/vNVwUP9TNpOJnY22WMZweQDG+rahLjEOcPljUwMIFwFsfwyVFF7YXvde4B+oFqgb+cikxaKXaomGIRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoaEJ5zTpAIKUwzd7UZmNVa6t6DV+xKLJsUYVb+qvaInVuY5+I
-	KMbxxFD1p54vsaKje3M2okFEPC0BfoL/s8O5XWuvk/K4StSq/l6CrmvipxW/caGp2PsyNg1Eh4h
-	CeFWAsTgIS/cmPz2h5uydi4bJSCd3GVRwUaLtwbkrXapaCUAGZSKDN+TucMdtOh1GCTid0A==
-X-Gm-Gg: AZuq6aIQl8tijUZMxYuygdAN0g04GidE/23Arv8CamFcrHjMpa87t4Z886xflrfIXF0
-	5aXATQZjEZpJ349bGcy+7MyY3I5/TdMKKQXWyHav2K0meQqwus4ATHE2X8wdXpP85WpYWZcdT/K
-	p1YmQYgmDvra6QFp11crnkycBL94r4oM6se6HI1VQFji+167lRQIAniis/a5WnJ2eqJjT+j/F6b
-	xkzUaeE87NvA7gQtKU9wDXol3F5jD7tJQDBmXZouBdR3BI4gsNFbInKSEXuQXepyZIYX4GPlCYR
-	mF85h05jziBk8jNzRxyHENO6dMDy7RFgNJ1yhcxYnuaiTbO4yEH5HABPMwio7Igpr9AboVLJXpV
-	Oebcheq+/ZjW5khJ8ndf2Kr8VmrxOwJCivL45+sZHv+kQ
-X-Received: by 2002:a05:622a:5ca:b0:4f0:22df:9afe with SMTP id d75a77b69052e-5061c18db52mr1685121cf.51.1770141295391;
-        Tue, 03 Feb 2026 09:54:55 -0800 (PST)
-X-Received: by 2002:a05:622a:5ca:b0:4f0:22df:9afe with SMTP id d75a77b69052e-5061c18db52mr1684941cf.51.1770141294980;
-        Tue, 03 Feb 2026 09:54:54 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5061c1e7f63sm658131cf.18.2026.02.03.09.54.53
+        d=1e100.net; s=20230601; t=1770152931; x=1770757731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oOaC7ZgINNg0twPrRky8t1EuRrSsqF9vkFHbkRc80e0=;
+        b=sQovmL8VvEO7Xdx30vo6HA4zGYv8nSZ9mTByYpXmxIeSXuilbZukekQFfIU9ImLvm2
+         iaPZgG9dYGpCCpNoyjBoJQ6QWTRt4YlyQIR3iS2K3H3fucPeMQP9xfASmXaSg1JwuQ7d
+         LIGbutJjf6TKfSiLhXQecUU6ChJWGsjQhEvunsXYIXksC1GQYXHjpBu+wjoMfq98x5Nc
+         LToiGCDNisD3X6w+P4uBM/YTlJps6YEAa9HbOrOFvmdLbCB7iiEzaum+giDOQBy0pLr/
+         x8PVUELoevUPagE0vx67Le+B7IPle2WJpd/u3F6vqVISY2PXnPE78x8Ni1zk/IrB85Ty
+         rgbA==
+X-Gm-Message-State: AOJu0YxSGu4/lyCpai7mcNdTKa/mlpsXs2ijMzQSAAltkheAbRFjC5qf
+	Q+kWSiVQhyUVkn+0BxpjLxQm/3mwH/AvvKXal2z1YxtjiRAAzXjVEFT6
+X-Gm-Gg: AZuq6aLh8Hp8/Ql/55UeKeRh08aQK2738pxOrQc7p4GdWoh3dEyhcZxl/VzOzSiTw7X
+	fRCFx0xF4ScDemHDueH3qO468Rxh/5JH37xGfOKihfCB/CR4AGYOjRuI+lBTf96XuHctOpzqmpu
+	lTl3jOn3cWcqX1J9e/Abga0EoOJwSaohxBySuzq+M2fnmpXuGvgu9lj77JoS0nLnEmp7AgLU5ol
+	ltr90aZFw4SCSTK/S6ggQEk+9MfFK08JS3PmNah2Z2F0Aw8pGwLpLKi4maOv2/srdl9mFe6cyov
+	C7tW8N+DZkOd5FjTOAEYFoRv7CXExoGn7H8XmsUPoHYEjd56mHc0ncHFG+2EeHQ01E+L1kqE8zg
+	HZVfqW//rMivmDieYJAZHNQ9w0louxrbgZ1GcUJ/5aTXm718XVdfpunmOfk6U07FgvJD0DdwW9p
+	UDIRncT5daww==
+X-Received: by 2002:a05:600c:35c8:b0:477:9ce2:a0d8 with SMTP id 5b1f17b1804b1-4830e8d1e59mr15873095e9.0.1770152930823;
+        Tue, 03 Feb 2026 13:08:50 -0800 (PST)
+Received: from localhost ([87.254.0.129])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483051292bcsm125902805e9.5.2026.02.03.13.08.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 09:54:54 -0800 (PST)
-Date: Tue, 3 Feb 2026 12:54:52 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] clk: microchip: fix typo in reference to a config option
-Message-ID: <aYI2bKIfRfoFQr2e@redhat.com>
-References: <20260203090101.348879-1-lukas.bulwahn@redhat.com>
+        Tue, 03 Feb 2026 13:08:50 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Marc Zyngier <maz@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] irqchip/gic-v5: Fix spelling mistake "ouside" -> "outside"
+Date: Tue,  3 Feb 2026 21:07:35 +0000
+Message-ID: <20260203210735.5036-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260203090101.348879-1-lukas.bulwahn@redhat.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 03, 2026 at 10:01:01AM +0100, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 026d70dcfe5d ("clk: microchip: core: allow driver to be compiled
-> with COMPILE_TEST") introduces a typo when referring to a config option in
-> an ifdef directive.
-> 
-> Fix this typo.
-> 
-> Fixes: 026d70dcfe5d ("clk: microchip: core: allow driver to be compiled with COMPILE_TEST")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+There is a spelling mistake in a pr_err message. Fix it.
 
-Ugh... thanks for catching that.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/irqchip/irq-gic-v5-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
+index e24ce3d9fb62..8c4cf8430871 100644
+--- a/drivers/irqchip/irq-gic-v5-its.c
++++ b/drivers/irqchip/irq-gic-v5-its.c
+@@ -902,7 +902,7 @@ static int gicv5_its_alloc_eventid(struct gicv5_its_dev *its_dev, msi_alloc_info
+ 		event_id_base = info->hwirq;
+ 
+ 		if (event_id_base >= its_dev->num_events) {
+-			pr_err("EventID ouside of ITT range; cannot allocate an ITT entry!\n");
++			pr_err("EventID outside of ITT range; cannot allocate an ITT entry!\n");
+ 
+ 			return -EINVAL;
+ 		}
+-- 
+2.51.0
 
