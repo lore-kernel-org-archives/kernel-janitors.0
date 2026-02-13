@@ -1,148 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BD6312829;
-	Fri, 13 Feb 2026 08:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B8318D658
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Feb 2026 12:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770972862; cv=none; b=FAcnGIyLPfoYnS6MlUquNl2i9Ug3ABrrawLihMzMGJA06/NDmDQ5IlJQ6g8FIFsUomYI6AfxWqx1JfXXG+4jZb3Mu81CmO8+MfYiTWsSsHAsxUl4Lgr175LmDYC/gSQww2TauoPrFp5K09Wd0St6hzVoG+j1M9ufsHZtJ99zgi8=
+	t=1770986701; cv=none; b=nnts/kGvAibNMMegbio6d9DR1JXVmVQH3FT0fC2LhWqbXCyAsKTNgyqFyAr+BcnACKIg4ocI1r4garI6IRj/74RAO98RydiEyl7n7qeiAkXR14beqeis4kDjVqXmJ7mooB97tXC4qdARwRG1M9pe1HoxNK7PFafJczIb8iySdSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770972862; c=relaxed/simple;
-	bh=WfkDXFYmwC97kaq9x3OO67fq+4W/dySLiI/MkGDH91U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=eLcSDV/eKwf9/KcxK2UTtPhkeqO6L5k8lpwGd0DNrs06v3/mnGIwgWB7DenyzBto8AobHspK8+I8uTvABSwzbkH7nFWMHh+YnGogvvOEML3yiVOshts1a3cfIzRTmMR4nUDmqiFkTrIdfVLfXiwM7jTqJSMYSlxP6S9p+VglpFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k+kxciou; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1770986701; c=relaxed/simple;
+	bh=/Zt6khdhGfH3Hkoe052E7yZXR/qlFYcR5e3cmtxk5rY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DgxhhsBqjjgcCRDrxGw/aTacHvgBuJ2Or9KcKpVAZDBHbsgm4qnf5Tp50xOwybAyc/DtKaV4DpVHXZxR+oGzqBrcEgYw+n9WTcveMndkxuuUklBcj4hYYI4GpBH0dS3m6MkbNz3UrwZtjIm8TzrtksNT7cugli+FGSuEtnnAQeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uvf/YHGI; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k+kxciou"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1770972852; x=1771577652; i=markus.elfring@web.de;
-	bh=WfkDXFYmwC97kaq9x3OO67fq+4W/dySLiI/MkGDH91U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=k+kxcioumU45J2+58p83N9NN+YPfoP+x0rciR3fXGFSYWv/ywYJSrmgImM0bQPRP
-	 o3YheHulBg5EWVvsaNWVfoZqkP4Mf7+eFggQpq15mBXvroFZ7lInKf73iYQzjuL82
-	 shLy0WZFgRjWxL1PIUWs+zbXvx92tFgK/us0fpeetf/DGXRmj5HD6dyj6YTfeIFub
-	 N6ToQqxi3bWOY+nRSRic2cVU3B09hrCJ8TKfCDATS0lBxeO33KB/ao3iSS0yJt58+
-	 H6yJzkpsd4uAW4TNEJWfQafuF1q4XTulE5ARUeuxCXpGmsqZp35KsvWGF/Y8Av7S8
-	 XHVyQ8vnsB7QC3g5qQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.207]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6K1l-1vkHX843XF-00wavz; Fri, 13
- Feb 2026 09:54:12 +0100
-Message-ID: <c4db3d6a-b683-4b5b-943d-c0be91caad1d@web.de>
-Date: Fri, 13 Feb 2026 09:54:09 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uvf/YHGI"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-59e5ed7303cso63794e87.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Feb 2026 04:44:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770986698; x=1771591498; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=r7nT78nIm0YLmarabSYPD2yv/puF0ssCbcpZBWsZgYU=;
+        b=Uvf/YHGIAegDJ96laazeY3XdnOMw+cHNd6+fCotQOrXA///FsleXfg/mE7otC2OINC
+         jb8OgMP1HOEu+HfoZYHeUXNKKeA75UlmJNJlclXgUCu4xD7qDBJR31eiL7cdEHXAZ/wA
+         xm0reflO7B6sGa9igqPwdH1MhwVFzyO0lBQnojlgFTlyZ3NlDdunqsFVvewhp3Ns/e+L
+         z4bNhiocNG3lSBjuZNOLyeqNWAyHl/KXoVizpY9e3ypfyNPEFJIH/hCXEcfV9v6iSt2M
+         eG6WSq23B+LicaWI7UGXMFTZrqpphoPIJWXdf26xI3oJzyyhM7zZBi71KvohKB4BbWu5
+         nXxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770986698; x=1771591498;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r7nT78nIm0YLmarabSYPD2yv/puF0ssCbcpZBWsZgYU=;
+        b=rxu12/+mnS+N/KAc6ytTwGgPNthKC5J0uElL+mJvHvVSfg6gfQctuR6GRw5sGCmGAO
+         fo8S6O50OBqRnPRVjlKFb0Pgi18WFXsps7DxU/n6Jn2T384iY6kOhJcNL8ZR+nlYLXnh
+         EOemLIOj/KFxjEPCeK4G9SaChWwsfnMyI1QxB6U3KMiKuzbXHgyOvMfnvjFOUb+njDyW
+         rf8O15/UnZCh8+Pvu+p0R4yWe6Vz71xUzRvjEaqrJcxVaxsRJe5jkDlP2GnoWyU1cy+s
+         C67c/HrRJD9C50dKutI/yWbWSNsX0d0XiiLbXqePlw5lQYJdGxaMBWZfg6+eop+ldO+n
+         5EzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiUSLAKRC9AuEPFo8HOG6hetVcKmjvUvNE/nTESbktL56dOCE/PfX1UshGlEeTMR3cayFKAUBe4ltrEVEc4K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpoSfTJdpK3AOFEKfXWNSB/XVaKmV+XJJ4kMnix0ebudA3oCyT
+	0Ngaqx1cVVOB9XeVII1upIWpgFZ+hMIwuoJYkgJd6u4+nmVAUmxYSa9t
+X-Gm-Gg: AZuq6aLYrwp7Rn/AQBpleP1R/fOg3ExxqjNBmopYfGwPFJ1yzphxjZXFosUzBJosKGF
+	GU3oxvLn6vRKMsweUhjHkHSffZGZz5v3qv+y8xGh4LVBzDOrtVGMADrHR1/3v4fsOTfm+3fyx6B
+	DB//3hEZJeAs21cjtOadPFUKNGCLsIT9LPW1bsIErQkczvnwyFed5jhrhxxZL6u27VGeiE9FQ6o
+	jp16MXYV3ocoiQkCrNk1FwQMG4nQRJ0xeu96k9du4tFRQeyefC91cqES7f5rATOHnYWaqIIq5/Z
+	4n07+ndanoRtyZsS73NBUlyYcySN8kNz7Mz4S1r+H5meVxdhA0p2K+iTTYdMI9cglxquYSNLwrU
+	ROXH8ss60JQaExkLm3NLGSGci6IlCLJTSLnXDHcgySUfK/jrgKarMOwDmESKuPKZyjsTTysDrRf
+	sRbbyX7uM5MZSAfCA=
+X-Received: by 2002:a05:600c:4448:b0:47b:d992:601e with SMTP id 5b1f17b1804b1-48370e2b6bemr23412015e9.2.1770979593031;
+        Fri, 13 Feb 2026 02:46:33 -0800 (PST)
+Received: from skbuf ([2a02:2f04:d501:d900:419a:75c9:94a4:7ac3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d82a4c4sm444065575e9.10.2026.02.13.02.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Feb 2026 02:46:32 -0800 (PST)
+Date: Fri, 13 Feb 2026 12:46:29 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Felix Gu <ustc.gu@gmail.com>, linux-phy@lists.infradead.org,
+	Jyri Sarha <jsarha@ti.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] phy: ti: j721e-wiz: Fix device node reference leak in
+ wiz_get_lane_phy_types()
+Message-ID: <20260213104629.q5pwqpsuficmx6qv@skbuf>
+References: <20260212-wiz-v2-1-6e8bd4cc7a4a@gmail.com>
+ <ffafec42-8d5f-429a-92b5-1b92c7643642@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Felix Gu <ustc.gu@gmail.com>, linux-spi@vger.kernel.org,
- openbmc@lists.ozlabs.org, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?=
- <j.neuschaefer@gmx.net>, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20260212-wpcm-v1-1-5b7c4f526aac@gmail.com>
-Subject: Re: [PATCH] spi: wpcm-fiu: Fix potential NULL pointer dereference in
- wpcm_fiu_probe()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260212-wpcm-v1-1-5b7c4f526aac@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HfWVrsW+IWR2QlxFK2Pl8zGVTnNAWL/CUi9X5L1uhbrwOLPgz0F
- BcDXQ7mrl58YsDVeMpFLIiHcGPvMhiNzFnReSxLk0mHAFSxdPHR/486hBnOgjfHyRDHZ+ZZ
- /3Qsj/EiZfw1ZnSzzkFAnxdIkZnl2iXUMa54SRm9mJ/sty25/Y3zJZO1zHZkvbdR0s2BdpJ
- JBSser5ygTmGOlC96V11A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2dNkOfrNNfU=;LaBNwfhcuUnFxN/l6W4hOSGTSn1
- 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
- IgmkDGCY=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ffafec42-8d5f-429a-92b5-1b92c7643642@web.de>
 
-> platform_get_resource_byname() can return NULL, which would cause a cras=
-h
-> when passed the pointer to resource_size().
->=20
-> Move the fiu->memory_size assignment after the error check for
-> devm_ioremap_resource() to prevent the potential NULL pointer dereferenc=
-e.
+On Fri, Feb 13, 2026 at 09:09:55AM +0100, Markus Elfring wrote:
+> …
+> > ---
+> > Changes in v2:
+> > - Use of_node_put() suggested by Vladimir Oltean.
+> > - Link to v1: https://lore.kernel.org/r/20260211-wiz-v1-1-fdd018d02f33@gmail.com
+> > ---
+> >  drivers/phy/ti/phy-j721e-wiz.c | 2 ++
+> …
+> 
+> * Would you like to complete the exception handling by using another goto chain?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.19#n526
 
-Were any source code analysis tools involved here?
+While gotos have their place, here it seems simpler not to use them.
+Felix would have needed to move the "int ret" variable from the
+for_each_child_of_node_scoped() scope to the function scope, and
+initialize it with 0. All that is unnecessary complexity here.
 
-Regards,
-Markus
+> * How do you think about to increase the application of scope-based resource management
+>   by additional update steps?
+>   https://elixir.bootlin.com/linux/v6.19-rc5/source/include/linux/cleanup.h#L157-L161
+
+The cleanup.h API does not exist in all kernels where this bug fix can
+be backported.
