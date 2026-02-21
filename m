@@ -1,91 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D5B2DECA8;
-	Sat, 21 Feb 2026 09:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487743115AE
+	for <kernel-janitors@vger.kernel.org>; Sat, 21 Feb 2026 10:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771667298; cv=none; b=tciKDQOdeEQu+QM49cfRpt5JQcbM8acD0JzoUm/RbxFvPCUuKpuRQUSlCeW/iJI7pzpcd67H95kCTvy7mtegDawO6rU4BRf061AN1A4kuJtQ2METYOa+Bpq50wcKIP2Qi6VkPLskQidO6cMd/H9ftDNixaZ87mWeDh2Ac/x2HcQ=
+	t=1771670502; cv=none; b=Xnuac9bok3ga8gLN7r5DrNoHGu6jv5fKyGIprCYEO0KFNJzW4XmnwXg9yNF8taMwzft4Rsh27h6RpvlBcdJM/PglHS+h6VrKyZEaSrrvQdUic7vSPAJDW+DXpBp0wTwwAFPCUlwtX/Z4B39wCt8L69Q8DCCm0ugfhVzBO0xtEE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771667298; c=relaxed/simple;
-	bh=hkSeGuS1y4o33bSzqRDo/rppJDHhaDJDxaPnSg5wlao=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bCPZEv58IFCMX8g8h39MFs4/OX7+sZNsH8gi4FvZTvB7jtmcHEOlS3DfcVX4CF4oGRjeflpaSSAY2KJmBBkDF5nr+nm3WrjlNaSFkBTnwt7nLkewYjzzZkLa+GIwiXXQyQMU3UNvQRuqF27Nbt/uXKg8DQvqvIu8MsxJXO30IQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4k6N3VA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771670502; c=relaxed/simple;
+	bh=DSF2NhmQGDeFoSnzI+Mg1CGPDPklUr4KfPrHzH1V4WA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xrqi4BeqJCk3btXC/bJDF0tGeRxWxqTHRXYMOY+ijyBrESz9Rv4myQ3v62RMDq5YPoySyIf8HUePcTVU8ZvISxegMgKRRtCXJpzrchm0XLbkMfi0fHLdbOsNvI0/1WvrCe8GhiIoD7hvlTdLUCfuHz2f3dWeoaat2csB7it9Q8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJeTfUhO; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4k6N3VA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0717C4CEF7;
-	Sat, 21 Feb 2026 09:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771667298;
-	bh=hkSeGuS1y4o33bSzqRDo/rppJDHhaDJDxaPnSg5wlao=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=L4k6N3VAXe+JmzJJ4dgLlXtGX0US6fAARNi9Yn73Zx2tNh1xKkvS5da41OLr/XOa6
-	 KyP7rLs0ILacup6JCFcn1wnUr9g3vG1kqmRsUYnbJH0UnqE+EWDqgcv2geXBURg3ws
-	 ekxE1ugpogKkZO7neLtAttP/bCDstoZIuevkIwfGl9+/25ehRV8K56NYIOcWB0tWio
-	 8WgHmP1VGHAYcVrXTw+Rt8bFTuRWuu7k85+buCA2eHRHNo9wc14u/inFCpviePf+rv
-	 ts/de5jb+OrqI+3pKLAaEhHxXp1TVu0ebkLEHHWDUtcMq8xKUGRGWrepOBOYT0tcrC
-	 QoUNhd+OhFTlw==
-Date: Sat, 21 Feb 2026 10:48:15 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: =?ISO-8859-15?Q?Ren=E9_Rebe?= <rene@exactco.de>
-cc: Lukas Bulwahn <lbulwahn@redhat.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] HID: quirks: really enable the intended work around for
- appledisplay
-In-Reply-To: <944F8139-6528-442E-BFC2-9609A7DACA2D@exactco.de>
-Message-ID: <9pos2s83-p7q0-oq36-oqo3-s555o07p31n9@xreary.bet>
-References: <20260205081131.426899-1-lukas.bulwahn@redhat.com> <944F8139-6528-442E-BFC2-9609A7DACA2D@exactco.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJeTfUhO"
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2aad1bb5058so30634845ad.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 Feb 2026 02:41:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771670501; x=1772275301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YX6B3fZCA0dAwqSvjvOB2FTtcU0eRxeM2B9ioo4wtiw=;
+        b=jJeTfUhOKQPnqSYz1ku84wG4mJGTQI2IHxzgG0dIb28ZwDHIckqOwZWaeqaozSBZmz
+         ix9v/le4af3/d2eR6YFlBF+cXe2ElpcafJ+Zcoxp4DtfnPZt4ozNGSPx3dc+UM+QAc+S
+         I/8CC9M7fLJ//IBxcs9ucg2qUq7SltKrREUF7OQuPGRD+P9aHN9KzugLGuX2Erq6Eydy
+         7jaWClKKZH0kdZdKmvYf6TECTYhS/lH9VTp/Qi+zHUpgUI1LPFl6mTcvROW/KppxChQX
+         +1qTz0bDsy3n6+vzNbv9qKpfq165iPZ1e7eCH3Pr0Pmn53BKHgT45XFFprPSTkliO7wU
+         Tzwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771670501; x=1772275301;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YX6B3fZCA0dAwqSvjvOB2FTtcU0eRxeM2B9ioo4wtiw=;
+        b=ZFmWRCc4eQzBkl8MPM0eG8SYxTXHhAdssn/UsbR7J9l2Mh7bWuHaiUrY5ri4HBhG/E
+         PkvPb2LHFcq3T4nURiCCf2l6CpwzlWvmAV1jJckXoaqCJQG2E1JUQBb6U2x2NQTEu6a9
+         osbB5t6nSgUGWhG5dk6/KOrZz4Huup1nC8Q1MfXIZp942LOS1GwrS95xlF1qQ+TRLj2r
+         AurJw0lB0nxk2syfST957PQECp69WeG1R2kRXkFxKrWp5nCVZEca1Wjd+hOLntTBc2uK
+         mYVYcRFqXDxaNGm5ho5alMozjtIsZshW/LCNRdoFf6qLZ/9JfbhGfKJiDQCXgTnxwUsk
+         oy8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWb8BanwRvSQ8Et7KK9lK5fT4YhVwuKLJxIYonPr7Z3EarkSqpa940VCNvt+0pzn+B6HwuBx2c7UZp552UxOvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybzWUdOnBgvs0k0jvh3IV8v2puvXGmgksBCb19Rd94F6LhZUTY
+	HTBrOAuALwooCXeueCXrgU+sYOL3nwHvjeniqwWH8HAn6ZK2yevm+5EM
+X-Gm-Gg: AZuq6aKMgfXEeHvjnai3zgtsY1gAdCGRoXWyGpkXX8CU7+TCweYzGHVhuxkxqem5COS
+	IvVBd2qy8TEZML4ESB6MVsZvIwHcg10eRQWl/np7wv7MEhml4Y5wfpjNlW/MDnTcVgDzoIwPxyg
+	2D43dNVmubolU6Dq3By1S8AYNtgOsKHUUO6ypFrjoqhfwH997r07j/7erBBC1qYM+Anb6T58v6u
+	yeHtsc4tJdW1TukAXFjRS4E49nU4kDTLGtzTwv7dLjAC0lbPPIp4es0NU5HFVSX2yLoD+Zm4yaJ
+	kaQwXCrElHRLkIPdUGcgRnN1GNBM8qImx682MBPWkFd0X95VlfLEh6HiCxusUQikghvf1Tjzu8f
+	4B+yhqyb29Jyg3YbU1hUgL9ZEW/Z27qOc8E+EOh0sXbPSZh54Eqhh8lYKeQxSLu9THRrESNkkKo
+	d6uEzU9Sq7jDb4PKSyBu6GJc6dr4JNNTblyx4v7NG5WOVIzp/Ej7m4XgldVNaSgxer9XB5
+X-Received: by 2002:a17:903:1248:b0:2a9:2a0b:4ef5 with SMTP id d9443c01a7336-2ad743fbbafmr25024305ad.7.1771670500635;
+        Sat, 21 Feb 2026 02:41:40 -0800 (PST)
+Received: from zeeshan-Standard-PC-Q35-ICH9-2009.. ([103.73.101.58])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad74e3507csm20656665ad.8.2026.02.21.02.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Feb 2026 02:41:40 -0800 (PST)
+From: Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
+Subject: Re: [PATCH] usb: dwc3: qcom: simplify error check in dwc3_qcom_find_num_ports()
+Date: Sat, 21 Feb 2026 15:41:15 +0500
+Message-ID: <20260221104115.4400-1-zeeshanahmad022019@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aZgYKin2nP19CZyL@stanley.mountain>
+References: <aZgYKin2nP19CZyL@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 
-On Thu, 5 Feb 2026, Ren=C3=A9 Rebe wrote:
+Hi Dan,
 
-> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> >=20
-> > Commit c7fabe4ad921 ("HID: quirks: work around VID/PID conflict for
-> > appledisplay") intends to add a quirk for kernels built with Apple Cine=
-ma
-> > Display support, but it refers to the non-existing config option
-> > CONFIG_APPLEDISPLAY, whereas the config option for Apple Cinema Display
-> > support is named CONFIG_USB_APPLEDISPLAY.
-> >=20
-> > Refer to the intended config option CONFIG_USB_APPLEDISPLAY in the ifde=
-f
-> > directive.
-> >=20
-> > Fixes: c7fabe4ad921 ("HID: quirks: work around VID/PID conflict for app=
-ledisplay")
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> > ---
-> >=20
-> > Note this fix suggests that the patch of commit c7fabe4ad921 in this fo=
-rm
-> > was never effectively tested, checking the effect that the commit messa=
-ge
-> > claims it would have.
->=20
-> Thanks for spotting this. It was tested when I did this years ago. Though=
-, maybe I
-> tested before adding the #if IS_ENABLED, anciently hit some key in Vim, o
-> something was renamed since then.
->=20
-> Either way, I=E2=80=99ll get the display out of the basement and re-test =
-it the coming days.
+You are correct. I ran Smatch on dwc3-qcom-legacy.c and it did not produce 
+a warning for these lines. I identified this issue through a manual grep 
+search for the pattern 'platform_get_irq.* <= 0' across the drivers 
+directory.
 
-Is there any results of this testing, please?
+It appears there are several dozen instances of this pattern that Smatch 
+currently misses because the '<= 0' check includes a valid negative 
+error check alongside the redundant zero check.
 
-Thanks,
+Thank you for the technical background on why Smatch handles it this way.
 
---=20
-Jiri Kosina
-SUSE Labs
-
+Regards,
+Zeeshan
