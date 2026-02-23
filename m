@@ -1,90 +1,52 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514A5227BB5;
-	Sun, 22 Feb 2026 12:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8B280317;
+	Mon, 23 Feb 2026 14:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771764663; cv=none; b=Xn9nqa9MhqhcBcd/azenEDmyGMHq4bhi5n11zbBQwEdTJhGlXV/y13qg4mQy8CGr6lUgK2bnq9Za78Zs8S5I5HmDLXNFZqlH2mcFV+1sIavR4fJKjN5KWXxqaf7I2h44FsMK8/p/gRcqN/WKICbcxTQSm+2prrlAdmN3d55Mcdg=
+	t=1771857531; cv=none; b=nWDTIoBRKwjLw/gtmd3muobAA4Emj8AslDKBoba5BpTxb0Lqmr4SyxCq3Qf7yoFh1ArI2X9WHSAwsXiPu3x7CTrxAFxdxZHF3Tzau0fjX37avMvjB/7ESRd3hfLL8TIahoV0nwVY4WwdPPQN+HUtChVp21M7pRMH0Eq4uAX/BPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771764663; c=relaxed/simple;
-	bh=9alrkBii7inAJ/v6zEDQ0djgRTb3ajjY9W3aAARBa3s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pY6y7D3VurV2t8MoMP/MQfRRry9/SgHA3RGOwkOJfLt8FP91MXAl7yEzIeCK2P8WDA0tzqEfOIDufpvz9PPR48XNr2ukS9zMzyyNHKsjfpcfx49fQeShKJLPF+S9kHI3WCiK7veaXa16sdDewKF6om98aJjVJj3jQ5ZAXjKU1Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=JL6jwXj2; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1771857531; c=relaxed/simple;
+	bh=NUfhfvaiA9qRt5CvEPEE6G/9RvGVWqop7hq7ygoGb4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWXB7yBkvpvzPff19bnKuO6osYK2NrZjXGJgnrvhiADCZA9kQrBeYZMHPxkwfv80egKd9KPEPzRzevZDtBfMlpC97oVqu9L+1PiQRMvxem5MQfDpyD1yEgXKQEVOFbrAciBEMYiTEiSQE/iBDOYvsM6Y6GW2I3v3s5+CWXXY+2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yRmS5c10; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="JL6jwXj2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=jPA+43cqeK52PPxzLr+du30rPQWvLcOSdwAm6ahrmw0=;
-  b=JL6jwXj2iz3wpPRD+BooY4yzu44S3R+jDvRZVKBuhYJk45ZmAYfX1vMd
-   jbWuhxcc/25L4AW2CxSJnpg8tSBGBO4JKcFjIQhO849sAo1Azjb74QXbp
-   7by9WSyutFP+Fg2ttooJoyVHRZOwVA6SEiI5bGR6OGhncPw95svoyamnp
-   c=;
-X-CSE-ConnectionGUID: 6eo86DJaQOeqF1UV3+Yh7g==
-X-CSE-MsgGUID: YUuEAlChTDSHSWnOzF5WmA==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.21,304,1763420400"; 
-   d="scan'208";a="264592694"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2026 13:50:58 +0100
-From: Julia Lawall <Julia.Lawall@inria.fr>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: kernel-janitors@vger.kernel.org,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ext4/move_extent: use folio_next_pos()
-Date: Sun, 22 Feb 2026 13:50:49 +0100
-Message-Id: <20260222125049.1309075-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yRmS5c10"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB204C116C6;
+	Mon, 23 Feb 2026 14:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1771857531;
+	bh=NUfhfvaiA9qRt5CvEPEE6G/9RvGVWqop7hq7ygoGb4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yRmS5c10xGdAzuo478QraLhe5b+cqE0iI3J+x5IJQShkWIIp8R2AlUrtGGZuVSKxs
+	 dHc763i72k5JSh4yq4jKyInyRmFdAxjuY0oLh/pwSaXVDyAYsVtCzvTv1s49BV3lvi
+	 pk5IkAoQB0fcZ+XHtieGDB70K3/tEG+D69Ur4PvE=
+Date: Mon, 23 Feb 2026 15:37:58 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Sajja Easwar Sai <eshwarsajja20@gmail.com>
+Cc: ethantidmore06@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, iryuken@duck.com,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3] staging: rtl8723bs: remove hardcoded dead debug code
+Message-ID: <2026022350-armband-mannish-5480@gregkh>
+References: <20260207180934.73593-1-eshwarsajja20@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260207180934.73593-1-eshwarsajja20@gmail.com>
 
-A series of patches such as commit 60a70e61430b ("mm: Use
-folio_next_pos()") replace folio_pos() + folio_size() by
-folio_next_pos().  The former performs x << z + y << z while
-the latter performs (x + y) << z, which is slightly more
-efficient. This case was not taken into account, perhaps
-because the argument is not named folio.
+On Sat, Feb 07, 2026 at 11:39:34PM +0530, Sajja Easwar Sai wrote:
+> The debug code is guarded by a constant false condition and is never
+> executed. Remove it to simplify the code. This also removes the now
+> unused variable 'pattrib'.
+> 
+> Signed-off-by: Sajja Easwar Sai <eshwarsajja20@gmail.com>
 
-The change was performed using the following Coccinelle
-semantic patch:
-
-@@
-expression folio;
-@@
-
-- folio_pos(folio) + folio_size(folio)
-+ folio_next_pos(folio)
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
----
- fs/ext4/move_extent.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -224,8 +224,8 @@ static int mext_move_begin(struct mext_d
- 	}
- 
- 	/* Adjust the moving length according to the length of shorter folio. */
--	move_len = umin(folio_pos(folio[0]) + folio_size(folio[0]) - orig_pos,
--			folio_pos(folio[1]) + folio_size(folio[1]) - donor_pos);
-+	move_len = umin(folio_next_pos(folio[0]) - orig_pos,
-+			folio_next_pos(folio[1]) - donor_pos);
- 	move_len >>= blkbits;
- 	if (move_len < mext->orig_map.m_len)
- 		mext->orig_map.m_len = move_len;
-
+Does not apply to 7.0-rc1 :(
