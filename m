@@ -1,107 +1,111 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B743876C6
-	for <kernel-janitors@vger.kernel.org>; Thu, 26 Feb 2026 09:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC485378D80;
+	Thu, 26 Feb 2026 12:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772097774; cv=none; b=bAjyfibqLdwG/mu2BilJuVQi+4lXO5xsIVrF82/SzwsNikB8s4z4m1rCCGM961VVy1MVQF3ET+Jyd6ukzgpCSz8J8uGXvdHvKuJFhqAfEFEFAUkzELObnpaxNhpJrlp9cS74WOeKuvDRN5uSN7eYa5sQBbTCBBn42GJSotaLA7k=
+	t=1772107729; cv=none; b=VtqTWptqr9aEUszZLCd/qoxpRGqAJbDQYnN6O2PaPLGuKY1o8BVxcefN347SqgqQf6lxicLbKHBqFdiFR7H9m6+1UcUilpUelWShpaRJPwOZgd1HoKxeiKF8466r3sFRJAoazHIrjvnCN5p90PtaONiDjhSpwR809RHaccHEhM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772097774; c=relaxed/simple;
-	bh=8UXEEY78JgIJo476jNFn2ZS8ebZG6/2oNY53ZJEgYO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLjSZjHSqIoizFqsbYkRqKJbquX3nYGRkT9G/b71hYJQrXZRgl+khJH0eCCOn4my/+vgj0w/enPo03wfdCbnV+RTYTDsS9sgfB2xvfs8oL/Pk4vbVQX8Qwi1JXzdTgaFxR8eYNn2V2ZsRarx6QSTKEDYF3DSGz9msJ+g/rDDfEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xd5G+ZeI; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xd5G+ZeI"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48371119eacso7333715e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Feb 2026 01:22:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772097768; x=1772702568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Fi/8raflhbrprvHiDe2P6OVjgFKHTkfZNPmoq1Ca/k=;
-        b=xd5G+ZeICfCxedsy6gsAiDxNpOcxL+xqSxryfu55OWSCdmL6bO3mV32PMO5PHriuVt
-         8xNOV35qrXYOGszokOk6wzTZvRw3yoNKg+MLi4dLeNKuYQy4mEOkUTBUAaULSjTzZem9
-         ZtiQSXEYfXIoGm6DIhGY/VWJ1TPxJY/Q9XFix6+HA/P01WfeqKhOvYSCj+oNs4Hx0s2V
-         AjLdYsRLn/HbCbzZ2kL8+OTfKT0GFrmaKKnrKj70eOR9wnnZpxroHyWm0+vgD2YBgU/a
-         X1oV7NR85AzJ9+jP7JVpF+yUf+lmVB7NLfU5aRtEG91XSAmD9lCbeeqqT41YyQkNqVUr
-         oy8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772097768; x=1772702568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3Fi/8raflhbrprvHiDe2P6OVjgFKHTkfZNPmoq1Ca/k=;
-        b=veZDUsvFVlLyzNXbaBOXfQOvgV7uDVqN0bWTRoQse3tK1pJwpyq2NJeSVN6CeySqKy
-         1mU3aV5dPpXxykILt3tX0ZEf1VkzVFfZXIlfiqjAdCM1+OcS6vIvQwr+Pp2b8QbuR+8V
-         ZTcBWMmOwtYc9HgpKt36gmhoeVY3b2AYXLErp48+cp7vZpzhjbyerXbKk5Inn4w4H/Ze
-         KnJT6cgpwII2QyMM9q5jeTpQSB0Vya1HKlCbJeJn+ya5uTkYwRknnZQacYF0rg0u1Kl8
-         YlDDREU9bC4edYJkz2x2mX53WZ+COWaKigGroXXbpobZrOybxLQYBJ3wn9qGatuYsirX
-         hqpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRAn9RE/1w/gs7Udzv71BT5Xj82dJUIU/ejbt7EGBQDr/pKx288aqNubGVZ355oziN/NAl8dDurpO/tQIMyjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY89+mP8bYXAbwbbuh8oURJ++PwlxXjn/CFeSFuz3zRgMvycpS
-	bR7iYuzrJSAhyGIj9DqYKo4v6JC7lWpdgsitw1uUrRVvcunBYBbnIYhv5UQLY8vd0mw=
-X-Gm-Gg: ATEYQzzw6/GUfAZpyShyqT7zj+2ERIjJoL1gYIBfRC62974xkk4M/bknhmIyfuP4h25
-	obopbMIJAM+vBiSyeuUmCW6PxolsJuHBKI4au+Z0XoQuEPHVP1GeUwCGh6jPXIgP2nVzT+Qin4W
-	eplnf31FV1UO1zHLv4I9KtbvoRcMhUkt7hEkWTgDFj6FyKFkqb1xAmB6DAAO3PHrY/dEIFM4a9W
-	yctg3H/kWo5a+C7nlID+GziQdZ1UonrAvLKX8ADW0B4zrM2TzORGu8u4Vq9dDVS08blBQrCiDG6
-	b9UH+oq+wVuv/E4Ax5Bz2yuD1ynwxA9g3E+omSKS+fwfZl68DhNyfLBkS0rYBa9zuDq2hN9vd8r
-	zJG/L8plbDqk4DITm79i8LXiCfIiA7UZHYDQ+rb7tpxHU5qO+gtXgjBFmRqTyCabO0pISoVKpLf
-	mQqyiClxyiASYiQGw9lSEO0u3HoizL
-X-Received: by 2002:a05:600c:5250:b0:483:9139:4c1d with SMTP id 5b1f17b1804b1-483c3db85b0mr23915235e9.14.1772097767976;
-        Thu, 26 Feb 2026 01:22:47 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439934cc51csm8305010f8f.3.2026.02.26.01.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 01:22:47 -0800 (PST)
-Date: Thu, 26 Feb 2026 12:22:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
-Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net v3] net: core: failover: fix NULL pointer dereference
- in failover_slave_register()
-Message-ID: <aaAQ5JrrDAVOByeb@stanley.mountain>
-References: <20260226085601.11343-1-zeeshanahmad022019@gmail.com>
+	s=arc-20240116; t=1772107729; c=relaxed/simple;
+	bh=wJH07GsSrk5aNgD5JNBTQ8pTvLhFhbcFCDwX7t8RET8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eDiXYjA+4TKoqHvxn+dxfLwRnhgXI3sXCwo7D82hwjRhu2fosoJmqdT0E7pZAUNn7SJtc0xcEYEEM6TtPsPT+w4jf4KM05qK3QY5c3XM6XlWsCLfr7cZqZFdnBKnu1goULMaKGFpypwgOqE1ITNcWhKMv5+usO8hQbhz5BKeb0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.198])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4fM9GB140HzYQv8C;
+	Thu, 26 Feb 2026 20:08:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7C16840574;
+	Thu, 26 Feb 2026 20:08:43 +0800 (CST)
+Received: from [10.174.178.253] (unknown [10.174.178.253])
+	by APP4 (Coremail) with SMTP id gCh0CgBnFvfJN6Bp6r9RIw--.15725S3;
+	Thu, 26 Feb 2026 20:08:43 +0800 (CST)
+Message-ID: <248b3b7d-3f69-44db-8914-f2e187cc010c@huaweicloud.com>
+Date: Thu, 26 Feb 2026 20:08:41 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260226085601.11343-1-zeeshanahmad022019@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4/move_extent: use folio_next_pos()
+To: Julia Lawall <Julia.Lawall@inria.fr>, Theodore Ts'o <tytso@mit.edu>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger
+ <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260222125049.1309075-1-Julia.Lawall@inria.fr>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20260222125049.1309075-1-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBnFvfJN6Bp6r9RIw--.15725S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw13uF43ZF13WF4rXF47Arb_yoW8Gw1fpr
+	W0kFn09rWkAwnrCa17X3W2qr1UK390qr4DJa1a9a13AF98JF9Y9rZ8Ka1j9a4FkryDGryf
+	Jana9a48X3ZxCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbiF4tUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Feb 26, 2026 at 01:56:01PM +0500, Zeeshan Ahmad wrote:
-> Smatch warns that 'fops' is dereferenced without a NULL check.
-> While other callbacks in this function properly check 'fops', the
-> rx_handler registration does not.
+On 2/22/2026 8:50 PM, Julia Lawall wrote:
+> A series of patches such as commit 60a70e61430b ("mm: Use
+> folio_next_pos()") replace folio_pos() + folio_size() by
+> folio_next_pos().  The former performs x << z + y << z while
+> the latter performs (x + y) << z, which is slightly more
+> efficient. This case was not taken into account, perhaps
+> because the argument is not named folio.
 > 
-> Consolidate the NULL check for 'fops' at the beginning of the function,
-> before it is first used in slave_pre_register(). This ensures 'fops' is
-> valid for the entire function scope and allows the removal of redundant
-> NULL checks later in the function, as suggested by Dan Carpenter.
+> The change was performed using the following Coccinelle
+> semantic patch:
 > 
-> Fixes: 30c8bd5aa8b2 ("net: Introduce generic failover module")
-> Signed-off-by: Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
+> @@
+> expression folio;
+> @@
+> 
+> - folio_pos(folio) + folio_size(folio)
+> + folio_next_pos(folio)
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+Thank you for the patch. Looks good to me.
+
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+> 
 > ---
-> v3:
->  - Move the fops NULL check to the top of the function before any 
->    dereferences occur and remove subsequent redundant NULL checks, 
->    as suggested by Dan Carpenter.
-
-Thanks!
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
+>  fs/ext4/move_extent.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff -u -p a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+> --- a/fs/ext4/move_extent.c
+> +++ b/fs/ext4/move_extent.c
+> @@ -224,8 +224,8 @@ static int mext_move_begin(struct mext_d
+>  	}
+>  
+>  	/* Adjust the moving length according to the length of shorter folio. */
+> -	move_len = umin(folio_pos(folio[0]) + folio_size(folio[0]) - orig_pos,
+> -			folio_pos(folio[1]) + folio_size(folio[1]) - donor_pos);
+> +	move_len = umin(folio_next_pos(folio[0]) - orig_pos,
+> +			folio_next_pos(folio[1]) - donor_pos);
+>  	move_len >>= blkbits;
+>  	if (move_len < mext->orig_map.m_len)
+>  		mext->orig_map.m_len = move_len;
+> 
+> 
+> 
 
