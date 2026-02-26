@@ -1,111 +1,229 @@
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC485378D80;
-	Thu, 26 Feb 2026 12:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F15046AF0F;
+	Thu, 26 Feb 2026 20:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772107729; cv=none; b=VtqTWptqr9aEUszZLCd/qoxpRGqAJbDQYnN6O2PaPLGuKY1o8BVxcefN347SqgqQf6lxicLbKHBqFdiFR7H9m6+1UcUilpUelWShpaRJPwOZgd1HoKxeiKF8466r3sFRJAoazHIrjvnCN5p90PtaONiDjhSpwR809RHaccHEhM0=
+	t=1772138667; cv=none; b=enb6/UjBvqOKKPNYsY3q2h+TI0RhS/Fwm48750HX4glTMQ0HykvIlL7cEqRzjZcuM/eisw4MAoICX1BrM8alE860iA0kQYSivKWGzfXUk/ktun6bJyKofgTL0UOXw6YgGwmPZ4/AgYQ/qjoD+KWN920gRHrCMcM3vlpo2gNjaVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772107729; c=relaxed/simple;
-	bh=wJH07GsSrk5aNgD5JNBTQ8pTvLhFhbcFCDwX7t8RET8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eDiXYjA+4TKoqHvxn+dxfLwRnhgXI3sXCwo7D82hwjRhu2fosoJmqdT0E7pZAUNn7SJtc0xcEYEEM6TtPsPT+w4jf4KM05qK3QY5c3XM6XlWsCLfr7cZqZFdnBKnu1goULMaKGFpypwgOqE1ITNcWhKMv5+usO8hQbhz5BKeb0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.198])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4fM9GB140HzYQv8C;
-	Thu, 26 Feb 2026 20:08:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7C16840574;
-	Thu, 26 Feb 2026 20:08:43 +0800 (CST)
-Received: from [10.174.178.253] (unknown [10.174.178.253])
-	by APP4 (Coremail) with SMTP id gCh0CgBnFvfJN6Bp6r9RIw--.15725S3;
-	Thu, 26 Feb 2026 20:08:43 +0800 (CST)
-Message-ID: <248b3b7d-3f69-44db-8914-f2e187cc010c@huaweicloud.com>
-Date: Thu, 26 Feb 2026 20:08:41 +0800
+	s=arc-20240116; t=1772138667; c=relaxed/simple;
+	bh=RpZviqvGWVJR1tcATAIWAtKC+QlaZLR+DGJO/TZlyz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tMJFM2dU3OW7FTYs+if4O7gvk7jiJc+bibkxFp+ccJyrVZhDwWUH49t6/XVcU36WBtm1RwZ4JHYaSXysqeo1gaIlWek1zsgbATITEia1iL8l0Qw8DmoGsCm10MayLMmx00LUFlpUIipdrohh+ShBTt+k4Xby2hvCt+SC0X6Q37s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sWNx3deX; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sWNx3deX"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPSA
+	id viDZvEqUkbni4viDavq6iC; Thu, 26 Feb 2026 21:44:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1772138661;
+	bh=DacmWtirnDJ8c5FfO60izxCVDBNId/jIFsPzSSFKxMk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=sWNx3deX74wZ1sLmbYlB94WwaAvsbzZjnr/HqeBUWAOhun7bKOCvQbAnp1elKkvzt
+	 ef6PBgecHm1z/Ua/2PhYmMnHJzfwb0C3KNbIuPhRPcZiLM1ZuPS7E5X9T8t56MLJcs
+	 wn7ngmD4UfdxYcVwXMKGJuHQL9er9gH4vZMBlZsmZJPus1/UJ3ySU5VVbZM0q6eUjJ
+	 E3GcXHEwuv8Vup9GCxUFH5tcK1US0W+l7IYFd2W56mKh03e81/REuI8ZfgenpFXs+Z
+	 jqq/hPeb1DL0biKYbHI2BhIOh/ZVmM8w1UV59jlUvdas2tRkKexZud3w+qcnFiruL/
+	 bjxcsLkEKKxKQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 26 Feb 2026 21:44:21 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH v1] ALSA: aoa: Constify struct codec_connection
+Date: Thu, 26 Feb 2026 21:44:10 +0100
+Message-ID: <4009c337cc1a1a57795562279270c03687973b3b.1772138640.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4/move_extent: use folio_next_pos()
-To: Julia Lawall <Julia.Lawall@inria.fr>, Theodore Ts'o <tytso@mit.edu>,
- Matthew Wilcox <willy@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger
- <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260222125049.1309075-1-Julia.Lawall@inria.fr>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20260222125049.1309075-1-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBnFvfJN6Bp6r9RIw--.15725S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw13uF43ZF13WF4rXF47Arb_yoW8Gw1fpr
-	W0kFn09rWkAwnrCa17X3W2qr1UK390qr4DJa1a9a13AF98JF9Y9rZ8Ka1j9a4FkryDGryf
-	Jana9a48X3ZxCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbiF4tUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 2/22/2026 8:50 PM, Julia Lawall wrote:
-> A series of patches such as commit 60a70e61430b ("mm: Use
-> folio_next_pos()") replace folio_pos() + folio_size() by
-> folio_next_pos().  The former performs x << z + y << z while
-> the latter performs (x + y) << z, which is slightly more
-> efficient. This case was not taken into account, perhaps
-> because the argument is not named folio.
-> 
-> The change was performed using the following Coccinelle
-> semantic patch:
-> 
-> @@
-> expression folio;
-> @@
-> 
-> - folio_pos(folio) + folio_size(folio)
-> + folio_next_pos(folio)
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+'struct codec_connection' are not modified in this driver.
 
-Thank you for the patch. Looks good to me.
+Constifying these structures moves some data to a read-only section, so
+increases overall security.
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  10034	   3392	     12	  13438	   347e	sound/aoa/fabrics/layout.o
 
-> 
-> ---
->  fs/ext4/move_extent.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff -u -p a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -224,8 +224,8 @@ static int mext_move_begin(struct mext_d
->  	}
->  
->  	/* Adjust the moving length according to the length of shorter folio. */
-> -	move_len = umin(folio_pos(folio[0]) + folio_size(folio[0]) - orig_pos,
-> -			folio_pos(folio[1]) + folio_size(folio[1]) - donor_pos);
-> +	move_len = umin(folio_next_pos(folio[0]) - orig_pos,
-> +			folio_next_pos(folio[1]) - donor_pos);
->  	move_len >>= blkbits;
->  	if (move_len < mext->orig_map.m_len)
->  		mext->orig_map.m_len = move_len;
-> 
-> 
-> 
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  10370	   3040	     12	  13422	   346e	sound/aoa/fabrics/layout.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+The fabric_data field in struct aoa_codecis is only used in
+sound/aoa/fabrics/layout.c, so there should be no side effect for other
+files that include sound/aoa/aoa.h
+---
+ sound/aoa/aoa.h            |  2 +-
+ sound/aoa/fabrics/layout.c | 28 ++++++++++++++--------------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/sound/aoa/aoa.h b/sound/aoa/aoa.h
+index badff9f7cd54..b92593f170ca 100644
+--- a/sound/aoa/aoa.h
++++ b/sound/aoa/aoa.h
+@@ -48,7 +48,7 @@ struct aoa_codec {
+ 	u32 connected;
+ 
+ 	/* data the fabric can associate with this structure */
+-	void *fabric_data;
++	const void *fabric_data;
+ 
+ 	/* private! */
+ 	struct list_head list;
+diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
+index c18b55305294..c3ebb6de4789 100644
+--- a/sound/aoa/fabrics/layout.c
++++ b/sound/aoa/fabrics/layout.c
+@@ -55,7 +55,7 @@ struct codec_connection {
+ 
+ struct codec_connect_info {
+ 	char *name;
+-	struct codec_connection *connections;
++	const struct codec_connection *connections;
+ };
+ 
+ #define LAYOUT_FLAG_COMBO_LINEOUT_SPDIF	(1<<0)
+@@ -116,7 +116,7 @@ MODULE_ALIAS("aoa-device-id-35");
+ MODULE_ALIAS("aoa-device-id-44");
+ 
+ /* onyx with all but microphone connected */
+-static struct codec_connection onyx_connections_nomic[] = {
++static const struct codec_connection onyx_connections_nomic[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_HEADPHONE | CC_LINEOUT,
+ 		.codec_bit = 0,
+@@ -133,7 +133,7 @@ static struct codec_connection onyx_connections_nomic[] = {
+ };
+ 
+ /* onyx on machines without headphone */
+-static struct codec_connection onyx_connections_noheadphones[] = {
++static const struct codec_connection onyx_connections_noheadphones[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_LINEOUT |
+ 			     CC_LINEOUT_LABELLED_HEADPHONE,
+@@ -157,7 +157,7 @@ static struct codec_connection onyx_connections_noheadphones[] = {
+ };
+ 
+ /* onyx on machines with real line-out */
+-static struct codec_connection onyx_connections_reallineout[] = {
++static const struct codec_connection onyx_connections_reallineout[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_LINEOUT | CC_HEADPHONE,
+ 		.codec_bit = 0,
+@@ -174,7 +174,7 @@ static struct codec_connection onyx_connections_reallineout[] = {
+ };
+ 
+ /* tas on machines without line out */
+-static struct codec_connection tas_connections_nolineout[] = {
++static const struct codec_connection tas_connections_nolineout[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_HEADPHONE,
+ 		.codec_bit = 0,
+@@ -191,7 +191,7 @@ static struct codec_connection tas_connections_nolineout[] = {
+ };
+ 
+ /* tas on machines with neither line out nor line in */
+-static struct codec_connection tas_connections_noline[] = {
++static const struct codec_connection tas_connections_noline[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_HEADPHONE,
+ 		.codec_bit = 0,
+@@ -204,7 +204,7 @@ static struct codec_connection tas_connections_noline[] = {
+ };
+ 
+ /* tas on machines without microphone */
+-static struct codec_connection tas_connections_nomic[] = {
++static const struct codec_connection tas_connections_nomic[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_HEADPHONE | CC_LINEOUT,
+ 		.codec_bit = 0,
+@@ -217,7 +217,7 @@ static struct codec_connection tas_connections_nomic[] = {
+ };
+ 
+ /* tas on machines with everything connected */
+-static struct codec_connection tas_connections_all[] = {
++static const struct codec_connection tas_connections_all[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_HEADPHONE | CC_LINEOUT,
+ 		.codec_bit = 0,
+@@ -233,7 +233,7 @@ static struct codec_connection tas_connections_all[] = {
+ 	{} /* terminate array by .connected == 0 */
+ };
+ 
+-static struct codec_connection toonie_connections[] = {
++static const struct codec_connection toonie_connections[] = {
+ 	{
+ 		.connected = CC_SPEAKERS | CC_HEADPHONE,
+ 		.codec_bit = 0,
+@@ -241,7 +241,7 @@ static struct codec_connection toonie_connections[] = {
+ 	{} /* terminate array by .connected == 0 */
+ };
+ 
+-static struct codec_connection topaz_input[] = {
++static const struct codec_connection topaz_input[] = {
+ 	{
+ 		.connected = CC_DIGITALIN,
+ 		.codec_bit = 0,
+@@ -249,7 +249,7 @@ static struct codec_connection topaz_input[] = {
+ 	{} /* terminate array by .connected == 0 */
+ };
+ 
+-static struct codec_connection topaz_output[] = {
++static const struct codec_connection topaz_output[] = {
+ 	{
+ 		.connected = CC_DIGITALOUT,
+ 		.codec_bit = 1,
+@@ -257,7 +257,7 @@ static struct codec_connection topaz_output[] = {
+ 	{} /* terminate array by .connected == 0 */
+ };
+ 
+-static struct codec_connection topaz_inout[] = {
++static const struct codec_connection topaz_inout[] = {
+ 	{
+ 		.connected = CC_DIGITALIN,
+ 		.codec_bit = 0,
+@@ -772,7 +772,7 @@ static int check_codec(struct aoa_codec *codec,
+ {
+ 	const u32 *ref;
+ 	char propname[32];
+-	struct codec_connection *cc;
++	const struct codec_connection *cc;
+ 
+ 	/* if the codec has a 'codec' node, we require a reference */
+ 	if (of_node_name_eq(codec->node, "codec")) {
+@@ -895,7 +895,7 @@ static void layout_notify(void *data)
+ 
+ static void layout_attached_codec(struct aoa_codec *codec)
+ {
+-	struct codec_connection *cc;
++	const struct codec_connection *cc;
+ 	struct snd_kcontrol *ctl;
+ 	int headphones, lineout;
+ 	struct layout_dev *ldev = layout_device;
+-- 
+2.53.0
 
