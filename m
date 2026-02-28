@@ -1,83 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4281E9919;
-	Sat, 28 Feb 2026 01:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D337228643A
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 03:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772242611; cv=none; b=CAg6bwdjubFrPrv+lVk4SZDJPqCG8AUa0IkjCozBCoCkAefBo7QNyUwXia9/Li6brpvLu1VI2/hOxI4RKXn4wfl7UKw0fhRoQpby1RSJH/8UfdD/3QvanFNZsjlCCU7s2Zl3CXn08pN94WgL9GkoazZ+b0eJsNah7SHJ0dE5IlQ=
+	t=1772248018; cv=none; b=pXmhT3Z9nsoRguszxMjEhV4xhX3DHpi9OnXiKZrkXFM3ebSPUzCml7ix/wTqmhbtFsXqCmdCbSQ0P/FaJrlYB8fYkaH3uethXeSJpwuP0LDHmNk1zPdlAvwjG6l05kuhklam8BkOrQOfc+PQzoCH05f68769vvmtSk6irfcbSK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772242611; c=relaxed/simple;
-	bh=c4pBVGH7zq9UuVP5amo0SjJihT/ZFkBYCMVvrDdIajo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u62J/o8PgcbLQhvTYDbY+roHyvPCQOZIClxJm2uG4lzJ94bodGGVU4A05skDIyMs6Va54/foRmbI67vHtNXyb0bbV0FwgPmt81itMjSDIm3wYg5OmNh5Ow+4ErsiiMqD1PtbtbWh7fkKLqMGCzcTA7Y+NQtmDFB4WMvyHy5pGjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLu74K6L; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772248018; c=relaxed/simple;
+	bh=DDaJDLr6rfbYCONV1hjqRTr3hnRKgGdTYMXk+Clst4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jq7tjRv8LWKRJV1pWpR0vvMqjxMUvK4Os2z+G8OJQZrDyVM52vU3n9n9qRv9o3uCmC95F5OwzvVJ3buCpMedUJqn4ASPPpO1kHM/ds/MfuDuYXnrL71Dd06OL3BJ1/0mAwwq14agFu/EZ0GhD/+/vv+m2/H/kazNxfRvOgjm33M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1SO5a0+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLu74K6L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1AFC116C6;
-	Sat, 28 Feb 2026 01:36:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1SO5a0+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91839C2BC87
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 03:06:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772242611;
-	bh=c4pBVGH7zq9UuVP5amo0SjJihT/ZFkBYCMVvrDdIajo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rLu74K6LNFeqnCrjG12I69zGopOJ/Q1p9SDQr6mDIE5Y51IOOl2zxXNdRb/48rxiH
-	 yiZ3XCNKHzHaFd1imxlxpJb+57hOCR8LP25Nf0H7nnisx5zwh4xLiwqILSfIAFwu8F
-	 W2CsLAPQpXaqtG7ySQR1i6INegHqf7gxIuF9qzapRLH0IvxHmZlfIT80GYzRuusl3X
-	 crM9/xMJt/uKUds8AaHPQuE7gM7A8G2uo27SXbnf5Di7czq94wavlWvGA+3flKJfD9
-	 B0ibDXjhAZDXcLZnDeTIaFAnYrCwCHzipAGvP/+k+C4Vdfg0Xf681PLbOg372h34Rz
-	 zd32d7SrXZY+A==
-Date: Fri, 27 Feb 2026 17:36:49 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
-Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>, "David S . Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman
- <horms@kernel.org>
-Subject: Re: [PATCH net v3] net: core: failover: fix NULL pointer
- dereference in failover_slave_register()
-Message-ID: <20260227173649.7a9f202e@kernel.org>
-In-Reply-To: <20260226085601.11343-1-zeeshanahmad022019@gmail.com>
-References: <20260226085601.11343-1-zeeshanahmad022019@gmail.com>
+	s=k20201202; t=1772248018;
+	bh=DDaJDLr6rfbYCONV1hjqRTr3hnRKgGdTYMXk+Clst4s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K1SO5a0+8x3wngyFabM0opxCAmDvGsUdhDhTJ99JBXqmxqRNgI9JMhNShnpxp+uHo
+	 9Nj1lddFTAPdzaXlcI8Dgq6i9O4agj4bHfO8vBpZQzNCIiGsB/2ipnxh8Q8QPei+rP
+	 uf/QrUKeu1WtGAD0EMDFDvGyGEIbexCZzFvHcVlo9lCdbZm1VsJDHvMGabc0vsQebj
+	 VWsoD9WAusHabonA8drCbkNgRvOyb9dXpjVSTwBiCuTbA41iLYhPmaD4WOQmUbQTmx
+	 v+/FqXvzTktTtoucEQzbB4wN/ot5JHUmMMMuPizRowCCRx6/ri5EtlvmyeqvFjZuh8
+	 27E2Z8D3kSmBw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-65f9a875eabso5036580a12.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Feb 2026 19:06:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXbCiZh6nP783JFERs1z5SsSH6UCTSXj5OiLOzV6enOFxyO5jcp/fbeMH6bT6wmLSmcxbjWP0Lkn0h/TCnEBLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4BGvyC/glEb9oPnDR1PhCiQXlpCmXD0AgwYOLmsezWUmNwnmf
+	x7x6x/OHczOLxABfzq/OgXDsGtIUjLxYMW7/hkWAyA9iMFETQMj1Fbxrl8uLYSOkcfw13hizPUs
+	uBRQSwwatD7MjAVwkw/zCyObywN56FC4=
+X-Received: by 2002:a17:907:60cc:b0:b93:8460:4ac with SMTP id
+ a640c23a62f3a-b93846007a8mr173991766b.53.1772248017070; Fri, 27 Feb 2026
+ 19:06:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260227231854.421561-1-colin.i.king@gmail.com>
+In-Reply-To: <20260227231854.421561-1-colin.i.king@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 28 Feb 2026 12:06:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8yzKA4X_+J2BhSZGkWuO1VDGFPS2Cq-vaPVM4r2mbLjg@mail.gmail.com>
+X-Gm-Features: AaiRm52XIwwvPr8IXCWmqUBxxs7R9NYP7ECnAOVSxQ5QHA7LESumhtOrICC7haM
+Message-ID: <CAKYAXd8yzKA4X_+J2BhSZGkWuO1VDGFPS2Cq-vaPVM4r2mbLjg@mail.gmail.com>
+Subject: Re: [PATCH][next] ntfs: Fix spelling mistake "initiailized" -> "initialized"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Hyunchul Lee <hyc.lee@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Feb 2026 13:56:01 +0500 Zeeshan Ahmad wrote:
-> Smatch warns that 'fops' is dereferenced without a NULL check.
-> While other callbacks in this function properly check 'fops', the
-> rx_handler registration does not.
-> 
-> Consolidate the NULL check for 'fops' at the beginning of the function,
-> before it is first used in slave_pre_register(). This ensures 'fops' is
-> valid for the entire function scope and allows the removal of redundant
-> NULL checks later in the function, as suggested by Dan Carpenter.
-> 
-> Fixes: 30c8bd5aa8b2 ("net: Introduce generic failover module")
-
-Not really a fix, there's only one user - net_failover and it always
-passes the ops and has all callbacks.
-
-> diff --git a/net/core/failover.c b/net/core/failover.c
-> index 2a140b3ea669..47e4a91dcaa6 100644
-> --- a/net/core/failover.c
-> +++ b/net/core/failover.c
-> @@ -59,7 +59,10 @@ static int failover_slave_register(struct net_device *slave_dev)
->  	if (!failover_dev)
->  		goto done;
->  
-> -	if (fops && fops->slave_pre_register &&
-> +	if (WARN_ON_ONCE(!fops))
-> +		goto done;
-
-Better still please add this check in failover_register()
-so that we don't allow any device to be registered without ops.
-Then you can delete all the fops checks throughout this file,
-not just in this one function.
--- 
-pw-bot: cr
+On Sat, Feb 28, 2026 at 8:20=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in an ntfs_debug message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Applied it to #ntfs-next.
+Thanks!
