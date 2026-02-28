@@ -1,111 +1,119 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC35410D08
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 10:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE301DF980
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 11:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772272860; cv=none; b=tpApMZSBBqZwXzUMckCP5YNtVPBSzWYEorP5S969gsrZKPuudRa01vdodSUiorr9qA5yl4gRbb2+eotutXG4GQLzrK+nrhNRSEaKKVsZiniwLf2COJ2lIUoOYlPkCcP+tGtya6ata8NKfF6iamWqLM/izoV9Fflg14JN90MdOa4=
+	t=1772279308; cv=none; b=p/RvqfpSe2ysbVol+FzAYDKdpVaIAQfm1dUDoYQ+rOBzyu94pLof8Wzbm6M4NAKQY9P3wSs2DiC52yQTlbntoc6qHiObjz3qex64isRSbnr40simJc6gsCnaix2jBUC87Gl/KsYwF33Y838Ryv8Mrmo0JTKypjXdncaUGTVnpxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772272860; c=relaxed/simple;
-	bh=SyVPaUo+z+HYEidXoc21BGkOE7CxnTuR2yUK55P6/Gc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uMsXnOL6El5dEaApyKK71al5fPRhkp9u2ETW6MBuciqUY37C+E6HcHI5qpJOBLpEIZS7HBBi9J2d9rf93Cx1MmmGe7MmCjIgLyFuuCvSosbIbDO2xQOcT9zARPdNiC21PQfc2rXKdsURrIlyZRd30pi3AL86lkC+9KqnLEHTsKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7tGOjlM; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772279308; c=relaxed/simple;
+	bh=wxTihcnyyAsMHGR5lmRw9VbabDkYnXjRnrj5L4uFjkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pootJcnxvc++vKjIUpmJuoZh3OTX7GU1YKtdGpCnTq1788rbbi7ug95PzjMh3XlsENAG3wNkeZTz4G6wtWYmE6JM1FTBi7MVMHz7l7virL5swTI9ZxPaMQk6N1mjA2kZfddo+XsykpIyISWG7Qnv/N7Ntk21XGoZEL+mrsxuvDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lap50l+V; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7tGOjlM"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-436e8758b91so1847187f8f.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 02:00:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lap50l+V"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-483abed83b6so23670695e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 03:48:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772272857; x=1772877657; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pi+GFLSwi3pjYjAmI89JNYKtrRFb4ualdoW7/2mbzi4=;
-        b=L7tGOjlMQVgGz8tkwaoNLwl+hNMlPCNTJi/D5Af1NfHAp1cmIMQAiDfhwoknrNry9h
-         pn3EeIY+pSIDYYr4HxJwJRa7KAOOwBfFAU8HtdXKfzC5ZTPWF7CR8twLG383nnXTmBQd
-         28y89qPxig1S4HzyzfvXBTUxbgBqrbb8BANsMGoacJQFSuZlQQ2lxJwmdnuHX/0+YVQD
-         bJiZYobMJDekXhAfU3SDnqFFZp6iCuAJu5BDvD05+FzT14/qfizLO550ugehQrxCI+hF
-         ZR+RAYVTxrPDRL3MLdiz97bSZJs7v9x8uAlykgii5ZTbemcEPwqn+pCOQjPRmRX0Ivz4
-         TWgg==
+        d=linaro.org; s=google; t=1772279305; x=1772884105; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OzMakfe/gCuMTNoRfsCupn/fCSXvgArEvTidpMiIPDc=;
+        b=Lap50l+VEWYQIHXbmdWDWe7VAwEm8xOWzxraxHvj/UNHKvQZYk6nVJd/r4vRujQWDv
+         vsDbiXYRS5uVXAbykuEJdTdlIgOf0iiWnmGwyOoqDWsG790D4OP4F5CKbgEX3JBaPSO5
+         jxEAHNyCw2RVhZQ1uzMXmLx8UXKXOX0BhR3kUFq8o8IDXq5axK9RAZLiD2Dq278YK8AS
+         ekNfBPqL4drnbT/bBzW+bj/pxfdcKOpPO43OeX7hqqJTuc0zIbJpV41UE/ZRdJR0Gpah
+         Q7S3hzrV62us9rZxncpyx6RRMm0OVQ73+tpcednt91e6YKXFLkhm7kCDlGCqRpX2Ts33
+         SBaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772272857; x=1772877657;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pi+GFLSwi3pjYjAmI89JNYKtrRFb4ualdoW7/2mbzi4=;
-        b=IuxtLp3HWCFVgMfiQah3b/Bud2p725IYn8qn1CHMu0fKSOk1RHsRScAaMjB2xXPmk+
-         zraY5A719ZwWPCSwii7nmtEB/cVxcPdlIYt3faFb2/fbqjT1kzrFv6gqUTnEDDrNS2RD
-         gUBkskQKXJnKS4TWuyVFIrrTBO2RPx0T29Nz/dbVfxMseu8LFarAXJLQwikEtqcaOf1R
-         NFauiJUxjpg0pcW6NzX/3ODajeibg/peUpj61rhZJW0gfjRkYsMPpNkFgjKeW32qhO/e
-         GGG4WoJ2AZkX7LEbVE5rKmqdRhwxb/+kgRWfrGrhI3wAyqOeQ9drOTr8z2yUNcnUh3GM
-         xJGA==
-X-Gm-Message-State: AOJu0YxiF/VDPI/21G7rXQnUlTHtE2vuF+JY0O+XQowDF535sjXgt6N4
-	z4HNbny0UwIV0HqtXQeRYPvE+CBibNlktD1lz7wOf6BMxBwuFQ31cK4L
-X-Gm-Gg: ATEYQzwR7FC3ogLqHZpwqG3ND9lRICgHpe5MN2Ts2N1Q71hHGaBmQWv+xj1KB77W/u/
-	EDW0u/SbwtePf/8/m6ut6t88PKGjjXMEvRqb0ZuMS9UDqrGfKr6qdlF62hSL0PBkhHWXPw1+FZs
-	THe9Nu+VRo/7pphZ6KKk2IT3FWqGq28V/br8AdjxDYuTbfoCWpvIaM6R3wxnDvOZFzJMb1wW0bx
-	oys1AN9usV65/wGR14Ut4ieBHd7DwzlcuGEUGesfMJw2vhIMtA7Q7lb4k1mOOIsiEhGrybaELXB
-	JsNUlqc8d05bFd05OolVklxWXXUoepXajiVsHGWYnL2Wxt+wciVjaRjwjAnCntpFHbICc6nK8s7
-	yDEvarHKtaHTGbrpm61ONhhLwAIMJh6gAqB5XLem3Nt1rhwskIORpXODElphL3wXDK8a+xzQ+Dq
-	lkxbYLAnr7d5lAutBa9ZRmCQ==
-X-Received: by 2002:a05:6000:288c:b0:435:b7ca:7521 with SMTP id ffacd0b85a97d-4399ddf211fmr10631779f8f.15.1772272856846;
-        Sat, 28 Feb 2026 02:00:56 -0800 (PST)
-Received: from localhost ([87.254.0.129])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c75a523sm12770570f8f.19.2026.02.28.02.00.56
+        d=1e100.net; s=20230601; t=1772279305; x=1772884105;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OzMakfe/gCuMTNoRfsCupn/fCSXvgArEvTidpMiIPDc=;
+        b=nxIZg9gObCUkpgk22pPlKo2I1PWoF/eGr/6vXO5zMt2icuMUa/QEh1yHy9oGefa2Jo
+         5gRah7WbZsOjgWlmIY5Z58yVVuQLxNMNMPlkCpDde23ebfzvTq2BSxlKntYxMOZY1aE/
+         Erf3T1QuNWSqo2lZcR8FBcmlm7LWMRG/M/UHezH51wgBRF1qHl1JzZleKJEH317Y91Px
+         l7VuZydK2juQX22Sr2+MSk25RZGOALcFlvhjAyzf6mhnW3VH8FAHT7eZ43oxZgO1Syoc
+         jkuHmuDOIEjJbcxSDGkJ4Ez5hQhdIPWqRGpi4zebWcVdIurKMyDyByYuXhif4Z4Nk1Tv
+         4m6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUFFKU5THg7VCKV9Ly39jCZk4Q610kBqmJ7//K07a7y0g5dTYLZNvzAo5h6EYl6SYfZc3N6nkWTNLzgN2cOan0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy++/vNabruBDxgRqZbah3samQGCyx55SU88O9lnilhrITUbS1+
+	o5WRgjeYZt9m01Oc+FVAZulif5MQaNFBJd8RPYTRe5hMVH2SayaUI2DBRagxxpf+ENORfPDWK17
+	Ga6+r
+X-Gm-Gg: ATEYQzzMOrOMAgzwj1QBSb6FPqOjVuYY+UemTXh6VRIooZyT4YJracuYAZrMNdECfNC
+	sKiiWdtRTCKBqMZLNaxITzaJrSnt3J8oFJFPVjd+2Osnli9S3DteRlIdR/E0xehnyduGv042Gd5
+	3IxJUC6MtuyJlMsT+beLg08s/6ZqJGTpZpU4TWz5hbDyFy5yyInC6jqxE6uX8nuLWHQDJjVVvXO
+	D3n0W2Gw/tPkZW8P5lIn74PYxWmpnWsN1JEG2R04dPvLjNTyNtWCVNba6sXvgOTrHm2xo/hpWoT
+	V8aAaMib85RIKeOduqx/fphp5Dq+weNLLZLe6U4MXV6nIc6bZ6OLNJONdgB7m07mSUtk5oBNU3z
+	sJitgYIwoj1YTwrBgF+K6i4fkUoUZpwmm6lwZT8st/ysKGurJSaEvmd3LcGGSYyvCIZhZE725dh
+	3BaTZzVMpgcCeBRp1E1V2jhHANZJvO
+X-Received: by 2002:a05:600c:c174:b0:477:73e9:dbe7 with SMTP id 5b1f17b1804b1-483c9c0bcdamr101457695e9.35.1772279305381;
+        Sat, 28 Feb 2026 03:48:25 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd765604sm241547315e9.15.2026.02.28.03.48.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Feb 2026 02:00:56 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Alex Hung <alex.hung@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: remove extra ; from statement, remove extra tabs
-Date: Sat, 28 Feb 2026 09:59:38 +0000
-Message-ID: <20260228095938.548728-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Sat, 28 Feb 2026 03:48:24 -0800 (PST)
+Date: Sat, 28 Feb 2026 14:48:21 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, kernel-janitors@vger.kernel.org
+Subject: [bug report] tests/liveupdate: add in-kernel liveupdate test
+Message-ID: <aaLWBYzuFg3ZuVmP@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-There is a statement that has a ;; at the end, remove the extraneous ;
-and remove extra tabs in the code block.
+[ Smatch checking is paused while we raise funding. #SadFace
+  https://lore.kernel.org/all/aTaiGSbWZ9DJaGo7@stanley.mountain/ -dan ]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hello Pasha Tatashin,
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-index 71cfc623bc2d..f3fa8eb4bcce 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-@@ -1165,9 +1165,9 @@ void dm_helpers_override_panel_settings(
- 		link->panel_config.dsc.disable_dsc_edp = true;
- 
- 	if (dc_get_edp_link_panel_inst(ctx->dc, link, &panel_inst) && panel_inst == 1) {
--			link->panel_config.psr.disable_psr = true;
--			link->panel_config.psr.disallow_psrsu = true;;
--			link->panel_config.psr.disallow_replay = true;
-+		link->panel_config.psr.disable_psr = true;
-+		link->panel_config.psr.disallow_psrsu = true;
-+		link->panel_config.psr.disallow_replay = true;
- 	}
- }
- 
--- 
-2.51.0
+Commit f653ff7af969 ("tests/liveupdate: add in-kernel liveupdate
+test") from Dec 18, 2025 (linux-next), leads to the following Smatch
+static checker warning:
 
+	lib/tests/liveupdate.c:130 liveupdate_test_register()
+	warn: passing zero to 'ERR_PTR'
+
+lib/tests/liveupdate.c
+    112 void liveupdate_test_register(struct liveupdate_file_handler *fh)
+    113 {
+    114         int err, i;
+    115 
+    116         liveupdate_test_init();
+    117 
+    118         for (i = 0; i < TEST_NFLBS; i++) {
+    119                 struct liveupdate_flb *flb = &test_flbs[i];
+    120 
+    121                 err = liveupdate_register_flb(fh, flb);
+    122                 if (err) {
+    123                         pr_err("Failed to register %s %pe\n",
+    124                                flb->compatible, ERR_PTR(err));
+    125                 }
+    126         }
+    127 
+    128         err = liveupdate_register_flb(fh, &test_flbs[0]);
+    129         if (!err || err != -EEXIST) {
+                         ^^
+|| vs && bug.  This error messages will always be printed.
+
+--> 130                 pr_err("Failed: %s should be already registered, but got err: %pe\n",
+    131                        test_flbs[0].compatible, ERR_PTR(err));
+    132         }
+    133 
+    134         pr_info("Registered %d FLBs with file handler: [%s]\n",
+    135                 TEST_NFLBS, fh->compatible);
+    136 }
+
+regards,
+dan carpenter
