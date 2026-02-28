@@ -1,65 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D337228643A
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 03:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FAD255F2D
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 08:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772248018; cv=none; b=pXmhT3Z9nsoRguszxMjEhV4xhX3DHpi9OnXiKZrkXFM3ebSPUzCml7ix/wTqmhbtFsXqCmdCbSQ0P/FaJrlYB8fYkaH3uethXeSJpwuP0LDHmNk1zPdlAvwjG6l05kuhklam8BkOrQOfc+PQzoCH05f68769vvmtSk6irfcbSK8=
+	t=1772267616; cv=none; b=LgHqhamMw9ijv0iQ0SzJwOf1ed6Za/cNapUzpvL/OoV0jBpKNsbg0fKVsas52GB1KfZi2xe1oixFSmPawwbKZitfSTN3nRbewATsrtpNrUcUeOf0J5E/X22/7hUwEmOQFqYCsnxlEtXCSRwsrHQeiVD1GxMlEmQg1egzwWCaFAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772248018; c=relaxed/simple;
-	bh=DDaJDLr6rfbYCONV1hjqRTr3hnRKgGdTYMXk+Clst4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jq7tjRv8LWKRJV1pWpR0vvMqjxMUvK4Os2z+G8OJQZrDyVM52vU3n9n9qRv9o3uCmC95F5OwzvVJ3buCpMedUJqn4ASPPpO1kHM/ds/MfuDuYXnrL71Dd06OL3BJ1/0mAwwq14agFu/EZ0GhD/+/vv+m2/H/kazNxfRvOgjm33M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1SO5a0+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772267616; c=relaxed/simple;
+	bh=9J4aLFNBUFimLZoXPSiviBhOcwI2yMg4Omo3sBfptTI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mZKWMmWt1KGaIZp8pBUoULRAGodNt4fLs2TOxkWcSd9yei2hEATcOX/D5/uQrjzybK8eD3WeGEVATjQfONCWIiCkM8g4nYYJPME7rsFHQ670fKUn/fFtKe2E/nU/jKYwtJjh2BHsX4ZlrI/cIPpBWPt/7fQnWaMTVx/Tjk3gPKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GcSG9wfh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v2Tpj0jq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=stYtJ938; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=z7ONblRo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1SO5a0+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91839C2BC87
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 03:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772248018;
-	bh=DDaJDLr6rfbYCONV1hjqRTr3hnRKgGdTYMXk+Clst4s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K1SO5a0+8x3wngyFabM0opxCAmDvGsUdhDhTJ99JBXqmxqRNgI9JMhNShnpxp+uHo
-	 9Nj1lddFTAPdzaXlcI8Dgq6i9O4agj4bHfO8vBpZQzNCIiGsB/2ipnxh8Q8QPei+rP
-	 uf/QrUKeu1WtGAD0EMDFDvGyGEIbexCZzFvHcVlo9lCdbZm1VsJDHvMGabc0vsQebj
-	 VWsoD9WAusHabonA8drCbkNgRvOyb9dXpjVSTwBiCuTbA41iLYhPmaD4WOQmUbQTmx
-	 v+/FqXvzTktTtoucEQzbB4wN/ot5JHUmMMMuPizRowCCRx6/ri5EtlvmyeqvFjZuh8
-	 27E2Z8D3kSmBw==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-65f9a875eabso5036580a12.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 27 Feb 2026 19:06:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXbCiZh6nP783JFERs1z5SsSH6UCTSXj5OiLOzV6enOFxyO5jcp/fbeMH6bT6wmLSmcxbjWP0Lkn0h/TCnEBLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4BGvyC/glEb9oPnDR1PhCiQXlpCmXD0AgwYOLmsezWUmNwnmf
-	x7x6x/OHczOLxABfzq/OgXDsGtIUjLxYMW7/hkWAyA9iMFETQMj1Fbxrl8uLYSOkcfw13hizPUs
-	uBRQSwwatD7MjAVwkw/zCyObywN56FC4=
-X-Received: by 2002:a17:907:60cc:b0:b93:8460:4ac with SMTP id
- a640c23a62f3a-b93846007a8mr173991766b.53.1772248017070; Fri, 27 Feb 2026
- 19:06:57 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GcSG9wfh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v2Tpj0jq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="stYtJ938";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="z7ONblRo"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ACD6A3F8E7;
+	Sat, 28 Feb 2026 08:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1772267613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXNJRNBKCpIULn24va1xFS7lT+j21mcqoDyWxckYkJU=;
+	b=GcSG9wfh7MXdVEH4anojkW3R5eYh7VqH2o8eJUpraFCSd0ioxPuOcqoF1+BPbFOWQ7jYnp
+	UHFpnQtggIAkMMErtit1Tb2NWowBoI3TwtDVaouHP/XYychr+Czccpgdne3EhOcsY7Gu34
+	REqDi67deh7vBEBgE3ix2Ek/+kiYuKQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1772267613;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXNJRNBKCpIULn24va1xFS7lT+j21mcqoDyWxckYkJU=;
+	b=v2Tpj0jqtwVouxVCkSNrtpNVjQGf0IyDAuIuYdcLm1FM5RZW3aK177hafKGIChiO1PBS3X
+	m3HUsVKjFHg3OrBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=stYtJ938;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=z7ONblRo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1772267611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXNJRNBKCpIULn24va1xFS7lT+j21mcqoDyWxckYkJU=;
+	b=stYtJ938Z7u4ehosRybMS+f0aGVbgPuduOmgfZs0C/5rZI9yk3eXXnsgAk8YH24lJx60mj
+	Zwu60BPK3fhQspdwgJCjtGWzRC+bpCJJMrh5eo4YacjiqC1ykisfpP0dKjFkUhtNTPQni6
+	9FaAuDrJ5uxsx/dfA7Q9b4VvqcaedAg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1772267611;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXNJRNBKCpIULn24va1xFS7lT+j21mcqoDyWxckYkJU=;
+	b=z7ONblRo7DyDe+Ikjg5ycJYke/fpkaQJynqvXKkji/kv70az+dGJdntWrmVeoeAJsGYLbk
+	ik8MK7QfgudjRXCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7079B3EA65;
+	Sat, 28 Feb 2026 08:33:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mUwiGluoomlyTAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 28 Feb 2026 08:33:31 +0000
+Date: Sat, 28 Feb 2026 09:33:31 +0100
+Message-ID: <87a4wt6zdw.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v1] ALSA: aoa: Constify struct codec_connection
+In-Reply-To: <4009c337cc1a1a57795562279270c03687973b3b.1772138640.git.christophe.jaillet@wanadoo.fr>
+References: <4009c337cc1a1a57795562279270c03687973b3b.1772138640.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260227231854.421561-1-colin.i.king@gmail.com>
-In-Reply-To: <20260227231854.421561-1-colin.i.king@gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Sat, 28 Feb 2026 12:06:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8yzKA4X_+J2BhSZGkWuO1VDGFPS2Cq-vaPVM4r2mbLjg@mail.gmail.com>
-X-Gm-Features: AaiRm52XIwwvPr8IXCWmqUBxxs7R9NYP7ECnAOVSxQ5QHA7LESumhtOrICC7haM
-Message-ID: <CAKYAXd8yzKA4X_+J2BhSZGkWuO1VDGFPS2Cq-vaPVM4r2mbLjg@mail.gmail.com>
-Subject: Re: [PATCH][next] ntfs: Fix spelling mistake "initiailized" -> "initialized"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Hyunchul Lee <hyc.lee@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[wanadoo.fr];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Queue-Id: ACD6A3F8E7
+X-Spam-Flag: NO
+X-Spam-Score: -3.51
+X-Spam-Level: 
 
-On Sat, Feb 28, 2026 at 8:20=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in an ntfs_debug message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Applied it to #ntfs-next.
-Thanks!
+On Thu, 26 Feb 2026 21:44:10 +0100,
+Christophe JAILLET wrote:
+> 
+> 'struct codec_connection' are not modified in this driver.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   10034	   3392	     12	  13438	   347e	sound/aoa/fabrics/layout.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   10370	   3040	     12	  13422	   346e	sound/aoa/fabrics/layout.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> The fabric_data field in struct aoa_codecis is only used in
+> sound/aoa/fabrics/layout.c, so there should be no side effect for other
+> files that include sound/aoa/aoa.h
+
+Applied to for-next branch now.  Thanks.
+
+
+Takashi
