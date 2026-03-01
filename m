@@ -1,119 +1,84 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE301DF980
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 11:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E0B175A6C;
+	Sun,  1 Mar 2026 16:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772279308; cv=none; b=p/RvqfpSe2ysbVol+FzAYDKdpVaIAQfm1dUDoYQ+rOBzyu94pLof8Wzbm6M4NAKQY9P3wSs2DiC52yQTlbntoc6qHiObjz3qex64isRSbnr40simJc6gsCnaix2jBUC87Gl/KsYwF33Y838Ryv8Mrmo0JTKypjXdncaUGTVnpxo=
+	t=1772382140; cv=none; b=C1F51nsGTFy/8s7U2HCFpdAEUBpsBgop+Du0sU1IkX9hXNtOuvtqN3Bo9ClmH7VwCDhF3kjjSaJi98bDxCrGrmkbvlLzAqbCffuBX+aBVqGeeGOmnR19wynS0khh2t075oL7bTbU//4GRC+tbKE3z0lRhGNgA0fCPoWbgB9n2ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772279308; c=relaxed/simple;
-	bh=wxTihcnyyAsMHGR5lmRw9VbabDkYnXjRnrj5L4uFjkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pootJcnxvc++vKjIUpmJuoZh3OTX7GU1YKtdGpCnTq1788rbbi7ug95PzjMh3XlsENAG3wNkeZTz4G6wtWYmE6JM1FTBi7MVMHz7l7virL5swTI9ZxPaMQk6N1mjA2kZfddo+XsykpIyISWG7Qnv/N7Ntk21XGoZEL+mrsxuvDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lap50l+V; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1772382140; c=relaxed/simple;
+	bh=+EFaN8ukVl2jbon2CP+tjXmZpNoO68XrGZDN1hGeeDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GkW7tvsy1bCgLE226YFNuB92IUD6D0nw8CIqHUP44gov4BnfA/Ry0cZ/s9KurCX0oxvN2ocppAY8saL/xrLkAgpHd1+m0Y+n+O/6jXBHtVEJaMyFPyW+rTvmBKbojvsHsEdusDRCAhPvWcV0nooLRi1uEPuoO8Qqqn/cNuizW5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cBXl3qaJ; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lap50l+V"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-483abed83b6so23670695e9.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 28 Feb 2026 03:48:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772279305; x=1772884105; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OzMakfe/gCuMTNoRfsCupn/fCSXvgArEvTidpMiIPDc=;
-        b=Lap50l+VEWYQIHXbmdWDWe7VAwEm8xOWzxraxHvj/UNHKvQZYk6nVJd/r4vRujQWDv
-         vsDbiXYRS5uVXAbykuEJdTdlIgOf0iiWnmGwyOoqDWsG790D4OP4F5CKbgEX3JBaPSO5
-         jxEAHNyCw2RVhZQ1uzMXmLx8UXKXOX0BhR3kUFq8o8IDXq5axK9RAZLiD2Dq278YK8AS
-         ekNfBPqL4drnbT/bBzW+bj/pxfdcKOpPO43OeX7hqqJTuc0zIbJpV41UE/ZRdJR0Gpah
-         Q7S3hzrV62us9rZxncpyx6RRMm0OVQ73+tpcednt91e6YKXFLkhm7kCDlGCqRpX2Ts33
-         SBaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772279305; x=1772884105;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OzMakfe/gCuMTNoRfsCupn/fCSXvgArEvTidpMiIPDc=;
-        b=nxIZg9gObCUkpgk22pPlKo2I1PWoF/eGr/6vXO5zMt2icuMUa/QEh1yHy9oGefa2Jo
-         5gRah7WbZsOjgWlmIY5Z58yVVuQLxNMNMPlkCpDde23ebfzvTq2BSxlKntYxMOZY1aE/
-         Erf3T1QuNWSqo2lZcR8FBcmlm7LWMRG/M/UHezH51wgBRF1qHl1JzZleKJEH317Y91Px
-         l7VuZydK2juQX22Sr2+MSk25RZGOALcFlvhjAyzf6mhnW3VH8FAHT7eZ43oxZgO1Syoc
-         jkuHmuDOIEjJbcxSDGkJ4Ez5hQhdIPWqRGpi4zebWcVdIurKMyDyByYuXhif4Z4Nk1Tv
-         4m6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFFKU5THg7VCKV9Ly39jCZk4Q610kBqmJ7//K07a7y0g5dTYLZNvzAo5h6EYl6SYfZc3N6nkWTNLzgN2cOan0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy++/vNabruBDxgRqZbah3samQGCyx55SU88O9lnilhrITUbS1+
-	o5WRgjeYZt9m01Oc+FVAZulif5MQaNFBJd8RPYTRe5hMVH2SayaUI2DBRagxxpf+ENORfPDWK17
-	Ga6+r
-X-Gm-Gg: ATEYQzzMOrOMAgzwj1QBSb6FPqOjVuYY+UemTXh6VRIooZyT4YJracuYAZrMNdECfNC
-	sKiiWdtRTCKBqMZLNaxITzaJrSnt3J8oFJFPVjd+2Osnli9S3DteRlIdR/E0xehnyduGv042Gd5
-	3IxJUC6MtuyJlMsT+beLg08s/6ZqJGTpZpU4TWz5hbDyFy5yyInC6jqxE6uX8nuLWHQDJjVVvXO
-	D3n0W2Gw/tPkZW8P5lIn74PYxWmpnWsN1JEG2R04dPvLjNTyNtWCVNba6sXvgOTrHm2xo/hpWoT
-	V8aAaMib85RIKeOduqx/fphp5Dq+weNLLZLe6U4MXV6nIc6bZ6OLNJONdgB7m07mSUtk5oBNU3z
-	sJitgYIwoj1YTwrBgF+K6i4fkUoUZpwmm6lwZT8st/ysKGurJSaEvmd3LcGGSYyvCIZhZE725dh
-	3BaTZzVMpgcCeBRp1E1V2jhHANZJvO
-X-Received: by 2002:a05:600c:c174:b0:477:73e9:dbe7 with SMTP id 5b1f17b1804b1-483c9c0bcdamr101457695e9.35.1772279305381;
-        Sat, 28 Feb 2026 03:48:25 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd765604sm241547315e9.15.2026.02.28.03.48.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Feb 2026 03:48:24 -0800 (PST)
-Date: Sat, 28 Feb 2026 14:48:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, kernel-janitors@vger.kernel.org
-Subject: [bug report] tests/liveupdate: add in-kernel liveupdate test
-Message-ID: <aaLWBYzuFg3ZuVmP@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cBXl3qaJ"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPSA
+	id wjXVvgvwZrKIuwjXVvxE5w; Sun, 01 Mar 2026 17:21:06 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1772382066;
+	bh=ZDU6YEmeKfV0DZTfQRWPUrC0979+SE4F08nNSXKB+Rw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cBXl3qaJB63B45EjFaVLtaEMsSamPxFhByNIgYPTgYFgmSON8X/UUgQNg64hh/H4j
+	 IgNLkQj8avGmaSvnjhYtEAHOiCfWoq7pQQF3Q1HWXI5zdupSU42eeZBfCDufBD7yri
+	 wVYaDVGx1owXInYbbJVk3Hu5ZhwOVnnRowAqGuTewtkBTtJqvkgDJLFmF+SmBCMYqo
+	 8c6W2IETu6BFBEj2s65kc94Aw+hQ5Vv12/6xptjN9vsOFdA/qThREfY7/EXZTzl0xF
+	 kYJcUJongu+PD9SyKiWJrixnC1kWZHG7E8umBOUkGkkOmUw5N4s6+0V+5iqid8NvbV
+	 NDba2IlekOFnQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 01 Mar 2026 17:21:06 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Eddie James <eajames@linux.ibm.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa@kernel.org>,
+	"Oliver O'Halloran" <oohall@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-i2c@vger.kernel.org,
+	openbmc@lists.ozlabs.org
+Subject: [PATCH] i2c: fsi: Fix a potential leak in fsi_i2c_probe()
+Date: Sun,  1 Mar 2026 17:21:01 +0100
+Message-ID: <fd805c39f8de51edf303856103d782138a1633c8.1772382022.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-[ Smatch checking is paused while we raise funding. #SadFace
-  https://lore.kernel.org/all/aTaiGSbWZ9DJaGo7@stanley.mountain/ -dan ]
+In the commit in Fixes:, when the code has been updated to use an explicit
+for loop, instead of for_each_available_child_of_node(), the assumption
+that a reference to a device_node structure would be released at each
+iteration has been broken.
 
-Hello Pasha Tatashin,
+Now, an explicit of_node_put() is needed to release the reference.
 
-Commit f653ff7af969 ("tests/liveupdate: add in-kernel liveupdate
-test") from Dec 18, 2025 (linux-next), leads to the following Smatch
-static checker warning:
+Fixes: 095561f476ab ("i2c: fsi: Create busses for all ports")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/i2c/busses/i2c-fsi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	lib/tests/liveupdate.c:130 liveupdate_test_register()
-	warn: passing zero to 'ERR_PTR'
+diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+index 82c87e04ac6f..b2dc5ae1d0e4 100644
+--- a/drivers/i2c/busses/i2c-fsi.c
++++ b/drivers/i2c/busses/i2c-fsi.c
+@@ -729,6 +729,7 @@ static int fsi_i2c_probe(struct fsi_device *fsi_dev)
+ 		rc = i2c_add_adapter(&port->adapter);
+ 		if (rc < 0) {
+ 			dev_err(dev, "Failed to register adapter: %d\n", rc);
++			of_node_put(np);
+ 			kfree(port);
+ 			continue;
+ 		}
+-- 
+2.53.0
 
-lib/tests/liveupdate.c
-    112 void liveupdate_test_register(struct liveupdate_file_handler *fh)
-    113 {
-    114         int err, i;
-    115 
-    116         liveupdate_test_init();
-    117 
-    118         for (i = 0; i < TEST_NFLBS; i++) {
-    119                 struct liveupdate_flb *flb = &test_flbs[i];
-    120 
-    121                 err = liveupdate_register_flb(fh, flb);
-    122                 if (err) {
-    123                         pr_err("Failed to register %s %pe\n",
-    124                                flb->compatible, ERR_PTR(err));
-    125                 }
-    126         }
-    127 
-    128         err = liveupdate_register_flb(fh, &test_flbs[0]);
-    129         if (!err || err != -EEXIST) {
-                         ^^
-|| vs && bug.  This error messages will always be printed.
-
---> 130                 pr_err("Failed: %s should be already registered, but got err: %pe\n",
-    131                        test_flbs[0].compatible, ERR_PTR(err));
-    132         }
-    133 
-    134         pr_info("Registered %d FLBs with file handler: [%s]\n",
-    135                 TEST_NFLBS, fh->compatible);
-    136 }
-
-regards,
-dan carpenter
