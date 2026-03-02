@@ -1,123 +1,181 @@
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E288A430BAA;
-	Mon,  2 Mar 2026 01:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B03D199EAD
+	for <kernel-janitors@vger.kernel.org>; Mon,  2 Mar 2026 06:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772415277; cv=none; b=Sphb2RH1VzB/6OjWLn+9rDn9+P+tJmkrvsB4FrTZAMLYyO9m4VWpBtK41Hhxm1OoBxy7Spx2Vtt+Ur4CQjQp6eSjxgBH43x5UeOO1CxHtnIsMP/WJpFjviZo/LHmHt8RiahgxDsqiX1pVSCHuenlc34NoN0nl+35WsboEP1xSKU=
+	t=1772433832; cv=none; b=Nlea6huEOsWUc5/6V8mLpJtrZnKwqe93Fo6/KwAbHDHgOhAuGBEn5keZTR1Wpeq7oC90Ev8xW2ytGZK/ygvbp0K2YHwz8mjK2QNZg5sriMabZ3SgVsua5q3XrQ4Jz8BkG0qhHYlKoNkYJVFHws+nb/1rRWBP/mwrPEyJATJf+/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772415277; c=relaxed/simple;
-	bh=0vWmCoJrQzldWWeztRJY2TIVFKyE+H8Dlc/ptEGiuEU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HzwDJiu3RZHztqykq0dFTo4+iSs8aSxLCSu9dU0tLYAyFlr+/kwqPoy6q9+NPtvLt/NOE6LWHPzGrBP11i3mBGQjjAm0CQdh95ZcdJ8c9TyY80XmO+uWqdORLI+grZxTOYYBYLSiMlldu2V+xSPiKB3r4WipltjLTDJMp7fvbn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=NNkZkCU/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bH+TOzzH; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+	s=arc-20240116; t=1772433832; c=relaxed/simple;
+	bh=PKNSEVqwgpezkdcE7Jg366jjgNQJdfEBDD+dXkoYfgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D7wmSUhzZeuiEsD4nDwbsbBF0fPacm81YyLMIHrWh4yOzwgJw/luFlSYKH4KqHsAVedurJmwygvz4x+wgjgWJnfsMVquzKhiRDMz3CeAZuTdX8yE2YhXVllWKIkY5UWDqHIx8vf054F2UZnZtDG/6/7oIfkZU6p25j3fxA/g5ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMef/nYa; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="NNkZkCU/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bH+TOzzH"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 39157EC009D;
-	Sun,  1 Mar 2026 20:34:35 -0500 (EST)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-02.internal (MEProxy); Sun, 01 Mar 2026 20:34:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1772415275;
-	 x=1772501675; bh=h2o6XFufitq9L91ADmN9mLCvCTcKAFQMvDnnllZdt28=; b=
-	NNkZkCU/KoHfG2w7sEFA586qdDtoXZLmKhf4mJqI+bqIY8HbysXVIz+QK6tqxZ7Z
-	OLrzVktDgEKuMss8fPBASps0e9sWuMm72xqXXZGc5XDc5FbAKxFB3MUK1MNVjVzw
-	WuCpG2BHsP/8bUb9rI6o/94X/kFncwP1RkC4i/fGv7fTMAKuafpPthX8IyKL/YyM
-	EuKrImDNxtF0lO/ZCnqsMC4ivbNiGRZSFPkfx3gnOUQ22TKWCU2jJkzZQlJ89Oen
-	pw+TxvX390hWrtpUxVCZ1Oueuii9xT0ug+r2WBctdNurxEksu/jRQ9kIp0d9jAW0
-	Hu+qatPLj85MVIivOvpayg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772415275; x=
-	1772501675; bh=h2o6XFufitq9L91ADmN9mLCvCTcKAFQMvDnnllZdt28=; b=b
-	H+TOzzH1FNQUJw5lM+5uc77jQOIGPjWg0Gmm20wdyFBOauLmzgfnZuYhLM2gevRe
-	TgdKykdjo57EvOdc3SdgEP0P0FBImtr4OzHXMz28srvMP03ohAc8dwVNx9JSWXxh
-	XH6ynnzvVyyzNrX+TzYAq5C4LqGOA/BNwgBYotxmu5q6bSODlUVPX11NAl/Kro25
-	UjFl9ef0HXwwk0EVAZ2hK6Xlhwh7Nv9l8HRKyyKxOT9cBV4zLbbRleW6u5v2ZWRx
-	HaX5pc7tJpzpHy1xoM1RjvihsgiqNZdkZlMuFiZD3EVB9WPYPx6FjqwHpSo3O4yc
-	ElA0aCmzgM9VL5cXQDwdg==
-X-ME-Sender: <xms:K-mkaeYqZSW-lUk3zt-vfaoXmPDUxdE2yj8K_PM4n7RWmC-wskyHqA>
-    <xme:K-mkacO7NKz439snsrGkpZq2gy1madVUVoZ6nzww5QYRPiQGTE3dqZr2_epSK6Xa9
-    XJPUPhYY2gcyBcIXHcIyZNoSDRh25Qm1IU0eA4KKEdIOregBypZzlU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvheeifeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrrhhk
-    ucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtg
-    grqeenucggtffrrghtthgvrhhnpeejgeejkeevleeileevhefgteehteetieefgeelleeg
-    uddvvedtueevieffkeeugfenucffohhmrghinheplhgvuggptgguvghvrdguvghvnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhs
-    ohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepjedpmhhoug
-    gvpehsmhhtphhouhhtpdhrtghpthhtoheptgholhhinhdrihdrkhhinhhgsehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepuggvrhgvkhhjohhhnhdrtghlrghrkhesghhmrghilhdrtg
-    homhdprhgtphhtthhopegsvghnthhishhssehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnh
-    hithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    ihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:K-mkafftd4AjmU1FHHL088ad1id8Mu8A_sD8m7Hmh81h_4Nw35d29A>
-    <xmx:K-mkaUQ3-ZIBicvjlNyOgpuYhmHgj-SUIM2tvzgzPXpbAzhjxpOR3A>
-    <xmx:K-mkaetdAPoSTPyEb4y-MrbAfbLwG2rQft_oJEW1zTzGEeOXM_P_jA>
-    <xmx:K-mkadc8FprvDpcZQJxrllER4bMxzjc7QRV_3ScDJNNmrFif4GPJUA>
-    <xmx:K-mkaWpHaHWBcVI7dzswjUMaU15HuMFLZQA0tSe0-ADYpMuMWLgxJfTM>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0B9FD2CE0072; Sun,  1 Mar 2026 20:34:35 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMef/nYa"
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-82418b0178cso2289016b3a.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 01 Mar 2026 22:43:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772433829; x=1773038629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aEMJ/SEK1uGPP1uyITOdW3C1N0iniu09gHnQF77+QCU=;
+        b=LMef/nYa9WOuNFpYa9XV5VXBBlB3tdsqHJtKZA21NvwNHdEqIecDCmz1UmqvfJJFI4
+         wyR7e2JWsqRLL6cNIN7oisxxJiQOGo6x4HNZxFKWaJAstor/TFFvgwXGOqz98Re+Wq9P
+         TxdS6Bts+BvAAHNB9N1YrSv1+gfEuLt0MQvZo+Fl0AEYNT+VMudlAoKHhK/HIwxJChu1
+         7cd60gAjSTk9oq/LdrhDCYXpVntJB77j7ml+Mev2vfYkvl9OIW1bAFl6K0ABkZnTstII
+         cXtXuNvpVanRHzny9R0zYyvEDDK+P5L6y16ws2tZIwi+KfdwD0UoGkODNXLvDEis9V8m
+         qvgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772433829; x=1773038629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aEMJ/SEK1uGPP1uyITOdW3C1N0iniu09gHnQF77+QCU=;
+        b=cjppSZRcu1YKkm+kOrdLh9yBu4jBoVa2AtaMs51WPDYLZRnrJEnBKkQMBMu4BoKUZp
+         8VvnJHPj/5Cco7cbUBPQnsgzzHnaey8ififTBt3uzvpLeCxlmm99wclZb02Ebq8dptlI
+         ZodLapDxlKtUrJe1R8FaluA5G0ciwn+XxesjYyDQOvR3xBKZ6b/WQOOBoeDFQlOES4eq
+         tVYq213lrPkFSrCXOArn5eF5R+JNlghBCEO7IA5ZRVCFPmCjM8YjVdaH4dtHGgrDmWjZ
+         zN6m7h9MNNSYdcL0BbU+Dp8Dywqz5w1FPKWX2fsu/zcnv3RN84Jb8oZxyZoS0GdXfSMQ
+         wzUw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+6FGwcW2Me2pwx8BmmTTyKqQ6Wg/yytEc4mZC7S8orvD7X6xWLmvxdgZGYg4ShRu24IGGy1Ttw7sZdO9wUjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXwhfnbEXD3topThbeKXiWvtjek2Wr4hY03MQrc/nVvfvoNv7T
+	ekEFPXEa6VRsulJHw6bbkxgYx+UkbbtGMaeVfrbalpYy7fLotQnVwMIr
+X-Gm-Gg: ATEYQzzBmLG5dOzjxpWOdL4ncKPvFuQ9Ujz6Qi+986nt4rCZqoNmujy2VDHszjA31iJ
+	zcCL5HwQXZQebDlSMwtbw074gBZ2zGc2VgEm3O0jvjHmMNavgy9T9uGbzPTHMIjo9LwNFsNA/uw
+	e62rz8O6Myc/IE9EvYl1ZkcWhtsACCD4FBQOUH3uB6mN+6uipJciMPKV+dNW4jsl0NxZzqWYgIz
+	GIF8XdakMT8h5UiJbONvy2sqvcM1deoloF8jk+qSlthjGx215mYvmr0dEBhKX6xB3Pvprm0q2DI
+	X7WvH1CjOrbdtafS7BfFSxmOchCb9FNxpFmJppbpOXpaeSXVslTBTOlH5o/6P31TgmOBgsCbdXC
+	Jdly5ONjiH4NGeMRtdX6uzL1euR7EQUWBjl+zm/XsizeiGcGDpI6LFqrGy/s50DFP7rUl2BT05e
+	+Mm4t47hwLLL6REcZ4c3QwGS0r9CDRIyHRpljMNnuX+gAWd+nxDwgCP1k5vrnwYZcjtuQs
+X-Received: by 2002:a05:6a21:1186:b0:392:e5cb:da81 with SMTP id adf61e73a8af0-395c39f7bb6mr10443610637.3.1772433829349;
+        Sun, 01 Mar 2026 22:43:49 -0800 (PST)
+Received: from zeeshan-Standard-PC-Q35-ICH9-2009.. ([110.93.227.54])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c70fa82c531sm11015265a12.24.2026.03.01.22.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Mar 2026 22:43:48 -0800 (PST)
+From: Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
+To: Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
+Subject: [PATCH net-next v4] net: core: failover: enforce mandatory ops and clean up redundant checks
+Date: Mon,  2 Mar 2026 11:43:17 +0500
+Message-ID: <20260302064317.9964-1-zeeshanahmad022019@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Asf2JMYkFHio
-Date: Sun, 01 Mar 2026 20:34:14 -0500
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Colin Ian King" <colin.i.king@gmail.com>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
- "Jiri Kosina" <jikos@kernel.org>, "Benjamin Tissoires" <bentiss@kernel.org>,
- linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <d4369de6-cf80-46a9-b3ae-a80377d5df94@app.fastmail.com>
-In-Reply-To: <20260227231606.421263-1-colin.i.king@gmail.com>
-References: <20260227231606.421263-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] HID: hid-lenovo-go-s: Fix spelling mistake "configuratiion"
- -> "configuration"
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 27, 2026, at 6:16 PM, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err_probe message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/hid/hid-lenovo-go-s.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/hid-lenovo-go-s.c b/drivers/hid/hid-lenovo-go-s.c
-> index cacc5bd5ed2b..dbb88492fbba 100644
-> --- a/drivers/hid/hid-lenovo-go-s.c
-> +++ b/drivers/hid/hid-lenovo-go-s.c
-> @@ -1401,7 +1401,7 @@ static int hid_gos_cfg_probe(struct hid_device *hdev,
->  	ret = devm_device_add_group(gos_cdev_rgb.led_cdev.dev, &rgb_attr_group);
->  	if (ret) {
->  		dev_err_probe(&hdev->dev, ret,
-> -			      "Failed to create RGB configuratiion attributes\n");
-> +			      "Failed to create RGB configuration attributes\n");
->  		return ret;
->  	}
-> 
-> -- 
-> 2.51.0
+The failover framework requires 'ops' to be functional. Currently,
+failover_register() allows an instance to be registered with NULL
+ops, which leads to inconsistent NULL checks and potential NULL
+pointer dereferences in the slave registration paths.
 
-Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Harden the entry point by requiring non-NULL ops in
+failover_register(). This ensures the 'fops' pointer is guaranteed
+to be valid for any successfully registered failover instance.
+Consequently, remove the now redundant NULL checks for 'fops'
+throughout the module to simplify the logic.
+
+Signed-off-by: Zeeshan Ahmad <zeeshanahmad022019@gmail.com>
+---
+v4:
+ - Harden failover_register() to forbid NULL ops as suggested by
+   Jakub Kicinski.
+ - Remove all redundant NULL checks for fops throughout the module.
+ - Remove the Fixes tag and target net-next, as this is now categorized
+   as a refactor/cleanup rather than a standalone bug fix.
+v3:
+ - Move the fops NULL check to the top of the function before any
+   dereferences occur, as suggested by Dan Carpenter.
+v2:
+ - Wrap the dereference in an if(fops) block instead of an early return 
+   based on feedback from Simon Horman.
+
+ net/core/failover.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/net/core/failover.c b/net/core/failover.c
+index 0eb2e0ec875b..11bb183c7a1b 100644
+--- a/net/core/failover.c
++++ b/net/core/failover.c
+@@ -59,7 +59,7 @@ static int failover_slave_register(struct net_device *slave_dev)
+ 	if (!failover_dev)
+ 		goto done;
+ 
+-	if (fops && fops->slave_pre_register &&
++	if (fops->slave_pre_register &&
+ 	    fops->slave_pre_register(slave_dev, failover_dev))
+ 		goto done;
+ 
+@@ -82,7 +82,7 @@ static int failover_slave_register(struct net_device *slave_dev)
+ 
+ 	slave_dev->priv_flags |= (IFF_FAILOVER_SLAVE | IFF_NO_ADDRCONF);
+ 
+-	if (fops && fops->slave_register &&
++	if (fops->slave_register &&
+ 	    !fops->slave_register(slave_dev, failover_dev))
+ 		return NOTIFY_OK;
+ 
+@@ -115,7 +115,7 @@ int failover_slave_unregister(struct net_device *slave_dev)
+ 	if (!failover_dev)
+ 		goto done;
+ 
+-	if (fops && fops->slave_pre_unregister &&
++	if (fops->slave_pre_unregister &&
+ 	    fops->slave_pre_unregister(slave_dev, failover_dev))
+ 		goto done;
+ 
+@@ -123,7 +123,7 @@ int failover_slave_unregister(struct net_device *slave_dev)
+ 	netdev_upper_dev_unlink(slave_dev, failover_dev);
+ 	slave_dev->priv_flags &= ~(IFF_FAILOVER_SLAVE | IFF_NO_ADDRCONF);
+ 
+-	if (fops && fops->slave_unregister &&
++	if (fops->slave_unregister &&
+ 	    !fops->slave_unregister(slave_dev, failover_dev))
+ 		return NOTIFY_OK;
+ 
+@@ -149,7 +149,7 @@ static int failover_slave_link_change(struct net_device *slave_dev)
+ 	if (!netif_running(failover_dev))
+ 		goto done;
+ 
+-	if (fops && fops->slave_link_change &&
++	if (fops->slave_link_change &&
+ 	    !fops->slave_link_change(slave_dev, failover_dev))
+ 		return NOTIFY_OK;
+ 
+@@ -174,7 +174,7 @@ static int failover_slave_name_change(struct net_device *slave_dev)
+ 	if (!netif_running(failover_dev))
+ 		goto done;
+ 
+-	if (fops && fops->slave_name_change &&
++	if (fops->slave_name_change &&
+ 	    !fops->slave_name_change(slave_dev, failover_dev))
+ 		return NOTIFY_OK;
+ 
+@@ -244,7 +244,7 @@ struct failover *failover_register(struct net_device *dev,
+ {
+ 	struct failover *failover;
+ 
+-	if (dev->type != ARPHRD_ETHER)
++	if (dev->type != ARPHRD_ETHER || !ops)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	failover = kzalloc_obj(*failover);
+-- 
+2.43.0
+
