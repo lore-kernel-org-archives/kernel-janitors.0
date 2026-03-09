@@ -1,43 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641F13A9D94;
-	Mon,  9 Mar 2026 12:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9F13A4F30;
+	Mon,  9 Mar 2026 12:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773058226; cv=none; b=DteADlHQv6YKDPoKkhpnXU0HqdBwc3olfHg9zsoUTmfQMa2QEe5gZ3GLMG2R/97m9wA5FD3SORB6YntD2mQwwatgRxYdOi57JLSncGLL3SHeXGsmnOq8Ya25bfmo7C9cAI3KIAetyPBPYlyVlcHmD5dWjsPtlPaVsvGOrORPl/c=
+	t=1773058584; cv=none; b=i97IAqK7zJrqxoQN3Sy4Ud6a4qi2IzQFyQbI6mlKxMJg3emZtaz9upjVRVOO8q2wsgNsSgInImyxlchTrAEzl1L8m3OPYTDjHRlbpFCtPWdJ0r7bc/B3eOi1zlW//oNsWODGZ0wlWQ7lp4e4ykqpXPmuR9WN9OxW69aQcsmDHhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773058226; c=relaxed/simple;
-	bh=Q5cOPE6T5rdZ2KwqIlpqd/NhV8/TkqTjqCcs/GNI4mg=;
+	s=arc-20240116; t=1773058584; c=relaxed/simple;
+	bh=DYYmwym6ReyVABIh9NRKh4ITZWKOfAAlNCfJkeZnmYg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtNakav2t3PnMRREJrsR4Xe7bZI1dI/0w3/HHpDZGH9OZUvsVOo/BpUGej40JP3e6IiW1cxtkfWOVK8bx+MM83jsalHAGyjH8Uog6oXTSFOpe4PC1Fu8UbEmKONf5jQq3EixwD1ujL9B5EBEEaHMvF2Q3jV4RH8Fa+hcf8Q1Qw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZrSkZ9u; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFT/e54IeZyMwVaulZrly0TUY8q0aqSRt1Bhf8zASwk2mPDo/NYoCif0UNMaxuYcxWGMfxEou/isSiTHysAS12zx3gXBS/7M2SR+q8IMuHRSXIWU3GCMMVfusCdPRiAYlRebAn9Vq1VtPgLfszJ+fND7U7yqDD2qH6/fr7SOdGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSR4u5tx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZrSkZ9u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3D0C2BC86;
-	Mon,  9 Mar 2026 12:10:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSR4u5tx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55EFBC4AF09;
+	Mon,  9 Mar 2026 12:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773058226;
-	bh=Q5cOPE6T5rdZ2KwqIlpqd/NhV8/TkqTjqCcs/GNI4mg=;
+	s=k20201202; t=1773058583;
+	bh=DYYmwym6ReyVABIh9NRKh4ITZWKOfAAlNCfJkeZnmYg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZrSkZ9uw+K+Z/G74mQmuoVzgSgE+ZrcP0eihZh0CVp6GsUe7BT7PwLT9m0/XWw8l
-	 MaMVu70b7ejsOI4m61mluJcgIMq2E2uBdv5g1iOJeZzdt6I580Rd/SIDGyFTNdEztb
-	 qfSlXmLwOkwZ2CaxJDhHZjksIe58O2GqWc1X3WZh8jgtGtIalfiNQALJOjSnALKeO9
-	 jninxuOagNablZ3WDOyshO7kB+R101Jgh2tbKN0G4XEfIS7WJRXJ0m6Zib0ShipPCR
-	 23dJfvwe1qJ+bIFWEQkriV2fKF8zQF+Qi4o5tDDBOUakTvD1UAJ6BlKEIvkq/nN3k0
-	 pMHwAUHCLzh1A==
-Date: Mon, 9 Mar 2026 13:10:22 +0100
+	b=eSR4u5txd1hoGn1+I1lcfU/56UN2uA2t+S26w3iLZPX2CrKyVgNmNaCQpz/VxMRrr
+	 dO3cdEwQc0rZPRtGQy5zKzy4khHLZTG5YCQkI0ajyVpzgdUoJDXSr4wHApLQtBFUcH
+	 iP8JS+Xnh3dwFevqkNtjpLb8YrjGgeejQuVnuV4GfpaApWRIgpf0S4xrGqqdaTIvsQ
+	 MnNbnF1mKhB2AeH+vXOZC/QI/k5DDT4d+h5FJazf3j6sX2B4lIMqwNW+8XHxTCAMXf
+	 lFDZyNLVn86HhZlfKdzAsujuR/GX8euLsq8zNENjvu2Qa8L98TOGCvCMLUelBGOKk3
+	 S9ODFtzAOKGKA==
+Date: Mon, 9 Mar 2026 13:16:19 +0100
 From: Alejandro Colomar <alx@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: cocci@inria.fr, Julia Lawall <Julia.Lawall@inria.fr>, 
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr, 
 	Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, 
 	kernel-janitors@vger.kernel.org, Kees Cook <kees@kernel.org>
 Subject: Re: [cocci] [PATCH] scripts/coccinelle: Add script for using
  ARRAY_END()
-Message-ID: <aa6vSvsp4J6InmiB@devuan>
+Message-ID: <aa65s_alHWW3woUb@devuan>
 References: <cover.1772752564.git.alx@kernel.org>
  <f1c9dff525752dc5a839760269a1c96d6e0870b4.1772752564.git.alx@kernel.org>
  <cab3d2a8-4c3f-45e6-9e7f-8bdca48a6209@web.de>
+ <4aa2fc38-3c32-75a1-161-1c90709252be@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -45,235 +46,119 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cvowzgf7khn6nplo"
+	protocol="application/pgp-signature"; boundary="kqlfy2xevpf6bsix"
 Content-Disposition: inline
-In-Reply-To: <cab3d2a8-4c3f-45e6-9e7f-8bdca48a6209@web.de>
+In-Reply-To: <4aa2fc38-3c32-75a1-161-1c90709252be@inria.fr>
 
 
---cvowzgf7khn6nplo
+--kqlfy2xevpf6bsix
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 From: Alejandro Colomar <alx@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: cocci@inria.fr, Julia Lawall <Julia.Lawall@inria.fr>, 
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr, 
 	Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, 
 	kernel-janitors@vger.kernel.org, Kees Cook <kees@kernel.org>
 Subject: Re: [cocci] [PATCH] scripts/coccinelle: Add script for using
  ARRAY_END()
-Message-ID: <aa6vSvsp4J6InmiB@devuan>
+Message-ID: <aa65s_alHWW3woUb@devuan>
 References: <cover.1772752564.git.alx@kernel.org>
  <f1c9dff525752dc5a839760269a1c96d6e0870b4.1772752564.git.alx@kernel.org>
  <cab3d2a8-4c3f-45e6-9e7f-8bdca48a6209@web.de>
+ <4aa2fc38-3c32-75a1-161-1c90709252be@inria.fr>
 MIME-Version: 1.0
-In-Reply-To: <cab3d2a8-4c3f-45e6-9e7f-8bdca48a6209@web.de>
+In-Reply-To: <4aa2fc38-3c32-75a1-161-1c90709252be@inria.fr>
 
-Hi Markus,
+Hi Julia,
 
-On 2026-03-09T12:17:00+0100, Markus Elfring wrote:
-> =E2=80=A6
-> > This script makes it easy to find more places where that macro should be
-> > used.
+On 2026-03-09T12:59:48+0100, Julia Lawall wrote:
+> > > +
+> > > +//----------------------------------------------------------
+> > > +//  For context mode
+> > > +//----------------------------------------------------------
+> > > +
+> >
+> > Please omit such extra comment lines.
 >=20
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv7.0-rc3#n94
+> No problem to put such comments.
 
-Thanks!
+Okay; thanks!  Although I tend to prefer without them, so I've removed
+them.  Also, a majority of existing scripts don't have them.
 
-> =E2=80=A6
-> > +++ b/scripts/coccinelle/misc/array_end.cocci
-> > @@ -0,0 +1,93 @@
-> =E2=80=A6
+> > > +@depends on i&&context@
+> > > +type T;
+> > > +T[] a;
+> > > +expression b;
+> > > +@@
+> > > +(
+> > > +* (a + ARRAY_SIZE(a))
+> > > +|
+> > > +* (&a[0] + ARRAY_SIZE(a))
+> > > +|
+> > > +* (&a[ARRAY_SIZE(a)])
+> > > +|
+> > > +* (&a[ARRAY_SIZE(a) - b])
+> > > +)
+> >
+> > Extra space characters may be omitted directly after SmPL asterisks.
 >=20
+> No concern about the spaces either.
+
+Okay; I've kept them, as the majority has them.
+
+> > =E2=80=A6
+> > > +@r depends on (org || report)@
+> >
+> > You may omit parentheses here.
+> >
+> >
+> > =E2=80=A6
+> > > +@script:python depends on report@
+> > > +p << r.p;
+> > > +@@
+> > > +
+> > > +msg=3D"WARNING: Use ARRAY_END"
+> > > +coccilib.report.print_report(p[0], msg)
+> >
+> > Would the following command variant be a bit nicer?
+> >
+> > coccilib.report.print_report(p[0], "WARNING: opportunity for ARRAY_END(=
+)")
 >=20
-> > +// Confidence: ???
->=20
-> I hope that a more reasonable value can be determined for this informatio=
-n.
+> Either way.
 
-I don't know how the scale works.  I know the script has a few false
-negatives, and AFAIK there are no false positives.  To what level of
-confidence would that belong?
+I've taken the suggestion.  Thanks for the review!
 
-Is that field a keyword, or may I be explicit such as with this?:
-
-// Confidence: no false positives, but a few false negatives
-
-Or maybe I should write that in Comments...
-
-> =E2=80=A6
-> > +// Comments:
->=20
-> Please omit such an empty field.
-
-Ok; thanks!
-
-$ grep -rh '^// Comments:' scripts/coccinelle/ | sort | uniq -c
-     34 // Comments:
-      2 // Comments: -
-      1 // Comments: -I ... -all_includes can give more complete results
-      1 // Comments: Comments on code can be deleted if near code that is r=
-emoved.
-      1 // Comments: Some false positives on empty default cases in switch =
-statements.
-      1 // Comments: requires at least Coccinelle 0.2.4, lex or parse error=
- otherwise
-$ find scripts/coccinelle/ -type f | wc -l
-76
-
-
-It seems around half of the existing scripts have that.  You may want to
-remove those empty comments.  I added it because the scripts I looked at
-do have it.
-
-> =E2=80=A6
-> > +@i@
-> > +@@
-> > +
-> > +#include <linux/kernel.h>
->=20
-> I doubt that such an SmPL rule would be required.
-
-Okay, I'll remove it.  Thanks!
-
-> > +
-> > +//----------------------------------------------------------
-> > +//  For context mode
-> > +//----------------------------------------------------------
-> > +
->=20
-> Please omit such extra comment lines.
-
-Agree.  BTW, you may want to remove such lines from existing scripts:
-
-$ grep -r '^//.*For context mode' scripts/coccinelle/
-scripts/coccinelle/null/deref_null.cocci:// For context mode
-scripts/coccinelle/misc/boolconv.cocci://  For context mode
-scripts/coccinelle/misc/array_size.cocci://  For context mode
-scripts/coccinelle/misc/struct_size.cocci://  For context mode
-scripts/coccinelle/misc/newline_in_nl_msg.cocci://  For context mode
-scripts/coccinelle/misc/badty.cocci://  For context mode
-scripts/coccinelle/api/alloc/pool_zalloc-simple.cocci://  For context mode
-scripts/coccinelle/api/alloc/zalloc-simple.cocci://  For context mode
-scripts/coccinelle/api/alloc/alloc_cast.cocci://  For context mode
-scripts/coccinelle/api/pm_runtime.cocci://  For context mode
-scripts/coccinelle/api/resource_size.cocci://  For context mode
-scripts/coccinelle/api/vma_pages.cocci://  For context mode
-
-> > +@depends on i&&context@
-> > +type T;
-> > +T[] a;
-> > +expression b;
-> > +@@
-> > +(
-> > +* (a + ARRAY_SIZE(a))
-> > +|
-> > +* (&a[0] + ARRAY_SIZE(a))
-> > +|
-> > +* (&a[ARRAY_SIZE(a)])
-> > +|
-> > +* (&a[ARRAY_SIZE(a) - b])
-> > +)
->=20
-> Extra space characters may be omitted directly after SmPL asterisks.
-
-Good to know; thanks!
-
-Although most scripts seem to be using white space (space (164) or
-tab (26)) after the asterisk.  Please confirm if you prefer it removed
-in new scripts.  Only 39 scripts don't have white space after it.
-
-$ grep -rh '^\*' scripts/coccinelle/ | grep -o '^..' | sort | uniq -c
-     26 *=09
-    164 *=20
-      4 *(
-      1 *;
-      1 *E
-      1 *I
-      1 *P
-      2 *W
-      1 *\
-      1 *b
-      1 *c
-      3 *d
-      1 *e
-      4 *f
-      1 *g
-      2 *i
-      1 *l
-      4 *r
-      2 *s
-      1 *u
-      2 *w
-      5 *x
-$ grep -rh '^\*' scripts/coccinelle/ | grep -o '^.\s' | sort | uniq -c | hd
-00000000  20 20 20 20 20 32 36 20  2a 09 0a 20 20 20 20 31  |     26 *..   =
- 1|
-00000010  36 34 20 2a 20 0a                                 |64 * .|
-00000016
-$ grep -rh '^\*' scripts/coccinelle/ | grep -o '^.\S' | wc -l
-39
-
-
-> =E2=80=A6
-> > +@r depends on (org || report)@
->=20
-> You may omit parentheses here.
-
-Ok.
-
-> =E2=80=A6
-> > +@script:python depends on report@
-> > +p << r.p;
-> > +@@
-> > +
-> > +msg=3D"WARNING: Use ARRAY_END"
-> > +coccilib.report.print_report(p[0], msg)
->=20
-> Would the following command variant be a bit nicer?
->=20
-> coccilib.report.print_report(p[0], "WARNING: opportunity for ARRAY_END()")
-
-Sounds good.
-
-> By the way:
-> How do you think about to omit a cover letter for a single patch?
-
-Sounds reasonable.  I like the cover letter as it holds the range-diff,
-which may become a bit confusing when it's in the same email as the
-patch, but maybe that's just me.
-
-I'll send v2 in a single email.
-
->=20
-> Regards,
-> Markus
 
 Have a lovely day!
 Alex
 
+>=20
+> julia
+
+
 --=20
 <https://www.alejandro-colomar.es>
 
---cvowzgf7khn6nplo
+--kqlfy2xevpf6bsix
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmmuuK0ACgkQ64mZXMKQ
-wqkSzw/7BsY+QbHN9FP+p5Frj+Yh5Vr3bWpVw9TsBPrJ7Uq3JcaZHHDmXtIxZSj1
-toOrlHkdfWlOLA+4QEec+PyFf3tTcAPu5jFYRazT9QjPwyj/vGSep6A4XKrZ/CQv
-Mvgn/OLhoW0/0SGqYp6xMmJxcNIpo+7Idm7cVnwf8WQNvHOToQBLDdXIOv6z18tI
-XFFQxayGDbK39nQldUB7j7c+lfO8w/Qpj9yrkrgLFrkRa3CDyeMUh/n/SIoepHPj
-crYvb2C95hZFEHdI8UbWLlRtpMRj/ZbltH0MZn7Hn6xrh55kKQOVgQzjew39IkRW
-J3xyGV5PejQZ3Ju2htZPcdOsHVksmcBLb1W5IXxJMBIIPuMeyGiqf6sl/tIR3l5Y
-6jHJMIaKBy6zZRBOx80uyZEVhuTV43bEjePDfVLou7KWvBLNnCpDALUaLzlfhlaS
-HVPJJdVtUEQ96v+3tPdefIL/+HYvopI+L4Cg3ob5eIAxYTjd0JduKvZHh22a5vYg
-ccyVRtO9IOtY77z/5bw5r9lY8CqN/1rG/tHUQhS2RPd9337bkcFFprt0UTZxnBPP
-4Szqx+KeeaODP4YaAVlPkWfNFWjbWk2+0m8MFfGWz79OkJZpI6zY7EbvQlDU1zXe
-cmMZX5yhs8JJ1d2n0GE6H3R4SLVcjZn64tSDO7w+zjx9v7W/1+s=
-=gFux
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmmuuhMACgkQ64mZXMKQ
+wqlD7Q/+MC8nUpjlK/p9rr3OlX/h0Gt6qYb3vFL+1+Y7660U0CQL2Vm6fbrGNXci
+P8etesjkt76rIR95FJTNxXhAXMeESb6GBm06BCg++RRDACo45PbueJuv7tqlgccS
+1dKN7qEvwrEiNbZpGD4vNMaNoXk0MFmjU5weHHmqjNm1MmM/CqLnsiM7nQdFoHkn
+cxqiG7VQSNKPWZ0/p4eGPphqPDQWSsMW4SRdF1FqwCCbgnyTZIMbLHZ9SqP261v1
+nkcnkQU/ZNJqNUTwunB916S8dI5PsOBYRs8rl07iFXJPOCApnL/uC8Px+UI5WZIv
+5dZt9YdZag5sUx7Ln91UjwKINUrjneAOTuAPPuUAf4HZuJmIPKL2vKvS44rdEtsO
+idSu0Bly2q3cpcDcNS3ou9J1+zdJsSu3PoFfLesXX28uCYdF6oT9s8m1XxvQM5zi
+aSoKoG8ZD2O5YGA45xXJ0ZUsxQIq6HC+myPcVPtLWVHIHo/yBnk7b6TmCn6HgMQQ
+TSDgxF3YVCqS3xOPoz6LRdTBBPFxz9VF3lV8XKSpMaMnVJgVRoyHmxcJurIOzui+
+9Z8UxtTUfNFOVW4y8b7lyqYFU2bfVLQUbFJ7dHk/at8FZvmFEcnbR4WhWxKXPQ5r
+LYGj+lCzmOtl912j6MjLeJNv/8sNRWNXYxFpVjNqs2ha7o91Y+Q=
+=Fthy
 -----END PGP SIGNATURE-----
 
---cvowzgf7khn6nplo--
+--kqlfy2xevpf6bsix--
