@@ -1,115 +1,103 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17D4401A2B
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 19:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F23A1DD9AC
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Mar 2026 00:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773343849; cv=none; b=anWm37aEePXpG5HnmmXF61sYbUwmNeuwRy6ZvTaS6FR8oCsewjLoUBvhv/3Tt2CIrF9yK+WgMI00fXbvejTQzgaDi8i9oEF7Q/eRDOBdtfw+twDUHRduzj6FsYHz1UDjGeJzQhTGRhRKrpxnLJSe02fQ5BX3ITw3mhdPaPn3KYU=
+	t=1773360047; cv=none; b=FRJWZ+0paLODNGzrN/GVgreh+6L671F4wcwBy31gJb9Coljrh2Nsi4M8VcVwlResH5OEwPwaCsvIw+xdKPvQ+dPYiytWwoJA6dHAFcvuaYgYNqmlQ7wD3SLJDw0vH1nmROQ1Mh9688Hfuk23LbC8gxC8AovXdcGRqoQ9Cz+nrms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773343849; c=relaxed/simple;
-	bh=y7Ic8SkZEutrwZjF9wbUzch2Yj6Ry/4aJx/GuhaJsnQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cn7TZ9I+9r9qp+nJCwrpl3mKw37/oYzHPeaTNHw9PuPTx4WW9dj4hSlPUzACVZttI/8ZEgJ+STRGNVRRLh61QPKgcnrtLRJNk+Mmulx1YC2RQ0hNs+R//JsTvEKNjChH57fJVw6Q/sB8qrEImI8YAKjTjQKCw3YLbXOvcbSy2fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+	s=arc-20240116; t=1773360047; c=relaxed/simple;
+	bh=unpDN0xSFAqZ7nYTSSNREqnY5W0AVi5GlC1hx8dlYz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lR2zpx0K7oVUyDYJQLginjE9gMdMME8h4iTDGbyNDIGsl7dc/kYGwoUIu5tmvM4hWQdbZW/gEx63deEe4aUP5zoZa3tGC+xIOBTZRD/2cJh5hBy934KxUXhGFj2tStlgz0NdsmAcxRfpGOouLj12USRmH71HqYtmFM4O0r312Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrtCVVKc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7d556c1a79eso1553588a34.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 12:30:47 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrtCVVKc"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4838c15e3cbso14016585e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 17:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773360044; x=1773964844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyEWphJeNnvkPez3fZUAj2xNcAS8g8xQPq60zu8rPdc=;
+        b=GrtCVVKctQjp4izWByIE1F8s/PkFOBazUIbH1vh9k6gqf82lIpl0n/xRqqESjMp1yx
+         Od45g93ByURWI760PRyjkod9nd5MSQur4LJf2x0ORaAAmdM1GbWjkfgU1kYSvAGVVVPQ
+         lLxjJMPTyCQZ2T45ESymWc3NmEsQgIGm/2VdbJEhnpq0SpMJDTzhw5LnPABs8DpS9x3m
+         dqWkK9JLYjHrUXU/9ZiZ4f8ozfkXgM63WulPJ27ECqGCUJ0nhCLeSfdE6QUSBSlCx6xF
+         wMddfWEXj5q+pSKEeRrpRhX9yqyOGmIyySVwI34vuGn/UA/cTowJn5Eou5orOYKef+ss
+         7RNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773343846; x=1773948646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nwiFGJRSfB6hzdknB7fn9cdgGxf64BtP9o6kcYSkeQ8=;
-        b=f/OXeCtKwTGi3oym/3k8gLDCS6BPettmC6aCsRqIlEdk1uF7wqU4Cxl/8ZEyTnL6wK
-         mYKtTt+YPi9nLJLpKa7nJEZtLO1Jd+TpcVITsDpyiJkbBnsUeCyYQkGXoPiU4CZAgOVO
-         aE8ovbpyIlFyRmFxoyYPWL94x1/xmC6nQAJsVyAMXLOZwSUZmJ71dwgF8/Wx+38IqrpK
-         Xej2EOtDxtyS5mnPGf8d/+3otuV17w//WZLnVJNDmwQ3gxOYSYmjFptw6yYFpywPKdmN
-         26MkximWfIUIg0t5hyPyjiWoq0e7OHWk+mrJAUbyYXs8Fe2x7G9+12nK6ZumDhcDxvUQ
-         nOcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUp0JJu00p43RmvU2Sqhy9p0R3+rpfBQjTKGh8xxnZfFcMwjvjmv1fQOLiqCSLXHfbCNuDe5bOG5/vw+ZeMnp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykp+wsBU98aUr554/VNEWSd43CziQ07qDkB9GeqYH1q6OGMWV9
-	ZU96umOitIFhgla7Y0h134w17mfdRJbkMDwSsWQ0at817l39PuHMEN5V2XYcqA==
-X-Gm-Gg: ATEYQzzOzQx3fc3CFSraUuUnb8TE649iZEsPomlCgqIIuzudakBz+8GiKLHJoW8JlNP
-	RKtPY/6AyQBIHwTSxBaG/L0HzB9PFX6eGPcMl1vuMafevGZgf6Nv4M6UDpWxpRsCfCA6b/remwi
-	gXUbK2+uF/6FjguWhIdqLBVoT72yu7nY5saWlKId1BFpD3EPwNpV5uMLzHwuGT98OHIGBnCs6Pb
-	aPV+rJRcd6CJvScC79MQT53QdbVuupxFAgnHMS93OPubWm3peOYDjA71mVstBdCD1tjccNqGK2L
-	09RH1RerCO2MLsTFO5RaiT2vlGn9ePE+E+wixE3bLFdjYkiSBXt8hq/aIyd5LDcrI/9oPdGmY6/
-	LHcSOrcmVvUf1OZ13zF32iDBUvfaHxXCBIzo6c4khOFg21jijPaGtizPfEFzD6I7gB8AqNqIRkB
-	0azBJic7I+EaOmriPRCWLvepeTcA1Bo7sFKc/giT6IjPQE+aVfkQYKg/ZJ2YcfCZyKqp5qA4jyv
-	5Ne+GEUNErUkgWMyIDGszNLfpkPLu+y6oPMPAiJBfVyzgSOC/ouwjEQ7F0vz7k7flNGdp0pnGvS
-	mlUxqdwY
-X-Received: by 2002:a05:6830:4388:b0:7d7:55c2:d768 with SMTP id 46e09a7af769-7d782574e58mr386663a34.18.1773343846444;
-        Thu, 12 Mar 2026 12:30:46 -0700 (PDT)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d76ae68a4bsm4660837a34.19.2026.03.12.12.30.46
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2026 12:30:46 -0700 (PDT)
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7d77b179b52so939174a34.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 12:30:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZwNhHgs6OGJFK6WIXQ2IjocadL6jIG8nVjSqAFtvkoGUlzt49bpKLXbHvuCCY6AIfqHCp9JTtelkNlN2SZg4=@vger.kernel.org
-X-Received: by 2002:a05:6830:6508:b0:7d7:44f2:cf6 with SMTP id
- 46e09a7af769-7d782574aadmr414436a34.22.1773343846017; Thu, 12 Mar 2026
- 12:30:46 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773360044; x=1773964844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AyEWphJeNnvkPez3fZUAj2xNcAS8g8xQPq60zu8rPdc=;
+        b=gJqJMLon2p+2J7ndIshRyEQUx9xEJkv79tG5GvQE3BiRMZigET3KNSGe3BrS+5cycR
+         j6uM57+ZkB2iHAdR/6yH0HM2KUbbCf6Kp/+DrhK28bBLMEY8i5Ly92FXCIIII1UGkc0U
+         KtisEBefxDP87LQgHsqpYpkkrSxHAjOqkmlrMe5QPK3ES1SGwK53Zt3YD9bCge2PsLHZ
+         d9VirD6rHzEpAdoRdqtUnpSsPa5YRdDAguEWrxj6dr0H2bL5rPIc6jFV9TjIXFNvB2cc
+         uWSNSdOlWoZHfUb7qJvs2K7Ne/HwNU4HLgu7H4bZPxe21eCH8dQ7Gls2hJ146W/af/q+
+         cPeg==
+X-Gm-Message-State: AOJu0YxQ06h8mDE8j6C3f+wPr6ZlewhTjeV73O1fuSgIh+z0G4s6BHWO
+	d9tSaHDph4Bm+HwoaCf+9Z4UqpI4JvRTH+7HvPC+kfWx3sjCcrylurRr
+X-Gm-Gg: ATEYQzxKz3yZ7LKWAPEhjQ+E5MxNJcJrQS2TIU1Xvj5DL8bmvSxQcaFwr7Yh97sWi/B
+	cPpe7JeHhYQ7t0Nsg+ORNnlDxVyfTpiHzYdekEpH029mnTOhZEOJyUt9xheq52lcVJH8CoL3WfO
+	htTtgcIsdzBULlG6gYFBDXsHZlhVJySMXXf7pg1R9yVDtCBCeph/h+pmV/EF9/LgE3aw6PiHIjN
+	gV+0irV5ybyjeNzRxDSRYUPdTcwSPlkSzP+JF02BB9WmuaIYePe+e42JMMl/XZoF4M+U2JptQsv
+	cs7JzOM8PNOtnTNYbb0PYx9FEpD6ibF0t9gDcvzbtKDBrbQgC0lGb8v5ohekYsbgp4ugFQD1hfG
+	AJem0kekRfFHFcvSdIBDTsd5E22mKGmxMxJ+xJqhRe07pxR16HTWfss/NUouZz30UnxjB1HnChv
+	65v/fO4X0vFGByFJ0t7lAhfA==
+X-Received: by 2002:a05:600c:354b:b0:480:2521:4d92 with SMTP id 5b1f17b1804b1-485567071a0mr18402125e9.24.1773360043742;
+        Thu, 12 Mar 2026 17:00:43 -0700 (PDT)
+Received: from localhost ([87.254.0.141])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439fe21b631sm14641861f8f.27.2026.03.12.17.00.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 17:00:42 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Fan Gong <gongfan1@huawei.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] hinic3: Fix spelling mistake "capbility" -> "capability"
+Date: Thu, 12 Mar 2026 23:59:22 +0000
+Message-ID: <20260312235922.3442120-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2838895.vuYhMxLoTh@fedora>
-In-Reply-To: <2838895.vuYhMxLoTh@fedora>
-From: Neal Gompa <neal@gompa.dev>
-Date: Thu, 12 Mar 2026 15:30:09 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je-KwNNGoi3mpPeNq3Jmtzj_5seuj1Qeh2_1dt994iCJSA@mail.gmail.com>
-X-Gm-Features: AaiRm53c1qZCB280A2IGi5tKHEffuGeO3K6uS7gw8tLpnvn5EhoDD4Js_TJQtX8
-Message-ID: <CAEg-Je-KwNNGoi3mpPeNq3Jmtzj_5seuj1Qeh2_1dt994iCJSA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: apple: fix spelling error
-To: Axel Flordal <axel@flordal.net>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 7, 2026 at 5:29=E2=80=AFPM Axel Flordal <axel@flordal.net> wrot=
-e:
->
-> Change "configiguration" to "configuration".
->
-> Signed-off-by: Axel Flordal <axel@flordal.net>
-> ---
->  arch/arm64/boot/dts/apple/spi1-nvram.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/apple/spi1-nvram.dtsi b/arch/arm64/boot/=
-dts/apple/spi1-nvram.dtsi
-> index 9740fbf200f0..d2720b307774 100644
-> --- a/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
-> +++ b/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
-> @@ -2,7 +2,7 @@
->  //
->  // Devicetree include for common spi-nor nvram flash.
->  //
-> -// Apple uses a consistent configiguration for the nvram on all known M1=
-* and
-> +// Apple uses a consistent configuration for the nvram on all known M1* =
-and
->  // M2* devices.
->  //
->  // Copyright The Asahi Linux Contributors
-> --
-> 2.53.0
->
+There is a spelling mistake in a dev_dbg message. Fix it.
 
-D'oh! Thanks for the spelling fix!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
+index 2dfa4fb39627..c5dd53a8fa96 100644
+--- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
++++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
+@@ -44,7 +44,7 @@ static void hinic3_parse_l2nic_res_cap(struct hinic3_hwdev *hwdev,
+ 				   HINIC3_CFG_MAX_QP);
+ 	nic_svc_cap->default_num_queues = dev_cap->nic_default_num_queues;
+ 
+-	dev_dbg(hwdev->dev, "L2nic resource capbility, max_sqs: 0x%x, max_rqs: 0x%x\n",
++	dev_dbg(hwdev->dev, "L2nic resource capability, max_sqs: 0x%x, max_rqs: 0x%x\n",
+ 		nic_svc_cap->max_sqs, nic_svc_cap->max_rqs);
+ }
+ 
+-- 
+2.53.0
 
-
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
