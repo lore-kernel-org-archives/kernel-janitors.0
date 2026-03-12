@@ -1,197 +1,115 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F93E375F88;
-	Thu, 12 Mar 2026 15:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17D4401A2B
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 19:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773329312; cv=none; b=WwPdMJLBWuRtsfZD0xL0H+sek+W77ze91E+1bR+UpwGGxDHEYFbZIUEAKeuLr2XUkSFlNbv9OJ8AIap4yIqwUlymPM2JIm0wCtnOVdugydwvx5se472fHBQO/UFcqzAMR1iHGXXsSdk4lBnE7xCDQTYIoTYwiSKrPfI+70y9jqg=
+	t=1773343849; cv=none; b=anWm37aEePXpG5HnmmXF61sYbUwmNeuwRy6ZvTaS6FR8oCsewjLoUBvhv/3Tt2CIrF9yK+WgMI00fXbvejTQzgaDi8i9oEF7Q/eRDOBdtfw+twDUHRduzj6FsYHz1UDjGeJzQhTGRhRKrpxnLJSe02fQ5BX3ITw3mhdPaPn3KYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773329312; c=relaxed/simple;
-	bh=mg5QwjVB8C3lyA5B4GIUBanFC8PT/4NVDirTPg56Dw0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ta67EcvbfdLQ1mj9aVygSCMXtdhNxdAd37LlYQbOk9u10nCas5dkP7e4tH69bLp/fopydOZk1Cne+TOoVh9Cq+3cfUtoh/Rg6eSb3x9fQ4PphWi1NA3qP1Vsrpppj5ejfbGY2kR9d2oc0+PPQ/wUD8lT63fcrSBjvD87kaYf4Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pzlMOb/7; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pzlMOb/7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1773329296; x=1773934096; i=markus.elfring@web.de;
-	bh=SC8u5eoiPAkMWwOVbnMih4gktNVv+/wNn305CFKLNXc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pzlMOb/7U2ZmxNy9xTL+j9Nmes2G9v6xBfkBmoTqBSLrrFdL9ov00sOTkwzeJXYy
-	 3AauKRvJCUq9WRyeNmpdPROH+qf29cuv9Yz4Yt5XThrlyPZBE2Hvtd+A1x9eJYE2a
-	 W1MQisgeRnk1R6ICKo1yj0CgsApgITJPY4C+czUqXox+t0gv86uboIk1lqLGsM2Br
-	 Vg5DFaiPmi2WrUSV5H/iB9WuF2r5SBOxoCMCM+FGcKlac55VDfFOj0y3M6ZZFiMhm
-	 3C9wLojiLaJQxRCG+KyW6qcyC94sNpAe+i30ZM1Mee/4HxdcIPJNZCZ7WGxPMt3Zf
-	 FJQ2I1xxWnZnrYlAqA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MgibW-1vQFc33xNs-00d9Ym; Thu, 12
- Mar 2026 16:28:16 +0100
-Message-ID: <a44adff7-60fd-4fca-85f4-0c69a035ec69@web.de>
-Date: Thu, 12 Mar 2026 16:28:13 +0100
+	s=arc-20240116; t=1773343849; c=relaxed/simple;
+	bh=y7Ic8SkZEutrwZjF9wbUzch2Yj6Ry/4aJx/GuhaJsnQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cn7TZ9I+9r9qp+nJCwrpl3mKw37/oYzHPeaTNHw9PuPTx4WW9dj4hSlPUzACVZttI/8ZEgJ+STRGNVRRLh61QPKgcnrtLRJNk+Mmulx1YC2RQ0hNs+R//JsTvEKNjChH57fJVw6Q/sB8qrEImI8YAKjTjQKCw3YLbXOvcbSy2fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7d556c1a79eso1553588a34.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 12:30:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773343846; x=1773948646;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nwiFGJRSfB6hzdknB7fn9cdgGxf64BtP9o6kcYSkeQ8=;
+        b=f/OXeCtKwTGi3oym/3k8gLDCS6BPettmC6aCsRqIlEdk1uF7wqU4Cxl/8ZEyTnL6wK
+         mYKtTt+YPi9nLJLpKa7nJEZtLO1Jd+TpcVITsDpyiJkbBnsUeCyYQkGXoPiU4CZAgOVO
+         aE8ovbpyIlFyRmFxoyYPWL94x1/xmC6nQAJsVyAMXLOZwSUZmJ71dwgF8/Wx+38IqrpK
+         Xej2EOtDxtyS5mnPGf8d/+3otuV17w//WZLnVJNDmwQ3gxOYSYmjFptw6yYFpywPKdmN
+         26MkximWfIUIg0t5hyPyjiWoq0e7OHWk+mrJAUbyYXs8Fe2x7G9+12nK6ZumDhcDxvUQ
+         nOcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp0JJu00p43RmvU2Sqhy9p0R3+rpfBQjTKGh8xxnZfFcMwjvjmv1fQOLiqCSLXHfbCNuDe5bOG5/vw+ZeMnp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykp+wsBU98aUr554/VNEWSd43CziQ07qDkB9GeqYH1q6OGMWV9
+	ZU96umOitIFhgla7Y0h134w17mfdRJbkMDwSsWQ0at817l39PuHMEN5V2XYcqA==
+X-Gm-Gg: ATEYQzzOzQx3fc3CFSraUuUnb8TE649iZEsPomlCgqIIuzudakBz+8GiKLHJoW8JlNP
+	RKtPY/6AyQBIHwTSxBaG/L0HzB9PFX6eGPcMl1vuMafevGZgf6Nv4M6UDpWxpRsCfCA6b/remwi
+	gXUbK2+uF/6FjguWhIdqLBVoT72yu7nY5saWlKId1BFpD3EPwNpV5uMLzHwuGT98OHIGBnCs6Pb
+	aPV+rJRcd6CJvScC79MQT53QdbVuupxFAgnHMS93OPubWm3peOYDjA71mVstBdCD1tjccNqGK2L
+	09RH1RerCO2MLsTFO5RaiT2vlGn9ePE+E+wixE3bLFdjYkiSBXt8hq/aIyd5LDcrI/9oPdGmY6/
+	LHcSOrcmVvUf1OZ13zF32iDBUvfaHxXCBIzo6c4khOFg21jijPaGtizPfEFzD6I7gB8AqNqIRkB
+	0azBJic7I+EaOmriPRCWLvepeTcA1Bo7sFKc/giT6IjPQE+aVfkQYKg/ZJ2YcfCZyKqp5qA4jyv
+	5Ne+GEUNErUkgWMyIDGszNLfpkPLu+y6oPMPAiJBfVyzgSOC/ouwjEQ7F0vz7k7flNGdp0pnGvS
+	mlUxqdwY
+X-Received: by 2002:a05:6830:4388:b0:7d7:55c2:d768 with SMTP id 46e09a7af769-7d782574e58mr386663a34.18.1773343846444;
+        Thu, 12 Mar 2026 12:30:46 -0700 (PDT)
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d76ae68a4bsm4660837a34.19.2026.03.12.12.30.46
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Mar 2026 12:30:46 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7d77b179b52so939174a34.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Mar 2026 12:30:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUZwNhHgs6OGJFK6WIXQ2IjocadL6jIG8nVjSqAFtvkoGUlzt49bpKLXbHvuCCY6AIfqHCp9JTtelkNlN2SZg4=@vger.kernel.org
+X-Received: by 2002:a05:6830:6508:b0:7d7:44f2:cf6 with SMTP id
+ 46e09a7af769-7d782574aadmr414436a34.22.1773343846017; Thu, 12 Mar 2026
+ 12:30:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wang Jun <1742789905@qq.com>, linux-media@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- gszhai@bjtu.edu.cn, 23120469@bjtu.edu.cn, 25125332@bjtu.edu.cn,
- 25125283@bjtu.edu.cn
-References: <tencent_D591461D8821B2B10E09549FF5379CE6C706@qq.com>
-Subject: Re: [PATCH v3] media: saa7164: add missing ioremap error handling
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <tencent_D591461D8821B2B10E09549FF5379CE6C706@qq.com>
-Content-Type: text/plain; charset=UTF-8
+References: <2838895.vuYhMxLoTh@fedora>
+In-Reply-To: <2838895.vuYhMxLoTh@fedora>
+From: Neal Gompa <neal@gompa.dev>
+Date: Thu, 12 Mar 2026 15:30:09 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je-KwNNGoi3mpPeNq3Jmtzj_5seuj1Qeh2_1dt994iCJSA@mail.gmail.com>
+X-Gm-Features: AaiRm53c1qZCB280A2IGi5tKHEffuGeO3K6uS7gw8tLpnvn5EhoDD4Js_TJQtX8
+Message-ID: <CAEg-Je-KwNNGoi3mpPeNq3Jmtzj_5seuj1Qeh2_1dt994iCJSA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: apple: fix spelling error
+To: Axel Flordal <axel@flordal.net>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:j3UjvJaZMnAWbj8kJ0oltxzF1RqAVXX8yPZsKN3xcU2bhncFZCd
- 1FuGQupfBY5iHvjhtYymVSiG+Cm53A+BRShP44rJEro+ZHoez+ilZ02M/YGMJv6aA7mYlbb
- PkhRSP+FfDl42wl+zLYgPjocpX3AmEvV1KeyYUqUiTq6X0sGNCjUErQnMDFO7fVtx+6bjCY
- +PyDRPbSm3aZe+hyEB83w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jnsQAoDSvWY=;FLl6v0ozK9lI9KO2rmn6a0WBe3z
- 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
- HkeRRp55OwAVvi9NQv3i
 
-> Add checks for ioremap return values in saa7164_dev_setup(). If
-> ioremap for BAR0 or BAR2 fails, release the already allocated PCI
-> memory regions, remove the device from the global list, decrement
-> the device count, and return -ENODEV.
+On Sat, Mar 7, 2026 at 5:29=E2=80=AFPM Axel Flordal <axel@flordal.net> wrot=
+e:
+>
+> Change "configiguration" to "configuration".
+>
+> Signed-off-by: Axel Flordal <axel@flordal.net>
+> ---
+>  arch/arm64/boot/dts/apple/spi1-nvram.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/apple/spi1-nvram.dtsi b/arch/arm64/boot/=
+dts/apple/spi1-nvram.dtsi
+> index 9740fbf200f0..d2720b307774 100644
+> --- a/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
+> +++ b/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
+> @@ -2,7 +2,7 @@
+>  //
+>  // Devicetree include for common spi-nor nvram flash.
+>  //
+> -// Apple uses a consistent configiguration for the nvram on all known M1=
+* and
+> +// Apple uses a consistent configuration for the nvram on all known M1* =
+and
+>  // M2* devices.
+>  //
+>  // Copyright The Asahi Linux Contributors
+> --
+> 2.53.0
+>
 
-See also once more:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv7.0-rc3#n659
+D'oh! Thanks for the spelling fix!
+
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
 
-> This prevents potential null pointer dereferences and ensures proper
-> cleanup on memory mapping failures.
-
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv7.0-rc3#n145
-
-
-=E2=80=A6
-> +++ b/drivers/media/pci/saa7164/saa7164-core.c
-> @@ -998,9 +998,21 @@ static int saa7164_dev_setup(struct saa7164_dev *de=
-v)
->  	/* PCI/e allocations */
->  	dev->lmmio =3D ioremap(pci_resource_start(dev->pci, 0),
->  			     pci_resource_len(dev->pci, 0));
-> +	if (!dev->lmmio) {
-> +		dev_err(&dev->pci->dev,
-> +				"failed to remap MMIO memory @ 0x%llx\n",
-> +			(u64)pci_resource_start(dev->pci, 0));
-> +		goto err_ioremap;
-> +	}
-> =20
->  	dev->lmmio2 =3D ioremap(pci_resource_start(dev->pci, 2),
->  			     pci_resource_len(dev->pci, 2));
-=E2=80=A6
-
-Would you like to avoid duplicate source code here?
-
-=E2=80=A6
-> @@ -1019,6 +1031,23 @@ static int saa7164_dev_setup(struct saa7164_dev *=
-dev)
->  	saa7164_pci_quirks(dev);
-> =20
->  	return 0;
-=E2=80=A6
-> +	/* Remove from device list and decrement count */
-> +	mutex_lock(&devlist);
-> +	list_del(&dev->devlist);
-> +	mutex_unlock(&devlist);
-> +	saa7164_devcount--;
-=E2=80=A6
-
-Will development interests grow to apply a call like =E2=80=9Cscoped_guard=
-(mutex, &devlist)=E2=80=9D?
-https://elixir.bootlin.com/linux/v7.0-rc3/source/include/linux/mutex.h#L25=
-3
-
-Regards,
-Markus
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
