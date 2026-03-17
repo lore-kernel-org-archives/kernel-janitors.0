@@ -1,76 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581A3E7167;
-	Tue, 17 Mar 2026 14:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE4C301004
+	for <kernel-janitors@vger.kernel.org>; Tue, 17 Mar 2026 20:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773756259; cv=none; b=piOLA8A/qlaJEXjw1fRiH0ndUtvrvneP1UIXJGn0LO7bOr8XH9NMZ8S8Vvt8GcQQGcruXbRq3dpLVM/4nBYCBfIZR0llSElQntjoNZ0mIqEi4vU9tvoIvtkT661S1LA56pUEfTSiwBCrSvPLo7yLvhpfi5UvVMu6OjhgToO+c6U=
+	t=1773780478; cv=none; b=nyHZ1ljOLevG9px9pQxlFAXRp1coXw1sn0/u2je8cZqn3gVS82VIL/1RVkh/8+BrS23UoZnNRT1pkmbYXw80RTIecxr+OaunESCW7aXZCzucpfAqZi0bdNp3Ucbk5mNZNXSpnusDqgYSSCXVMWSrKVxByIb+FuTnoqhZ9z//xHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773756259; c=relaxed/simple;
-	bh=WSMrHeA7v6TncmzeDTIFtykB5hNRm5aobkhygNs37eU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqHRIrmbcgSuGs/OehEFv+uH57k7MOCWh2LBGF8P+zKpfor/wJgWCuIyUXQ1sgLjZJDplqKL2N6A+fN1+t92poUqdTmpJL7vHTj4RsOZHpjVugyslk/1CoiN4AYufbmUHRx/Ei3AeFbrhGHHN6b1MiSlSmBBLsLhOthWfag3XQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwRpm8q4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773780478; c=relaxed/simple;
+	bh=erbVrTXG97D5FI0eFhcyGQkyScSUPMgDK8m5mqqKgng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=inpf4rzCEpXiMgWfPlR6QgDwzjG5aB/a756HK5HfT7P5NLbNeS6UtWRQxKe514u7wUaXYs2g4ZtYxOPiOTTduc5uJcKZ6t11IDrTSfbI5YoOWnbKWE1DWWV3gdmSyzcNsmIFjTin6dKebXoiSGMOCgSVGVz5b1KY0fYPO3+J45s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rof47hfl; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwRpm8q4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7364CC4CEF7;
-	Tue, 17 Mar 2026 14:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773756259;
-	bh=WSMrHeA7v6TncmzeDTIFtykB5hNRm5aobkhygNs37eU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UwRpm8q4RYhEqLjc35fsqkEvklLdeJ3eLm8W18bvsbnXB7UfNaXW2AnrwkAkRri5+
-	 3J3T7isHIlKqHjLAMiU4kkX+N/RJoia5zZD9A4uyrc6FyCkK2NYIrIxTzZX+8hk0EA
-	 YHrnARB7blDIltj+9Fsk6suqCoZzli7OjkiNF4v9mseHSUa3ZYIL5NzHfsnQYRMcbi
-	 ZMBSB7/Lm3dhwAVNkYn6Q28/i5x4C5/0wynHUB6dmCRWrS6wrncBJfPsCo3kssZ+EG
-	 Joy5b8ISBfTrlIywV+liIfHGiboWPSk1aw4YBiqJsYXyC3vl2RX6rni2In2OhwoW9e
-	 GheY9rbkFMtYg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1w2V1t-0000000011t-0q81;
-	Tue, 17 Mar 2026 15:04:17 +0100
-Date: Tue, 17 Mar 2026 15:04:17 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: greybus-dev@lists.linaro.org, Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Felix Gu <ustc.gu@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH] greybus: Omit a redundant pm_runtime_mark_last_busy()
- call in two functions()
-Message-ID: <ablfYXR7i1nRiaA9@hovoldconsulting.com>
-References: <03573ebb-54af-4bd0-9730-5f55d24ae0c9@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rof47hfl"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48538c5956bso2471075e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Mar 2026 13:47:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773780475; x=1774385275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/1Ej2QQkVfR2yUyXwe861yMTinfcJrjiiA4dl00sg28=;
+        b=Rof47hfld/mXrYXwzhookdiJABxeKavaD1o5zD7+sgIMaQaFs4qInviaMEuAgk7LDs
+         HDQbImb0Ngt4774Wu6NNQwCXGP3/u/fD4dKBQ4W8qQ2ch9pKSR9rncOKgoO+I9XmbRmp
+         zaISZ8HGAW/3JTW0YWBt/aUYh0rPaQgw42c4ThD1H/XHjDNPnm2FuW+d/q0gXMgVrFCS
+         hQlQHiM2l77jpLwDXW51n/S7EWUnlfrkHRgMqPeAiwrcs+Uv2VnEW2GYsg0bntbskclY
+         62ZOwp5sYub8Af5XfthNs+WwPHI01cA5+1Ai7CqZBUiYt7t+yJfijXRm1jiYMEqvcPdj
+         4eCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773780475; x=1774385275;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/1Ej2QQkVfR2yUyXwe861yMTinfcJrjiiA4dl00sg28=;
+        b=DRz3XXdXhKh65ANVrErk4vegOoa/eZ0R/fFGQvPS/UsJ/GPD+q46aW1GgPnf7Aj/X1
+         6Uh0Gw6NoVp+1S7LF/OZ65axOHMfONPDvwgecIFvrvsjjzYalSUcsiG7EPti7IWrxIX+
+         PNQvY0hLEJ524+ykpqdpRPPEHBFkHkN1xOaTU3qbukl/9KeD//ZDdXRV+I88WH6tsiWz
+         cZi/JkZYYt1d5QvE9LyVUUnpl5QkoZRGFWHLn5B0C6vCXZ/jl4bcvkMKQf5fAxEyIKSp
+         g73SOym60D4GOd3HsM9CIC1jInkPm2ZJoZvZhi9tof6nzi6Djc6y09ymbiaNWgWh7DKB
+         IwXg==
+X-Gm-Message-State: AOJu0YyhulG4cO47f4nlduvNJ18ddffun3wdbzgP73IuoYHV6tHPTgqa
+	Von23j+Dy7DdYDdc5S0mWHvQ3dCZ2bRUeFltVTwqvP8hGYkMbss6s84s
+X-Gm-Gg: ATEYQzx9j5ffsOUXSHqSiEol+y/cj8iISS4YF4B1Vs8i3rIhv4TBWiEM42WL9sE68pI
+	q0f4hGoN+QCaOXyXJ79NA5z3t9gb2gY9HPqz7gIELjgOF+aReV9Ug5PnmEtCeLYlaZH7If4gpCS
+	BgX2FFYVEOXcy72Qo95jgDGn6ixYkyQ/46LFkm7kviMAHUijzV6wdz7fkxFGpF4YMqohXzL6jfO
+	0Y/LNlzeZN4wcFUwg7xTnMGMnIuqMuIpB9bjsIttd298jcTCw2Dnjq+9uLh0apKKS9rr25U+N7C
+	0uIqVQ1Ok+8jdVqhoFw2WnkBFZX4zJX30qAq9jBZrRpv5a5tbCLiOHqcO3HEZZsYiaImElKzJnr
+	HkKFvzu4PKyw3kBR5HwuSoFUFJDTD7NZVK0CN1o+zgzs2acWDqLImLHMLNkxgD7n2c4eTIPL3Gg
+	PJYG+DiP7V4pE8B+v0TZDD+Q==
+X-Received: by 2002:a05:600c:8b18:b0:485:38f1:5cec with SMTP id 5b1f17b1804b1-486f40aca00mr16393135e9.7.1773780474467;
+        Tue, 17 Mar 2026 13:47:54 -0700 (PDT)
+Received: from localhost ([87.254.0.141])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b518a2cd3sm1641025f8f.32.2026.03.17.13.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2026 13:47:53 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Binbin Zhou <zhoubinbin@loongson.cn>,
+	Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>,
+	dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] dmaengine: loongson: Fix spelling mistake "Looongson" -> "Looogson"
+Date: Tue, 17 Mar 2026 20:46:31 +0000
+Message-ID: <20260317204631.120332-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03573ebb-54af-4bd0-9730-5f55d24ae0c9@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 14, 2026 at 04:05:23PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Mar 2026 16:00:20 +0100
-> 
-> The device's last busy timestamp was set in a wrapper function since
-> the commit 18c1fe53d186867243f4cf17f4eef60737a16c4c ("PM: runtime:
+There are a couple of spelling mistakes, one in a comment block and
+one in a module description. Fix them.
 
-nit: 12 char hash is enough and reads better
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/dma/loongson/loongson2-apb-cmc-dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Mark last busy stamp in pm_request_autosuspend()").
-> Thus delete a pm_runtime_mark_last_busy() call before
-> two pm_request_autosuspend() calls.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+diff --git a/drivers/dma/loongson/loongson2-apb-cmc-dma.c b/drivers/dma/loongson/loongson2-apb-cmc-dma.c
+index 2f2ef51e41b6..1c9a542edc85 100644
+--- a/drivers/dma/loongson/loongson2-apb-cmc-dma.c
++++ b/drivers/dma/loongson/loongson2-apb-cmc-dma.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * Looongson-2 Chain Multi-Channel DMA Controller driver
++ * Loongson-2 Chain Multi-Channel DMA Controller driver
+  *
+  * Copyright (C) 2024-2026 Loongson Technology Corporation Limited
+  */
+@@ -725,6 +725,6 @@ static struct platform_driver loongson2_cmc_dma_driver = {
+ };
+ module_platform_driver(loongson2_cmc_dma_driver);
+ 
+-MODULE_DESCRIPTION("Looongson-2 Chain Multi-Channel DMA Controller driver");
++MODULE_DESCRIPTION("Loongson-2 Chain Multi-Channel DMA Controller driver");
+ MODULE_AUTHOR("Loongson Technology Corporation Limited");
+ MODULE_LICENSE("GPL");
+-- 
+2.53.0
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
-
-Johan
