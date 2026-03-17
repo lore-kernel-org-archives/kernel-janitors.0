@@ -1,111 +1,77 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AF43EDABE
-	for <kernel-janitors@vger.kernel.org>; Mon, 16 Mar 2026 20:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005353E557E;
+	Tue, 17 Mar 2026 14:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773692835; cv=none; b=lZ37w9UzOq7j3E0iBucJycLgnZp9Zf2rWm0Z2l+dRNMd5V+YDR5yvFTupkjPpVPBidgg0D+SrYsahfXMW7t88UEhf8ADH1zvArRb/0fwQqUAMyyBTBtlioNNy7x5BqcGG5rgNIl/CZD8CQUw/OOozcuqPrwZlWQTcbu6xWC5dwY=
+	t=1773756192; cv=none; b=sFD+HcRRLErgijMgnIri7eY1+ZzKc7DLLhjm9Hwro1Z5Deww3NUocwdcQcEyfyy6Vb8rtqibTUG346DqQ+1TvJohIlteZ2pmkgUKCkzNUfLtqTRF7C5xdIez0SDsA4nXoWYdUOZ8JrSB7mxypfzyTG7VZySGVwkq+Y/h3aRumms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773692835; c=relaxed/simple;
-	bh=8okJ2fmzvjNNFPFXI9EMfIxITHFwACLEFFZDTbRfHNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XJG2+L1DY1TT+cvY2n4T5RxeRI/oqIyziAWFVUwqCze9NSzHHx+3j/FNnhGAzZcZEZypywZqXvpY/zfi1aeUYEZrIyuA1Bysv6A80a23YTXnlB5TfAuwyLNRQyKlzvW24Wvkrsc1deSpQUaHWKOH5iE+0lgzwBel4yohOpbyNwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYA4sFjr; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773756192; c=relaxed/simple;
+	bh=2yJ60b2S8Lk96Pg4emo/hxt/fIRDy4IDj5N7w6tK+C4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMP7gktDDbahPaHDPWXQIS8t8f54JwTVqM/gF/36IEXpNGWR66R/RXOMTQvrT8M+YOd1gV7aEB5XNSp+oBpCV1YOZ8h54/4sZR386dEEvlmW37BUD52Yc7SSkjIPamOGyNVf08AbOhVsHRwJ80VEygc8eLnHWM6nqTAuKn1ArSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bnh71P71; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYA4sFjr"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso44067885e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 16 Mar 2026 13:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773692833; x=1774297633; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QGkSCnkaww1lWR+SNMIGIRrj8X0ysk6mGmmOv90jF6Y=;
-        b=jYA4sFjr2sMDGi5vBQn5kPJ1AMmWfLUmNi/Gdk7HfMmIulKmWpDo1LHwMc/1b7YVme
-         AehBw9LuPdN9GcIYtUC6y9/fvpyV3qCiBKsQXdf4H/UrOesuiFKCqXCEb8fmh9/CVyNl
-         W/HSBRWZ3QB4dyuKBAl5fda9lGuuzwQuFZ+ktZauXV0Kio8NkfBcLIy810K4YXrnenTN
-         k47UN81aOwNiCc664TFe0PoUaDa85jcaowkSG45RrWBGLtBLEAicEhnuoiRt98K1aFbc
-         oK3/Njh70qh50hjqbeoPJUhmWrC5wth2PdIvLUi8z6NkA5ioJknj8KEQsJ//Ls51idQd
-         8QCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773692833; x=1774297633;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QGkSCnkaww1lWR+SNMIGIRrj8X0ysk6mGmmOv90jF6Y=;
-        b=UExKUrW8KidnO0VbBwZQxiBF6MA9OflUHkBurFoI/hocwtmzrHoCiYTVR161dcwyUy
-         gBXN0KQuwOBjlT4LFX63owT1PM9HJO8FFxXCyAWCI1rnuZ68sboVUfZl4fgYV6+v+SVo
-         VpUDthT6PD/MQ02oHSG6zktc5OlfsSkSJkOzO1SkPb4J36E7e5EM8lCFyHWC/j1CtVyo
-         EkFwkzvcMZdshup1ocDZbuoPoj+zImYFL44cw4XhGezU4ShwkTQ4b6BtdcmyGwoG9S9u
-         PfBIoCR1K7PA1s27T/juKzKzq5C3HTAbwAYSGs5YLQoETi4KVeK08rdmhMo/GMBXy3hL
-         IUiA==
-X-Gm-Message-State: AOJu0Yz1w5H2v8XvHaz9c73Z4R7CkSlI/3fXifr7H6NslQYOzil/D3SL
-	RP1JybPaTSyuCeUOQ4gyVW0wTDw5fO99SsOGNSZkezIHovNioTcRBnGh
-X-Gm-Gg: ATEYQzyVm8RTQQtZWp0x0uHsnXFtJdeqUjWzSVDNXNFBbbz0PWOYKpZkshc+AOGaA4y
-	5TDyHzUtdm72uHfE8pP10Kw1/vZ0jJuhsvzEOnO0e64AOF13rDTak5VKC8fLv9HT4l4rQqQDnYt
-	C2P1aCsgq3P9BE0rGcoUhBQjh7WH01w1s5JCb3dj6WYORtO0MVTSSeNKRusQjYiiZg4DWXfDbaH
-	iyXLAldliDKDUvgWuUo4lu4lDDPdEaVW5e/qkYkTNTiVDoFhlbSjzzhtmpIMH6aOZi+6oyjt3Sr
-	8AmJw6KTLP503deZEc/bqtwoNMncxzWOR1LE0oTtuxWUYfgw7mFWwPXcB/93v9PZo1H56z58vAV
-	tP7sMjMIMbZ8Cyde4xUKVI4RQJHUL93hAT+kETKzCTaK44gV/zoSVQ6K1Dn9AsMQjaiJEe77WEP
-	s1v1mr1K6fii5NFUYENOoeQw==
-X-Received: by 2002:a05:600d:8499:10b0:485:3f30:6250 with SMTP id 5b1f17b1804b1-48556714fd8mr184206035e9.20.1773692832397;
-        Mon, 16 Mar 2026 13:27:12 -0700 (PDT)
-Received: from localhost ([87.254.0.141])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48557777105sm172470675e9.4.2026.03.16.13.27.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 13:27:10 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drbd: Fix typos: "receive_peer_dagatg" -> "receive_peer_dagtag"
-Date: Mon, 16 Mar 2026 20:25:48 +0000
-Message-ID: <20260316202549.33978-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bnh71P71"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2377C2BC86;
+	Tue, 17 Mar 2026 14:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773756191;
+	bh=2yJ60b2S8Lk96Pg4emo/hxt/fIRDy4IDj5N7w6tK+C4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bnh71P71kX3MJoXBSUFUcTTl6CxG/COM/0aLGrdBlQzt/A09aVrNQQJ4/0YeUZn5d
+	 eK6bXsw8bRpjAXGChJmKjWw0WzrTVl991QaO3WDZKL0yQd2rtlWx6mQuhDZn0Waliq
+	 KvnM+PVkuFDE9P/zzENKBiYmGU52awF8Educs7zh/INZnTbuwiNiSZ1SppepTIpMH5
+	 JOArD2fsqp1shykKSMRjwJzOrVtym9Z0uqKNvkv6DM/zTIzeDbfNnWtMNzw7S4IPP1
+	 VasDxf+BB3AWNApmrtPbaks80qUmB/eW/Krp58AuKgh6GEodL8N+LOMxanoYTC3hpc
+	 lyZEwOnaKuhMA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1w2V0n-0000000010r-0UkH;
+	Tue, 17 Mar 2026 15:03:09 +0100
+Date: Tue, 17 Mar 2026 15:03:09 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-staging@lists.linux.dev, greybus-dev@lists.linaro.org,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Felix Gu <ustc.gu@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH] staging: greybus: gbphy: Omit a redundant
+ pm_runtime_mark_last_busy() call in gb_gbphy_idle()
+Message-ID: <ablfHWyTEhHOZ3PZ@hovoldconsulting.com>
+References: <ad901a22-7c48-41c4-a69a-2fae9ace6664@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad901a22-7c48-41c4-a69a-2fae9ace6664@web.de>
 
-There are a couple of typos in drbd_info and drbd_err messages.
-Fix them.
+On Sat, Mar 14, 2026 at 03:40:50PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Mar 2026 15:35:09 +0100
+> 
+> The device's last busy timestamp was set in a wrapper function since
+> the commit 18c1fe53d186867243f4cf17f4eef60737a16c4c ("PM: runtime:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/block/drbd/drbd_receiver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+nit: 12 char hash is enough and reads better
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 06d83b5ffafb..100207623182 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -8850,14 +8850,14 @@ static int receive_peer_dagtag(struct drbd_connection *connection, struct packet
- 			    strategy != SYNC_SOURCE_USE_BITMAP &&
- 			    strategy != SYNC_TARGET_USE_BITMAP) {
- 				drbd_info(peer_device,
--					  "receive_peer_dagatg(): %s by rule=%s\n",
-+					  "receive_peer_dagtag(): %s by rule=%s\n",
- 					  strategy_descriptor(strategy).name,
- 					  drbd_sync_rule_str(rule));
- 				goto out;
- 			}
- 		} else if (ps != strategy) {
- 			drbd_err(peer_device,
--				 "receive_peer_dagatg(): Inconsistent resync directions %s %s\n",
-+				 "receive_peer_dagtag(): Inconsistent resync directions %s %s\n",
- 				 strategy_descriptor(strategy).name, strategy_descriptor(ps).name);
- 			goto out;
- 		}
--- 
-2.53.0
+> Mark last busy stamp in pm_request_autosuspend()").
+> Thus delete a pm_runtime_mark_last_busy() call before
+> a pm_request_autosuspend() call.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
+Reviewed-by: Johan Hovold <johan@kernel.org>
+
+Johan
