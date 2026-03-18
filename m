@@ -1,66 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759803CE4BD;
-	Wed, 18 Mar 2026 11:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019B1354AC7
+	for <kernel-janitors@vger.kernel.org>; Wed, 18 Mar 2026 19:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773833265; cv=none; b=gk9b+B/G88u+DGLe3Jjo7TXdbM+JWTsGqhX2plE+FA6k2JvE4rxUBN4Z+PBk2HwOeOW4QmIaaRhbPXEf23livNsiirEF30y7cnJqV5FCAVcxUe1SLdf4ZJvs9ZJ+CMlGNuGrEW/IqigCIBe1EyVisZTeyTgDNFtfvsq2rlpnb80=
+	t=1773860737; cv=none; b=kUD3cbG/oiPEUbnnjDuZmT/gq/JFNUhwNLUW6m91PhicSWjGD/ZgFiEfRnEv6TvIeWZBkvmo0B9fb1rSKvAwpSIGeVen5rsn0HAUiEuMOA1pMJr0f/OuBcQoTwuzkUnOE1AO8kYFoR1M+NYR1OLoshQbBhMibvl20EwKd8rMcWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773833265; c=relaxed/simple;
-	bh=SddV8voIsEFuPxT+7XHbOrlR4AELF1Ovx3gw0rTnECU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GXu6aY45Dz0h/2WLWgitG/P05Hyy/cgbMlHThYrc5ZExCF55rnOeZPkfh29SDQpJrIH6VsTVzdBbiRbQSIbuskEnvWovdfHFMEeI89bEOOtHd2TeWhgmBIHMg3o68eRpNHvHpTQVAxUtnINQF+WVrxpQfHbTd1wUbOoSLkkYPH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgMOhB8W; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773860737; c=relaxed/simple;
+	bh=kgdLseVwqgNsrnA6mSZdwhzqu3zFgVWNp2vzWnPMKeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IBWqP9C0HgzKg5L8VVk3lalKUuuSGgL5TP/Qr4+HMaRcXCkFvw+5qZTKhmPP9YriWCQ99WQafkJhVjDOs5icwshSHSNW4DOQ5P6mvi33Iy7MvBDgCT1ESGYDZhB2PwIMGtRJYXHY5dxm5H64Q5rVu2/oxAoCzUEFyO0QlyzT+uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Syy0Jpei; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgMOhB8W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F535C2BC87;
-	Wed, 18 Mar 2026 11:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773833265;
-	bh=SddV8voIsEFuPxT+7XHbOrlR4AELF1Ovx3gw0rTnECU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=EgMOhB8WaJZ5IgdtmhBgdOnjUzRkb+/YCC7J96ub2HhBSd1GOVD2/hxJAgjNMN/nf
-	 CHIEbxDymVfjgA0aC0YCmOnWv60cWVQaYWSK/icxjCX6E0hzVsy3IIENxPRh5+PhhZ
-	 hoVS2zmGfc4i/yPg+5hiUpZ9iOGLAgFLLmyT4cl4YIOf9CcxzPeR+yIWJ105NtW0JL
-	 vAnNxnKYdRqgO+BKwcn2xBDskKxTqNL7hc9zFsM81H/X4TzNma1or1Z9vyLD3OHLr0
-	 3qAXHX/eLksGUSna4X7K+pRgs5qsFWP4+tChBrYsoUypPF09GGc58YKSf6GeDb2xKi
-	 2+JmHXYxHu9ng==
-From: Vinod Koul <vkoul@kernel.org>
-To: Binbin Zhou <zhoubinbin@loongson.cn>, Frank Li <Frank.Li@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, dmaengine@vger.kernel.org, 
- devicetree@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260317204938.120729-1-colin.i.king@gmail.com>
-References: <20260317204938.120729-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] dt-bindings: dmaengine: Fix spelling mistake
- "Looongson" -> "Looogson"
-Message-Id: <177383326202.408483.13593288650783586231.b4-ty@kernel.org>
-Date: Wed, 18 Mar 2026 16:57:42 +0530
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Syy0Jpei"
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-46726528f1cso212858b6e.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 18 Mar 2026 12:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773860735; x=1774465535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3O9yp9YjA8SKMzZSgAh+Zo3Mazffp8wu/lSnpv1/5u0=;
+        b=Syy0JpeirBAc8K2vLGihKuBKR6VXUgsrZr0sd95AS2qFoyaWPoinIlrLtPx7NlUC0x
+         sXs9W2PLx1748w0lDF4/GGgNoDqFAkDwV5Y3cqkUEQXhxAIsQS9tL7p3RrwHy9SDE97W
+         QdiQyTmeRFoxDH1x96uXr7yANuEbROzeUUVdcM+Pc975d6Meh9P9eDFGR74qYiuzCQMn
+         cMn+Fyx7E/kgAIixTOI8SJV0C6CZKXW+5UvmWFA0jV8rH9/WEEVNojovoNsPsjLxxMYd
+         oO/jY8BcsnEgj+atDUnBlReTxZC5hiZl3OQYxaGuqY79YE0HMO2iISt4PlCAeFRkPkcm
+         JRVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773860735; x=1774465535;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3O9yp9YjA8SKMzZSgAh+Zo3Mazffp8wu/lSnpv1/5u0=;
+        b=owCQXck5omWPOB8CTXMKLGrS7/xTXV019zWEuPpw4AKLMWZihsu4BvbnbolgqA1o0t
+         2ruZTDCq4X90jzo+KytRHTP7bkXmtB+SZOLIQFSx73d+VEFJNttxhbNg8MU8OcTVWS7v
+         Wa51pcwpKNaqXxdc4dUC4ZkOKjfEf64RdsNGGkNIbtLT3g91kBI1EnOrdxOyfCbLwRjD
+         LyxLzLlCqt3KTcJ7p6yPfLbNT5ck/V3nXqmHaSYZyPK8D1OqaCiCp8nSWkVf5/whmfal
+         g6+pZ+4ab+gOqYVxgIntQcr1bP+YzkzUHdUkeS7o+TJ3uimE4PrqxAF7HPSXzOGwR63r
+         Omrg==
+X-Gm-Message-State: AOJu0Yx5eFmyNLEYKLUJZs/Z+UDK0edrjGO8rkL8eboqdi85b/LJOzQ4
+	yvTr8ztUYcgCBXzfPqCnmdqJGZ34N4YtE5HpdvUdVFK7h7dHoJyJaVHIJHyc/Bxwr0I=
+X-Gm-Gg: ATEYQzzZ7lrenVXrQW2SrM8n1TWQAmEO9fp37gMKNiebos/4VOjclx7aMsQVC1i6OJV
+	L+5jNYsfbiyZPA96OyU3dJ3aaBN6VI+dto/Lg2hxzMRDpfZeYIT7EzHC+PQQXDCfRyqQjELhuIE
+	bygbxMpdYdM3Z7hBTNdjbQJMDNKttDbGH+LeqeVl9Jsdme6iPQIF35to3UC9LXuuf2v6GWVBH6M
+	ME6/SvvuCMBZ0aEa2td0SkEpLMZGapk4DNnundQSHDGu6HWd7u3xmtMjraxSdAWqTKULpZEkSO/
+	BmOjQf+LgDjClLb1D1GJ7k7vKTAf3C88k+P6dnOZH9zC0zcp/hQFOsDYLTT2MtOuFwxrTLjS2ea
+	t4ccvVr4QB2nNXd2NWJ9fakinuyPJCIDuKw9humsiYT5avIDoKPbfA/J58IlvErpwIqKJPt29bB
+	lO0mFyMCedvqAF4T9+4HFtXlEOejE5r5D9pOTEAW0ScxUKqaEvk+gUy+64MjLn3fm+6fXgMyc7g
+	AvT6oHJ
+X-Received: by 2002:a05:6808:179d:b0:45e:e07d:4eff with SMTP id 5614622812f47-467ba216488mr2658412b6e.21.1773860734890;
+        Wed, 18 Mar 2026 12:05:34 -0700 (PDT)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-467cb465136sm656777b6e.0.2026.03.18.12.05.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Mar 2026 12:05:33 -0700 (PDT)
+Message-ID: <ea558bc4-3efe-4eca-9da6-56f4a5302056@kernel.dk>
+Date: Wed, 18 Mar 2026 13:05:32 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drbd: Fix typos: "receive_peer_dagatg" ->
+ "receive_peer_dagtag"
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Philipp Reisner <philipp.reisner@linbit.com>,
+ Lars Ellenberg <lars.ellenberg@linbit.com>,
+ =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+ drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260316202549.33978-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260316202549.33978-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
+On 3/16/26 2:25 PM, Colin Ian King wrote:
+> There are a couple of typos in drbd_info and drbd_err messages.
+> Fix them.
 
-On Tue, 17 Mar 2026 20:49:38 +0000, Colin Ian King wrote:
-> There is a spelling mistake in the title field. Fix it.
-> 
-> 
+Doesn't apply against for-next?
 
-Applied, thanks!
-
-[1/1] dt-bindings: dmaengine: Fix spelling mistake "Looongson" -> "Looogson"
-      commit: 132e47b783a8057a8eb14484f153b417de00c1cb
-
-Best regards,
 -- 
-~Vinod
-
+Jens Axboe
 
