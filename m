@@ -1,157 +1,103 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250F2E62B3;
-	Mon, 23 Mar 2026 19:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A9036DA04
+	for <kernel-janitors@vger.kernel.org>; Mon, 23 Mar 2026 22:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774294628; cv=none; b=MfmDJmOqz2XUd774CLkDvSWQ+q5f+CJporkX4UqrsQP7MfNYXW4/XaB6kgF9hdx07dKyfWOprWNcnxaUus6R0+J2rkg1GOrv+7gFbWjD9T00OxnYDGVuXriHVP3I2jC3pjSudePp8vqCy4lxnUiCbzbRtzUjr+Uc/kaffXDSPts=
+	t=1774305915; cv=none; b=qfi2E87yMK4DeQlyGFPxBojsVT3Zg/cCTQUXqQd8WjGBlEj9YEZP6fiBkuQrfTGRsjLVELJMYoVKlclbxNAqT17tmgaOAppy/SpVOUMVwL3o3GRzFoFUgm5I5VhoY5Aav/7QNc9baqpoaKOHaW1VaGTD3MnHJsV8/wFDQaWLozk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774294628; c=relaxed/simple;
-	bh=5BGRcdA36LVVKtAvAJ9aNHJv8AVUrsJIiR0mMu+qOvE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Qe93OAviIwe3vYFG6udIVSsEvh4coYmrWZS8k+m/TG3CFgUQGl04fIM15V3x7pwy6g5R8nVJt+Ksl+BbWFijC35SyV/8bgP8QBvmfZ3123Kmcb8SUzVD7u6CA5acJ9oY1sE2ctQHdUrl1j/wm0AmeJPuW9ZhPpVzj/vgqpRTcUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pNr69tbB; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1774305915; c=relaxed/simple;
+	bh=jePR/G1lFiYQ0Bq5k4AUIX/4orWKBtLQQjeDBLmnmrw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a8Tg7K9qTIXTph18x/mw6SVvIEXkbg/xi07I+FS/0ADyL+Ut/DJsn7rHP8yJJXPPRGy/n4WwW8CjTznEu2wcp72zZBZqWvVqi41FRCEpZTefQVyeEYVYWx9B9N33uLGHRG4LUrQ/s5x2vahgMkR+Xs67IUivDrfks/2H6pNXXwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJ6TbIYW; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pNr69tbB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1774294617; x=1774899417; i=markus.elfring@web.de;
-	bh=5BGRcdA36LVVKtAvAJ9aNHJv8AVUrsJIiR0mMu+qOvE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pNr69tbB3/OOivG7FZ33Rh3Tj9AFoHUqUC7S4VVyZ1ufpqhbAlIwaNr2aviUSrJP
-	 oIUNjY3zFqCaCo4lTTkawY4ZTjrB+Cyc6d/Uk+Zekja8kvm7/O7ILJqWeghS7X6b7
-	 DFuVCggolcigx08qyzTL5+yFz8b1Eci66rIxyby6y29ddOO6arWXgldBzJQrdQMxq
-	 eLejpHNb3+0vURdnjmXITrBigBEJ6foVPbuE7Nsbu5PNUwoAfDVAL6GjlwmIdQ3eO
-	 IroBYuTZyFiLkZpj3NnR1FORqBcc2M5shgxb9oj4iUWx85nVgwRVSyRKHjJgBX7aH
-	 xBFHdjIhALwhP/StJA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUCz3-1vwKss1YOJ-00Uy3r; Mon, 23
- Mar 2026 20:36:57 +0100
-Message-ID: <f4fba38e-c2b8-4e08-a958-ea433a7cbe05@web.de>
-Date: Mon, 23 Mar 2026 20:36:55 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJ6TbIYW"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-48558d6ef83so31657125e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Mar 2026 15:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774305913; x=1774910713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=66u/VBwHFIYtSS0ffR+AH+e9AgRhJBGf6jfFuy18y7Q=;
+        b=nJ6TbIYWHeyilFAHxJUCze0iMf+zc9OJfp6NOuLgyrU+G7PgG5Aiy73vEcXi4bBcsb
+         //L03847T2r9KMjUnKPYn/+i2gB0nVsFnB35QfjpYUkXgdkxwND+yRDF21tgrnWe+DyC
+         STZ89lbKoqJMWkxJSD6l7i+47TDxALwubW5HIcCOgGEaNhVol58ailsNUlHM4meAa+9Q
+         RELXk6eOyzOnBC/YjkBePJIbkAX/D2v2UxzFFo+inHTk/QfT//uQSLudAlP8r36+AfYK
+         qhxrrl0QMBoiPMGSEX0jbANFewATCCy0+59dWEl3hdyK7kMsqOCO+LhoRZQRFB+DJ17Y
+         pC0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774305913; x=1774910713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=66u/VBwHFIYtSS0ffR+AH+e9AgRhJBGf6jfFuy18y7Q=;
+        b=rzhhPWZwbVa8JdaeOa8fnuGFh59siVfB1to7p8t9ugJNHtsowk9O5Rp1Suyt3ZITKW
+         6r2f5ulYeLb4KIzwIkAgfPxMpvqeUYjWES0zUdEv4dstw/Mmmg7xglPh3SQFm39r/ntp
+         NRcnVS6h+GqPWg5yXz+hnofB4k9ajnm7Mtjv1FDuHk7Jam5P/WcJHCkviojnyHMXBfbY
+         PL6NkxvSBXerumQDFYeqtvH8WFSMbCcyPTZsE06KN3tYJiYMoJUGbvk/oA8YsNxh0LkI
+         X5u8RB5AnTGXwUmjRI3Y2P8lxNShKZl3O7I62P2khsQEOvzeU10Yf1H6yz4ERZKOCvWL
+         oHEQ==
+X-Gm-Message-State: AOJu0YyXxgnAEc3/gcdmN+72ovTKfjBSiN/LrmP0rleuei/1+DU9okuK
+	2HTnKiDi/GpnHd1bR2vn5AL0q9gNZAIhdhCTILHZIKZuThyLzMqXDeDU
+X-Gm-Gg: ATEYQzyTEQGUuVuKwYC1kfMgowkGcNYfWp5tedzYRXmLo74uAl7zHEJLdBP4w0ZuYXE
+	hy0aQxy/GJttYUlQzF5SrnXCfXjZk5tqBhDLM5YzC98XRqJUCwzBcHA6rCiQiaWGrw2hS4+DL+K
+	4WscrA+Yh1SeI5HHPrdMEA0uf64WuVrXBLWlI9BseBi/LzRWJvTYROHNf4wPV8if6SS+Mj7m+NO
+	t5IRsCi+eor5z5px8InRirz2kpbwelCIAbuCr6MpR9lAy6VO+m7Nhcr5wYogi1ABV4s2AnJV/FU
+	fwLWrepBICYn5O6+48X0HPcFhyPbAs3fysymHlqG+zgubs2X1KTNJu2p2nVOjUsLdAvhg3AgZpL
+	CIc17JdvnF1x31xAEFiba+yCk8+dNfrfK3qzKLvXr1GhtWzqKgDpckuwcuFPHq/B5WZQ2yMeCka
+	MGAs3mpSHR7LsaFQ4uP8/SzA==
+X-Received: by 2002:a05:600c:1d15:b0:485:2ce2:4c75 with SMTP id 5b1f17b1804b1-486febbc648mr193158595e9.1.1774305912768;
+        Mon, 23 Mar 2026 15:45:12 -0700 (PDT)
+Received: from localhost ([87.254.0.141])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4870f6d5fd9sm4775495e9.4.2026.03.23.15.45.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2026 15:45:12 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][nexr] drm/amdgpu/mes12_1: emove extra ; from declaration statement
+Date: Mon, 23 Mar 2026 22:43:48 +0000
+Message-ID: <20260323224348.343495-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-riscv@lists.infradead.org,
- Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <pjw@kernel.org>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>,
- Atish Patra <atish.patra@linux.dev>
-References: <20260323115957.38348-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] riscv: cacheinfo: Fix node reference leak in
- populate_cache_leaves
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260323115957.38348-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CQVB+hFlhabYUDW5vlLRbBoHdaQuObik5nMXbbjjSFzLGBUjRSd
- nol6OqL+8vKR4Cio7t23jxicfcdwwbJIIZj/MbtIWyqL6Ca7qoY+ayZ80HClgc6vTWna9tk
- +Mqi8I9TvmGZjdLeb8y/CaUX387EDGGCtyELf1OoAMAWVEzxvHNWklJeC+Cruo9FPp29Ja9
- shLtMHSGIFaxBemaIs9HA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6Tkw9uzrKYE=;Cw8vSLP8bjcw3BmegK/oimulbj5
- uxIL1SPCQngzQ/dVzUWIqIGVjCyl01FPQiS2HQ+wfeFix3ZsA5qOEOQTwnspQciTZZT8Cot/7
- 8kSC+pDdavNsm2ZrxYXWuAMay5KWjmUMwfQq4uPhw6yhwMXYhPRNd8phadSwZ+SvX4W/exewl
- K1GuuP1N6rFakD8TdsNJF17VsaCEH7eMB3qqEHSI+KX+Wh1g+INEgwzAkvULpZlPznQ9NZg+M
- 3pL1dDBnKBrXB4ZGvegRFz7gctpo2oes9uidfc6MS35GJCza4Gpvb6P9Qj5ikOQBy2n66tbrU
- oSA13sERwkieyZYiV12P0/B6VKQyeZqPt4Gl4PuXsYGn2b+KltiXzUTmIOHBG80qaih27ELP2
- QUcvWPkPxkgK+exQ7i1dhtHBXrrjQwhYdQYAH1//YzbfR6PwEWeZZ807oBAWsA4zp2dKEon6o
- lBHYyQKkWxS5UYUjIV/CmqgJhOvz/hQ9VpIUoNHIZX3kwUsF0QeI4NTO5Hl31uVum5ztdPiKJ
- 8EyHFre6qJnq6e4y6TPwm7UgARoWf3/wIOEv1IAWdht9C8nxgXo/ByF2e4C0GuYa1CV7rT28h
- q3K1bNJdYbVo2FewZyqLIjcIbYVZH4+dg589HBIdUtpCnoDsOvs9GcHIp+j4iI0S9rGEWv7Ui
- CYqs8fKCMi5qytixN23MHAcoZ+lJMeLga7I8nBtLIZgbdGlZ/IL3Sac2oX4WPgTGjlQP2sIlM
- SuOC6iVACHw01zkrwvE7GEFLKEP0vL/+isq/wzLC5X6UQK3Gu4X3Mt/ezqC4F9gAlplSMg1Ec
- fVdOSURJuI55qQJyQZ41XIHCl3fuX9j85di/tD12L2PW/GEMZFKk1AvWt/M8Ossf31YnWM0Vp
- TW6QF0HlfFvJTiK/YARMNoUoC+65qAioFdlv8jvnq0gfcIepx4dlnFEtT0kSdQ13CkoLOtsav
- XPwOFKdIGqFGFmogMLez66j50MyHQd0Bpyl8bHyyX3UWdOzXuUD7gydcg9EbMBcYYTxdvHn4D
- 47KGG8vySrCEWrwY0bJrKS3c4EGQv9fcqJIK2mdLHL4RsF9b++LcFdxA8j5NUypRGiqEEEYH0
- r/IvJ4EDC/vu5OEq7Vw4pdySXTSBCvZmEcBWiyrRIBLUw9z6uRLvnH4q1w8BKwiCLKstBFoWc
- Bi5s4Bv9SsxzoSciALmaaW+HW8XtVS12jYoZHdrc8OiXQ4TKjTPVIQjpQF4C8wEVxRJSYGHrZ
- X0JhspEFE/wsD46iXsOd3qcpt4CM2l7nnAajHWfHrnbdjiGD0gXjByXVrwAttm2SGZb4awMWE
- QjQOYhGK4ag3vslKgm79NP+3fCpooUZ3ObjZjXhMKxN5+03n8VKJudjK9vuqmbhkEwrO33mga
- hdhsSr7GkP6q1RfsIFosRKqRkz6XM8+LgXOLy7vHAB6KR5CjKAX73T8fuTIFoLIxurXDJpvil
- NdJl3j9fsEnkvVCnYM9mZWQ6rh6dTDjk7gVHut2IQyCi+O5Cyltpa9uAuwF111jFRKcBqdq1b
- higMv5LFcAiuWjGt3CMlhTtKVVYWhij4DMu8xNQv2/Qn5yK4s9gO3RYU28B99oLUMVV3/vo+W
- NXpovvqT7a9Amc3PUUR7DDaxFE1TUId6h01vmad4pJUVZ3rwZfCvn2fxxwCmWAa2he0iBkM6A
- JErCSR6Pl8mN895EQXFEtJ8VMr/BbnnzAzY59Rp/qRuAJ6yIMEehZHp3TOVXOAGDrxxG47XVG
- ZC3T8ihjGDC1+45QTHtMKAJ63xcxNSWjiWws6prUUaTdswZg6K5XBgs8AXe0nFOsEz5zLE2qF
- 88QrQinIDdZSCd9p2mR3z+D7Y8SF1w9QTSHKZ/SloAbWHAF7dqH91XFIJfmslfHEioYKnADEh
- CF5oK6XFoGfrTbdlUECJbqgJk/+uIii/sp4xNc2IR4Rz+XiZ5nk1CFmhfRUO7GvC87kow4sP9
- PDh2/Brg1WJTM+m/FpnySgbr7pCvC7jbqZffRvNmOj6Hu0K+CA88QSGV52FL1zUDuFl7QVf9e
- 3ii2em8ew4GNkxxEjB8lZXwSKD2lpIIXaJnDLlGcNExJTbGxtRWJIp9GUjk2KQHuReMU0S0lN
- BPelVFoo9EpTaSQkR/zyBlMKROr/sdm2V+eOGCBEKcHXbIjy9QULGZc002Q7q6En+pWJln5K6
- hBXlE1gYnTbhcTocUvSVsgdfqvYOgDOuDutMyUidMw35qm6QlbVvL4FNdyaSakhjThruAUxyW
- /OPVXNswIYjwBRPAlu90OyIixwGYE70EPAlH6XvoroNvgfAUJE6yVOIY2gXaIe8clqw7fYdzA
- hPwCXi6tIjRjTctG6prWhuHJrbt9pEz7Ddhhg6mkakDaqsYxSsb8w10aXQVNYdNTnxv7oCPWC
- m8Cyucgou/TgbPwihVzLgEbQWCVj1eQ/oR8QU587vlzyKIybvtCxw73ibLypq4AdyNtKPpV4B
- wVeeRSvZWBO4ITvh/Kv+9/Dlg0Gc+ky5g0jEUHBfRCF/zJAqClCMQOatE7RyCyqSmwaRleWY0
- vnJ0jZlk+5g2bgPlkw25WOIvtBFx/3DbUNCdXwcn1Fp/0nk/JA4Bf1N7jNnYLfdkX1GUCicVV
- XGRpxPhISIfUb4KkG0HaqyvOzmfeax55rLKOLiJiA3hT70J/Cg6CK/oQfRH5fjh72xAVFJFYo
- grK5JUNJ9M147Zz768aGxEel0pspGmhcAuzH7w+ewZGElvWKyWY1XQ03wxLhTvVUy1wmy48ly
- HStqVNFueaZQ+b0iq7EhYXKQ/5HD17rbybZS1HbdrvPMT9T5XCfLtORP7YkushabnDZADQN7/
- 0GTPxXnOcjnmCf6fwPzuW1Ef/9oXmMYsEgOtNZFmFmpDU7wxj0ZFKuhZpb9c7iz0VMCPkE0iD
- iJW3ki7WDrT/wetpRn9rfAk3OWD0SrWjeKXN511Phhj1ss1rnf8jTcltfAsBLnYDJOC5ZyREW
- ts03clmxc5vDXelsaSBa2DjgGNWa9a8wOYR01jRZQnFFnNoOMfwUZLHgXD9yJWxlbST5SqDLB
- Ib7BPyh9ILw2mZQQyAY1yJSkzBdR3qUc5uuH52STvQxTzvQ1DWyYpmQioXViTNKi+RnHVM5UI
- jCheY7Udh0ph33apXLnLo9O+7oeJ2zP+MtztQ6pz8jeU8TJoAKZZ4ij7yp0VnSfKf2kXKoJJ/
- xyu1YRg2fnfKq/dLU/FAekPF2pCmwxaH4bw8F5XNofBHVnipl+KVqY1tLtUFtjy0+eG6LsQlh
- 13uCkhicTglvrZRVrsuRhbEZrhc4tBjxcIEwmbsRNey+Y/KGKQFwoIno8EiRYmmdc9phh76vG
- YuD8xU65XMqgSnIH7eZUZ9MmS8i6txYeyoObA/nvVa8QhUj1cKleBVUOMPIEagzmiqY66QQgA
- 3FlFUYw4cTvirooMinaeoAaOGDn2Gv2IWCIgVVn6VeLRn9lfrs96ZIo50AsFc5u5ib4RV3mUj
- pkawMGMYrNfGFKwzs6HuLXNl9zlI1efo2WhDBBdukWh3le1hNbZDE+8s29RAc3BzpXPnqDeHQ
- QQvgrsyT6fyyA+tLSgYGyo8zpq4PZIjhghghctuz/uBSkDTlWFDOR2W2yzofiPGbjN9I9FS0Z
- iQSfNpaLpzSo8VRx3nzMYPtM4KwkKU9p/eEikrv3qvHk43nwEQyc4YfDctdhYPmVwGP3RZROs
- EZOoXmXZ8x7Fg+VyY0z5wmL2S9IdJt5lnKRWdhpxUY0Mk6DZQYrYFFV/+fPveDSxbLA+h3SSx
- jrrE8CJWMdKEaoF4de1NIJO7Pjjx/SS1KPF+vdhbuTnm/RXJKEeX1czipWeQd2ZrCZYqkPjnw
- QZdUMLKyD6OxBYhmF3HD+aSL3nD9EbfShYZ2Wi0d6EPq8a8kWqTn300h3Rne28JdGcqCU6HzU
- Zh2e8cOybFFYYraZQXTU5YPAsK/qD/nPbxOuVcuUei1kHjTl7m86LyEm0v0T8Aq8B5Xg6QbuV
- Fw4kEcJA9rrBShSWNIKzO5K5IpB+QyQs7yXqMD624U+mRZoWK4+0Ob9LB/krvHgXzUQWRjptq
- DAmlXBVLi5bpej1ia6sRMj3oOb82WUscXAGU5AJw9Ut0Yt1j62Z7NIWnuTPgujMP0SP+EMso6
- dCMz6PisYsqpOVC4qZkxy0z56/d7A/zHgKOLHdx4M+EMB3jtQZz7C5qY+zmQnWgOEw1xSAL1M
- +2xWifueBmzExdUmWKMb7nyeV0mlCFhHqwewtscM+G+q4DNl2vCnl/crpff1q3hmIU9zWkysa
- mibTdWoVi//GxZKPcWty2FJEagcwKImhoKoS6FsQhWH6DRrsAYfqoDKyDNDPvPKx3LQTC3lDi
- kvIV6PJGfUxV0eSm0qIVNVs33BBEdKB+CyQi8Np4fIIBd1gkknSoe+MgJAS+uTENMFQMGHVyX
- MsJ+5vmTtisK0EM0lnZ3d4ru7p633QIaOigMP/AU3tQtRfNgULDwse8p+wfAL4zdNgPhOaezT
- 5G5Nsgv1n583flTh1pELoZFoZ+GmzZbsAMudfsb72wrnNlZ3lZWA0pycwD1mvhGrTbAhZ4xZ+
- uKx7j25il+Gvl8Ipc7PTi4hRCdWCQYOADDg5+WUF9sIrNPZIOiiFkx+fIz9/uLD7K+X6K8qa+
- HyHGL8mxYOV9dKeDdqV3pfG1nSPZl5a7sK30DtkXKfXiTuj+eGNHBo/QPa4F1Se0fe+2xO7mm
- 9i1+4rRSEOluXLNl00zCpqJrIl44MxuhHNKy+XDSHrn8gObMxxzs174w6nc/vldbjupRwDFO9
- +km17/aDLFxKLyIqtAT0g4inhwwVYZiZStDSOaa1gg8ZT6e5CBnzjc8cMgRCyDGSyZA6ggMt+
- 2bOSzA9vvEgY1DEhHOkTmyMCVU3C/JTOTw2sy12z4zWErayehj9xxLjK/XRDFGYfKfkrCweJ3
- SVSme8ZMQ6OB9WVM3muda1MwgRfDpLU8swFVUzTQyEwDJQjZLRqXw9wANEsg75QeMs8VOKUnZ
- et9KGHzM0rl1nM7M3Gti3Y6o5fr6h2rt1omYG6Y7+I0eTvlHIkTm8JbhFGOP9pyByLdx2qKSq
- kTtJb7crvX5JOydp8H7YLUKlemk2Gmn+hxyB6o8/+VSmiz0A6RR9N+N2hUa/X11fKFDgSYvk6
- JsQGZI6WhgNe6d9gB6jEokKreAxI3q4LA09wYP/96g6faRhXFGONWlXzw4lLSzxa3hbSUp0XR
- pu9p+MSAB3iZAZgUt4dabtsmS/o+aMl7up6WsmS8e64g6oqJmctiZfhnlSrzGoCmJ070JpgUU
- ieciQ3J15Co6VdDpnmvc+EbLQIDCwv5lmbkOEfbtfLz5LzYudvQPvonOs1nMnHnZnN5UkRyDz
- DH1HvRfttQsPYi3WQMlb7jzcxWLj6t7Cw==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Fix this by changing the final `of_node_put(np)` to `of_node_put(prev)`.
+There is a declaration statement that has a ;; at the end, remove the
+extraneous ;
 
-How do you think about to use a wording approach like =E2=80=9CThus replac=
-e
-the passed variable np by prev in an of_node_put() call at the end of
-this function implementation=E2=80=9D?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/mes_v12_1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v12_1.c b/drivers/gpu/drm/amd/amdgpu/mes_v12_1.c
+index 5dcc2c32644a..0e9089544769 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mes_v12_1.c
++++ b/drivers/gpu/drm/amd/amdgpu/mes_v12_1.c
+@@ -2227,7 +2227,7 @@ static int mes_v12_1_self_test(struct amdgpu_device *adev, int xcc_id)
+ 	struct amdgpu_bo *meta_bo = NULL, *ctx_bo = NULL;
+ 	void *meta_ptr = NULL, *ctx_ptr = NULL;
+ 	u64 meta_gpu_addr, ctx_gpu_addr;
+-	int size, i, r, pasid;;
++	int size, i, r, pasid;
+ 
+ 	pasid = amdgpu_pasid_alloc(16);
+ 	if (pasid < 0)
+-- 
+2.53.0
 
-=E2=80=A6
-> Signed-off-by: Zishun Yi <vulab@iscas.ac.cn>
-
-Can further clarifications become helpful also for the safe usage of
-the Developer's Certificate of Origin?
-
-Regards,
-Markus
