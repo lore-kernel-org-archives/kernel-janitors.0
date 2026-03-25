@@ -1,158 +1,120 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B18313E2C;
-	Tue, 24 Mar 2026 18:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6746279DC2;
+	Wed, 25 Mar 2026 05:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774378490; cv=none; b=kQy6/1ysmOGXaRVvO2mkty9pE80smDoqMEkFda4oOLnp3cMdDMfcSlYMiNcER899bLSZmB31L+YNlZrdhmc9ROcqS0FJm+jEOuSH/O8uckXWxZsjLrFvV248S0MIFPmqu0ZU6B8twk0ebuRRDhWl5PmkWud8QEGbqaJYyri+bRk=
+	t=1774417426; cv=none; b=NJ32j2Fns6bf3jfvc0ArdcSgZuszUnOxw+2cx1GOtmZvRwKTwvDBhsMCAUzdsPqEUPyRhGkb/bqbS4FZ/cYcrINtkDiel9euH0LGC2rudYWih0ndg4jtooVEW2wSXicjz6IMLBeOonG/IGiIEMcH3GmJcbwddu3YNgoRzuxl2IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774378490; c=relaxed/simple;
-	bh=qGrGYShj9X/Gsl0O9LrUoheJwbXfkqHTA1XpMcuBu7A=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=u838uFSnxjJ7M+nzq3m8M/8x43j9BlB4zF2WXtD49UKmU2aZ6w1TJZC3baBKnzzvzua9CZNe89uPNVeSzTHiy0KTMw8kjovD/GLj90m5oef5v02t57/ha76xkgHgAe+tlhJzPp+ryYuKxTrcP3muXo952IhfiKxBmiIkPNQgcy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=H68nQJjN; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1774417426; c=relaxed/simple;
+	bh=bYikgk+vQUQlqxCaN3q7Io2ssK/VGSv9sCZHj2fQ7Kg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZXdo2+rYdWzYvajxKBfnMCBmZSVVp1SxnvssN7iGmUW8tDSRn9jtmsT3HLVLWvCJ+A4wWLkSbwkl/tzZ2LYfhYoeuh7bJk9yIdmi1YM7TRRwdLhHxwurpnh8JI+g4riKfz2uzbRol+xImf2ebNcArhnJZdilHhiZ/Oi96u2qsbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=sC2ha+sR; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="H68nQJjN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1774378483; x=1774983283; i=markus.elfring@web.de;
-	bh=J0iQ3OBbdLnlKvcf8NJMhIMrmMCMx0Q8P3oFr7nGAwU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=H68nQJjNhzFE4YnYfrJ6SXFbKPYrJEB2kgai4XItflLcRP67CrV9sPmg2grib0qC
-	 8Sn+BVOkgGa96hgypa0Q1Z0W+ubJr/cUXr3j9I66y1vQjwJH2pSD2XglLeQWrnDOW
-	 PMT64c2r61EOPqWC2vtw1nPzmepFTr74hiximrn5bxppxsHlsETx9n89WXpYp+Wj7
-	 jqbzUYsEmZe/Z7jtq8E4k2PyFE4iYGoxIj5OqR0ZRqAHGkLTBfuZvuia8nsgjPJai
-	 B69PhU2FQyc3kwM9RBRFJ25X7Vje+v6GaJM5q0jZm1DWGRnYgd4cosYkKyR30ObQq
-	 dtxH7mI8VeO3umxJRA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvbn2-1vEedZ07Zm-00wM73; Tue, 24
- Mar 2026 19:54:43 +0100
-Message-ID: <a9db10d6-6db9-4939-86e2-f8cd169e6d96@web.de>
-Date: Tue, 24 Mar 2026 19:54:32 +0100
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sC2ha+sR"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OMBwV82579160;
+	Wed, 25 Mar 2026 05:43:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=j8Iv0nFixpzCQj4i
+	di0jKx5N99bawBqJjOIv6r515Wo=; b=sC2ha+sRhsp1HomluSPDdUtUs+U3KtmY
+	IoA8XZscg/vDgayo9qKR5lPwHEESjFElptLmhg9FjQdNdEScgnFA6AWc5pYRzh8j
+	LwKIo9sr6ySyIeEcG2hyfx9FG3C1A2HZaRcXyFeaKouZ3HAEmHtfuSRpnBT5lCCb
+	BREODp4z++u4j8FsOG1FAAnYXUQT77XjG92tQooKxbZij5vaxOYUDN84kErniZEF
+	NMSNXnsx9Y5a6+lfLBuagiEhSRIeAUDUhL+eCDwoirY2xmP6ldittcc79/yU1RY+
+	4NKn97VGQzlhZDb0GyvQEpqkxi/EF34zIwcE4tR8BwCItduzNFniKg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4d1kja5ppa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 25 Mar 2026 05:43:38 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 62P5QwVq000671;
+	Wed, 25 Mar 2026 05:43:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4d1hsaxj9j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 25 Mar 2026 05:43:37 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 62P5hafC007031;
+	Wed, 25 Mar 2026 05:43:37 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4d1hsaxj45-1;
+	Wed, 25 Mar 2026 05:43:36 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Marc Titinger <mtitinger@baylibre.com>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] iio: ina2xx-adc: fix regmap max_register off-by-one
+Date: Tue, 24 Mar 2026 22:43:09 -0700
+Message-ID: <20260325054313.868261-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
- Felix Gu <ustc.gu@gmail.com>, linux-pci@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, Hans Zhang <hans.zhang@cixtech.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Hans Zhang <18255117159@163.com>
-References: <177433688851.20261.7315743280318704387.b4-ty@b4>
-Subject: Re: [PATCH] PCI: sky1: Fix missing cleanup of ECAM config on probe
- failure
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <177433688851.20261.7315743280318704387.b4-ty@b4>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xAyUJQKlQ6DA9SaziGFO23pZntfTVfTMH9pIEZjKnniQacGDEME
- sIcJ/RAFka8NNkTaSIn33eAz2/pDin5FygRWVowho0jgmCIvnCflsS4QPc6t1mrBlLYiUjD
- EXqtTokM/pPjriAKvi6sSoJx1gVGvJA2ts7FdA/3STUVcSQSrDsbKGEbQfT0jFzB9+JkYEt
- 3AQR4Ct3K5c2Z4lsRtb8A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:27rwNnPESyI=;Uqfp/+5yXc6O4+gqplPUAWQS65u
- 2Ugm840eYopKIqUWj7sMVa8SCa4FPPgnyIR1x/5al3nyqih4RiO/ubXUpUNQndhb6goq6U+mO
- 586HqS+aJYFIb0+njnKnhfcnMYgFSX6qiG7tZNvi345PVaMhfCZtYGe190/DGzkVmPj0iPQOn
- V4TmMoHGqECJgqJ7CzLvQ1Z3R/ea1uUg5LxmTrneQAHlZ8Z3EsAnSVXMAfwvuC2quUWjQyE3N
- y38E6F5fd4PGzFo+2vyId3M4wTBhfcrFbIb31kVycsXrsRenCrZ42BnNY13R885KBXjd974yE
- oeuHhf8cSwP7ReIxgtYfxb/Zjv6sHnwCG2CvGGZWxzKW54/XKXIlE+ulri/sgjCvsIOctI3Q6
- 7/hVQlsXV80bIYpF5InA6pVD4I8cfhJYzbWus8AsV1Jx4prtw4is/w38LCWjAlMl8atzBRAjb
- Uq1ReQSra3iIfMUx0sm7KJbKM94aAA5atBanvPF8PBxjq+0ZUusEHwafjbsA2KXUtAtZzeXhk
- k++B3R67MTd204SYgJ6x2UMbD4LhrT7FWyydXTrYbw3WVoF6mZ03DpoJz1FGTBuGFRxlcMINo
- m7ZHtfPNIZDWijb7Ymmzu8soa3yArNgJHfLC9GkAV2tYthcFnJ7aaYUaWzvqtOLcxTPXwhtnU
- 0lQO+QkfIkxTARi0tExW2qTd+p+XgB6UCpr9/kEiNbIyWsDfQniG9BYAP9GFow5kUyUJZOb7P
- fK06H/R8QV2HXPYiwqdvi7K/dkEaMVeVdllsxuKneBVK3E/PkCs4X9ksjjOLmvU8VQjZv3h20
- TgVyYBEGjvTsjS95DkubkdSppzpGTsh0JXYTCmicnrcvJT5BhT7jG4rgdGGkqA6vwWz86cIad
- f8UU3bfIeruYD58yD5dG/OKiPHqXfluXAXvrRVM4O9FB7TJlK064Q34YW9VuPc4wfmbXSdE0C
- sZwYv18AcwOlO18cT06axOMw7jC79CS6vRku6zI0+pw8PCH+RpstHcgPehr6MHFx8SyYHTJNp
- ULf6F1E3aT8I9Tj6MWg/gahl6YWQ+mg8BNPrN0j5QC5+leWUrszYqx9BBD4JvlCeS8xTZUESW
- IZjNGAyhdlZvrS8OnR+UXrmk50s5Ffdq44Xtcp0JC+4Hb6LIgn/cz0Vo5EIYwppRhgNTWrLTx
- 4HiAWlBJVMIqDUefW1Htfn7ZHqOC4lYlcVT4DBaDvD1PtrADDv29+YGE5UEx/4ytMUSAmD5g4
- OOPN5PhaC3PuHMcvA8zsrHVw/u3SE3wE7s47nrVWW+ctuyFPgK+SYIwn2SglAjMSjKuU0O+Wb
- UOunl1Owl3sfWGHR9BIbeStvItRK3CxnJvPIVYPfVa4XzxJ1DWgLgPt89YL2CEecMHO/ySznm
- HzEWB/ZjtNYIWpamLEQmmUBp4LuAvZKBb5MIdiW0+VObfdhHyH1NeOFZvHu8etPYRP+NxdtAa
- iZM6g5mYqSrjZeAaTxu8y3ganNebF+b/xJbZkqE+ShTMHDlcbAH+fxRrEd3S4SyGU5JdA2JEs
- 4jCUhwMxJMtJqcJ3sBXgqVyPLHTuCjhaLid+Bk50kzaZ5dgmAf8l9kSyS3edU/LPeLkGkHb49
- wl0amUmwVUFwAcI3/FXNKj4ZH/twM8eGsNVGbCGEUQOx2ch0Y1rVrfM0f4mqiqdQKoDuTPMtX
- 7uH+GEClXYereHORLbyajDCNymVS3s0khWAyEHIL9Vv5qZuSa47vFOtMU+2Tak469aog/0Tpf
- 3hEMRVK56+Q24lMaWIc46qZCwdOlW9WssAQ7eJro63hNnuHtAzZSndxz5i3GOMNZC69Uuwes2
- MQ73umUOSXDtwM5DvBUkBeFjeaGEnVkxFZ295nHwxxt6Ot2B1aCC7+6CL8PJkyr6B5HqMV2lD
- m2FFo47iUXLusu1BLpc88SWK22RqFzLXVOQ0El9kwc6K1slQ8zqTsKesSFGn1s43vhXmRhfMg
- mySxMDidX6HRRrnlZpJFWqXPlpeh4tNfYogTdgG/3xVlbQ703Vwnw0SznLqP9ryFbuLTRUah6
- 2R62kikDausripnw3x5L7fjdxN9fnlTATBX2EUtOeGcCk5jzXFuAQejvTWJYQCRmpNn2blXeR
- Dvae8P0dgtlPRdEdoZhJPYIkuJGFWXmaumA+g3dnEW+weW2T/WKbjRfK96qEXOh9brss6H9aK
- MW8TKA4u45h1pLCTLvHks8LM53PrvoGSMoR5kUSnY8aecIaK9olZBaGvVgk+0a6YHB1fSfa7G
- QOfSwDRuMuESHFD4mxxztc+NwSGCxtPeX0eGO/eJ5EL62exAH8Ry/sbGoCKbg5NInQXUqNqoj
- aQCmceXDbVM9I1ksKeseB6ZYrCc8VgFI2g+wLtT2XfJFDtHfMteLjSVRE2lu5vyMDpLwybpaT
- ssohKX+zZD3Yq1p2VMsKxxqPnnzScgCeN5caCgan0YWfGfwVJse7fnaroP52pprCOblTEWwr6
- OUjbhsI6nif602ry/kHMa1DDbiYJbl50yCqpI8ROxS+0dkRvDayYwvmUw0/tdesAS0Wl6JC+6
- ZL+huVM/PUgIFJ+eQ3JZDyDzyQ7JwRoefC25KqzFR/C87MgbbFboZJKmZZFCR8LfVxhNZRc24
- w96DqOyP2ak/0Se66V8IaalTMAb/x1MBgbkPQ0kTuuy2qlD7yzL+q/RAnYSLrp2UYU6A16RtN
- IuNrLFMQKZmW4DRRUruHZsz/TuAssKsj9tK5LpZ+tIYeCl+RgjKyDIt1h2lR2KAD57iicl9GP
- XSqJTM0kjOlP2feJxCV1wKpbZRf60Jwgqv98XkrOAH4iiggZOnQ5PCYkKF1QNK2skPd0PTucD
- senl0TK8BQaYjejHoNnAxlW7T3qDUrL+4kXt/Qc8Mm8Bqzj9bcG6Ti2U837gEXWALVEyPnbtq
- 3ZcxrCUqtprSO6raPy0s0A78M1TuyQyLhRPFPNUYm08+FTev0+t4HAeodokQj1HEEcauzhZeo
- tAyvgWI+Gc+0sXcJ1dUxsy82ahpNZPRco+HZizXlnWJyl2vOJ69uIjTIgn99f1uhzJjr3kyT/
- /tWubUX5pqtK2VEA5I2m1LDF8PKISMwnYRZZBBrtx60rvOWRA2qo4BWN+OfEksBHTXXoDzRZ/
- hGqE7E9OZJ6VRHXFS5f4RHa11eo90kM3DL03tB+B3dDn0N8/f4Rqyooh8yApy5OviCxnWLpof
- NVWo5sTO9oZoxOsRKa6vkbxVcr6U2A5I5xsp7wdYUMbAbnDbeqCDBOmJXR4iUi9sZ9pY/HdSc
- 9c8wVwGTXk8ZF+Y7idgRTzdwZ0hrxhj8V/cYOWYO2TaX9r287MKS7qTripWMJPr4TcUgKLdWf
- tJAMILq2hLH9L2S8QGEmbrQx42siV68O6UhEeeBp6GJ7HyHlhcHf/SgWn4UMmmjyRwhjlLoyK
- nxgqmVpnFT7m+tJHbTgCE5MW1NoHTvS0gFpPQ84vfYXBiXaCyams+A4PYLVnh6ejb3XGPyfDp
- uSk5jghTbrUxjKm4rM3x52DA3a7icvg4aew6Zi00gm8tQnB4DznjqzeK7AKbnentX8zoYoJ2x
- k6/32DpaNskpylw+Fk8AX0AhgIzxf/eaWAZFiJo4NG+GZN5Kig2UWEBwSVk/CG3ginUBh+lfZ
- lyJa6ryqY4/TRQ22xcntRnBuAPfzRvmECqU/joxJTweTL9g3Qbusss/7LURu1FAc2RS4X7gY2
- ntYsY2z4tk4oZvu40J13wwYo0IGBEbMLAAnl6E8dECOCdql2vOxKid9f4e1oPVP5BzQfMdZiS
- w8hyUuVnyy2Lu0/ZVNbyGO7v1nl8CdOVabMG/NT3hPw66SIlx7p2p04vWTQBAvlEProVfvVeN
- /fjs5e9K3RRtoNN8rIV14iF5Yc+1866lwad5gFX1xaH+wmkYAm21yXEt3FQjsQy1RptPSFYQm
- PIMu8PmjT9TsZ96PFf6zCIFncrvzk+V4K6gJYrI9sEVXCk3B28XwF0IOgYD8nqB1rvBhOPV1j
- 8OqShGc+Lmguam8vK8j3exCYkWNo8N8dQkAbi73hHTNdGAxFdLLrUGnr/73anIdKMyFsGqkae
- knb+7m03cfXSCCYv1byeqI4/40gFNv98aGMverb3mFqPtTOqVIrNdioSLu54MS4BYYLjuI6zk
- 7i1xVazk4DWRqsPL/IXj7qxuNtzgNoPKezzriuQH5dG+6ePenuNreJJDFA6ejgzuDc21b3RKL
- vaSi4eB63wx2lDD9U7VrIRZ8rMC232+o292gFzZ9qIcKYA9n22uQJYunQxwQ/csVyH60OD8Vd
- JlVCDqOG4wkOVUgV2AoW5HUHkyegFHQAbcrCxIsV5EcBLp3gIX2pK5iSIu5qTEjnHN4UzuxBd
- WSmADT5CfLsiIGs2EjO8a3jZyVCiJyJlq4CEnVoZG3eS3ZkIjJur6YVfjdi6FxSDJ1prz03HG
- V3hfTJno45cY2vRxq4bMPS/ZBRtBbfpfK2gT6sj2HIP5Ys3wdsr6RSo2R/KmRvYyuLrGJrxcv
- IChHccLRqQKemNXhDoTzKH2BPOCHSKrkShQAC848F3GOzGzO/YWroYrhPsnWcVvJFOTjzCRzW
- Pr7pqKzD9F2BPdFYRvAMFEHCyMIW0z7ZfiGSDM79W7pLt0zesXSRxn6FEFK3xc6tX0B+V+RXD
- DJf369yvEJsJxwlS89Q9LQ4ygO+gx7eKh98biUDy9ZE/aWyeNXCkC+pO1gKUR+oKYEvgfIJoO
- LUlpWHVEVN4P+xHE8jGLkkU3/PhKFFVm2jRjk3oDzMNTdcZ8EMwmAdL1Xz+UjdW+k+w1gTldD
- GW57miJLXKdWX+nrkN/GpN7r4nGSyNoXbyrHdok+sbI3e9Z6ZVKZxiLBXjSCZ2VBQb33WtRmW
- 2Okk4YigHtYPYjVTnMcA87ooHtj25NvNUKUWwXPMqWGpHegD6ZfbCU9cLd9GYoT8JYcLUtbui
- Js2DERmMFYfeSe5cR+rNNCjEqW9zTYKO6ry47QG6luzGIWs0v6cltGXWb8rpxUcopmPn0kQ9m
- DXbWmSVkLsKiq7vC9VfNgk0gP3xlyEF6J36ds1H5ItglXlZagWyS2gie5XaMNKCgcD85Nev11
- +ceqoQ3Mtz7hMUk0d2uQg02Gc6Sf9DGnqRTRW7+5l1f3MbzBB4Wz6H3sipV3A7ynfywQDvcCM
- FpVUi6pAR0t+EvwzkVZqxWfcRmWLGG7Wcg2eqUFy8DU+NI3Exyd292z5T9KSUeqVHlbR3N1xH
- tJo3JUAQHXJwVdANK7LPfu24D5XFO6KPjj4kz7TEElIc03EEpYM4j1bf41AXluTXJ6pUjDJpS
- UxLsNf7HPSyEvq240TxJTzBBBgC35YP2V4X/1IXU6a8tXXZaRTB3I5Yz2gJziax7ekFjZHVgL
- dHJ5tDF1sNJLAb+lNsfHhR0xbhQP9Rx9CstRwn74k/FmkG31aOpFyZVvrO5W7kQTGlTHUWD6z
- Dh
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-25_02,2026-03-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2603050001
+ definitions=main-2603250038
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI1MDAzNyBTYWx0ZWRfX8j3BTZn3OeZ0
+ 6gHpDb8T0Qd8RHpwYTQRiQEd5tccRouzXaRQvMI5BK0YVEyH5f7GeJW17IEqHElPEl4BJ6JL8JS
+ qU3ByunEv/Rpfhvqfj3cRTWLPYX90NtbP4lyOl2GGiZbnQuQJgpdP6L0EamU7hWP1eUAxVtbxk+
+ gNUAvIqx5OlFA94u3Bpcwai7LGzoqivCNy+FU6yqJmtacy2+7xRemadjVJyxzmBiU+ciBk0pWzW
+ Xc5lyH5vKrS1WIYAk81t3sVSOdcpkRpFSR8ycFzR9b6escAXUPsXmMfiq2K8CpMjiGhK7vxkflt
+ uCYc9H64eFWz5z2NX0WFo5w2hHHJm7NQBwvCCSzcVG7I5xGB53BMfd7G5Y1nJKMwz94r7FNOYg2
+ jWu9vrzqFw2+eRdQxC39AagVvT8gboHUd8uCt/gqSyVI/Ndi5kGtpBkO++rljS+Er0P6xl1rbpI
+ /YHi/hQ8Z5v+1jUzgAA==
+X-Proofpoint-GUID: seFQ5tEEOOWtJS_RQMlodnPGe0_z3_Vv
+X-Authority-Analysis: v=2.4 cv=TPdIilla c=1 sm=1 tr=0 ts=69c3760b cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=jiCTI4zE5U7BLdzWsZGv:22 a=o5oIOnhZENCTenyL_yNV:22 a=yPCof4ZbAAAA:8
+ a=UEHRISqDphSmfm_4Y50A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: seFQ5tEEOOWtJS_RQMlodnPGe0_z3_Vv
 
-> > Add the missing pci_ecam_free() call to properly release the allocated
-> > ECAM configuration window on this error path.
-=E2=80=A6
-> Applied, thanks!
->=20
-> [1/1] PCI: sky1: Fix missing cleanup of ECAM config on probe failure
->       commit: 72e76b63d6ff6d1f96acccbfc6c118656f63e66a
+regmap_config.max_register is supposed to store the highest valid
+register but this driver assigns the number of registers
+INA2XX_MAX_REGISTERS is 8, the highest valid register address is 7.
 
-Can the application of another goto chain become more desirable for
-the implementation of the function =E2=80=9Csky1_pcie_probe=E2=80=9D?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv7.0-rc5#n526
+Fix this by subtracting 1 so max_register is inclusive.
 
-Regards,
-Markus
+Fixes: c43a102e67db ("iio: ina2xx: add support for TI INA2xx Power Monitors")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+Found by static analysis using smatch, code review and guess work.
+NOT TESTED.  Please review carefully!
+---
+ drivers/iio/adc/ina2xx-adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
+index 857e1b69d6cd..d200b8e87839 100644
+--- a/drivers/iio/adc/ina2xx-adc.c
++++ b/drivers/iio/adc/ina2xx-adc.c
+@@ -116,7 +116,7 @@ static inline bool is_signed_reg(unsigned int reg)
+ static const struct regmap_config ina2xx_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 16,
+-	.max_register = INA2XX_MAX_REGISTERS,
++	.max_register = INA2XX_MAX_REGISTERS - 1,
+ 	.writeable_reg = ina2xx_is_writeable_reg,
+ 	.volatile_reg = ina2xx_is_volatile_reg,
+ };
+-- 
+2.50.1
+
