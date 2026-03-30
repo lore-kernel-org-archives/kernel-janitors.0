@@ -1,133 +1,143 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543903B6363
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 12:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19C23D5241
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 13:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774875096; cv=none; b=gl3trCnQlVIfKAoTsg7yuAl/RMw/nNdrYEd+vh4lWkH6bKn2vYpC4IweliP0CKcNPasIgrcoqGqayTmnVCdvERleOROA/3IGwF6LSn7FcxdazhgGu58ezDBDYCZLzFrErophFlGjI0w2U95xm2ovgf8cqZM9kiqXMjwK0nifOZY=
+	t=1774878454; cv=none; b=YsX/7lCWUcnlFZwRNlsX+diBXK1VihvO0JSTtMMT7/Ei9cfLBi07MAF0kiaOQPX4oKSI9mKOX0GlS3kOOyBPbHktLHjGmu2Dfmk840gm1rECFoIPf/H2js2Rc4haCpGS0LQJrmSGMKZifo+g2OHPZIC3zIxpTfmT46NYMsyGzSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774875096; c=relaxed/simple;
-	bh=dFU7eDeg8xFC7NnSsbiUif4srtnlzOtbXD27lfj0wgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnnW0kfP2cEwC45JNytjiSnoT1UDuXKI0xHQ+w88WlxDquxwNE1Z8GQW8TUKsEYKufrteEG4t5lGF1NOwt2rodc20z7k5NsLnuVCd6I+p1qJaNZ/VmLRDeYrEIcU4mXx43y84ZzqFPY4HFk0F65mbRANU41RhO1x+C/jTi8so08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGMFbXIh; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774878454; c=relaxed/simple;
+	bh=iez5XejcHCsHzAA5JuGvLNAcxqGlpMKj9Hul+hbrels=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dyYvft43Fv1mGl01htjFCcsILxsosWGShRQEWTtopDi7SX067D5+OkpHF0JEuGvD66pjRGRtz+QUFBuTQc5sIqr3HXX8wHTqIs92MzzaeBAml6j45IeUiU6l1DxQTwbG9/AlgK6G6r1OXwdgTNSeVwv7iSYFdQqlDFxCFr9v97Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=x4iU61yG; arc=none smtp.client-ip=199.212.143.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGMFbXIh"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5a2b383cefaso1889191e87.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 05:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774875094; x=1775479894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q7x/oKLAJLt5Dcv5IjeqmvpGsInA1DnzID4mwJflJU0=;
-        b=gGMFbXIhZDrg3HrbachQdC9BYpXTL7C2mRVi8qS0tIUTcrlqLFrsICRJ0QClBhNZ2Q
-         R++Hs6gz7+FAOlyLOX9FW02+C24VhPJni/VEIxHjM9LUVZynn+XWF+aGoMAFDBZLEqjm
-         3S0vLgV49yQE4n4JT8PZmuIgQKVZUKENj4Ls4GTEd2qfg9K+tWSAhxM214kY0ZSAWJXW
-         j7hk3iIf+J+g8E6hDn3WYQuyekm3AjWSjIkJ3Lb7e/Yyg2wz5Ypjexd8psi9iCuNq3T3
-         NLmyt7kr+xUMoMY2JGoJ+wCOED8nrvkmSt+6OjNZI5Mqhy+X5F1EI9qvWCZ+ijQQuIKl
-         tGAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774875094; x=1775479894;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q7x/oKLAJLt5Dcv5IjeqmvpGsInA1DnzID4mwJflJU0=;
-        b=jCc1nbTLg11B0/Gw+Sybr7eN7+E7yNAGUZuUURha2jpAqJGjpTMbRGqpaLAgj921Jq
-         6ZH0pUaAZ9ra55SUXT3ldGx9/N7AJOj2MvIbAXQvRs8nzgTFueWLxhubb6lHMx5Pg2hu
-         zpHIrAs7u8kMM9p/idvFT9jIISZsswIbPiLmVmlV11YOhGr7eWwrupPTkrp6azFKI08D
-         0JRypo5Pa+TQ4utbCOl+6rhQQh9wPZplBCJ8EfxlTIOLY2nJ4Pvu9ObMf6k/HA9i0xEG
-         u0u2wMMFld7rsLaIT1z0rLAHNz19dYA3pCQ3hRO2ILJtlIaVVwFqhdn/alosWHelhy5U
-         YzLw==
-X-Gm-Message-State: AOJu0YwEyUICv2ctwV85jLxHcSIFPD/foFM92IqZwOiFiFhmt6rH8dVo
-	kFzazyZVsQYGZOk9ay85WLXBFKHREM73u4AWMLAs0VSJEF6mB57tXi4zJtdYXA==
-X-Gm-Gg: ATEYQzzHVwwiN8Qi6MvR5LDj3ZBrxeNtYKiUDHW9KiwMGvWdq8nOOEW8k6PeSdoY9L6
-	CT+Gs37QX888kQhmp0phDwhdRuKon1zXtSQYbrFGlY29Z2jHJ/MHp3dmfTcaBjmnZwi81QYXHem
-	p49jZDGTY7d6DbHP9KwyWKk+xLnaAnhxbboqwcyf7r5WMt9TVa/5eSsfB75eBtxx80C6DN4366+
-	/afrQ5n5LVqq/xkBP2iHu5oDwnwq1f7DBSinOyoY5o29xe8jt2bKiWbEyqyXZTnFRo9VE7WZjGQ
-	mFQjkRZMJZcCZC0l5KelD7vYuwYK33o9x303Ox4l+7PdopWW9FkK0c7sDyssE/V9hNvl2vnH23F
-	WNX4yBYx2YH+6yVYw9Q9h7c+s+FMN7mR+jW6k64WBqJhpul23R5Xto8nuNOV+ffK+7l3eI0pEzx
-	wijBArYEzuscBWGnDST+28eW7uGvFCir3JX7APVEDXtzOtpEfp7+RNQQze+dvufA==
-X-Received: by 2002:a05:6512:31d2:b0:5a2:874e:8a1e with SMTP id 2adb3069b0e04-5a2ab92104emr4870775e87.26.1774875093200;
-        Mon, 30 Mar 2026 05:51:33 -0700 (PDT)
-Received: from localhost (c188-150-77-196.bredband.tele2.se. [188.150.77.196])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2b145eff6sm1634333e87.76.2026.03.30.05.51.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 05:51:32 -0700 (PDT)
-Date: Mon, 30 Mar 2026 14:51:32 +0200
-From: Linus Probert <linus.probert@gmail.com>
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="x4iU61yG"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
+	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PNHCzMc6hPVbaW6FIt4WygkEcKJwSMAnaN8A59MhpXs=; b=x4iU61yG8CPSp+cpflQYKiRdSQ
+	7WPTBtKzjqSL/3iycy5o+2CTuDuqJSH7K8CGREI2w91FPO7YgmRaX2nkI1WjPhvxIo/fqTMeIwHs0
+	piJ1FydrsM4iVI1NDtwxbY5HnS5NGqfMDJo8N4FPwzkZID1JfltFYd5w2FWwwgatr4kTVkK9aT8AJ
+	JS+zOjvSCllIrKobojqC0firy7/qfPNrLycfeF+spPR/ygDo0shzHNUM+3qDhq5qY9f7DTMWC5Ddu
+	bf/Uu76n65tdu+kQWfuNXwm2L7yJG+FcW9UB/rYDYwGnuUmuMEWeoRZ5+cyqIox9WtRxOqB+KlkuR
+	XWG1TLhw==;
+Received: from [147.129.179.166] (port=54268 helo=rday)
+	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.1)
+	(envelope-from <rpjday@crashcourse.ca>)
+	id 1w7CdX-00000000jpx-1GzI;
+	Mon, 30 Mar 2026 09:26:36 -0400
+Date: Mon, 30 Mar 2026 09:27:25 -0400 (EDT)
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+To: Linus Probert <linus.probert@gmail.com>
+cc: kernel-janitors@vger.kernel.org
 Subject: Re: Status of kernel-janitors?
-Message-ID: <acpv7KIJiSnMcfvP@mosquito>
-Mail-Followup-To: Dan Carpenter <error27@gmail.com>, 
-	kernel-janitors@vger.kernel.org
+In-Reply-To: <acpeJQEPtDKQ68uo@mosquito>
+Message-ID: <e25aa771-d3d2-4b93-31b8-15576e1d9512@crashcourse.ca>
 References: <acpeJQEPtDKQ68uo@mosquito>
- <acprxrESPr1hnXkr@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acprxrESPr1hnXkr@stanley.mountain>
+Content-Type: text/plain; charset=US-ASCII
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - crashcourse.ca
+X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Mon, Mar 30, 2026 at 03:25:42PM +0300, Dan Carpenter wrote:
-> On Mon, Mar 30, 2026 at 02:10:49PM +0200, Linus Probert wrote:
-> > Hello,
-> > 
-> > I've been a long time builder and fiddler of kernel source. Running
-> > self-compiled kernels and pulling in patches before official release
-> > etc. Bog standard for most of you I assume.
-> > 
-> > I'd love to dedicate some spare to help the project. Like so many
-> > others.
-> > 
-> > The kernel-janoitors "project" does pop up in various resources such as
-> > kernelnewbies and I think it might have been mentioned in one of the
-> > Linux Foundations free courses. But links to potential homepages seem to
-> > be dead and resources are sometimes dated.
-> > 
-> > I read somewhere that this has mostly evolved into janitorial work in
-> > drivers/staging. TODOs were mentioned.
-> > 
-> > So the actual question. In my mind janitorial code work is a good place
-> > to dip ones toes when starting out. Is this the right mailing list to
-> > ask about such things? Any suggestions to find an area where ones
-> > assistance would be welcome?
-> > 
-> 
-> Starting in driver/staging is good advice.
+On Mon, 30 Mar 2026, Linus Probert wrote:
 
-I'll start looking around there then. Seems to be a good amount of TODO
-files in there. Close to 1-to-1.
+> Hello,
+>
+> I've been a long time builder and fiddler of kernel source. Running
+> self-compiled kernels and pulling in patches before official release
+> etc. Bog standard for most of you I assume.
+>
+> I'd love to dedicate some spare to help the project. Like so many
+> others.
+>
+> The kernel-janoitors "project" does pop up in various resources such as
+> kernelnewbies and I think it might have been mentioned in one of the
+> Linux Foundations free courses. But links to potential homepages seem to
+> be dead and resources are sometimes dated.
+>
+> I read somewhere that this has mostly evolved into janitorial work in
+> drivers/staging. TODOs were mentioned.
+>
+> So the actual question. In my mind janitorial code work is a good place
+> to dip ones toes when starting out. Is this the right mailing list to
+> ask about such things? Any suggestions to find an area where ones
+> assistance would be welcome?
+>
+> I'm aware of checkpatch.pl but for many drivers diverging from these
+> rules seem intentional and just blindly fixing checkpatch warnings are
+> not helpful to the maintainer.
+> Open source is a lot of work so the goal would be to be helpful while
+> not stealing too much attention from concerned parties.
 
-> > I'm aware of checkpatch.pl but for many drivers diverging from these
-> > rules seem intentional and just blindly fixing checkpatch warnings are
-> > not helpful to the maintainer.
-> 
-> Yeah.  After a while, you're left with only false positives or
-> we introduced new rules and the old code is sort of grandfathered
-> and the maintainers wouldn't appreciate an update.
-> 
-> > Open source is a lot of work so the goal would be to be helpful while
-> > not stealing too much attention from concerned parties.
-> 
-> I tried to introduce the concept of, if you have an idea but don't
-> have the time to implement it right away, then write KTODO in your
-> email so people can search for that and get a list of ideas but it
-> hasn't really caught on.
+  I mention this once in a while ... *many* years ago, I wrote some
+admittedly hacky scripts that scanned the kernel source tree looking
+for what I considered "obvious" cleanups. One of those cleanups was to
+abbreviate the numerous calculations of the length of an array
+sprinkled throughout the source code, so I wrote a script that can be
+run from the top of the kernel source tree and can take an argument of
+which subdirectory to examine, looking for a particular regular
+expression that I can barely recognize anymore:
 
-A pity that didn't catch on. Could have served as a good stepping stone
-to get some young blood into the project.
+  #!/bin/sh
+  DIR=${1-.}
+  grep -Er "sizeof ?\(?([^\)]+)\)? ?/ ?sizeof ?\(?.*\1.*" ${DIR}
 
-> regards,
-> dan carpenter
-> 
+For example, if I run:
 
-Thank you for the quick reply.
+  $ arraysize.sh drivers/gpu/drm
+
+I get the output:
+
+drivers/gpu/drm/xe/xe_guc_hxg_helpers.h:#define hxg_sizeof(T)	(sizeof(T) / sizeof(u32) + BUILD_BUG_ON_ZERO(sizeof(T) % sizeof(u32)))
+drivers/gpu/drm/nouveau/nvif/fifo.c:	a->m.count = sizeof(a->v) / sizeof(a->v.runlists);
+drivers/gpu/drm/amd/display/dc/mpc/dcn30/dcn30_mpc.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+drivers/gpu/drm/amd/display/dc/mpc/dcn20/dcn20_mpc.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+drivers/gpu/drm/amd/display/dc/dpp/dcn10/dcn10_dpp_cm.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+drivers/gpu/drm/amd/display/dc/dpp/dcn10/dcn10_dpp_cm.c:	int arr_size = sizeof(dpp_input_csc_matrix)/sizeof(struct dpp_input_csc_matrix);
+drivers/gpu/drm/amd/display/dc/dpp/dcn30/dcn30_dpp.c:	int arr_size = sizeof(dpp_input_csc_matrix)/sizeof(struct dpp_input_csc_matrix);
+drivers/gpu/drm/amd/display/dc/dpp/dcn20/dcn20_dpp_cm.c:	int arr_size = sizeof(dpp_input_csc_matrix)/sizeof(struct dpp_input_csc_matrix);
+drivers/gpu/drm/amd/display/dc/dpp/dcn401/dcn401_dpp_cm.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+drivers/gpu/drm/amd/display/dc/dpp/dcn401/dcn401_dpp_cm.c:	int arr_size = sizeof(dpp_input_csc_matrix) / sizeof(struct dpp_input_csc_matrix);
+drivers/gpu/drm/amd/display/dc/dce110/dce110_opp_csc_v.c:	int arr_size = sizeof(input_csc_matrix)/sizeof(struct input_csc_matrix);
+drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c:	table_size = sizeof(qp_table_##mode##_##bpc##bpc_##max)/sizeof(*qp_table_##mode##_##bpc##bpc_##max); \
+drivers/gpu/drm/amd/display/dc/dml/dcn20/dcn20_fpu.c:	for (k = 0; k < sizeof(wb_arb_params->cli_watermark)/sizeof(wb_arb_params->cli_watermark[0]); k++) {
+drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+Note the number of places in that subsystem which calculate the length
+of an array; much of that can be abbreviated by now taking advantage
+of the kernel header file include/linux/array_size.h (only relevant
+line shown here):
+
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
+__must_be_array(arr))
+
+That would seem to be obvious janitor work -- simplifying code a
+subsystem at a time (do *not* try to submit a single patch that
+covers the entire source tree).
+
+  I have other examples, I should clean them up and post them.
+
+rday
+
