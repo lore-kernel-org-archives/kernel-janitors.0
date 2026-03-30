@@ -1,68 +1,68 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39383B47D9
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 09:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24574315F
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 12:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774863367; cv=none; b=uZw9zl0v43/UaB57LT1aZ6kGlwN0fWPFsEtGDLpvRnaPxV+3uGGBZr3hFn9VrdGdv4Q1AJ6Jq4yf+jz109ZchVqSnxAWRNY5MhUAx+IofrY8/a+crRnbKOL+fXrMVTYI8ye+VH0Kqn1XUw0+g3vijFRxmGvUBHAg91DKHQUb+F4=
+	t=1774872655; cv=none; b=dfjqiB3K/Mze/4egG5wIy3UTcGdm4GibTDfo6aNQNX+DjEMuGVxpK9GDxOofiy/ohK2TWBZ95JijpCwFvRr40qyu8AvcgBVjiUkKC//T2mhoCvLlRE87BZRdDtDFDS88cU2f12dxa8QQya2Pq7VPUZRAcaEag/GSuQs+m2oUFDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774863367; c=relaxed/simple;
-	bh=IGxp/rqI38tyUsvOysuytbAr+H9oKCSZ8vNvt2yXXrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJXqU4EAjGvinzVn7FuoZ5vMwd5r5hhrR2zUmTdTPSjgJXKk30mhueyjP02scCEdofq9o3jiPNbjAkVHBdoeDDGCRQIr6VtmDFouu4Ndnhmt4uIIZh3aSBlqPPU8tWeegc7yjI2SGtsMFjnkQt+QzzlhX3Twi9pfia183PM99Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtfVvS+a; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1774872655; c=relaxed/simple;
+	bh=JsCm1/xPfnNaQnETgfqz9hxlLfjLgnC+cbFTHpTa+Is=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qDgoa+2JByQs6zsCjvVrg9PcEZk6L943ZKjYSgtVZRkMkqZZthiTFKQpzeAXK//5QyHZi35Fzlbp9yhwkn/UhPEY2aWmbfFgOPxYlaTW38yReCNYlGg4HyScaDj2AZwpAd267FH1kqF7w8dxRQv/tTy0xT8UhnN/XSBM7cqPROQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaajqP+x; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtfVvS+a"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b79f8f7ea43so832104166b.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 02:36:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaajqP+x"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5a12c19affeso7531581e87.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 05:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774863364; x=1775468164; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cGOT0YD066IlL0iTHorc+otlHQeCNtqJmMfEev18gTY=;
-        b=OtfVvS+a0C82nZ1K+psfpWHIj21BSTVvdEIk7qpadjycyLn2koySMgcWTiB4bJc28H
-         PktSeDaZKZN4tfSGgGzzovWPrmuvZTvudbXMlIDLTgHzrztdqlsvrsamAGN8jE1e4h60
-         EVe09rGQw5XgtfH4DYjtDxwjeNPmIxjKGRm3CAkdFQQ/EtXkeTn79PjWNhyq4HJOt86k
-         zL/VtuyKQeI+1dxFUpBkBEz12ZDCRthOR8VqejW/5glAfVc+LSkaZvrlq86LLSs7v2zd
-         yZD8cWT8WWclpGeT85iETXYrE27N5G0j3BRWwC0ks6lkidfyIcIN2Qs7gwvZuvgqTAKV
-         dZ7w==
+        d=gmail.com; s=20251104; t=1774872651; x=1775477451; darn=vger.kernel.org;
+        h=content-disposition:mime-version:mail-followup-to:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsCm1/xPfnNaQnETgfqz9hxlLfjLgnC+cbFTHpTa+Is=;
+        b=CaajqP+xnRBjpCBHkIvhgmz/NUAt9bD3SXQlzRamQm8P8Dpmpx4KjmnRS2Nyh6uJlJ
+         uRWt8w27fJwpIEzwdhBHIYpxVZbo1LRp6mbLz0tiLPfk4WpiT5lEFjOFSTkM3kjervV2
+         5cQcrPMnt9sWcjd6PUMjt4nMXJ52OBeVseTzGhka9xR5l2pBFVwzQJNe8VclKcTr2hdG
+         j/gymTdK79q1qsRYkRUS/VtfZMeSZBx64LWeMa0HPAShTCeihH/bihRtRn0wb698xnVw
+         uWKdt7yIqYPtEP+nYscAfkDSXEtXJzf7glY8BtqTlAD2zmp5OISCnTR8ic2pFJSMLn/s
+         rovQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774863364; x=1775468164;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cGOT0YD066IlL0iTHorc+otlHQeCNtqJmMfEev18gTY=;
-        b=bU764tKKqgyus/7OkxwXqaqH31jEKewHOwa2UsXv85y7n/N60+PZv2PxNtJUjYhMQV
-         lunMkzxsDZmBptV5kP3837QuxPpl6lU/IGHWOJnfcyzw/+t58jbHHngKPwQAhi51oWjs
-         wXIAwW9oEakGSLWaGBYDynucTQXSD3sNoZWwEqpKcZQJ03AtLL5K+nTEXXRL0RPfApzB
-         VgXtjNhDc6Qv6dz0jjnc879H9lgf4Kv/1GogPaSkYpggRBboFBvB+3TmIqAS13kS4HFO
-         jMYzT6PmT1aoUFPHMgWpnWE8HT/ou9FME56y3tObkzsg6bPUGWX1BZOARid0Rj24IgXD
-         sCKA==
-X-Gm-Message-State: AOJu0Yw+kzj/qy9yeBwo10E953NW+jrfMv5cHpgHYlzJPZzjCpM/KHj/
-	tTXFb54Rofg7bXCaKnlKNrW90klVXgarm7pfycPNAo6U0DgiUMl6vUqc
-X-Gm-Gg: ATEYQzzec3kwjFJrm1067LD77ywhbU9fb0URDh5L53LrXXbgLbS2iJ/lCBctWaXmRPv
-	7ePbpnRz2YCDwfIUO/krJpPh1sVVVKSJkQHePTP4YzKDsnq6q8dy8G6RDk4CTNgJeusg9971ajo
-	GdX5wqkJudIORLL/KMXuySCmrPc+01nhbIWe6YTbha3++33eZUkCrzZdCqwGI4OSpb7NTrWjpeR
-	2sd930idtrrm6go0FY+2GitT2uNNg11yoRGctCz4w3XRE0q3ObjB4yRcnbcgXanph5WftqE5RBD
-	THJskcSCWBQO7NfceMbiD+pq+/UO4ifmJ3p2YbKSOGog9Zu1WQEj0NJXq3jNfMgO8WaMlrz7a0n
-	RjhWFHxU9mtDh1x9CS1tHttHpnsU/1GsX9JvMAZMgvL2yC87C2zip+2BM2JOMzWY5aPSTCkdCYp
-	YQHUXL9xxVa3XPd9OVmMHkHaZ6adv3og==
-X-Received: by 2002:a17:907:c312:b0:b99:7697:76cb with SMTP id a640c23a62f3a-b9b507a7556mr630119766b.35.1774863364189;
-        Mon, 30 Mar 2026 02:36:04 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9b7b1e3aeesm268091166b.48.2026.03.30.02.36.01
+        d=1e100.net; s=20251104; t=1774872651; x=1775477451;
+        h=content-disposition:mime-version:mail-followup-to:message-id
+         :subject:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JsCm1/xPfnNaQnETgfqz9hxlLfjLgnC+cbFTHpTa+Is=;
+        b=quNwua7Vl9nhMPIZkHEQ8ZwllCB+sCo/NR7T5ajHe0A0zvE5Ma3geptxT7BR1FPTop
+         uTzGiCaVbujYWJtnXQHbb3uv4UeDVKN5lgBz0eICvzumVbNuVScYvcym/zGEckH/h6vh
+         R2Jgf2ZCcs7HbKO2ng0v8jAFOFFaK+Ob85XAqrGZCHzy94GSbWZsbzeC6J4cMK1JWzsw
+         V4+1nYDMXdk11kb704vr1tTZZY32YGeVloGmU16F5yeVWqqzq7sZaMp+4m6PutdcM1gp
+         Pv1v3GyYCTgo7LNuf7d/B4VyIbIcJYSndQkgVqimn0rpNOscntgBVaxHuEDiBEFOMUX9
+         nFmQ==
+X-Gm-Message-State: AOJu0YziXn3KFc2rHK9oLkFzNmyL9dDC6hGjRW26a1BgZg5sSda3pOh8
+	IJfsapSBx6b/5dQQxT2OcFfDoZnFc8GM7BrIRHaU1jBZoLZtc5jtoDww+Pozcg==
+X-Gm-Gg: ATEYQzzBb8zpFhgagn3ZbI0VcWeXwJwQmQoymX3cQcidvvo/h7MjuPZjyjrZjsW3MLz
+	Lw7fHf0pWErCezXaTFEeaIpKQfBoFmovjMKOu0X3gaLilnvKa+sEsX61QicEcPqjdFREWD7764n
+	PoztvA3ky7AIQ/gtDpyiQcAD71GrDmnQKsyMncvWRUssP/M5fS2F6fYgDzYnGyNn8KMF663n+GE
+	Ecq++FItqzHChfRoBBku7L08iPC8TD4k1aOb7Sk8924YZDi0olAcwP0Lt7CYNuCgSzS1NHyQKMR
+	gMeaGjWhj4z+Lfyf18RZnoxA0eINu/wusNz5eD37iPHJfbkzPXmGkWsg0RLkQtYMxwZZslVN6Js
+	pfFVkBIBDJe4RL8R6fiv7lsCxhCsD2Qqsr5gWqKHIcruJ5grs/CLH/f/IH5udEUKC+r0alVMpj8
+	859KoBB9WR7pMvWrLpZjGq+ULb9stIWyOQbkTQv6PY89y5LPcIJBu2+/JJnC9gzAnl9fKfjQWI
+X-Received: by 2002:a05:6512:3e04:b0:5a2:a3da:fad7 with SMTP id 2adb3069b0e04-5a2abc3ee64mr3599915e87.2.1774872651260;
+        Mon, 30 Mar 2026 05:10:51 -0700 (PDT)
+Received: from localhost (c188-150-77-196.bredband.tele2.se. [188.150.77.196])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2b140ae35sm1623861e87.36.2026.03.30.05.10.50
+        for <kernel-janitors@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 02:36:02 -0700 (PDT)
-Date: Mon, 30 Mar 2026 12:35:59 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Adrian McMenamin <adrianmcmenamin@gmail.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Ensure Dreamcast VMU code keeps building
-Message-ID: <acbc0m-O97qdc6Z6@stanley.mountain>
-References: <CACwZE5SJiHmoufCMAP5pJtRn=LRN9Jp3=zSh2j0UoUikwVKr-g@mail.gmail.com>
+        Mon, 30 Mar 2026 05:10:50 -0700 (PDT)
+Date: Mon, 30 Mar 2026 14:10:49 +0200
+From: Linus Probert <linus.probert@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Subject: Status of kernel-janitors?
+Message-ID: <acpeJQEPtDKQ68uo@mosquito>
+Mail-Followup-To: kernel-janitors@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,28 +71,34 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACwZE5SJiHmoufCMAP5pJtRn=LRN9Jp3=zSh2j0UoUikwVKr-g@mail.gmail.com>
 
-git log --oneline drivers/mtd/maps/vmu-flash.c  | head
+Hello,
 
-The subsystem prefix for this file is "mtd: maps: vmu-flash:".
+I've been a long time builder and fiddler of kernel source. Running
+self-compiled kernels and pulling in patches before official release
+etc. Bog standard for most of you I assume.
 
-I wouldn't normally nit-pick, but you're going to need to resend this
-anyay.  A better subject would be:
+I'd love to dedicate some spare to help the project. Like so many
+others.
 
-[PATCH] mtd: maps: vmu-flash: include device.h explicitly
+The kernel-janoitors "project" does pop up in various resources such as
+kernelnewbies and I think it might have been mentioned in one of the
+Linux Foundations free courses. But links to potential homepages seem to
+be dead and resources are sometimes dated.
 
-On Fri, Mar 27, 2026 at 06:12:30PM +0000, Adrian McMenamin wrote:
-> Make necessary include explicit
+I read somewhere that this has mostly evolved into janitorial work in
+drivers/staging. TODOs were mentioned.
 
-Add a period on the end of the sentence.
+So the actual question. In my mind janitorial code work is a good place
+to dip ones toes when starting out. Is this the right mailing list to
+ask about such things? Any suggestions to find an area where ones
+assistance would be welcome?
 
-Why is the include necessary?  There isn't enough context in the
-diff to see and I don't want to spend time figuring it out myself.
+I'm aware of checkpatch.pl but for many drivers diverging from these
+rules seem intentional and just blindly fixing checkpatch warnings are
+not helpful to the maintainer.
+Open source is a lot of work so the goal would be to be helpful while
+not stealing too much attention from concerned parties.
 
-When you resend, send it to the people from:
-./scripts/get_maintainer.pl -f drivers/mtd/maps/vmu-flash.c
-
-regards,
-dan carpenter
-
+Br,
+Linus Probert
