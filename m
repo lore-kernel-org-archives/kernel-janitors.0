@@ -1,47 +1,44 @@
 Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC6E2E285C
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Mar 2026 21:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4243A3ACF15
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Mar 2026 11:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774904930; cv=none; b=segy/B6ZK6XRW1CsJaYCvfXSCSCY2fOJNhMvp/e7PJrLkiYFguVxJtkD0vhCntLIRdDzHJkHc0wtc9SEO1PUxbp6o9w96Ln2i4QkBTfNAyhzV06tVD8RLQwRH3tzLVcEN6KVUi1WcVxb043dBNKv0ypKKVUWFdNUKVa7lo4S6Ro=
+	t=1774957695; cv=none; b=nTi/4Px13IjxFmpca4mvG4Nf3zintk0EdXVEoW/b4jsktPWY+gaBUxlVYQPmyAl1vTR1mOiiIJKjn14ukbQrtycXepI9GBPFQvlIg+dAOM2tfQCKkVWJc9UxGK5ybWefKP8MgiaYxPRls+Ajr3NnGWZhEHOL5NFd7dXcPYa1S88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774904930; c=relaxed/simple;
-	bh=h6jX7B0TIi72AAyByIJLydTYvyq8FOA8/NZpjMggoYs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=o8WdZ0D3kCYeoHGQMANy5dFO0Z4kpup9MVj1M9NYraJ2yTG3gy86FMA3F5u66yt9V3OVOf04xx+azyit6mqQA5c2mPqNXhwzNqVotvcwSZS2HjHrRU3T0HRkqJlEbsd8n5Xi8nEpbFhIfjneJkvZyuXigfCAx5eB8EUUkHPPbDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=Nwn/jSYN; arc=none smtp.client-ip=199.212.143.9
+	s=arc-20240116; t=1774957695; c=relaxed/simple;
+	bh=kb3dmRrdjEc0vozXKRM+YpwyCulKU+mbnoEmFwDDaGk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=RSvu+heImgd8iLzmmmXwJYk+cK4MW7ppduIgP98oI4lvNilTEedB/w3o06i2VytO+PvysYJAU1eSEpBhP4HoLbDheVihPbs5D96ryx/OVeHHESWnmMQE01fxUttTWdwQA0Xf1ZOBnqntnqZPELp7uVt1sFQB/TFLNwvE6iHQzpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=y6oCB4YL; arc=none smtp.client-ip=199.212.143.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="Nwn/jSYN"
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="y6oCB4YL"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
-	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1b3vV57Hezpk5YkxyWZbkHMw1GD/cPyTvRkEd2To3mI=; b=Nwn/jSYNbgYTQs1Y81QsgaYZ0L
-	rOniCfdgp9xsRLnbeFN1Q1g+Nrjuoo0B4JClPylmCMR0AB8SBd/CqhCbJqScfACAvylkEPMPa6dr6
-	cm108gZXTYBuAozsAJo8aB0GANej8ByewjHNlrhN9gfqo4dcCt6iesQULxk4K6/+G7ED0rUBXvtF+
-	fe8u57KmzvsuFXKk8rcn8yhBetXHZziTEMFOLnt7cWztZTJqFtiiCxrId/1RbXcGmuT5pTfQAmOoe
-	vkLQNWzljdaflgRmuRTUeXVKmcHF0O+lrtaez9K5qVspyZAH1osEcJ4+ka+EadSaOWeqx/OdiP0sr
-	HJPb7ifg==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:47172 helo=rday)
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yioqD31UswXkYo7PMEJWxeds8F5h4BKKSwKFl8D0rCM=; b=y6oCB4YLGtodqlWfhPO/ccni7A
+	SHlqzs0OK9BALvxUWPZvXLYaPHGG7KvQqD4mI7Cpwft7OoZvLvGdscISDDjE41of/bCkKg9EgVsg7
+	mvOwNX3twmYzeyiYFcIZ/diIxMF7M+U1AVLXl0gZ0uxs4JnPmC+c5+uaHdFZWQtCpEojifeHBCz42
+	mKQe/Jf7V8YmyKjM1ku3BydL1hCGnkcziRMe7jf8tXU1TTo7sZp4X8XhRly6dgZ6/CaONshFRsWNl
+	dCLe3pKW4Yx9zx+Dietf5U2FSVtN8FGq8jO6n8QXsR7vF/O7Bctp94qIbdSbZ6ATq2PTxvdiCxd9q
+	2te+Oqqw==;
+Received: from [147.129.179.166] (port=57746 helo=rday)
 	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.99.1)
 	(envelope-from <rpjday@crashcourse.ca>)
-	id 1w7Jqn-000000021EO-2dTv;
-	Mon, 30 Mar 2026 17:08:46 -0400
-Date: Mon, 30 Mar 2026 17:09:31 -0400 (EDT)
+	id 1w7XZn-00000004LKW-3ZVF
+	for kernel-janitors@vger.kernel.org;
+	Tue, 31 Mar 2026 07:48:08 -0400
+Date: Tue, 31 Mar 2026 07:49:04 -0400 (EDT)
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Dan Carpenter <error27@gmail.com>
-cc: Linus Probert <linus.probert@gmail.com>, kernel-janitors@vger.kernel.org
-Subject: Re: Status of kernel-janitors?
-In-Reply-To: <acrhsqvXp4R-egW4@stanley.mountain>
-Message-ID: <4e4529f2-681b-00b2-1cef-36e50c1bc779@crashcourse.ca>
-References: <acpeJQEPtDKQ68uo@mosquito> <e25aa771-d3d2-4b93-31b8-15576e1d9512@crashcourse.ca> <acrhsqvXp4R-egW4@stanley.mountain>
+To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Subject: more potential janitor work: simplifying test for power of 2
+Message-ID: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -60,50 +57,84 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Mon, 30 Mar 2026, Dan Carpenter wrote:
 
-> On Mon, Mar 30, 2026 at 09:27:25AM -0400, Robert P. J. Day wrote:
-> > On Mon, 30 Mar 2026, Linus Probert wrote:
-> >
-> > > Hello,
-> > >
-> > > I've been a long time builder and fiddler of kernel source. Running
-> > > self-compiled kernels and pulling in patches before official release
-> > > etc. Bog standard for most of you I assume.
-> > >
-> > > I'd love to dedicate some spare to help the project. Like so many
-> > > others.
-> > >
-> > > The kernel-janoitors "project" does pop up in various resources such as
-> > > kernelnewbies and I think it might have been mentioned in one of the
-> > > Linux Foundations free courses. But links to potential homepages seem to
-> > > be dead and resources are sometimes dated.
-> > >
-> > > I read somewhere that this has mostly evolved into janitorial work in
-> > > drivers/staging. TODOs were mentioned.
-> > >
-> > > So the actual question. In my mind janitorial code work is a good place
-> > > to dip ones toes when starting out. Is this the right mailing list to
-> > > ask about such things? Any suggestions to find an area where ones
-> > > assistance would be welcome?
-> > >
-> > > I'm aware of checkpatch.pl but for many drivers diverging from these
-> > > rules seem intentional and just blindly fixing checkpatch warnings are
-> > > not helpful to the maintainer.
-> > > Open source is a lot of work so the goal would be to be helpful while
-> > > not stealing too much attention from concerned parties.
-> >
-> >   I mention this once in a while ... *many* years ago, I wrote some
-> > admittedly hacky scripts that scanned the kernel source tree looking
-> > for what I considered "obvious" cleanups. One of those cleanups was to
-> > abbreviate the numerous calculations of the length of an array
-> > sprinkled throughout the source code,
->
-> There is a coccinelle check for this already.  I don't know why it
-> hasn't been done to NUM_ELEMENTS().
+  As another example of a cleanup script I wrote lo those many years
+ago, this one checked if someone was manually testing if a value was a
+power of two (do not make fun of my coding):
 
-  ah, i should have assumed there was a coccinelle check for that. in
-order to be truly comprehensive, maybe you really need to attack the
-problem with an ugly regex when the pretty stuff fails.
+#!/bin/sh
+
+DIR=${1-*}
+
+echo "PATTERN:     x & (x - 1):\n"
+grep -Ern "([^\(\)]+) ?\& ?\(\1 ?- ?1\)" ${DIR}
+echo "PATTERN:     x & ((x) - 1):\n"
+grep -Ern "([^\(\)]+) ?\& ?\(\(\1\) ?- ?1\)" ${DIR}
+echo "PATTERN:     (x) & (x - 1):\n"
+grep -Ern "\(([^\(\)]+)\) ?\& ?\(\1 ?- ?1\)" ${DIR}
+echo "PATTERN:     (x) & ((x) - 1):\n"
+grep -Ern "\(([^\(\)]+)\) ?\& ?\(\(\1\) ?- ?1\)" ${DIR}
+
+  As you can see, the typical hacky check was to test the value of
+some variant of "n & (n - 1)" to see if n was in fact a power of 2.
+Note that, when run from the top of the kernel source tree, you can
+focus the search on any subdirectory.  There is a ton of this sort of
+thing scattered throughout the kernel source; for example:
+
+$ test_for_power_of_2.sh drivers/net/ethernet
+PATTERN:     x & (x - 1):
+
+drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c:756:	if (eq->num_elem_in_pg & (eq->num_elem_in_pg - 1)) {
+drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c:456:	if (num_q_pages & (num_q_pages - 1)) {
+drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c:523:	if (q_depth & (q_depth - 1)) {
+drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c:620:	if (q_depth & (q_depth - 1)) {
+drivers/net/ethernet/huawei/hinic/hinic_hw_api_cmd.c:872:	if (attr->num_cells & (attr->num_cells - 1)) {
+drivers/net/ethernet/mellanox/mlx5/core/steering/hws/definer.c:691:	if (flags & (flags - 1))
+drivers/net/ethernet/mellanox/mlx5/core/steering/hws/definer.c:697:	if (flags & (flags - 1))
+drivers/net/ethernet/mellanox/mlx5/core/steering/hws/definer.c:702:	if (flags & (flags - 1))
+drivers/net/ethernet/mellanox/mlx5/core/steering/hws/definer.c:709:	if (flags & (flags - 1))
+drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_rule.c:680:		byte_mask = byte_mask & (byte_mask - 1);
+drivers/net/ethernet/mellanox/mlx5/core/lib/dm.c:163:	if (!length || (length & (length - 1)) ||
+drivers/net/ethernet/sfc/siena/siena_sriov.c:505:	return ((buf_count & (buf_count - 1)) || buf_count > max_buf_count);
+drivers/net/ethernet/sfc/siena/siena_sriov.c:956:	BUG_ON(vf->evq0_count & (vf->evq0_count - 1));
+drivers/net/ethernet/broadcom/bnxt/bnxt.c:4736:	while (pages & (pages - 1))
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:1230:#define POWER_OF_2(x)	((0 != x) && (0 == (x & (x-1))))
+drivers/net/ethernet/synopsys/dwc-xlgmac-common.c:110:	if (pdata->tx_desc_count & (pdata->tx_desc_count - 1)) {
+drivers/net/ethernet/synopsys/dwc-xlgmac-common.c:118:	if (pdata->rx_desc_count & (pdata->rx_desc_count - 1)) {
+drivers/net/ethernet/freescale/fman/fman_keygen.c:700:	if (hash_size == 0 || (hash_size & (hash_size - 1)) != 0) {
+drivers/net/ethernet/chelsio/cxgb4/sge.c:5094:	    (fl_large_pg & (fl_large_pg-1)) != 0) {
+drivers/net/ethernet/chelsio/cxgb4vf/sge.c:2649:	    (fl_large_pg & (fl_large_pg - 1)) != 0) {
+drivers/net/ethernet/chelsio/cxgb/cxgb2.c:657:		if (advertising & (advertising - 1))
+drivers/net/ethernet/emulex/benet/be.h:136:	BUG_ON(limit & (limit - 1));
+drivers/net/ethernet/intel/igc/igc_leds.c:156:	if (flags & (flags - 1))
+drivers/net/ethernet/intel/igc/igc_ethtool.c:1286:	    (rule->filter.match_flags & (rule->filter.match_flags - 1)))
+drivers/net/ethernet/intel/fm10k/fm10k_tlv.c:203:	if (!msg || !len || len > 8 || (len & (len - 1)))
+drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1917:	if ((table->mem_table.depth & (table->mem_table.depth - 1)) != 0) {
+PATTERN:     x & ((x) - 1):
+
+PATTERN:     (x) & (x - 1):
+
+PATTERN:     (x) & ((x) - 1):
+
+  This can be simplified using the kernel header file
+include/linux/log2.h, which defines the test using an exclusive-OR
+operation:
+
+/**
+ * is_power_of_2() - check if a value is a power of two
+ * @n: the value to check
+ *
+ * Determine whether some value is a power of two, where zero is
+ * *not* considered a power of two.
+ * Return: true if @n is a power of 2, otherwise false.
+ */
+static __always_inline __attribute__((const))
+bool is_power_of_2(unsigned long n)
+{
+	return n - 1 < (n ^ (n - 1));
+}
+
+  Lots of simplification there if one wants some janitor work; I don't
+see a coccinelle test for this.
 
 rday
