@@ -1,96 +1,81 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9AE3A16B0
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Apr 2026 12:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139663F7E93;
+	Wed,  1 Apr 2026 12:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775045771; cv=none; b=ZfrzpkqPO1CRqvSfmEucY9Poc2ZdwgjZOenJTn9o65bmtDgx3P8plqpsdAxBQbtiLTp3gK4Mre1pg9XK2gzfzH4s0yjixIZDjZL93FFcTnGZn+tBHodCV2nq1V2zSF1Nsxck546SSboDeW5HhRLdLrlO84vaxJH0fHmF+IRuDXI=
+	t=1775046549; cv=none; b=XnLd6OjYZG9rUMgXXxLblD8f/vbcod8qPGXLTE98exnLI5BJ90jm4R6KnQh9bPBpZQIYmONiMi1rT5OqNvZjWJBIaQ7DfJ1bu9Tmh1jNu0BzK91roxZsfrI+raAkGgeul+efIXMzQWzg95CvmJllFW67tc+N2KzNear+JpTy2KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775045771; c=relaxed/simple;
-	bh=3wxD6idGHQG4j4jBBXn3Maw8ufvro1T7/HQAf7AQIJQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=GfpSy8JPfthJ0WxRStMsoA0ih02GmrHXW/zdV4IrlBvk3Ofd6AL4YXBT7wnX1QTGgGRGmuI+clraXBHZ77TUPQn8hLi5kO5XPqiMMSD4BaFxuZ5ERAtge6lOf+qbpCqXl1syp6+UGeKTivxJBNcw8dxU8/lYminBVjvWdNykL/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ifBSQOUK; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1775046549; c=relaxed/simple;
+	bh=NvgNkEMAN52LEQ4N0hlij8TYcV+8I2cZgNeTB7K/fJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxQ5KWvO3vQOpnx+XmSwt3ZLpW5OIHhhXFkRXNrj5XZb6lYRabRkaw+HdB+cDlOiXZn5imsmcpFXpBc5BZn2jsKygEyMbZhDUnM++3l9xJKov3Ni3AfVD6poD1Dmt1d+YGkrAlt9bVsoMqez+qS+feF/mzI4CBMau8/goZtCrVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8A3xcAp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifBSQOUK"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-486fb14227cso90384195e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 01 Apr 2026 05:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775045768; x=1775650568; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c/6LdoeEC7FOnQ7VHBSbWi+v6Qmo2pyXOZ2k8FFbrpA=;
-        b=ifBSQOUKPwpzJ39i73x4yEEmVx5ROJRkxqoQTD989UKRIlEcijUCxO8e9L5h53q1V2
-         Wxrf38bVnoqtP/2i0iDW8Ywwr82WtnZKHSSL6JC9ZXhBpxiU5Njd85KPNCWeUiPhX6SS
-         qgbr3OnqOfGz+j8ICUceRZlrXGWhGPvxRYIp1Yr/GuKKUqK2URlJRCzOCTjmOk3hBgmJ
-         qGxkpqWQydY1in88Eh2AN7pWEM1JWs15rpKMG6MlUWBm3YKMQ5qik27ZjBW/upX8B5/m
-         +ih08Hs1irVHFoUnoyL3ItOi4XAMmilTp44W5WXA3zdD23YFUfLIVXy6E7Hd0H4x6/Q/
-         1BXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775045768; x=1775650568;
-        h=in-reply-to:references:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c/6LdoeEC7FOnQ7VHBSbWi+v6Qmo2pyXOZ2k8FFbrpA=;
-        b=Xz77E1lbpWjwAIxq4HZW2AV5+JQhmbkObbLOv9Ze+Nxa2drxVVFBWF7A42JfFFrlqd
-         ASib5o9Y0Q5r0dRaJs6oR6trO+Tz1TZIrzt2bh5w+wu89pvANvvqqGBb9GcmlLhAm3yD
-         F9eL7yQB++UFDZ9PWOT4N8NFG6xsXeZGNbEk0PfE5T+rJIdserCLfZzBWHtE6Z3/8ir3
-         OgrqQzdWAiA12FmUC+Jx5rCgNUe13PgUbHXrXdIrP9/DURTtZ+LCA6tWmgwTJYI20abH
-         elGcAozBeVD/Almq8QYM7MUPLm35guawB2ZZQ9tAZvuF/WtBc9h1xCUF8VbmSHJTx+NV
-         5JJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTK0wxroaFT7XPa3USYmh8UfXWKgxkZ0fOa3AIRzx2SpH+87GFP7kyySe6Vpj+im8Di22bUYvsx/2ddnNde88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxIgcsO4SpZYdcm09lPYnYA1HRQDEU2FSCk2Y7S3Ca3dfa+xJx
-	babC85vxzdn6mb0kyNe4MeENOIzFyADBuNwI3ceVzyzmV1Wf4/mCROeVMrS2S+PXn/g=
-X-Gm-Gg: ATEYQzwglwWJWgwY9jXztn1IXu711THSh4wGgxs2A6Wk5fV4AUXOmR4ZdV9hqEtYg2S
-	ds2ByJpmVgTMAmLqfbpWEhKHdzUpOifweUJ8X3UvjGP/7uZ1g39mLgoDZTxoCw1w6TPtTlTeJPi
-	x7kKT//Fusdj1CeEfaDv4BAX6ZN+/2buA8IooUUa8+lmUcv74IXnpTkI+MQU65WDg00tTWMg4PG
-	YJIFNiFDtbePio5IKYTid62+M/5Bsl9NN9l9FLUendcGAoxX+WKaF18hB6AXJhsgpk0hCtU2QDc
-	cIUDBrALzWDv4ZqHkdj32LtjL5co+RAh5WqyWfOniAZYI8fOw6EB4fyDGhTDd3bK8tufJ14wr9l
-	00Q9hHl//diA58TukDAvwf4KPuNLTcOkylt39pxBTj/DTh+TXMP+QVfar7TKiJ7qqF+k+bSEunL
-	qUE3VaAb2zBK1IasWsRsiPq7QhHrch+dPqGM3yajVcU/51k9Mi
-X-Received: by 2002:a05:600c:a406:b0:485:40fd:8390 with SMTP id 5b1f17b1804b1-488835ccc61mr43890645e9.26.1775045768376;
-        Wed, 01 Apr 2026 05:16:08 -0700 (PDT)
-Received: from localhost ([2a01:b740:1f:2d21:489f:54b4:5d16:4f39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887e82e669sm104677905e9.11.2026.04.01.05.16.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2026 05:16:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8A3xcAp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36036C4CEF7;
+	Wed,  1 Apr 2026 12:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775046548;
+	bh=NvgNkEMAN52LEQ4N0hlij8TYcV+8I2cZgNeTB7K/fJk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I8A3xcAp19J7C3Xq7hDDhs29w1fBgvrJxUzMTiATHfo83y6qixx/OtOlIz4gsNNlV
+	 t9kI+WT9osbrw3iPmqkHIYOCwn/ebzfsLhlrfPaXFUn/oW1KSUjkxUVeOTPwtsTlPw
+	 2UiLE0tfsSfbsVQMNC2mVZ0cMMZlOUdj2onG7DfhFbvSs0MloXFTNnQ/h8pXwmWWIl
+	 8ZJvkdtZeh06N9R1OUQd0tcEy5NNXfT8OoW+0al4pVaDhuqanGENKddGYG4ezBf0cm
+	 FgOOEyWAJ3f4fUF9T/4v1o1FeLGvElNCB5BPc0ucot+PO53jgRnUu0PWDVz/oNzGE9
+	 idVNg2ikk+cYQ==
+Date: Wed, 1 Apr 2026 17:59:01 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] scsi: ufs: ufs-qcom: Fix spelling mistake "retore"
+ -> "restore"
+Message-ID: <sfyaonr2izg2xynwuwh7xvxvn4jmml7talyp2ntx3asv3eoujq@ryi6p6sliwam>
+References: <20260331153049.1344957-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 01 Apr 2026 14:16:07 +0200
-Message-Id: <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com>
-Subject: Re: more potential janitor work: simplifying test for power of 2
-From: "Linus Probert" <linus.probert@gmail.com>
-To: "Robert P. J. Day" <rpjday@crashcourse.ca>, "Kernel Janitors List"
- <kernel-janitors@vger.kernel.org>
-X-Mailer: aerc 0.21.0
-References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca>
-In-Reply-To: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260331153049.1344957-1-colin.i.king@gmail.com>
 
-On Tue Mar 31, 2026 at 1:49 PM CEST, Robert P. J. Day wrote:
->
+On Tue, Mar 31, 2026 at 04:30:49PM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-[...]
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
 
->   Lots of simplification there if one wants some janitor work; I don't
-> see a coccinelle test for this.
+- Mani
 
-I'll definitely take a look.
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 5a58ffef3d27..bc037db46624 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -2810,7 +2810,7 @@ static int ufs_qcom_get_rx_fom(struct ufs_hba *hba,
+>  	/* Restore Power Mode. */
+>  	ret = ufshcd_change_power_mode(hba, &old_pwr_info, UFSHCD_PMC_POLICY_FORCE);
+>  	if (ret) {
+> -		dev_err(hba->dev, "%s: Failed to retore power mode to HS-G%u: %d\n",
+> +		dev_err(hba->dev, "%s: Failed to restore power mode to HS-G%u: %d\n",
+>  			__func__, old_pwr_info.gear_tx, ret);
+>  		return ret;
+>  	}
+> -- 
+> 2.53.0
+> 
 
-I've only ever used coccinelle, never written any scritps for it. But
-for these kinds of things, is it valuable to introduce such tests?
-
-Or are they involved in any form of automated testing? I assume we don't
-want to wile up an angry mob of maintainers.
-
-Br,
-Linus
+-- 
+மணிவண்ணன் சதாசிவம்
