@@ -1,48 +1,44 @@
 Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9327B1A294
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 12:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD402877E8
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 13:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775133599; cv=none; b=GlhcQVdraEpE4nKB9fPpQh75+saYXGbSFhoC22ytFE2idvGKH/rG3rUmN+y8i+lNGwgvTdwg2+aDQZIHYLo3uBeCg5sGL4GIHFf57ryVFkpw0NAfj8HInjCugxz+FmJngfnxOeVpO9Xi1xWoIbzDiXAyH9k4foR0kupgmi2MTbI=
+	t=1775135038; cv=none; b=NFEU+0Ln3MT/C/oQU+RA6MkBOje2K8i+e2/6PHcnhiG+rnutfVE5bRNO6vQLXB3Txrq5bp+9+Ar61kqGT1Qwf8NNrpJ0WpLNpClmWWoiQWIwnJzyz0S3ujSexNqjGdnyr/K3UN7m83ltz+pLuxypqxOsbZaxBZE+BGlXhOiWukY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775133599; c=relaxed/simple;
-	bh=z7epecj8meh+cekc2wfLJ3WaiyktzFaE0RpBV5whmf0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lIoIvi7qL3Wn046Y0CPv7/6gZXlpWGRKgQD4EpecGk6ynjk7tb1pfWS26LVR4/8UGWL3EN+r9B2niFghmXZKvuuzAygkB9aqgFYO8mzEgO+brWXO6wgVl9063tiUaVtFQCXvFNI5Wr1NlRtZpxBaxuplsynAQYRUC6koQ01iBaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=T8GqHLCs; arc=none smtp.client-ip=199.212.143.9
+	s=arc-20240116; t=1775135038; c=relaxed/simple;
+	bh=sT49rkFhjmPzxllabTZjOd7OVIt8HFYKgdVy/VdYUwE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=FPeBm/Fhd4G+qOi7xhxbmjvp+jIGXMuy4hXbX9440Qy690I6NCpqogJtxbalKimI7oFk7X+G9Qse4kVhczsbhxLMpYur+FkrOIIvvZEhgz7cwciMaUni1r603lt9Je1LyQl6sp/K52AFu5EYrhpLg2zP98Au7QyUHCvv5heoIO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=WVZCee0Q; arc=none smtp.client-ip=199.212.143.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="T8GqHLCs"
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="WVZCee0Q"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
-	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=p1fVkyEOhGlYf6ULLY/7Z3uhj5xqf/FMMtGZB4ctlgA=; b=T8GqHLCscPor+9q5shDi6PbyrI
-	NdW8HAPktSPUWYRyTTBxRHhzr1VJM10n8TNq7iFOtmGe+yqukib3f4k597utCx3UIkH40pzPa6X+K
-	l+wxb+50ukE0e541IOti9OLx84yiOVUX3RlPfujTaUEAZ6iVNjaICHBo6mKF82Cbw5q/0bnQ0R2S2
-	mLfOjtIT1HoygNG3JiyNVRrTxLv4FHj/ul532NiXvSJGjE3l/AhoC66atHM5kqqtHeAN2b+K4uC8b
-	5iQsXMocjwcypSaa/NCze5oEir7+15GemASHA4LTy+Wna+KUCknxjXdKV0GtZSCIC1HOmbuOolPAQ
-	Rg/qPCCw==;
-Received: from [147.129.179.166] (port=52140 helo=rday)
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zXUizsg2Kb34NoYXZH0H4vn9Dmpd2hSiSJQEsxIxiik=; b=WVZCee0QXNe0SVm/8VuvKHhJjm
+	0U/45SzqTY+m0DXqZek5rTqvINFnYMxIeQM5iFx8artGjc8P4Xy5lt6WSaHjYLMFH38ruKhWw6woI
+	UE7rEVYY+jJE1QwYk3mz5Mq6FqHi+ySscPmH8ZhSNLuDdRHNdUP0hIzQqUPClsJ+gQyVWX+seC2vN
+	79fAkZ1sb8arjj/2D8tYfAOsPWwjCnkCjA/DhWYM5837NL4C8FML065yJvXwC2g0k1jkHjkP4zCae
+	vydAhQRepb7X8cDvUHM/gq47T9ISE/FaYQ03QOPVeMikn0P/sHO8pzyGX04Mhe9yePXsrmyLn26Qs
+	ChdVajJQ==;
+Received: from [147.129.179.166] (port=45092 helo=rday)
 	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.99.1)
 	(envelope-from <rpjday@crashcourse.ca>)
-	id 1w8HKk-0000000CLzI-0TAZ;
-	Thu, 02 Apr 2026 08:39:38 -0400
-Date: Thu, 2 Apr 2026 08:40:33 -0400 (EDT)
+	id 1w8Hi9-0000000CQlt-0XIW
+	for kernel-janitors@vger.kernel.org;
+	Thu, 02 Apr 2026 09:03:50 -0400
+Date: Thu, 2 Apr 2026 09:04:49 -0400 (EDT)
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Linus Probert <linus.probert@gmail.com>
-cc: Julia Lawall <julia.lawall@inria.fr>, 
-    Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: Re: more potential janitor work: simplifying test for power of 2
-In-Reply-To: <DHINFSQNG4ZT.JNZO5ZPRUMW5@gmail.com>
-Message-ID: <bcd30f78-7cbb-4284-dc18-302b549a00e2@crashcourse.ca>
-References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca> <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com> <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com> <d048659a-e668-98f8-46e7-ae870c8c917@inria.fr> <DHINFSQNG4ZT.JNZO5ZPRUMW5@gmail.com>
+To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Subject: some possible Kconfig-related janitorial work
+Message-ID: <1615a000-adf6-1729-beb0-d2ac3c527f40@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,78 +57,53 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Thu, 2 Apr 2026, Linus Probert wrote:
 
-> On Thu Apr 2, 2026 at 12:07 PM CEST, Julia Lawall wrote:
-> >
-> >
-> > On Thu, 2 Apr 2026, Linus Probert wrote:
-> >
-> >> I took a closer look at this. Many of the occurences here are actually
-> >> used to check if a binary flag has more then one bit set. This is quite
-> >> a common pattern.
-> >>
-> >> Eg. 'if (a & (a - 1))' would pass if a = 0b100, not if a = 0b110. Since:
-> >> 	0b100 - 0b001 = 0b011 -> (0b100 & 0b011) => false
-> >> 	0b110 - 0b001 = 0b101 -> (0b100 & 0b101) => true
-> >
-> > If it's common, maybe there should be a function for it that properly
-> > reflects the intended behavior.
-> >
->
-> Not my decision but I would guess that the general consensus is that we
-> don't want to obscure bit manipulation in helper functions.
->
-> These patterns are often considered base knowledge and since it doesn't take
-> up any space a "helper" function only obscures what's happening. In
-> particular from a review perspective.
->
-> So unless there exists a function for this pattern already I don't think
-> it's something that merits replacing.
->
-> That's my 2c on that subject.
->
-> That said, there are certainly places where swapping in the
-> is_power_of_2() function is applicable. It uses a fancy bit trick which
-> wasn't as obvious to me. Generally the right side of the expression
-> below is the one I would use and no helper function existed.
->
-> 	(n - 1 < (n ^ (n - 1))) == (n && !(n & (n - 1)))
->
-> So if you are looking into doing some janitor work in this area you
-> should keep in mind that, without that zero guard 'n &&' swapping the
-> function might be altering the logic.
->
-> So, a heads up is all.
+  following up on my earlier posts, again, many years back, when i
+wrote those kernel source "cleanup" scripts, a number of them looked
+for cleanup in the Kconfig files -- things like config variables that
+were never used, "select" directives that selected non-existent
+settings and so on. those scripts were absolute brute force and (i
+might be mistaken) i recall that someone subsequently wrote much
+better utilities that took advantage of the database of Kconfig values
+created during parsing.
 
-  Not to toot my own horn but if you go back through history, I was
-the one who kicked off the introduction of the first "is power of 2"
-helper function many, many years ago:
+  in any event, if i run my old "find_badref_selects.sh" scripts and
+ask it to scan the drivers/ directory:
 
+$ find_badref_selects.sh drivers
+>>>>> DRM_KMS_DMA_HELPER
+drivers/gpu/drm/logicvc/Kconfig:7:	select DRM_KMS_DMA_HELPER
+drivers/gpu/drm/adp/Kconfig:9:	select DRM_KMS_DMA_HELPER
+$
 
-  commit 63c2f782e8f6aafbc11b14b2cb291b3dc9fc217d
-  Author: Robert P. J. Day <rpjday@mindspring.com>
-  Date:   Tue Jan 30 06:06:00 2007 -0500
+  that tells me that a couple Kconfig files *appear* to be selecting a
+config setting that does not exist anywhere in the entire tree. not
+fatal, just unnecessary.
 
-    [POWERPC] Add "is_power_of_2" checking to log2.h.
+  if i examine the arch/ subdirectory:
 
-    Add the inline function "is_power_of_2()" to log2.h, where the value
-    zero is *not* considered to be a power of two.
+$ find_badref_selects.sh arch
+>>>>> HAVE_LEGACY_CLK
+arch/sh/boards/Kconfig:13:	select HAVE_LEGACY_CLK
+arch/mips/Kconfig:334:	select HAVE_LEGACY_CLK
+arch/mips/Kconfig:475:	select HAVE_LEGACY_CLK
+arch/m68k/Kconfig.cpu:33:	select HAVE_LEGACY_CLK
+drivers/clk/Kconfig:12:config HAVE_LEGACY_CLK # TODO: Remove once all
+legacy users are migrated
+drivers/clk/Kconfig:23:	depends on !HAVE_LEGACY_CLK
+>>>>> PINCTRL_MILBEAUT
+arch/arm/mach-milbeaut/Kconfig:16:	select PINCTRL_MILBEAUT
+>>>>> USB_OHCI_SH
+arch/sh/Kconfig:334:	select USB_OHCI_SH if USB_OHCI_HCD
+arch/sh/Kconfig:344:	select USB_OHCI_SH if USB_OHCI_HCD
+arch/sh/Kconfig:429:	select USB_OHCI_SH if USB_OHCI_HCD
+arch/sh/Kconfig:455:	select USB_OHCI_SH if USB_OHCI_HCD
+$
 
-    Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
-    Acked-by: Kumar Gala <galak@kernel.crashing.org>
-    Signed-off-by: Paul Mackerras <paulus@samba.org>
-
-
-  And, no, a lot of that content was not immediately obvious as a
-candidate for simplification; when I wrote my regex searching scripts,
-I deliberately made them overly general *knowing* I would get false
-positives, then I manually checked whether they should be simplified.
-It never occurred to me that some of those checks were actually asking
-whether more than one bit flag was set, which semantically is asking a
-different question.
-
-  Anyway, people were asking about janitorial work so I threw out a
-couple of ideas. Whether they're worth pursing ... not my call.
+a small number of *possible* cleanups -- there used to be *way* more
+hits than today so a lot of that stuff was cleaned up. anyway, i'm
+sure there are better utilities for identifying stuff like that, but
+there's so little of that these days that it's probably not worth
+working on.
 
 rday
