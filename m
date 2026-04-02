@@ -1,99 +1,81 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B903E5561
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 09:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A7F346766
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 10:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775123458; cv=none; b=HOYuZe1Es5gY9G0KKnbBCJPxblLSY4Jo5mchZRO+jzjqleOehdhCTe5BmQj7oGRVWzHgMkcyTk0p6HiruYcr5KtZO0oiLzeX0twqFfvaHytZhQeOYuenAXOkwQJypG346oUevl6VyAMaJEPIaO65ZIJa7qhCVj6s3L0wbhxf8ZY=
+	t=1775124537; cv=none; b=MrFpieOCfUdHwlTTEg/g6dpUSWeRbSFp3uUAKvLyO+q39CrgV9quQtrAYEIV1CMB7TVDQ4wQM9HXYtNoMUNutVhBwMMibMnypA7EtKMkOfvrqkgI5ak5sdZwxpMazBd7F9i5W4Zn7IB99glg6LjFYXs7GwYrH0PxoKu3VO0z7vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775123458; c=relaxed/simple;
-	bh=i8xELImoKt+NkSPmYN2Mz0gHpDISMKGrccCD7ZDIqZs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=CYWUW9XBHNffef7HnMHu9Zl7qwZCDrsBnQdNBuDJY0GTvMO020zdcztSSC84lP5kFsOpPXxCkFiAsxqBkuBhrANrgYZDXsTXO1J8VDoMulpfBAig6u35dkGpv8JBgV/I1z9IUbqFBKhbd/t5dDgosUF7VwG2o/kKSKnETsHXCWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXbVjd+K; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1775124537; c=relaxed/simple;
+	bh=0UYuKRY1ek8hAHTFZsXRVO8foDiBEoAdPtTWVJpEntQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=daBJVgAh7H4ulZ21LV82cM6xL6NpdZW4BcC1jV7eWO2nIiX5mECnbfStgKo6tAN3tcpI4JO38sdQjfhwgfd1nJsNfmAshs9sTbnWFMyDdiq49tFdESM2ur+hfRyKP3aHsyBs4CiUmaaB2VXa6dAk9hX98Ypc4wvnD3G7YAgJQOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=OSOKA0Tv; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXbVjd+K"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-38bd60d7a2cso6496941fa.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 02 Apr 2026 02:50:53 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="OSOKA0Tv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775123450; x=1775728250; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6cesA+d5sjjwb+YlTQMQo7Z/YYAmTyVQLSN1pk0dWYE=;
-        b=FXbVjd+KuyIzCY50uWy6piSgnKyMpMfUJFjtjVRVaFri42pJLN1ufE4/5Dwl9dp9tO
-         QdxPUHSZFz0TRScVXIYuP++g1qoSL5sij1e2LZu3BCNqSVPgA/zug+/6sY7oHG5J7xow
-         Nr3lGRF0JqVbjtubii95hHgg4f+n8StFYa0ilg8mXWiCBmLgHJUtMfwlMY08s5Xh+nXq
-         x1XvA8V44/uhUy/hrl1v0XXvLKfaOxFNcJzPPQsWax6IZO4lDRlewTsczDYvE2fQdrA5
-         ATMZAJfzwE5MlbgA94U9SrL8LxNlJcL/U/zbZjjypWMkXmEJiVWy/8tUuFEkEE/NH47S
-         ChZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775123450; x=1775728250;
-        h=in-reply-to:references:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6cesA+d5sjjwb+YlTQMQo7Z/YYAmTyVQLSN1pk0dWYE=;
-        b=YAWuj7WA4D7gCYp9dW9mnWMWBXp4xF9xXH5yfQTlVBQgluYFDUhGFf0iQJO+iPv/a3
-         dasLE3HAEd27cNfs9vW/mfcLzUf4vtrM8bUbFNY1f0cLnfHkQNAi8nLMaEhD7Vi4+/JA
-         o8CpLdIjFlr+Mj39IIWXOguFsZlwe6sBnVOhyQrKtdoa6FBTUOEKiNLwnIXXzVR6uh9+
-         PoDqEP/AvMBbIoC2bQWPkQrzjSVmLuQ+M/lyMIyD5MtDSR1oLDFhp0MTSgi5rSVoizaJ
-         ldqEOkbLQfbrDsO0IyRZOGxscY3tJJr+/pTjOa7yi+NqALppgBcBRnOFw1aoKgEFkxAk
-         xlVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKJYgVUgmCZcI61r5yFM0UBBUdHLl+duZFRYPpQoLxdHoaZuHAuwKUL+JtPBUL+qU1Gg8/apVXWNclRU8g42Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk6qhLlBFTd+AvuZWa8nKH6pIrk/GEVhoVhcT/vkUxkasLk3vw
-	IU04cGWxxPvNuszH/9QZUYhy5XCp2aqsun1KJiTi4nEZAkW3bE3bePMQUwPgq5Vs
-X-Gm-Gg: ATEYQzx8C60kbF4g347AbvZCoQd0QTO0MqjhqX3q9QzoCmi7uh86IRvIAQb/2kOCHvo
-	/LuknVBWA2K/+5PWER+a7eSD9LqA1zHpUGZ2Tnw6ZKWoRPYB6m3KIHc+lJ468u+SJg7u+QO9jpt
-	8MuBWTpV+dYvH46ou+7NptXURqk2w7S2BHh7lqLcEGAQ0rJkgDxvsM7gHZ/uVwjzVj1cJXO/oGZ
-	98Z8rkV3pqvFzSZbhzqPZmPu2lThr3EgtWNHyNiA5jzVsH59OJwjgYz2SKq4HomdLvZ2dIZ4yAT
-	9Yb41X6SVHemE8uzk4c73AtpniSiWfJBUhRIgjP4z+9Jm6qsPRBPSB1juU5u9dkG/ZqoBiqPbhx
-	usQSF1KJZEOz22B+K3v+CK3AFPfBnpZHnq4VCgbNd1ZEFp8ZFufrk8J3eWpgD2PP6WhMkyyGuwD
-	zR8rLRdPrbeh0IkAaqYIzGQII8L5Iz
-X-Received: by 2002:a05:651c:e17:b0:38c:6a46:b98d with SMTP id 38308e7fff4ca-38cc2f389demr26014361fa.1.1775123449317;
-        Thu, 02 Apr 2026 02:50:49 -0700 (PDT)
-Received: from localhost ([2a02:aa1:115f:85c8:99af:b9fd:7f92:d8b4])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38cd2108a4fsm5043391fa.23.2026.04.02.02.50.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Apr 2026 02:50:49 -0700 (PDT)
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Vuddfobx3o4qAnT25aJNC5cTP+Z8jpw/55ze3WWwcVc=;
+  b=OSOKA0Tv90Jx2QFeZuNlq0LQ1uKO6R/LyfPEczDsf7ohJ78sGpoGWxjp
+   Rt4XW7qVxGHxKqmMdAsGV1O+8zMNaeFMhtk03LVggjrvVNfN7uJyinRxm
+   qNoNSmnzZVxK05c07wmjik7lIiAIBMGEh418lV1GLlxVR+N1yCAf/4SlZ
+   A=;
+X-CSE-ConnectionGUID: d8k6qxFZRoK1c9y2R4+lMQ==
+X-CSE-MsgGUID: zvFiLe4iQ52iuSQnm1l14Q==
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.23,155,1770591600"; 
+   d="scan'208";a="143053274"
+Received: from c-76-123-3-53.hsd1.va.comcast.net (HELO hadrien) ([76.123.3.53])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2026 12:07:42 +0200
+Date: Thu, 2 Apr 2026 06:07:39 -0400 (EDT)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Linus Probert <linus.probert@gmail.com>
+cc: "Robert P. J. Day" <rpjday@crashcourse.ca>, 
+    Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Subject: Re: more potential janitor work: simplifying test for power of 2
+In-Reply-To: <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com>
+Message-ID: <d048659a-e668-98f8-46e7-ae870c8c917@inria.fr>
+References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca> <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com> <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Apr 2026 11:50:48 +0200
-Message-Id: <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com>
-Subject: Re: more potential janitor work: simplifying test for power of 2
-From: "Linus Probert" <linus.probert@gmail.com>
-To: "Linus Probert" <linus.probert@gmail.com>, "Robert P. J. Day"
- <rpjday@crashcourse.ca>, "Kernel Janitors List"
- <kernel-janitors@vger.kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca>
- <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com>
-In-Reply-To: <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-I took a closer look at this. Many of the occurences here are actually
-used to check if a binary flag has more then one bit set. This is quite
-a common pattern.
 
-Eg. 'if (a & (a - 1))' would pass if a =3D 0b100, not if a =3D 0b110. Since=
-:
-	0b100 - 0b001 =3D 0b011 -> (0b100 & 0b011) =3D> false
-	0b110 - 0b001 =3D 0b101 -> (0b100 & 0b101) =3D> true
 
-The power of two check would 'normally' use the negation:
-	'if (!(a & (a - 1)))'
+On Thu, 2 Apr 2026, Linus Probert wrote:
 
-Just a heads up so anyone else reading this doesn't go blindly swapping
-out this pattern for 'is_power_of_2()'.
+> I took a closer look at this. Many of the occurences here are actually
+> used to check if a binary flag has more then one bit set. This is quite
+> a common pattern.
+>
+> Eg. 'if (a & (a - 1))' would pass if a = 0b100, not if a = 0b110. Since:
+> 	0b100 - 0b001 = 0b011 -> (0b100 & 0b011) => false
+> 	0b110 - 0b001 = 0b101 -> (0b100 & 0b101) => true
 
-You need to apply some thinking. No 'sed' work.
+If it's common, maybe there should be a function for it that properly
+reflects the intended behavior.
 
-Br,
-Linus
+julia
+
+>
+> The power of two check would 'normally' use the negation:
+> 	'if (!(a & (a - 1)))'
+>
+> Just a heads up so anyone else reading this doesn't go blindly swapping
+> out this pattern for 'is_power_of_2()'.
+>
+> You need to apply some thinking. No 'sed' work.
+>
+> Br,
+> Linus
+>
+>
