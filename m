@@ -1,109 +1,129 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
+Received: from smtp.outgoing.loopia.se (smtp.outgoing.loopia.se [93.188.3.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD402877E8
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 13:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74136495A
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 13:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.3.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775135038; cv=none; b=NFEU+0Ln3MT/C/oQU+RA6MkBOje2K8i+e2/6PHcnhiG+rnutfVE5bRNO6vQLXB3Txrq5bp+9+Ar61kqGT1Qwf8NNrpJ0WpLNpClmWWoiQWIwnJzyz0S3ujSexNqjGdnyr/K3UN7m83ltz+pLuxypqxOsbZaxBZE+BGlXhOiWukY=
+	t=1775135083; cv=none; b=tmlLhLWiROAv47zeAZB7ZXW3PNGkOb0nH1Ng+edYWu3r2ybpGECwFFz8XoYBm3CfkGP2gMI1j7zLlvePSA9pGwhIR3jwpDlxAUMDhj8lO+GDfGCttwiaN/o1GshnAkSutDTNv39H0dylipvJZTEqsGBPWq2Mid1jjKAQ84qp7/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775135038; c=relaxed/simple;
-	bh=sT49rkFhjmPzxllabTZjOd7OVIt8HFYKgdVy/VdYUwE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=FPeBm/Fhd4G+qOi7xhxbmjvp+jIGXMuy4hXbX9440Qy690I6NCpqogJtxbalKimI7oFk7X+G9Qse4kVhczsbhxLMpYur+FkrOIIvvZEhgz7cwciMaUni1r603lt9Je1LyQl6sp/K52AFu5EYrhpLg2zP98Au7QyUHCvv5heoIO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=WVZCee0Q; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1775135083; c=relaxed/simple;
+	bh=WLCRWLhY5YEcvDSyKbxU9qTXlTRzeU5oITtPKgrf5Io=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Gx8YIxr3CuqiVPXVVt5Jq15YKrF30vsmRxJ1Dz2+AiVWSvenEzabyLGf1ed5dInu4qOf+jo/T2CaeZanUysLbt4zshsg7f8vMT7cAQgUKknj5w6wpBHReOYynkfDSS3Rdytk4/b9j9ObqVF9LTzNlPxoN/UlOsYhKYeJzgMY/7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=probert.se; spf=pass smtp.mailfrom=probert.se; dkim=pass (2048-bit key) header.d=probert.se header.i=@probert.se header.b=TK4rxmdA; arc=none smtp.client-ip=93.188.3.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=probert.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=probert.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="WVZCee0Q"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zXUizsg2Kb34NoYXZH0H4vn9Dmpd2hSiSJQEsxIxiik=; b=WVZCee0QXNe0SVm/8VuvKHhJjm
-	0U/45SzqTY+m0DXqZek5rTqvINFnYMxIeQM5iFx8artGjc8P4Xy5lt6WSaHjYLMFH38ruKhWw6woI
-	UE7rEVYY+jJE1QwYk3mz5Mq6FqHi+ySscPmH8ZhSNLuDdRHNdUP0hIzQqUPClsJ+gQyVWX+seC2vN
-	79fAkZ1sb8arjj/2D8tYfAOsPWwjCnkCjA/DhWYM5837NL4C8FML065yJvXwC2g0k1jkHjkP4zCae
-	vydAhQRepb7X8cDvUHM/gq47T9ISE/FaYQ03QOPVeMikn0P/sHO8pzyGX04Mhe9yePXsrmyLn26Qs
-	ChdVajJQ==;
-Received: from [147.129.179.166] (port=45092 helo=rday)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.99.1)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1w8Hi9-0000000CQlt-0XIW
-	for kernel-janitors@vger.kernel.org;
-	Thu, 02 Apr 2026 09:03:50 -0400
-Date: Thu, 2 Apr 2026 09:04:49 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: some possible Kconfig-related janitorial work
-Message-ID: <1615a000-adf6-1729-beb0-d2ac3c527f40@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=probert.se header.i=@probert.se header.b="TK4rxmdA"
+Received: from s807.loopia.se (localhost [127.0.0.1])
+	by s807.loopia.se (Postfix) with ESMTP id B1AEF559067
+	for <kernel-janitors@vger.kernel.org>; Thu, 02 Apr 2026 15:04:33 +0200 (CEST)
+Received: from s981.loopia.se (unknown [172.22.191.5])
+	by s807.loopia.se (Postfix) with ESMTP id A14445598D5;
+	Thu, 02 Apr 2026 15:04:33 +0200 (CEST)
+Received: from localhost (unknown [172.22.191.5])
+	by s981.loopia.se (Postfix) with ESMTP id 9E8CC22B17DF;
+	Thu, 02 Apr 2026 15:04:33 +0200 (CEST)
+X-Virus-Scanned: amavis at amavis.loopia.se
+X-Spam-Flag: NO
+X-Spam-Score: -1.2
+X-Spam-Level:
+Authentication-Results: s473.loopia.se (amavis); dkim=pass (2048-bit key)
+ header.d=probert.se
+Received: from s980.loopia.se ([172.22.191.6])
+ by localhost (s473.loopia.se [172.22.190.13]) (amavis, port 10024)
+ with UTF8LMTP id 3mwRvq04uGqF; Thu,  2 Apr 2026 15:04:33 +0200 (CEST)
+X-Loopia-Auth: user
+X-Loopia-User: linus@probert.se
+X-Loopia-Originating-IP: 94.191.136.33
+Received: from localhost (94.191.136.33.mobile.tre.se [94.191.136.33])
+	(Authenticated sender: linus@probert.se)
+	by s980.loopia.se (Postfix) with ESMTPSA id DDC8722016D2;
+	Thu, 02 Apr 2026 15:04:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=probert.se;
+	s=loopiadkim1707418081; t=1775135073;
+	bh=J1WYDNty3yyt3Rb7/WyRST1MJyB7gyqlrUpoiBTWn9U=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=TK4rxmdAHWX9Etp8zL2auGTgqpSbvyiqivbNvL09wU1QbaagJuM4ysvdjIBiU1EO9
+	 msx6BGwTtGhGpH9/bttH+8WtungMzxWmeHRua2V2tf7aNLJVSJNwhyolb3BKM6eISU
+	 OuCAkEOBikMSv1PzhK1qM5MzIqi3QFr3rLnjIKhwjp/ALrUC4/J47FkI/Yh5HQyfac
+	 s/ksp4AZD9UB6wJxu1TDwXsFXnswhWRnPJk18NfYeOvdHERA01R3km3QW95BmT0SVP
+	 8wPTQ/mYhUCkvtlqKipcNO2qdW0Db1oZKEEjINEzH5uO1VFs+JxMxvVJNzYY8hc0AK
+	 puo9jsh3aIXQg==
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Apr 2026 15:04:22 +0200
+Message-Id: <DHIOV1XVG37A.11HWRSCG0AD3G@probert.se>
+Cc: "Julia Lawall" <julia.lawall@inria.fr>, "Kernel Janitors List"
+ <kernel-janitors@vger.kernel.org>
+Subject: Re: more potential janitor work: simplifying test for power of 2
+From: "Linus Probert" <linus@probert.se>
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>, "Linus Probert"
+ <linus.probert@gmail.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca>
+ <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com>
+ <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com>
+ <d048659a-e668-98f8-46e7-ae870c8c917@inria.fr>
+ <DHINFSQNG4ZT.JNZO5ZPRUMW5@gmail.com>
+ <bcd30f78-7cbb-4284-dc18-302b549a00e2@crashcourse.ca>
+In-Reply-To: <bcd30f78-7cbb-4284-dc18-302b549a00e2@crashcourse.ca>
 
+On Thu Apr 2, 2026 at 2:40 PM CEST, Robert P. J. Day wrote:
+> On Thu, 2 Apr 2026, Linus Probert wrote:
+>
+>> On Thu Apr 2, 2026 at 12:07 PM CEST, Julia Lawall wrote:
+>> >
+>> >
+>> > On Thu, 2 Apr 2026, Linus Probert wrote:
+>> >
 
-  following up on my earlier posts, again, many years back, when i
-wrote those kernel source "cleanup" scripts, a number of them looked
-for cleanup in the Kconfig files -- things like config variables that
-were never used, "select" directives that selected non-existent
-settings and so on. those scripts were absolute brute force and (i
-might be mistaken) i recall that someone subsequently wrote much
-better utilities that took advantage of the database of Kconfig values
-created during parsing.
+[...]
 
-  in any event, if i run my old "find_badref_selects.sh" scripts and
-ask it to scan the drivers/ directory:
+>
+>   Not to toot my own horn but if you go back through history, I was
+> the one who kicked off the introduction of the first "is power of 2"
+> helper function many, many years ago:
 
-$ find_badref_selects.sh drivers
->>>>> DRM_KMS_DMA_HELPER
-drivers/gpu/drm/logicvc/Kconfig:7:	select DRM_KMS_DMA_HELPER
-drivers/gpu/drm/adp/Kconfig:9:	select DRM_KMS_DMA_HELPER
-$
+Totally worth a toot, it's a neat piece of bit operation.
 
-  that tells me that a couple Kconfig files *appear* to be selecting a
-config setting that does not exist anywhere in the entire tree. not
-fatal, just unnecessary.
+[...]
 
-  if i examine the arch/ subdirectory:
+>   And, no, a lot of that content was not immediately obvious as a
+> candidate for simplification; when I wrote my regex searching scripts,
+> I deliberately made them overly general *knowing* I would get false
+> positives, then I manually checked whether they should be simplified.
+> It never occurred to me that some of those checks were actually asking
+> whether more than one bit flag was set, which semantically is asking a
+> different question.
 
-$ find_badref_selects.sh arch
->>>>> HAVE_LEGACY_CLK
-arch/sh/boards/Kconfig:13:	select HAVE_LEGACY_CLK
-arch/mips/Kconfig:334:	select HAVE_LEGACY_CLK
-arch/mips/Kconfig:475:	select HAVE_LEGACY_CLK
-arch/m68k/Kconfig.cpu:33:	select HAVE_LEGACY_CLK
-drivers/clk/Kconfig:12:config HAVE_LEGACY_CLK # TODO: Remove once all
-legacy users are migrated
-drivers/clk/Kconfig:23:	depends on !HAVE_LEGACY_CLK
->>>>> PINCTRL_MILBEAUT
-arch/arm/mach-milbeaut/Kconfig:16:	select PINCTRL_MILBEAUT
->>>>> USB_OHCI_SH
-arch/sh/Kconfig:334:	select USB_OHCI_SH if USB_OHCI_HCD
-arch/sh/Kconfig:344:	select USB_OHCI_SH if USB_OHCI_HCD
-arch/sh/Kconfig:429:	select USB_OHCI_SH if USB_OHCI_HCD
-arch/sh/Kconfig:455:	select USB_OHCI_SH if USB_OHCI_HCD
-$
+Throwing a wide net makes sense. I first noted this alternate 'question'
+pattern after some scrolling. Didn't consider that case at first.
 
-a small number of *possible* cleanups -- there used to be *way* more
-hits than today so a lot of that stuff was cleaned up. anyway, i'm
-sure there are better utilities for identifying stuff like that, but
-there's so little of that these days that it's probably not worth
-working on.
+Just wanted to share that finding since others might have picked up on
+this opportunity to contribute and perhaps not noticed the "semantic
+difference".
 
-rday
+>   Anyway, people were asking about janitorial work so I threw out a
+> couple of ideas. Whether they're worth pursing ... not my call.
+
+I was asking and appreciate the suggestions. If you have more stuff
+knocking about I'm certain it will be appreciated by some of us
+neophytes.
+
+I'm learning that the hard part isn't immediately the code change. The
+whole email patch cycle and high standards on commit message subject and
+content takes some getting used to.
+
+I doubt the kernel project is a large contributor to
+https://latenightcommits.com/ :)
+
+Br,
+Linus
