@@ -1,129 +1,93 @@
-Received: from smtp.outgoing.loopia.se (smtp.outgoing.loopia.se [93.188.3.37])
+Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74136495A
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 13:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.3.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D16E2F0C48
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Apr 2026 13:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775135083; cv=none; b=tmlLhLWiROAv47zeAZB7ZXW3PNGkOb0nH1Ng+edYWu3r2ybpGECwFFz8XoYBm3CfkGP2gMI1j7zLlvePSA9pGwhIR3jwpDlxAUMDhj8lO+GDfGCttwiaN/o1GshnAkSutDTNv39H0dylipvJZTEqsGBPWq2Mid1jjKAQ84qp7/Q=
+	t=1775136008; cv=none; b=WBRz1lueTjwQuvAICmc0wOV9nCeyUT48R+0l04YTU1nMMZXsPN/nUl/BZ/0QyVxHTC/y6UjqpF3/0Zzo9dFxVkI3e/ny0FRhpj2kXEhjUFoIh+AYr2O7/o+yGdvMDpAapH6bRuWp6tqPe8AUztvGkBqcCPg+nU5GFYNnNYZ5m3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775135083; c=relaxed/simple;
-	bh=WLCRWLhY5YEcvDSyKbxU9qTXlTRzeU5oITtPKgrf5Io=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Gx8YIxr3CuqiVPXVVt5Jq15YKrF30vsmRxJ1Dz2+AiVWSvenEzabyLGf1ed5dInu4qOf+jo/T2CaeZanUysLbt4zshsg7f8vMT7cAQgUKknj5w6wpBHReOYynkfDSS3Rdytk4/b9j9ObqVF9LTzNlPxoN/UlOsYhKYeJzgMY/7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=probert.se; spf=pass smtp.mailfrom=probert.se; dkim=pass (2048-bit key) header.d=probert.se header.i=@probert.se header.b=TK4rxmdA; arc=none smtp.client-ip=93.188.3.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=probert.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=probert.se
+	s=arc-20240116; t=1775136008; c=relaxed/simple;
+	bh=y8m8HEfMgBzkldepBhmhfW3Emsfa0U8/3v7py8oBx3A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=vF9v5i3MH9O/rh32BZK6keFvusmN1QU6+GfYIotwdGE216lX3pE33Lyk23f28rjmjXoHIdPLAKIOLGXEV2GAVLWM0OyUdmnGojr8olVgTzaYldO5FRYlHzGkPKNBYZRQ39y3TyQd+VhEAc76zbRS1PTeBH3tOPP9X5AR5vkxhU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=rV3uM3oL; arc=none smtp.client-ip=199.212.143.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=probert.se header.i=@probert.se header.b="TK4rxmdA"
-Received: from s807.loopia.se (localhost [127.0.0.1])
-	by s807.loopia.se (Postfix) with ESMTP id B1AEF559067
-	for <kernel-janitors@vger.kernel.org>; Thu, 02 Apr 2026 15:04:33 +0200 (CEST)
-Received: from s981.loopia.se (unknown [172.22.191.5])
-	by s807.loopia.se (Postfix) with ESMTP id A14445598D5;
-	Thu, 02 Apr 2026 15:04:33 +0200 (CEST)
-Received: from localhost (unknown [172.22.191.5])
-	by s981.loopia.se (Postfix) with ESMTP id 9E8CC22B17DF;
-	Thu, 02 Apr 2026 15:04:33 +0200 (CEST)
-X-Virus-Scanned: amavis at amavis.loopia.se
-X-Spam-Flag: NO
-X-Spam-Score: -1.2
-X-Spam-Level:
-Authentication-Results: s473.loopia.se (amavis); dkim=pass (2048-bit key)
- header.d=probert.se
-Received: from s980.loopia.se ([172.22.191.6])
- by localhost (s473.loopia.se [172.22.190.13]) (amavis, port 10024)
- with UTF8LMTP id 3mwRvq04uGqF; Thu,  2 Apr 2026 15:04:33 +0200 (CEST)
-X-Loopia-Auth: user
-X-Loopia-User: linus@probert.se
-X-Loopia-Originating-IP: 94.191.136.33
-Received: from localhost (94.191.136.33.mobile.tre.se [94.191.136.33])
-	(Authenticated sender: linus@probert.se)
-	by s980.loopia.se (Postfix) with ESMTPSA id DDC8722016D2;
-	Thu, 02 Apr 2026 15:04:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=probert.se;
-	s=loopiadkim1707418081; t=1775135073;
-	bh=J1WYDNty3yyt3Rb7/WyRST1MJyB7gyqlrUpoiBTWn9U=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=TK4rxmdAHWX9Etp8zL2auGTgqpSbvyiqivbNvL09wU1QbaagJuM4ysvdjIBiU1EO9
-	 msx6BGwTtGhGpH9/bttH+8WtungMzxWmeHRua2V2tf7aNLJVSJNwhyolb3BKM6eISU
-	 OuCAkEOBikMSv1PzhK1qM5MzIqi3QFr3rLnjIKhwjp/ALrUC4/J47FkI/Yh5HQyfac
-	 s/ksp4AZD9UB6wJxu1TDwXsFXnswhWRnPJk18NfYeOvdHERA01R3km3QW95BmT0SVP
-	 8wPTQ/mYhUCkvtlqKipcNO2qdW0Db1oZKEEjINEzH5uO1VFs+JxMxvVJNzYY8hc0AK
-	 puo9jsh3aIXQg==
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="rV3uM3oL"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
+	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tbymz+XWuF8kEVjJt2hfW5h0j2f5diz5r2Ye/M8PHRM=; b=rV3uM3oLAr5F9An/Tg/MGYO6Ts
+	1UbfpGxRyBQ5dONRxxjbzH9L8Pj7Zep0nRfEvlDUu6lzlq3lCA5XCuioa5WUevRi5e1PwfItVRIXX
+	DuWIoy9wTBaB/qYvT0K7IU9HO+K0iQhlNRAG2RDAztyctvZeaS346MYvmWc273e3NxhPEqNE/KqPg
+	+2ZJCfSvf8AOj4cpMJ6M3wtRli7fY81Thvjpg6c2eoeR874EJocDqnUzPjWbqOvRuWZXg4YIsbOhJ
+	d4YEzkZHZr/LYxmyl59wBZDqcMS1A3qO4IO9gvTci3cqhrgzn9T43BWCNCuU8/2XmLvvn+H8q3Ha8
+	9w7hpDaA==;
+Received: from [147.129.179.166] (port=56220 helo=rday)
+	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.1)
+	(envelope-from <rpjday@crashcourse.ca>)
+	id 1w8Hxr-0000000CTUg-3mt2;
+	Thu, 02 Apr 2026 09:20:05 -0400
+Date: Thu, 2 Apr 2026 09:21:04 -0400 (EDT)
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+To: Linus Probert <linus@probert.se>
+cc: Linus Probert <linus.probert@gmail.com>, 
+    Julia Lawall <julia.lawall@inria.fr>, 
+    Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Subject: Re: more potential janitor work: simplifying test for power of 2
+In-Reply-To: <DHIOV1XVG37A.11HWRSCG0AD3G@probert.se>
+Message-ID: <cbd3de85-f50b-7380-20c3-5c25476f06fc@crashcourse.ca>
+References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca> <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com> <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com> <d048659a-e668-98f8-46e7-ae870c8c917@inria.fr> <DHINFSQNG4ZT.JNZO5ZPRUMW5@gmail.com> <bcd30f78-7cbb-4284-dc18-302b549a00e2@crashcourse.ca>
+ <DHIOV1XVG37A.11HWRSCG0AD3G@probert.se>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Apr 2026 15:04:22 +0200
-Message-Id: <DHIOV1XVG37A.11HWRSCG0AD3G@probert.se>
-Cc: "Julia Lawall" <julia.lawall@inria.fr>, "Kernel Janitors List"
- <kernel-janitors@vger.kernel.org>
-Subject: Re: more potential janitor work: simplifying test for power of 2
-From: "Linus Probert" <linus@probert.se>
-To: "Robert P. J. Day" <rpjday@crashcourse.ca>, "Linus Probert"
- <linus.probert@gmail.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <888a08d7-1d0b-f114-dd3d-e840f16c8803@crashcourse.ca>
- <DHHT7K60IORC.2DG3PT7PB2OSO@gmail.com>
- <DHIKQUBU2MZS.IOSIJB5DJYJ0@gmail.com>
- <d048659a-e668-98f8-46e7-ae870c8c917@inria.fr>
- <DHINFSQNG4ZT.JNZO5ZPRUMW5@gmail.com>
- <bcd30f78-7cbb-4284-dc18-302b549a00e2@crashcourse.ca>
-In-Reply-To: <bcd30f78-7cbb-4284-dc18-302b549a00e2@crashcourse.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - crashcourse.ca
+X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu Apr 2, 2026 at 2:40 PM CEST, Robert P. J. Day wrote:
-> On Thu, 2 Apr 2026, Linus Probert wrote:
->
->> On Thu Apr 2, 2026 at 12:07 PM CEST, Julia Lawall wrote:
->> >
->> >
->> > On Thu, 2 Apr 2026, Linus Probert wrote:
->> >
+On Thu, 2 Apr 2026, Linus Probert wrote:
 
-[...]
+... snip ...
 
->
->   Not to toot my own horn but if you go back through history, I was
-> the one who kicked off the introduction of the first "is power of 2"
-> helper function many, many years ago:
+> I was asking and appreciate the suggestions. If you have more stuff
+> knocking about I'm certain it will be appreciated by some of us
+> neophytes.
 
-Totally worth a toot, it's a neat piece of bit operation.
+  IMHO, i'll repeat that simplifying code that manually determines the
+length of an array could be simplified based on
+include/linux/array_size.h:
 
-[...]
+/**
+ * ARRAY_SIZE - get the number of elements in array @arr
+ * @arr: array to be sized
+ */
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
 
->   And, no, a lot of that content was not immediately obvious as a
-> candidate for simplification; when I wrote my regex searching scripts,
-> I deliberately made them overly general *knowing* I would get false
-> positives, then I manually checked whether they should be simplified.
-> It never occurred to me that some of those checks were actually asking
-> whether more than one bit flag was set, which semantically is asking a
-> different question.
+/**
+ * ARRAY_END - get a pointer to one past the last element in array @arr
+ * @arr: array
+ */
+#define ARRAY_END(arr)  (&(arr)[ARRAY_SIZE(arr)])
 
-Throwing a wide net makes sense. I first noted this alternate 'question'
-pattern after some scrolling. Didn't consider that case at first.
 
-Just wanted to share that finding since others might have picked up on
-this opportunity to contribute and perhaps not noticed the "semantic
-difference".
+  there's *tons* of that all over the place.
 
->   Anyway, people were asking about janitorial work so I threw out a
-> couple of ideas. Whether they're worth pursing ... not my call.
-
-I was asking and appreciate the suggestions. If you have more stuff
-knocking about I'm certain it will be appreciated by some of us
-neophytes.
-
-I'm learning that the hard part isn't immediately the code change. The
-whole email patch cycle and high standards on commit message subject and
-content takes some getting used to.
-
-I doubt the kernel project is a large contributor to
-https://latenightcommits.com/ :)
-
-Br,
-Linus
+rday
