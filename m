@@ -1,76 +1,75 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1640B37C0F2
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 10:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475D937D13B
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 10:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775815935; cv=none; b=gTcfiFwS0n5EIw+sU6F+MPXYzxpsmTSHgG80hyfP/NU1sazI2YtxfQgtr/u0MgFqw0OtoWOzjtSYuk61J9O5jJ/PeCyHRdxf1whYYurlz4lmLg9lU0Q9bAKmf9daCohJFRBvbefmOp8tamBdsqhxklnrYtTelsLTaAmhsBgqcX8=
+	t=1775815940; cv=none; b=R5RVmoI9R5PY/0s71SBmBdgoaY2OeWmX9W7P1EQ4KxU5BATOp9la0ci2WaVttYy/tBgN/3ULLYxEg/eXIGs1C9EMA/wukvHWHxvDW1B4QOPKkCHjASWvtzQlWo6/Dkcvhotpqw95EyQ/2EQIeb0dA/c7KkmoFmONravq30SUzD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775815935; c=relaxed/simple;
-	bh=gT+USVlr6D6SbUBhI2YPyiIlQCKMO43Y6KsB/Rb1ggE=;
+	s=arc-20240116; t=1775815940; c=relaxed/simple;
+	bh=H0fXTkWi3cEW1grzTO2UpwdTEZU5njLYXMU7g8OxhcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Bxd3Ywery0MAvs7opi7GUf7G9mJnPblknvHTCyNQmHpWK2RaAuMKYh8OBtqJn8FN1NHcj7CAIHrzUlge7cs9NLWCM0ATQ5dyv3jSrPccftDgFl6bOd77x2nhV8gYieB08S3FUNcWr8jo5aLrp7/wzp6GQxGoJvOFdBjj3TEb3z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fn09RndM; arc=none smtp.client-ip=209.85.128.54
+	 Content-Disposition; b=N9bov8Pmzx8wb6aSPu1EUFKIh0RnCxTHEaF3CPWeOVEIcVaObZ77OJhqhvdyya95UOWWXSvfIcwQcKaKGYO4RSB7SF8rhIaDBm80UpoN2ASudmF8345IQ/nGQxYL+JHTKPxrzE5nCbyjLxN4gXxuwzMJylv5yQ0Mv7PQH6n/XJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGEwk05u; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fn09RndM"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-488aa77a06eso29156065e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 03:12:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGEwk05u"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-483487335c2so20288225e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 03:12:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775815932; x=1776420732; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775815937; x=1776420737; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=22v578vS3urScHwXah/EGJm4oQZ5Dq0jM06OD1zJsnE=;
-        b=fn09RndMlPAdhKuXtrVWcfcr3wtxQjy38dLA/5yOVIpzrMuWuatelm1dRHUe5ZdLnm
-         z+H/eaYea3W5cblPlyOCnYL9tahzMUbrnRgQV/tjW9NNs7fkMyTBg2GCdy5jKq63IIeI
-         82jVRXcOkjyBYlzDWiaCF4XY1SKWUWiwlN4WIYEpUKxSinWBCy8/QrHDcuiMRUmgifQn
-         x/mEAoII6sPxXE4qUMlzlqZUOJoAvk3aRzapih+3eFbLntqnInn+dZcUaqhGD6duESkb
-         qrSYkOC2KHzB+tTaD2AQ9XbtIc00o8J29hEdxqG5kJaBvHxsP4dAZRqzIofn9jcUjf3m
-         mdYg==
+        bh=2joo26VZqK/l7L0t7ywj7SByOmdQBrAhyw+E9lx2JP0=;
+        b=gGEwk05u65i7OyrFU09sm3cibL2EYJ3yVES5ZR4aCtwm+o5T5hvE1D/aFwqvuDvoto
+         6x4+Q6rCSxgCNbNIxyyeON19h0981U1gOM7HMkqSpIANW9XKHNFLUgvsz1/mu/65+N6M
+         SyiIjbVLPi2FJyfxp7M5tv5qnLXcQHvCiIFCdrIUcmM1+v+l1QsobnglzCazgoUqIRZ5
+         sPm6/x5vQ/wFZB/ub8OAPxIm9D262LqIplHmSIw2bMLDfAYzx+Eah9zAcRFGh1JU68xi
+         Dpr4GiuPbeSYD+S5S5MKr+OvZN0mdqIl2qC+sAbeBJdf2MAtLx5P/QI05FylJN6Z1xcw
+         AxnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775815932; x=1776420732;
+        d=1e100.net; s=20251104; t=1775815937; x=1776420737;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=22v578vS3urScHwXah/EGJm4oQZ5Dq0jM06OD1zJsnE=;
-        b=sP6nehpCZtGejAPCWOGWB5ukpyt328Bb3tk6GU8+9pgXRVaWYlnv0gWXCdPiYuW2BD
-         fuyis9gubiXYuaId4mlBFEbIiAJUpr7K99yrQUXIGN/NLSkNnRKocgSWy63+RwqNpNF4
-         3XEK7S+/Lidn8RogKK6wfg7190rUt0x0RHoHc45Ewc+d6AONyTuiH3dgxpK4rVw3UyOl
-         AaPHMEs0QrN7+n/ieiBLqsCZ8Di+zg6qEHIiaxkFNjCc0BE1l4jw8uFlebdhSI71o6CH
-         3j1/B+EheUfRwBS3R+qNgo2Vsn+RF9bwtRr0eQxQLkzM2HwBPPsxCApucmtcWIo+BGX/
-         7g+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXqGkmKjaLJAMZqlSK37sw03dSYmSyUC//PQ4Q8fhAw1t306xnFwO6pbynWv3eOj/kIb5p0E1eMOfnfDVlaZq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytijFaCKVjKy9z28gH+MjGGuV5OOjO5Lr+snp57B26abEAlDz5
-	DA7l7WJl+qRF7GGkUcwOrpG/HN46sQ5VeAU9abfURRieq8FRCh3cI6pj
-X-Gm-Gg: AeBDies5RHOR+vegvi3hZZo91IeQSxTz+UdCjP7HukP7HsQrXGoIJNj6F+EOF8ZCgSC
-	SA51531iQvYwd5AwhiJ0wmB7CP4Qh3FGN07816LK9t4zWeBnrE759UZs+MLeIqHNhW1WqtfLTJi
-	zp0cdCbbMBeW0KChxEqndW0r7E4Sys/aSUTG3eIeHCub2oQe3+vaj6W8yEj8zayinEaulN8B9Bf
-	T0f+qSdgJsP7zguEOJi9dE2B/8BOKQhg1T07x9zBwO+1JnVUlPykQSU9ScVEEUaBBwUOZnOb0/O
-	IsMnhhr5rQQqOBd3XihqHVEZdvtTWwD+IlrQ+w57uveQQxvQeNGikcGBKSvQAv4TBGz44KUEP4+
-	WGLsZCgl+VyeCCgO/2anFKT4F0KDSGCGANZ7Tne/wq02cRKAjG+1RILIXcDfvcQNzGXJaybuNkS
-	tFY1GdE/1WCT519A6qhH8=
-X-Received: by 2002:a05:600c:3ba1:b0:488:90ac:8f71 with SMTP id 5b1f17b1804b1-488d67c704amr32809435e9.5.1775815932319;
-        Fri, 10 Apr 2026 03:12:12 -0700 (PDT)
+        bh=2joo26VZqK/l7L0t7ywj7SByOmdQBrAhyw+E9lx2JP0=;
+        b=ds35ReiGOrOVolyr96JbLg8kz3rW2H51sLEnbDWWad29qpMQ7WNB8n0fpDPPJcBd8r
+         aa8s3wgb0gdOqykAcQdnXz4MxAejk7wXG1X3lVh7RpbpaV4IZdp0WBgXPlxMpQ7ell0Y
+         Kt6uRx8mk339T0e3VJFJpntV9fpos7GOKOm0dxCX7Rl9T6vHV+3MueeMYs9hbbu72+u7
+         YIQFhAUDhfhf9fXgIGwx/gAgF5TBCqWTSmsuGfsjk80Ry0Yts0KnRUWMKu+Y2baNcUgt
+         WMMCrP6xL/dwrHI3+JdAjpCQhSMfenLpBEyHA6HraHlmawSMEF4Gn9nJWBuG+5CcvMZE
+         CrEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSLOxyeSaE1jspwgBjK4zdB6mOtL908X76lu8I0su9iqdmmDDesdDA4UeNxsgqBXesvY4Cbs4cNUy87gLc/Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAMuyQ1qoQiFkbuLcp89tA/gQi5L8ja4NGLvUZR5qpkZ+UzShS
+	vVBydj9W23jvuOeZZi8xKs1DboBjVCx66EoaJP+MRma/DCBejkEQaZet
+X-Gm-Gg: AeBDietCIvyodnaWR2x0iEzh1S9M1tvA9h2aCYHcZJ9uxICDB8yPQf+QyjJ3RPcxldo
+	dUj19kEBm+nL9YQDsndhFhXFr59vQX119qGVgIs96iU+DNIcNLdqrcGlCdpovtwingVlB7vrIGI
+	jM3nWfs7+lxcAbZWZKajW27/DuPc9xIIsjnV2FTW64MNYdLErHUpW62km8XLWhwaOWv+1tbdAJL
+	+7FjFq46Uel1srkxH0n84ugcR6yGfI3OZbGJ3TiDoEkTwBsv5Ptnd5iYSdlSoE898w+jU60wgBc
+	MwCRfrk6KeFxLc1EMl3EhCUPoAgKhcEsyAmUDBPmC0O3PMAd7Vr7Z9AYTVdOboZVALZQZahPLA/
+	SCI7pgQxqmrq/NBzzS4UUMF/XrBp1MRgYEEts/CQMhxIfvxJ7Bq8buAlJb10HBcnKgVMIVF0r54
+	isC53zPsxoQXjD/czOfQA=
+X-Received: by 2002:a05:600c:a109:b0:488:b239:77ec with SMTP id 5b1f17b1804b1-488d683d510mr22075085e9.17.1775815937325;
+        Fri, 10 Apr 2026 03:12:17 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d683c902sm17472615e9.22.2026.04.10.03.12.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d5b3cbb2sm63943005e9.13.2026.04.10.03.12.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2026 03:12:11 -0700 (PDT)
-Date: Fri, 10 Apr 2026 13:12:08 +0300
+        Fri, 10 Apr 2026 03:12:16 -0700 (PDT)
+Date: Fri, 10 Apr 2026 13:12:13 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Pengyu Luo <mitltlatltl@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Dan Carpenter <error27@gmail.com>, linux-arm-msm@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/panel: himax-hx83121a: Fix NULL vs IS_ERR() check
- in probe()
-Message-ID: <adjM-IhvtrghMDnB@stanley.mountain>
+Subject: [PATCH next] iio: adc: qcom-spmi-adc5-gen3: Fix off by one in
+ adc5_gen3_get_fw_channel_data()
+Message-ID: <adjM_ZXs9IoIYjyN@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,32 +80,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_drm_panel_alloc() function never returns NULL, it returns error
-pointers on failure.
+The > in "if (chan > ADC5_MAX_CHANNEL)" should be >= to prevent an out
+of bound read of the adc->data->adc_chans[] array.
 
-Fixes: a7c61963b727 ("drm/panel: Add Himax HX83121A panel driver")
+Fixes: baff45179e90 ("iio: adc: Add support for QCOM PMIC5 Gen3 ADC")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
 This email is a free service from the Smatch-CI project [smatch.sf.net].
 
- drivers/gpu/drm/panel/panel-himax-hx83121a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/adc/qcom-spmi-adc5-gen3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-himax-hx83121a.c b/drivers/gpu/drm/panel/panel-himax-hx83121a.c
-index ebe643ba4184..bed79aa06f46 100644
---- a/drivers/gpu/drm/panel/panel-himax-hx83121a.c
-+++ b/drivers/gpu/drm/panel/panel-himax-hx83121a.c
-@@ -596,8 +596,8 @@ static int himax_probe(struct mipi_dsi_device *dsi)
+diff --git a/drivers/iio/adc/qcom-spmi-adc5-gen3.c b/drivers/iio/adc/qcom-spmi-adc5-gen3.c
+index f8168a14b907..48c793b18d11 100644
+--- a/drivers/iio/adc/qcom-spmi-adc5-gen3.c
++++ b/drivers/iio/adc/qcom-spmi-adc5-gen3.c
+@@ -482,7 +482,7 @@ static int adc5_gen3_get_fw_channel_data(struct adc5_chip *adc,
+ 	sid = FIELD_GET(ADC5_GEN3_VIRTUAL_SID_MASK, chan);
+ 	chan = FIELD_GET(ADC5_GEN3_CHANNEL_MASK, chan);
  
- 	ctx = devm_drm_panel_alloc(dev, struct himax, panel, &himax_panel_funcs,
- 				   DRM_MODE_CONNECTOR_DSI);
--	if (!ctx)
--		return -ENOMEM;
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
- 
- 	ret = devm_regulator_bulk_get_const(&dsi->dev,
- 					    ARRAY_SIZE(himax_supplies),
+-	if (chan > ADC5_MAX_CHANNEL)
++	if (chan >= ADC5_MAX_CHANNEL)
+ 		return dev_err_probe(dev, -EINVAL,
+ 				     "%s invalid channel number %d\n",
+ 				     name, chan);
 -- 
 2.53.0
 
