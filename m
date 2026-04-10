@@ -1,75 +1,68 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475D937D13B
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 10:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDB1344046
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 10:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775815940; cv=none; b=R5RVmoI9R5PY/0s71SBmBdgoaY2OeWmX9W7P1EQ4KxU5BATOp9la0ci2WaVttYy/tBgN/3ULLYxEg/eXIGs1C9EMA/wukvHWHxvDW1B4QOPKkCHjASWvtzQlWo6/Dkcvhotpqw95EyQ/2EQIeb0dA/c7KkmoFmONravq30SUzD8=
+	t=1775815961; cv=none; b=FvcrKL1o1ZFFIrV/4KsbCzh5NjCH5ODw+Bi0lJkyTpqpA0k8pKo48ofTmDUmkUrvdmnWMlqjYLcwjbJ7vaFOFlDaPqLEl/w9fA8YldsGsVWwmBIDVWiDNIoHdG3qiZ0U/QpIZxGyZtMr0Ghqk/dXL3e+gcnAHddzBKxUdjqVqKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775815940; c=relaxed/simple;
-	bh=H0fXTkWi3cEW1grzTO2UpwdTEZU5njLYXMU7g8OxhcQ=;
+	s=arc-20240116; t=1775815961; c=relaxed/simple;
+	bh=ypR0mAofSNl3wnVL/4GqW8vs2zYZWGoCLzM7ASQ0LEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N9bov8Pmzx8wb6aSPu1EUFKIh0RnCxTHEaF3CPWeOVEIcVaObZ77OJhqhvdyya95UOWWXSvfIcwQcKaKGYO4RSB7SF8rhIaDBm80UpoN2ASudmF8345IQ/nGQxYL+JHTKPxrzE5nCbyjLxN4gXxuwzMJylv5yQ0Mv7PQH6n/XJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGEwk05u; arc=none smtp.client-ip=209.85.128.46
+	 Content-Disposition; b=UEscFcBpEMfOLAaEloOD8I/7Q0AhJ4DX7nOYFgNU++hS2iHM4fs82wb6lBFJOGv392YzPnG/w8W9bIgD0q+0oY1+E+/f/wQGkHpweBBBs6XkVbEWeRH4DZsEb31G3d/WJY24PrrqyR7IBHTjOG9fmD2OxPqArKFIzhUStNLWlps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NA4fupIh; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGEwk05u"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-483487335c2so20288225e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 03:12:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NA4fupIh"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-488ba6366a7so22713635e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Apr 2026 03:12:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775815937; x=1776420737; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775815958; x=1776420758; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2joo26VZqK/l7L0t7ywj7SByOmdQBrAhyw+E9lx2JP0=;
-        b=gGEwk05u65i7OyrFU09sm3cibL2EYJ3yVES5ZR4aCtwm+o5T5hvE1D/aFwqvuDvoto
-         6x4+Q6rCSxgCNbNIxyyeON19h0981U1gOM7HMkqSpIANW9XKHNFLUgvsz1/mu/65+N6M
-         SyiIjbVLPi2FJyfxp7M5tv5qnLXcQHvCiIFCdrIUcmM1+v+l1QsobnglzCazgoUqIRZ5
-         sPm6/x5vQ/wFZB/ub8OAPxIm9D262LqIplHmSIw2bMLDfAYzx+Eah9zAcRFGh1JU68xi
-         Dpr4GiuPbeSYD+S5S5MKr+OvZN0mdqIl2qC+sAbeBJdf2MAtLx5P/QI05FylJN6Z1xcw
-         AxnA==
+        bh=+FxQmBox90UaRlKugkSGgbN272DB6wwpiVADHns4y7w=;
+        b=NA4fupIhXrcExysXZrpMr3rNCl5bZjdpYkh7O7bjE/e7g1PvJPY6IU3DalbUVG6Fr2
+         QaTYZhd6RP7BPGSCBrZzVCvVEFqJiSvDFqjxTcONY3iSkVYCbdXO1DOkDTs9idW5mZT1
+         xwPbx31Bp8gR1ljLWOyuBYfhN94IG6cTVp0ttd3QIodykh2JQm7O2/UmqYM3dtw7opUJ
+         vPGqnG8szPkWztuSgTioDqZ4Rwn6cQN1SJsseWZVEda60kDlDDx2ebWNgqJVw3nwpwSU
+         WVttoKu5IwjsTdQ1wuX6YlDFaPgp2AgotLUxlwjXPAmE9zidT+6j2hdFo81vnptkUGwH
+         jL5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775815937; x=1776420737;
+        d=1e100.net; s=20251104; t=1775815958; x=1776420758;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2joo26VZqK/l7L0t7ywj7SByOmdQBrAhyw+E9lx2JP0=;
-        b=ds35ReiGOrOVolyr96JbLg8kz3rW2H51sLEnbDWWad29qpMQ7WNB8n0fpDPPJcBd8r
-         aa8s3wgb0gdOqykAcQdnXz4MxAejk7wXG1X3lVh7RpbpaV4IZdp0WBgXPlxMpQ7ell0Y
-         Kt6uRx8mk339T0e3VJFJpntV9fpos7GOKOm0dxCX7Rl9T6vHV+3MueeMYs9hbbu72+u7
-         YIQFhAUDhfhf9fXgIGwx/gAgF5TBCqWTSmsuGfsjk80Ry0Yts0KnRUWMKu+Y2baNcUgt
-         WMMCrP6xL/dwrHI3+JdAjpCQhSMfenLpBEyHA6HraHlmawSMEF4Gn9nJWBuG+5CcvMZE
-         CrEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSLOxyeSaE1jspwgBjK4zdB6mOtL908X76lu8I0su9iqdmmDDesdDA4UeNxsgqBXesvY4Cbs4cNUy87gLc/Ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAMuyQ1qoQiFkbuLcp89tA/gQi5L8ja4NGLvUZR5qpkZ+UzShS
-	vVBydj9W23jvuOeZZi8xKs1DboBjVCx66EoaJP+MRma/DCBejkEQaZet
-X-Gm-Gg: AeBDietCIvyodnaWR2x0iEzh1S9M1tvA9h2aCYHcZJ9uxICDB8yPQf+QyjJ3RPcxldo
-	dUj19kEBm+nL9YQDsndhFhXFr59vQX119qGVgIs96iU+DNIcNLdqrcGlCdpovtwingVlB7vrIGI
-	jM3nWfs7+lxcAbZWZKajW27/DuPc9xIIsjnV2FTW64MNYdLErHUpW62km8XLWhwaOWv+1tbdAJL
-	+7FjFq46Uel1srkxH0n84ugcR6yGfI3OZbGJ3TiDoEkTwBsv5Ptnd5iYSdlSoE898w+jU60wgBc
-	MwCRfrk6KeFxLc1EMl3EhCUPoAgKhcEsyAmUDBPmC0O3PMAd7Vr7Z9AYTVdOboZVALZQZahPLA/
-	SCI7pgQxqmrq/NBzzS4UUMF/XrBp1MRgYEEts/CQMhxIfvxJ7Bq8buAlJb10HBcnKgVMIVF0r54
-	isC53zPsxoQXjD/czOfQA=
-X-Received: by 2002:a05:600c:a109:b0:488:b239:77ec with SMTP id 5b1f17b1804b1-488d683d510mr22075085e9.17.1775815937325;
-        Fri, 10 Apr 2026 03:12:17 -0700 (PDT)
+        bh=+FxQmBox90UaRlKugkSGgbN272DB6wwpiVADHns4y7w=;
+        b=GkkFsC+NiU3kKE1ka2+Pz0z14L8fNpyCGDs+GFV+7wW6BR45zDJr3+VBBeNKUtzqov
+         p+uQ3psFWXaRxEwnk4DtMYOAShjpGtcyrhKqu6dhVYvooRz//jXTCG5PirOfWb0nrykJ
+         z7uxl2cL07TWiW1enK/satBSpZmWyPJNaABwOBz6FIhb5gBuennW0eCB0QquNy3aTNCj
+         CQnFNmuQf8DexBsXv1tOj0LrfTOoCJd+21t2Nh4S81uLXB7amIchgj4sK3+9H3znUenh
+         qcVF38qdpgq2Aqa0uITeYstmI+VDlN+YtyHE0d8zUvZ9XX3KO/NmNW+rs5tFzuZ2m9C8
+         LKPQ==
+X-Gm-Message-State: AOJu0YxFMWAQFg8T4kIwZ7Jx3yrZtZYNnkYtJ4cB2FTqYIdwT3ChAmmO
+	2njGz/OClw12n32MgYnYlWTUpOi+c67OwlMnsZuwMofGWM6o8ElNfydp
+X-Gm-Gg: AeBDiet2XcDVmZjIjJYmBZGY8MJwzg5R9g/7lf9zM9LJct9/YrR9i74l4EKds4vkrb8
+	Cjb1jojGVPaTL4btALkDHwcZXGMJZuQY28U7Id/3RQo/pngB06lx99Hj0+rF3SIuOUY1i00umd6
+	ZQDt1RPoi3DNJrsFYRI+RXcziOVoZey0SpqYAavDtTlgPJwOwauj7eWCrrz4jgZn1fZDFYcy/QI
+	1KF3KidupFNw8R4c6arVls1w1LEU2Z8cocyaurrJv96HJI8n3cMslOgMdZDrRbrJgR7v46Yqiuw
+	79THOQKrrmy3HNuFkwd4Rae+iROGA9MFWWNjihWTmEBxKGKZxxf3oyxjOyzGLBfMrCFP1Uyt25+
+	hp7fRmvDLstOo5SvBxXzDTc60nz80AbkYNRQ8V4QxbgKyCPWt6W1QKvFLPS5dEFJhmiH9gMEUMh
+	v4VaxJ3CbshVsKBLjOSPc=
+X-Received: by 2002:a05:600c:1987:b0:485:5ba3:37d8 with SMTP id 5b1f17b1804b1-488d67bf736mr29341215e9.5.1775815958266;
+        Fri, 10 Apr 2026 03:12:38 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d5b3cbb2sm63943005e9.13.2026.04.10.03.12.16
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63dec07esm6596419f8f.13.2026.04.10.03.12.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2026 03:12:16 -0700 (PDT)
-Date: Fri, 10 Apr 2026 13:12:13 +0300
+        Fri, 10 Apr 2026 03:12:37 -0700 (PDT)
+Date: Fri, 10 Apr 2026 13:12:34 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Dan Carpenter <error27@gmail.com>, linux-arm-msm@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] iio: adc: qcom-spmi-adc5-gen3: Fix off by one in
- adc5_gen3_get_fw_channel_data()
-Message-ID: <adjM_ZXs9IoIYjyN@stanley.mountain>
+To: Josua Mayer <josua@solid-run.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] mux: Add helper functions for getting optional and
+ selected mux-state
+Message-ID: <adjNEl0C8OgEjMI7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,32 +71,40 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-The > in "if (chan > ADC5_MAX_CHANNEL)" should be >= to prevent an out
-of bound read of the adc->data->adc_chans[] array.
+Hello Josua Mayer,
 
-Fixes: baff45179e90 ("iio: adc: Add support for QCOM PMIC5 Gen3 ADC")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
+Commit 993bcaf32c49 ("mux: Add helper functions for getting optional
+and selected mux-state") from Feb 26, 2026 (linux-next), leads to the
+following Smatch static checker warning:
+
+	drivers/mux/core.c:640 mux_control_get()
+	warn: 'mux' is an error pointer or valid
+
+drivers/mux/core.c
+    630  * mux_control_get() - Get the mux-control for a device.
+    631  * @dev: The device that needs a mux-control.
+    632  * @mux_name: The name identifying the mux-control.
+    633  *
+    634  * Return: A pointer to the mux-control, or an ERR_PTR with a negative errno.
+    635  */
+    636 struct mux_control *mux_control_get(struct device *dev, const char *mux_name)
+    637 {
+    638         struct mux_control *mux = mux_get(dev, mux_name, NULL, false);
+
+mux_get() can only return NULL if optional is true.
+
+    639 
+--> 640         if (!mux)
+
+this should be if (IS_ERR(mux)) {
+
+    641                 return ERR_PTR(-ENOENT);
+    642 
+    643         return mux;
+    644 }
+
 This email is a free service from the Smatch-CI project [smatch.sf.net].
 
- drivers/iio/adc/qcom-spmi-adc5-gen3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/qcom-spmi-adc5-gen3.c b/drivers/iio/adc/qcom-spmi-adc5-gen3.c
-index f8168a14b907..48c793b18d11 100644
---- a/drivers/iio/adc/qcom-spmi-adc5-gen3.c
-+++ b/drivers/iio/adc/qcom-spmi-adc5-gen3.c
-@@ -482,7 +482,7 @@ static int adc5_gen3_get_fw_channel_data(struct adc5_chip *adc,
- 	sid = FIELD_GET(ADC5_GEN3_VIRTUAL_SID_MASK, chan);
- 	chan = FIELD_GET(ADC5_GEN3_CHANNEL_MASK, chan);
- 
--	if (chan > ADC5_MAX_CHANNEL)
-+	if (chan >= ADC5_MAX_CHANNEL)
- 		return dev_err_probe(dev, -EINVAL,
- 				     "%s invalid channel number %d\n",
- 				     name, chan);
--- 
-2.53.0
-
+regards,
+dan carpenter
