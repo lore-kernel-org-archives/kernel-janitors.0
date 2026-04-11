@@ -1,116 +1,109 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B122264D3
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Apr 2026 10:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.178
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775901833; cv=pass; b=BuChRTGnJt8VLMPsTokOz6RKbooezM8vQDfOnEEiMKwxxlRVfuuyoDVL18d5AzmIuEQPSfWyUy22sbCEHwCIfUGjSYiVCa8Dt9XEHB7kY19IuacHLysFl1UNCy7nN1LfY6B5lHJgS5XfkZ8/gzff1uQcrutNX31Mk2prbCx3wuU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775901833; c=relaxed/simple;
-	bh=tzdzv+Lu99UxUsiPz6Bj7C5mvvvg0kBPlXADJIR5SZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7iCQvMWC5UZnTbx1ip3+cj4kU1PO8GejviGPrMaFDhaKfOJW7mBmiAZS62HwKMHsJJ6BINmwAbgNiZ3E6h1F80EXXgWr+U4DRL1a9OnLdLkcRwgaW4Rdy1tL0PZ3tAraDwN90JJMwOP8TUMGUZTwD2m6E63794tV3rn66bccJw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFcC5sHf; arc=pass smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776071F5821
+	for <kernel-janitors@vger.kernel.org>; Sat, 11 Apr 2026 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775912108; cv=none; b=qilPORO3tCnEv1QVek3yX9zbgRIzW6d+GyGsKO41D6/KLmFumahHEQnIHYr+neHAloweecyHN9nt/DGUIcQ7s0b9J6Gol1sFN3Jl+umLOTNeV9TUfIRLobhQ+Hti8NPZ87GfhXROBtJVurKsxF51htMoFLX2kmA1OKb5k4IXlUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775912108; c=relaxed/simple;
+	bh=vBPOS+Mzqd0qYklI1rlLeYg1G4n0LqVG0JMrgPezwfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fDIFeWmuoE5VCCbKsI7SoxcvfZ+wr8c9YNTR7w2oBZKNCcpXGiEtCMTjnU+ThCu0LwgFhgn1EqaG+UJ9DwtllXG7+IKtSJsjrXQt7t2hPStRBl2yb+pGrtw/JhdDLnPKuS9/OaGxIGlW497SU5WpEU0XAZ46+LPnQTb81MYXIlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JeWNeaGc; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFcC5sHf"
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56db63456d4so1062025e0c.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Apr 2026 03:03:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775901831; cv=none;
-        d=google.com; s=arc-20240605;
-        b=bbRM8Ym6YmprZvVqMYQzqY66EtfJ915HB3qkSkOeis2TRCwmzGzBWFsTUtKBtHbHrD
-         cqZe/L1IVuDFPwfbeyAZhEJwJgtUWTYF6uzSGYNE+NOt1G1/WZQ0oTJaXGrkWNvR56kQ
-         iU5GwQ9y/zO4TJg2WP+9XvuS6tdTs/pthArexmwXaaaFF8l/8pu2vyIpmWfSQnv/9FIT
-         p8/gfw5UbT5aLwt597EqZz6abzAML6rEabRxPI4FzdsvzllXASnNPehbYylyxL2PVO19
-         ZdvmJqGd/R3/KBH2DfIcGQwwpHr/66NzSTxiRX1g2Vpa0VWs2qR5kVJFNM/36+PqVT0l
-         wyFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=tzdzv+Lu99UxUsiPz6Bj7C5mvvvg0kBPlXADJIR5SZQ=;
-        fh=e9BtA0KkT04oPSgN/0Eceoxi93BFS9go6Q3UfNSx1+Y=;
-        b=X+Hg5FzJ0b6S0JH4EJ6z5IA/qrOqOWfgM85CyXy8t07zKGoRhk/AUMz7v0TKlf5CxO
-         dLI7M3g5672zjbe56472JyGjrM92Tc+MF1MkKInnrkT0y8N9tx7AYby5sp8+dKgjWTnf
-         d+4tawrOrobc2taCueVGE3Hsa2I08QcjCM8Io7CxOl39C/IxGCKqRxGj1IXFt9E3TQ7l
-         XrWvJXZvjKAN+lAZ1CTtG49f7WfzwGl03aV2hb065LDVV8qjS0NJ4SogO4J0hKsX5Kq7
-         swC/TB1fvrFG3tAUmWWxGSuFhn6OdVb6vFsnOpg0aolFRhVSB24quBMPwwLE+uqWVdrN
-         NCOw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JeWNeaGc"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-488ad135063so27926855e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 11 Apr 2026 05:55:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775901831; x=1776506631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tzdzv+Lu99UxUsiPz6Bj7C5mvvvg0kBPlXADJIR5SZQ=;
-        b=DFcC5sHfJAqb0d6OnOOIunFCWleiQrmBURyHzZ260ftZxF5k4pkP9f9VhmllhU/qlL
-         FSKl+UN9EmHp6Hn5gCAbnhpl82qpiRWSNdlj8hcASjd6LAAsQdYWEPgprtl5buY83JZn
-         D38Fbxfyp8mVdk7GxZ5DNX9JX4F88uwqOVXJR6q7sNZDbdL8v+gxMdFtuyzR3DlKV7cN
-         zNVPDPB4IKpPAT//sWhZCXbrnh/SnV2dhBuKg5++KpKdiWAq0gpV6EgWzjRvE2EezO4u
-         WYObvwiousz48vMUWgzf/d0toXYxIz05c2t0SmreZhVQsrOCGTIoUTfO23PU8+ARDkcy
-         PB3A==
+        d=gmail.com; s=20251104; t=1775912106; x=1776516906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sk4BS+NYYx5pChD5+U+ftGqCpaMePJhg1hk3GmMPw8=;
+        b=JeWNeaGcVEuMVVFQYis1gFrR6mqYj/vk3CTyHh6QeeTVifUoZlEAhrH/Suea+3aL1s
+         5fUhWs89pOHBqehrz0GVfmJImtGM/+Jr4cJrBxEC4ctDEXI+VAxxXF3PkOBaJfBoKfuR
+         g/8zsEQLzhRhgkqoKBj75gWStKNlVorHWAJ6+fgyhealNUSILcWJAFqJ+RA595mYDQxJ
+         cuZcApIg7HxnhcBzmwd9j4anVkOyNqNYTp1J7WZd3al+iEVGwba5+9OOw78+LuU7zc6Y
+         2m0ycQxHYgDYtxcBeQtFLwxMJ+O9r+lDYRaoC9mKv7CFzGTZZDDNGclTwNfs+VnE7lNb
+         WWJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775901831; x=1776506631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tzdzv+Lu99UxUsiPz6Bj7C5mvvvg0kBPlXADJIR5SZQ=;
-        b=CgKYdxqIxKVhmWev158TXdeURayCoTVxHWVwMrQRyUwikIH+4qw7q+kyttf/R88U9Z
-         yyIoWhKVV8RX68fT85GEZMhTgjzzCkMAruKO4yCZp5t7kfi+qe02FV14gOfk6TcjKhQr
-         wrRQjFF+iL+Tk5OgSGqEEw/Sk1KqMn8vMU29giQ5mwMBEB3pl2nesl+zMgAjPpw/BbVu
-         sGwRPWIwnaYy785ZYzvZmQwiRXzqd2g4gouyB+L2s6mn+2K4JL51zsR6vrO86di1QHpn
-         fm2TFOODhp31Cm2gD5XCK7N7cBJ+JHFSEPYmLF4tCVFHnW9jFhnvYRqU2dAJqxL6YHEa
-         ul/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXv3cI4YxeWtutzBoGJh8vmLZnv2kdDUqAL6QpVyILhGEL8hz6nDk3BuqBLhtj4l45TKYdX2dfH5E8Gt7ye9cE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI8/tAVghZX6dJZMeTI1v0YauGVw/lsgXGoCcNSgah4RYi2CTe
-	NX1nSTFVs4mAUEfJPEJrqq63aC5993iulPLTkWqVYxRSstjqNiRSYusjU1sYgjGltWH1J7/0qFZ
-	VvnoGmVCtdMDmHqcIvzKvZEXeKi1X1Ig=
-X-Gm-Gg: AeBDieslRoWX6vHpl1PX0mGJZHbNc6qrqu+bTDKbhzTem1VOVTJf6t4aakJ2UzoNSts
-	uBqxyrFMIAUvJcX005lv0U0HZmrvtK6UVTCRBIi5Wi74cP31VUsqpipa9ICScX5e+AmsgL0PDDn
-	bN2GzVp53ZjJfMsWD3onNSpyEkSwgxGK8Gs8gAvhrNXxX0+zuNgXN3a2OlfrOI/RwIJa8gqPpii
-	bZwI4jihXiV5WyOa1VVbvq3yr6xDQHU5QO+CsgHVizr2jkqxTJ1MKFLXlaz/JIDsM8FfWHozixJ
-	w/ZEjD7ho19f7dBrM8e48J/kf6ZYTJm8hKG7tMzr7rI80z4Opw==
-X-Received: by 2002:a05:6102:6044:b0:5f5:4055:4558 with SMTP id
- ada2fe7eead31-609fe48d9d2mr2627787137.2.1775901831007; Sat, 11 Apr 2026
- 03:03:51 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1775912106; x=1776516906;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1sk4BS+NYYx5pChD5+U+ftGqCpaMePJhg1hk3GmMPw8=;
+        b=tHx1IvtiQrIWpMlt85GN1pZyGcRh1Hp8JfMLxWWBHRLNlJAsoY2s5ovEzmEr/lu16k
+         sFkp0wqElq13uBQEiofJT4iia4jvVGzR/jkHmrtQa5smimLZq/ATPwagzWY8F7bq8757
+         9pTEEO9+UxrFTYMyurT5pll73TrqycY3DrN3uwH2zdmmXVpLoJT1oL7YTVNrOIwPQKAp
+         tpG+/TRtry7xMlvagAt3qCGPFNu5JC4EZU1L1y7Jc7hAZLtjG16G+e7dbsRS0p0XXnPk
+         ZdwUNPTt2Y1paO/67O3QhedZ6mA1nSbSkFC2HVEOXMA9cFD2vQ06wJ3cVZ6Az52duN8/
+         TyOw==
+X-Gm-Message-State: AOJu0YztUoqnpqU8+fiFKSiqYhFI0yDfJlJxdhk1g5RQZkoXNbrrv4Cf
+	5zMXKscD+ZvQcTIyRxVySawMiAyqBtwD3bV+HdvgK7vaLikcbIHrU4L3
+X-Gm-Gg: AeBDieuSIK/Xv0H3wkfhjdhcNjiOmOkB4GyGHRQU8+Hnty2IO2GWwPmq6wlPfL1m12K
+	fPYVbGx9BFll1enYo/vYGQ/CH8aX2c/UXtM1vGGLQXEe39hYaabvgQPEVaBRmSWHiZLYNOmznWj
+	B9+f8gTsqmY9qFCxDIxsGAN5JmGFo5amdxRYr4ZQDsNLI8qD9QLKS2JPdEuSJjB8Bvjbrb5PK6R
+	bDhumdH8tJzL8NUWhzKxRJNMWcdH5IpmzT1XURWv1Wj2UDHuu/MVsyARzcq8jNIqEJe17j4SWfN
+	ebYapa2klPsY4g2lzvV1h2l3ubRqSl09nIgqRLt4mDvHyt0Qrml6CcDSnYpUT2nsVmIFoCXZkCi
+	kSS/5GJtHeNCb1hJFlq479vQGYKP5oiTp5ZRMFmPyg0H7xySga1aD1FdPGJzQuGK17XJJ1Faip6
+	kAWdo1NgEGF1R1BUH38hGBE2lkgGR7GbHC
+X-Received: by 2002:a05:600c:35c7:b0:483:64b4:79da with SMTP id 5b1f17b1804b1-488d68b27d6mr98565045e9.26.1775912105614;
+        Sat, 11 Apr 2026 05:55:05 -0700 (PDT)
+Received: from localhost ([87.254.0.141])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63de2a69sm15877244f8f.4.2026.04.11.05.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Apr 2026 05:55:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hfsplus: remove xattr error message
+Date: Sat, 11 Apr 2026 13:53:38 +0100
+Message-ID: <20260411125338.165758-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <adjM-IhvtrghMDnB@stanley.mountain>
-In-Reply-To: <adjM-IhvtrghMDnB@stanley.mountain>
-From: Pengyu Luo <mitltlatltl@gmail.com>
-Date: Sat, 11 Apr 2026 18:03:12 +0800
-X-Gm-Features: AQROBzAyYZuFVagVc_vBOi-Hx99ZeQPhqfSdTs1lmogRFo2Oryli_H93NDHjpRk
-Message-ID: <CAH2e8h4=+qATNBqQDgADjctkjtabt+8zpg0z8zBRSN6bzBwxcA@mail.gmail.com>
-Subject: Re: [PATCH next] drm/panel: himax-hx83121a: Fix NULL vs IS_ERR()
- check in probe()
-To: Dan Carpenter <error27@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 10, 2026 at 6:12=E2=80=AFPM Dan Carpenter <error27@gmail.com> w=
-rote:
->
-> The devm_drm_panel_alloc() function never returns NULL, it returns error
-> pointers on failure.
->
-> Fixes: a7c61963b727 ("drm/panel: Add Himax HX83121A panel driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
+When exercising hfsplus with the stress-ng xattr stressor a large
+quantity of somewhat unhelpful error messages "hfsplus: xattr exists
+yet" spam the kernel log. Remove these.
 
-Sorry, Chen Ni had sent it.
-https://lore.kernel.org/dri-devel/20260327021728.647182-1-nichen@iscas.ac.c=
-n/
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/hfsplus/xattr.c | 2 --
+ 1 file changed, 2 deletions(-)
 
---
-Pengyu
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index c70bb6f494b2..e10e1d8a5862 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -301,7 +301,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 
+ 	if (!strcmp_xattr_finder_info(name)) {
+ 		if (flags & XATTR_CREATE) {
+-			pr_err("xattr exists yet\n");
+ 			err = -EOPNOTSUPP;
+ 			goto end_setxattr;
+ 		}
+@@ -348,7 +347,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 
+ 	if (hfsplus_attr_exists(inode, name)) {
+ 		if (flags & XATTR_CREATE) {
+-			pr_err("xattr exists yet\n");
+ 			err = -EOPNOTSUPP;
+ 			goto end_setxattr;
+ 		}
+-- 
+2.53.0
+
