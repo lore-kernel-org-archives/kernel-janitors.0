@@ -1,70 +1,97 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776071F5821
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Apr 2026 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB05351C1F
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Apr 2026 10:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775912108; cv=none; b=qilPORO3tCnEv1QVek3yX9zbgRIzW6d+GyGsKO41D6/KLmFumahHEQnIHYr+neHAloweecyHN9nt/DGUIcQ7s0b9J6Gol1sFN3Jl+umLOTNeV9TUfIRLobhQ+Hti8NPZ87GfhXROBtJVurKsxF51htMoFLX2kmA1OKb5k4IXlUQ=
+	t=1776075692; cv=none; b=VXyLBHEkDMjr8/WKB2Axa/jsZ2cZ/m4YshY3lmyop7hmTcdwaoQUpSAAJ/sYrPIZQEgxSSoKRNEJI/N8lw0e173+UhyRZEiBHeOebdg2sFjiPyBspScY2QCS3UK+RvbxSSKHdV1mHUhzpAVp70Y9e2TNvEbGykKsxtCbX99RzDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775912108; c=relaxed/simple;
-	bh=vBPOS+Mzqd0qYklI1rlLeYg1G4n0LqVG0JMrgPezwfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fDIFeWmuoE5VCCbKsI7SoxcvfZ+wr8c9YNTR7w2oBZKNCcpXGiEtCMTjnU+ThCu0LwgFhgn1EqaG+UJ9DwtllXG7+IKtSJsjrXQt7t2hPStRBl2yb+pGrtw/JhdDLnPKuS9/OaGxIGlW497SU5WpEU0XAZ46+LPnQTb81MYXIlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JeWNeaGc; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776075692; c=relaxed/simple;
+	bh=oICiryzy3QGI3tJheynSBKYqkqw/7LjA3LQm5HpTRaU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jt2Fn+Yv3M63OpGlAJV+m/Uoyo/fADJnTQMNS4pPkm3c4EDXsBd5kkGq8HueaNKm8Cu8ugKTzXHWRGL4isT4AXRCofODNfCeati34WGyWU6f7IpdUYZAHSGf/xO0J20Lef4L9SFuj6xBN13/L/VEA3fu1XIuUwj8aEh1boGmU28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A9EwXWeM; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ArYUOPYZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JeWNeaGc"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-488ad135063so27926855e9.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Apr 2026 05:55:07 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A9EwXWeM";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ArYUOPYZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776075688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fW/Jk0WpKq11KY/BRAX8lJJtqZ8w0BPQk7uT/pBi+tk=;
+	b=A9EwXWeMi9tUCrugUzIs6VawCzl2BJYbGr2sf0aGs2DIXYj4UabMGBHbY/0nwIep4c0xf3
+	pYDpA1QCTwMbhYO7H7b+i4FYgyBOV1xwF5/OZP6Y4L7VPIb5bXBxD2WqnOBfct5kGEZoyw
+	4UnD/N5hBUrU3DTTvmTO+JBl5QDrveA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-148-zUEfMTeqOYeLzSTD9Rv7aw-1; Mon, 13 Apr 2026 06:21:26 -0400
+X-MC-Unique: zUEfMTeqOYeLzSTD9Rv7aw-1
+X-Mimecast-MFC-AGG-ID: zUEfMTeqOYeLzSTD9Rv7aw_1776075686
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-43d775bcb14so978599f8f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 13 Apr 2026 03:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775912106; x=1776516906; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1776075685; x=1776680485; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1sk4BS+NYYx5pChD5+U+ftGqCpaMePJhg1hk3GmMPw8=;
-        b=JeWNeaGcVEuMVVFQYis1gFrR6mqYj/vk3CTyHh6QeeTVifUoZlEAhrH/Suea+3aL1s
-         5fUhWs89pOHBqehrz0GVfmJImtGM/+Jr4cJrBxEC4ctDEXI+VAxxXF3PkOBaJfBoKfuR
-         g/8zsEQLzhRhgkqoKBj75gWStKNlVorHWAJ6+fgyhealNUSILcWJAFqJ+RA595mYDQxJ
-         cuZcApIg7HxnhcBzmwd9j4anVkOyNqNYTp1J7WZd3al+iEVGwba5+9OOw78+LuU7zc6Y
-         2m0ycQxHYgDYtxcBeQtFLwxMJ+O9r+lDYRaoC9mKv7CFzGTZZDDNGclTwNfs+VnE7lNb
-         WWJQ==
+        bh=fW/Jk0WpKq11KY/BRAX8lJJtqZ8w0BPQk7uT/pBi+tk=;
+        b=ArYUOPYZQDwSETQvLfrAKlMWezJY8F9NdLedkOqutpns5inC/fsCUm61n8+XCX9dG5
+         Qt2C2jT7Arw7PQz7AQOJDT33BTM4omxikYG/5wtI9DMtTSD7AEWX/SJCWGqBqPqutE9n
+         Vp963RJ4DCxHgwprZtO1ycEmypGOoSx9jZd8TDtJDFpP5RLt86/LPDcPd0+A9bx4L6dX
+         hjxfxmPKaq4l4AXpuUB0zVqVg6rd1ykYT0KCsjrbr7htuiLhrjY4JtRObL5ib+AVfMx4
+         NhjQlMMDK91lLO6gzuOTXoP+pdQxNbz/e30XWzmykwypCtdCRJxL18xWnaYHzXIYm93v
+         afKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775912106; x=1776516906;
+        d=1e100.net; s=20251104; t=1776075685; x=1776680485;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1sk4BS+NYYx5pChD5+U+ftGqCpaMePJhg1hk3GmMPw8=;
-        b=tHx1IvtiQrIWpMlt85GN1pZyGcRh1Hp8JfMLxWWBHRLNlJAsoY2s5ovEzmEr/lu16k
-         sFkp0wqElq13uBQEiofJT4iia4jvVGzR/jkHmrtQa5smimLZq/ATPwagzWY8F7bq8757
-         9pTEEO9+UxrFTYMyurT5pll73TrqycY3DrN3uwH2zdmmXVpLoJT1oL7YTVNrOIwPQKAp
-         tpG+/TRtry7xMlvagAt3qCGPFNu5JC4EZU1L1y7Jc7hAZLtjG16G+e7dbsRS0p0XXnPk
-         ZdwUNPTt2Y1paO/67O3QhedZ6mA1nSbSkFC2HVEOXMA9cFD2vQ06wJ3cVZ6Az52duN8/
-         TyOw==
-X-Gm-Message-State: AOJu0YztUoqnpqU8+fiFKSiqYhFI0yDfJlJxdhk1g5RQZkoXNbrrv4Cf
-	5zMXKscD+ZvQcTIyRxVySawMiAyqBtwD3bV+HdvgK7vaLikcbIHrU4L3
-X-Gm-Gg: AeBDieuSIK/Xv0H3wkfhjdhcNjiOmOkB4GyGHRQU8+Hnty2IO2GWwPmq6wlPfL1m12K
-	fPYVbGx9BFll1enYo/vYGQ/CH8aX2c/UXtM1vGGLQXEe39hYaabvgQPEVaBRmSWHiZLYNOmznWj
-	B9+f8gTsqmY9qFCxDIxsGAN5JmGFo5amdxRYr4ZQDsNLI8qD9QLKS2JPdEuSJjB8Bvjbrb5PK6R
-	bDhumdH8tJzL8NUWhzKxRJNMWcdH5IpmzT1XURWv1Wj2UDHuu/MVsyARzcq8jNIqEJe17j4SWfN
-	ebYapa2klPsY4g2lzvV1h2l3ubRqSl09nIgqRLt4mDvHyt0Qrml6CcDSnYpUT2nsVmIFoCXZkCi
-	kSS/5GJtHeNCb1hJFlq479vQGYKP5oiTp5ZRMFmPyg0H7xySga1aD1FdPGJzQuGK17XJJ1Faip6
-	kAWdo1NgEGF1R1BUH38hGBE2lkgGR7GbHC
-X-Received: by 2002:a05:600c:35c7:b0:483:64b4:79da with SMTP id 5b1f17b1804b1-488d68b27d6mr98565045e9.26.1775912105614;
-        Sat, 11 Apr 2026 05:55:05 -0700 (PDT)
-Received: from localhost ([87.254.0.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63de2a69sm15877244f8f.4.2026.04.11.05.55.04
+        bh=fW/Jk0WpKq11KY/BRAX8lJJtqZ8w0BPQk7uT/pBi+tk=;
+        b=hEqWkSbP6op8buTjxdkMeGw8Wga3QmpdZxDZgPVDxH85N21gjVtSsnR8+IJpx1ARw0
+         1MkaR7KoLSKrMkku6352vCUfHOqqY+xB4YFhQuwRB2QL6JPc42vM4Q6dNDKTKI2TW6xt
+         y+mnBhLjBIvcP8UiI61rPeP/EV67rBK7jmGXT1q3aNBhljR02R2e0hYGeyh0LPuaGTix
+         aqEYtwVoD1Feiy0E0JQpDC4yjx3kOkvqUCo5jaruGdn20LMBigsuTbSB2UiF55G6Hheu
+         8gbh1DEbFqwokxVsaY63+h3k2k2tMqaQArdcUhMxcaQdjxmwQMBmZqAoAzRL6EpfMPw/
+         TLJQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9NdkqcieuAJAiG8D8X4Is6knYnc6HL1qotQ5zkrNzpZSjzDw15I6gtdcNP0iTv+/ae/qXazZcWFjjO2TCySTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQx15QqRFANrO4XmC9SlFKAef51hxverb/PfIXbyZCgtWtvxyR
+	UvrQ+4IQB6Xa+d+7pnSI5CmgX7OMq/KtEQ8bl5j2+Dk53vduRy9TsJPS8dLr5uwYnrUCpjbSyIb
+	hOeZf73sZUQayGXaUXEXHUlhOW4fGoyoprUxOMHjnVpqa0C+AhxINTkLhJ27lVUCMXntTng==
+X-Gm-Gg: AeBDietiY35DIpVJZXvlrpiHlkwh2rRcglMqjqGp7sl9AnEuvPYJ5i32kHfh5cZ66bx
+	foZO0TzWBtrWOB9HIE3PpmKSqt6NcaSq0tq6ULFLIZ2pJeWUqAZW6CpMsY11n5rwcpRq+km6yEm
+	jWXJyrHjKjn4iVkbykexDYxiPMTRebUpOXf3v7Tl+Kl/z9XknoKttsehX5zbPfKL6CXAJDoNE6I
+	hguil6qb42dPKPX4Ns5r5UakPlnS6/CJtawdX5rCUPhthopDOutwOV3QQ/bGJXoTPIT2xeWI1TQ
+	vzzm/I5jt0wu8i48gv57SxiRP2sQDbmvjGyIbj+DmQl02HL5wSgRP1bgDrs5lm7n4UK0GfnUObF
+	lWdxbRzvR2TZcMLviPa83VsUUFjiMTYCZIb8TUywFQoJFf6yNjT5DxKsVgRGw3TpyHpjufAc=
+X-Received: by 2002:a05:6000:26cc:b0:43d:73de:abd3 with SMTP id ffacd0b85a97d-43d73deacc9mr6725838f8f.30.1776075685600;
+        Mon, 13 Apr 2026 03:21:25 -0700 (PDT)
+X-Received: by 2002:a05:6000:26cc:b0:43d:73de:abd3 with SMTP id ffacd0b85a97d-43d73deacc9mr6725790f8f.30.1776075685169;
+        Mon, 13 Apr 2026 03:21:25 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d6a1203b8sm26926706f8f.16.2026.04.13.03.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Apr 2026 05:55:04 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hfsplus: remove xattr error message
-Date: Sat, 11 Apr 2026 13:53:38 +0100
-Message-ID: <20260411125338.165758-1-colin.i.king@gmail.com>
+        Mon, 13 Apr 2026 03:21:24 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Kai-Heng Feng <kaihengf@nvidia.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in NVIDIA GHES HANDLER
+Date: Mon, 13 Apr 2026 12:21:18 +0200
+Message-ID: <20260413102118.33088-1-lukas.bulwahn@redhat.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -72,38 +99,38 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-When exercising hfsplus with the stress-ng xattr stressor a large
-quantity of somewhat unhelpful error messages "hfsplus: xattr exists
-yet" spam the kernel log. Remove these.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Commit d7610855b0b5 ("ACPI: APEI: GHES: Add NVIDIA vendor CPER record
+handler") adds the file drivers/acpi/apei/ghes-nvidia.c and also adds a
+section NVIDIA GHES VENDOR CPER RECORD HANDLER in the MAINTAINERS file with
+a file entry referring to drivers/acpi/apei/nvidia-ghes.c. Note that the
+file name in the entry (nvidia-ghes.c) differs from the actual file in
+the repository (ghes-nvidia.c).
+
+Adjust the file entry to the actual existing file.
+
+Fixes: d7610855b0b5 ("ACPI: APEI: GHES: Add NVIDIA vendor CPER record handler")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
- fs/hfsplus/xattr.c | 2 --
- 1 file changed, 2 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index c70bb6f494b2..e10e1d8a5862 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -301,7 +301,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d4b396dccfe9..a74012c38542 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19103,7 +19103,7 @@ NVIDIA GHES VENDOR CPER RECORD HANDLER
+ M:	Kai-Heng Feng <kaihengf@nvidia.com>
+ L:	linux-acpi@vger.kernel.org
+ S:	Maintained
+-F:	drivers/acpi/apei/nvidia-ghes.c
++F:	drivers/acpi/apei/ghes-nvidia.c
  
- 	if (!strcmp_xattr_finder_info(name)) {
- 		if (flags & XATTR_CREATE) {
--			pr_err("xattr exists yet\n");
- 			err = -EOPNOTSUPP;
- 			goto end_setxattr;
- 		}
-@@ -348,7 +347,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
- 
- 	if (hfsplus_attr_exists(inode, name)) {
- 		if (flags & XATTR_CREATE) {
--			pr_err("xattr exists yet\n");
- 			err = -EOPNOTSUPP;
- 			goto end_setxattr;
- 		}
+ NVIDIA VRS RTC DRIVER
+ M:	Shubhi Garg <shgarg@nvidia.com>
 -- 
 2.53.0
 
