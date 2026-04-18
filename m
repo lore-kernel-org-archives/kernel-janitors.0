@@ -1,113 +1,113 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DF3329365
-	for <kernel-janitors@vger.kernel.org>; Sat, 18 Apr 2026 10:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43B3278156;
+	Sat, 18 Apr 2026 10:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776508040; cv=none; b=QRS29X2gAcnNKSbfNe2bI7VxRMbgfBA1UAkhMo9jnIHlVLKNHhExeIPFrFNJY5H/KzypCI59dLeL20Y2ARmZKtldLjTwwWjeKDexRcbIe8sxKer3uOr/dhzO+zQBD1I6xBErIbKtJk+ty3y+OgiqsMIz2UEZqPxb8d6n/nq8qrE=
+	t=1776509171; cv=none; b=n//OgB4PsuON/ofOgN7pkD/jA0juYR/45zQMaQ1Dpi3A5Du+gwCv8KMnbSDCmnZ40/QhP1nNv7HQr2H6vMzFXBDn4bSQEY3J0sYsv4YawZnJvo8JWOTk9xaImkrivQ+rkB7qMk5GU+vXeDGrM7a35a0Z+W8BRZJ49C17mwLlIeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776508040; c=relaxed/simple;
-	bh=lbvp+q6Ee1jXl/JddiYXx2sw6/NvDwxJUd93EGYKAco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HiZ3NWv44Ta/aEhP3WNS6pKGW1tRXWjNbL63DrTji+fb4YFpoiR/7CcXHSqTZauYYEPTS6WSjadSsVFjwfouhLLvPiXvGqY9+W0w6FfnqcrLRPjvdXhJrat8w4D2Q+LHlWBLyVDi0/cXAolskr+V9Fq4ihZEfQsP+/A9skENX6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYm7z1F9; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776509171; c=relaxed/simple;
+	bh=Ir0qLUR/r3WJt2KzeUx3H7b+A0/ZkWKvELu87SyVyfI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IhRP8PbI58k5VNge/JPkWJaqkZ1C5YZ61KA+k+cWlc+PGKxjwMIv9Iz86WD05/eYvkCRDA8+Yab2cgnSYG31ejIFbrXYtdkVPWwwXEgvz6J77UUbADWgzCu6j/jp8wZhu0lzOed0DYXoOmuSqfTRwYUhtBzEEntQM0TGJR7qJdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HWP9kWgW; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYm7z1F9"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48374014a77so17909545e9.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 18 Apr 2026 03:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776508037; x=1777112837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBNI4EdgBnERH0JRaIrNWQCvhm/8BjKu3aOv53OQCzU=;
-        b=CYm7z1F9u+ZagNqNK/L5Vu9N3AjMk8Fc0dX20u2kcfsno9rNYrVFHYQ+5tFraTxkI9
-         C2VJ2v2NyxV7QGqBSN45+XLyjrt9KmEk7mJTxX9TuY0cHoK80JtwP4UmRFaNHRcBWuvv
-         IcTb3SjqQ72NvNkdptr/ANbf0+s3P/YnTcilsHtSqeZgpLJlX4T25G1TzUbnxu6tvqzV
-         qFRyMjGz6HKWMOTATsnw67AvQ6h4ZSvL1O9U52OlQEsU7KJw3XFs4xvakW2y3BiEGb2P
-         tmPJ2fCtgd4YPfbTEHPtRYQ30rFQZAK+XxJRKvWxebMhekwPY7Y2+vZHhLHqYHz7e7Z3
-         tjvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776508037; x=1777112837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZBNI4EdgBnERH0JRaIrNWQCvhm/8BjKu3aOv53OQCzU=;
-        b=Ve/wftvw5VwszDHLXopXTI98vZEhpTBqurJwnhb+mZ0vr96pcYeGwzRQCCfzyEbk7o
-         9HTFc9MwPc1z0cB+Ov76ANfvKlRvpq9VAQ/WqD/OcC4xYDKbb47ceZJMK1Kk1VR8pvw9
-         BruW1RWIAtqaSweEEyOqrnPL4x0MouGtJidEzTe8cwwUY/9C7zYY6ydhfUR/e3Rv0BET
-         kVx4DS7JQb/9ZJqX9Hl1WcDhX/j0pwuDOyz2VuEPS90KK+MZOfj3g6fM+MhGrBW3p4W6
-         Rme1NL7aYjwBQrqgRm/MPJc5AyPHy2TlBd1TLkLrKaEmU0Qb5edq5QQjDNRtpswKfouF
-         am2g==
-X-Gm-Message-State: AOJu0YzW638ierz/Nh3uEciz8ofhs3Vf/gq30+NKIADmFQKDwdBl3odD
-	r8+0UB2mmRtif8jV0qIQqMu1Jbw8F9pkNmB3MEaBN7/bNESnJ4nqbB2u
-X-Gm-Gg: AeBDieu666Yhv18Qwd2/wVWrfyHwIHpAJ38yYLZWYcD/W0x9yn1TZaN5Mzh9ksv+SBr
-	2efeLoHGDKkVyVDxm1xKFUgJSeTcplOnQePK39BkXaqEEg7y9hl43GlzPaBks+kjqh6bRn2XyUe
-	aBMp+rL+edlmcwJKwdLOCjWdW/7lwWmpqycbpwJNekfhu5w37CQmKzgKx1Q55oVPNu9dwGdOMrN
-	p7Se1EYU9q8eMaIhAFn/7pakWL0t4dzPNCNaZZNGQ5LJVJJbvL9n2+uxfhT+r5+MzfmWbHD97Od
-	VkDiHaMs8mToHXgUdrdVskFSR2wMLRiJPU6rj/EFr6dtrIj2pGc/FrbGDaTUkpf7FjHLlRXBLqf
-	SfRk6bIjXxK8nNTr3BttwRMvOmzV3ODt0X6B2Vh5iqZdDDuenPZbK9VlaEEFreng3BBbAVDFte1
-	S0R4/b3lfjJBJNckZ7Y0xV3slZKRo/3Q==
-X-Received: by 2002:a05:600c:6089:b0:488:e192:6fb5 with SMTP id 5b1f17b1804b1-488fb7887camr88648135e9.24.1776508037427;
-        Sat, 18 Apr 2026 03:27:17 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4cb1682sm12499160f8f.1.2026.04.18.03.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Apr 2026 03:27:16 -0700 (PDT)
-Date: Sat, 18 Apr 2026 13:27:13 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Manuel Ebner <manuelebner@mailbox.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	linux-newbie@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HWP9kWgW"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fyT1m6yXcz9v8P;
+	Sat, 18 Apr 2026 12:46:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776509165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ir0qLUR/r3WJt2KzeUx3H7b+A0/ZkWKvELu87SyVyfI=;
+	b=HWP9kWgWI4ZxvUTH9DIaA1XYwaEZzJUnFWIHEymbWZg7sjxylsM0xIiTGXHpiEDrSByebX
+	ZIgwGYd16wGku7H5i0jVOQ8hLxarEmr8FFh2dKrFkwApVP7W15HMvlDQKVAxoTNYeXraoY
+	ib6qObVY/C83qeseKkzlS9KzNf6EU3GITU7yR78oAUW53M//EkrNSP8qZW1SvQiG6JhBiR
+	ETw/Zbzec0/Ww/soORSwHqmEry4z0Ss9sh+H+2dWQRTH5WdpX6+BxKpfgY8kFqpvyed6hZ
+	LYzDO0NobRuGFUPnkeFp4qPXAXoxHrQxoybTTEjS2fcszO0S03dIt5giiEoGmA==
+Message-ID: <980be93ce680c831c37dbeeb070135b2fc8f4fb8.camel@mailbox.org>
 Subject: Re: [PATCH] Documentation: adopt new coding style of type-aware
  kmalloc-family
-Message-ID: <aeNcgSu8kVEyWbzY@stanley.mountain>
+From: Manuel Ebner <manuelebner@mailbox.org>
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-newbie@vger.kernel.org
+Date: Sat, 18 Apr 2026 12:45:19 +0200
+In-Reply-To: <aeNcgSu8kVEyWbzY@stanley.mountain>
 References: <20260418093101.130335-6-manuelebner@mailbox.org>
+	 <aeNcgSu8kVEyWbzY@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260418093101.130335-6-manuelebner@mailbox.org>
+X-MBO-RS-META: x68at7d5ak98dwp53bru93d44wfmpx66
+X-MBO-RS-ID: 758a58929862b72aee3
 
-On Sat, Apr 18, 2026 at 11:30:48AM +0200, Manuel Ebner wrote:
-> Would a patch like this one make sense?
-> I think i need help with the change log. Is there something to much or missing?
-> 
-> ptr = kmalloc(sizeof(*ptr), gfp);
->  -> ptr = kmalloc_obj(*ptr, gfp);
-> 
->  This one is done. The ones below are not done yet.
-> 
-> ptr = kmalloc(sizeof(struct some_obj_name), gfp);
->  -> ptr = kmalloc_obj(*ptr, gfp);
-> ptr = kzalloc(sizeof(*ptr), gfp);
->  > ptr = kzalloc_obj(*ptr, gfp);
-> ptr = kmalloc_array(count, sizeof(*ptr), gfp);
->  -> ptr = kmalloc_objs(*ptr, count, gfp);
-> ptr = kcalloc(count, sizeof(*ptr), gfp);
->  -> ptr = kzalloc_objs(*ptr, count, gfp);
-> 
-> change log:
-> [PATCH] Documentation: adopt new coding style of type-aware kmalloc-family
-> 
-> Update the documentation to reflect new type-aware kmalloc-family as
-> suggested in commit 2932ba8d9c99 ("slab: Introduce kmalloc_obj() and family")
-> 
-> ptr = kmalloc(sizeof(*ptr), gfp);
->  -> ptr = kmalloc_obj(*ptr, gfp);
-> 
-> Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
+On Sat, 2026-04-18 at 13:27 +0300, Dan Carpenter wrote:
+> On Sat, Apr 18, 2026 at 11:30:48AM +0200, Manuel Ebner wrote:
+> > Would a patch like this one make sense?
+> > I think i need help with the change log. Is there something to much or =
+missing?
+> >=20
+> > ptr =3D kmalloc(sizeof(*ptr), gfp);
+> > =C2=A0-> ptr =3D kmalloc_obj(*ptr, gfp);
+> >=20
+> > =C2=A0This one is done. The ones below are not done yet.
+> >=20
+> > ptr =3D kmalloc(sizeof(struct some_obj_name), gfp);
+> > =C2=A0-> ptr =3D kmalloc_obj(*ptr, gfp);
+> > ptr =3D kzalloc(sizeof(*ptr), gfp);
+> > =C2=A0> ptr =3D kzalloc_obj(*ptr, gfp);
+> > ptr =3D kmalloc_array(count, sizeof(*ptr), gfp);
+> > =C2=A0-> ptr =3D kmalloc_objs(*ptr, count, gfp);
+> > ptr =3D kcalloc(count, sizeof(*ptr), gfp);
+> > =C2=A0-> ptr =3D kzalloc_objs(*ptr, count, gfp);
+> >=20
+> > change log:
+> > [PATCH] Documentation: adopt new coding style of type-aware kmalloc-fam=
+ily
+> >=20
+> > Update the documentation to reflect new type-aware kmalloc-family as
+> > suggested in commit 2932ba8d9c99 ("slab: Introduce kmalloc_obj() and fa=
+mily")
+> >=20
+> > ptr =3D kmalloc(sizeof(*ptr), gfp);
+> > =C2=A0-> ptr =3D kmalloc_obj(*ptr, gfp);
+> >=20
+> > Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
+>=20
+> Yeah.=C2=A0 Fix up the commit message and that could probably be merged
+> through the documentation tree.=C2=A0
 
-Yeah.  Fix up the commit message and that could probably be merged
-through the documentation tree.  Probably no need to split it up
-by subsystem, but you should CC the affected subsystems.
+how do i fix the commit message?
+ what's even the issue?
+ is the one-line-message ok?
+=20
 
-regards,
-dan carpener
+> Probably no need to split it up
+> by subsystem, but you should CC the affected subsystems.
 
+Thanks, i struggled with who to send it to.
+
+> regards,
+> dan carpener
+
+can i add
+Reviewed-by: Dan Carpenter <error27@gmail.com>
+?
+
+Thanks,
+Manuel
