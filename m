@@ -1,80 +1,81 @@
 Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25B410F1;
-	Sun, 19 Apr 2026 00:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7396220010A;
+	Sun, 19 Apr 2026 00:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776559358; cv=none; b=lCjCLQ6DahYUTyKwPEdS9ttfXgSfnE2jzCGOSpD8GLW6Qq096l/WA5z3RnWnMi6ZnpgJtGHsdhxqNLQYJET8N/DDyBS2XX9poTW4iNd9HeoGgszXk8tOwuVTsb6kf9WGPALiMYy+2JMhbTq/UqkGwxq5ATrV3XXIq3h8nKDLW7o=
+	t=1776559556; cv=none; b=NE2YBfgf1PU8s0d9HLHCE/2D7nyc2sP1l1hauokulGZREZhX39r3D27vKGbYIoYLWa4TvnU5RAkYCWn5gl12plVqU9AcLjKTjxuTB+gQc+xZ4retH43X9GvB5PRZs/wm2Ob3b/1uPnR5ML51Rkx75DlE1x0GReiZ7mUvE+XxhNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776559358; c=relaxed/simple;
-	bh=iPW/y5pADXITXht7iP58B8qisYZQ9v+e7ratS9msR28=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IyCZ4ac9VFplX0o1DRKuWIdxJKiAumZXFHURvzoG/5ZPnUYlciHA63KlcD06aNZNXrhHs5wTOMSicYYmKmKh/dVk+uOeXbulankGEBXKlgQlxrqlSRVmwbs905P2vs8Qp0EqrbppN1uvea0MBBFqYk7oVYVY/Cklrfa2HXTlaxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=InDvC6q2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T70Sc35r; arc=none smtp.client-ip=202.12.124.154
+	s=arc-20240116; t=1776559556; c=relaxed/simple;
+	bh=GNU/MRGok5zFJKRq5TRgaA/qhTEKDgwPGLJNEKyjzuk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pliYUYRh+MVzF7+6amk68FRMCISgB5wo4tHeOsOjzRCBLtpUF7yKn8ctDp3rkllSFXXZ+na5YbT0+7Z3ieY/hTmXw86DH/uW2xVHsv2LmczRzOlS+IphcqlORVneonzsn0KucK+Z+UkkuTd5UmAgFh1d7qKj5LtqwHDc0waiVBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=JmLxZpJl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lyC8Kdq1; arc=none smtp.client-ip=202.12.124.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="InDvC6q2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T70Sc35r"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B85D17A0050;
-	Sat, 18 Apr 2026 20:42:34 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="JmLxZpJl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lyC8Kdq1"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B0B7C7A00AF;
+	Sat, 18 Apr 2026 20:45:54 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sat, 18 Apr 2026 20:42:35 -0400
+  by phl-compute-04.internal (MEProxy); Sat, 18 Apr 2026 20:45:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	ethancedwards.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:from:from:in-reply-to
 	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
-	 t=1776559354; x=1776645754; bh=FlzxNUPIr/LWDRd9Mv/A76w6SCSznvhL
-	IpTZq1Wlc/Q=; b=InDvC6q2BNsZI+hzzjyFI6soE0gAH2umc8iokMkU6odFCzPN
-	KjRj+RytvS84Pc10X+INmmWZPVes6sc/XyJQSi4BCIC3j3s3YhNJbcaw7sYbX5GC
-	YnzOKfTWkMiMEl7VVNmUiAc3+DqURowkDIZ1x8vSARKUnLCZ2TO3FocF0E26uufe
-	HG8ByZa5waoBWxBJhfUvFbA/+Q47mxOd3aSevoTMjKDxlCtTKR2YxKtoboK0R9Pl
-	z+OU7bB9227LzODRiLo0+Og9U1YUTlySsvtEtBurXopDeZyWa2i1DLr5zb9os0Pp
-	KgK6aRhdL1bqji7vOHvjmndc8S4RJVNS2vC2jw==
+	 t=1776559554; x=1776645954; bh=+ryyt5gM1krKhmzbZX2sB8GTsWehBb0P
+	fTP5kNNxTZg=; b=JmLxZpJlVmeyaQMDetTvMd4A9wORwND1+SYKtinYyFCappTP
+	g0y/hc4R1WfzVQs5ONHLCeSm6vM4tUH4kioMD1NngbWpun4faUNymIBbUrPf6/2Y
+	qxyJnWwhj61HhfD6R5Wx6ZmmnqAt+5mb63M/aZmOgs5MzkCF4xqGPY/4UZ6wG11j
+	ejIPX8boRdfa3gYe+lSkEtZ8Mmb+U7HLhL1Pda5en+G1PDJXy1OM90OgYTXkQzMx
+	jdzn5eLxt+54xs5EvEX6fAsYeGMgtT7JOE0L3Um/qRJwOmq0SDBnga8RoQ/RfIXI
+	IdTVq1v0Lm0XMu15kb2eNAmTmk51/hdpKpZXBg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
 	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1776559354; x=1776645754; bh=FlzxNUPIr/LWDRd9Mv/A76w6SCSz
-	nvhLIpTZq1Wlc/Q=; b=T70Sc35rn/5uK6WItPTxRtugoJdQaKQx7wnEuP7rbSTB
-	8H6XjjoHSU7eaErJtpqBXwLQdNtkLrKv22FxlizcFt45iTh4eXfeDJUHaGhm5vCz
-	TnyzfQlLNcwDmPvWzVpESB4Z+9zDCUlaMPGNpgl9l7+xvPCtJArV+PlKqoj1i+ke
-	BnanXNnvez+qq0qSW0YkR1N0a+aP+RrMPT1agjjjQcgrGxZNpVzUw3u0Ups0pAX3
-	rcOQ22AsTsJl1I20ld7/eRZ/q2mT+OTQejelbzxvlIIY+vVuaD3PXXs4BVdQMwKh
-	n6qrFh9uPpnTjGO1qGtSmhfhlgGQdBL17kqJyhNyPw==
-X-ME-Sender: <xms:-iTkacKjOsZ-hf8MOvs_97HtwejvahJXQe85SNvgySa5mPnYuekxmw>
-    <xme:-iTkaWNlPZup8RrB_k15VERAiRzPdNHRbvX62VnKuYwtSjXlVQWarxx0b9ARXkFPs
-    unock4MYftwzKCjy_Qvnxgd7S0w4VaX1UxeIR4im8PoSe6sv802S8M>
-X-ME-Received: <xmr:-iTkacl4WQemBDKDLn6a-zflGyN4pZ6BQu_N2U-q-fpXhOIP_ysaOD2J7y2j>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdehgedvfecutefuodetggdotefrod
+	fm2; t=1776559554; x=1776645954; bh=+ryyt5gM1krKhmzbZX2sB8GTsWeh
+	Bb0PfTP5kNNxTZg=; b=lyC8Kdq1pzb912zWR0STY1SWLvHA/dXKhq3NZOf9HBHf
+	Bp0sag3HM1E/XHXFCo1bwtUbdx9DQ6vIHCS7L7hjqlayJX6lXn1ZbIZFFd0yt1V6
+	9vsUIsA7hJ5hj96fo4hAkV1El4EMaCuIntY9ATo3ZFXZvZhXU3HTscH9T7FTbR7n
+	lI54rN2QPURcDfUM1Wvbh/SbjTqoRLvLdkkL54pLcT4fmz3pQ7B1NgQ0CwNkKMHL
+	g/yHma3C/YKonW2IVwgYOaCJ6uumFWv8nmC/81O6VJlg79KxMElKpbEIfqcjfLM2
+	RPSoajUqSCeylXBttDryjAqpurW2qM/ROx3C5TKNaQ==
+X-ME-Sender: <xms:wiXkabXJ4dbJYKvhYCArf57xN34CfI-sSuKvxKSBh-h6bSgZY8Nz_w>
+    <xme:wiXkadmdILdjVWgBV_QctuWBC1ntem82xSWCA8lmXBQyxSpKF0voTYwzjWxJsFbF4
+    PkATUjwEHXtKjTJlkxyVu8laID1HvYrOw4kXvS2YtgqnOeKyAujTEI>
+X-ME-Received: <xmr:wiXkaeC5_iDgoYRbURVqEdFl92f9QLDvQIwUn7sB6SoC_91kIExMgIdeykvD>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdehgedvgecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephfffufggtgfgkffvvefosehtjeertdertd
-    ejnecuhfhrohhmpefgthhhrghnucevrghrthgvrhcugfgufigrrhgushcuoegvthhhrghn
-    segvthhhrghntggvugifrghrughsrdgtohhmqeenucggtffrrghtthgvrhhnpeeiuefhue
-    fhgfeuhfffkeffgfetgfejgefhudekledvudeiuddtffffgeehtdeivdenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegvthhhrghnsegvthhhrg
-    hntggvugifrghrughsrdgtohhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehrvghpnhhophesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheplhhinhhugidqkhgv
-    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefih
-    hlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepvghthhgrnhesvghthhgrnhgtvggufigr
-    rhgushdrtghomh
-X-ME-Proxy: <xmx:-iTkaa7-Ubl5opRNbK6qOSMY1YLVw4C8Anada2Btg-1B9gHT1w94rw>
-    <xmx:-iTkaQ2CrtJayRBTaHJt94VU-ThxhMwHh-fWnAQ880u4sQ3NrExBiQ>
-    <xmx:-iTkaVErChxdLfUCCn3lr5c6cq7vshLXyMvsuzSlWG7uagJjYCddXA>
-    <xmx:-iTkafjFKWi3r5bthbdXwd4GDx0E8Ssf628mb4P33ftogFvhsiijPw>
-    <xmx:-iTkafXnYtF6nWOoHF3kIK_5HrjXIBOReiZNLzawCyeTzsRGHkES6NOY>
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepgfhthhgrnhcuvegr
+    rhhtvghrucfgugifrghrughsuceovghthhgrnhesvghthhgrnhgtvggufigrrhgushdrtg
+    homheqnecuggftrfgrthhtvghrnhepieeuhfeuhffguefhffekfffgtefgjeeghfdukeel
+    vdduiedutdffffeghedtiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepvghthhgrnhesvghthhgrnhgtvggufigrrhgushdrtghomhdpnhgs
+    pghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvlhhlvg
+    hrsehgmhigrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvghvsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepvghthhgrnhesvghthhgrnhgtvggufigrrhgush
+    drtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghs
+    khhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhhsehkvghrnhgvlhdrtghrrghshhhi
+    nhhgrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrd
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:wiXkaUhirGKZwNvgH9flKBReUuSEEZRiTTUoiCaBwhguKIuvI7f4Mg>
+    <xmx:wiXkaTzZ1XBqTQp_KPc279nJAb9WBizZsh2hEgpxf3ogOD9cii7xog>
+    <xmx:wiXkad1GPaouBjiDbYXS295GTUWqwEQorgzvqEb_X80N3Qu05vRc6g>
+    <xmx:wiXkaQ-PmwoN_nYFaWln_-O_6OD3CrXzMHf7MT9bFlfVPEBOHKIeJA>
+    <xmx:wiXkaW5HTpeMoaOEHxiKTQ7GTzq3CbnA4wHDL049LWB3GoIr-hExa_rX>
 Feedback-ID: ibf9e487c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 18 Apr 2026 20:42:33 -0400 (EDT)
+ 18 Apr 2026 20:45:53 -0400 (EDT)
 From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Sat, 18 Apr 2026 20:42:30 -0400
-Subject: [PATCH] fanotify: Fix spelling mistake "enforecement" ->
- "enforcement"
+Date: Sat, 18 Apr 2026 20:45:50 -0400
+Subject: [PATCH] video: fbdev: aty: Fix spelling mistake "enfore" ->
+ "enforce"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -83,26 +84,26 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260418-fanotify-typo-v1-1-03ea48cb44ba@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIAPUk5GkC/x3MQQqAIBBA0avIrBsws4iuEi3ExpqNhkoU4t2Tl
- m/xf4FEkSnBIgpEujlx8A19J8Cexh+EvDeDkmqSup/RGR8yuxfzewW0mqwy+6BGJ6E1VyTHz/9
- bt1o/6dDFFF8AAAA=
-X-Change-ID: 20260418-fanotify-typo-c4ec2ad325f0
-To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
- Matthew Bobrowski <repnop@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org, 
+Message-Id: <20260418-radeon-typo-v1-1-8e075365089b@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIAL0l5GkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDE0ML3aLElNT8PN2SyoJ8XUsLQxOLJMtUozRjcyWgjoKi1LTMCrBp0bG
+ 1tQDevMZhXQAAAA==
+X-Change-ID: 20260418-radeon-typo-98148b9e2f37
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+ Helge Deller <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
  Ethan Carter Edwards <ethan@ethancedwards.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1044;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=992;
  i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=iPW/y5pADXITXht7iP58B8qisYZQ9v+e7ratS9msR28=;
+ bh=GNU/MRGok5zFJKRq5TRgaA/qhTEKDgwPGLJNEKyjzuk=;
  b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeFpENVIrZGxYUEhWRFNHcjc3YmQvTXVwajF1eHUxSnZ2CndKUHg2MTFBK2U0WFJYb3o1
- bTdyS0dWaEVPTmlrQlZUWlBtZm81ejJVSE9Hd3M2L0xrMHdjMWlaUUlZd2NIRUsKd0VTRVl4bit
- DbnFVUGZtVCsrbkdKcHRhdlhrNW9tbkZ1ZHBYVERSTmVEK3NuVkw1M0hIVlJZWi8ycWR6cFpNRg
- paM2xlSzZ4bjNyZnMrNFVQZHNzMGJsMEt2eCt3Y2ttRTl4dHpGZ0QrL1ZFawo9dFZVcAotLS0tL
- UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+ GhQcXlVeFpENVJQZmpEU1plYjcvZWZONWMrRzZ5M1R2QzZ6UFUzCjZNc2FuUzkvZGx4VTBqSC9Y
+ cGZYVWNyQ0lNYkZJQ3VteVBJL1J6bnRvZVlNaFoxL1hacGc1ckF5Z1F4aDRPSVUKZ0lrY2ttRDR
+ aM3VXYStxRHByUkptNFRyV1h6dmY3WXhmN0ZEOHRQOUgvZjJuZS9RbU13NTR5ZkQveUR0NTZlMA
+ paeC9tZExIZ1kvZHB0WlRjdkVIeVdOSDhsVE8vcjlDKzkyZTNEaXNBQzdKUmVBPT0KPThUR3cKL
+ S0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
 X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
  fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
@@ -110,26 +111,26 @@ There is a spelling mistake in a comment. Fix it.
 
 Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 ---
- fs/notify/fanotify/fanotify.c | 2 +-
+ drivers/video/fbdev/aty/radeon_monitor.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index bfe884d624e7..38290b9c07f7 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -457,7 +457,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
+diff --git a/drivers/video/fbdev/aty/radeon_monitor.c b/drivers/video/fbdev/aty/radeon_monitor.c
+index df55e23b7a5a..621d13a1a1d9 100644
+--- a/drivers/video/fbdev/aty/radeon_monitor.c
++++ b/drivers/video/fbdev/aty/radeon_monitor.c
+@@ -654,7 +654,7 @@ static void radeon_fixup_panel_info(struct radeonfb_info *rinfo)
+ {
+ #ifdef CONFIG_PPC
  	/*
- 	 * Unlike file_handle, type and len of struct fanotify_fh are u8.
- 	 * Traditionally, filesystem return handle_type < 0xff, but there
--	 * is no enforecement for that in vfs.
-+	 * is no enforcement for that in vfs.
+-	 * LCD Flat panels should use fixed dividers, we enfore that on
++	 * LCD Flat panels should use fixed dividers, we enforce that on
+ 	 * PPC only for now...
  	 */
- 	BUILD_BUG_ON(MAX_HANDLE_SZ > 0xff || FILEID_INVALID > 0xff);
- 	if (type <= 0 || type >= FILEID_INVALID || fh_len != dwords << 2)
+ 	if (!rinfo->panel_info.use_bios_dividers && rinfo->mon1_type == MT_LCD
 
 ---
 base-commit: c7275b05bc428c7373d97aa2da02d3a7fa6b9f66
-change-id: 20260418-fanotify-typo-c4ec2ad325f0
+change-id: 20260418-radeon-typo-98148b9e2f37
 
 Best regards,
 -- 
