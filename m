@@ -1,82 +1,80 @@
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB62212D7C;
-	Sun, 19 Apr 2026 00:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942FD63CB;
+	Sun, 19 Apr 2026 02:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776560317; cv=none; b=Fr9/mLDmAxNHd9SHecU9UDMejadN9AeeICceKRcXRaM3GEwQ1SA7+Cr3gfPnbx50dDHa+ovwyC2wBB9g75wkDBDUpiavhPdgjT87DLjGT+WrMiu7A9kZ5B2ZQCv/x0/EGzqx3VsAf5Cmb5xFH3yleOVRbljwg3YdEojXl3EVJGs=
+	t=1776564019; cv=none; b=CCn+Gyq80RMEKxar2yHuTul3Rs7rre9cath0UqYDFgbG3GXRWO7TIQs/DcVGFXFAgpyeu10aM073m9x81raCr5LvFjLsFRwPkPueJ/fG7B78kBMhn7U4WaSZkGIneuoOA3mI5Dam+znC+vjjD7P7nL8cqjLnV2GX4wijlIuYy60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776560317; c=relaxed/simple;
-	bh=yW0F6v7t+BIRPX5uD4zJjeNVn0YMh9w/VIBBFWel3fs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Zn6a6YB3NJ+QDjjED9bjNyVEqXRhbku7IsRTFX0U8ritnSWdzOA5llDsvcKgKG2rrHiRvEXTFQIURiEJ8BvXyZoaFbzBwdach7qNBpY6FDGkwE+Y0lV4HnTz6bihDVUzSzC3Ob8ZBt1+Ug4Tdt9gDlm86IzO7KwPqQHVZSjH3OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=dHmOjF0v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DVBlaSbX; arc=none smtp.client-ip=202.12.124.154
+	s=arc-20240116; t=1776564019; c=relaxed/simple;
+	bh=9PI04kGBc6uuhBljNKSsMKlnOew9+2vCEYDTnyF3vfo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VQ3TteAEELntZ8I3qCH6FimhRwhuUpWZZGYTJTo/AySEPvu6qulZmQI3f4Xg2/KmVsYyAWpt4f5GrCByUNaXtDuZvv60Ml8GQFjmqyb2buow8hWbNU6XdrPAg4e8HxK31AUvqWOv6w1OEJjAtmcI2x10BjxAq2UPJM9XLGraHNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=I3PvY/og; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AaOVMGZH; arc=none smtp.client-ip=202.12.124.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="dHmOjF0v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DVBlaSbX"
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B1D3B7A0053;
-	Sat, 18 Apr 2026 20:58:34 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="I3PvY/og";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AaOVMGZH"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 56CFD7A013F;
+	Sat, 18 Apr 2026 22:00:15 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Sat, 18 Apr 2026 20:58:35 -0400
+  by phl-compute-04.internal (MEProxy); Sat, 18 Apr 2026 22:00:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	ethancedwards.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:from:from:in-reply-to
 	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
-	 t=1776560314; x=1776646714; bh=j2Cl+gYnYHO1DKTjmBwPE5+KeWxesc/P
-	geGQx8inu54=; b=dHmOjF0vM7xLwu4UiCXlrh28BC5r6W96ex6DJOR4r5naMO1F
-	RNNGCwVTTlg7hcsD4yvQycZqL+C+vs6fJ7MTrS+Z/MwyQh1BmI4IkahLDT1McE0j
-	TPBUhQGLaEGWwa6qYh9pbzp7ND1HPZsfGkLisI9hM0TdR9QkkO5OCj77KKohPtn+
-	EUMWunFVneHRFoJE4Y3g1+A6ibQuNJEn/ZtF7A74j9IWfrnO8hTg/lZAK0zlRpsU
-	h0JxmdVINw5MC1fKZchFcYKeGV0l9j8ufGMUlkHflslGOYANN9igS6zjeMOUWDM/
-	RHTMLKTEgmoX6kT2HcjWf/aDfsjHLmrW2nDmHA==
+	 t=1776564015; x=1776650415; bh=zcoSt4sGkk4hEuSPgPZ9SW6gByCYln4j
+	rUh5vDOeI3s=; b=I3PvY/ogtelm+p/oHIoEoQBWbZ3BvaWaDCyB5vltQ8D+pEXk
+	AikE0mGpURAPa6fsjFMQTwoCrnCpUSuC42o57U2/sGZkQzQiyc7wz160z+TdOAk7
+	LUFZpypiNcM5UgWBgYBOE1KQXHlbBq7KiRrM9LV3PZ+eTFF1aVdTQ95/PIw9/kB+
+	MG7Gs1bVKIsZzPFFJ4lRXrVkTigxS5ig0SA1V1aE9foj7XiK6lIqXcT3aKHAPOtj
+	EBJaPamwCeC9JUMagQoAOSJ2AHMPOX+jnYFGkjkqaVB69IXYAzXfIbFd0KhtRmAt
+	tTWhGibM6LDpncKkYDhazOdDsWCUTBtGEe4rTA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
 	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1776560314; x=1776646714; bh=j2Cl+gYnYHO1DKTjmBwPE5+KeWxe
-	sc/PgeGQx8inu54=; b=DVBlaSbXael4yTgd63brmPkjisGyqZqGIZp5GY43gYXN
-	ijRaW2d97lOxKnDS+E5rmbJpclfdFSaCAWzv/YLc2TKgFW2wHPkHuCmHkUl4UeOF
-	v+sI7BKxZ7pHarvrCzyQtRxdmutZRqNzztLGBanBNqxrEZuA3LNHvdmZ224OtYvv
-	WfUyl9XUyNsAFANJlESCzfO12FVhGAIt1ljbNmccTR3C42NKhAgWHvYc2YcLHWZG
-	yk6KD5UmZYk+ZNJLS7hH+8IYoviUaE0lMkA7zMRJGQ2kUd+80HMqRky0SUlMd6Yk
-	XFVwYiYkgtt7Ub6kQrzQp0gf2XPijEB3n3ciBUOY1Q==
-X-ME-Sender: <xms:uSjkaZEMuXhaqYBsh8hSXKxZlg2AVE3F_Z9o8owvMianfjSGXAvrpA>
-    <xme:uSjkaf7cbi7OpXIYdIgssCezBn-aoOVUrLfL2ovxRyrlCq_XbhmK5PLUbyrWPcC_a
-    Qd8X2LwdSH5bc9rCB5VQLcltoJaVj_7eg9Noyn4wys0AMztEPNg>
-X-ME-Received: <xmr:uSjkaabicqQDK-k5KeCfs2TDekHnJ9z2iZc2eVS1Fkb5jURkK4-9NlRmHmMz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdehgedviecutefuodetggdotefrod
+	fm2; t=1776564015; x=1776650415; bh=zcoSt4sGkk4hEuSPgPZ9SW6gByCY
+	ln4jrUh5vDOeI3s=; b=AaOVMGZHWK8Xrtu/5nQtAKNYDttpvJZ66HCVAW1wViIR
+	kuP2B8v1K5d5G4nHxpj+96QhwZU9fEnMJ+uj+7PApRSTKShZ7YWoR18MkQXQ9ALp
+	IoqXEWbHWIcWS6xwOzWKS2qP36Ar10Vm/LPk4oodZaNPJOdSEUc9Ixl9I55nf3cq
+	HndL+RWCJ9Al2JoP7HDHgFlG7kp8w+2VLPqOcjPIXbcMAm6EkQRciAXb/qbbisAe
+	VvD65UO2c4tKQsM3cAEyUUIzx3CkKv+uuuNsZtrHyk6a8p/pIkBllPZ6vCNbKkdk
+	/gi7R3r46b7faCwNmauCl5bxnxQ3l7Uo/t3E1dxMlA==
+X-ME-Sender: <xms:LjfkaWMvqOeQS2YqNhBQIdlI1mEoDoMALTvQodVI9ROx40zZifq4yw>
+    <xme:LjfkaUAa3NTKutDMeyU4Ig4a0h9hJnCwehxAHd8d26mdmngyGmgei4Tnwe3brakV3
+    yX0F34VYCko3ho8fxX6GEfahbvXgNDRTH-LmUe7QEAVzYsv8VSYH7PI>
+X-ME-Received: <xmr:LjfkaTdr2aenW2XxdJI33Ty6YgnXcrJVDYMLy-ERv91PSrbZ0Kr1oF02Wn18>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdehgeefkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
     hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepgfhthhgrnhcuvegr
     rhhtvghrucfgugifrghrughsuceovghthhgrnhesvghthhgrnhgtvggufigrrhgushdrtg
-    homheqnecuggftrfgrthhtvghrnhepieeuhfeuhffguefhffekfffgtefgjeeghfdukeel
-    vdduiedutdffffeghedtiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepvghthhgrnhesvghthhgrnhgtvggufigrrhgushdrtghomhdpnhgs
-    pghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuh
-    igqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgt
-    phhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopegumhhith
-    hrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehimhigsehl
-    ihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepfhhrrghnkhdrlhhisehngihprd
-    gtohhmpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgt
-    phhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:uSjkaVh2kkzbUFf3o-Ldd9IC7gDpbTVuZBe0fJ-DTVKE1MbnB9agKw>
-    <xmx:uSjkaUeBaGNrZlyz8L3_6MFuN_L2nq6UhHNU4hcKFgNjg9Fh6zLQzg>
-    <xmx:uSjkaclTg0nm-8BM5HImW1Z_Sn9RZ6Gx1o5tQdKbOfq1ZDu3pwGogA>
-    <xmx:uSjkaRxkbVKXQvVnmqiSKxA48j9fqNy8y5rNV8Tfo7_HCJQpPoXjpQ>
-    <xmx:uijkaQ1pIyb1aca6tXczcx00zkazgd-OrrDrnLJxa8896xfu4WXuI4my>
+    homheqnecuggftrfgrthhtvghrnhepfeevuefgfeffhfdvleejhfetudelledugffgleel
+    leelleeihfetieffgfethfdtnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegvthhhrghnsegv
+    thhhrghntggvugifrghrughsrdgtohhmpdhnsggprhgtphhtthhopeejpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehlihhnuhigqdgtrghnsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehsohgtkhgvthgtrghnsehhrghrthhkohhpphdr
+    nhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepvghthhgrnhesvghthhgrnhgtvggufigrrhgush
+    drtghomhdprhgtphhtthhopehmkhhlsehpvghnghhuthhrohhnihigrdguvg
+X-ME-Proxy: <xmx:LjfkaTMug8v7k_2Ubz2P9hh_ZPH5_9vAwRHsYO3yhyxdDgFbWHU1vg>
+    <xmx:LjfkaTIMn3t1aOGb4K9hyq4aahvHPmo8NRjAuwMj8q-45OS4u_iU7A>
+    <xmx:LjfkaTIbfQI4i6KF_BzbdInpKqbXX-PPG8y9qBHNqhLMi9xIDsKzqw>
+    <xmx:Ljfkad7QjmZ5KhDKPasq52n6jbx9S02RcjcImG_f0vfuGAQuB6XJIg>
+    <xmx:LzfkaVtHeq82Q0ZmiguwuQolMaU76cfATAACwuojW87r3J4Wh078jPHl>
 Feedback-ID: ibf9e487c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 18 Apr 2026 20:58:33 -0400 (EDT)
+ 18 Apr 2026 22:00:14 -0400 (EDT)
 From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Sat, 18 Apr 2026 20:58:32 -0400
-Subject: [PATCH] Input: imx_keypad - Fix spelling mistake "Colums" ->
- "Columns"
+Date: Sat, 18 Apr 2026 22:00:13 -0400
+Subject: [PATCH] can: bcm: Replace strcpy() with strscpy(), simplify call
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -85,65 +83,63 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260418-imx-typo-v1-1-2a15e54ad4e7@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIALco5GkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDE0ML3czcCt2SyoJ8XUMTY3ODpBSj5FQTcyWg8oKi1LTMCrBR0bG1tQD
- iqiU6WgAAAA==
-X-Change-ID: 20260418-imx-typo-14370bd2ce47
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-input@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org, 
+Message-Id: <20260418-can-bcm-strscpy-v1-1-993eb8de9f77@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIACw35GkC/x3MMQqAMAxA0atIZgOxaBGvIg61Rs1glUZEkd7d4
+ viG/19QjsIKXfFC5EtU9pBRlQX41YWFUaZsMGQs1VWL3gUc/YZ6RvXHg411xDUZZy1Bro7Is9z
+ /sR9S+gDzvTDNYQAAAA==
+X-Change-ID: 20260418-can-bcm-strscpy-56a0e402a660
+To: Oliver Hartkopp <socketcan@hartkopp.net>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org, 
  Ethan Carter Edwards <ethan@ethancedwards.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1379;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1116;
  i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=yW0F6v7t+BIRPX5uD4zJjeNVn0YMh9w/VIBBFWel3fs=;
+ bh=9PI04kGBc6uuhBljNKSsMKlnOew9+2vCEYDTnyF3vfo=;
  b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeFpEN1IyQ0VzWmpKTjljNUZ2ZXZkVndNdXovT3Z0REdlCk1TV3kzK0RJM3NYbjVRc1l6
- azd0S0dWaEVPTmlrQlZUWlBtZm81ejJVSE9Hd3M2L0xrMHdjMWlaUUlZd2NIRUsKd0VSZW1UUDh
- GVnAyN3UyTWFSdWlYdTVuVkpBejNQYUZZZjU4NWYwTDNWWW41YTNlY1h0Uy9RMkcvNzdQWm56SQ
- pMVjJmTXY5VGRvdmloSC9mbHZ6L09DVWw0SmVON210WC92eFpsemdCRFdaU1JBPT0KPU5jdy8KL
- S0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+ GhQcXlVeFpENHgxODJmZXlqcW5ZekZ0N2E0RHFQOVN3TzBwc3VZClorNlp2L25TWDR1R25MNWdE
+ YUdPVWhZR01TNEdXVEZGbHY4NXlta1BOV2NvN1B6cjBnUXpoNVVKWkFnREY2Y0EKVE1SaEh5UER
+ 6eDN0eXlyT0ppMDZJRlhTN25pQmZmM3ZxazJsSEorWnY2dm0xS2N2NWt1d1pQakpXUEt6OVhxVw
+ p5UTFHZ1pVVFh5NWY5MWVtdG1mYjI2empVZ3NQT2Z5MUt6Rm1BUUFzdUUxUwo9K0ErdAotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
 X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
  fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
-There is a spelling mistake in a two comments. Fix them.
+strcpy() is deprecated; use the safer strscpy() instead.
 
+While the src is char array at bcm_proc_getifname's call sites, the src
+is passed to the function as a char*. Including the IFNAMSIZ length
+makes the call safer.
+
+Use turnary over if/else to simplify code.
+
+Link: https://github.com/KSPP/linux/issues/88
 Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 ---
- drivers/input/keyboard/imx_keypad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/can/bcm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
-index 069c1d6376e1..ccde60cd6bb3 100644
---- a/drivers/input/keyboard/imx_keypad.c
-+++ b/drivers/input/keyboard/imx_keypad.c
-@@ -324,7 +324,7 @@ static void imx_keypad_config(struct imx_keypad *keypad)
- 	reg_val |= (keypad->cols_en_mask & 0xff) << 8;	/* cols */
- 	writew(reg_val, keypad->mmio_base + KPCR);
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index a4bef2c48a55..c133dab1202e 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -196,10 +196,7 @@ static char *bcm_proc_getifname(struct net *net, char *result, int ifindex)
  
--	/* Write 0's to KPDR[15:8] (Colums) */
-+	/* Write 0's to KPDR[15:8] (Columns) */
- 	reg_val = readw(keypad->mmio_base + KPDR);
- 	reg_val &= 0x00ff;
- 	writew(reg_val, keypad->mmio_base + KPDR);
-@@ -357,7 +357,7 @@ static void imx_keypad_inhibit(struct imx_keypad *keypad)
- 	reg_val |= KBD_STAT_KPKR | KBD_STAT_KPKD;
- 	writew(reg_val, keypad->mmio_base + KPSR);
+ 	rcu_read_lock();
+ 	dev = dev_get_by_index_rcu(net, ifindex);
+-	if (dev)
+-		strcpy(result, dev->name);
+-	else
+-		strcpy(result, "???");
++	strscpy(result, dev ? dev->name : "???", IFNAMSIZ);
+ 	rcu_read_unlock();
  
--	/* Colums as open drain and disable all rows */
-+	/* Columns as open drain and disable all rows */
- 	reg_val = (keypad->cols_en_mask & 0xff) << 8;
- 	writew(reg_val, keypad->mmio_base + KPCR);
- }
+ 	return result;
 
 ---
 base-commit: c7275b05bc428c7373d97aa2da02d3a7fa6b9f66
-change-id: 20260418-imx-typo-14370bd2ce47
+change-id: 20260418-can-bcm-strscpy-56a0e402a660
 
 Best regards,
 -- 
