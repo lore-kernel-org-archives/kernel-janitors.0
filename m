@@ -1,127 +1,91 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CED81B7910
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Apr 2026 15:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E06935F16C;
+	Mon, 20 Apr 2026 16:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776698354; cv=none; b=fMvo/Jm0OmEgjTYq+Rr8HhT0OfoLF8KFJ2YhmgtKIOKPsVs5lesGwtxV93E6JwpbBAhY5bCMEohGXow//kcAeDhiCj7/Up4vG2X4avnu0OWSoV3GJQqtS6znOz3se1oK90CIXxhvgIAC2XPUqqt1PKsxl5s4m4u6OnRm2nptsO4=
+	t=1776703413; cv=none; b=YGP0dDecEdPvUTJD2UsuQYt6dtN6gDEE4Ee0jL6ppNyt+5hjtEklW9G/65PIuaE0Uwx/pxDa57pGoLqdLDYkYuR5eyZuL0OIjpgLEhJ8AlD5yiq6IokTWhMLJR9/LcImpxg+DfY20/PQX/Xd//8CiS7PjUOEKJSZ+mIEus6IsIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776698354; c=relaxed/simple;
-	bh=1RIbNCwAwPZ+tO6yRtl9kZg4OcH4KIufSEgKwjXtJas=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z0jxt46SDtMpMXET86EdZZNREVs9yA18Z68m9D9vh+SzPVPfnzxADEjzz8rqxFr3B+2qb+Hgsfcr+/ztT4m6rcPtnMnkmKFK+lh4d62GcrajUkya21jGm+Evx6kLui4lRt2mS1Fz1l4eqNHrIkg/Lqcf6F2rkEVSdvXw83A4WLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N4GI57oQ; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776703413; c=relaxed/simple;
+	bh=E4bRTQ3aK44yLjKyfT1OH4NindW495kH0SG3yICneSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tvtJhwyv10pAoDK3YDP8vUeUnzmtiUBoaqzCZAc0Vw1o8ArOvMTcmAX9Db6JCFYAyGl9Tli3Qa0kbIncuB6P9vYldDN74oomZbZUb2ibZvl8Py45zJcZgvD2qF3Vm9TQ6zVCFUwlb3Uz4FgVQPeDc2d6vmalS2bk13/p/I+Itzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=g1nxdP3F; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=l66Lx/2Q; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4GI57oQ"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43eada6d900so3197532f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Apr 2026 08:19:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776698351; x=1777303151; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n3FD/s7AW/AHmwjCwKG79GXRWosFi6qB1cnUUHCz7DA=;
-        b=N4GI57oQ04uNRA3ZJs9n1vawtacpjFGw7guLW337vUk7gecjBFmMJhZk2i6WzrsWh9
-         Wz5q/VQb8C/xoJStA4dXFPHVbMdrQ18FkSbCpOuGapNbk4v6aXQWlABmlkeNziS2NK3S
-         eSsnf0hSp1rGVLUgrwOCbN4V9SyepGekBScHUAeOdKRpgatz+QIt82DHHiPhYTL6rw2o
-         QAy0Q96UtjHUtl01oJ3ttWVJK5ckn+njLs1xsnd4xMhwEMD5tLJvYpUP6ZODJ/b9gJEi
-         UsAynPizdQXeAFerf18/qb9I3P/g8LuLs2tyIgD6Bm2WiuivcqN2RNQBjKKX/PyxOomg
-         j/sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776698351; x=1777303151;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n3FD/s7AW/AHmwjCwKG79GXRWosFi6qB1cnUUHCz7DA=;
-        b=ICvE/4M5+qq7NE2Je6qXqyU/PfWCa2ptBRpx/hO7sK/rxbGoDhmcnyeWEZoq7JAv+7
-         NzM5H0osrodW0wuguv4aE7Crn5gUqwMicR85owBPNpdWgE1SvP9u/khVr19N0v6C0L4y
-         uCXHTAN0FGVCwvrd1iLvAN/E7JJRWjT5y2FuclXkcMC7GmmrEFIYMFX8MT+UsKGXD2v9
-         qWkfizT7vr4xGquFM4jBV8JNTvaCoFizb4PUA37vVYat0aIaBZs2SVEcqJqvSAKWDCCC
-         +M75hDgqYNCzWPyeh537IRRoGUqE8M7jiV0EyVBPWFzVjCCwgtMzyxpSbEcG3WvlD80k
-         NVzw==
-X-Forwarded-Encrypted: i=1; AFNElJ+XORYvYS8haS1HNSTpTp7Sq+0K4h+mlPbOdn+9TVKe8hiotNXclfPL2YpPRvNiXyFYbODeAm9dIOUkqXoyhqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2F2Gpy3e9HOAUxnoACOwgcJc4VKSv04IXYkyd2ohP7XwTvZQF
-	HcMy2zFRoa2f+snShH+/6pTq8kRki9y8yKOctQpCATitjr2+whwMoW/v
-X-Gm-Gg: AeBDievaK24xL49f1vJkUVMD9EovyMqs0saLWbiYyV+rdmUy2MUDvF2I7YA7apFxTVv
-	PZLGifkzkRDVXBj2KwjXhu8qyuXiY/qoOG9/qW2S0Va9mkJNhuoIvy3ajYRQ3p1XnQV627MJ/1m
-	06GYIEdf/VksxLaFFyBh650bjnFW/np1Lz3pWH0IbK4Gbxo55icyhaDUdiflx8jpRDRLFJ8t08q
-	r4e3JjfwoJoO41gJzruUUUTUfJV7+QBtsQAzlQEpGfghs1h95EQHCU+xNJWMLvQ33Eu4Htw6rni
-	LhNH3axZMhTit9QLAyWC0RCxprkQ22bemDpvjupNmrS3aE90KGVI6JdjwyrImFmNmhTgWu2oe1+
-	1wmtjtlUoxR+VBT5FcergsIG+841UXQuyA4Lc3mCZRjQs42QabiMykOheerklIGwIGDrDqqjItZ
-	mAshvznadBVuph5csczm0YPVbiWdJmxQ==
-X-Received: by 2002:a5d:64e6:0:b0:43d:26a2:f8c3 with SMTP id ffacd0b85a97d-43fe3e14047mr22847771f8f.35.1776698351391;
-        Mon, 20 Apr 2026 08:19:11 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e3a174sm33822216f8f.18.2026.04.20.08.19.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2026 08:19:05 -0700 (PDT)
-Date: Mon, 20 Apr 2026 18:18:58 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Ahmad Masri <quic_amasri@quicinc.com>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sumanth Gavini <sumanth.gavini@yahoo.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>, Maya Erez <quic_merez@quicinc.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: wil6210: wmi: prevent underflow in
- wmi_evt_auth_status()
-Message-ID: <aeZD4hGhsrsSJczJ@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="g1nxdP3F";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="l66Lx/2Q"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4fzrs61f01z9tNn;
+	Mon, 20 Apr 2026 18:43:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776703402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E4bRTQ3aK44yLjKyfT1OH4NindW495kH0SG3yICneSc=;
+	b=g1nxdP3F3SoElj9Ayc9Nc/T4mAYRfzpoI05B1P/p3/gXGVlNhoyLLjlnDXRylDmH3tBkLn
+	Y2H+5tEik5LUebWdvayvZ8ipDqgoOfIbY+z4ayfiBQchdxdlAIwss1cyEnc/nUbuG40ZPS
+	t9pSP4E/W+gMWi3IcN8IVRz81VwqHFhhPbvmL+pqGFTphuKMmDP+E8B6I6badCEihMLb8r
+	Panj7egUNk8qcjV1ewvgP412bi1wgrU/FxNWBOIGvT5jjdidozYMV8YaaCM1iVRV3UkBhQ
+	E5NJi9mjQRqxw2YiUIjfhOJJ+0tP9BiiQfqXCH6MIirqoNMffNC9N9v6xOvvXw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="l66Lx/2Q";
+	spf=pass (outgoing_mbo_mout: domain of manuelebner@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=manuelebner@mailbox.org
+From: Manuel Ebner <manuelebner@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776703400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E4bRTQ3aK44yLjKyfT1OH4NindW495kH0SG3yICneSc=;
+	b=l66Lx/2Qrl/eMTXr6hun+WbH8oY57tfs91xU5A/uWq3Wc/+vK7IhoTkZVs6N1mw0WUbLUY
+	WNKxjsyL+qF+cb3ZuS9ui7K8RKpPwEbaVvlunDuVq9WDXdVZHl1tz7Q+e45lmcKUizJC0j
+	MXyq2xomcgdDXD88hakO502O6r/icAUHpptpD0F19BCUudm+WXX09LW/M2Bj5+UEbI31LH
+	XuesZuTnhrgKOEn+5gn2R8Fs0QXM/VgU8Xii5FNBPu9LXB5Zqla+hf/gPo2atfqlOT7t4K
+	dRsA2nL2+oQ5CpsCURIDY/W6dnyfdj9yQ5vG76DmdPSoqmCFEDl0yVE76eRzJA==
+To: kernel-janitors@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-newbie@vger.kernel.org
+Cc: Manuel Ebner <manuelebner@mailbox.org>
+Subject: [PATCH v2 0/3] Documentation: adopt new coding style of type-aware kmalloc-family
+Date: Mon, 20 Apr 2026 18:42:35 +0200
+Message-ID: <20260420164234.217133-2-manuelebner@mailbox.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 9btyoubag4po9sx5b9bsh3dwebya8o1h
+X-MBO-RS-ID: faa2ffa49eb93135954
+X-Rspamd-Queue-Id: 4fzrs61f01z9tNn
 
-The problem is this condition:
+Update the documentation to reflect new type-aware kmalloc-family as
+suggested in commit 2932ba8d9c99 ("slab: Introduce kmalloc_obj() and family")
 
-	if (ie_len < auth_ie_offset) {
+ptr = kmalloc(sizeof(*ptr), gfp);
+ -> ptr = kmalloc_obj(*ptr);
+ptr = kmalloc(sizeof(struct some_obj_name), gfp);
+ -> ptr = kmalloc_obj(*ptr);
+ptr = kzalloc(sizeof(*ptr), gfp);
+ -> ptr = kzalloc_obj(*ptr);
+ptr = kmalloc_array(count, sizeof(*ptr), gfp);
+ -> ptr = kmalloc_objs(*ptr, count);
+ptr = kcalloc(count, sizeof(*ptr), gfp);
+ -> ptr = kzalloc_objs(*ptr, count);
 
-The test is supposed to ensure that "d" is large enough to hold a struct
-wmi_ft_auth_status_event and 3 additional u16 values.  The "ie_len"
-variable can be negative but, because "auth_ie_offset" is type size_t,
-then negatives are type promoted to high positive values and treated as
-success.  The effect of this bug is that when we do:
+I have also thought about adding a few cases to checkpatch.pl, but this
+will take me more time, and i want to get this series finished.
 
-	d_len = le16_to_cpu(data->ie_len);
+ [v1] -> [v2]:
+put RCU/* in a seperate patch [Patch 2/3]
+Remove GFP_KERNEL as suggested by https://lwn.net/Articles/1062856/
+deprecated.rst: change the argument gfp to optional [Patch 3/3]
 
-then we may be beyond the end of the "d" / "data" buffer.  Fortunately,
-on the next line:
-
-	if (d_len != ie_len) {
-
-the contition will be false so the negative effects of this bug are
-quite limited.
-
-Fix this bug by changing the type of "auth_ie_offset" to int.
-
-Fixes: b9010f105f21 ("wil6210: add FT roam support for AP and station")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/wireless/ath/wil6210/wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
-index 479b2418ca34..57e6a43a04cf 100644
---- a/drivers/net/wireless/ath/wil6210/wmi.c
-+++ b/drivers/net/wireless/ath/wil6210/wmi.c
-@@ -1629,7 +1629,7 @@ wmi_evt_auth_status(struct wil6210_vif *vif, int id, void *d, int len)
- 	struct cfg80211_ft_event_params ft;
- 	u16 d_len;
- 	/* auth_alg(u16) + auth_transaction(u16) + status_code(u16) */
--	const size_t auth_ie_offset = sizeof(u16) * 3;
-+	const int auth_ie_offset = sizeof(u16) * 3;
- 	struct auth_no_hdr *auth = (struct auth_no_hdr *)data->ie_info;
- 
- 	/* check the status */
--- 
-2.53.0
-
+Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
