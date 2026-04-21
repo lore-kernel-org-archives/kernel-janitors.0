@@ -1,49 +1,49 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A5013C9C4
-	for <kernel-janitors@vger.kernel.org>; Tue, 21 Apr 2026 11:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7B113C9C4
+	for <kernel-janitors@vger.kernel.org>; Tue, 21 Apr 2026 11:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776771646; cv=none; b=DfZVqx5n10rBFEPv0RxaudBGXA4jWPHDJDGz6W37jyBa3ZDCc707bft+nJ2nqqguMoJUIOa4yn+9E7Uxt/gtMmxjqCTsMp1nLJAs+ydQReoyN1WZQbXH/weWi+vc8tjniRPH6XuplEEz5JcJQb2wdlVYUy/dXxfeBgaZn6FZevM=
+	t=1776771687; cv=none; b=PRzfvWSlox8NrBRdO28VHiQGxtUhmRjG9LFkxZYnsPJRFGdt3dH6NsxrGIPbBS/URxYp3W/a5ypRmo1usHdWmuVLuSMDk4xyafvxTnae0luF4UCz+8Vp3F9/qAGmnWUOE2j5XDKtm0p57KHIDWNVqYyKELCiBH6RnbMpn1GJT9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776771646; c=relaxed/simple;
-	bh=Aqwmxj8uFkfP9nHrc8fZ7RRLzeMC8fJOyFF5kKMYktE=;
+	s=arc-20240116; t=1776771687; c=relaxed/simple;
+	bh=tmh28N7EqAh47yW39PAljeH9qczgHiXAOMMOAKLBQMg=;
 	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=F8Ok8al9OkbxtczmadCjIQdfSmLENl7ExEmijQKWWj6LY1YDLe0T1TbuyVFDgCUZuNGfWztYO2jAa/mO3zT84BJ27nrXoZyjkyLqT/K7IuTFgIshX6NJSmpbrhjiM5D+3ADtEX91Ru0h68X5d+oFz8ca4WK1zE0yXKbmybJ7Ljc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=K8oDEJ1P; arc=none smtp.client-ip=210.118.77.12
+	 References; b=aTdoHpFnQhH3Xp3Gsc5vfRMRK0Oq1eAQck48GVSn/pQLUoyqgn09w4dFJlYDIkNZ9Wyum1bT33do2Cd9SOprEorasyGTI34Rihv6TzQ2q0LZ4uqK5PLnEyW8uFScF9hty1eXBCbdknZTX0W/qidlg6v7mTpnxXOUg9bZeIlq/Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CM+rBnjt; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K8oDEJ1P"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260421114034euoutp0205bf64995e43cb4fcbf86431dfa5c3c2~oXGNm9eab1731817318euoutp02Q
-	for <kernel-janitors@vger.kernel.org>; Tue, 21 Apr 2026 11:40:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260421114034euoutp0205bf64995e43cb4fcbf86431dfa5c3c2~oXGNm9eab1731817318euoutp02Q
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CM+rBnjt"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260421114124euoutp023cccdc720633233cfaa889ffb6465f54~oXG7vj7Ji2100921009euoutp02T
+	for <kernel-janitors@vger.kernel.org>; Tue, 21 Apr 2026 11:41:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260421114124euoutp023cccdc720633233cfaa889ffb6465f54~oXG7vj7Ji2100921009euoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1776771635;
-	bh=MtJpmhcXNEwjZg/96uUvgc/7Ds9nqk3h5aj71RrwZIY=;
+	s=mail20170921; t=1776771684;
+	bh=70jEdzIKV8HR08JHZkS91QEFnkGBbri7q7JyRmu8yWw=;
 	h=From:To:Cc:Subject:Date:References:From;
-	b=K8oDEJ1P4QrFUafUofy21JaFfSTfykL+A1gBtrqVVOYwIf+1osMgat2N1wnkguvmc
-	 ZPMA5OEQ6twMpuf9+QJLEG5oSvPviYW2Gqb4O+HCuF2io1eqJPccIxj8stL3g7xQmJ
-	 cX0IBtaakUxkqt/b9U6vFAcrPQ1/fr4ZZx6N651A=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	b=CM+rBnjt/04mUCui/mZOpnL19hW9TGmmquJoEHYCxn+icLfiNnXWNo3AmLkHr2IOa
+	 aHAiLVU6vmYbiIkkIX4fYSlv0WejZPtNscBQLIj2TfQnjODwlKff6U5rzftVJGoGT+
+	 0w4/jn6iCyqaL43dLZXk+fK6IyCE0kWVQ6XwbISw=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260421114034eucas1p1d746ffe32b49aeb57f10e729d1331124~oXGNTHFly0938209382eucas1p1q;
-	Tue, 21 Apr 2026 11:40:34 +0000 (GMT)
+	20260421114124eucas1p1198b3e8dd272702a5f717b818729a978~oXG7YEEeM1149611496eucas1p1Q;
+	Tue, 21 Apr 2026 11:41:24 +0000 (GMT)
 Received: from AMDC4843.eu.corp.samsungelectronics.net (unknown
-	[106.120.77.61]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260421114034eusmtip112d8a374cc8b5bf185ab61c332f660d0~oXGM-A0Sj0596605966eusmtip17;
-	Tue, 21 Apr 2026 11:40:34 +0000 (GMT)
+	[106.120.77.61]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260421114122eusmtip218a09934226ad44030fc9000a5445d85~oXG6QV7iK1631316313eusmtip2j;
+	Tue, 21 Apr 2026 11:41:22 +0000 (GMT)
 From: Jakub Raczynski <j.raczynski@samsung.com>
 To: netdev@vger.kernel.org
 Cc: kuba@kernel.org, przemyslaw.kitszel@intel.com,
 	anthony.l.nguyen@intel.com, kernel-janitors@vger.kernel.org, Jakub Raczynski
 	<j.raczynski@samsung.com>
-Subject: [PATCH] net/intel: Replace manual array size calculation with
- ARRAY_SIZE
-Date: Tue, 21 Apr 2026 13:40:29 +0200
-Message-Id: <20260421114029.2689961-1-j.raczynski@samsung.com>
+Subject: [PATCH] net/intel/e100: Make read-only param_range struct static
+ const
+Date: Tue, 21 Apr 2026 13:41:17 +0200
+Message-Id: <20260421114117.2690342-1-j.raczynski@samsung.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -52,50 +52,37 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260421114034eucas1p1d746ffe32b49aeb57f10e729d1331124
+X-CMS-MailID: 20260421114124eucas1p1198b3e8dd272702a5f717b818729a978
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260421114034eucas1p1d746ffe32b49aeb57f10e729d1331124
+X-RootMTR: 20260421114124eucas1p1198b3e8dd272702a5f717b818729a978
 X-EPHeader: CA
-X-CMS-RootMailID: 20260421114034eucas1p1d746ffe32b49aeb57f10e729d1331124
-References: <CGME20260421114034eucas1p1d746ffe32b49aeb57f10e729d1331124@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20260421114124eucas1p1198b3e8dd272702a5f717b818729a978
+References: <CGME20260421114124eucas1p1198b3e8dd272702a5f717b818729a978@eucas1p1.samsung.com>
 
-There are still places in the code where manual calculation of array size
-exist, but it is good to enforce usage of single macro through the whole
-code as it makes code bit more readable.
+No need to use stack for single use read-only struct,
+just make it static const.
 
 Signed-off-by: Jakub Raczynski <j.raczynski@samsung.com>
 ---
- drivers/net/ethernet/intel/i40e/i40e_adminq.h | 2 +-
- drivers/net/ethernet/intel/iavf/iavf_adminq.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/e100.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_adminq.h b/drivers/net/ethernet/intel/i40e/i40e_adminq.h
-index 1be97a3a86ce..0e7cecd00169 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_adminq.h
-+++ b/drivers/net/ethernet/intel/i40e/i40e_adminq.h
-@@ -109,7 +109,7 @@ static inline int i40e_aq_rc_to_posix(int aq_ret, int aq_rc)
- 		-EFBIG,      /* I40E_AQ_RC_EFBIG */
- 	};
+diff --git a/drivers/net/ethernet/intel/e100.c b/drivers/net/ethernet/intel/e100.c
+index 9074b558de35..6bce22e15a97 100644
+--- a/drivers/net/ethernet/intel/e100.c
++++ b/drivers/net/ethernet/intel/e100.c
+@@ -1034,8 +1034,8 @@ static inline int e100_phy_supports_mii(struct nic *nic)
  
--	if (!((u32)aq_rc < (sizeof(aq_to_posix) / sizeof((aq_to_posix)[0]))))
-+	if (!((u32)aq_rc < ARRAY_SIZE(aq_to_posix)))
- 		return -ERANGE;
+ static void e100_get_defaults(struct nic *nic)
+ {
+-	struct param_range rfds = { .min = 16, .max = 256, .count = 256 };
+-	struct param_range cbs  = { .min = 64, .max = 256, .count = 128 };
++	static const struct param_range rfds = { .min = 16, .max = 256, .count = 256 };
++	static const struct param_range cbs  = { .min = 64, .max = 256, .count = 128 };
  
- 	return aq_to_posix[aq_rc];
-diff --git a/drivers/net/ethernet/intel/iavf/iavf_adminq.h b/drivers/net/ethernet/intel/iavf/iavf_adminq.h
-index bbf5c4b3a2ae..eb0257c86058 100644
---- a/drivers/net/ethernet/intel/iavf/iavf_adminq.h
-+++ b/drivers/net/ethernet/intel/iavf/iavf_adminq.h
-@@ -113,7 +113,7 @@ static inline int iavf_aq_rc_to_posix(int aq_ret, int aq_rc)
- 	if (aq_ret == IAVF_ERR_ADMIN_QUEUE_TIMEOUT)
- 		return -EAGAIN;
- 
--	if (!((u32)aq_rc < (sizeof(aq_to_posix) / sizeof((aq_to_posix)[0]))))
-+	if (!((u32)aq_rc < ARRAY_SIZE(aq_to_posix)))
- 		return -ERANGE;
- 
- 	return aq_to_posix[aq_rc];
+ 	/* MAC type is encoded as rev ID; exception: ICH is treated as 82559 */
+ 	nic->mac = (nic->flags & ich) ? mac_82559_D101M : nic->pdev->revision;
 -- 
 2.34.1
 
