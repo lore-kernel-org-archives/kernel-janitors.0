@@ -1,97 +1,105 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12D63C1967
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Apr 2026 09:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D43C13FD
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Apr 2026 10:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776849207; cv=none; b=h/vpyoNCPHCgAT7QPYPIFPA+tqdkVsqAttzzkRNsqZX5rv22nyq6LjEE9/ASfk9/v/I3X5thR1y6LDKN20z5uBElbnNcDghqMOy4meLNwO1qfUMvVVdBnXeUjJa4EFBpP7UjSp9/sOoSjIfAczRvVHd0mm173oEow8cgRZWMXQY=
+	t=1776855499; cv=none; b=a+6+Iw3LyF/vnQXTyYM6e9PF5nYRolj48C8YkTUPLqmn/1TCZQL281CaXxHDeL+88yzP3N/aO62C1Eyo/Vwr1L8YrtJU5r0XDU30VFXC23jA+hbqIpBuQAWe8mzKHOhwIVue8+7EWgdICp4as5q2n3JHaYQUTx0siRElGIBqaE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776849207; c=relaxed/simple;
-	bh=lnDH+L5FeyefzEiOwoi//zMzH528ayKYykWRM2wp6vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXKHC/rgsGZXdJdE23Um5FcB+OFD/O7BfbE7cvUU2VDMl5lbG9PMyWRpxnqLwK0Y/RchYi2wlVoj5V6eLVCmziSNzXXDdSTKeirs0jjimFS7Bdy6c8Gmt/+zEum+Lu6UR7xm3SRxiLle292JIy8RjUJApq9nWYc12EVyeKwxOzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPzbSsZ1; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776855499; c=relaxed/simple;
+	bh=087e/nvJmgEeLsXW0RHyWGzu7RXBNSYdUUjS8aydZE4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=pO5b+PO3IuBf0VOu6AqnggUPOkHb3z5tLW7DdwXM8jWbTtyTdJigIIXh1XPDZGpviwgugk53Yy74p7ZCnOSkmecummLpT5Mpgk2pA8q9DOhK78zsHsSvpH/NmQPvvNu5IcJYqUSDNCCPlbiKm2GkjrDsFsfC9AkXui0nhJh7liU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O78c/4K0; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPzbSsZ1"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ba51e69988aso651564466b.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Apr 2026 02:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776849204; x=1777454004; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKsuHuOjVnQIcIxkx06GjcZGC/dgb1PFZKky9ByNtmc=;
-        b=jPzbSsZ1GuZlxJ8NV3SvUI6vf3xLYDDj4+haUtF8zUg5blgFOCFfe9SvorHViNWXM7
-         oaocCs11Retpkh+ON0Z8qyeCboBWIBKGTpv22Xceqf0R3WqGxLBk6+Z1SXU3vJw+/J37
-         ldxjS1BfTsUb/krcK6CDgqzfjtOoom0hJ9Lzblxs11TX2q7/NYYmndx4DHcek3sM7tJ0
-         Hu0F+9GkikWaGznKgA2sJQet5Br5zVSg9vAurjoxzs+2s4WKOsrd0IEN7byuRUxO538b
-         5/kKkLcp1DVuRW001D9REi9z9eEGnQSroYhy94ZqgE9pMkU/Qw/GZvTvbet4aWp4gPio
-         gjIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776849204; x=1777454004;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OKsuHuOjVnQIcIxkx06GjcZGC/dgb1PFZKky9ByNtmc=;
-        b=UYgklRLw1wCSBDyG4gyPLwGdPbvVgKuISwWBVnaldnJN+ZF4nsPuijI5iwnF5scf8T
-         Hp8EFQAJyL4/LD0TFKyMVmb8xUoK0RDMk79w5sVKqI2Vmz8/neQ1KyfJlJ+CZBCeF87L
-         z+hfmX5T1jGkCcGC4OoJLYP2GIuJfklquBS8B/AlGtdZ35Gm+ffUvS5/zrogFh5JZSSC
-         dfYr6gNtXaz4pmU/QkQu+bHGOMHC6svDyaZAyDuv2rVFWZhk/32tPKtR37Wa4YFYMsG9
-         pbatt5YdiU+OIHfHBk1pqh50wxyvn3o9+RdnZhSJ36eD+nQrHxvj9YkghJN7JbmaybcX
-         JWsQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+eOwXWlAda7IHXYOagyXb5C3+SreAocys/h4PwYxyQ2rSIGrb1LXI2RFLb7uu7Iu+fkf8mix6NQIkmYSNbMzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZh2Imn57Ma4aN2+oHKnqMfgJb5jMNoJDHT7ADo6Hb+GlQ+for
-	/+UJwS6se+v9MTvXQkfq7u2cEhpZDUb8dDiPhNtykxtjyWg58iEwfXRC
-X-Gm-Gg: AeBDievDxQeIaj34RWPaxkmyK4cK+NaRRCKpuNPj3yjGEXS4OCE9WrCoKrfUXL7XPRn
-	20s8Ufr+YuAW//FOuykSuPLOnEn8w/25GrEnXmKXUGAutlpxwdyUVvfeHFMd2WH8mXYIVq2iyPh
-	aFJeUvHI+CERwV1UVCKRhtxqJLYakQ3Z1okrxTyv/uCs/CE30EUpM6jBCvPE+GUK6tOa89diLq0
-	2X2kLwQ6LktML++djtNZGkjdolEyhu3tp3brMmpxBZIalJ6QKDqWUuSn/ACM4XS9P6nfB838zL2
-	xkKHCDhfP3KpNdCsOzP5OgBCB2LzTKX1GOLFceP10hmSPl3W40wViBtMjKMDtUSqyspCPp9tBMl
-	MSaaIT3V2040dPFNQXq1H/Stlook8yFVOzMciciSgluiRplplbywp7oS90lDGN7fPe/lHp1AW/9
-	bxt0jGPETbhymwUC98T9mP+jzBJIFP4IYYiRjW2jq9J8lHhnbGeQiPohwqgLTtwOh1QJYttptNv
-	feeKMfe1wMP
-X-Received: by 2002:a17:907:3d4f:b0:ba8:d9b6:4993 with SMTP id a640c23a62f3a-ba8d9b64b32mr476670466b.8.1776849203836;
-        Wed, 22 Apr 2026 02:13:23 -0700 (PDT)
-Received: from localhost (226.55.classcom.pl. [195.150.55.226])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba538429115sm464634766b.15.2026.04.22.02.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2026 02:13:23 -0700 (PDT)
-Date: Wed, 22 Apr 2026 11:13:33 +0200
-From: Piotr Zarycki <piotr.zarycki@gmail.com>
-To: Dan Carpenter <error27@gmail.com>
-Cc: kvm@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com, 
-	shuah@kernel.org, vkuznets@redhat.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: hyperv_tlb_flush: replace NOP loop with
- udelay()
-Message-ID: <aeiM82FpO-CcqBlI@arch-piotr>
-References: <20260421172953.191345-1-piotr.zarycki@gmail.com>
- <aefZrtpivxh0eK_0@stanley.mountain>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O78c/4K0"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260422105814euoutp012ca4f4c7d567222a4de774ca5bb969fe~oqKhoRCk51362513625euoutp01f
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Apr 2026 10:58:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260422105814euoutp012ca4f4c7d567222a4de774ca5bb969fe~oqKhoRCk51362513625euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1776855494;
+	bh=HqZ/MfNxixsoC5HUHKPFpN1nTHkNJ5klIDKPGmogXBs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O78c/4K0wAM0YGFZ8WN3N64GlFLsKgB+jiRv60SEoZNAtbVhzpEKeYLSMQ3/7khUI
+	 7FdazqVt7/3sz75rbUY+Fp10sbMgXkCVo6VQO9Z/HgAclQmWNllebCaL2MoUfZ7r90
+	 6LR38jWBGRGtiD0X6Pdxi7+TFxiEdSSqqVavZBJU=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260422105813eucas1p1a59a07ab8c1ac0c4b7eba37d509f69b8~oqKhYw4N90671706717eucas1p1Y;
+	Wed, 22 Apr 2026 10:58:13 +0000 (GMT)
+Received: from AMDC4843.eu.corp.samsungelectronics.net (unknown
+	[106.120.77.61]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260422105813eusmtip15775a2bab96a887094e270ad7d48787e~oqKhA-sow1020810208eusmtip1X;
+	Wed, 22 Apr 2026 10:58:13 +0000 (GMT)
+From: Jakub Raczynski <j.raczynski@samsung.com>
+To: error27@gmail.com
+Cc: netdev@vger.kernel.org, kuba@kernel.org, przemyslaw.kitszel@intel.com,
+	anthony.l.nguyen@intel.com, kernel-janitors@vger.kernel.org, Jakub Raczynski
+	<j.raczynski@samsung.com>
+Subject: [PATCH v2] net/intel: Replace manual array size calculation with
+ ARRAY_SIZE
+Date: Wed, 22 Apr 2026 12:57:12 +0200
+Message-Id: <20260422105710.268003-1-j.raczynski@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aeeFh1zQqhVysvxI@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aefZrtpivxh0eK_0@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260422105813eucas1p1a59a07ab8c1ac0c4b7eba37d509f69b8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260422105813eucas1p1a59a07ab8c1ac0c4b7eba37d509f69b8
+X-EPHeader: CA
+X-CMS-RootMailID: 20260422105813eucas1p1a59a07ab8c1ac0c4b7eba37d509f69b8
+References: <aeeFh1zQqhVysvxI@stanley.mountain>
+	<CGME20260422105813eucas1p1a59a07ab8c1ac0c4b7eba37d509f69b8@eucas1p1.samsung.com>
 
-On Tue, Apr 21, 2026 at 11:10:22PM +0300, Dan Carpenter wrote:
-> 
-> How did you test this?
-> 
+There are still places in the code where manual calculation of array size
+exist, but it is good to enforce usage of single macro through the whole
+code as it makes code bit more readable.
+While at it, beautify condition surrounding it by reversing check and remove
+unnecessary casting.
 
+Signed-off-by: Jakub Raczynski <j.raczynski@samsung.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_adminq.h | 2 +-
+ drivers/net/ethernet/intel/iavf/iavf_adminq.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-  I built the test using:
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_adminq.h b/drivers/net/ethernet/intel/i40e/i40e_adminq.h
+index 1be97a3a86ce..dcf3baec7b73 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_adminq.h
++++ b/drivers/net/ethernet/intel/i40e/i40e_adminq.h
+@@ -109,7 +109,7 @@ static inline int i40e_aq_rc_to_posix(int aq_ret, int aq_rc)
+ 		-EFBIG,      /* I40E_AQ_RC_EFBIG */
+ 	};
+ 
+-	if (!((u32)aq_rc < (sizeof(aq_to_posix) / sizeof((aq_to_posix)[0]))))
++	if (aq_rc >= ARRAY_SIZE(aq_to_posix))
+ 		return -ERANGE;
+ 
+ 	return aq_to_posix[aq_rc];
+diff --git a/drivers/net/ethernet/intel/iavf/iavf_adminq.h b/drivers/net/ethernet/intel/iavf/iavf_adminq.h
+index bbf5c4b3a2ae..dd2f61172157 100644
+--- a/drivers/net/ethernet/intel/iavf/iavf_adminq.h
++++ b/drivers/net/ethernet/intel/iavf/iavf_adminq.h
+@@ -113,7 +113,7 @@ static inline int iavf_aq_rc_to_posix(int aq_ret, int aq_rc)
+ 	if (aq_ret == IAVF_ERR_ADMIN_QUEUE_TIMEOUT)
+ 		return -EAGAIN;
+ 
+-	if (!((u32)aq_rc < (sizeof(aq_to_posix) / sizeof((aq_to_posix)[0]))))
++	if (aq_rc >= ARRAY_SIZE(aq_to_posix))
+ 		return -ERANGE;
+ 
+ 	return aq_to_posix[aq_rc];
+-- 
+2.34.1
 
-    make -C tools/testing/selftests/kvm ARCH=x86_64 x86/hyperv_tlb_flush
-
-  And ran it 100 times to verify it passes consistently
-
-    results: 100/100 passed, 0 failed
-    average time: 466ms
-
-  For comparison, the original NOP loop averaged ~537ms on the same machine.
