@@ -1,72 +1,138 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5B53D170B;
-	Wed, 22 Apr 2026 12:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF653CF02A
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Apr 2026 13:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776862067; cv=none; b=dGs0W06fKhIQzkALCr2n1/jXbmH2qSejpp0YvfywShTMkJwzBcWCId1E9rb3oIf1HsKlT6r0ZQx2KJHPEXzPOpwkhzT5bU5ZPAtJMLVNJhx2grSGm9IvY+ouPTM9Hyl+79Sh1VxTJy+O2HTKzv5raek1yfuxUUwVCet6iQUFSt0=
+	t=1776863027; cv=none; b=NRXI10B0Rc0UBMpU8rx9Pn/AeoN5W+TX3vJNYaVyoJyI8gSN0y5avWXqkZpwpWoPNPL0z0C1CQTOiAokl6Y8qwF2iUhyVzuDVo16qxG0BzRCSLvoDigdyRvUizvf/ru990gbCp8ckF54PcLTVU95t3qwK3csPo2bXX09MpIBiug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776862067; c=relaxed/simple;
-	bh=/7KKzmCUPAzn3ywPe9THLhfNRqp/gG453mYfw4BCtxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IFNhxslUHODw82Z70LeglNrIENPdpajzhj6x65KbcpARzri5aSFmCCBPgfJLeuW0fl1d1Ynjf3WaFfK2SJpYrc6ZPFhQT8GsB+hCNC0C/HT6mkXzQ9tubirL0ooT9X0seC9U2/yhlvRU0EcLzYJC0SJACU3+6KgUfPa+3sas+N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VXhwhb/d; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1776863027; c=relaxed/simple;
+	bh=NVp5rKRYc5QSU6T0BrJ5kTBob2N0jngaeZMRgSzkKTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F1TKNVQdpxLKHkmEiiWEJ/xBDsNBznlcsxSJ5IyqID5UVOHI7WgDPfwel9/5Oj0CCm2v6dL9sDXdtCpGkMwb+D4E2RThjZAqo4DC/6HmtTjl1TUrwrmywX9sieIOfcX4r1WsVVoOc04nrez22Wp4shB5xCJFO97JFIshjyxttn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g022hXn7; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VXhwhb/d"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=clASrg+WTACfIVmwSPZRwPOparTt2388K44CIhnQt0o=; b=VXhwhb/do4tzvuXj2cgIdGZQ92
-	8Ecq2EzXt9SYjNlwn2KgOjZiWBkSLFhza+L7R5eO2Y0VZUzBKe2RsebYQc2QzCw0pCBOc5+V4tW+k
-	z+PhS+Trd7bz8WhH9dUVhNYToI57Bo5nDEyTLKNyIzjJ7YFmjI2OsmqYPU0CChqKxKl8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1wFWzS-00H1yx-2Z; Wed, 22 Apr 2026 14:47:38 +0200
-Date: Wed, 22 Apr 2026 14:47:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jakub Raczynski <j.raczynski@samsung.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, andrew+netdev@lunn.ch,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g022hXn7"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b9d9971d059so798689066b.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Apr 2026 06:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776863024; x=1777467824; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6DxlUcAzvEB7U+i5O0kj+4iBEHjE40skBjf9E+7IN5g=;
+        b=g022hXn7mJYo98CrQVe0weyAw1cvWrg04DNbWu2Kjw5JpG5u/i9GIMxP0YTb0abKum
+         xSZzILS83d8iA0tunQR++NxgmGUEKVlc5pau6zhf2euIIM9DELwsjiDQcB4f4+2BMAaL
+         xDnQPf9fAZdOwyuq/onFNqGDNJ/erwjUE4Aflia+1ZpdEieFVgFbdDEUoEL+ujxpJ7cA
+         wcd7AJwZTpY0Mv9/Stz4eSnS1FUXFXLtzqCKdWIorSgl2IPTRT/x7JcGtqZ+Ceez7yCM
+         GXSvKV5IAJUI3AwAOa3bMKaqcAAbHXiipPQo++uel7dpwJ4gow4uvwJO4Ph73P4kw8ek
+         bKdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776863024; x=1777467824;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6DxlUcAzvEB7U+i5O0kj+4iBEHjE40skBjf9E+7IN5g=;
+        b=D5MatiT4/gBN6y058qljhq9lZDgbumW2z1AeRLpidQP1Lq9jksEViEjRzELHQN59mF
+         W9NIerdpQHT3Fo738ZdzSmMQbhuRy79aoHvlDZ8KrlJRG55oxgye5v6dddJuZIzaJByb
+         MZ9knLYvDVP2czFKb7lxHcn9ZHGt7r4lF6cy9tGDX7fl1qztt0B5niBLh6uWBbakBH2w
+         pO1LOOAE7aqRuuSH+HrRgDY5UJbUFE304XG8PmWhyNXE3Jcnc49K9lXivtyflNFpdSxl
+         Zc0ei8d+7qppW3teEYhA5zfRBQk25hXpCNI4tyWNg42EMe1zuaXFHIvJnhZMjp5kiuAS
+         V5sw==
+X-Forwarded-Encrypted: i=1; AFNElJ8+ZRTM/Mh0y0TffpT+ZH5eppkjcd3kr/9TijRaE7IcwnqNFpOIsA4WR4QSqWGXUQiymLVOpffXxLHJOEbn2js=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCiRAoT3fH04/Kr7cJ8qYqDqptcfOwcvRjfuQ8JC3GtjhSTGW+
+	Br2TjRwoxbsnVz2ca9k+xVyPIfAAw9WW07dk3CO1tTBeQt34RY2BdhSd
+X-Gm-Gg: AeBDiesL1FrICxKcDpbkpQPLSs1N9SHvAFmhZHluzne/RlsJaldnDOCSh0IHvAX2clo
+	hsOOQ33xJ5LSWSAyXAWiIqTtvWXdIOAS6nNMz2vsXXYWClrJhdQ6iYhyJfzlRqf36xKJAVBpP8d
+	nChf06LATKc6NM/vUoZqtFHETTweN6R4NvxYj5cD5Mjz8T9TwzFN/I7Fybwf7VTxICPmdmjPUyh
+	QDhmFatGAxOVTy3RdlkB2L492++riDNfdf06xSkt2tIfGRJnZX2Fji+u4mZIQCn4DElSt11ypeb
+	IyX1qzUnJr9UCkyIY+69gIyxxIS1BxP5+/JG1/HImSrYXv7r3/J87v5SNgmJ8ORra2na2TD6N4y
+	d6CBfq65QpR7ucOt1CKCam6MIc+2Sgr/oslm6I7ZWwiCLA9S0mbKkjnojd3lXKYvO/rE6V5ePHG
+	18kSqQGiSA2ZRrTTm/pa2EYaLGxSiBDDTrpVUC4xYfK1m/Ty4+hJsbA/728Z44DY8E7dHYiIxb4
+	3I3ZaDK8SzDnhj4gqSQzURIWG8CPjbMu/7WRA==
+X-Received: by 2002:a17:907:847:b0:b9c:a70c:d30b with SMTP id a640c23a62f3a-ba418e85407mr1112598566b.19.1776863023946;
+        Wed, 22 Apr 2026 06:03:43 -0700 (PDT)
+Received: from arch-piotr.tailb7ebba.ts.net (226.55.classcom.pl. [195.150.55.226])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba4520c93c7sm531722966b.27.2026.04.22.06.03.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Apr 2026 06:03:42 -0700 (PDT)
+From: Piotr Zarycki <piotr.zarycki@gmail.com>
+To: vkuznets@redhat.com
+Cc: kvm@vger.kernel.org,
+	seanjc@google.com,
+	pbonzini@redhat.com,
+	shuah@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] net/stmmac: Fix typos: 'tx_undeflow_irq' ->
- 'tx_underflow_irq'
-Message-ID: <f1d51362-ca8f-481a-b9c1-400ab6422686@lunn.ch>
-References: <CGME20260421115052eucas1p103281c5b25719a44c0875d6b0860bfa6@eucas1p1.samsung.com>
- <20260421115008.2690541-1-j.raczynski@samsung.com>
- <7eb9e4d4-909c-4203-833d-bd8b664fdfbc@lunn.ch>
- <aeiJ3zr4WJAm1UCk@AMDC4622.eu.corp.samsungelectronics.net>
+	Piotr Zarycki <piotr.zarycki@gmail.com>
+Subject: [PATCH v2] KVM: selftests: hyperv_tlb_flush: replace NOP loop with udelay()
+Date: Wed, 22 Apr 2026 15:03:07 +0200
+Message-ID: <20260422130307.1171808-1-piotr.zarycki@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <87v7djgoji.fsf@redhat.com>
+References: <87v7djgoji.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aeiJ3zr4WJAm1UCk@AMDC4622.eu.corp.samsungelectronics.net>
+Content-Transfer-Encoding: 8bit
 
-> I don't see anything wrong with it?
-> - naming is correct, same as stmmac_extra_stats from common.h, as it
->   wouldn't compile otherwise
-> - string length is ok, as max name length is ETH_GSTRING_LEN=32 and it is
->   not close
-> - ethtool just polls data from driver and in my tests it is ok
-> - all instances of 'undeflow' are changed
-> - 'underflow' semantic is ok, 'undeflow' is just not correct
-> 
-> Please correct me if I am wrong, but imo no issues with this patch.
+Replace the open-coded NOP loop with udelay() which was added to KVM
+selftests in commit 6b878cbb87bf ("KVM: selftests: Add guest udelay()
+utility for x86"). The NOP loop is CPU speed dependent while udelay()
+provides a deterministic delay regardless of host CPU frequency.
 
-ABI
+Signed-off-by: Piotr Zarycki <piotr.zarycki@gmail.com>
+---
+ .../testing/selftests/kvm/x86/hyperv_tlb_flush.c  | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-This name is published as part of the kAPI. You are changing its
-name. User space could be looking for this name, even thought it has a
-typo in it.
+diff --git a/tools/testing/selftests/kvm/x86/hyperv_tlb_flush.c b/tools/testing/selftests/kvm/x86/hyperv_tlb_flush.c
+index c542cc4762b1..4b7f089542c1 100644
+--- a/tools/testing/selftests/kvm/x86/hyperv_tlb_flush.c
++++ b/tools/testing/selftests/kvm/x86/hyperv_tlb_flush.c
+@@ -141,17 +141,6 @@ static void swap_two_test_pages(vm_paddr_t pte_gva1, vm_paddr_t pte_gva2)
+ 	*(uint64_t *)pte_gva2 = tmp;
+ }
+ 
+-/*
+- * TODO: replace the silly NOP loop with a proper udelay() implementation.
+- */
+-static inline void do_delay(void)
+-{
+-	int i;
+-
+-	for (i = 0; i < 1000000; i++)
+-		asm volatile("nop");
+-}
+-
+ /*
+  * Prepare to test: 'disable' workers by setting the expectation to '0',
+  * clear hypercall input page and then swap two test pages.
+@@ -169,7 +158,7 @@ static inline void prepare_to_test(struct test_data *data)
+ 	wmb();
+ 
+ 	/* Make sure workers have enough time to notice */
+-	do_delay();
++	udelay(100);
+ 
+ 	/* Swap test page mappings */
+ 	swap_two_test_pages(data->test_pages_pte[0], data->test_pages_pte[1]);
+@@ -189,7 +178,7 @@ static inline void post_test(struct test_data *data, u64 exp1, u64 exp2)
+ 	set_expected_val((void *)data->test_pages, exp2, WORKER_VCPU_ID_2);
+ 
+ 	/* Make sure workers have enough time to test */
+-	do_delay();
++	udelay(100);
+ }
+ 
+ #define TESTVAL1 0x0101010101010101
+-- 
+2.53.0
 
-     Andrew
