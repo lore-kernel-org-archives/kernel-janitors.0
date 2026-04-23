@@ -1,75 +1,72 @@
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE40320393
-	for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 07:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2403DDDCB
+	for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 07:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776928168; cv=none; b=OouFuOI6DUR7UkhjBDG/7Cy/yVUy2dq+tJkRQxQZ966X2pP7GbjvvWr2mUUYzeH9skdUGN4CxNE/FzgsglFkFbWR50cvM3VOidArpFWib0iFC5MiTr1S2dpJEO6AGxbJA2mrWOWEMBX8cpylYGxukuiSqim5JzE0ZEZWWETKVSg=
+	t=1776928178; cv=none; b=gxnkeX5H9EEGIfOdn3kOEMivfSeYtwYb8nrGD/VlsYVY7iixqSBAYuYHu+KTvuuFP1mX+LXpENQhjDzlukgaAPXxhKE68lpf98ML/w9+54iNDcXY28rv8mFI1k8H3SlqstqkgIp+Q7tjM3tbZ8SFeL+pHIg/nUtZFRNwDUXF/LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776928168; c=relaxed/simple;
-	bh=DupynI6gpH1hFGwBJMBqwZF2os5L0Q35W2Yjj2yAnyI=;
+	s=arc-20240116; t=1776928178; c=relaxed/simple;
+	bh=1lNCZRFETIhBr1Vkk6epqTXfzI/kKQkmv6oP4itdNbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gIfzkqtCId8BhYYqZJF2XBiu567JH9Z+Pwt7g7qHvtY8geD5y1bzzI0M13XIGPOqQZ7ANDE1W5gsKi/QD9Wk46w3Qe6+uvVpGxy8WmXmJLn6DVCUl/Q1xVl5WbjeCxuV/eeP2rUAFDl2AB9Lj7SWhWMX0FbIshbS7O4CweXEees=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2JBFIvU; arc=none smtp.client-ip=74.125.224.46
+	 Content-Disposition; b=UK9Nxby5n64XepuolIfgwb6sOZ7gfpMB7E/GA0kmjpSdlRqoQ3sRY4dfZlHL/92tihhGRM/H5zMqbB+Ol+iROTEEcJtU+tkmrLjdolKOkDq3yoqIfQGsNBI9lpPTS92YEJ4nTWGeTOcMmxu06mpRg64A4O0C9Hfs//aTyefmtFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GqeBcHNV; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2JBFIvU"
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-65492d097acso207381d50.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 00:09:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GqeBcHNV"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7a43424f861so62007367b3.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 00:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776928167; x=1777532967; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776928176; x=1777532976; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+G5xDeM2eEmKTciid+jelsafennvBZ1THzAZAjB59Gk=;
-        b=K2JBFIvUOl0E0jwg+fD+fdJfJFVF96BoOssPBv6/9F/MPAOik6k3oy7xQn6e5mwfsO
-         YI0yVNaQLCHXUpomsI7pV9OAnGcTglx118UXT9VHY04ZHbFFptl/wGkjHjfDUrG5suQ4
-         7KipD+8fOpoWy6a2mKbqNw8wZFCe3yhHcQy8ps7Hkye4yTgFjIMYvAB691DTFg6ey2zD
-         Yy0rJbw+CeEDRcK58EH/+OGToHvxRpIu6lvgxljgt5DMS1/fH/IzNTxkWaEmRzi4yRRf
-         eZ0XQ3GQTNam2DFecM574dVFS48mufQibF2qjnsyuupTW7qf7eTmzicESZwM+IYq359B
-         mZug==
+        bh=vGKmSTNGemBMrvy+mTM+W1vFimf9R3yJOHV4XTerUnE=;
+        b=GqeBcHNVirJ71j/7/RpNsZ5jQgTtus1ZcGTmOsBbqDvfw5g35Wc/rPxRGh3iHDKVRy
+         V5bZDl4r4Lengb5ac3n3KAlbqCwsGk667clFAYBYPOIV0vESNlcpTMLt02qjCXEhenWP
+         c8/DyAtSVEvUKOoMnmYCfJpMUB259jbkZXiWNDL8lZqtzD7C/l2XTfO7xnjZuQkB4mge
+         l6ZAqaLVOO/DrNnoiP43WOyE2+v7qIqYD5G7atiIOyHibSI3yDSU48xi6Hc8OByo7Vw1
+         evv/enJUrPiT8z5VwoDt9ASCUERRwTg4tVY6b497waBiSUHoDPekrPOGVYpS6dT5DqDv
+         zPqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776928167; x=1777532967;
+        d=1e100.net; s=20251104; t=1776928176; x=1777532976;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+G5xDeM2eEmKTciid+jelsafennvBZ1THzAZAjB59Gk=;
-        b=hilkmXeKPlsiD0CP0eLLfi/5M2YuinecxCo7eGYrihzlOdwOXPKYOpWN2sdBUeysQb
-         apby0ibXxgcsbcwFPbvcr1QijwgracG0aLYy9TsNLnXWI0wr1WODCincdqEfiwnjdhks
-         /yGFWqIJLZCf2pGI3NGwbEQc+ONONejQfiQidFgXGKEmXbJGG4uywSernr9Sg0jKaPfj
-         Dvu/oBXGDt8MItA1mZZWSWs+WRCWC++9q8e1cNKzA2IW9QOHyBeUASBrefFlT4nlDRII
-         4y9XdmRAd/RfpCONhclSM0S+pq0dJXuJdWqRArCNeDoy8mFCOzXiCswvSegD4x7jdsms
-         ildg==
-X-Forwarded-Encrypted: i=1; AFNElJ/by7QTIogtJMgckDPAVurHZNkoPN1x0F8uFFkBvydoYwzt2SAnTYsCLGQkMjLYq7M5PRfltU54q2DQiIoijB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYPCWP4Dr472qOPKcNznbkLfkRvCBwtFtkHBKSdj+49RZrIqMl
-	yrBrPlwowIhPrUy5AQpeOKOmUZYBGUVN6PLQN/GHCxbH/uFu3ll9j7+T
-X-Gm-Gg: AeBDieviMglImGtQvABV/iRscuBvvksVePiZ9diRnhHoaEqtwH7AdDoSmqGwpNy9CU8
-	rZ7dV3+MKWXKGQ4pJwhhkGNbGVBDKUE+wYWb3EXFk/VD1PuCWS+YYijykR5fy4Rb1afVuY8O07+
-	Q1DXf8ARgvvPUhuqM7wIhaayWV3SCQ5NkRLjULAB6bkC9eQUj4XuKGZSGlgLicY6YmXK0vUfdHz
-	zGGlLGA3pRDNOqBIt/cZJuoFLTmLUSUeiCvih9LqK7jU3DhqTBEg3HWqw71JY1+2ShHfOIAjcOU
-	I/iajKoBe5i4ZKr50r1LgdHmuD12fs0xzLVtf6FVpnSDfVPVIXCoXDfg5NPDtOAlSlZSMgmBnsO
-	wYZnc+bc1+aw/WfV7k6oDLlb0zYBeeJPdUlPmJLZle4ndsZoDb/ClpRg//Q14fuXQMRv0yK5K90
-	rUsnLgbaJ+SfHhgzazz7a/z+1oXBki
-X-Received: by 2002:a05:690e:4850:b0:649:e871:3eb7 with SMTP id 956f58d0204a3-65310b03ee5mr15847316d50.57.1776928166757;
-        Thu, 23 Apr 2026 00:09:26 -0700 (PDT)
+        bh=vGKmSTNGemBMrvy+mTM+W1vFimf9R3yJOHV4XTerUnE=;
+        b=bS24gEiZJEI0pDrimxqKuCAySMg85o5hazVaJvj1BqWccoUTYlOmus9mi1ftVM9v1g
+         mod3Q+EsIT6tyedVtMFMcahMU9puMzKg7cFiNNpqY8IxHXvYtREWJHLmH64ZkbFAkCcz
+         2SA17dkIqro+raRnc/byxe9Jv8YWZpzWYxd/3Kq8KR3WNupW39nEhaiwWn79/Mfj7na+
+         OVfjijgvyAKqlAIRx9R0GlOY1k6G/WWCDkSb9UyggD3TK7h1qmLN7PdfrDQTkH2yb8Gu
+         7tIANZ3t+JL79lRFriBkb1mvqfIuM4SQJ28jiEsOapXNwFF5GE0TPhwIZzI6u5OMRLbF
+         FYvw==
+X-Forwarded-Encrypted: i=1; AFNElJ9SM72JyDsVhdlssUS0vhkVTsY1/br6qOt3UITV0yDZm2hGfl/T2ix4ES5BTOq5qnXU9dIcnNk0o/zRAtmZtPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHSybKCulxm3sPpG2qQZNK8lbVxF0rzL1XSZ45umTBmx1TwUAr
+	3aNLcbJo4U336DSON1fGxCIuFM5KVc2gzztmORmWulm7+1nbspyZGAXn
+X-Gm-Gg: AeBDietH7OQUvxqqqURROqJfXsKTA4H3YIAkY2zz5BDWFl1GgY/MhyoAHAjhXFf6APt
+	PTJknjKVUQr2IRp+Wxxbgs2a9zARVZjQ0jfB3KQbVdK6VvjHs0pV5ozU5O3zQdhG/h1ds+1YAe7
+	4OGlHYbbdw7VWvie9VHouRRXocrvoAgUlxmmRiqCBOEwCOa1Ng6pmIecN0umlkQn8gYPmGDMqhc
+	MCQoGTQq3BW4iGuZt081bf0q28PwczNp8N0PCOE7vHxrpi4qr701R10IMT7R/CqEYY/sVpKEZwe
+	bVzxrudUekzGi8igTwiI/ILM9qC4GmdUJgrES+Bh9UkJK2sVugPI0DB/Dtm7kTJGhLlHfHmoVh5
+	fVz6K1/fIrZxNsTVBgwFQb9xaiPly6YFcEvrJUPVu4ZEl9+IB/0fjU2ykh+iccVo6MAZJdbgGY9
+	0JXk0qu/VwxHPOsnXiDnqlPN59KEqn
+X-Received: by 2002:a05:690c:7283:b0:7b3:edc7:9bb8 with SMTP id 00721157ae682-7b9eccb73a9mr270364097b3.0.1776928176434;
+        Thu, 23 Apr 2026 00:09:36 -0700 (PDT)
 Received: from localhost ([172.216.252.33])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-65314e328d6sm8799738d50.11.2026.04.23.00.09.24
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7bafee18982sm32189457b3.46.2026.04.23.00.09.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2026 00:09:26 -0700 (PDT)
-Date: Thu, 23 Apr 2026 10:09:20 +0300
+        Thu, 23 Apr 2026 00:09:35 -0700 (PDT)
+Date: Thu, 23 Apr 2026 10:09:29 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Harry Wentland <harry.wentland@amd.com>
-Cc: Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Chenyu Chen <chen-yu.chen@amd.com>, Ray Wu <ray.wu@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/display: Clean up allocation in
- initialize_backlight_caps()
-Message-ID: <aenFoICS1syeOPEm@stanley.mountain>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: David Rhodes <david.rhodes@cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ASoC: cs-amp-lib-test: Fix some NULL vs IS_ERR() bugs
+Message-ID: <aenFqUC8X2CucQwb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,55 +77,51 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Just a small cleanup:
-1) Remove unnecessary initialization.
-2) Use the new kzalloc_obj() macro.
-3) Reformat the NULL check to make checkpatch happy.
-4) Remove the unnecessary NULL check before kfree() since the pointer
-   is not NULL and anyway kfree() accepts NULL pointers.
+The cs_amp_devm_get_vendor_specific_variant_id() function doesn't return
+NULL, it returns error pointers.  Update the checking to match.
 
+Fixes: d70fa6b569a9 ("ASoC: cs-amp-lib-test: Tests for reading SSIDExV2")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/amd/display/modules/power/power.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ sound/soc/codecs/cs-amp-lib-test.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/power/power.c b/drivers/gpu/drm/amd/display/modules/power/power.c
-index 6c73fecf57d5..68b5b3b967be 100644
---- a/drivers/gpu/drm/amd/display/modules/power/power.c
-+++ b/drivers/gpu/drm/amd/display/modules/power/power.c
-@@ -470,7 +470,7 @@ static bool validate_ext_backlight_caps(
- static void initialize_backlight_caps(struct core_power *core_power, unsigned int inst)
- {
- 	unsigned int i;
--	struct dm_acpi_atif_backlight_caps *ext_backlight_caps = NULL;
-+	struct dm_acpi_atif_backlight_caps *ext_backlight_caps;
- 	bool custom_curve_present = false;
- 	unsigned int num_levels = 0;
- 	struct dc *dc = NULL;
-@@ -486,11 +486,8 @@ static void initialize_backlight_caps(struct core_power *core_power, unsigned in
- 	/* Allocate memory for ATIF output
- 	 * (do not want to use 256 bytes on the stack)
- 	 */
--	ext_backlight_caps = (struct dm_acpi_atif_backlight_caps *)
--		(kzalloc(sizeof(struct dm_acpi_atif_backlight_caps),
--				GFP_KERNEL));
--
--	if (ext_backlight_caps == NULL)
-+	ext_backlight_caps = kzalloc_obj(*ext_backlight_caps);
-+	if (!ext_backlight_caps)
- 		return;
+diff --git a/sound/soc/codecs/cs-amp-lib-test.c b/sound/soc/codecs/cs-amp-lib-test.c
+index 636d0f3198b8..bb0cfd9d5db2 100644
+--- a/sound/soc/codecs/cs-amp-lib-test.c
++++ b/sound/soc/codecs/cs-amp-lib-test.c
+@@ -2360,7 +2360,7 @@ static void cs_amp_lib_test_ssidexv2_fetch_invalid(struct kunit *test)
+ 				   cs_amp_lib_test_get_efi_vendor_sysid);
  
- 	/* Retrieve ACPI extended brightness caps */
-@@ -611,8 +608,7 @@ static void initialize_backlight_caps(struct core_power *core_power, unsigned in
- 		}
- 	}
+ 	got = cs_amp_devm_get_vendor_specific_variant_id(dev, PCI_VENDOR_ID_DELL, 0xabcd);
+-	KUNIT_EXPECT_NOT_NULL(test, got);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, got);
+ 	KUNIT_EXPECT_EQ(test, PTR_ERR_OR_ZERO(got), -ENOENT);
+ }
  
--	if (ext_backlight_caps != NULL)
--		kfree(ext_backlight_caps);
-+	kfree(ext_backlight_caps);
+@@ -2376,7 +2376,7 @@ static void cs_amp_lib_test_ssidexv2_not_dell(struct kunit *test)
  
- 	/* Successfully initialized */
- 	core_power->bl_prop[inst].backlight_caps_valid = true;
+ 	/* Not returned if SSID vendor is not Dell */
+ 	got = cs_amp_devm_get_vendor_specific_variant_id(dev, PCI_VENDOR_ID_CIRRUS, 0xabcd);
+-	KUNIT_EXPECT_NOT_NULL(test, got);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, got);
+ 	KUNIT_EXPECT_EQ(test, PTR_ERR_OR_ZERO(got), -ENOENT);
+ }
+ 
+@@ -2391,11 +2391,11 @@ static void cs_amp_lib_test_vendor_variant_id_not_found(struct kunit *test)
+ 				   cs_amp_lib_test_get_efi_variable_none);
+ 
+ 	got = cs_amp_devm_get_vendor_specific_variant_id(dev, PCI_VENDOR_ID_DELL, 0xabcd);
+-	KUNIT_EXPECT_NOT_NULL(test, got);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, got);
+ 	KUNIT_EXPECT_EQ(test, PTR_ERR_OR_ZERO(got), -ENOENT);
+ 
+ 	got = cs_amp_devm_get_vendor_specific_variant_id(dev, -1, -1);
+-	KUNIT_EXPECT_NOT_NULL(test, got);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, got);
+ 	KUNIT_EXPECT_EQ(test, PTR_ERR_OR_ZERO(got), -ENOENT);
+ }
+ 
 -- 
 2.53.0
 
