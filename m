@@ -1,142 +1,117 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6713624B5
-	for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 09:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBB51B142D
+	for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 09:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776935312; cv=none; b=mdJ+MVqsd48HuTiPShcZWonItBxmbrVk1M7Gtk9+/OcH8qQeKceQE1DUDHU2gYEQ8GLkAuu7K6vhVtxhGuZOy1Wl7PoOTIgCTuvg+KDrvpAeijvvjIUI2nnHv2PaNPMl9pS5QGFc0o0Ub4MDJ9QKO5saq5p8fNV8OO1dBPzhp/I=
+	t=1776935607; cv=none; b=RNs+y5kOjf39umdwTaGgFirhiUMdcW3XwtySbA10w8jsLoC9M61iSeVm4mqflA96ZLSN6E5z5rdjtTlmN00HT0xGvnX1SR386n1cDVc7p5XMDexaVXxvlhVisY76qR31sUp6ddTpDlUblhgXcJhtiK1P0Jugd9Ui+ylvDwBGtYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776935312; c=relaxed/simple;
-	bh=r3kHVrluazrYYrDklNG/TrMUVX5CgIch3zRJ/KB1h5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=ShFJHfwv/bQqqHYQoPLy2kHYxBTWq4LxTxIhveuMJ4xZoi6DKg0mH9FWVrPu82q/MeyDrXMHnERj3uHILz9mv/SUIKWxjF/YhPsJEAzvAoOUtUE9mr1IPKG09NLrGKgApNb8PSPMXgn1ID9My6iJg9lOsI1ek0L+n4vRIp3lr7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=N00BaMEH; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1776935607; c=relaxed/simple;
+	bh=6T9IqlK5280psLkT3eMJmwYwDyICLVpbc7WfYWRFFiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t3+jXdEFRFCjsNBK4OJ3U+QuEgIrJWFhMU1c2BMKA5RPxLHg98CbIuDAwodiOymlRDQ90JQpSKhExSzBRaNpFj5GHDlnt6Zhbb9EVtvU4qUFPpXIcwTJ1JnttlfUbVUPsOn/j6/5+8/PtBse8GbyoG5p9X8CTyhRwdMV/79JNkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sGuGzt8O; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N00BaMEH"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260423090828euoutp01443129658de3b7f0d430a000f2f09e42~o8T_wvYBd2415224152euoutp01F
-	for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 09:08:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260423090828euoutp01443129658de3b7f0d430a000f2f09e42~o8T_wvYBd2415224152euoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1776935308;
-	bh=wDBCWCKH25r3rzgbP56Jfhz7Hk9W93MZ0Xv826+RJBw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N00BaMEHjfQ8ysK/zJO0guD2i953Z2z8NHQqo5I2qmfPJrM9w5C539OBF6OFyef5E
-	 d6TnEiVWxfHYQ1ztF5WqbkkDa+A9KMVyzjkS7a+cfGkfgsl2w76a+RPB/bAFiYHo9Z
-	 Ehn/Js6B/jr+nyAGlWIYhnM403tgH2ym0Wv/R1m0=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260423090828eucas1p204606b1be37253296ac938bad852e8f4~o8T_JYoD82360223602eucas1p2l;
-	Thu, 23 Apr 2026 09:08:28 +0000 (GMT)
-Received: from AMDC4622.eu.corp.samsungelectronics.net (unknown
-	[106.120.77.34]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260423090827eusmtip2f7824fdaa66107f46994835bd820dac6~o8T9sjupi0699706997eusmtip2L;
-	Thu, 23 Apr 2026 09:08:27 +0000 (GMT)
-Date: Thu, 23 Apr 2026 11:08:24 +0200
-From: Jakub Raczynski <j.raczynski@samsung.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, andrew+netdev@lunn.ch, kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] net/stmmac: Fix typos: 'tx_undeflow_irq' ->
- 'tx_underflow_irq'
-Message-ID: <aenhiHCZge2dMBFw@AMDC4622.eu.corp.samsungelectronics.net>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sGuGzt8O"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488a88aeec9so82879915e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Apr 2026 02:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1776935605; x=1777540405; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iBZ9+FXv0tBiNwFRrrrMnD/CIzl1HaptSL4qAqgrjwM=;
+        b=sGuGzt8OSxXHXuuQSOIbjM0yAZHsXrcsBG0ct0RqXYUgZDL2Md8h1h01TBdRYMtvJS
+         gSAaBP/bBElP+I5fQ6XuYMCp1nSzXOO7/Sd1dmQAq5eHd+FCd3RqF8jIm3btI1DR6zbS
+         BcLa3rrvHBebrEiaQbO5nVi8uDxEM+NvnqvPZ/TefJGvJWAudWHRWkVrgmNrxSAI2fLr
+         0drhLCZA5yE7oaS6+d3GRSTMsEAshwGQX6Znhgt5y9jYTN4M9aYO94GWekxeUo/17rqY
+         3BuxbiqaZLIpp6JLklQygli7DWihQLEVrspiYmCddhwJX3XNjfNyAWbVaMD8QY3LMB+y
+         Vqig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776935605; x=1777540405;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iBZ9+FXv0tBiNwFRrrrMnD/CIzl1HaptSL4qAqgrjwM=;
+        b=P4tUxz6xr94vpSTPdMK1FCuvFlOrZrpj40h6qXeJv+kOYhiX6s9eLGDRagHJStQ4I4
+         /OCPja3PDokBnvpFeNvFVguO22+npWo+X1DUd76gJHlwRPDxnHXNfwXEmqyp3mUoX9Ek
+         x+BuvhZObEu5nMJkRlM72XTA2o93si1O63afAWgghrOqb3jsQGKe5rvQRWjfpqn4K7qL
+         H1qgKg7x99ZbVFzUGEgKdB/m/9hUN80oKo/7IZPthTYEbkTDhfeJOOkjw2zszgvnIJ1a
+         OrNcxropecR31KKpXXmX/fcGSsfRGZiJ0KaaxiZvff5PKldpyUSgBzgpowtGCQr3fqZn
+         ennQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/GhtdNQTsppGfmk1VbK9Spzgbrnt9e5umVosZglbOXAZz47lgKokT1gV/E65EAVYCaLNI0Lnub4Hk5UrkCve8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR4PwikYsgNepUVqiSpGJNNzRhzvRskL0ECiC2c6NLJTNbH92O
+	MUMZ+g4/TeLXoxH9MCxk9IDLo8YEQos04lZkK6Jo0eqOz5in//BL2AN/U4jWI4dRozM=
+X-Gm-Gg: AeBDiev93YvG82U695KYft+5jOU8e7QLmYw5CQ1YWoqGUyE3FcV4FkDwTDqX4o6QYvv
+	2PukCdGwwYgbgbz5zHfDhsLIn/cKIBvcnPq7TZTvB9LtOTir4S68g/D5iRySB2ZC5XzpfuxmN7G
+	UneTo8TTSBYqTVRB8G362HfXKR2xweJFosqOPSjY37duZ2PeAPtVMHI82gfULxVcfrAhQt39d9C
+	ehglZiqopbIIkSPybDEwN6SnvKhpkhI1eNqpxalI7tlXDV/SxFTqEoFBtol+s/OI+18kn8WkqkW
+	H+SN13iouIF5RwGnQUgVTm2L3uF+QcnP+O4faJ9USajjhYvEES8ksQNVnXhfIlgJpE1rz1TJMG6
+	tZXnKDthvWHMR8qsjDoJgDQ2bt1Xshi3Ij9AemjoWhrfbN7n9HHJCa8Vj/5raBX66K+1iNhD6Ht
+	JdMg41WbH/2lC4Y4jhNC/y5j7pp0tRBRGrP63Y4FilBLQ=
+X-Received: by 2002:a05:600c:c10a:b0:483:2c98:4368 with SMTP id 5b1f17b1804b1-488fb771613mr293409705e9.18.1776935604727;
+        Thu, 23 Apr 2026 02:13:24 -0700 (PDT)
+Received: from [192.168.178.64] ([84.246.200.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a557412eesm85745545e9.9.2026.04.23.02.13.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Apr 2026 02:13:24 -0700 (PDT)
+Message-ID: <204607f3-16fc-4be8-91ac-bf38c6dc31f9@linaro.org>
+Date: Thu, 23 Apr 2026 10:13:22 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <52b06f0a-8283-4903-9d8a-2bbdf637dd5d@lunn.ch>
-X-CMS-MailID: 20260423090828eucas1p204606b1be37253296ac938bad852e8f4
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----hExaTKD8pSV4C1.mHO0xNjZioIzStKhMnOXfyxqZoi0.l2l2=_2e513_"
-X-RootMTR: 20260421115052eucas1p103281c5b25719a44c0875d6b0860bfa6
-X-EPHeader: CA
-X-CMS-RootMailID: 20260421115052eucas1p103281c5b25719a44c0875d6b0860bfa6
-References: <CGME20260421115052eucas1p103281c5b25719a44c0875d6b0860bfa6@eucas1p1.samsung.com>
-	<20260421115008.2690541-1-j.raczynski@samsung.com>
-	<7eb9e4d4-909c-4203-833d-bd8b664fdfbc@lunn.ch>
-	<aeiJ3zr4WJAm1UCk@AMDC4622.eu.corp.samsungelectronics.net>
-	<f1d51362-ca8f-481a-b9c1-400ab6422686@lunn.ch>
-	<aejYCYObZyFPpLat@AMDC4622.eu.corp.samsungelectronics.net>
-	<52b06f0a-8283-4903-9d8a-2bbdf637dd5d@lunn.ch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf dwarf-regs: Fix off by one in
+ __get_dwarf_regnum_for_perf_regnum_csky()
+To: Dan Carpenter <error27@gmail.com>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Guo Ren <guoren@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aenDmXNIKdwdtMzn@stanley.mountain>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aenDmXNIKdwdtMzn@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-------hExaTKD8pSV4C1.mHO0xNjZioIzStKhMnOXfyxqZoi0.l2l2=_2e513_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
 
-On Wed, Apr 22, 2026 at 06:15:20PM +0200, Andrew Lunn wrote:
-> On Wed, Apr 22, 2026 at 04:15:37PM +0200, Jakub Raczynski wrote:
-> > On Wed, Apr 22, 2026 at 02:47:38PM +0200, Andrew Lunn wrote:
-> > > > I don't see anything wrong with it?
-> > > > - naming is correct, same as stmmac_extra_stats from common.h, as it
-> > > >   wouldn't compile otherwise
-> > > > - string length is ok, as max name length is ETH_GSTRING_LEN=32 and it is
-> > > >   not close
-> > > > - ethtool just polls data from driver and in my tests it is ok
-> > > > - all instances of 'undeflow' are changed
-> > > > - 'underflow' semantic is ok, 'undeflow' is just not correct
-> > > > 
-> > > > Please correct me if I am wrong, but imo no issues with this patch.
-> > > 
-> > > ABI
-> > > 
-> > > This name is published as part of the kAPI. You are changing its
-> > > name. User space could be looking for this name, even thought it has a
-> > > typo in it.
-> > > 
-> > >      Andrew
-> > >
-> > I don't think it is? This part of extra stats (struct stmmac_extra_stats) and
-> > is not part of standard ABI from
-> > Documentation/ABI/testing/sysfs-class-net-statistics
-> > nor is mentioned in
-> > Documentation/networking/device_drivers/ethernet/stmicro/stmmac.rst
-> > 
-> > These extra stats are specific to stmmac driver and most of these are more
-> > than standard
-> > https://www.kernel.org/doc/html/v7.0/networking/statistics.html#c.rtnl_link_stats64
-> > This name does not exist outside stmmac driver, so while some application may
-> > expect this (stmmac specific app), question is should this typo stick?
+
+On 23/04/2026 08:00, Dan Carpenter wrote:
+> Change the > comparison >= to prevent an out of bounds access of
+> the dwarf_csky_regnumsp[] array.
 > 
-> 47dd7a540b8a0 drivers/net/stmmac/stmmac_ethtool.c                  (Giuseppe Cavallaro      2009-10-14 15:13:45 -0700   81)     STMMAC_STAT(tx_undeflow_irq),
+> Fixes: 8cac4013b0c2 ("perf dwarf-regs: Add csky perf to dwarf register number mapping functions")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> ---
+>   tools/perf/util/dwarf-regs-arch/dwarf-regs-csky.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> It has been exposed to user space for 17 years. In that time, there
-> could well be stmmac specific apps using it.
-> 
-> Just because it is not documented as ABI does not make it not ABI.
-> 
->      Andrew
->
+> diff --git a/tools/perf/util/dwarf-regs-arch/dwarf-regs-csky.c b/tools/perf/util/dwarf-regs-arch/dwarf-regs-csky.c
+> index cb44b774f8d9..4c586a5cb763 100644
+> --- a/tools/perf/util/dwarf-regs-arch/dwarf-regs-csky.c
+> +++ b/tools/perf/util/dwarf-regs-arch/dwarf-regs-csky.c
+> @@ -118,7 +118,7 @@ int __get_dwarf_regnum_for_perf_regnum_csky(int perf_regnum, unsigned int flags)
+>   	if (flags & EF_CSKY_ABIV2)
+>   		idx++;
+>   
+> -	if (perf_regnum <  0 || perf_regnum > (int)ARRAY_SIZE(dwarf_csky_regnums) ||
+> +	if (perf_regnum <  0 || perf_regnum >= (int)ARRAY_SIZE(dwarf_csky_regnums) ||
+>   	    dwarf_csky_regnums[perf_regnum][idx] == 0)
+>   		return -ENOENT;
+>   
 
-Sure, up to you whether NAK or ACK this change.
+Reviewed-by: James Clark <james.clark@linaro.org>
 
-IMO this name is specific to stmmac and should not be part of any app,
-as monitoring tools should be more universal. When monitoring interface this
-field will show some other way, via dropped packets and then you would use
-driver specific fields for debugging.
-
-Problem is, quick search on github shows this change propagated through
-hundreds of Linux forks or different RTOS. But no public app using this found,
-at least C app (but well, I didn't browse everything for obvious reasons).
-Funny how typo will live everywhere and not be fixed.
-So this change would make it differ from all the forks/RTOS'es that will
-probably never fix this. So thats the downside.
-
-Question is whether this should then remain that way forever?
-And was it really part of some ABI if no one noticed?
-
-Regards
-Jakub Raczynski
-
-------hExaTKD8pSV4C1.mHO0xNjZioIzStKhMnOXfyxqZoi0.l2l2=_2e513_
-Content-Type: text/plain; charset="utf-8"
-
-
-------hExaTKD8pSV4C1.mHO0xNjZioIzStKhMnOXfyxqZoi0.l2l2=_2e513_--
