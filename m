@@ -1,78 +1,79 @@
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E50436C9E5;
-	Fri, 24 Apr 2026 14:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E893C3E6DD4;
+	Fri, 24 Apr 2026 18:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777039591; cv=none; b=IYMVue2BTMTX4yx0vn9VNyAmnLz4h46GOicTxttAw8/DycP2X62CEc+/D9aEokLAKRVLQdjHZKhtv0kYyZLsRKWpdmh026PxPgdXMGWik9FmiEZPxt0vnLjivczbD1CpHR4Ie1cGvERkw3EpF4qsC2DFR2KAMAQZScnozazSsnw=
+	t=1777055844; cv=none; b=B4/M4XjcYBKnWiol7PzNcg28iV/h+f/xr8tGxnAqOpdq1T0OfgsmO8CO87sHElxPR7H+wydnylQtZ+t+qQ/l8aW9mgiu3X5La5muW5jPbzS0QJhK6iOpS5wjQcFz0FbL7HQufhMVFt6Q+iVSg385RbY4C/ZcqM5dCfBCR76Z1eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777039591; c=relaxed/simple;
-	bh=HuqFQpihBSAjw9z0OmGnI4ll7+CE/EmLvtCHWVC1FtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SL6CVQ0fqkAO7Nf35lD5rwj5YshQMkV3nVB3yTDzk5I0EDldYdsEsDr5N+I1IEo72x9tGcdTxUIBp3e9/jJ/UT+uEx3F01Q9YkmVNUo6ahD3ehj+JB6EqfGoPGtLLgBaYpm0ihXooiV23vBLNXduN1mzBxg5HuO8ErJDtAEnnF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=jyffZIM9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZP2e39kb; arc=none smtp.client-ip=202.12.124.142
+	s=arc-20240116; t=1777055844; c=relaxed/simple;
+	bh=n1N0NJ6lmEMVSMqOlxf0BjcHpMztbSLy+lwT4MHNJow=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JdAboMBlzaLTtVn/M6SCKwLVl6bxN6HsjVFpi/A+y2L38jknytYbHMxRnGg8E4s8C6vluuCx3881fjHgk2X0G7OoLP2DKVUbA+Uj1Pf2YpEtw4nMUa4uf8adHnCDwqA14gmE3PgAr5YmYbOFEoo6TRZkg2Xff8c8957KNLsFL60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=S61+402l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WtFGhbt1; arc=none smtp.client-ip=202.12.124.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eduardovasconcelos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="jyffZIM9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZP2e39kb"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 287781300F6C;
-	Fri, 24 Apr 2026 10:06:28 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="S61+402l";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WtFGhbt1"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailflow.stl.internal (Postfix) with ESMTP id 8FBA51300F21;
+	Fri, 24 Apr 2026 14:37:20 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 24 Apr 2026 10:06:28 -0400
+  by phl-compute-02.internal (MEProxy); Fri, 24 Apr 2026 14:37:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	eduardovasconcelos.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:from:from:in-reply-to:message-id
 	:mime-version:reply-to:subject:subject:to:to; s=fm1; t=
-	1777039587; x=1777043187; bh=oHuMOvtj1iezE1YeNuDLSCyrYSQUS/0Yz/m
-	go3MwrYs=; b=jyffZIM9CAu7RLVGskBsOaknZ1Fb9Nj2OgVtx2v36VsXTKcrl+w
-	oQRl7+Iq80V6drEjweeeI2MsCd3B6V148U6pBdj6xyBhEo8/RMRXz/mYSXS2kctQ
-	V6Ikz+0Am9iiuLtNveDQ3iDzB5IS5PcNMLnlofz+9Xpm3EAgfrH0Y9fLJYJqVCbJ
-	TN49CAiD2IcZgfyyuEYoPcT1o7enASVWuibrOg2mWxMcLX97ZG3QTRSD7WKhK35z
-	QjioEaKc1+hf/2GmCeodL/voRzc6+PnJMkLU/BOMsBTBnY/C/4wEMle74eW0fc2K
-	NW+07csFrW+Gume17Idji/7hLN23bkKusdw==
+	1777055840; x=1777059440; bh=GBeKdNWDoF51ljz6w1e1jZ+m8hi43b3guSB
+	l3uJssuU=; b=S61+402lGna3vQnHn9DSS6v197g7TkTCKVGlfPh9I15PuL9LHJM
+	5fRTqtOlypsTzHduC3wnzc0Tst1SfuebfTKhkvNIy7GmfP9cJ0wVpHPao6S+ZYL1
+	kPknQHEN9FoOMlV+7iVgSKKqlgg3Bmo5ydXwrlcKwNA58SYxHX09xRIzIS8tHSHv
+	XSXdYykr3RaJuHvcwLwyF6T+tx3k5rNMvEDhnb1DkS1TiAY+WwI+nY4slSK3wq/g
+	ve0EbqNtrUN3sddcOA899qAXmHdPufXmbuPhy66RpHKmdrqNY/QHP/dLroE3qiEX
+	9PomA0vYB/FFAkK9KiDIcjDmNtcEln6THRw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1777039587; x=1777043187; bh=oHuMOvtj1iezE1YeNuDLSCyrYSQUS/0Yz/m
-	go3MwrYs=; b=ZP2e39kbNb8sjWgt7gZLAqyvfkxjHPxs0c1j5qEKAoTpGATbWUP
-	pCbuB2rvxegPdl3trSyAm+rUD7IEoRnMvnIUgIBvGijWvvREcQa25gZgFBW4nSh+
-	GRavmn+i0BWZH+yqTWKv8jKLa5zgLqqqltN1sHteHh/KhE4v/L7CH+rcr0IGGsc2
-	DJXWDE5UyDcUTQRVlZ4zKYFVFk6fAf8k5Mmr+nY3M8Mfhsl6x1TUbJXYCVVswf0I
-	bLpwXYMYzusfdbugZEYbfwxdVEKNdI6xSGKo68ETruRM1TK1Kag6MFju6ysk9Llx
-	tahEOkj6VTeZ670vVKJCJv9gg/Qa3gAhkFg==
-X-ME-Sender: <xms:4njraQ4Xf8s23F1Yzd7x3ROe84cagSZv8-EJWot-BlQqeKzWmVhODg>
-    <xme:4njraedLh7CMayWeGhfWPc1Tqfj62b67W0p-9EYjvagn6JbqDuF1u5OCpNoS7Q-Qx
-    _cN_hIEHusqY6rI7s8LiAHpscinu4HQyVmC2O2dLGKW_vH3hWdOD-s>
-X-ME-Received: <xmr:4njraT4UZ3ZrY-VP1dw9Uw7vG6o0tgaYYQtVsodw97P3o1puo5rE3ZANisLyRw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdejtddvfecutefuodetggdotefrod
+	1777055840; x=1777059440; bh=GBeKdNWDoF51ljz6w1e1jZ+m8hi43b3guSB
+	l3uJssuU=; b=WtFGhbt1dPekyZ+jhL5OzW2VMK4+FB8rFFr1mWnUp2YICGze1h3
+	lM18CuZ/Fmcrch/Dj/i3NV0PsR+uz1N6AszvH+GyRmt618JtKnzs7Nf/Ectk8If/
+	fV1Ayzj7w5LeGN5mEph2fJuvOlz5U2BMRRMFI7wGeQlaabpHMcNIDISnGQqKlsGJ
+	SlNBctv/utSI+zq0hNUQYqbkE3DOoJvKcpqFq1Q9/rOllfV+Bnd2UCDGC6vntkP8
+	kufOVtrSLZO9fUP0xmQT+lCNj9nWXoAaOz26XzgW3BPl6JVik4f0zhyX3qX42JR0
+	avQ1T6s1/qJa8R09qy0ijljgwqa3XOz6tvQ==
+X-ME-Sender: <xms:X7jraRo3kh7_A9R1YlAylVtKTP0YpHPmlkIkJaHe9kBwNJJBH24bMw>
+    <xme:X7jraQO5hjF28ca8aV1ZiXIAsyZZH5Cs6pq-uDE0NYkqxqwYlQUgZE51Mvl03yraz
+    k7r3AggF_lpQpmbF6IwTuPwwkjqn09Nw49OU50g-nYV5FKJZEDhNjCS>
+X-ME-Received: <xmr:X7jraSqx_7y_fO78oJ4xDLS8trZAAhwQfNa48IAPlpYdPTxE4pVEbvcllx0rww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdejtdejjecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
     enucfhrhhomhepgfguuhgrrhguohcugggrshgtohhntggvlhhoshcuoegvughurghrugho
     segvughurghrughovhgrshgtohhntggvlhhoshdrtghomheqnecuggftrfgrthhtvghrnh
-    epuddtueffheevgeduudegfeffjeevveeugeegjeeuvdelhefgkeeujefggffhffeunecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepvgguuhgrrh
-    guohesvgguuhgrrhguohhvrghstghonhgtvghlohhsrdgtohhmpdhnsggprhgtphhtthho
-    peelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkh
-    hhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghr
-    ugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhush
-    gvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegvughurghrughosegvug
-    hurghrughovhgrshgtohhntggvlhhoshdrtghomhdprhgtphhtthhopegurhhiqdguvghv
-    vghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgv
-    rhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:4njrab9TsKMSzAGnmzBQBBxi3efbelVccmxMKWoBDHpTgRWVoPyB_w>
-    <xmx:4njraVEag09JlgTu5x-w57cAApIYMboxkW4WL3Ibhwv-j4DdesnJ1w>
-    <xmx:4njraQVyJf7RO_1gcnoXNX2sCBoX8_g08zkNuPBH0N5zhpkInxOQnQ>
-    <xmx:4njraR9zvuBFUb41bE4E48dA2HjRqxj1kAJxg_Y9FlW93exVTWcDBQ>
-    <xmx:43jradE5gVON7dWaMvPYhbM9bnGjfUVmxbSpg-5NejEiLKmGAqhNV8nf>
+    epveffteffgeekteeljeefveekiefhffeuiedtkeekkeekvddugeejiedvueethfeinecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegvughurghrughosegvughurghrughovhgrshgtohhn
+    tggvlhhoshdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgv
+    lhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhl
+    ihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
+    hhpdhrtghpthhtohepvgguuhgrrhguohesvgguuhgrrhguohhvrghstghonhgtvghlohhs
+    rdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvsh
+    hkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:X7jraTssNyHcfZR4TQ2tKuAa5D6CK_qRiFbv8ZvtkahzaWGDyhR55g>
+    <xmx:X7jraR2vvAJU6j2z86mV73GJxTOiLgpyuZcR6UM1xJ4clEja5DgvQA>
+    <xmx:X7jraeEUaR0LnO1S6PNlHsQgykjhncyPDZLUWH2M5Sw2BEVJqfA8rw>
+    <xmx:X7jractyrN_bR4dv402JPFxjUtSFuI1L-c73EaF4me-qQHPufujYOQ>
+    <xmx:YLjraX2Xh8SKaXov9VdGx2Wh0R1IWY0vSG27qcBAxT8nNrLr5ZCuGEYk>
 Feedback-ID: iac1e4b6b:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Apr 2026 10:06:23 -0400 (EDT)
+ 24 Apr 2026 14:37:16 -0400 (EDT)
 From: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -83,9 +84,9 @@ Cc: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/crc: Fix typo in documentation for drm_crtc_crc
-Date: Fri, 24 Apr 2026 11:05:13 -0300
-Message-ID: <20260424140515.2019-1-eduardo@eduardovasconcelos.com>
+Subject: [PATCH v2] drm/crc: Fix typo in doc for drm_crtc_crc
+Date: Fri, 24 Apr 2026 15:36:29 -0300
+Message-ID: <20260424183630.3764-1-eduardo@eduardovasconcelos.com>
 X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -95,10 +96,15 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a typo in the documentation for struct drm_crtc_crc ("occured." -> "occurred"). Fix it.
+Fix a typo in the documentation for struct drm_crtc_crc
+("occured." -> "occurred").
 
 Signed-off-by: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
 ---
+Changes in v2:
+- Fix subject line and commit message formatting
+- Link to v1: https://lore.kernel.org/dri-devel/20260424140515.2019-1-eduardo@eduardovasconcelos.com/T/#u
+
  include/drm/drm_debugfs_crc.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
