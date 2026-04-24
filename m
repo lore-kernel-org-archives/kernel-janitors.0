@@ -1,101 +1,120 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1792391840
-	for <kernel-janitors@vger.kernel.org>; Fri, 24 Apr 2026 11:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E50436C9E5;
+	Fri, 24 Apr 2026 14:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777029954; cv=none; b=ojMDrTSCgAkWzjKolTB13zNmhGDeDWAwsoEfGe8OuHJNcsJsT3vwNQaoQz8h4RPfyPUos8R4mISYoG+iBSLNPn8brTcp1YoI7NKRRxBfKDf3MSEDnhMEq3c1afF4k/OCu+bggcZ5P31DzMoAETzi2vBIF+ghP91n1xqGhh+1CIA=
+	t=1777039591; cv=none; b=IYMVue2BTMTX4yx0vn9VNyAmnLz4h46GOicTxttAw8/DycP2X62CEc+/D9aEokLAKRVLQdjHZKhtv0kYyZLsRKWpdmh026PxPgdXMGWik9FmiEZPxt0vnLjivczbD1CpHR4Ie1cGvERkw3EpF4qsC2DFR2KAMAQZScnozazSsnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777029954; c=relaxed/simple;
-	bh=lABDuFnz+YwQcCiLQofnNy8gDQ2d43kUKsMbKEpkLwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WWLUonqrOiLSI3gdeLte9BaX2wpaI9nMcL0gskl5e3sh8uusrJA9UWwduD6P9kXw/zi+8t2mn6gaGPV9fVG5GiZDW7ZhCbqRWPyqbLEZNG+OaoTUM4kfZa3W/PxkT36O6hmepuLK6+7WxE3S4d47o2Em/GeBVStdl9ML+3BkD/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=njDUbA+P; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777039591; c=relaxed/simple;
+	bh=HuqFQpihBSAjw9z0OmGnI4ll7+CE/EmLvtCHWVC1FtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SL6CVQ0fqkAO7Nf35lD5rwj5YshQMkV3nVB3yTDzk5I0EDldYdsEsDr5N+I1IEo72x9tGcdTxUIBp3e9/jJ/UT+uEx3F01Q9YkmVNUo6ahD3ehj+JB6EqfGoPGtLLgBaYpm0ihXooiV23vBLNXduN1mzBxg5HuO8ErJDtAEnnF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=jyffZIM9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZP2e39kb; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eduardovasconcelos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njDUbA+P"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483487335c2so75376205e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 24 Apr 2026 04:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777029951; x=1777634751; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMNZYVpC/xQvt6usePtF/pIytAbShuPrQ+BZzTgAqEA=;
-        b=njDUbA+PO3P5y4Z2Kr55Bvq2Lr33zZwPoEUXxvBQGTVGSqq6BM8lWxzfpXZ42+qvJt
-         +MbqE/tXrO2z+RVC8NF6azrdKZ6IZvF89zjSSt7CFAHqrpGCF89Oc0tV31200ZLQ54FH
-         lYc5DDlLhi92KVnSoOPzAL8W/N52kNW3Y/4+JTMZCOD1v431/gvfnAyJTRdkaXDePsMQ
-         PoEHeN9XxJO1eBKPic1CLrX+iFOA+i6Ap8Fb9CLYrUNuH9EZUMJqrt/gbIUHJ+Y+ZWoX
-         /tRPqkXwdN6kd8YU6/PZyQ3uWp2LAygQZJ/ukKj3gNHt4DV1fnaXtcAbUgpjC8aMSmZV
-         fNrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777029951; x=1777634751;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UMNZYVpC/xQvt6usePtF/pIytAbShuPrQ+BZzTgAqEA=;
-        b=QU1JMTtasdNe2v1NK88ws7MMZjmRQJkJ3BaF5hah6RH571qwqEfSjAQ+4VyVRAO+Yd
-         r9MA4Zk5gtg7WpkIGvoan9FarKDxR4sjeiGW20/OLeBRGUK8kg8t2GqqpwHLvZ3A9OJc
-         ltEtUhth9iDvlSDgHYetempPTi2wsstmDhlpqyU0fcwGC8Jt7WYDaQJX2BZGY+Ss80tI
-         9YiEAuwkhrRTNubg71C09jTRVQN6q9BN6BgLJXilHs68OtIXJY3iGM+eg9A2Cgt3hoCX
-         cdIrHYxr82ccDa5wSvsC5bHcZs5NlPfEF9ITBNjLYPCWjSNMQoLY+byBpfH/chOCRoz4
-         HBsA==
-X-Gm-Message-State: AOJu0YwKvK6ClISuNLC0eSiVZU4Z5omaHSWIZoklT7b/nJO9aT4BOivi
-	aQu8IGJxQQKvlDUOzCcOBXqcerq6NkyblC/82UD2dUisflXPuqaqCfPW
-X-Gm-Gg: AeBDievB0lDtaV4KLNf3zDxRtSiXV+5pfs2/dDJbVrEVF50Uplgtap/s8lG/TmVSUx/
-	/kD/Lr9r2MvvXCeXsbSuxT3d2TAi/6KRaxr7lNFbIJ9oxi+2oSbygjZ2xO+CqMd9JboGU4BUW6q
-	AfogLAY5/t55Uz1Ysf4Q+DSzmPQm0gIEtgq4Odxhk94tJugjGKbDPxzu5Av6Liva+4z2/UQ6kMr
-	iJAxuTnBiOJwvv+IZHV+TmKdxwbAGHabW7rqX5Q+Mu6WtHaNNlrM5r20Vs4b1VG/RPHmfSBXnaX
-	mZLOwptf6/yLBt8IHtoxeyFOFo9Q/iJuuMwa3zIA7Dd+vnDKLNaIkCCtBqGtyzim2EGKlSBiXMC
-	B/y+yJrJxGt/dh5M+PaReBa6nk/O7io2Tk0b4bzi3X406kfAHqyYRGX37tVrvRacbGs5euVtvWO
-	4NRRCrk+aqNdIAljiXaNvbhh0Z7hT9tky9
-X-Received: by 2002:a05:600c:8284:b0:489:1f3e:5f69 with SMTP id 5b1f17b1804b1-4891f3e629bmr296268375e9.18.1777029951134;
-        Fri, 24 Apr 2026 04:25:51 -0700 (PDT)
-Received: from localhost ([87.254.0.141])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4891b46cffasm406834355e9.13.2026.04.24.04.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 04:25:50 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	driver-core@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] regmap: sdw-mbq: Fix spelling mistake "undeferable" -> "undeferrable"
-Date: Fri, 24 Apr 2026 12:24:25 +0100
-Message-ID: <20260424112425.32129-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="jyffZIM9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZP2e39kb"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id 287781300F6C;
+	Fri, 24 Apr 2026 10:06:28 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Fri, 24 Apr 2026 10:06:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	eduardovasconcelos.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to; s=fm1; t=
+	1777039587; x=1777043187; bh=oHuMOvtj1iezE1YeNuDLSCyrYSQUS/0Yz/m
+	go3MwrYs=; b=jyffZIM9CAu7RLVGskBsOaknZ1Fb9Nj2OgVtx2v36VsXTKcrl+w
+	oQRl7+Iq80V6drEjweeeI2MsCd3B6V148U6pBdj6xyBhEo8/RMRXz/mYSXS2kctQ
+	V6Ikz+0Am9iiuLtNveDQ3iDzB5IS5PcNMLnlofz+9Xpm3EAgfrH0Y9fLJYJqVCbJ
+	TN49CAiD2IcZgfyyuEYoPcT1o7enASVWuibrOg2mWxMcLX97ZG3QTRSD7WKhK35z
+	QjioEaKc1+hf/2GmCeodL/voRzc6+PnJMkLU/BOMsBTBnY/C/4wEMle74eW0fc2K
+	NW+07csFrW+Gume17Idji/7hLN23bkKusdw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1777039587; x=1777043187; bh=oHuMOvtj1iezE1YeNuDLSCyrYSQUS/0Yz/m
+	go3MwrYs=; b=ZP2e39kbNb8sjWgt7gZLAqyvfkxjHPxs0c1j5qEKAoTpGATbWUP
+	pCbuB2rvxegPdl3trSyAm+rUD7IEoRnMvnIUgIBvGijWvvREcQa25gZgFBW4nSh+
+	GRavmn+i0BWZH+yqTWKv8jKLa5zgLqqqltN1sHteHh/KhE4v/L7CH+rcr0IGGsc2
+	DJXWDE5UyDcUTQRVlZ4zKYFVFk6fAf8k5Mmr+nY3M8Mfhsl6x1TUbJXYCVVswf0I
+	bLpwXYMYzusfdbugZEYbfwxdVEKNdI6xSGKo68ETruRM1TK1Kag6MFju6ysk9Llx
+	tahEOkj6VTeZ670vVKJCJv9gg/Qa3gAhkFg==
+X-ME-Sender: <xms:4njraQ4Xf8s23F1Yzd7x3ROe84cagSZv8-EJWot-BlQqeKzWmVhODg>
+    <xme:4njraedLh7CMayWeGhfWPc1Tqfj62b67W0p-9EYjvagn6JbqDuF1u5OCpNoS7Q-Qx
+    _cN_hIEHusqY6rI7s8LiAHpscinu4HQyVmC2O2dLGKW_vH3hWdOD-s>
+X-ME-Received: <xmr:4njraT4UZ3ZrY-VP1dw9Uw7vG6o0tgaYYQtVsodw97P3o1puo5rE3ZANisLyRw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdejtddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
+    enucfhrhhomhepgfguuhgrrhguohcugggrshgtohhntggvlhhoshcuoegvughurghrugho
+    segvughurghrughovhgrshgtohhntggvlhhoshdrtghomheqnecuggftrfgrthhtvghrnh
+    epuddtueffheevgeduudegfeffjeevveeugeegjeeuvdelhefgkeeujefggffhffeunecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepvgguuhgrrh
+    guohesvgguuhgrrhguohhvrghstghonhgtvghlohhsrdgtohhmpdhnsggprhgtphhtthho
+    peelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkh
+    hhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghr
+    ugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhush
+    gvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegvughurghrughosegvug
+    hurghrughovhgrshgtohhntggvlhhoshdrtghomhdprhgtphhtthhopegurhhiqdguvghv
+    vghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgv
+    rhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:4njrab9TsKMSzAGnmzBQBBxi3efbelVccmxMKWoBDHpTgRWVoPyB_w>
+    <xmx:4njraVEag09JlgTu5x-w57cAApIYMboxkW4WL3Ibhwv-j4DdesnJ1w>
+    <xmx:4njraQVyJf7RO_1gcnoXNX2sCBoX8_g08zkNuPBH0N5zhpkInxOQnQ>
+    <xmx:4njraR9zvuBFUb41bE4E48dA2HjRqxj1kAJxg_Y9FlW93exVTWcDBQ>
+    <xmx:43jradE5gVON7dWaMvPYhbM9bnGjfUVmxbSpg-5NejEiLKmGAqhNV8nf>
+Feedback-ID: iac1e4b6b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 24 Apr 2026 10:06:23 -0400 (EDT)
+From: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/crc: Fix typo in documentation for drm_crtc_crc
+Date: Fri, 24 Apr 2026 11:05:13 -0300
+Message-ID: <20260424140515.2019-1-eduardo@eduardovasconcelos.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_warn message. Fix it.
+There is a typo in the documentation for struct drm_crtc_crc ("occured." -> "occurred"). Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
 ---
- drivers/base/regmap/regmap-sdw-mbq.c | 2 +-
+ include/drm/drm_debugfs_crc.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-sdw-mbq.c b/drivers/base/regmap/regmap-sdw-mbq.c
-index 4533fe793c5f..2585933d4946 100644
---- a/drivers/base/regmap/regmap-sdw-mbq.c
-+++ b/drivers/base/regmap/regmap-sdw-mbq.c
-@@ -172,7 +172,7 @@ static int regmap_sdw_mbq_read(void *context, unsigned int reg, unsigned int *va
- 	ret = regmap_sdw_mbq_read_impl(slave, reg, val, mbq_size);
- 	if (ret == -ENODATA) {
- 		if (!deferrable)
--			dev_warn(dev, "Defer on undeferable control: %x\n", reg);
-+			dev_warn(dev, "Defer on undeferrable control: %x\n", reg);
- 
- 		ret = regmap_sdw_mbq_poll_busy(slave, reg, ctx);
- 		if (ret)
+diff --git a/include/drm/drm_debugfs_crc.h b/include/drm/drm_debugfs_crc.h
+index 1b4c98c2f838..1cb71c03bf44 100644
+--- a/include/drm/drm_debugfs_crc.h
++++ b/include/drm/drm_debugfs_crc.h
+@@ -49,7 +49,7 @@ struct drm_crtc_crc_entry {
+  * @lock: protects the fields in this struct
+  * @source: name of the currently configured source of CRCs
+  * @opened: whether userspace has opened the data file for reading
+- * @overflow: whether an overflow occured.
++ * @overflow: whether an overflow occurred
+  * @entries: array of entries, with size of %DRM_CRC_ENTRIES_NR
+  * @head: head of circular queue
+  * @tail: tail of circular queue
 -- 
-2.53.0
+2.54.0
 
