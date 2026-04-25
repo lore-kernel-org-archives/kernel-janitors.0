@@ -1,126 +1,108 @@
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E893C3E6DD4;
-	Fri, 24 Apr 2026 18:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A8930499A
+	for <kernel-janitors@vger.kernel.org>; Sat, 25 Apr 2026 09:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777055844; cv=none; b=B4/M4XjcYBKnWiol7PzNcg28iV/h+f/xr8tGxnAqOpdq1T0OfgsmO8CO87sHElxPR7H+wydnylQtZ+t+qQ/l8aW9mgiu3X5La5muW5jPbzS0QJhK6iOpS5wjQcFz0FbL7HQufhMVFt6Q+iVSg385RbY4C/ZcqM5dCfBCR76Z1eU=
+	t=1777108179; cv=none; b=eGA8L2e6M5OhNbpSMrjwczERWS/8Sz5u9DOmwP4R/vI63hzr1EsKHfd0zrd4qu0oQMJ2tOWBMGYWbat36PViwFZVWJ5QNoz8p4XqF7kP0G8qJOi2UTuTraglOk/+px/4YCPvoXPYR0pvbNH6XYFklfZHZa8msFIb50dtRYitbFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777055844; c=relaxed/simple;
-	bh=n1N0NJ6lmEMVSMqOlxf0BjcHpMztbSLy+lwT4MHNJow=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JdAboMBlzaLTtVn/M6SCKwLVl6bxN6HsjVFpi/A+y2L38jknytYbHMxRnGg8E4s8C6vluuCx3881fjHgk2X0G7OoLP2DKVUbA+Uj1Pf2YpEtw4nMUa4uf8adHnCDwqA14gmE3PgAr5YmYbOFEoo6TRZkg2Xff8c8957KNLsFL60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=S61+402l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WtFGhbt1; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eduardovasconcelos.com
+	s=arc-20240116; t=1777108179; c=relaxed/simple;
+	bh=yn0n7unySXi2xE38g0Fs5uwMd71BZF2HOYgbp6bbEcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cnoTMooX4hHmgvXnUJI3G2tuQGcpE0IqXc2mNZmZMNURt51dpN674+4q5BWWmu1cMtAtU9UfrLDVrTX3AQF2MhAqz4Ec5FwkLC1I7hiRfZYs/t6Vyprw5KJMFoFV/8fWSMB4mfA/ZHpZ+UKmpqmOYOQ1i2TtPnrZ5Mmpv9elA8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqETPIQb; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="S61+402l";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WtFGhbt1"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailflow.stl.internal (Postfix) with ESMTP id 8FBA51300F21;
-	Fri, 24 Apr 2026 14:37:20 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Fri, 24 Apr 2026 14:37:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	eduardovasconcelos.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to; s=fm1; t=
-	1777055840; x=1777059440; bh=GBeKdNWDoF51ljz6w1e1jZ+m8hi43b3guSB
-	l3uJssuU=; b=S61+402lGna3vQnHn9DSS6v197g7TkTCKVGlfPh9I15PuL9LHJM
-	5fRTqtOlypsTzHduC3wnzc0Tst1SfuebfTKhkvNIy7GmfP9cJ0wVpHPao6S+ZYL1
-	kPknQHEN9FoOMlV+7iVgSKKqlgg3Bmo5ydXwrlcKwNA58SYxHX09xRIzIS8tHSHv
-	XSXdYykr3RaJuHvcwLwyF6T+tx3k5rNMvEDhnb1DkS1TiAY+WwI+nY4slSK3wq/g
-	ve0EbqNtrUN3sddcOA899qAXmHdPufXmbuPhy66RpHKmdrqNY/QHP/dLroE3qiEX
-	9PomA0vYB/FFAkK9KiDIcjDmNtcEln6THRw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1777055840; x=1777059440; bh=GBeKdNWDoF51ljz6w1e1jZ+m8hi43b3guSB
-	l3uJssuU=; b=WtFGhbt1dPekyZ+jhL5OzW2VMK4+FB8rFFr1mWnUp2YICGze1h3
-	lM18CuZ/Fmcrch/Dj/i3NV0PsR+uz1N6AszvH+GyRmt618JtKnzs7Nf/Ectk8If/
-	fV1Ayzj7w5LeGN5mEph2fJuvOlz5U2BMRRMFI7wGeQlaabpHMcNIDISnGQqKlsGJ
-	SlNBctv/utSI+zq0hNUQYqbkE3DOoJvKcpqFq1Q9/rOllfV+Bnd2UCDGC6vntkP8
-	kufOVtrSLZO9fUP0xmQT+lCNj9nWXoAaOz26XzgW3BPl6JVik4f0zhyX3qX42JR0
-	avQ1T6s1/qJa8R09qy0ijljgwqa3XOz6tvQ==
-X-ME-Sender: <xms:X7jraRo3kh7_A9R1YlAylVtKTP0YpHPmlkIkJaHe9kBwNJJBH24bMw>
-    <xme:X7jraQO5hjF28ca8aV1ZiXIAsyZZH5Cs6pq-uDE0NYkqxqwYlQUgZE51Mvl03yraz
-    k7r3AggF_lpQpmbF6IwTuPwwkjqn09Nw49OU50g-nYV5FKJZEDhNjCS>
-X-ME-Received: <xmr:X7jraSqx_7y_fO78oJ4xDLS8trZAAhwQfNa48IAPlpYdPTxE4pVEbvcllx0rww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdejtdejjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepgfguuhgrrhguohcugggrshgtohhntggvlhhoshcuoegvughurghrugho
-    segvughurghrughovhgrshgtohhntggvlhhoshdrtghomheqnecuggftrfgrthhtvghrnh
-    epveffteffgeekteeljeefveekiefhffeuiedtkeekkeekvddugeejiedvueethfeinecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegvughurghrughosegvughurghrughovhgrshgtohhn
-    tggvlhhoshdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgv
-    lhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhl
-    ihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtohepvgguuhgrrhguohesvgguuhgrrhguohhvrghstghonhgtvghlohhs
-    rdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvsh
-    hkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:X7jraTssNyHcfZR4TQ2tKuAa5D6CK_qRiFbv8ZvtkahzaWGDyhR55g>
-    <xmx:X7jraR2vvAJU6j2z86mV73GJxTOiLgpyuZcR6UM1xJ4clEja5DgvQA>
-    <xmx:X7jraeEUaR0LnO1S6PNlHsQgykjhncyPDZLUWH2M5Sw2BEVJqfA8rw>
-    <xmx:X7jractyrN_bR4dv402JPFxjUtSFuI1L-c73EaF4me-qQHPufujYOQ>
-    <xmx:YLjraX2Xh8SKaXov9VdGx2Wh0R1IWY0vSG27qcBAxT8nNrLr5ZCuGEYk>
-Feedback-ID: iac1e4b6b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Apr 2026 14:37:16 -0400 (EDT)
-From: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqETPIQb"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4896c22fcbaso57481125e9.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Apr 2026 02:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777108176; x=1777712976; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1GuYWc9nESbYSG7ThORlI5mhNLyHqE9tuWw4BPRuJSI=;
+        b=jqETPIQbJ+ORypc0Yu7mYdfEGjcTZvVecsV3RMS1Qdaby40HZFVhdHeWoiX0jAvSBs
+         XTj7PXMxBvNf2JuBOPppeQkjbw4obkjtQN2NRfr5g2qcQHMVzum3D3/53fT5Wi8X3vds
+         /gZ7bI3oWp0NTzUtNj2NAGVrqVou/PJQ9p+EOuTO9hYv/dtDDneMqlCBy662jLJnkj6d
+         gMLq5PmdfiKDR2e9wZYbtM3sdmHA7wJc3RFZy+RehR6UMzBgddWNLYZh6bCdmcUFYX8B
+         zL52xKQQWXwhUiWDzxVc78IHD6u5ZCamj9iY8qv74HjhMXHLKqEjh2v0wd04anzyEmLK
+         l7aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777108176; x=1777712976;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1GuYWc9nESbYSG7ThORlI5mhNLyHqE9tuWw4BPRuJSI=;
+        b=Ud/TvWuCrT2DP3Uqexzf+IUsDWcJ5p73g6Ey1cf3S+3Hv3H/uOBiJ/ovDEA2n+SFwh
+         55Ld51NxX6eyFbBWahPkVitIIByUho4HDdFAaO7XDV2gI3bXws8Ptuadj2Yll4MyGo7A
+         3PTXJ2uSiOKTzaWXABWgZ6/5UlcLuL1Ed//G5GMcHm0cFHLM43EybEpiU2oonWVxYJBq
+         sp1jSl+Gcp0jLn/WrOO/BfOmaX7CbnqWWUv/NckTxMqjNZEKFqM5N/YUGxIbd3gWwWVs
+         mBdQa7qe1kmK6FK78LiU5vmQ1FfuxAj47PPdLjSVWmAKunNk7MW83nqWaBLQe8toJmLb
+         akyg==
+X-Forwarded-Encrypted: i=1; AFNElJ+z4/byBT+B8wtE9OZ8HSWrNxt3Q0rYCrLQHl6Js4kRJ2vW3sQJZA5qn+dl2oaXkKWIwyESEyGEx24hq1cAt60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqyNpKdaRHtpS2nlr12TPVFuKzLQYNCosDit8dedO84XrecPXG
+	qqFDJHh0pFgB9XUigtgeAicL4A1ss2QAhm2mdcK32rnY7yT7gw8OrCqO
+X-Gm-Gg: AeBDiesR6V766P6bTgjpsR4/QA3Eu/H9NZLtjgmq29hWxfMe16tX4HxZWv3dTEQSft2
+	kPy43/cgPOKA9n59iyrsqgeYyjoh3EJk3QvjYkosuE98lJ+KlwiHvkkUXhsb3zS4cSmM8P2xfr3
+	DKDH4LK7lw4zDs/V4Cuq1DYNl7UyGyqGs/L3avNQdxiYaX7sihbkoz89dhEBbokRbTOhBUcZh9T
+	aJjeXwZ2RjLf9S9Jr6/Q/FufpEqAKNSaifAFsTQx5+0Hg9+ZzzndIVr/5r1f/D+ww/kBRmSefD+
+	b0REiCSqAmrUBL/0YR1p29cQFa2XeDs/porKKsZJ8/3lUQ7fUMJlrDJ8uRVdEMSWj8PFrra+Vgr
+	1/2euPnowlM5sKfPnib5aa+b0QXn/UjJPL2xfTJVO5ty5JeYlsVzNau4ddqlS7y7Dr0Y9IA7yON
+	zcs5AT1gdJ4L0k8GSbDlmZfsybjnXqCqGhhnlxygJO
+X-Received: by 2002:a05:600c:888b:b0:485:4bd1:4c64 with SMTP id 5b1f17b1804b1-488fb796f95mr416216655e9.31.1777108176309;
+        Sat, 25 Apr 2026 02:09:36 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4891c08faffsm782163945e9.1.2026.04.25.02.09.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Apr 2026 02:09:35 -0700 (PDT)
+Date: Sat, 25 Apr 2026 12:09:32 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Alejandro Lucero <alejandro.lucero-palau@amd.com>
+Cc: Edward Cree <ecree.xilinx@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Martin Habets <habetsm.xilinx@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] drm/crc: Fix typo in doc for drm_crtc_crc
-Date: Fri, 24 Apr 2026 15:36:29 -0300
-Message-ID: <20260424183630.3764-1-eduardo@eduardovasconcelos.com>
-X-Mailer: git-send-email 2.54.0
+Subject: [PATCH net] sfc: fix error code in
+ efx_devlink_info_running_versions()
+Message-ID: <aeyEzO6C-v6J1VHH@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Fix a typo in the documentation for struct drm_crtc_crc
-("occured." -> "occurred").
+Return -EINVAL if efx_mcdi_rpc() doesn't return enough space.
 
-Signed-off-by: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
+Fixes: 14743ddd2495 ("sfc: add devlink info support for ef100")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-Changes in v2:
-- Fix subject line and commit message formatting
-- Link to v1: https://lore.kernel.org/dri-devel/20260424140515.2019-1-eduardo@eduardovasconcelos.com/T/#u
-
- include/drm/drm_debugfs_crc.h | 2 +-
+ drivers/net/ethernet/sfc/efx_devlink.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/drm/drm_debugfs_crc.h b/include/drm/drm_debugfs_crc.h
-index 1b4c98c2f838..1cb71c03bf44 100644
---- a/include/drm/drm_debugfs_crc.h
-+++ b/include/drm/drm_debugfs_crc.h
-@@ -49,7 +49,7 @@ struct drm_crtc_crc_entry {
-  * @lock: protects the fields in this struct
-  * @source: name of the currently configured source of CRCs
-  * @opened: whether userspace has opened the data file for reading
-- * @overflow: whether an overflow occured.
-+ * @overflow: whether an overflow occurred
-  * @entries: array of entries, with size of %DRM_CRC_ENTRIES_NR
-  * @head: head of circular queue
-  * @tail: tail of circular queue
+diff --git a/drivers/net/ethernet/sfc/efx_devlink.c b/drivers/net/ethernet/sfc/efx_devlink.c
+index d842c60dfc10..45f412bb9b5d 100644
+--- a/drivers/net/ethernet/sfc/efx_devlink.c
++++ b/drivers/net/ethernet/sfc/efx_devlink.c
+@@ -531,7 +531,7 @@ static int efx_devlink_info_running_versions(struct efx_nic *efx,
+ 	if (rc || outlength < MC_CMD_GET_VERSION_OUT_LEN) {
+ 		netif_err(efx, drv, efx->net_dev,
+ 			  "mcdi MC_CMD_GET_VERSION failed\n");
+-		return rc;
++		return rc ?: -EINVAL;
+ 	}
+ 
+ 	/* Handle previous output */
 -- 
-2.54.0
+2.53.0
 
