@@ -1,163 +1,180 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC3A3CA4A3
-	for <kernel-janitors@vger.kernel.org>; Wed, 29 Apr 2026 18:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269F93A382D;
+	Wed, 29 Apr 2026 21:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777487535; cv=none; b=X6J/5KznGuZ6M2WKq3lbbOomEy1pBpmvjp85IDG/jh6Hzr+KXvSLK3/kMHuPpq7dHjwgE9SYwUo/amPZpjF7oTWVLGjCSBopdr+lGtaZLUBMZXdX+Q7IY2JrQi1VORfgPQf0BIlmu4xgXAIEZb+/DBxy0pJg83mK9tJp26dBTMk=
+	t=1777497509; cv=none; b=FsiZ1EgciECHO6DK3C8CHO7Q59Eqf+Sgxhzczp9hplma/Ibmo2XTN7r/kq8VDFmgGtp5fHyX9tMQN1gMrHgyuDYV6DEhz/G8wGgJTFS9xJleFSdulD6a1c5RyK/2/r5hsxa4ZU9p++tcsTHJbsRqKQ65hIkMQc5VRv000PdrWdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777487535; c=relaxed/simple;
-	bh=NPS0uVesQbn/96xKibYJPo5XwkQG6pblbbNdvUnxBhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i7R4qn//sNxeXTbE23oNXBjPAk1TaGrUx8IuJGx55kgV0JZs93Rd8HxSDAvge9nw5T33did6hfKjbwlCBjmfgRreIHWQWcc0OKjqUy2Idjrqln5SNNyep92t8pEGfRGQlcNjfpoLAdN3gStNxKXiHMDLaHiYlF9C2Eo4IKtr4EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AoZXOuk7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777497509; c=relaxed/simple;
+	bh=+Zoa5fWSAnJ+ICqNbcHOzXk9P0t+8/+omdy3Xl66DJo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lAzZ1FDtfuAYwhpvlFoMWCHNtR9znEdloux4zEIyI+Z3SBbIaMka1ayRLR8mSxYmVr9cOeh1rq/al4QzdclrbhbOPxThs+QshN9mj6EmwMZ892SfPlZtC+E6oTBO/bbV1SWMZZW2PYUcLsTA0KdTsaXDGnPhyVil+ERNvsk6BD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=pAjjUnAc; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AoZXOuk7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF6EC2BCC9
-	for <kernel-janitors@vger.kernel.org>; Wed, 29 Apr 2026 18:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777487535;
-	bh=NPS0uVesQbn/96xKibYJPo5XwkQG6pblbbNdvUnxBhc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AoZXOuk76SIdMWINXIg3wBi6eN0oDRLO4heduFEO7kIVx94DkHa4rmBiBTTFJTXHI
-	 VIMiRQ1zwKq0kODFP7/fxSP9jQl1MQMcKoKrKsXbhEVG5TwLv5j1NFuO6NYdkLIagp
-	 2El/sIEnrDHbppX7ZK96VIJaRWn52Q7BjL6GLhUdo0j1pDlYN5VYg9irOosIy7hXO+
-	 ewPc8edwpO/MtnrurGTvzggUxHx/S1onhTULVBCPPxW4TD8Qf0fAlV8dffZLTj1sb0
-	 r1LbaZ02arp421D7lQuEAGnfgM9brKH7srYga4jZV+S3gH5wFQPRbHHjMSnm7jQwMi
-	 tMgmVAbZxVRag==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5a3cee3a271so30865e87.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Apr 2026 11:32:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+YTbzPcP1/GKF9QSzsa1ojNaBJ5oKOTt7rFgbnevzxEztXb9epIPlY7p93UiXQ3UJURkbx0u4ycYD2W7SYJMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHprC6FgX9UTVM3x9ECZQlMCJOlUX+5nZFWMNw8YUMU9MZWQ/7
-	ZNbryVQkhnnbwRFEqb+MrOoeAP7GiA0M9xQlo5tXyLou7IaJjZEh2/5iq/k0LQao3/eQviz6+rZ
-	POthXnpmzqBJhlfj/ttGNnHYWMrmZsXc=
-X-Received: by 2002:a05:6512:138e:b0:5a4:992:e8b2 with SMTP id
- 2adb3069b0e04-5a746626b07mr3110254e87.21.1777487533395; Wed, 29 Apr 2026
- 11:32:13 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="pAjjUnAc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=uPX3kDTl6ZZxuziu834VSUYY6cPdVQdQ9nEU9mi1qNM=;
+  b=pAjjUnAcp2/GlU9skP/Uwy9vZvFZMqa2Y1izJK9Kq76T3CWtDYVxHptG
+   hSk433WQrS22fMAf3rzrZ2PuBMzCyPEtjOkq2naOW6+iWy4hRnwMa2AyP
+   X1vNSv9drIYxzo/xCUQTbhCDLpwtcg4vQJQbgbWdhYiTTMSyQGLmt0AG1
+   U=;
+X-CSE-ConnectionGUID: vxrgS5nxQguyQYyfaSRnhA==
+X-CSE-MsgGUID: iBFc9tVmQLuueLz1OtTsDg==
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.23,206,1770591600"; 
+   d="scan'208";a="145376762"
+Received: from default-80-209-135-165.interdsl.co.uk (HELO hadrien) ([80.209.135.165])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 23:18:24 +0200
+Date: Wed, 29 Apr 2026 22:18:22 +0100 (BST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+    Aboorva Devarajan <aboorvad@linux.ibm.com>, 
+    kernel-janitors@vger.kernel.org, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: menu: correct variance calculation
+In-Reply-To: <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
+Message-ID: <c5fc3d94-ae4e-5879-bacd-645ed26f2cc0@inria.fr>
+References: <20260429153357.2350958-1-Julia.Lawall@inria.fr> <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260429153357.2350958-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20260429153357.2350958-1-Julia.Lawall@inria.fr>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 29 Apr 2026 20:32:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
-X-Gm-Features: AVHnY4IaAGfEUO98E_JqT-1cimRgs-_mC-SsSfwpHZEL5BDngfwrNlLowPjL6lg
-Message-ID: <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: menu: correct variance calculation
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Aboorva Devarajan <aboorvad@linux.ibm.com>, kernel-janitors@vger.kernel.org, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Christian Loehle <christian.loehle@arm.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323329-256966742-1777497503=:4434"
 
-On Wed, Apr 29, 2026 at 5:35=E2=80=AFPM Julia Lawall <Julia.Lawall@inria.fr=
-> wrote:
->
-> Commit 13982929fb08 ("cpuidle: menu: Use one loop for average and
-> variance computations") simplified the numerator of the variance
-> calculation to:
->
-> sum of squares of idle times - (average idle time)^2
->
-> This computes a value that is typically too big.  The formula should be
->
-> sum of squares of idle times - (sum of idle times * average idle time)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I'm not sure why.
+--8323329-256966742-1777497503=:4434
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-According to Wikipedia Var(X) =3D E[X^2] - E[X]^2:
 
-https://en.wikipedia.org/wiki/Variance
 
-> On a small number of tests I didn't find any significant performance
-> change.  Likewise, the original patch was tested by various people and
-> was presumably not observed to cause any problem.  My impression is
-> that this is because the actual variance is almost always quite high
-> (greater than the threshold of 400 used by get_typical_interval), so
-> having a value that is even higher than it should be doesn't matter.
+On Wed, 29 Apr 2026, Rafael J. Wysocki wrote:
+
+> On Wed, Apr 29, 2026 at 5:35 PM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+> >
+> > Commit 13982929fb08 ("cpuidle: menu: Use one loop for average and
+> > variance computations") simplified the numerator of the variance
+> > calculation to:
+> >
+> > sum of squares of idle times - (average idle time)^2
+> >
+> > This computes a value that is typically too big.  The formula should be
+> >
+> > sum of squares of idle times - (sum of idle times * average idle time)
 >
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> Fixes: 13982929fb08 ("cpuidle: menu: Use one loop for average and varianc=
-e computations")
+> I'm not sure why.
 >
-> ---
+> According to Wikipedia Var(X) = E[X^2] - E[X]^2:
 >
->  drivers/cpuidle/governors/menu.c |   14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> https://en.wikipedia.org/wiki/Variance
+
+Suppose you have 10 10 10 10 10 10 10 10 10
+The sum of the squares is 800.
+The average is 10.
+The square of the average is 100.
+So the current formula gives 800 - 100 = 700 as the numerator.  It is
+supposed to be 0.
+
+800 - (80 * 10) = 0
+
+I took the formula from the same page but in the discrete random variable
+section, in the sentence:
+
+The variance of a collection of n {\displaystyle n} equally likely values
+can be written as ...
+
+julia
+
 >
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors=
-/menu.c
-> index 64d6f7a1c776..8cbd70cafe89 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -117,14 +117,14 @@ static unsigned int get_typical_interval(struct men=
-u_device *data)
->  {
->         s64 value, min_thresh =3D -1, max_thresh =3D UINT_MAX;
->         unsigned int max, min, divisor;
-> -       u64 avg, variance, avg_sq;
-> +       u64 avg, variance, sum;
->         int i;
+> > On a small number of tests I didn't find any significant performance
+> > change.  Likewise, the original patch was tested by various people and
+> > was presumably not observed to cause any problem.  My impression is
+> > that this is because the actual variance is almost always quite high
+> > (greater than the threshold of 400 used by get_typical_interval), so
+> > having a value that is even higher than it should be doesn't matter.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> > Fixes: 13982929fb08 ("cpuidle: menu: Use one loop for average and variance computations")
+> >
+> > ---
+> >
+> >  drivers/cpuidle/governors/menu.c |   14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+> > index 64d6f7a1c776..8cbd70cafe89 100644
+> > --- a/drivers/cpuidle/governors/menu.c
+> > +++ b/drivers/cpuidle/governors/menu.c
+> > @@ -117,14 +117,14 @@ static unsigned int get_typical_interval(struct menu_device *data)
+> >  {
+> >         s64 value, min_thresh = -1, max_thresh = UINT_MAX;
+> >         unsigned int max, min, divisor;
+> > -       u64 avg, variance, avg_sq;
+> > +       u64 avg, variance, sum;
+> >         int i;
+> >
+> >  again:
+> >         /* Compute the average and variance of past intervals. */
+> >         max = 0;
+> >         min = UINT_MAX;
+> > -       avg = 0;
+> > +       sum = 0;
+> >         variance = 0;
+> >         divisor = 0;
+> >         for (i = 0; i < INTERVALS; i++) {
+> > @@ -138,7 +138,7 @@ static unsigned int get_typical_interval(struct menu_device *data)
+> >
+> >                 divisor++;
+> >
+> > -               avg += value;
+> > +               sum += value;
+> >                 variance += value * value;
+> >
+> >                 if (value > max)
+> > @@ -151,17 +151,17 @@ static unsigned int get_typical_interval(struct menu_device *data)
+> >         if (!max)
+> >                 return UINT_MAX;
+> >
+> > +       avg = sum;
+> >         if (divisor == INTERVALS) {
+> >                 avg >>= INTERVAL_SHIFT;
+> > +               variance = variance - (sum * avg);
+> >                 variance >>= INTERVAL_SHIFT;
+> >         } else {
+> >                 do_div(avg, divisor);
+> > +               variance = variance - (sum * avg);
+> >                 do_div(variance, divisor);
+> >         }
+> >
+> > -       avg_sq = avg * avg;
+> > -       variance -= avg_sq;
+> > -
+> >         /*
+> >          * The typical interval is obtained when standard deviation is
+> >          * small (stddev <= 20 us, variance <= 400 us^2) or standard
+> > @@ -175,7 +175,7 @@ static unsigned int get_typical_interval(struct menu_device *data)
+> >          * Use this result only if there is no timer to wake us up sooner.
+> >          */
+> >         if (likely(variance <= U64_MAX/36)) {
+> > -               if ((avg_sq > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
+> > +               if ((avg * avg > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
+> >                     variance <= 400)
+> >                         return avg;
+> >         }
+> >
 >
->  again:
->         /* Compute the average and variance of past intervals. */
->         max =3D 0;
->         min =3D UINT_MAX;
-> -       avg =3D 0;
-> +       sum =3D 0;
->         variance =3D 0;
->         divisor =3D 0;
->         for (i =3D 0; i < INTERVALS; i++) {
-> @@ -138,7 +138,7 @@ static unsigned int get_typical_interval(struct menu_=
-device *data)
->
->                 divisor++;
->
-> -               avg +=3D value;
-> +               sum +=3D value;
->                 variance +=3D value * value;
->
->                 if (value > max)
-> @@ -151,17 +151,17 @@ static unsigned int get_typical_interval(struct men=
-u_device *data)
->         if (!max)
->                 return UINT_MAX;
->
-> +       avg =3D sum;
->         if (divisor =3D=3D INTERVALS) {
->                 avg >>=3D INTERVAL_SHIFT;
-> +               variance =3D variance - (sum * avg);
->                 variance >>=3D INTERVAL_SHIFT;
->         } else {
->                 do_div(avg, divisor);
-> +               variance =3D variance - (sum * avg);
->                 do_div(variance, divisor);
->         }
->
-> -       avg_sq =3D avg * avg;
-> -       variance -=3D avg_sq;
-> -
->         /*
->          * The typical interval is obtained when standard deviation is
->          * small (stddev <=3D 20 us, variance <=3D 400 us^2) or standard
-> @@ -175,7 +175,7 @@ static unsigned int get_typical_interval(struct menu_=
-device *data)
->          * Use this result only if there is no timer to wake us up sooner=
-.
->          */
->         if (likely(variance <=3D U64_MAX/36)) {
-> -               if ((avg_sq > variance * 36 && divisor * 4 >=3D INTERVALS=
- * 3) ||
-> +               if ((avg * avg > variance * 36 && divisor * 4 >=3D INTERV=
-ALS * 3) ||
->                     variance <=3D 400)
->                         return avg;
->         }
->
+--8323329-256966742-1777497503=:4434--
