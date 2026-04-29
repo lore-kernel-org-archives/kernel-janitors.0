@@ -1,225 +1,164 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E43913635E;
-	Wed, 29 Apr 2026 09:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777453329; cv=fail; b=jmec5xJms9gcfMYAtww/VHqXhxxUkw/HyeAGImclMNHSf8SqeTZY1DY33fWHQY/XvsQcpkf9tJSFzK4lzX9btPlcRsOc4/g8Bv6r4t5A2H7MJFvUwsjFPSlb6O5vbUp/jNJkkG9KHfc2R5Uk/fNSqcO1JN7qfvVmscLEqynmxeE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777453329; c=relaxed/simple;
-	bh=nMarTOXCsp7aDNihnPFRFLPXTnH4a+yg18qUp/WZPCU=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=L+uidDWB0Ay369pBvaA8CSLBQpd03xerdR2GKvjvBMpnpU0Kkuo9riIRzAMVdaZhqcrHt7mBmqeB2/HO+pmerTQ1srij+9tlvfShKZte5sdHSyOAyFTGjxIjQnaIk8EphaJhi9YhO/8SFBmv7L6AYzmyCSqNKef0/aD0i/QEcrY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HLWGvI3+; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D453D3485
+	for <kernel-janitors@vger.kernel.org>; Wed, 29 Apr 2026 10:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777458304; cv=none; b=TXd8aS2BA5ky+i0qqKJZ2ihhjQ5/mz9tzN/1nSsP8t6ooX/3voCBNK41ECw8T1QMTZEX3Xx0uYdM8PBxNd4F2/2K1631j5V1lprgrMqyLO7Sl+V5DEb4pVA5rFBi8Yyk/AWcPfgpjO/DXA9lkmqzz/uqdbOd/2r283pObpPIikY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777458304; c=relaxed/simple;
+	bh=CdrLN0lDSJ+qLPLvLukQjHPxitbeiKWzUTVI2etEt4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpnwHsqkW/amrRZtqPNx+MtGXx1ADGJyjIpigmf5ZkCUOS08UxOY5qKKDqXH1jcm+Opcl0FwPCTUnIdGyA0woIhW3X4PKw3MbhM3DJoHpIfEofbxc9rRdMLRJb7tO6dAKN8pKLBcxwWe0VDtCFk16nkgkvyiD7tgzhYLooz1PGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rVEZmKj2; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HLWGvI3+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1777453327; x=1808989327;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=nMarTOXCsp7aDNihnPFRFLPXTnH4a+yg18qUp/WZPCU=;
-  b=HLWGvI3+0YXHufM/Wge+pK3IcpPqyyjXII1rzyqyTTiq2ih7U+pWqlDk
-   PuR/OVTKknEeD3xVcMcRBPk4CGVu5sU8nf7f432BMvzMUHi21XkOzIbVr
-   GYd2LtO1iUrM159xkfYviJEN3xxLRddrOxbv0PvD+Kry/ptGaZE3T1z/S
-   Px2zUoK6jAhKEXVYFIbwIfOJVPcq4JUi9IYEHXb3YAGRXCqf/dLfUKerp
-   bkNUtVUpwNTTjTUqvy6n4Gfl2xe/zDVLn7Q2HFJ1Ee0cVbsh6FWetnqa9
-   G8uUKvBg6ZOJH62On7AXmerQULyHgBbgCmA6rSH3gvYIs5z3VpDM++l9a
-   g==;
-X-CSE-ConnectionGUID: N9ZtJGj1SQejwYYgeoxNaw==
-X-CSE-MsgGUID: 1DZGEWJDSOaQLwa+Q3KnKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11770"; a="103832439"
-X-IronPort-AV: E=Sophos;i="6.23,205,1770624000"; 
-   d="scan'208";a="103832439"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 02:02:06 -0700
-X-CSE-ConnectionGUID: V4+L/8U6SOavoALdVLyiTg==
-X-CSE-MsgGUID: vuMzaUW+TvCdrg7EqX8rpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,205,1770624000"; 
-   d="scan'208";a="229860861"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 02:02:05 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 29 Apr 2026 02:02:05 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 29 Apr 2026 02:02:05 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.34) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 29 Apr 2026 02:02:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dRRpOfbbWnKrWwFYG9D0qYOVEIdx98aUApplXWCm42C4F9Gkq78/vWN33lwkLHaPbqEJW1es/BUasa/naMJX6kKdNgu8RBFQNGUwFWu+QAdvAvtzAvackgPNQwqqcDvDnU9G6mMmHOQs1GAb9lzOeL5EFxDfc5C4cBrNtLtvRsfivpp1ev1W1iTIP6DZwAL8H5G/Vj/vZ4lU7x9b3+TjtLdrfqdWDx4a5zhyyxpyA2YnloF9iFfnjV3JAyKVt9x1/4ztWPxXvLlVZixIXWoCr7BGgYdHuzIaNIPhLXjdTAKbWYIeur6oEug1hQ5A1DmDCtuRypesi/itNIxWtbV9Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=he/nndZb+X0VzGUs2nnmmES0s3fvRZL10jYQAQ+VG6I=;
- b=T43AP+2R9iQoWUhnnZcx/3gr2qCbpM9JacNe/dj/GfI/htFncguc30N/bD78Muy4GGoAgyEkskmBFZ3kFFpV0EqxSNZJ/7zhkh181nhq537WJt45JHddSO3SKNBfrsOf5eOqqnzaMr8HyP6gErqeERmJE828KzKZiW+mgc6UuGxFu3ZFmO5eeXgPjiV4Krg6RMygLfUWCLJCXyVxldsIJrb1mUy4PWSJwHNo7fOiX58ZkB6jqwHD4bRnqbygpTnrhFbf5Vl5WR8iJ0PkjFYl06Qbw4qhSmxgfrpOO+oUlVT9WPsThbKTtizQZZFY716YcIXeiCB7+PUn75fX2P222g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by PH0PR11MB4885.namprd11.prod.outlook.com (2603:10b6:510:35::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.20; Wed, 29 Apr
- 2026 09:01:59 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::8d98:e538:8d7:6311]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::8d98:e538:8d7:6311%5]) with mapi id 15.20.9870.020; Wed, 29 Apr 2026
- 09:01:59 +0000
-Message-ID: <b0a706e1-2494-40b4-836f-f5d32c6b0fef@intel.com>
-Date: Wed, 29 Apr 2026 11:01:46 +0200
-User-Agent: Mozilla Thunderbird
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rVEZmKj2"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4891c00e7aeso95823055e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Apr 2026 03:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777458300; x=1778063100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGaorEyZYwXUrpqtvF2wYxBfD162OIEpEP/P+Q+kjPA=;
+        b=rVEZmKj2VsWPCvddA8XUWLrhmR6+K5O49dRH0Z66+hvjBAdoh4k4ZOdT6OiHxHlRa4
+         SCZIAfhMaJ/n0IFcey01+cl1EJNaFwutrtvYRYTYvU1dq1eCv35f+cRU6pcb4v7jJu22
+         6KQfjf5RJyN4ip7x1Y2lgK1xAGaGVik/yhDOg+SU0zYBoX6exntqy+SHzo+CFeq0L+Ws
+         hNV46f6vPPWxgn49MehDXrfM7KeYysHv2QhJBF6EWkj3K4wlEC/q7jh75PKZPQudxLZv
+         A3UqMHTMcGiHFECdcOzuwh8t07S8aY1prV9fIMmJqo/247pV1nBFcUswGdwXTZJtDgtO
+         KKWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777458300; x=1778063100;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kGaorEyZYwXUrpqtvF2wYxBfD162OIEpEP/P+Q+kjPA=;
+        b=BpznVVEgqJfX0apwSOThEZ+tWWYeCU2arHX5r5LT5/I4H04utow/NwK/+YFlytBszo
+         Jf8qU4xshM4g0GdM2FYaKgZTLMCglM/+DcXxi6Trd0C70V2LgtVSZb6bmv4iO4nbM2m1
+         iMWfGaBKAJcxt4BXhrn5RBhc90PS54MXLUdMVPUtaivo/4fQtNPl4BvDWPp7WaTQsg5s
+         n//fjx5kNYD5eLE5hu/TtoI4COnAFbOP7Z2IJZssHGPDhiN5R57RsoZ2Rv1rzmUD53y2
+         oD4XryEq8+7/AoPG35YwCZi80F2XfF3yWe/gbGYUVWhe2ptkCy1hxFwZ8WWEB0jtzTCv
+         4TWA==
+X-Forwarded-Encrypted: i=1; AFNElJ96u4MYRpEcSLZ3ZsHomj+6RDeoJfb8lZak4w1xI4LXD9F86fxDtai0i4CQW+uaTtO08jZBLf2QCsecpkDQFmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLu2BF1FPpWYCRkutt4ehLTPdZc5I9SpvbG6Rk+ky2kLdRp00I
+	CkTbxvVfm1lSPvO4JYXHFT/Hqh0ObWOaVteDdiL4Aw5TfHAxMDEIJ5tZ
+X-Gm-Gg: AeBDiescWTeD7mWMdEPQnnsy6oxdh0ZCXIgCHyMLgFfqIy1I7lNOahJ8JOTVVSD0uDs
+	iZyd6dIu+5jScJrS3ZK9Fiy/OVtUbJN0vT027Ntqpmmy56rNVmcyUgDxbriteVexOFN/9zNrf39
+	koTutzL2qSNtRBYLMVtKpxOhkM+uhHf8uiY4qiZ+P2T5LKpPumAURzrN/iRx8YBJ7ZXSkykAmmx
+	vvcyEnvFSYhhdXd1YTWxeQpbtqPouFwJXEei+9mNtZS6OE5SEgcG0cSbiOWCxAwxh1ityughUjU
+	xNUYn59/sVRGQO7JwOTBqUXsIY/kd9DZbVOdII+6yAeEhNQQiMYUqYUslCcl2/yxhNgDamRBGXW
+	op+yEmoJ7kIUyYohaDiJ1y26etelp1sPtmgM6mJKxQlX7mXZGoKdM2gkyPHtQN3o+UhTmvqezOI
+	YyO2slFLMIG0riLK0roZSLimxhgWDqGNF1m34HtkjO
+X-Received: by 2002:a05:600c:1c20:b0:489:1aed:1658 with SMTP id 5b1f17b1804b1-48a77b241admr115999145e9.23.1777458299919;
+        Wed, 29 Apr 2026 03:24:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7b9116efsm18185095e9.4.2026.04.29.03.24.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2026 03:24:59 -0700 (PDT)
+Date: Wed, 29 Apr 2026 13:24:55 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Jakub Raczynski <j.raczynski@samsung.com>, netdev@vger.kernel.org,
+	kuba@kernel.org, intel-wired-lan@lists.osuosl.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH v3 net-next] net/intel: Replace manual array size
  calculation with ARRAY_SIZE
-To: Dan Carpenter <error27@gmail.com>
-CC: Jakub Raczynski <j.raczynski@samsung.com>, <netdev@vger.kernel.org>,
-	<kuba@kernel.org>, <intel-wired-lan@lists.osuosl.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Message-ID: <afHcd7BfFx8WzpMn@stanley.mountain>
 References: <CGME20260428103757eucas1p132f3f1123fae21d596a51cbdce72c931@eucas1p1.samsung.com>
  <20260428103653.3539239-1-j.raczynski@samsung.com>
  <ef61b770-ebf4-406a-90a0-8a49aba02aee@intel.com>
  <afDL02Z4QV6G0UxF@stanley.mountain>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <afDL02Z4QV6G0UxF@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR08CA0245.eurprd08.prod.outlook.com
- (2603:10a6:803:dc::18) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+ <b0a706e1-2494-40b4-836f-f5d32c6b0fef@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|PH0PR11MB4885:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99dae4f0-e241-45ca-36d9-08dea5cdf865
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|18002099003|22082099003|56012099003;
-X-Microsoft-Antispam-Message-Info: puf1aZfzvL00BqbfFmXZ2io5ujlXKMjN4xjWA4D1T1RzpXeKsjxBxzv2gn3mik1glvo95cDwYtyTNpNv5WgVEwL3Le08odp11wHhoAhIHmVeFHFMIsj+oGk5+E+onERNYFRM+UEOh0zbqov4OW5OlRQvLFdxIiAk1TLmae8xf5sK3x8bPoIwChs7GF4QQppwqXv912m9K2yDIIZwXYSQ76cVs9D1ygd9rUQp6L3yIXI1aCHR3nmZX4/c6hioTJNXSWLk/9LMImtqezYFVjfFvglgbuxavTA+EB4wrU83JlgkbQdR0iIyu56oD+pBfJSTPPsi/gFKv50mMt8CdLcVhycCveMxvr5iQkzU5ITP1nEWl3K1RwCcQZWfOMoUMJca4KEEPGEqb91JFlPzgoSKhKwOEzIVZ2U16EaoTZonZXJMRaPpiYKftQrzzlXdwHLypIGt4LOEIijOgd68QxDzpersVVI/2oeivIT3giiW3AQjEWWYLyx/BGr61yXk9041TJnRXFWITcOex0p0wGk+3fBSI/t6Wg/Hd2a101xc+F+Epr3IAHWYCdeJ68CF1WyVvWAJzrJ+nNj/2l74LQb1nbpv+PbRSLIfS7ud6ZiLRvUEiyXdEXc7xa2TKpdsbEzdW6GyYoH7+/6BhTQf49EPbruli8IXco+sV5/uB9a172JlLDPZObINwi00PMvUFJQQRaqivocmY6DmdZBWekHEcs0OxSho2+I7s/z34x2Nqws=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bytNbGZOMG1tb0hsdDdMZXZJSEN6Z2ZZbzFVY3VMQStCcWsrY0hISTAvMzh5?=
- =?utf-8?B?N1RtdlBDWVNoaDJXTXFhekNhWmxDYUtWMWNMOTNuendOd0RKckhPME5GMlBx?=
- =?utf-8?B?dFNrb1BheFg2UTZuQnNuZHVsbzdMblJQdEg3VVZaekZjaHd1R3JxWVRySnJ5?=
- =?utf-8?B?R3d6Y3hFT0dNbFYzVk1EUEJGVTJXQnFOOTY0eUhFSXB1ZFo3YldEZS9XVXVT?=
- =?utf-8?B?VjdxcmFyK2xwU2t2QS9TZmFGRVJJRDlnb3FoOWxXeHhqQlFyZk1sZ3ozZ3Rl?=
- =?utf-8?B?ZjFyaC9HOFJKdzYxQkl2OW9tdFRTSEpOWllpaFBydjdaK1VtUDNNTzNYM1NE?=
- =?utf-8?B?dStvVzZPbkVNc1ZPcng4OXJDa0ZqSjE1ajBrYXR0ME9nQzgwd25SdnVBQU53?=
- =?utf-8?B?TUtwSk5HOEtjRE80N25GM2F5d0t4MUY4YVl5dVlZRUFQdzhqQlo3Y3d6aDR3?=
- =?utf-8?B?M25yRmh6ci8zNVRqaTdVOTM1RHByVUJQN0RRVUNrSVFjOHJZdHBpNm4zbnBU?=
- =?utf-8?B?TmlES1BzMVQrZU00RWZNdTVSWTFHODExTXhjVjMrL1QzSmpZZEFFeWhua1Q3?=
- =?utf-8?B?MkJmL0QxYnBQQ3dqTG9QR2J5cktiUU1NZDltRXRPVURFc2x5OCsrbXNXREVX?=
- =?utf-8?B?YWlKNi8vYjBUMlhabnlJMElEQzJFUk90NnZ0VndqYmdTVC9sR240dVVTVmp4?=
- =?utf-8?B?ZmRaaU1Pb3hxRGNlSzNRTHNxVmdHbTBkUFR2Z3hMc1RxZFRDUFVkblROU09h?=
- =?utf-8?B?MmE1SFEyQVIyVzRPcjFYcXpHTG5kK2I0T0YwdFljVlBzaHIwY3NWYXQyMmdI?=
- =?utf-8?B?eUwycXIwU3dwUkdEVXFCYmlqTGhjMHBSUGFUR2hRWjJzdFUrNlcvdDVRUGZL?=
- =?utf-8?B?bjNERkJzLytkMDZJQ0xJZGtrSWhFTnVxdWx0Ym9pMTY2a3hBOHBRK2lON291?=
- =?utf-8?B?M0srTDl3R2dEVzk0cXFhdjFPQjFUeHQyRWdSUnhKdzllZzV3R3R1eDdKR0N3?=
- =?utf-8?B?RVJVeFZwVUtCeC84WUZ2T2RmR216RVNpYk1NT2MyaUxSVEJwSFZ4eSs4QW9P?=
- =?utf-8?B?ZmI1QXZ1M1V5YTlOSU5ybVB6SzNpUjB0WkJHY0FxUFdBZW9oY3lqa2d0WjVn?=
- =?utf-8?B?QVVKbHR6VkxWR2V1a1B2K1JGRFNYWjcyMGVOZUZiYS9YRVRRWWkrcmJYTUps?=
- =?utf-8?B?S2hnN2FWeC82S2pPaVpubW9qVjB6ZzFqNjVNZTJ2UFQwWWdVSmlrT1VkMTQ4?=
- =?utf-8?B?N1VyWjUzSHo5c3N0b0FyaExqRHMrSW4rVDd1SXpjWUw1WTBpc1FuUVREaGNN?=
- =?utf-8?B?WDBVcDVUUDg1Q25KUFZkbGlIK2xHMDlHN0VRSDNFQ0hnbnU0bzUxQmxOaGE5?=
- =?utf-8?B?Y0RnOXgyVWcxK2JEWENJcENSRzI3QlNVSXVjWktvVjZFU1Q3WWhqdHJReUVJ?=
- =?utf-8?B?Vi9zQUl5d3pmNFNaMmt5S2hDd21nWWt3LzdMK0xJNlMwSmtmbmtCR2lkbE5Y?=
- =?utf-8?B?Vk5PMFdHaHhqbEQwRktraXhSYW5ZN1ZoeVh3SWlMTmlTWVdIREc1QkhuOGkz?=
- =?utf-8?B?OUM4VG0xMUJXWjZlV2x4SXZRUWhsWDFzaTk1R3hKdGJNTGxIUyt3d2ludCt6?=
- =?utf-8?B?RXBWVzV2Y2VuN2NNRG9lcUROQWZRN01sNnRJNlNjeDRDSHdQTjIwZ09OYytV?=
- =?utf-8?B?d2J2Sy9TRG9rbU9JL2N1ZmJjaVRxYkJ3Y1huQ3N2eVJmS2lEdVNXOUhaUlRr?=
- =?utf-8?B?alByRkhUM3o1T2wxRDhUblFya1pOS1RPalN6OFN2Snlzb0xqUkJnTHN5bDl0?=
- =?utf-8?B?RGV2Y0ZMTFZTcWhTTmplZUVTUzZBcTh4V2dJV2MxZFZXVVBMU1R4djBWdTlQ?=
- =?utf-8?B?UkFoUzRMemNEMExtVDR3Ri9EWkdQTVdEcDlXcmdodDRJcHptejdTdjlDcFM3?=
- =?utf-8?B?OHhvVmJxWUdlVnF5NXMwWWF6QnZHY3lQK2ZpZFRXbDZ2cFN4VFJ0ajNJYUxo?=
- =?utf-8?B?TDRyRDQrSGU2QVZFNG11ZEdxcS9pZ2EzS3BsSTAxSlU1bXpLNWswTE5WNlBT?=
- =?utf-8?B?M0VuYkJucFhFSTA2a0U3L1JZd0R1MmYzRkFzckdobysrbkpXbWo3Y1N0VzA4?=
- =?utf-8?B?by8xVE1HV3dUUnVLSEdra1BINUhUbGh2WkltZ1JrcXNqa1JyUWJmYUMyZWV0?=
- =?utf-8?B?KzlkSjlQajFGTGpHMFJhOEMxZWZCcjNQNEw4eE1WWkR3VCtWS1hIMkRCM25K?=
- =?utf-8?B?MlVUMHk5OEFVK01lNWc1TFF6RXNIZEtNTGxrQ2p6UzkxTW9kcWJpd3p5b0RZ?=
- =?utf-8?B?RThGcWk4MUMyZHcwWUJGYlZwbGp3ekJYN3ZMREZOVCsxM3ZyaWZmSlAzejB0?=
- =?utf-8?Q?rBCTPp7G7/uLbJKA=3D?=
-X-Exchange-RoutingPolicyChecked: hrPnE0tAutWRdx3m7AaTORYewZce5pCGUNJHRZl6yejb6HC9p9a9RbeqVpFffn54nrwoplbxqBRZ3wehQvq1uxcEEkYyNtScPfuuHeCOhcniDJerOdjGbqNO2Cy7RmA9Kln3yb2R7QGBSygOi4j6r6tCAuMB5bk6Wvpx2YNVyWRcpmdKulOr77pGHQv7azCYu+kSbrgifrICZellYrluIdjMIA9kJgFKnXvmdN7ICJTqLwKyyfCFWYPHGl6EPNcH8wYstsuAc1ysA8lfjaKVdQ5q00cGGdh/8aifLd8EPF/zLch5Mo6kGrBG+7NaxYcmcq98grcrlNxGzGhwKte/rg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99dae4f0-e241-45ca-36d9-08dea5cdf865
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2026 09:01:58.9819
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FitR0FUtWEvQl5O+ZgTCa6M7hVTRHxIPnO16Wq3qvWWdiCSQZuH/t1iCt8EOWDMj5tUOK2KRio2ocHaO43ioJ0JBnX0WA4fsj4iaKVLqljY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4885
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0a706e1-2494-40b4-836f-f5d32c6b0fef@intel.com>
 
-On 4/28/26 17:01, Dan Carpenter wrote:
-> On Tue, Apr 28, 2026 at 04:06:48PM +0200, Przemek Kitszel wrote:
->> On 4/28/26 12:36, Jakub Raczynski wrote:
->>> There are still places in the code where manual calculation of array size
->>> exist, but it is good to enforce usage of single macro through the whole
->>> code as it makes code bit more readable.
->>> While at it, beautify condition surrounding it by reversing check and remove
->>> unnecessary casting.
->>>
->>> Signed-off-by: Jakub Raczynski <j.raczynski@samsung.com>
->>> Reviewed-by: Dan Carpenter <error27@gmail.com>
->>
->> thank you,
->> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->>
->> (next time use "iwl-next" in the title, no need to repost just for that)
->>
+On Wed, Apr 29, 2026 at 11:01:46AM +0200, Przemek Kitszel wrote:
+> F:	Documentation/networking/device_drivers/ethernet/intel/
+> F:	drivers/net/ethernet/intel/
+> F:	drivers/net/ethernet/intel/*/
+> F:	include/linux/avf/virtchnl.h
+> F:	include/linux/net/intel/*/
 > 
-> Which sub directories go through iwl-next?  I was trying to update
-> my script
 
-Thank you for all the patches so far you have provided and willingness 
-to continue.
+Fine.  Thanks.  I can add this.
 
-F:	Documentation/networking/device_drivers/ethernet/intel/
-F:	drivers/net/ethernet/intel/
-F:	drivers/net/ethernet/intel/*/
-F:	include/linux/avf/virtchnl.h
-F:	include/linux/net/intel/*/
-
-Perhaps instead of you managing your script, and everybody else doing
-the same, there could be some extension added to MAINTAINERS file to
-encode the prefix?
-
-In our case, the prefix itself is a message for net maintainers:
-iwl or iwl-next means the patch will go first via our tree, and be sent
-later as a PR for net/net-next.
-
-Without the prefix it requires guessing what was the submitter intent.
-Most patches that go through IWL receive additional round of testing on
-real HW too, thanks to our VAL.
-Patches that go straight to net are just merged faster.
-As intel ethernet maintainer, I want our code tested more, instead of
-merged faster (in most cases).
-
+> Perhaps instead of you managing your script, and everybody else doing
+> the same, there could be some extension added to MAINTAINERS file to
+> encode the prefix?
 > 
->>>
->>>    drivers/net/ethernet/intel/i40e/i40e_adminq.h | 2 +-
->>>    drivers/net/ethernet/intel/iavf/iavf_adminq.h | 2 +-
->>>    2 files changed, 2 insertions(+), 2 deletions(-)
+> In our case, the prefix itself is a message for net maintainers:
+> iwl or iwl-next means the patch will go first via our tree, and be sent
+> later as a PR for net/net-next.
 > 
-> but look at these file names. There is no "iwl" anywhere in
-> the names!  :(
-> 
-> regards,
-> dan carpenter
-> 
+> Without the prefix it requires guessing what was the submitter intent.
+
+We don't have any intent.  So long as it gets merged who cares how it
+happens?
+
+> Most patches that go through IWL receive additional round of testing on
+> real HW too, thanks to our VAL.
+> Patches that go straight to net are just merged faster.
+> As intel ethernet maintainer, I want our code tested more, instead of
+> merged faster (in most cases).
+
+All of this scripting could be done on your end.  No matter how many
+dozens of people you educate to add a different prefix it's always
+going to be less reliable than just scripting it on your side.
+
+Anyway, here is the relevant bit from my script.  The other subsystem
+that requires these is BPF but I only send bug reports for BPF issues.
+You also need to do a git fetch of all the trees with subsystem rules.
+
+regards,
+dan carpenter
+
+# Is this networking?
+if grep -q netdev $MAIL_FILE && ! grep -q wireless $MAIL_FILE ; then
+    if [ "$FIXES_COMMIT" != "" ] ; then
+        if git merge-base --is-ancestor $FIXES_COMMIT net/main ; then
+            TREE="net"
+        elif git merge-base --is-ancestor $FIXES_COMMIT net-next/main ; then
+            TREE="net-next"
+        else
+            TREE="net-other"
+        fi
+    else
+        TREE="net-next"
+    fi
+fi
+
+# Is this Intel Wireless
+if grep -q -w /iwlwifi/ $MAIL_FILE ; then
+    if [ "$FIXES_COMMIT" != "" ] ; then
+        if git merge-base --is-ancestor $FIXES_COMMIT iwlwifi/fixes ; then
+            TREE="iwlwifi"
+        elif git merge-base --is-ancestor $FIXES_COMMIT iwlwifi/next ; then
+            TREE="iwlwifi-next"
+        else
+            TREE="iwlwifi-other"
+        fi
+    else
+        TREE="iwlwifi-next"
+    fi
+fi
+
+# Otherwise if the commit is only required in next then put [PATCH next]
+# in the subject.
+if [ "$TREE" == "" ] ; then
+    if [ "$FIXES_COMMIT" != "" ] ; then
+        if ! git merge-base --is-ancestor $FIXES_COMMIT origin/master ; then
+            TREE="next"
+        fi
+    fi
+fi
+
 
