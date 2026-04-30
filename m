@@ -1,96 +1,114 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB6E44CF34
-	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 15:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DDA46AF01
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 18:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777564187; cv=none; b=JeCy50nM+0ULg2DZkZS/p+mWZNJSSkehiQiuFnNzScUWzGQXtJYLkuRlqF8uJGp1RZA/jhgEb5cr/syFH0jIYlNQs55qWt2VIhZ9fs/nm4zLS3CAwgXJAhnhS3DnM90R2oAHnmCCyQjzaN8olL9EoSrjZbtSH5UhIomZmGzbP+o=
+	t=1777572904; cv=none; b=sQxVk4dp3cZFCyM8NMZZef9JNgOuSrDbQN2BTg9LQQb6HRy6b40qVMt4yPFNRrbBy4dXfxNomy3TYTaTrWScn8aRycOO2tMuRHr+UT6jj3b+akTq5oj4SNpDt53fx4J3ecXfP1UdEOi9aSMsC0LWT5PSuEIXa9PnYbEiEkjViG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777564187; c=relaxed/simple;
-	bh=Pd8sYVFV1kR0uSimC6jrCcGJEkwAziThLBOjGnujbaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=a8xTtbN2uNMHULG8OFSZ7JLY+ltUzQ5Bg0HHuj075nWa9gVvJSvaXMB4uKJjSA40yrFkqnsq2CnJLEfgdX17uCskIs7uw1s8lYWHCnPAyg6OErmod0cm11gW1e7ds4mGgrU+OLo0FuNshRemByUVJ+1Dj/iccDnDVrTZaLZvbHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YDPegXpS; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1777572904; c=relaxed/simple;
+	bh=m6tdW/PyQ3fNJU6yi+8EeeFjX1bF/Ohn9ScCCVCvGIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mVJ0Nj1uQKHzcJy2pDPjHycqlAADK+vGJ0BiYeZdh80Bu9Z6lSm98CMwSNQGxOi52kblwi7q3H6OmWOK2dtEj82HfQHltzVBxtFhaDjC5ES8Z+iUPu0NvRMlgomRifzT5h6yeKCA+L9DZRrN3KaGX4EsHol2degSHp6h8JQyvTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yw7QO0XM; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YDPegXpS"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260430154943euoutp0150638253782bffa25fdad98d9e6d3980~rLTTzgtRT2047020470euoutp01w
-	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 15:49:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260430154943euoutp0150638253782bffa25fdad98d9e6d3980~rLTTzgtRT2047020470euoutp01w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1777564183;
-	bh=iCKWbPC+I/tUrQZJo+RFleYMY1viaZ7b8su8ZQeFbG8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YDPegXpShtz3+ydmnC4zWjutNW66ZiSt2HRTHYrXgjRx8ghZ9tTFZzomldrOLO+Kj
-	 ydUF+T+w0EUOOBrXecEOjWZKHMm2cN31en3SOjqAfIMKIDLGhEBq8TQn2NKKQjQARy
-	 f0Uxp+ilwFYC7W77ZgwLjlm2BKwn7gnQd8gz+vQ8=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260430154943eucas1p1bceacf3abe2f9fa802912566f1876217~rLTTrGz3v0489904899eucas1p1s;
-	Thu, 30 Apr 2026 15:49:43 +0000 (GMT)
-Received: from AMDC4622.eu.corp.samsungelectronics.net (unknown
-	[106.120.77.34]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260430154942eusmtip233cda62c92a14610cd4e27508e05f97c~rLTTNpc3N1125511255eusmtip2i;
-	Thu, 30 Apr 2026 15:49:42 +0000 (GMT)
-Date: Thu, 30 Apr 2026 17:49:39 +0200
-From: Jakub Raczynski <j.raczynski@samsung.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH RESEND net-next] net/sun: Fix multiple typos in comments
-Message-ID: <afN6CpRoH6g2RdoB@AMDC4622.eu.corp.samsungelectronics.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yw7QO0XM"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488b3f8fa2bso23230045e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 11:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777572901; x=1778177701; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+odbWKzhO0lfnlkFEGcDKWY0FJZ2otqINMazPnX9HaE=;
+        b=Yw7QO0XMbTWPlEXaF6T+ZqA59UIkOY1YI2/jjfVvcaO6eZRJTbBB8rEbGtlqyRCkPm
+         rIAcr0ZvB22jCsvkGaurtW5pQdgPzJOQ0EO0KT2rd1ngFSPV2YpQJf3ZLnIQqqcJHEoQ
+         aLebphH4uibVGpzDzuY7dBbBEyncXy4JV3QyiNb01e01/7sXTpzPl+mSV/WBlJhhoc1v
+         lf371prH6AyIQ5X1zpXiBnStdvKmVVDut4X7ldHSnBgYkZ1qWtxAUwowQdmL9RVn4naz
+         Qfvx5c4dypBbCjPALKqD4f921kjWB9z6Xqxv0ay7tgQOf9XqeinLCUdF2xFsNu9uluES
+         wi6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777572901; x=1778177701;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+odbWKzhO0lfnlkFEGcDKWY0FJZ2otqINMazPnX9HaE=;
+        b=VGZeqXfvY985S88MZvY1IErWewpoz5VK6Fk5zfGVRu5VPonO10wlLkdawVzS9fuBaX
+         ZiKvDaCKe7uSGwkBF+jPS2yl3ykSAIdopiH+08p3f8YLUK+Bpp2j1cHDIizcDqG+CQrI
+         WqrLAK8F1BkWX4Z+/jn0H11bg1ThIk2m1Y9vpW6+XvDQBmLGVkW6T0pLj5fJNiWOwKJ4
+         qigZNlXrFOXeGk8pK0GF12idCYIXZEW6jGEJZxlWD+o5WTKD+pN/c01KgV1RGqinTbxQ
+         UHjk3VEa177WjOBnDerzWXn8mpf83WS9GU13fOX0lwfwHuro3FT6KIB6lG1l3Dl+IxW4
+         srnA==
+X-Gm-Message-State: AOJu0Yw9kWFpDFDanyFGBIJDo3Nq9/ynK1Owk1iZQGyDoHy+BVhpEDMD
+	it9yJMRm3fA9PVIGkQTHA3NEYrwksOj4JFnZQAPfdAAoK/69WXg/c6X1
+X-Gm-Gg: AeBDietoTJW85dtrxPGj7gvfWiF8/fvkhsPCgbopNWk4vI6LSzKbERpsoJRzJMbMfRi
+	EcTQA17XKGWCLIiAf/+tVEowpONeR+ntAGqa7MnnJNxASoWp7hr9uUdstQQcvDpmbp5uPmK7ofN
+	g4rGnhC+9mvvM/R53oTvANvH+Jsp3biGd4uWTtic4tsXYSUdxhVaiR+lbt2RTWGBUbfx3spe57k
+	fBJA3O8WUiORClQIjR3F+ww4xyMhv5mCGnPEvHT0TiUkVM24ozGit2QEIJ5vZBAy/r7cd55LPtg
+	y0nGT9odfD4b4y8A1Igu6XXYIBAuQGUGdbrR0Xc4vSj4OcHpoe2GAeH4s4yqi/UakynrAPbR+7Y
+	UYJ4XXhaoNVYlMOtrCDVZDL7lYa23YG4SXk4xaNO+EvH63OOJFBKQHICu/mD7CB13itMmqvDd+I
+	kChrDXekzD/ThTkcDsCCFezF/BQ5fefQ==
+X-Received: by 2002:a05:600c:8b62:b0:48a:53cb:8604 with SMTP id 5b1f17b1804b1-48a8609bebdmr62229625e9.14.1777572901228;
+        Thu, 30 Apr 2026 11:15:01 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c324672sm46413585e9.32.2026.04.30.11.15.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2026 11:15:00 -0700 (PDT)
+Date: Thu, 30 Apr 2026 21:14:57 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] lib: introduce test_meminit module
+Message-ID: <afOcIan1ap9kD26M@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20260430010322.2326574-1-kuba@kernel.org>
-X-CMS-MailID: 20260430154943eucas1p1bceacf3abe2f9fa802912566f1876217
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_"
-X-RootMTR: 20260430010331eucas1p1e5a85246a4a475b4b70b883f4f241c26
-X-EPHeader: CA
-X-CMS-RootMailID: 20260430010331eucas1p1e5a85246a4a475b4b70b883f4f241c26
-References: <20260428101728.3537456-1-j.raczynski@samsung.com>
-	<CGME20260430010331eucas1p1e5a85246a4a475b4b70b883f4f241c26@eucas1p1.samsung.com>
-	<20260430010322.2326574-1-kuba@kernel.org>
-
-------EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Apr 29, 2026 at 06:03:22PM -0700, Jakub Kicinski wrote:
-> This is an AI-generated review of your patch. The human sending this
-> email has considered the AI review valid, or at least plausible.
+Hello Alexander Potapenko,
 
-I should also implement any basic tools or AI to verify my writing skills.
-This patch was basically prepared with help of 'typos' script and yet has
-errors.
-> The "autonogotiation" to "autonegotiation" change looks correct, but
-> the neighbouring "in enabled" in the same sentence appears to be a
-> leftover grammar slip (should it read "is enabled"?).  Since this
-> sentence is already being touched as part of the typo cleanup, would
-> it make sense to fix that at the same time?
-Probably, no reason to not do that. Might be good to also change double spaces
+Commit 5015a300a522 ("lib: introduce test_meminit module") from Jul
+16, 2019 (linux-next), leads to the following Smatch static checker
+warning:
 
-> Neither "imperical" nor "emperical" is a correct English word; the
-> intended word is "empirical".  Was the replacement here meant to be
-> "empirical"?
-Writing fail. Funny enough, I had someone read/check this before sending and
-it slipped.
+	lib/test_meminit.c:390 test_kmemcache()
+	warn: bool mask is always false 'ctor & zero'
 
-Will resend whole patch soon.
+lib/test_meminit.c
+    378 static int __init test_kmemcache(int *total_failures)
+    379 {
+    380         int failures = 0, num_tests = 0;
+    381         int i, flags, size;
+    382         bool ctor, rcu, zero;
+    383 
+    384         for (i = 0; i < 10; i++) {
+    385                 size = 8 << i;
+    386                 for (flags = 0; flags < 8; flags++) {
+    387                         ctor = flags & 1;
+    388                         rcu = flags & 2;
+    389                         zero = flags & 4;
+--> 390                         if (ctor & zero)
+                                    ^^^^^^^^^^^
+This is like (BIT(1) & BIT(4)) so it can't be true.  Was && intended?
 
-Regards
-Jakub Raczynski
+    391                                 continue;
+    392                         num_tests += do_kmem_cache_size(size, ctor, rcu, zero,
+    393                                                         &failures);
+    394                 }
+    395                 num_tests += do_kmem_cache_size_bulk(size, &failures);
+    396         }
+    397         REPORT_FAILURES_IN_FN();
+    398         *total_failures += failures;
+    399         return num_tests;
+    400 }
 
-------EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_
-Content-Type: text/plain; charset="utf-8"
+This email is a free service from the Smatch-CI project [smatch.sf.net].
 
-
-------EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_--
+regards,
+dan carpenter
