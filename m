@@ -1,80 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EB43939AE;
-	Thu, 30 Apr 2026 11:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB6E44CF34
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 15:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777549852; cv=none; b=qQzOmY6PVEoVLkCV4Vs6advRYxiw+x8m1S7ssisneqkO5LHeCKR6MDM7TzmSlf6mcC+SsfC0Er8f9GlRl0CZ97KgduODXR3GeFn9OTnZzrcncS47LxxB+EGUJZe+ypIk0ul8j0YwEEroIRryEQUQn4PKHhXoQigMVEN/WJ/HWsc=
+	t=1777564187; cv=none; b=JeCy50nM+0ULg2DZkZS/p+mWZNJSSkehiQiuFnNzScUWzGQXtJYLkuRlqF8uJGp1RZA/jhgEb5cr/syFH0jIYlNQs55qWt2VIhZ9fs/nm4zLS3CAwgXJAhnhS3DnM90R2oAHnmCCyQjzaN8olL9EoSrjZbtSH5UhIomZmGzbP+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777549852; c=relaxed/simple;
-	bh=VIAfUup26I6cErjUOkTtT5TkyQe3WzQ20MIgx9ZsKb0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JSxz2HkrPR+vfEG4En8GVdVkJcKMrdF/NzfOePhngsXdVIvfh7OZd6jEEp9OQqD7tSQl65zbVSQllDOXhvuQ3K4fG91oYGIRNH58Xhhp8imP/Pxz/vS3bxD1bE7sYvS6Ag2tVnr6mtrrutlOWW+1HT8moCurA8OXgZcWBRoPRc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieIk+6hd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777564187; c=relaxed/simple;
+	bh=Pd8sYVFV1kR0uSimC6jrCcGJEkwAziThLBOjGnujbaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=a8xTtbN2uNMHULG8OFSZ7JLY+ltUzQ5Bg0HHuj075nWa9gVvJSvaXMB4uKJjSA40yrFkqnsq2CnJLEfgdX17uCskIs7uw1s8lYWHCnPAyg6OErmod0cm11gW1e7ds4mGgrU+OLo0FuNshRemByUVJ+1Dj/iccDnDVrTZaLZvbHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YDPegXpS; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieIk+6hd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1192AC2BCB3;
-	Thu, 30 Apr 2026 11:50:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777549852;
-	bh=VIAfUup26I6cErjUOkTtT5TkyQe3WzQ20MIgx9ZsKb0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ieIk+6hdz8cs7jWFE/1rMWSDzl6bC4wCwTZa+6xgwplLrpOSvvyssESB4CAo71sM4
-	 8i0fyWEX2vZvgp2tC00SaZGadEkfo9c3jkLY0GQc+1pEzBnTsUZiTc9Vou6VAVGpAt
-	 62j6Me060ocZk4S6yDLnlEZ03kDegS6OxqH8EE+tG8vGK3qxH48Rjq9ia9T6k6DgQ+
-	 NtJmDS4KAWNYoNCaNiq/ILa+xbWsI2LLRv4ZS2xU2Ev/HVt7CaJVww5kJ23kYJD7oW
-	 St/2QpBa9Nwtpjxs9fLe/7t5F8GCgF1xVOG/dWFg6zNUOOTsOaZA7GuaM7CVxRArBT
-	 7GIGIabzzoTkg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 02B7F380A97E;
-	Thu, 30 Apr 2026 11:50:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YDPegXpS"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260430154943euoutp0150638253782bffa25fdad98d9e6d3980~rLTTzgtRT2047020470euoutp01w
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 15:49:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260430154943euoutp0150638253782bffa25fdad98d9e6d3980~rLTTzgtRT2047020470euoutp01w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1777564183;
+	bh=iCKWbPC+I/tUrQZJo+RFleYMY1viaZ7b8su8ZQeFbG8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YDPegXpShtz3+ydmnC4zWjutNW66ZiSt2HRTHYrXgjRx8ghZ9tTFZzomldrOLO+Kj
+	 ydUF+T+w0EUOOBrXecEOjWZKHMm2cN31en3SOjqAfIMKIDLGhEBq8TQn2NKKQjQARy
+	 f0Uxp+ilwFYC7W77ZgwLjlm2BKwn7gnQd8gz+vQ8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260430154943eucas1p1bceacf3abe2f9fa802912566f1876217~rLTTrGz3v0489904899eucas1p1s;
+	Thu, 30 Apr 2026 15:49:43 +0000 (GMT)
+Received: from AMDC4622.eu.corp.samsungelectronics.net (unknown
+	[106.120.77.34]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260430154942eusmtip233cda62c92a14610cd4e27508e05f97c~rLTTNpc3N1125511255eusmtip2i;
+	Thu, 30 Apr 2026 15:49:42 +0000 (GMT)
+Date: Thu, 30 Apr 2026 17:49:39 +0200
+From: Jakub Raczynski <j.raczynski@samsung.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH RESEND net-next] net/sun: Fix multiple typos in comments
+Message-ID: <afN6CpRoH6g2RdoB@AMDC4622.eu.corp.samsungelectronics.net>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] sfc: fix error code in
- efx_devlink_info_running_versions()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <177754980680.2967170.14222555807417200923.git-patchwork-notify@kernel.org>
-Date: Thu, 30 Apr 2026 11:50:06 +0000
-References: <afGpsbLRHL4_H0KS@stanley.mountain>
-In-Reply-To: <afGpsbLRHL4_H0KS@stanley.mountain>
-To: Dan Carpenter <error27@gmail.com>
-Cc: alejandro.lucero-palau@amd.com, ecree.xilinx@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, habetsm.xilinx@gmail.com,
- jiri@resnulli.us, netdev@vger.kernel.org, linux-net-drivers@amd.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20260430010322.2326574-1-kuba@kernel.org>
+X-CMS-MailID: 20260430154943eucas1p1bceacf3abe2f9fa802912566f1876217
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_"
+X-RootMTR: 20260430010331eucas1p1e5a85246a4a475b4b70b883f4f241c26
+X-EPHeader: CA
+X-CMS-RootMailID: 20260430010331eucas1p1e5a85246a4a475b4b70b883f4f241c26
+References: <20260428101728.3537456-1-j.raczynski@samsung.com>
+	<CGME20260430010331eucas1p1e5a85246a4a475b4b70b883f4f241c26@eucas1p1.samsung.com>
+	<20260430010322.2326574-1-kuba@kernel.org>
 
-Hello:
+------EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+On Wed, Apr 29, 2026 at 06:03:22PM -0700, Jakub Kicinski wrote:
+> This is an AI-generated review of your patch. The human sending this
+> email has considered the AI review valid, or at least plausible.
 
-On Wed, 29 Apr 2026 09:48:17 +0300 you wrote:
-> Return -EIO if efx_mcdi_rpc() doesn't return enough space.
-> 
-> Fixes: 14743ddd2495 ("sfc: add devlink info support for ef100")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> v2: Originally I returned -EINVAL but -EIO is the usual error code
->     when 'MC response was too short'
-> 
-> [...]
+I should also implement any basic tools or AI to verify my writing skills.
+This patch was basically prepared with help of 'typos' script and yet has
+errors.
+> The "autonogotiation" to "autonegotiation" change looks correct, but
+> the neighbouring "in enabled" in the same sentence appears to be a
+> leftover grammar slip (should it read "is enabled"?).  Since this
+> sentence is already being touched as part of the typo cleanup, would
+> it make sense to fix that at the same time?
+Probably, no reason to not do that. Might be good to also change double spaces
 
-Here is the summary with links:
-  - [v2,net] sfc: fix error code in efx_devlink_info_running_versions()
-    https://git.kernel.org/netdev/net/c/051ffb001b8a
+> Neither "imperical" nor "emperical" is a correct English word; the
+> intended word is "empirical".  Was the replacement here meant to be
+> "empirical"?
+Writing fail. Funny enough, I had someone read/check this before sending and
+it slipped.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Will resend whole patch soon.
+
+Regards
+Jakub Raczynski
+
+------EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_
+Content-Type: text/plain; charset="utf-8"
 
 
+------EbkeEIwBiIKV-5_.nU08j0UNUa-otTO645nIPTj5A2-x7-zv=_3474b_--
