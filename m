@@ -1,172 +1,115 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5005D22F74A;
-	Thu, 30 Apr 2026 05:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE44375F65
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 06:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777527407; cv=none; b=V69saa/W+TtxQmld8jhIYzjnIzf9g/Y9s620Oyw8+1Pa8+xn6r1l4cpRoPMcV5PaRImOAuevueqOyoLfnnSZvDwSMzfrQbHi2N8lli46QcO7wIBKKEeQQqhPfqaT+AXcDaCamjt4b8hrCiOrGlxnADaPe/vaj9Dh3ZWLa9ncnHI=
+	t=1777529755; cv=none; b=Kp3xFK0zqW05ess1KYTmFnaGTYDTFe67Xxc1pS9FbgcJYDPM71ZWjyqvhir+7zaQiinLl6ZsTbcOcieGsfhi9ga9HyG06O/i8ubd3vRB1MfE32fVTM0MNfeba2J7LYYlZPhRfFxn+3/9G9+hhmYK9UnF28uad2Ctb+NAhSkhwf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777527407; c=relaxed/simple;
-	bh=130YZ5RGilQ7QLErWWXJRZ1I1Fll9ez7IC+/6fIYIfM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Q4IReUteStEOcwdSlIabAN75hhnuOSrKOEb4D2KG9P5nqtFApyl9UW9kk09m4GmEvYqHgKp+uQQf4hWvjE7JwLCDcYc7YZDcOJNbVB/vB4WMYbcdqiM+BhQplz6HNeUQhojdcnO4BXjUlfrfQ3ZrWVcDdvYnQNxuIrLYIaLNRrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=fM2lJBI9; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1777529755; c=relaxed/simple;
+	bh=xL42ZWKrTVrSC2jDeY0hsvPfU3p9FbDy5krFUYRLQXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R/K2aXgwsU4X6WypIGbj+maQzhLO/+eZ0QGLq8VZ2ta9s21BCtC9CalzUf3FoPGS2Qnq3uoZBQ8JPrdgiFSbOtTYwOMEBUrGoJp7ctehGYZsMhmxiE/4YoBVoI0J0T41hPBPTu6SLY9cYxIeJ9gNUm494GAN0Npfd53KpQyaQc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLBQ4EmC; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="fM2lJBI9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLBQ4EmC"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4896c22fcbaso3265625e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Apr 2026 23:15:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=sp5GufT6BTm6oIFyDELXrFsaG41lVEftDToN/7RuaGk=;
-  b=fM2lJBI9Jw9rqeti8Ab63jIPBjaQWDy4RQXHPkAeJxnpoWJMRtdV303k
-   u8kw7UBV7omEfH3yr/gdAfZgj3rgM6rLwVn4tVTsFDnCEcwptshVJo+rL
-   bO1xa6k31+vJDfWKFn7Y5/T0LL8NhHELRqNfEW7sqOYLePAbI1DXjjTJt
-   w=;
-X-CSE-ConnectionGUID: KOnD0DBaSky6leyo4m+/8g==
-X-CSE-MsgGUID: vqnK2y7/Txif+2UOxpE7LQ==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.23,207,1770591600"; 
-   d="scan'208";a="274732026"
-Received: from default-80-209-135-165.interdsl.co.uk (HELO hadrien) ([80.209.135.165])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2026 07:36:35 +0200
-Date: Thu, 30 Apr 2026 06:36:34 +0100 (BST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-    Aboorva Devarajan <aboorvad@linux.ibm.com>, 
-    kernel-janitors@vger.kernel.org, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpuidle: menu: correct variance calculation
-In-Reply-To: <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
-Message-ID: <11a3f8bc-de5-7355-ecf-71d53a836fc4@inria.fr>
-References: <20260429153357.2350958-1-Julia.Lawall@inria.fr> <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
+        d=gmail.com; s=20251104; t=1777529752; x=1778134552; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4eBgl8Ld1ZWw/9cbt4soJzSAn0Jr0mSS+YG3PesXQEU=;
+        b=TLBQ4EmCZNU1xW3xGmi0Gs4ptvMebe2b3TLJLOu8eRcyRLG+XeT9JQL1xUcxHTMFs0
+         sjkg7IAMCriqxbcjaj9zBQNhptBYx8M0MladOpqvI5to3FPzvZvmbm/LIglQmUGzG0Bd
+         S1WEC90IyBjZHT9QpELVEzqPi0Ya/x8oilJA5jO+nnFzpDohIzGZImyVLpyVSbvtTtVe
+         lVVhFxaeGGWP9fq5SLw6rgsDCU4uOxzPBzX/+8OUhyd/0GFlhyBz8gie7j/+/H7/SsMz
+         lNj04w04Hu8NCRdJ8vXV1gNmju8nc3J3fl/l9QJU6w/mlwmLbPyGNu6MU6zXdRKNCMd8
+         u7ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777529752; x=1778134552;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4eBgl8Ld1ZWw/9cbt4soJzSAn0Jr0mSS+YG3PesXQEU=;
+        b=oehmWoINp13nRdVTjf7yvdQiw1uhFvAfm9ZmCRTtaQ5CpNOsf2VW9kUcNOdplMVsAQ
+         o6+bdcSNdYvY8Apew4wHkQv5wqKque12/Ob5mU8azvQOYjnauk/zLSbSB+ezVzhdqSB/
+         NoV5NBAHA40EOZNjoxPvKMa6aDFl5fQxukBMMsVatiWRzOFtjFraqA4TLaScoTAyHSYv
+         K+dLHsZ0yRLhNusXrHcvZQQpfItdFVgKzFh1Z9RZjru8o0Seq6wM48iXo+eipB8PJg8R
+         i08amxxoS/hMd/53nNb3y4iGJkBq59qzhtvpt/Per4rod+Tw3D51Gz6lhnC7MVOAHaGy
+         8YKA==
+X-Forwarded-Encrypted: i=1; AFNElJ+ygiYxhla/paU6gql1a19WuvQxKJ0KNoZGHyzSsAcAyfJBbpXGRCLSoi39R5yM5jvt7PLTrKXCQJArCUgKz1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV0NoP6lUs8W4Bl+quHi0Ip5Wdxa+OlO2Xm7g2yOOhYe2VfEpX
+	gT2TK9nDzL3bsoUqkd3uqIrDuHqhnBBlxrvsLWIVc3lLqT4tTON8Fono
+X-Gm-Gg: AeBDietzDVoxX2aiEJtDCfPUe2OAVxSc3SRrWE497x60CQzofVj96jsR5jMrrKlCogI
+	JrTxDNBlFh0qRXbsBKKgV9K27g0KuvkVCAsLK1zFj5L608JDFpJ9qYRhzcuWAxBzdbmyDqORMm0
+	FbJMlDk94oiTIQ3ej6aw1tzD+Y+383wwM4VOOJWie4AJoB3LwjuGQwxAj/2+a2afpN7+uwsYKRf
+	6MZUw/GM1WIhb9MGq1d6MPuf/J42M2XVz8Lse6R9395+fETMdQJG8lZu+cHIO7yJxiMcTzwvfjU
+	YLvKozvcjhHMzHsl10+sX9ooDsDWeMQPtIQ9tRmbwiR76I2OqApQzcbMv/Fm1+fvMjhPz3TLr9K
+	5XYcWXZETIQJqD4g971gA6LpLew20mdwk7aCNqWqC3hFTCyexdItU9uHZy5vu0+UJgWNYD5bzt4
+	VsUKghI4Qrypm/chFKR2nUwmNFhLxy0g==
+X-Received: by 2002:a05:600d:6:b0:48a:7a10:4f3d with SMTP id 5b1f17b1804b1-48a83d031fbmr20499035e9.0.1777529752266;
+        Wed, 29 Apr 2026 23:15:52 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a81ed6bafsm68748675e9.2.2026.04.29.23.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2026 23:15:51 -0700 (PDT)
+Date: Thu, 30 Apr 2026 09:15:48 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Raja Mani <rmani@qca.qualcomm.com>,
+	Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>,
+	Jouni Malinen <jouni@qca.qualcomm.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: cfg80211: don't allow negative key_len values
+Message-ID: <afLzlDT5VF4D746w@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1319900312-1777527395=:3453"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The ath6kl_cfg80211_add_key() function has an upper bounds check on
+params->key_len which ensures that it can't go over WLAN_MAX_KEY_LEN but
+it doesn't check for negatives.  This could potentially lead to memory
+corruption.
 
---8323329-1319900312-1777527395=:3453
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Put a bounds check on negative values in cfg80211_validate_key_settings()
+to prevent this sort of bug in the future.
 
+Fixes: bdcd81707973 ("Add ath6kl cleaned up driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This is from static analysis.  I can't think why a driver would ever
+want a negative length and I think this is the safest solution.  But
+I have not tested it.
 
+ net/wireless/util.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Wed, 29 Apr 2026, Rafael J. Wysocki wrote:
+diff --git a/net/wireless/util.c b/net/wireless/util.c
+index b78530c3e3f8..4552229eb2d2 100644
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -397,6 +397,8 @@ int cfg80211_validate_key_settings(struct cfg80211_registered_device *rdev,
+ 		 * or not the driver supports this algorithm,
+ 		 * of course.
+ 		 */
++		if (params->key_len < 0)
++			return -EINVAL;
+ 		break;
+ 	}
+ 
+-- 
+2.53.0
 
-> On Wed, Apr 29, 2026 at 5:35 PM Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> >
-> > Commit 13982929fb08 ("cpuidle: menu: Use one loop for average and
-> > variance computations") simplified the numerator of the variance
-> > calculation to:
-> >
-> > sum of squares of idle times - (average idle time)^2
-> >
-> > This computes a value that is typically too big.  The formula should be
-> >
-> > sum of squares of idle times - (sum of idle times * average idle time)
->
-> I'm not sure why.
->
-> According to Wikipedia Var(X) = E[X^2] - E[X]^2:
->
-> https://en.wikipedia.org/wiki/Variance
-
-OK, looking again at the formulas, I may be wrong about the calculation.
-I was assuming that the division by N was at the end of the calculation of
-the variance, but now that I am paying more attention, I see that it is
-before the subtraction.  So maybe the formula is OK as is.
-
-Thanks for the feedback.
-
-julia
-
->
-> > On a small number of tests I didn't find any significant performance
-> > change.  Likewise, the original patch was tested by various people and
-> > was presumably not observed to cause any problem.  My impression is
-> > that this is because the actual variance is almost always quite high
-> > (greater than the threshold of 400 used by get_typical_interval), so
-> > having a value that is even higher than it should be doesn't matter.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> > Fixes: 13982929fb08 ("cpuidle: menu: Use one loop for average and variance computations")
-> >
-> > ---
-> >
-> >  drivers/cpuidle/governors/menu.c |   14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> > index 64d6f7a1c776..8cbd70cafe89 100644
-> > --- a/drivers/cpuidle/governors/menu.c
-> > +++ b/drivers/cpuidle/governors/menu.c
-> > @@ -117,14 +117,14 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >  {
-> >         s64 value, min_thresh = -1, max_thresh = UINT_MAX;
-> >         unsigned int max, min, divisor;
-> > -       u64 avg, variance, avg_sq;
-> > +       u64 avg, variance, sum;
-> >         int i;
-> >
-> >  again:
-> >         /* Compute the average and variance of past intervals. */
-> >         max = 0;
-> >         min = UINT_MAX;
-> > -       avg = 0;
-> > +       sum = 0;
-> >         variance = 0;
-> >         divisor = 0;
-> >         for (i = 0; i < INTERVALS; i++) {
-> > @@ -138,7 +138,7 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >
-> >                 divisor++;
-> >
-> > -               avg += value;
-> > +               sum += value;
-> >                 variance += value * value;
-> >
-> >                 if (value > max)
-> > @@ -151,17 +151,17 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >         if (!max)
-> >                 return UINT_MAX;
-> >
-> > +       avg = sum;
-> >         if (divisor == INTERVALS) {
-> >                 avg >>= INTERVAL_SHIFT;
-> > +               variance = variance - (sum * avg);
-> >                 variance >>= INTERVAL_SHIFT;
-> >         } else {
-> >                 do_div(avg, divisor);
-> > +               variance = variance - (sum * avg);
-> >                 do_div(variance, divisor);
-> >         }
-> >
-> > -       avg_sq = avg * avg;
-> > -       variance -= avg_sq;
-> > -
-> >         /*
-> >          * The typical interval is obtained when standard deviation is
-> >          * small (stddev <= 20 us, variance <= 400 us^2) or standard
-> > @@ -175,7 +175,7 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >          * Use this result only if there is no timer to wake us up sooner.
-> >          */
-> >         if (likely(variance <= U64_MAX/36)) {
-> > -               if ((avg_sq > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
-> > +               if ((avg * avg > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
-> >                     variance <= 400)
-> >                         return avg;
-> >         }
-> >
->
---8323329-1319900312-1777527395=:3453--
