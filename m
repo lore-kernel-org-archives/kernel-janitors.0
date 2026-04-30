@@ -1,114 +1,107 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DDA46AF01
-	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 18:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41871925BC
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 19:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777572904; cv=none; b=sQxVk4dp3cZFCyM8NMZZef9JNgOuSrDbQN2BTg9LQQb6HRy6b40qVMt4yPFNRrbBy4dXfxNomy3TYTaTrWScn8aRycOO2tMuRHr+UT6jj3b+akTq5oj4SNpDt53fx4J3ecXfP1UdEOi9aSMsC0LWT5PSuEIXa9PnYbEiEkjViG4=
+	t=1777577776; cv=none; b=MmQRhqHbIrZ+A4IDw52REMrOVUtTMZb9x2SjRHwLzG74v/ZHvSeMOON2hNzBnOfBM9Yak1yEshOymUEDbXZ8r0SGtwkdcFYYfQxx3R3qNIi+W1v8fW+yxfRcy0TnDtnXXUN4LWtqpn3uN4mdRAddAGSsUNyg+6V3oRVvz/6M7Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777572904; c=relaxed/simple;
-	bh=m6tdW/PyQ3fNJU6yi+8EeeFjX1bF/Ohn9ScCCVCvGIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mVJ0Nj1uQKHzcJy2pDPjHycqlAADK+vGJ0BiYeZdh80Bu9Z6lSm98CMwSNQGxOi52kblwi7q3H6OmWOK2dtEj82HfQHltzVBxtFhaDjC5ES8Z+iUPu0NvRMlgomRifzT5h6yeKCA+L9DZRrN3KaGX4EsHol2degSHp6h8JQyvTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yw7QO0XM; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1777577776; c=relaxed/simple;
+	bh=g1DdlrMt/CkgIcA/T8HOsex0zj/lJDdO4s30iu/dasE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c9XJZncn68Z19z9f/o6xv4RbOSfj05QVhStzj1TELzWrmTb3PGi1ItoANva04CZK9t8VOxbktJfR+sadwBQy1mM8RvgHF9qgr67+0nxkgbMuugCjb++OevX+WYy901qWo116Pl7m3e8a9Y1EBka2EB8YlzgS414KE1BRLXKXafM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHL5BnBE; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yw7QO0XM"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488b3f8fa2bso23230045e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 11:15:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHL5BnBE"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4891e86fabeso16444725e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Apr 2026 12:36:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777572901; x=1778177701; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+odbWKzhO0lfnlkFEGcDKWY0FJZ2otqINMazPnX9HaE=;
-        b=Yw7QO0XMbTWPlEXaF6T+ZqA59UIkOY1YI2/jjfVvcaO6eZRJTbBB8rEbGtlqyRCkPm
-         rIAcr0ZvB22jCsvkGaurtW5pQdgPzJOQ0EO0KT2rd1ngFSPV2YpQJf3ZLnIQqqcJHEoQ
-         aLebphH4uibVGpzDzuY7dBbBEyncXy4JV3QyiNb01e01/7sXTpzPl+mSV/WBlJhhoc1v
-         lf371prH6AyIQ5X1zpXiBnStdvKmVVDut4X7ldHSnBgYkZ1qWtxAUwowQdmL9RVn4naz
-         Qfvx5c4dypBbCjPALKqD4f921kjWB9z6Xqxv0ay7tgQOf9XqeinLCUdF2xFsNu9uluES
-         wi6Q==
+        d=gmail.com; s=20251104; t=1777577773; x=1778182573; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+76ABm/WaUtbne2+7yg99KNFhUHJhiFPf1yo1/iOYY=;
+        b=JHL5BnBEUV3GM6Nyf4Os4rZ+2pIe5WARyCABVgIu4aBXavttO0mL5QpsJcm99gneOC
+         JBjcvFYFRN51S86hxQN4+i+rdi3U3oc1zOYiIV29YwAnx1EDQMPRjIBoblVokzC5Q6Xd
+         T9JMPrsnffvpAOlmGW04+kZ7k9KVi9Y4C85DZXMzapcdA5iHYvI9HPxxkGCyX1Dv6CwA
+         TfG+nbEcYC6spF2JBQTypPkn0cywHv9wiWwoQBSoptdwZKLMz3Z+fJ0y2mMvu3NRfsBL
+         gHgJmr0Z7aqFb8HRCyf1IcFkKlf31p3yf18xc24jJ8fQx9SL/s0wkSUvDVCoHN4+L7OK
+         lQlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777572901; x=1778177701;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+odbWKzhO0lfnlkFEGcDKWY0FJZ2otqINMazPnX9HaE=;
-        b=VGZeqXfvY985S88MZvY1IErWewpoz5VK6Fk5zfGVRu5VPonO10wlLkdawVzS9fuBaX
-         ZiKvDaCKe7uSGwkBF+jPS2yl3ykSAIdopiH+08p3f8YLUK+Bpp2j1cHDIizcDqG+CQrI
-         WqrLAK8F1BkWX4Z+/jn0H11bg1ThIk2m1Y9vpW6+XvDQBmLGVkW6T0pLj5fJNiWOwKJ4
-         qigZNlXrFOXeGk8pK0GF12idCYIXZEW6jGEJZxlWD+o5WTKD+pN/c01KgV1RGqinTbxQ
-         UHjk3VEa177WjOBnDerzWXn8mpf83WS9GU13fOX0lwfwHuro3FT6KIB6lG1l3Dl+IxW4
-         srnA==
-X-Gm-Message-State: AOJu0Yw9kWFpDFDanyFGBIJDo3Nq9/ynK1Owk1iZQGyDoHy+BVhpEDMD
-	it9yJMRm3fA9PVIGkQTHA3NEYrwksOj4JFnZQAPfdAAoK/69WXg/c6X1
-X-Gm-Gg: AeBDietoTJW85dtrxPGj7gvfWiF8/fvkhsPCgbopNWk4vI6LSzKbERpsoJRzJMbMfRi
-	EcTQA17XKGWCLIiAf/+tVEowpONeR+ntAGqa7MnnJNxASoWp7hr9uUdstQQcvDpmbp5uPmK7ofN
-	g4rGnhC+9mvvM/R53oTvANvH+Jsp3biGd4uWTtic4tsXYSUdxhVaiR+lbt2RTWGBUbfx3spe57k
-	fBJA3O8WUiORClQIjR3F+ww4xyMhv5mCGnPEvHT0TiUkVM24ozGit2QEIJ5vZBAy/r7cd55LPtg
-	y0nGT9odfD4b4y8A1Igu6XXYIBAuQGUGdbrR0Xc4vSj4OcHpoe2GAeH4s4yqi/UakynrAPbR+7Y
-	UYJ4XXhaoNVYlMOtrCDVZDL7lYa23YG4SXk4xaNO+EvH63OOJFBKQHICu/mD7CB13itMmqvDd+I
-	kChrDXekzD/ThTkcDsCCFezF/BQ5fefQ==
-X-Received: by 2002:a05:600c:8b62:b0:48a:53cb:8604 with SMTP id 5b1f17b1804b1-48a8609bebdmr62229625e9.14.1777572901228;
-        Thu, 30 Apr 2026 11:15:01 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c324672sm46413585e9.32.2026.04.30.11.15.00
+        d=1e100.net; s=20251104; t=1777577773; x=1778182573;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1+76ABm/WaUtbne2+7yg99KNFhUHJhiFPf1yo1/iOYY=;
+        b=h8EomjlIzJVuBxBNqTpl8tmpLUvVwBdLbkE2vogDaonjGGgzFEvIjsowdvxi2WIA3F
+         CMep83jcL+zmIBy208il3w0Ut5RwFKogc2v8DvgnFkJ7+fmjIChjVDPksjYjkWmUzoCo
+         SQ+UciEZaBWv9SUdZiCruocMzx3Wwh3QXPGDXJdwSUixvYWbNBpK39b43RcJ8wNi7B9h
+         kMN5on6XKpXk4uC8ToX6FjfQSb0GuQIWSO8sDU80X//gf0qfL8mcRJiaanrF+KfwZEPA
+         opohZvYjNjqMS8yryOdU2AnG539ZajkSNrgY3DCzYK0S0q3ddcjWC0WsRx3GEc/YxykO
+         cbUw==
+X-Gm-Message-State: AOJu0YzFaM+Js2Rxx+MI5ukOzg7qAypU0LGs3jtlfAZwJh4Ktp1qbJY3
+	gejF8wRCN/C+ffLs849mm85mV2ctxcetnneGDvveQ15zpwU0awR/Sv8U
+X-Gm-Gg: AeBDievCws51OzCo2T6ig+Zqdp6TXqJjide5dBFGjpzFrvVRysLz0T7Izm9kjKum9PL
+	tBe4PC6UDhs+r+pk8qGAmTlZAYCT6qIxLun7+BO0xB7ivOuhCy8zZtpEcEgVx2ehJg3wEL3tgPs
+	RRUkeAtyWIhaZdacTq/L/j4X7y3gOhvvtPFTNbZIuSiZCzt3uSosLCrdPxcJvUvNAMAv1wFn1vw
+	jP/IrRljPB8Ry5ljX9tbbk2s1L3VzCmTdtdnsI4mCL4r7uVw6fmPizWxYgU4skhAH23xyqz6pYn
+	v0CV3Fou6VdcKMsUfU1WKrhXF3J+2pH9tHkRPZ4BYLnkMbaLn9ZSaukmrKIKXJwviZlBAGayHb4
+	Urq1wzVr898gcyN9Yn5T4xAw7/fhDLkcjk297JodvdzV8wlc4lr9MruqOKR4ZxebUDgEIGY2Z/5
+	RcxS4E8S3pMf/D/tH7UyF4d9ulSvv9+bjt
+X-Received: by 2002:a05:600c:354d:b0:488:8b99:54a1 with SMTP id 5b1f17b1804b1-48a8445e8bcmr71043215e9.28.1777577772997;
+        Thu, 30 Apr 2026 12:36:12 -0700 (PDT)
+Received: from localhost ([87.254.0.141])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eb75fe8sm2264485e9.8.2026.04.30.12.36.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2026 11:15:00 -0700 (PDT)
-Date: Thu, 30 Apr 2026 21:14:57 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: [bug report] lib: introduce test_meminit module
-Message-ID: <afOcIan1ap9kD26M@stanley.mountain>
+        Thu, 30 Apr 2026 12:36:12 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nige?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/sched: Fix spelling mistake "sumission" -> "submission"
+Date: Thu, 30 Apr 2026 20:34:46 +0100
+Message-ID: <20260430193446.1062933-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello Alexander Potapenko,
+There is a spelling mistake in a pr_info message. Fix it.
 
-Commit 5015a300a522 ("lib: introduce test_meminit module") from Jul
-16, 2019 (linux-next), leads to the following Smatch static checker
-warning:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/scheduler/tests/tests_scheduler.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	lib/test_meminit.c:390 test_kmemcache()
-	warn: bool mask is always false 'ctor & zero'
+diff --git a/drivers/gpu/drm/scheduler/tests/tests_scheduler.c b/drivers/gpu/drm/scheduler/tests/tests_scheduler.c
+index 8b2e4ef9915f..4728e4605818 100644
+--- a/drivers/gpu/drm/scheduler/tests/tests_scheduler.c
++++ b/drivers/gpu/drm/scheduler/tests/tests_scheduler.c
+@@ -599,7 +599,7 @@ static void drm_sched_scheduler_two_clients_test(struct kunit *test)
+ 	 *  -  qd: Number of outstanding jobs in the client/entity
+ 	 */
+ 
+-	pr_info(" [pct] - Job sumission progress\n"
++	pr_info(" [pct] - Job submission progress\n"
+ " [cps] - Cycles per second\n"
+ "  [qd] - Number of outstanding jobs in the client/entity\n");
+ 	pr_info("%s:\n\t            pct1 cps1 qd1;  pct2 cps2 qd2\n",
+-- 
+2.53.0
 
-lib/test_meminit.c
-    378 static int __init test_kmemcache(int *total_failures)
-    379 {
-    380         int failures = 0, num_tests = 0;
-    381         int i, flags, size;
-    382         bool ctor, rcu, zero;
-    383 
-    384         for (i = 0; i < 10; i++) {
-    385                 size = 8 << i;
-    386                 for (flags = 0; flags < 8; flags++) {
-    387                         ctor = flags & 1;
-    388                         rcu = flags & 2;
-    389                         zero = flags & 4;
---> 390                         if (ctor & zero)
-                                    ^^^^^^^^^^^
-This is like (BIT(1) & BIT(4)) so it can't be true.  Was && intended?
-
-    391                                 continue;
-    392                         num_tests += do_kmem_cache_size(size, ctor, rcu, zero,
-    393                                                         &failures);
-    394                 }
-    395                 num_tests += do_kmem_cache_size_bulk(size, &failures);
-    396         }
-    397         REPORT_FAILURES_IN_FN();
-    398         *total_failures += failures;
-    399         return num_tests;
-    400 }
-
-This email is a free service from the Smatch-CI project [smatch.sf.net].
-
-regards,
-dan carpenter
