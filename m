@@ -1,180 +1,102 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269F93A382D;
-	Wed, 29 Apr 2026 21:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86921A9FA4;
+	Thu, 30 Apr 2026 01:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777497509; cv=none; b=FsiZ1EgciECHO6DK3C8CHO7Q59Eqf+Sgxhzczp9hplma/Ibmo2XTN7r/kq8VDFmgGtp5fHyX9tMQN1gMrHgyuDYV6DEhz/G8wGgJTFS9xJleFSdulD6a1c5RyK/2/r5hsxa4ZU9p++tcsTHJbsRqKQ65hIkMQc5VRv000PdrWdM=
+	t=1777511006; cv=none; b=sQpTRvetCr8vcrCmJtjDmIihiPZOFDnIc+1aKA+aaG7IkHMZz3aIPiJZcd0jRqVJoyAHCDLj3sMzwyOvWhz513oao37C4WQocSIa0vfFyeDJv4X1X8c/xpLrgEgWd9QITVJ9lcDqPz7Et8TalMGxlp1BUQgKtcPYnEETDJugH58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777497509; c=relaxed/simple;
-	bh=+Zoa5fWSAnJ+ICqNbcHOzXk9P0t+8/+omdy3Xl66DJo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lAzZ1FDtfuAYwhpvlFoMWCHNtR9znEdloux4zEIyI+Z3SBbIaMka1ayRLR8mSxYmVr9cOeh1rq/al4QzdclrbhbOPxThs+QshN9mj6EmwMZ892SfPlZtC+E6oTBO/bbV1SWMZZW2PYUcLsTA0KdTsaXDGnPhyVil+ERNvsk6BD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=pAjjUnAc; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1777511006; c=relaxed/simple;
+	bh=JbFNcbiAuQHSN10MkBynRl4jTPI/nckdEueAPnmUMHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VA0lz3hH8AF7jqNGjWMkGHp6oUZQGLdX1Azgnm4d2XgECrzUPVXDmUzXAP9RES3Zhmq7mqP/Pnz0r+yNia65Gs4wAonlAZryPbx5LBXR1WVG7JkkHoDeXL448odgAMn67aCKYoWcH5W1qjdB+x4bohiEV+hwYR4bRvS8/cJiUL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2VPMHjQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="pAjjUnAc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=uPX3kDTl6ZZxuziu834VSUYY6cPdVQdQ9nEU9mi1qNM=;
-  b=pAjjUnAcp2/GlU9skP/Uwy9vZvFZMqa2Y1izJK9Kq76T3CWtDYVxHptG
-   hSk433WQrS22fMAf3rzrZ2PuBMzCyPEtjOkq2naOW6+iWy4hRnwMa2AyP
-   X1vNSv9drIYxzo/xCUQTbhCDLpwtcg4vQJQbgbWdhYiTTMSyQGLmt0AG1
-   U=;
-X-CSE-ConnectionGUID: vxrgS5nxQguyQYyfaSRnhA==
-X-CSE-MsgGUID: iBFc9tVmQLuueLz1OtTsDg==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.23,206,1770591600"; 
-   d="scan'208";a="145376762"
-Received: from default-80-209-135-165.interdsl.co.uk (HELO hadrien) ([80.209.135.165])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 23:18:24 +0200
-Date: Wed, 29 Apr 2026 22:18:22 +0100 (BST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-    Aboorva Devarajan <aboorvad@linux.ibm.com>, 
-    kernel-janitors@vger.kernel.org, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpuidle: menu: correct variance calculation
-In-Reply-To: <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
-Message-ID: <c5fc3d94-ae4e-5879-bacd-645ed26f2cc0@inria.fr>
-References: <20260429153357.2350958-1-Julia.Lawall@inria.fr> <CAJZ5v0hVbda_ZjQ-j5t0MRCN9C6TUwN7dy-U89tm77DZDkdx8g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2VPMHjQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4FFC19425;
+	Thu, 30 Apr 2026 01:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777511005;
+	bh=JbFNcbiAuQHSN10MkBynRl4jTPI/nckdEueAPnmUMHw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n2VPMHjQmLfxGZMrISEvmPddqTLuus3rZWYlh9AfnWnfyR8yNAZUBLp+H4DplBuId
+	 /eoJYWQ/aAdiEvFS5UVGIpIz+0bxSSrtfdlRRCQUNxTPtZHkHDY498ac7C10jkT4Mk
+	 gQWQ/3eXFuc6hSCv0p+pfBl7aUtRNPRrs1IqJ3Amr+TGa/W2DjznvIERAm3IcFD/qA
+	 gPUqfAfSeXw2JfmJYKt9b3iWmehWoorpx7pEUqbn7CNaM73wrqS1VsLsXMvtNXePJp
+	 pTQE0ycJ6lgtOTNIZpsXRpl8yv869H5qhLnGxyx9FI7B+tDOHCYYCAPYKgSvfSq+Qc
+	 /eF3rOh+MCNkw==
+From: Jakub Kicinski <kuba@kernel.org>
+To: j.raczynski@samsung.com
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH RESEND net-next] net/sun: Fix multiple typos in comments
+Date: Wed, 29 Apr 2026 18:03:22 -0700
+Message-ID: <20260430010322.2326574-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260428101728.3537456-1-j.raczynski@samsung.com>
+References: <20260428101728.3537456-1-j.raczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-256966742-1777497503=:4434"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This is an AI-generated review of your patch. The human sending this
+email has considered the AI review valid, or at least plausible.
+---
+net/sun: Fix multiple typos in comments
 
---8323329-256966742-1777497503=:4434
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+This patch fixes various typos in comments across the sun ethernet
+drivers. A couple of the replacements may warrant a second look.
 
+> diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
+> index fe00e7dd3fe4..74fb0de12d21 100644
+> --- a/drivers/net/ethernet/sun/cassini.c
+> +++ b/drivers/net/ethernet/sun/cassini.c
 
+[ ... ]
 
-On Wed, 29 Apr 2026, Rafael J. Wysocki wrote:
+> @@ -4547,7 +4547,7 @@ static int cas_get_link_ksettings(struct net_device *dev,
+>  	}
+>  	if (linkstate != link_up) {
+>  		/* Force these to "unknown" if the link is not up and
+> -		 * autonogotiation in enabled. We can set the link
+> +		 * autonegotiation in enabled. We can set the link
 
-> On Wed, Apr 29, 2026 at 5:35 PM Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> >
-> > Commit 13982929fb08 ("cpuidle: menu: Use one loop for average and
-> > variance computations") simplified the numerator of the variance
-> > calculation to:
-> >
-> > sum of squares of idle times - (average idle time)^2
-> >
-> > This computes a value that is typically too big.  The formula should be
-> >
-> > sum of squares of idle times - (sum of idle times * average idle time)
->
-> I'm not sure why.
->
-> According to Wikipedia Var(X) = E[X^2] - E[X]^2:
->
-> https://en.wikipedia.org/wiki/Variance
+The "autonogotiation" to "autonegotiation" change looks correct, but
+the neighbouring "in enabled" in the same sentence appears to be a
+leftover grammar slip (should it read "is enabled"?).  Since this
+sentence is already being touched as part of the typo cleanup, would
+it make sense to fix that at the same time?
 
-Suppose you have 10 10 10 10 10 10 10 10 10
-The sum of the squares is 800.
-The average is 10.
-The square of the average is 100.
-So the current formula gives 800 - 100 = 700 as the numerator.  It is
-supposed to be 0.
+>  		 * speed to 0, but not cmd->duplex,
+>  		 * because its legal values are 0 and 1.  Ethtool will
+>  		 * print the value reported in parentheses after the
 
-800 - (80 * 10) = 0
+[ ... ]
 
-I took the formula from the same page but in the discrete random variable
-section, in the sentence:
+> diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
+> index 4c9d5d4dd8a0..efbf042e9352 100644
+> --- a/drivers/net/ethernet/sun/sunhme.c
+> +++ b/drivers/net/ethernet/sun/sunhme.c
+> @@ -1118,7 +1118,7 @@ static void happy_meal_transceiver_check(struct happy_meal *hp, void __iomem *tr
+>   *
+>   * We use skb_reserve() to align the data block we get in the skb.  We
+>   * also program the etxregs->cfg register to use an offset of 2.  This
+> - * imperical constant plus the ethernet header size will always leave
+> + * emperical constant plus the ethernet header size will always leave
 
-The variance of a collection of n {\displaystyle n} equally likely values
-can be written as ...
+Neither "imperical" nor "emperical" is a correct English word; the
+intended word is "empirical".  Was the replacement here meant to be
+"empirical"?
 
-julia
-
->
-> > On a small number of tests I didn't find any significant performance
-> > change.  Likewise, the original patch was tested by various people and
-> > was presumably not observed to cause any problem.  My impression is
-> > that this is because the actual variance is almost always quite high
-> > (greater than the threshold of 400 used by get_typical_interval), so
-> > having a value that is even higher than it should be doesn't matter.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> > Fixes: 13982929fb08 ("cpuidle: menu: Use one loop for average and variance computations")
-> >
-> > ---
-> >
-> >  drivers/cpuidle/governors/menu.c |   14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> > index 64d6f7a1c776..8cbd70cafe89 100644
-> > --- a/drivers/cpuidle/governors/menu.c
-> > +++ b/drivers/cpuidle/governors/menu.c
-> > @@ -117,14 +117,14 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >  {
-> >         s64 value, min_thresh = -1, max_thresh = UINT_MAX;
-> >         unsigned int max, min, divisor;
-> > -       u64 avg, variance, avg_sq;
-> > +       u64 avg, variance, sum;
-> >         int i;
-> >
-> >  again:
-> >         /* Compute the average and variance of past intervals. */
-> >         max = 0;
-> >         min = UINT_MAX;
-> > -       avg = 0;
-> > +       sum = 0;
-> >         variance = 0;
-> >         divisor = 0;
-> >         for (i = 0; i < INTERVALS; i++) {
-> > @@ -138,7 +138,7 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >
-> >                 divisor++;
-> >
-> > -               avg += value;
-> > +               sum += value;
-> >                 variance += value * value;
-> >
-> >                 if (value > max)
-> > @@ -151,17 +151,17 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >         if (!max)
-> >                 return UINT_MAX;
-> >
-> > +       avg = sum;
-> >         if (divisor == INTERVALS) {
-> >                 avg >>= INTERVAL_SHIFT;
-> > +               variance = variance - (sum * avg);
-> >                 variance >>= INTERVAL_SHIFT;
-> >         } else {
-> >                 do_div(avg, divisor);
-> > +               variance = variance - (sum * avg);
-> >                 do_div(variance, divisor);
-> >         }
-> >
-> > -       avg_sq = avg * avg;
-> > -       variance -= avg_sq;
-> > -
-> >         /*
-> >          * The typical interval is obtained when standard deviation is
-> >          * small (stddev <= 20 us, variance <= 400 us^2) or standard
-> > @@ -175,7 +175,7 @@ static unsigned int get_typical_interval(struct menu_device *data)
-> >          * Use this result only if there is no timer to wake us up sooner.
-> >          */
-> >         if (likely(variance <= U64_MAX/36)) {
-> > -               if ((avg_sq > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
-> > +               if ((avg * avg > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
-> >                     variance <= 400)
-> >                         return avg;
-> >         }
-> >
->
---8323329-256966742-1777497503=:4434--
+>   * us with a nicely aligned ip header once we pass things up to the
+>   * protocol layers.
+>   *
+-- 
+pw-bot: cr
