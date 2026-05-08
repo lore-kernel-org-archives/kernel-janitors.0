@@ -1,122 +1,103 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6157374E57
-	for <kernel-janitors@vger.kernel.org>; Fri,  8 May 2026 07:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C0B325483
+	for <kernel-janitors@vger.kernel.org>; Fri,  8 May 2026 16:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778226726; cv=none; b=TEsFh+EQ3TOvfItn+/wE1gAfsrmWP6RamnvDrN+o9BZwB5AqFEoMNqr3YBvD9zmdqtEzzcCr8kAiKy75U6MPHyDFlvxdpUqkxvILkFgiF4Kiv6IafbaqjODLowkS0ECWgnzBAy4hdmRuBAeBf2ZSRInNRs2/UNCsiXrFoEHBUYA=
+	t=1778259158; cv=none; b=mGJOWt9IavJcZ4s/i4LMw28AT22e/L1R9ovQvI2dvNBLzopXnA875Cu/LAwJsRYOvItyrIJnlKOKI2I9USAvwUhlATzWNmFyea+R5LwGbob+5DilSDfcZwMamDlpynFG2RSTOAu0/xIUE22egH4bqwJByrXfenK4g2RP0ynHv30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778226726; c=relaxed/simple;
-	bh=+hGFEzL83JRjm/4SymQAvrLQcOvD7wmAyNC0O9gabE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kc0PW7BxV9l9Of/49Ex/GPEAXOifFqGJjT++FqBBRIxH1QPaJSINBwGc86A8mNYEBIlYgVYovUyAP1t2W+ugMdA5a/XS13LI9SLWSSKxxbK98JG8NZv2K7T8qQTbFwV70FxJXugcarL/Oj676NJC9OpBMShiBij7rsBWmUQz47Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkFWzna8; arc=none smtp.client-ip=209.85.219.45
+	s=arc-20240116; t=1778259158; c=relaxed/simple;
+	bh=BQ4r8c1KpfYE3hCqwq96T8uwxakS+v2i2hWNPC4C2e0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QuwGxbAtzy3rEQDYcnfa0ud11W1rgMbnlMvnrJlBBetLPZxJvBWmxVhkq1JLdm+BCnymeW/2a/QcjnUYOnoycpwruh9ZO+Kuhq0D92oG+5pY0yFQkqqSJJiJrOtg+YsCyb50zSPbRVBtSgoyqr3SdAYT7QjkzFLPzkPZpG/T0ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lV1jaDMV; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkFWzna8"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8b1f2b7f1bcso19401576d6.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 08 May 2026 00:52:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lV1jaDMV"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-48e56c1bf5dso14019465e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 08 May 2026 09:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778226723; x=1778831523; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aDoE2rE1SAE6iZmEWNqg67hZIZXJqKOJm3oC+rNyc8Q=;
-        b=ZkFWzna8VD5A/DFCXeIVzbULEPAFh6KKNSV4/xsrkHWgXn8cxgwbVv1WTuogc3l38E
-         IRVw7WmOtAJCF9Na8iQ5Bj+jO01SJjoJAlPoLZa6ZVDtbLqHk+oe7AluYQcM+O5K+rtA
-         W4zEykc9+m+EiqqGgcKX4T6/Nm5qQQ+IZiu2XVY6GtN6v3dprbGy7t4UJ7jDQZlqus9R
-         j6UsAuDHF3QZ4fYSksBHUYbTU0Q+C03xZKnRICCYaGXtisYWuXdYtiDcqpFw3ptf6N4u
-         k6QuNKWhvy4gZdYSs+RYMOITh+ensIMRX7eRJ7vTPTBXM4xZAqoeUmw9dnCpzXvm2+QB
-         O61w==
+        d=gmail.com; s=20251104; t=1778259156; x=1778863956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDPLWhf2Swx5+TpPMoElnS74C6BcZSaXrBoYo8J5R/k=;
+        b=lV1jaDMV92VP4mV7hGsFeMjBLqrT5fQlkNYsTX6lgtw0166ZXmP9BLLzXUktWuyMY8
+         g1xjp96IaUZ0tI2D3zm20LApogdoaij4Vd+NqCxciHvYO5OEJH+FlFP2TBzO3YbfFctM
+         ZcVAI/av2KfOsrXJRMItFOZzX55zgXERNrDGH54NA2pW2g4fOQ7NwRbVg0SUXuCVEC7V
+         KG7q79mms3LkdPXceA2eTSyWQ5rN5LlavODdmIzHyN2swfpUYO5YsNMJPQ+uIXt/5NrA
+         rpVoxoLYoDPJoify1CTSCZtKqyd23FgT64Zs/FHNg/oLJVF5ssCohpB/h84r6qORSR3h
+         pwgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778226723; x=1778831523;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aDoE2rE1SAE6iZmEWNqg67hZIZXJqKOJm3oC+rNyc8Q=;
-        b=sD+rrJfahiP+6inm6H7nXfhDOt95SQveXZUvUmghmnXICJmZO6JNoOBayAVzO8tSkE
-         0WNBjB9gbTNCyPTCHIvNmFRdw22fBPEfLLetWl+8Slat8YvPrbAPWd3ZoNQUR1XsMkMR
-         LXkaoQA3LuNj7DXrOAP5gfWzl/pChbi/9IE2wRhB3MzGTLlpbFk6HX1RLTJqW/Z/HK8+
-         Qp0EDa3FlCYaiiHTuwCRvk9vAxSBGbrIF7WN8qcAmRt1KRqO9POr0W0xpYdec5yonWBr
-         eqBnmkUlAMmlTKHUw9UfiAf1gHgtsWUEZvETT7/dCCOdrA1MQ1CuBYD8Lvvlo9w1JsOY
-         Mlxg==
-X-Forwarded-Encrypted: i=1; AFNElJ/eU+Cq1dq3xiCj5xogB3hUWgKA36nNf6OFYrg+GQ56+5vD7B6nx1A/MXUDBswrPMx6OKqWorUyAtRwasU4z0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZhrAQYrspS8zXT7p3moFlHwZSblsCUnFu6OCilgMxced/UvJ7
-	Qa0lRE+z4HXPwaldKOknOlfTia78OHovCl38RJ5IGXYoz19IzjphuMbv
-X-Gm-Gg: Acq92OGa5YZ74yIm0K/Qzg6p2cuWNT1BcoVyomB0cPkWn8sbhzsl+I9r2nEOAD5JNGl
-	R2foTxURjsk2g3TLLRgPUyJcUIkmZWY+kRcVeVHMO2ao9q915RcCiNir5IP1IRubW55lLQVoTFj
-	fnDkY0tToAy6CBcDoX6L0DkjdWxQhj3mtkGWMmWspH+00Q7vIfj6TRhm/CqabVgkKi+u4RNMGX+
-	QtgDMSHP6aqPdBmXblq1fE1C0ehIaC6vhXruWhWY9bMAC1oVihYaR+RAmY1jgmVRZh5e5KAAUHX
-	5k6j+LLt8osp5MsmQPpFXN2H4zhM63k5yNI6EsEZ0Jhk1YoMqNN/6xUa+nXjUGONluBSbpg0sEE
-	4YpZuYlj1RWTzFsNMYyxZMwutUSV0eFG/xgSVWexYAL/D/sLJxacic0k9Lb9fSIwdYL9XzK3sY/
-	6RAeIrEx7IaDI69w1P9wbCi8zBUyvV
-X-Received: by 2002:ad4:5aa5:0:b0:8ac:a266:ce34 with SMTP id 6a1803df08f44-8bdb6ec5e9dmr92649186d6.3.1778226722878;
-        Fri, 08 May 2026 00:52:02 -0700 (PDT)
-Received: from localhost ([185.141.119.51])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf3addb413sm11845026d6.9.2026.05.08.00.52.01
+        d=1e100.net; s=20251104; t=1778259156; x=1778863956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDPLWhf2Swx5+TpPMoElnS74C6BcZSaXrBoYo8J5R/k=;
+        b=BJ79xuS4wAPb1pyexqXLW3TOotyzSK81kYkH51FkdBtcG129LvHY+jvIjkFcKR52Is
+         TrllvmV5BAWMGmNNdLMmhNJDpZdzKvbcCt3XFMZkLZxA4iUaIZ8vBRx1g8bH4JDmCfgp
+         ipslwMz5L2rw1dTSWtXe09SVYmRV6Wbn3hq/4ZFUlQt7RYXP1OogYGrQjlUgqHd8kMo0
+         IDUe5qLf6wuVub9Y5m/RS+s+2brDsxgoX6/Xxa5dBlnoylb0wF6bRNorNC96xIjtxEkt
+         QxgrEeH4jUanqQJ7VFG/pULSbbcZTXOuThBVWiIfjY2vMhsMSDIEi0DvGT4I+DmAX8Eg
+         fW8A==
+X-Gm-Message-State: AOJu0YyaO5nZRiQ+nlRri4BnymLFm3HIwkgy894/gcV7a7VTfuECZzFu
+	s2/b5ASneuq3hcduLSzb5kGvV0NvR6F36gDBjJF+5rJp1asHNXgKEyxk
+X-Gm-Gg: AeBDietybQ1k4JRoNmrjyVrd1WBnxMdiYdMy/F8u47xsF+VWfqBpCmtQiu8o4ntUOJJ
+	hYrzJdnhyQCEYWGbp45QXoX5Vf3LWRwfYjGiP7EKp81i/9hY0L36jrF36pMsYFOSMMcLvm5hCck
+	g3G9jQSJwGvKwxcaBgIOqzWiYFuiyYvHGh4l4zlEhIBAPNYSnL990/c6tCqt6cySk9yNpylPA8g
+	syGaINPI2UWm2cIN0YQfXB9Eupckqq/v00uSxXk9lbw+/PDZBbXtLxfDoOeqr70VAPMhvq/Hq7I
+	P2iALsXPCeRzOJlv+YfDlkr7KCRP9REwA6kjq6s9/26YKKTXjoY+26LUiBxOwZY10S3RnJ8NrlH
+	L8sppADd1EXWeA0buZ3grPYyIkmDlog3HbOYWqIO1i9MJT0ffLmYqA4P6EhRIqW2noq2pR96Fo+
+	f04cCNsrhHgkh12qkryaRy7A==
+X-Received: by 2002:a05:600c:354b:b0:48a:554d:b9a2 with SMTP id 5b1f17b1804b1-48e51e0c7c9mr202325015e9.6.1778259155336;
+        Fri, 08 May 2026 09:52:35 -0700 (PDT)
+Received: from localhost ([87.254.0.141])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e6dd35abcsm6637015e9.7.2026.05.08.09.52.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2026 00:52:02 -0700 (PDT)
-Date: Fri, 8 May 2026 10:51:56 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Alexandre Bounine <alexandre.bounine@idt.com>
-Cc: Matt Porter <mporter@kernel.crashing.org>,
-	Alexandre Bounine <alex.bou9@gmail.com>,
-	Chul Kim <chul.kim@idt.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] rapidio/tsi721: Prevent a bad dereference in tsi721_db_dpc()
-Message-ID: <af2WHMZiqMwdYveO@stanley.mountain>
+        Fri, 08 May 2026 09:52:34 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] firmware: imx: Fix spelling mistake "mismatced" -> "mismatched"
+Date: Fri,  8 May 2026 17:51:09 +0100
+Message-ID: <20260508165110.73435-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-With a list_for_each() loop, if we don't find the item we are looking
-for in the list, then the loop exits with the iterator, which is "dbell"
-in this loop, pointing to invalid memory.
+There is a spelling mistake in a dev_err message. Fix it.
 
-This code uses the "found" variable to determine if we have found the
-doorbell we are looking for or not.  However, the problem that the
-"found" variable needs to be set to false at the start of each iteration,
-otherwise after the first correct doorbell, then everything is marked as
-found.
-
-Reset the "found" to false at the start of the iteration and move the
-variable inside the loop.
-
-Fixes: 48618fb4e522 ("RapidIO: add mport driver for Tsi721 bridge")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/rapidio/devices/tsi721.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/firmware/imx/ele_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/devices/tsi721.c b/drivers/rapidio/devices/tsi721.c
-index 66331e67cf4e..71b87bf8c31d 100644
---- a/drivers/rapidio/devices/tsi721.c
-+++ b/drivers/rapidio/devices/tsi721.c
-@@ -394,7 +394,6 @@ static void tsi721_db_dpc(struct work_struct *work)
- 						    idb_work);
- 	struct rio_mport *mport;
- 	struct rio_dbell *dbell;
--	int found = 0;
- 	u32 wr_ptr, rd_ptr;
- 	u64 *idb_entry;
- 	u32 regval;
-@@ -412,6 +411,8 @@ static void tsi721_db_dpc(struct work_struct *work)
- 	rd_ptr = ioread32(priv->regs + TSI721_IDQ_RP(IDB_QUEUE)) % IDB_QSIZE;
- 
- 	while (wr_ptr != rd_ptr) {
-+		int found = 0;
-+
- 		idb_entry = (u64 *)(priv->idb_base +
- 					(TSI721_IDB_ENTRY_SIZE * rd_ptr));
- 		rd_ptr++;
+diff --git a/drivers/firmware/imx/ele_common.c b/drivers/firmware/imx/ele_common.c
+index 78440f62bf92..e5117a1f1995 100644
+--- a/drivers/firmware/imx/ele_common.c
++++ b/drivers/firmware/imx/ele_common.c
+@@ -110,7 +110,7 @@ int ele_msg_send(struct se_if_device_ctx *dev_ctx,
+ 	 */
+ 	if (header->size << 2 != tx_msg_sz) {
+ 		dev_err(dev_ctx->priv->dev,
+-			"%s: User buf hdr: 0x%x, sz mismatced with input-sz (%d != %d).",
++			"%s: User buf hdr: 0x%x, sz mismatched with input-sz (%d != %d).",
+ 			dev_ctx->devname, *(u32 *)header, header->size << 2, tx_msg_sz);
+ 		return -EINVAL;
+ 	}
 -- 
 2.53.0
 
