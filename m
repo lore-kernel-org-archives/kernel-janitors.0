@@ -1,101 +1,117 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45C931E823
-	for <kernel-janitors@vger.kernel.org>; Sun, 10 May 2026 20:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5B83112BD
+	for <kernel-janitors@vger.kernel.org>; Mon, 11 May 2026 07:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778444059; cv=none; b=Fd0pYkb31eHkj8h+4xdHGdonlYufSriMkl58GOiSnCGNckBth+vsyrwoaV6yBKI4PaHXXXox9S4ACZrRGPakbhzxLpv8j+gRJYS1eb75l9edJ1a4iPbpu9b52Dfv+jonB0oRTa++TvtxF/lWtc5ZUsgP8u20KHyhOaTf+9AZiSQ=
+	t=1778484251; cv=none; b=uejqpYUTlfhNYGEQ6yRlev0QAByjKrFqOH/kN53e8trt9CaXX5KTxPJsjmlYfvYqXyLaZk57X6ViyQdGYo23wUFtve6iGMXPHz5NPTZgsM1uc96JAlqaEN64Ac2+r9S42fPGIU9je8I7VBfQBDK40jhRYsZjr1qs2eQSqVIG5KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778444059; c=relaxed/simple;
-	bh=rDVkNd2WMkgMRAdl2SG+jRrcWpiaAUfMuzLmFKcvD0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kvxQCDdvIKVm5qV7A9WkDTYdkddsAeDLe/WHu3kvKP39u0+mauFrfuvZ5B3XvByAhWIGrPDxZxmePBZApT/+abGSMvvKXOpbj21zePmJsE20OzhtJDVYu/PZBTaoVoyToNEfvpkqZ/eSc/5pro7S+4Qhk/dgf6wOaMxbT/KiE3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tKKAYX0F; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1778484251; c=relaxed/simple;
+	bh=PP3r/MntpF6E2HPsEiAzHDByBUE9hdbpegtf7BYBCYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fy8hYK2q5GXt+wYOA0FGOQDOFtlYiYxdP1ANcUX080RlLHeApfEOv9SM4EpForQ8E+n742RzslEc8J95FkuHY3aUkfCbvAlilO7ijjm1ewAUdkTV5UmVFPny+GupW3W6vYbONEqZZ4ljP7aWjflBIaMWq1AREmitn/KWKeKgwHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZuHXl81; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tKKAYX0F"
-Received: from fedora.home ([10.64.95.105])
-	by smtp.orange.fr with ESMTP
-	id MAWSwPk0NfaigMAWSwajDo; Sun, 10 May 2026 22:13:08 +0200
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPSA
-	id MAWGwR6PjEbAgMAWGwTzjE; Sun, 10 May 2026 22:12:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1778443979;
-	bh=XolC0r9oYNCS4EPOsPRFpC6rNlihVAxe7GPmi9ew9/Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=tKKAYX0FsnkHgAo7jQ2IgSFGN5qj9FeBQFid32FxQxdOg+SycBk/Q7IqHOCBdXp2B
-	 84rm8RsiW4e+6cgEuqdasIdwUUkBUWmtASrjLzu+L4Q54gIQCC24WpyUME7NisVd52
-	 BVwcax2lLyWXi0nvKsPK2yG4zH8Ly1h0i197ZBmIro+PEu7cWs3DDHhJKV5X0qsDBD
-	 2Yrfb4hGLm+RKzU13vLuuX11+eWJAsp6Jrjkg0QbnzBEErhR2j8AI1cZWGTnUpqq+n
-	 x/PuZ3+LQthPZ9ZhjoErIwAavIrCTpCv/hhUp+SrM/iPcfmm/kxhERaPrFiDllOUcA
-	 7Jczv5NV8A96Q==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 10 May 2026 22:12:59 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: David Heidelberg <david+nfc@ixit.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	oe-linux-nfc@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: [PATCH] NFC: nci: uart: Constify struct tty_ldisc_ops
-Date: Sun, 10 May 2026 22:12:52 +0200
-Message-ID: <c756755a72cdfde2877a18ddee01eaa4f633c220.1778443960.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZuHXl81"
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-63134048d8dso2263740137.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 May 2026 00:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778484249; x=1779089049; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HyHzPHZyzl+Vg43QcI8DAMEIEZeDqaoxRsbf4hAiXOc=;
+        b=fZuHXl81vtNLXxdpgEQfODoCcMfzEgRoAV9PXMqww8xcNeWt+PppxdY04GfYJQ2N1m
+         90Qb8sxD6D0deFiv2Lj//01/JK/bSyaVpj+307ne5j53NP5+IFomHVq5Q2NZbh07Gr5R
+         pBM1bFzUlGLIFIyK1Dl9+G7LKeeNDyfySplL7cSBWndMe8cCOHc3LR+nBQ9IiA+FQUJe
+         cJoiVWW42oS0Zgwej+gb87CGC6bJCziF/9o1ymwiDYcmAkGz1rm/hfAvI6euKIzaGGRs
+         l5rbIQ9a4zBffIJXmE6b/JX7ZrO2/+9CL9XdrFx1/UM6IcP7MAWgOgl2Q2qySWnxNZs2
+         /jLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778484249; x=1779089049;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HyHzPHZyzl+Vg43QcI8DAMEIEZeDqaoxRsbf4hAiXOc=;
+        b=FQj5kIHhgSYqFSOLFllM1utX/CaR71zvUTno7IVbkrzswv6W1jlYEQ2dunMhZllLzF
+         NgjFeiDoOWPGgvzjnmed+UbKbNsCTzB2arZEnm4ovdvRtdBqo5ZboK7GV4APZaCTBKYm
+         25ZY/20ngM6efLOWtFPeAQNwVBFjmEOGQ1ectOAkD8vzrwVxWhEjp0V5AwLGz75RdF8q
+         FYTFcGUZMA87qLY6NA4hJQY1iRB1sZumf5kWGh812vxPLnKHcHWWZIfNfT2tmqyLQGnq
+         M6jX86uOEeVkvz07w+Cp/AUNf+EXQRXokMP+9y+BuIPQ36xsi6/no6W+lMPQDkD4pVqB
+         GqoQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+RXCeSboaHOBcq5c7Z9esZZz7QoxAthDdkE4C9mAt0CWGe9bzDu1MbYbtPImDPCulnbUJSJhhzA9eMNxGZkYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyVluovOJgxCQLaX5J4ZEyd00qnlDS+4BAbSQfLcXoBp8hgCPi
+	3wi2A9Gm+OmGLRgv4N+enAFuB0tC73Wu3LErPlQDTJQrIvgsF2/Bt6HrgXifAmIS
+X-Gm-Gg: Acq92OGZtm3s/YjBbk54Vw3vj07w/0PxamUAicoCGwbjTSSzJJWjP4ZAq6fQNbI1+LA
+	olg9CRv910/cAFsbi5e7GVfe7DwwoJe9BF2lIW/Ot8KCXoMGso/kUAedcSXlw2JAY4akb4XYmZs
+	0N7mD9UXnltgFjgwVR3uhRB388L29vNRXzkF8C/chNTT9hqqZbS/NHGR8tt3okHlt6gScDUIJ0B
+	KuSv8BxnpvU8fQUaCHEvSnxH9yAKxJD2411ixja6Sqf5Ojw8Y+sJNLfPn/xQe5G6Prk27fTiZNn
+	v5g8379CTBJ3MWwURv1glj+V4UR8twg1YBI3scYZDpYL2UxpTm998f4pt5vpIEB93iG5S089hio
+	zkTshMxJp+DsKR1iYjNcKGG2ef7jgnOdSu3ii/Mh9keS/1mzH3CplFAduKAFY/pwwAwFmzOHh1t
+	IxSx0gOhcZ2QbJYeyAW4P9sFgm9EeS
+X-Received: by 2002:a05:6102:508b:b0:632:b111:965a with SMTP id ada2fe7eead31-632b1119b04mr1737026137.11.1778484248846;
+        Mon, 11 May 2026 00:24:08 -0700 (PDT)
+Received: from localhost ([185.141.119.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-63140250725sm5583359137.12.2026.05.11.00.24.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2026 00:24:07 -0700 (PDT)
+Date: Mon, 11 May 2026 10:24:01 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] afs: Fix error code in afs_extract_vl_addrs()
+Message-ID: <agGEESTvK1LxcRH2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-'struct tty_ldisc_ops' is not modified in this driver.
+The error codes on these paths are only set on the first iteration
+through the loop.  Set the correct error code on every iteration.
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
-
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  11454	   3352	    256	  15062	   3ad6	net/nfc/nci/uart.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  11646	   3160	    256	  15062	   3ad6	net/nfc/nci/uart.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 0a5143f2f89c ("afs: Implement VL server rotation")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-Compile tested only.
----
- net/nfc/nci/uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/vl_list.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/nfc/nci/uart.c b/net/nfc/nci/uart.c
-index 5a3aed7f84f5..aa20e8603f32 100644
---- a/net/nfc/nci/uart.c
-+++ b/net/nfc/nci/uart.c
-@@ -421,7 +421,7 @@ void nci_uart_set_config(struct nci_uart *nu, int baudrate, int flow_ctrl)
- }
- EXPORT_SYMBOL_GPL(nci_uart_set_config);
+diff --git a/fs/afs/vl_list.c b/fs/afs/vl_list.c
+index 3e4966915ea4..003889cf0f18 100644
+--- a/fs/afs/vl_list.c
++++ b/fs/afs/vl_list.c
+@@ -92,7 +92,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
+ {
+ 	struct afs_addr_list *alist;
+ 	const u8 *b = *_b;
+-	int ret = -EINVAL;
++	int ret;
  
--static struct tty_ldisc_ops nci_uart_ldisc = {
-+static const struct tty_ldisc_ops nci_uart_ldisc = {
- 	.owner		= THIS_MODULE,
- 	.num		= N_NCI,
- 	.name		= "n_nci",
+ 	alist = afs_alloc_addrlist(nr_addrs);
+ 	if (!alist)
+@@ -110,6 +110,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
+ 		case DNS_ADDRESS_IS_IPV4:
+ 			if (end - b < 4) {
+ 				_leave(" = -EINVAL [short inet]");
++				ret = -EINVAL;
+ 				goto error;
+ 			}
+ 			memcpy(x, b, 4);
+@@ -122,6 +123,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
+ 		case DNS_ADDRESS_IS_IPV6:
+ 			if (end - b < 16) {
+ 				_leave(" = -EINVAL [short inet6]");
++				ret = -EINVAL;
+ 				goto error;
+ 			}
+ 			memcpy(x, b, 16);
 -- 
-2.54.0
+2.53.0
 
