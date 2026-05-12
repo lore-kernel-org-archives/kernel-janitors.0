@@ -1,117 +1,147 @@
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5B83112BD
-	for <kernel-janitors@vger.kernel.org>; Mon, 11 May 2026 07:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A1739FD9;
+	Tue, 12 May 2026 00:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778484251; cv=none; b=uejqpYUTlfhNYGEQ6yRlev0QAByjKrFqOH/kN53e8trt9CaXX5KTxPJsjmlYfvYqXyLaZk57X6ViyQdGYo23wUFtve6iGMXPHz5NPTZgsM1uc96JAlqaEN64Ac2+r9S42fPGIU9je8I7VBfQBDK40jhRYsZjr1qs2eQSqVIG5KU=
+	t=1778545002; cv=none; b=qa8auuR/NFpY9XJWy4oPTygWEsIAUafz+lomtiA/C/7wFiWjKYruYWydGwT2IoQAbTpTMG/Xs+owXTlFZUwUAy8l1ExJlsuhdOX86RjVjPDWKFGYGyHGGqOrsACTsLnznfYOlPv2fb/Kqr8TBezQLnXfcsbAW9PPbCvAKFeEBb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778484251; c=relaxed/simple;
-	bh=PP3r/MntpF6E2HPsEiAzHDByBUE9hdbpegtf7BYBCYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fy8hYK2q5GXt+wYOA0FGOQDOFtlYiYxdP1ANcUX080RlLHeApfEOv9SM4EpForQ8E+n742RzslEc8J95FkuHY3aUkfCbvAlilO7ijjm1ewAUdkTV5UmVFPny+GupW3W6vYbONEqZZ4ljP7aWjflBIaMWq1AREmitn/KWKeKgwHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZuHXl81; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778545002; c=relaxed/simple;
+	bh=oOz5EXdk6rMc/V0s+CRCekTvAdYe44DJ42tAZEbuREU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=JoZanueLLWPWPcinNRB25hLGpF0tyVrni4XkxqSVvqPob63UTvz4DrG3q7e9K9LrxxJVcnM6ZG3PJSOT4PGEkJkKxnPfYQlksXTe6D9zjx5gvKwfCG+/PvSRW6Y/OyROVS/V+n+xQcVW80obH8rHR2J3wO/9WjDRsgX4G5g7hvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIN9TG6/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZuHXl81"
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-63134048d8dso2263740137.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 May 2026 00:24:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778484249; x=1779089049; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HyHzPHZyzl+Vg43QcI8DAMEIEZeDqaoxRsbf4hAiXOc=;
-        b=fZuHXl81vtNLXxdpgEQfODoCcMfzEgRoAV9PXMqww8xcNeWt+PppxdY04GfYJQ2N1m
-         90Qb8sxD6D0deFiv2Lj//01/JK/bSyaVpj+307ne5j53NP5+IFomHVq5Q2NZbh07Gr5R
-         pBM1bFzUlGLIFIyK1Dl9+G7LKeeNDyfySplL7cSBWndMe8cCOHc3LR+nBQ9IiA+FQUJe
-         cJoiVWW42oS0Zgwej+gb87CGC6bJCziF/9o1ymwiDYcmAkGz1rm/hfAvI6euKIzaGGRs
-         l5rbIQ9a4zBffIJXmE6b/JX7ZrO2/+9CL9XdrFx1/UM6IcP7MAWgOgl2Q2qySWnxNZs2
-         /jLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778484249; x=1779089049;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HyHzPHZyzl+Vg43QcI8DAMEIEZeDqaoxRsbf4hAiXOc=;
-        b=FQj5kIHhgSYqFSOLFllM1utX/CaR71zvUTno7IVbkrzswv6W1jlYEQ2dunMhZllLzF
-         NgjFeiDoOWPGgvzjnmed+UbKbNsCTzB2arZEnm4ovdvRtdBqo5ZboK7GV4APZaCTBKYm
-         25ZY/20ngM6efLOWtFPeAQNwVBFjmEOGQ1ectOAkD8vzrwVxWhEjp0V5AwLGz75RdF8q
-         FYTFcGUZMA87qLY6NA4hJQY1iRB1sZumf5kWGh812vxPLnKHcHWWZIfNfT2tmqyLQGnq
-         M6jX86uOEeVkvz07w+Cp/AUNf+EXQRXokMP+9y+BuIPQ36xsi6/no6W+lMPQDkD4pVqB
-         GqoQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+RXCeSboaHOBcq5c7Z9esZZz7QoxAthDdkE4C9mAt0CWGe9bzDu1MbYbtPImDPCulnbUJSJhhzA9eMNxGZkYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyVluovOJgxCQLaX5J4ZEyd00qnlDS+4BAbSQfLcXoBp8hgCPi
-	3wi2A9Gm+OmGLRgv4N+enAFuB0tC73Wu3LErPlQDTJQrIvgsF2/Bt6HrgXifAmIS
-X-Gm-Gg: Acq92OGZtm3s/YjBbk54Vw3vj07w/0PxamUAicoCGwbjTSSzJJWjP4ZAq6fQNbI1+LA
-	olg9CRv910/cAFsbi5e7GVfe7DwwoJe9BF2lIW/Ot8KCXoMGso/kUAedcSXlw2JAY4akb4XYmZs
-	0N7mD9UXnltgFjgwVR3uhRB388L29vNRXzkF8C/chNTT9hqqZbS/NHGR8tt3okHlt6gScDUIJ0B
-	KuSv8BxnpvU8fQUaCHEvSnxH9yAKxJD2411ixja6Sqf5Ojw8Y+sJNLfPn/xQe5G6Prk27fTiZNn
-	v5g8379CTBJ3MWwURv1glj+V4UR8twg1YBI3scYZDpYL2UxpTm998f4pt5vpIEB93iG5S089hio
-	zkTshMxJp+DsKR1iYjNcKGG2ef7jgnOdSu3ii/Mh9keS/1mzH3CplFAduKAFY/pwwAwFmzOHh1t
-	IxSx0gOhcZ2QbJYeyAW4P9sFgm9EeS
-X-Received: by 2002:a05:6102:508b:b0:632:b111:965a with SMTP id ada2fe7eead31-632b1119b04mr1737026137.11.1778484248846;
-        Mon, 11 May 2026 00:24:08 -0700 (PDT)
-Received: from localhost ([185.141.119.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-63140250725sm5583359137.12.2026.05.11.00.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 00:24:07 -0700 (PDT)
-Date: Mon, 11 May 2026 10:24:01 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] afs: Fix error code in afs_extract_vl_addrs()
-Message-ID: <agGEESTvK1LxcRH2@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIN9TG6/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B915EC2BCFB;
+	Tue, 12 May 2026 00:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778545002;
+	bh=oOz5EXdk6rMc/V0s+CRCekTvAdYe44DJ42tAZEbuREU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IIN9TG6/KAa+QS6omXwg9xQJWFIqUI6sYtPx8jOYe7YgsAEk40n8aMCpNusK8IXdc
+	 R77sIGKRoQbmpyLgd2E/oYI1f2c0qLvUfw+rYBzwCuIJoshfIHlbiDZV8veyCNMY5Q
+	 ZoTlXiWf2YV+U891k8WAkbhQ7Xn4wYfIbOKBT/G+RonXyHMVGEYeAKrhscNAjlYY+S
+	 rp7HOaLVR8Oxv6xeJDnKP1ONeT1EBa5OZXlJj45+7+2KTgy2LMbIwzOIdp5iA3HskV
+	 DyexfTpYEzHVb1YgD01/9pfofarMrO78j6NSE7EB0+QKXBpvW8Or46BlMzkOhYeZwQ
+	 EyzkO7wgIB10w==
+Date: Tue, 12 May 2026 09:16:38 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org, Breno
+ Leitao <leitao@debian.org>
+Subject: Re: [bug report] bootconfig: init: Allow admin to use bootconfig
+ for kernel command line
+Message-Id: <20260512091638.8b95253ab022d7dabf473465@kernel.org>
+In-Reply-To: <af4YTUrDM-ciyoa-@stanley.mountain>
+References: <af4YTUrDM-ciyoa-@stanley.mountain>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The error codes on these paths are only set on the first iteration
-through the loop.  Set the correct error code on every iteration.
+Hi Dan,
 
-Fixes: 0a5143f2f89c ("afs: Implement VL server rotation")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- fs/afs/vl_list.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for reporting. A similar problem is pointed by Sashiko [1].
 
-diff --git a/fs/afs/vl_list.c b/fs/afs/vl_list.c
-index 3e4966915ea4..003889cf0f18 100644
---- a/fs/afs/vl_list.c
-+++ b/fs/afs/vl_list.c
-@@ -92,7 +92,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
- {
- 	struct afs_addr_list *alist;
- 	const u8 *b = *_b;
--	int ret = -EINVAL;
-+	int ret;
- 
- 	alist = afs_alloc_addrlist(nr_addrs);
- 	if (!alist)
-@@ -110,6 +110,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
- 		case DNS_ADDRESS_IS_IPV4:
- 			if (end - b < 4) {
- 				_leave(" = -EINVAL [short inet]");
-+				ret = -EINVAL;
- 				goto error;
- 			}
- 			memcpy(x, b, 4);
-@@ -122,6 +123,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
- 		case DNS_ADDRESS_IS_IPV6:
- 			if (end - b < 16) {
- 				_leave(" = -EINVAL [short inet6]");
-+				ret = -EINVAL;
- 				goto error;
- 			}
- 			memcpy(x, b, 16);
+[1] https://sashiko.dev/#/patchset/20260508-bootconfig_using_tools-v1-0-1132219aa773%40debian.org
+
+On Fri, 8 May 2026 20:07:25 +0300
+Dan Carpenter <error27@gmail.com> wrote:
+
+> Hello Masami Hiramatsu,
+> 
+> Commit 51887d03aca1 ("bootconfig: init: Allow admin to use bootconfig
+> for kernel command line") from Jan 11, 2020 (linux-next), leads to
+> the following Smatch static checker warning:
+> 
+> 	init/main.c:368 xbc_snprint_cmdline()
+> 	use scnprintf() instead of snprintf()
+> 
+> init/main.c
+>     331 static int __init xbc_snprint_cmdline(char *buf, size_t size,
+>     332                                       struct xbc_node *root)
+>     333 {
+>     334         struct xbc_node *knode, *vnode;
+>     335         char *end = buf + size;
+>     336         const char *val, *q;
+>     337         int ret;
+>     338 
+>     339         xbc_node_for_each_key_value(root, knode, val) {
+>     340                 ret = xbc_node_compose_key_after(root, knode,
+>     341                                         xbc_namebuf, XBC_KEYLEN_MAX);
+>     342                 if (ret < 0)
+>     343                         return ret;
+>     344 
+>     345                 vnode = xbc_node_get_child(knode);
+>     346                 if (!vnode) {
+>     347                         ret = snprintf(buf, rest(buf, end), "%s ", xbc_namebuf);
+>     348                         if (ret < 0)
+>     349                                 return ret;
+>     350                         buf += ret;
+> 
+> In user space snprintf() can return negative, but in the kernel, no.
+> It returns the number of bytes (not counting the NUL terminator) which
+> would have been copied if there were enough space.  So maybe you want
+> to do something like:
+> 
+> 	remain = rest(buf, end);
+> 	ret = snprintf(buf, rest(buf, end), "%s ", xbc_namebuf);
+> 	if (ret >= remain)
+> 		return -ENOSPC;
+
+Actually, we need to query the length of required buffer size if buf == NULL
+or the buffer size is not enough.
+
+But as Sashiko pointed, I need to check it with UBSAN. (but I think,
+even if @buf is NULL, the @buf is char *, thus it is safe to add some
+value...)
+
+> 
+> Or maybe you might want to use scnprintf() which returns the number of
+> bytes actually copied.  Otherwise bug ends up pointing to beyond the end
+> of the buffer.
+
+No, I need to calculate the required length of buffer.
+
+Thank you,
+
+> 
+>     351                         continue;
+>     352                 }
+>     353                 xbc_array_for_each_value(vnode, val) {
+>     354                         /*
+>     355                          * For prettier and more readable /proc/cmdline, only
+>     356                          * quote the value when necessary, i.e. when it contains
+>     357                          * whitespace.
+>     358                          */
+>     359                         q = strpbrk(val, " \t\r\n") ? "\"" : "";
+>     360                         ret = snprintf(buf, rest(buf, end), "%s=%s%s%s ",
+>                                 ^^^^^^^^^^^^^^^
+> Same.
+> 
+>     361                                        xbc_namebuf, q, val, q);
+>     362                         if (ret < 0)
+>     363                                 return ret;
+>     364                         buf += ret;
+>     365                 }
+>     366         }
+>     367 
+> --> 368         return buf - (end - size);
+>     369 }
+> 
+> This email is a free service from the Smatch-CI project [smatch.sf.net].
+> 
+> regards,
+> dan carpenter
+
+
 -- 
-2.53.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
