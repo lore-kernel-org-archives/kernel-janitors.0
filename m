@@ -1,119 +1,95 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from mail-43171.protonmail.ch (mail-43171.protonmail.ch [185.70.43.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76A91DC9B3
-	for <kernel-janitors@vger.kernel.org>; Fri, 15 May 2026 15:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC7E35E1A9
+	for <kernel-janitors@vger.kernel.org>; Fri, 15 May 2026 22:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778860448; cv=none; b=FhUImsMD397Bspao3u0AqZHxbQCHAK/OkVsKr9aWWHnb28A1ct7ilKB8RcHdpD0QJ2mXqQ5/hxAhmfj36HcuCApJ+UHY/WGbXT890yhBpMm62+dCEZuQByMfh6AYT5syAtM6TbXpu6bRJ+b3o3KHd7y4kPZ1S39SJ4FZ4nkGt0M=
+	t=1778885851; cv=none; b=TeyD6j2P3GhY5A3ub7+L5xpWRklEmRzttQgKom57CUGab8PzDE6r9pRSDx4/H05nYbhlU4kcJ25SY4ZObWC+bBM9iMlUR56uAlbhDZu2PcrdsBYBGlVDODWFoz3tOkq80sh0E7EZamBNSN9nFs48xX+f2SoNzgCzX5+pXAjNkZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778860448; c=relaxed/simple;
-	bh=2m6hNE+rGWWRszgjJjZdV3kXtKuk3ayDQEvlVFEHccg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HObqd1Jo4T9SN8OZGeEhmqp4CEevBDprWH7BwrwtfkVubLIgTLJmLnCpg/K5/AywY+T2utXNknyLsNprM6UvFslDBBEqTdvzo05rx1Ow7vbqvtsh4Am3W9e6bZN6U25GM92xiW6SNgLUut3qE4U8ApCMbkW3WE8EB0GzL3zkV6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K3DxjwsM; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1778885851; c=relaxed/simple;
+	bh=qnnHmeuD4B3ib6QErbfOiGA3ssD2oWWRu2a05LVDhNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V2s7HjGVQ1na+MwyX/3RfpCKXvpltndByBSW9e0/dTq3ne7ZJaq8MWUo2/xxG3boLSc6jcZlOhEFPXg3uhUmdxZWphvyI1UqNTWlzhuyrE2fZIQ/ly7NDioppf5ZoPyEGsbMtywNKjO4fCDYDt7RpgRn+KF0fCih8ELm3TY83VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vassilevski.com; spf=pass smtp.mailfrom=vassilevski.com; dkim=pass (1024-bit key) header.d=vassilevski.com header.i=@vassilevski.com header.b=OR/0cKyS; arc=none smtp.client-ip=185.70.43.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vassilevski.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vassilevski.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K3DxjwsM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 98F9DC2B9C5;
-	Fri, 15 May 2026 15:54:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9D585606FD;
-	Fri, 15 May 2026 15:54:04 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D1DC11AF82F1;
-	Fri, 15 May 2026 17:54:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778860443; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=jgFFboY+gNJXBunWTKjK4mQbM9XZJIPH3hYlzV0QAxQ=;
-	b=K3DxjwsMHzxTrUYCC2Nhvd2XryYHdkaq49tQzPVbsfh+OgaIjOUOoluVpVBtoH2IxNO1rb
-	vh3uMdilL9Gq1wrotNbHe/bheW4XyShgwa7JATN6cTMAgzj9BQsVe3ZXz+vqD5F5qb2hCw
-	mLdUY/0eDPHsA1ntKYxnOnUiYcbjUpGkN0SkIclTB8bgE+B1Fzui7WTHXD2QUWzsntrLeu
-	o/NniAOtMEdfctsDZeMurgYwhgUT2P8XgpX+ak7wLTwyQR6zSo0FdwpSA8rLPqsenJpTSe
-	U3gQEbY5QWZ17kn6+q7Ez/OVlaFIUzo88tyda0L1+dPtjlJjzIEV20UhIEWtVA==
-Message-ID: <3e698b9d-254a-4112-9cd5-217447efc8d3@bootlin.com>
-Date: Fri, 15 May 2026 17:54:01 +0200
+	dkim=pass (1024-bit key) header.d=vassilevski.com header.i=@vassilevski.com header.b="OR/0cKyS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vassilevski.com;
+	s=protonmail; t=1778885842; x=1779145042;
+	bh=74bsjubzgflcd9M7LjMJofPlrdTcXGeyKv5HA4b8SOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=OR/0cKySMrmMkZXYWAVWLylTjxT1+D22HHKf5w0yq3hhkiZ8rO21O7zE/UsOYV6uV
+	 71uDlCvoBwT4zPf5cKP47mKJBCIWsQFA9+9GaDThqGv3EBBxEjNHgH4GsGxGinNHCP
+	 HqnQFU9H2AjKSpH3tFTtgK4ZkSLA8s2huJu7bjyA=
+X-Pm-Submission-Id: 4gHMz06syrz2Schs
+From: Alexander Vassilevski <oss@vassilevski.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Roger Quadros <rogerq@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Chintan Vankar <c-vankar@ti.com>,
+	netdev@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] net: ethernet: ti: am65-cpsw-nuss: remove dead vid check in slave_add_vid()
+Date: Fri, 15 May 2026 15:57:14 -0700
+Message-ID: <20260515225715.3641804-1-oss@vassilevski.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3 net-next] net: mdio: mscc-miim: Use
- devm_of_mdiobus_register()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <cover.1778856199.git.christophe.jaillet@wanadoo.fr>
- <139ebd0e3698de5e785bb0c70a4d4da43925a7ae.1778856199.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-In-Reply-To: <139ebd0e3698de5e785bb0c70a4d4da43925a7ae.1778856199.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi,
+am65_cpsw_nuss_ndo_slave_add_vid() returns early at the top with:
 
-On 5/15/26 16:50, Christophe JAILLET wrote:
-> Use devm_of_mdiobus_register() instead of hand writing it.
-> This saves some lines of code.
-> 
-> The remove function can be removed completely and the
-> platform_set_drvdata() call at the end of the probe is now also useless and
-> can be removed as-well.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    if (!netif_running(ndev) || !vid)
+        return 0;
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+so vid is guaranteed to be non-zero in the rest of the function. The
+subsequent
 
-Maxime
+    if (!vid)
+        unreg_mcast = port_mask;
 
-> ---
-> Compile tested only.
-> ---
->   drivers/net/mdio/mdio-mscc-miim.c | 12 +-----------
->   1 file changed, 1 insertion(+), 11 deletions(-)
-> 
-> diff --git a/drivers/net/mdio/mdio-mscc-miim.c b/drivers/net/mdio/mdio-mscc-miim.c
-> index 4d8f60d458b8..7bdcf3e9baa0 100644
-> --- a/drivers/net/mdio/mdio-mscc-miim.c
-> +++ b/drivers/net/mdio/mdio-mscc-miim.c
-> @@ -322,22 +322,13 @@ static int mscc_miim_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
->   
-> -	ret = of_mdiobus_register(bus, np);
-> +	ret = devm_of_mdiobus_register(dev, bus, np);
->   	if (ret < 0)
->   		return dev_err_probe(dev, ret, "Cannot register MDIO bus\n");
->   
-> -	platform_set_drvdata(pdev, bus);
-> -
->   	return 0;
->   }
->   
-> -static void mscc_miim_remove(struct platform_device *pdev)
-> -{
-> -	struct mii_bus *bus = platform_get_drvdata(pdev);
-> -
-> -	mdiobus_unregister(bus);
-> -}
-> -
->   static const struct mscc_miim_info mscc_ocelot_miim_info = {
->   	.phy_reset_offset = MSCC_PHY_REG_PHY_CFG,
->   	.phy_reset_bits = PHY_CFG_PHY_ENA | PHY_CFG_PHY_COMMON_RESET |
-> @@ -363,7 +354,6 @@ MODULE_DEVICE_TABLE(of, mscc_miim_match);
->   
->   static struct platform_driver mscc_miim_driver = {
->   	.probe = mscc_miim_probe,
-> -	.remove = mscc_miim_remove,
->   	.driver = {
->   		.name = "mscc-miim",
->   		.of_match_table = mscc_miim_match,
+is therefore unreachable. unreg_mcast stays at its initialized value of
+zero and is passed as the unreg_mcast argument to
+cpsw_ale_vlan_add_modify().
+
+Drop the dead branch. No functional change.
+
+Found by Smatch.
+
+Fixes: 7bcffde02152 ("net: ethernet: ti: am65-cpsw-nuss: restore vlan configuration while down/up")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/kernel-janitors/aS_lhMwppbDHoEcX@stanley.mountain/
+Signed-off-by: Alexander Vassilevski <oss@vassilevski.com>
+---
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 7ac75fc8cd..77f59996a0 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -316,8 +316,6 @@ static int am65_cpsw_nuss_ndo_slave_add_vid(struct net_device *ndev,
+ 		return ret;
+ 
+ 	port_mask = BIT(port->port_id) | ALE_PORT_HOST;
+-	if (!vid)
+-		unreg_mcast = port_mask;
+ 	dev_info(common->dev, "Adding vlan %d to vlan filter\n", vid);
+ 	ret = cpsw_ale_vlan_add_modify(common->ale, vid, port_mask,
+ 				       unreg_mcast, port_mask, 0);
+-- 
+2.43.0
 
