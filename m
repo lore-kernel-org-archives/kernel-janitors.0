@@ -1,40 +1,40 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C334B34CFC3
-	for <kernel-janitors@vger.kernel.org>; Fri, 15 May 2026 15:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E05C17AE11
+	for <kernel-janitors@vger.kernel.org>; Fri, 15 May 2026 15:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778859939; cv=none; b=CsE/q1eRfEb6s3Kuriwyx+BueV9kkINRjM91+pfr/1Mg1m5BEfa7o8lUPFARpj3TXPvKfjemsp3QyZ5RGYI5+X4WUPmt8HTE4AOSPkNGEENKo0W6/Zs+vin2E0nGQkrwzZYpZ44xHh1scOmlYzOhF004nyEoMJOMCA5CyHF9ee0=
+	t=1778860400; cv=none; b=nYKeBmRX61NNVE4pAGiAmT+rgqKng9hCKgzXALvHn08LH4a4mAPKUbxm1g4Heo+D8E2Q1tL3hV9E2XE63nNOCDzlNkL5zsizIe0NnAHvEjUCz/6ToQ03LAL6qiccoXb7r1kLEwqRHUa1XUmUMQLYdILCYS4McznSLWHBm4oWlCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778859939; c=relaxed/simple;
-	bh=vtSjz5p5A911BGAxbJB3v+m+MYtuLj5cd0rq0Thr1/M=;
+	s=arc-20240116; t=1778860400; c=relaxed/simple;
+	bh=Bd05Y2DGQYHi7NJY2grwSkItczOV51BKttvp5or6Ing=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YZ0GL55CMXlgPu83iiLeVMUOrbFiLYf8ro7ev5QWnLlALqD+742JqVTq7fH0HxBVHrSPyK6Bt+zV+cW8bhSUHLDw3kaiMH+6j5dfdkSTxTgjbkGOPUgzKkcKBS6ejJZnQ1WkyKl0otZWjb07qUur3boLWMLPj0z6kIK03IcOKew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IB8jXbVt; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:Content-Type; b=jQqyNIVZFkME5G28DLR4iI6FaxexA44ZA0tjBBxoj/61ACqCyO1JnlG0H5hmb0cOKJF2Z2o+O4TEQ+X9Mfzr5mcgoxyyWKVAgCtpFNEwqQkE9QcUe50Jcri9poZuW/G7cOYPpLEt0DyHJuhKWGQ28V3x51KsCErsuJKkVga345w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dXj/FTEg; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IB8jXbVt"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dXj/FTEg"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C92664E42CAD;
-	Fri, 15 May 2026 15:45:33 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9CC471A35EA;
+	Fri, 15 May 2026 15:53:15 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9414E606FD;
-	Fri, 15 May 2026 15:45:33 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 28BF711AF82F1;
-	Fri, 15 May 2026 17:45:25 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 71750606FD;
+	Fri, 15 May 2026 15:53:15 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD44C11AF82F1;
+	Fri, 15 May 2026 17:53:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778859932; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1778860394; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=knt26lqT6LwhBS04wTRHGc1JT/AC9IuOf4RNZJ7n/vA=;
-	b=IB8jXbVt0CC3pnMgm/cCdgCT7FMBCO/4ysgLd8slW4wyCvbiDvLxjwEinG+SCwN9tloriw
-	/rwMN63wGB9Lj2mTxOJUvmezHsYH9cBc/Bcr5JeurmqUtbHlbQDsL6GMQQJoTuzPWL39HR
-	QMWQMIo/7oFF83sefNEsGziupE75Fa1vlBYbWvLzJ6kXOFyW+ZaYJWZGF7C55chxBSAkh8
-	ps9x8RrzQ+vD4CpmD1ePoA+HbLYvnuis1ARYC8UUjUcwMDY4eg/COHlyAUFza9GMe6r9f1
-	ibbExl3KvDePHD42irrtcPbwdL4Q4JRnyD+1VSY6dH8QiIKAJceLg1WzadA0lA==
-Message-ID: <9616afb9-a506-4d5a-94ca-269e78fb6a0e@bootlin.com>
-Date: Fri, 15 May 2026 17:45:24 +0200
+	bh=AIcZgrBpnI0H/y6z0YcYVG3RFVPMDM2NzjOXjmWhTEg=;
+	b=dXj/FTEgUdJ3Uv8jF4f0YIKEv6sIKoqEJC77S6jEtK0+LFqbDpFmZZpHYlzd3ZdqyPtopx
+	eX+ceRi3886g8oqD1qDXRDRX7pkNpvlfZHFZF8gj8qT4goq0Ei9Szln6ySstA70lAE3ZTH
+	fLNK8W9pSrfX3TkYW7LlNjVQXUxrlQKgoIE9ub1zXnfUCvAGlJMytxI4Hg63RLUQMTxbKr
+	YyzhOrwRbqgIVT4lbW1URR/N/rbd0k5yrJUswHfchw1/JgT77xgGlBD5gykxnnRAYkdgmj
+	ZYg2I1ZExTjxbLyn8FbDqcgWrPDO4S0vmv4OjgAf6XUZCsQuS9WlJ/EwvV8tKw==
+Message-ID: <15543e63-5c95-4558-9a95-3e9d051d67bc@bootlin.com>
+Date: Fri, 15 May 2026 17:53:11 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,18 +42,18 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3 net-next] net: mdio: mscc-miim: Remove some redundant
- code
+Subject: Re: [PATCH 2/3 net-next] net: mdio: mscc-miim: Use
+ devm_clk_get_optional_enabled()
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, andrew@lunn.ch,
  hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
  edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel-janitors@vger.kernel.org
 References: <cover.1778856199.git.christophe.jaillet@wanadoo.fr>
- <11209c6c6485656cc9a841c495381c540783798a.1778856199.git.christophe.jaillet@wanadoo.fr>
+ <542f88aee5de2ac24fca58001eab24ac817abee9.1778856199.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-In-Reply-To: <11209c6c6485656cc9a841c495381c540783798a.1778856199.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <542f88aee5de2ac24fca58001eab24ac817abee9.1778856199.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Last-TLS-Session-Version: TLSv1.3
@@ -61,28 +61,79 @@ X-Last-TLS-Session-Version: TLSv1.3
 Hi,
 
 On 5/15/26 16:50, Christophe JAILLET wrote:
-> *pbus is assign twice with the same value. Remove one of the redundant
-> assignment.
+> Use devm_clk_get_optional_enabled() instead of clk_prepare_enable() and
+> clk_disable_unprepare().
+> 
+> This saves some lines of code and simplifies error handling in the probe.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> In the remove sequence, clk_disable_unprepare() and mdiobus_unregister()
+> are not called with the same order anymore. I don't think that it matters.
+
+If anything, I'd say this is better as the original ordering, as the 
+remove path now mirrors the probe one.
 
 Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
+Maxime
+
 > ---
->   drivers/net/mdio/mdio-mscc-miim.c | 2 --
->   1 file changed, 2 deletions(-)
+>   drivers/net/mdio/mdio-mscc-miim.c | 20 ++++----------------
+>   1 file changed, 4 insertions(+), 16 deletions(-)
 > 
 > diff --git a/drivers/net/mdio/mdio-mscc-miim.c b/drivers/net/mdio/mdio-mscc-miim.c
-> index 259944d37fbd..03878bd9091d 100644
+> index 03878bd9091d..4d8f60d458b8 100644
 > --- a/drivers/net/mdio/mdio-mscc-miim.c
 > +++ b/drivers/net/mdio/mdio-mscc-miim.c
-> @@ -233,8 +233,6 @@ int mscc_miim_setup(struct device *dev, struct mii_bus **pbus, const char *name,
+> @@ -307,7 +307,7 @@ static int mscc_miim_probe(struct platform_device *pdev)
+>   	if (!miim->info)
+>   		return -EINVAL;
 >   
->   	miim = bus->priv;
+> -	miim->clk = devm_clk_get_optional(dev, NULL);
+> +	miim->clk = devm_clk_get_optional_enabled(dev, NULL);
+>   	if (IS_ERR(miim->clk))
+>   		return PTR_ERR(miim->clk);
 >   
-> -	*pbus = bus;
+> @@ -318,35 +318,23 @@ static int mscc_miim_probe(struct platform_device *pdev)
+>   		return -EINVAL;
+>   	}
+>   
+> -	ret = clk_prepare_enable(miim->clk);
+> -	if (ret)
+> -		return ret;
 > -
->   	miim->regs = mii_regmap;
->   	miim->mii_status_offset = status_offset;
->   	miim->ignore_read_errors = ignore_read_errors;
+>   	ret = mscc_miim_clk_set(bus);
+>   	if (ret)
+> -		goto out_disable_clk;
+> +		return ret;
+>   
+>   	ret = of_mdiobus_register(bus, np);
+> -	if (ret < 0) {
+> -		dev_err_probe(dev, ret, "Cannot register MDIO bus\n");
+> -		goto out_disable_clk;
+> -	}
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Cannot register MDIO bus\n");
+>   
+>   	platform_set_drvdata(pdev, bus);
+>   
+>   	return 0;
+> -
+> -out_disable_clk:
+> -	clk_disable_unprepare(miim->clk);
+> -	return ret;
+>   }
+>   
+>   static void mscc_miim_remove(struct platform_device *pdev)
+>   {
+>   	struct mii_bus *bus = platform_get_drvdata(pdev);
+> -	struct mscc_miim_dev *miim = bus->priv;
+>   
+> -	clk_disable_unprepare(miim->clk);
+>   	mdiobus_unregister(bus);
+>   }
+>   
 
