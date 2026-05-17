@@ -1,115 +1,69 @@
-Received: from mail-244108.protonmail.ch (mail-244108.protonmail.ch [109.224.244.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157132C21F1;
-	Sun, 17 May 2026 15:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183E120CCDC;
+	Sun, 17 May 2026 16:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779030988; cv=none; b=cPHHz2nUPyBj2+zNogtq0qjfUtRAaSI+mj4e7Q2wbNE1qaRN0dDzkTPyhD2PjGnavqMUzdJrM45L0XdUBzr7sfzn0dqQcxM13QouLrtvICmsGI16ibGVB+8ajWrzJIFYQVv4ViCo/2lONaqSGV8xz2d9ilzppzY4lb4Wl1TGamg=
+	t=1779034048; cv=none; b=ahPY3bdH+S7BRXV/cINhha++Gdc86KLPBAD/7/mexo4eC8ayH3FtedxBzMlG7j6FuwuGAfG6OLLHS2vcUrW4cwFb+MUHYYWEb9ytR7K5REWWlcwRwhAHhWfE0cFEmtsvp5UPxcZPpNTtN6029LiJuxX6tIqnqwmZiBKBECBdOzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779030988; c=relaxed/simple;
-	bh=iKoWjFoumDzU83662ZU2qlYoicofSlY+S6AkomCAcWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XhBqNuBPqgtX6w18LD4PA1ehJY4rGYfO2YiOOtsVAIUcXEFVnRL4779/7u1RhqLGrO5Ao1qjeP0BFuvUQ8tBx+EyLPfRc1RLdB1sipXcBYfWJH4ckkZXIgPg00yA+IbC3ntLi5+6ezTHCLsY7y8wtg19LMBjBcewfvbHJhfaUyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vassilevski.com; spf=pass smtp.mailfrom=vassilevski.com; dkim=pass (1024-bit key) header.d=vassilevski.com header.i=@vassilevski.com header.b=LxPlL6Nz; arc=none smtp.client-ip=109.224.244.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vassilevski.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vassilevski.com
+	s=arc-20240116; t=1779034048; c=relaxed/simple;
+	bh=XSszjgK65hBpLVmkbK2HuZkihV//fU+bBUxzxGh1Quk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m6Rjsob3KbM7KL9uahtmTBjxBw+gtwJInR07FFYJJl8ySXBYBycTfF9zhL5ppqvFWyBfT1LaoGkiiTohWemQmpAE2bKcz8tyDppJecR++6cWAxE9C5Xj0BSyiPV9pOwI1+oW4VzlgVWrPK5N4aYCoQpAtjQEx8hji74aEPR9ZCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUSI5VEy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vassilevski.com header.i=@vassilevski.com header.b="LxPlL6Nz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vassilevski.com;
-	s=protonmail; t=1779030983; x=1779290183;
-	bh=nTuZeJsw+iCXzqp0R7o7Vg2ADgoYOa361E1gmqMhiNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=LxPlL6NzxUvGQWEUh3ho0zlX9qqMCJ7wCObFMzYmhR1d7VDgnNxAAgQ10UcQaSoIW
-	 PDhICQQJ9Ov1B6wNlclHx1C8kYBMGCZntfYSLRVI3gwOTU7G3WCfOPbvfWl+Eou/Hj
-	 /VrOq3JnF9y67RDmWfTR2ZPEKR6Xf7O731e841UU=
-X-Pm-Submission-Id: 4gJPf65WVsz2Scpx
-From: Alexander Vassilevski <oss@vassilevski.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Roger Quadros <rogerq@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Chintan Vankar <c-vankar@ti.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Alexander Vassilevski <oss@vassilevski.com>
-Subject: [PATCH v2] net: ethernet: ti: am65-cpsw-nuss: remove dead vid check in slave_add_vid()
-Date: Sun, 17 May 2026 08:16:11 -0700
-Message-ID: <20260517151611.393789-1-oss@vassilevski.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260515225715.3641804-1-oss@vassilevski.com>
-References: <20260515225715.3641804-1-oss@vassilevski.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUSI5VEy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5F2C2BCB0;
+	Sun, 17 May 2026 16:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779034047;
+	bh=XSszjgK65hBpLVmkbK2HuZkihV//fU+bBUxzxGh1Quk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=GUSI5VEyq8lawBdV9VE1xQz9poqyL4vRZnfoG7vcE8TxoEFm8/cnc/dmr4GNWIz3a
+	 HbYQnQcFNKHr+oWFF3a0VFqyPG3BNGUPUh306AkrKn0Jmb/XbiQ58xnLmbL6ZAl52s
+	 zjJ67Xffnd5RgRTsc7fdJubR0BWywDFODA3thUVWhFA51lA2S+eH7ulZvbd/Wk2GWv
+	 GumnQVMY+DuQL+rKd6GILiLQWrjzYEoHjq2kRgkPqyOhqo2tYkHNpyCp1hczjGxddi
+	 HQVwI+MIATY5wfkShui3aSjp71eKPWE8+iwJxE9HHhXKFb+w52uA4kBYcDK8dDzTLl
+	 b6quXwjtfBvrw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-rdma@vger.kernel.org
+In-Reply-To: <6acd9c8a79b868b5e541a7e080a6b4b145e4fd4f.1778923041.git.christophe.jaillet@wanadoo.fr>
+References: <6acd9c8a79b868b5e541a7e080a6b4b145e4fd4f.1778923041.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] RDMA/cma: Constify struct configfs_item_operations and
+ configfs_group_operations
+Message-Id: <177903404471.2530582.12087012477556433788.b4-ty@kernel.org>
+Date: Sun, 17 May 2026 12:07:24 -0400
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-18f8f
 
-am65_cpsw_nuss_ndo_slave_add_vid() returns early at the top with:
 
-    if (!netif_running(ndev) || !vid)
-        return 0;
+On Sat, 16 May 2026 11:17:47 +0200, Christophe JAILLET wrote:
+> 'struct configfs_item_operations' and 'configfs_group_operations' are not
+> modified in this driver.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> [...]
 
-so vid is guaranteed to be non-zero in the rest of the function. The
-subsequent
+Applied, thanks!
 
-    if (!vid)
-        unreg_mcast = port_mask;
+[1/1] RDMA/cma: Constify struct configfs_item_operations and configfs_group_operations
+      https://git.kernel.org/rdma/rdma/c/7b2e9a338a5875
 
-is therefore unreachable. Drop the dead branch.
-
-With that branch gone, unreg_mcast is only ever its initializer value
-of zero, so drop the variable and pass 0 directly to
-cpsw_ale_vlan_add_modify().
-
-No functional change.
-
-Found by Smatch.
-
-Fixes: 7bcffde02152 ("net: ethernet: ti: am65-cpsw-nuss: restore vlan configuration while down/up")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/kernel-janitors/aS_lhMwppbDHoEcX@stanley.mountain/
-Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Signed-off-by: Alexander Vassilevski <oss@vassilevski.com>
----
-I agree, Christophe.
-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 77f59996a0..434a310808 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -302,7 +302,7 @@ static int am65_cpsw_nuss_ndo_slave_add_vid(struct net_device *ndev,
- {
- 	struct am65_cpsw_common *common = am65_ndev_to_common(ndev);
- 	struct am65_cpsw_port *port = am65_ndev_to_port(ndev);
--	u32 port_mask, unreg_mcast = 0;
-+	u32 port_mask;
- 	int ret;
- 
- 	if (!common->is_emac_mode)
-@@ -318,7 +318,7 @@ static int am65_cpsw_nuss_ndo_slave_add_vid(struct net_device *ndev,
- 	port_mask = BIT(port->port_id) | ALE_PORT_HOST;
- 	dev_info(common->dev, "Adding vlan %d to vlan filter\n", vid);
- 	ret = cpsw_ale_vlan_add_modify(common->ale, vid, port_mask,
--				       unreg_mcast, port_mask, 0);
-+				       0, port_mask, 0);
- 
- 	pm_runtime_put(common->dev);
- 	return ret;
+Best regards,
 -- 
-2.43.0
+Leon Romanovsky <leon@kernel.org>
 
