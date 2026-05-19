@@ -1,128 +1,113 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1033DB65A
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 May 2026 09:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069C13F0AB3;
+	Tue, 19 May 2026 09:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779182215; cv=none; b=FeC9OYuJa6mdbOa/R1l38saCMr3He9xKuzcj/i3vpE5oG4tLtZCBYGnMnI74vn1GPQSXPQOJdpCxXcmqtTeA1EEqG3M+iFLblNZ8vobgrYzOdPHpDknP23f3j5Kmd3hQwty+A1bb4vP8c9GcRv7UhnNs+CgroUe3eLrcIowocRc=
+	t=1779183247; cv=none; b=FBPnt2JtM56R/9/abXhKtxkRK+hGJbFLdkttuB1Xm5zn6waIfENGEXMuVmKWmYtY7Mnhdxs2CP7pArGynbx0E03eijHASZiBvjbgL/7vXIQOWex3Iaucg0LhOtHYKcH9HjkujRdVr5Dauzf/gdpddLsJxZp5vTGBScVK/KlFinQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779182215; c=relaxed/simple;
-	bh=POGVjhh97Wkq6I7DJgr4RTvlvpO4sa4R0ktxh1slj8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZRIjtdhoDtsRKenB/xu9odQDTo4xVwQyFCkf6YNI9jYjEHBVlDLdxp+RXRmcToEpgzCE6A4CZl47dyNi2qYjnwqLiPVAS00nYaoejz3jC+dLi1TOggCSNrVw7kkNpCctQtB97CQXzDwb85PCb9pbKtpQZUMhAr9IRzYJghOnO3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXBySPMz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dO3ooaav; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1779183247; c=relaxed/simple;
+	bh=9JHcOzht1n0wfKVTJuq0d8Jgtu8JOvyjFJ+NPArVa08=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=DxKEhHZQ/MVTY1BiUSEdYZ9mPvZWQ4bjojlLR5TKORaIUey6o6SI+9V5djCyvQ/sx+BGRx8QE8mlAqYtMXSRDrQbMzlqXVk8JyRFtv2NH6zAGTQVP0Pqun7EcpbIlYRpC7R1nsykWen4RhzDtEoyVEBHml8Md/KYTQLkebUp7ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H6ugWpLk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iajCMxdo; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXBySPMz";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dO3ooaav"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779182213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Psnh/1orvkXMNjpOzKqZw/Hf5BXfe/yVOhTHlyVoMU0=;
-	b=eXBySPMzCjXTmXoQffdxpPehgohKZuPds6OYZcpZKQur3TxB4N1ZTAlYocRgFYAPAu67Ql
-	Slitbi51KRZ+ZtkCMdUhZuO9H3OygT/a1oWi3oksL92mPdB4RasIGIufMF7qF9Hsir6g2J
-	qcYgp8wMvVLjxutFByAgczyfxxTIwms=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-136-4D2QdOUPNTuSfdhUK5ecdw-1; Tue, 19 May 2026 05:16:52 -0400
-X-MC-Unique: 4D2QdOUPNTuSfdhUK5ecdw-1
-X-Mimecast-MFC-AGG-ID: 4D2QdOUPNTuSfdhUK5ecdw_1779182210
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-44dad1b938fso1969893f8f.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 May 2026 02:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779182210; x=1779787010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Psnh/1orvkXMNjpOzKqZw/Hf5BXfe/yVOhTHlyVoMU0=;
-        b=dO3ooaavu8NebkdbszYP6Hg6HCcOcTGZlRa+t90/q5L9wQp/s8qG+tJ3U2d4woZ2l5
-         d7b1cmmivDxWd8++PSlZk4nn4qJWZyuwgYVAL/nn83TztCeGY1gryWvLb42qcsTWejwA
-         gFjsrZWtws2iuSQJoDPSCq4UdzGdha4+YWxOA/GWCjYCA4WBgTDAYx1GU67fISPtjsov
-         Cd3wP1/2XlzVs6824WJxB9kcSvHBXxzPFkPoYvJ8t45phJhwY6awn7XIc6HqfQLtNyWq
-         tshHB+e5LikSvP+FnNFIDsRaCcvptAXy3i97kmsyTm7WCjJs9VPxWh+xxVQYgcgATc2L
-         hQVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779182210; x=1779787010;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Psnh/1orvkXMNjpOzKqZw/Hf5BXfe/yVOhTHlyVoMU0=;
-        b=KkHZNXkd3lJdlBM11FvBsiEW4PvG2OnBTmxIGT5zXQ3922kR6z5ZeYPrTWht+TmKuW
-         gDF1FCqa4iZVcoWDgZMqPxKiQFP8zNbhvfDiJghknYXs7igZmlUSCpd+c59HYLugD8OT
-         tbNhqDjx8onjkkFn77y0Y1AMm01zsnp6z6mVKSZEB3YPAunE1f7apUHHL9OfBCdsHMOz
-         vrPXr7zFb7t9nEYtTDApMnVLAR019qLi3JJyNOB5vdiYEx43ZcLpjNmHf75rt3NsRwTw
-         ZnqxweQYC9U+XFZiFo3/dPwRimKSJxJ6YmKyUih9Pek0yWyQidJM1kJbjupiNqoGA3Ad
-         deOQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9/dQoO7J0D+aNAUkUkOs/NU1bfERYLECZiJhvF57aq8CNdJx5wcHhho4raemjZdw0zDKgsUcXeDJaI0gEgf2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVYS1IhHwWrPNua6Ojh0gwNd9Ld6dNbOJnyM6chNbliyqnz1SP
-	IN373SUvVlacZvvHTx7ovZ3ixez31t/TWnt4GaUZFVutGEhvkmzi0Xt8LY/zgLG9zD3R/j+p/aB
-	/FEENzCuDqwHJWSvtBWIMPbKHXzNYljdCgPpknEg/RJdnxPIKboEcgz/ssW3rHEQwVeEizw==
-X-Gm-Gg: Acq92OGj3hO3l25G2eJS2RYW7LBNrlFky5FOWSUb3mUeA6tsDi27GhdzJ2oEjRd4XZz
-	FN4/hALIxsQe8/JEbLJMUjDqTkPS7AUWJOOy1CSJ+PcqzKn2dH00IifmtNEyfiu/6LQg7iUykyE
-	7Cdek1/xZoF2nJbruuQwZE9W0lpssrL41VnEnQT/pi5D0iGzdDkWTKQZvzFtEvBPZp1YsHMISI8
-	nRh6GezFsLvH0ukPmWG88k3L2Thk6+EGttciFxHPvR+QKnuXJTBfJ1Dcb57lsd+4bjCWzr/Hoxu
-	YLN0W846wkkaHHBLBq47uS1QJEJsN+Dv8K6xKqca8FvTW6YyT0ssVg48hcQKE42QGRbqclrXW2O
-	XA8siRRCH0ikmBSbsvuX6dKU4ZgjsEn1ES5XX8B9fMO9OcsyttpVGdH5iI21QQzKG3DckLog=
-X-Received: by 2002:a05:6000:1aca:b0:451:bbe4:b48e with SMTP id ffacd0b85a97d-45e5c57d380mr28511212f8f.5.1779182210484;
-        Tue, 19 May 2026 02:16:50 -0700 (PDT)
-X-Received: by 2002:a05:6000:1aca:b0:451:bbe4:b48e with SMTP id ffacd0b85a97d-45e5c57d380mr28511159f8f.5.1779182210116;
-        Tue, 19 May 2026 02:16:50 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da15a6454sm45178454f8f.34.2026.05.19.02.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2026 02:16:49 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: remove obsolete file entry in NETWORKING DRIVERS
-Date: Tue, 19 May 2026 11:16:46 +0200
-Message-ID: <20260519091646.302458-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H6ugWpLk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iajCMxdo"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 8B06C1D00085;
+	Tue, 19 May 2026 05:34:04 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-04.internal (MEProxy); Tue, 19 May 2026 05:34:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1779183244;
+	 x=1779269644; bh=9JHcOzht1n0wfKVTJuq0d8Jgtu8JOvyjFJ+NPArVa08=; b=
+	H6ugWpLkIoztUOAw5JR9QLk/qk0eaMhQXCerZiNCkSj3wN01YD7oY9FNCVVwscUr
+	4ijhDnk159vWVC5/e/267qUhtuLg+UQti6zEPes7sp2nGznW70nZQDsM24GBQhNb
+	2WnHasYB0+cbtkLYQet/weSrI7/USmg0zjCCe2Mql9sXZAYsF5antFkWQXkr8LVi
+	6hG+AtLtMcyRskKtBPSHQn27Sdh7Z3nRu0t8bRpN5njc47UOOn/wnYs9LoqxRSoj
+	KcP8t2zRuIuGvKOI8/mjgpq+jnTy5sjeboMCAJJFRPAJLoKYPJ24Hp12ZTcZYPB1
+	qvM1yY+TMnobA28ufQ8nwA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779183244; x=
+	1779269644; bh=9JHcOzht1n0wfKVTJuq0d8Jgtu8JOvyjFJ+NPArVa08=; b=i
+	ajCMxdoNsH80/XVkJb9mNk0HqA7ElDQPG1/RTRs7gBtpDF7eLCKhh/eL2Do6JvWV
+	FRUfvz0whPX1ZkOWPYgs0OtG4Z1OimguwWJvWHMwbz6urtTzHbmMzL4CbB4Gd+hp
+	Bs8mRAjR8j2zpfL/XEJnDyzdj8xTv9VEldnWmyn71TUQcZkx/KCdSiihTWc5fg4O
+	BK13jEF0Of1ZRh6j31fpR0znrgR3B6CZGi8VNOmNt9q43Q1DqzxmutXWLDwGfgEX
+	b3Y0VtbqEwJKSWWnAXVM06ZJ1p3XeM+Xk5+GDElmUvzQZHp1TA4KZixgUXkT+3h3
+	zqBVyz1yTgtdOjzk/419w==
+X-ME-Sender: <xms:iy4Mag96X3tWADTpDEn3fRj7yZHuGGLUuunythREV9QMb8t_Qc7Xhg>
+    <xme:iy4MajhGs7ItTnl3w7HaoxtobLvI6Yjoh_ljHL-Zk6nphPGFfS2CTtCl_Ic2Dr3dQ
+    Ix66cN_Ww0Nj28j9k2NAykTU7CR9XN0UyZBdQIaiPQOQ5WrXsb-7kW0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugedugedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoh
+    epvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrd
+    gthhdprhgtphhtthhopehlsghulhifrghhnhesrhgvughhrghtrdgtohhmpdhrtghpthht
+    oheplhhukhgrshdrsghulhifrghhnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepph
+    grsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhi
+    thhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkh
+    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:iy4MajgDqaCwXHQDOMiFnKzafgJ_4IzATzLcSP5w_dEqFiS9UjpXlA>
+    <xmx:iy4MaoO_7IrKQUAJnU_giCvYjEFzT_JqO32UvvYn60nweflHSirG3w>
+    <xmx:iy4Maur-G4v0MnTSC0bT48E94Hkznv0WD4qs_APPpeXLLTIbFlk6hA>
+    <xmx:iy4Maq5LIrDbYMJPqCdz5Vc1mpNtu3GUoNs7nqGlNq-TMpW2i2tWXA>
+    <xmx:jC4Mah_O-0wsYoZWF9D9V9os8vDHDjRa_WhPLB1yU92dASr6Efxk1U_k>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CFFCE182007A; Tue, 19 May 2026 05:34:03 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: ACgEviAZ6E4Z
+Date: Tue, 19 May 2026 11:33:43 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lukas Bulwahn" <lbulwahn@redhat.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ Netdev <netdev@vger.kernel.org>
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Paolo Abeni" <pabeni@redhat.com>,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Lukas Bulwahn" <lukas.bulwahn@redhat.com>
+Message-Id: <a55cbd57-b81c-424e-af61-53a3e7caf3c1@app.fastmail.com>
+In-Reply-To: <20260519091646.302458-1-lukas.bulwahn@redhat.com>
+References: <20260519091646.302458-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: remove obsolete file entry in NETWORKING DRIVERS
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, May 19, 2026, at 11:16, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Commit 5e138e0ec32b ("w5100: remove MMIO support") removes
+> include/linux/platform_data/wiznet.h, but misses to remove the file entry
+> in NETWORKING DRIVERS referring to that file.
+>
+> Remove the obsolete file entry in NETWORKING DRIVERS.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Commit 5e138e0ec32b ("w5100: remove MMIO support") removes
-include/linux/platform_data/wiznet.h, but misses to remove the file entry
-in NETWORKING DRIVERS referring to that file.
+Thanks for the fixup!
 
-Remove the obsolete file entry in NETWORKING DRIVERS.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e541617ac448..27dbf1ca8283 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18631,7 +18631,6 @@ F:	include/linux/fddidevice.h
- F:	include/linux/if_*
- F:	include/linux/inetdevice.h
- F:	include/linux/netdev*
--F:	include/linux/platform_data/wiznet.h
- F:	include/uapi/linux/cn_proc.h
- F:	include/uapi/linux/ethtool_netlink*
- F:	include/uapi/linux/if_*
--- 
-2.54.0
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
