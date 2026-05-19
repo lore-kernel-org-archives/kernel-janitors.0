@@ -1,76 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A32C7E0FF;
-	Tue, 19 May 2026 00:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEB2248F62
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 May 2026 00:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779149868; cv=none; b=P1sZVmOLOk5j9q08/Dct7dnzN8Q4aJFjDoaX/i3vcnGxyPLChQ7ILOxDu516w1mZS+UAkapSN45L/QLUSNROPCzL1nyR2oW5OhB4O/kiwjzWPA8rPC/2/7ZQuSmuZyVlN9wM5cklbNKiQuj6NSQRD8nR5Pi/RKr3Cu9nEpy7MCc=
+	t=1779151419; cv=none; b=bKhAlf2R5Ss9tw7VlMLqpwUarRgzbfw00Ad4E6+mXI/Eq/u6PXaSU1jicjEcqoVhmCJOlUsFbdi/X/LrUrkQOlaavi52kvsoxkjDAhK+XMu2meOIlWDMIN8Mc+BNmJqn16qcplnCEX95wKb9hs0m+vxwTcSd2aeGQ/k/8t0WQJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779149868; c=relaxed/simple;
-	bh=dM8m+QgHdXt1PXx03ijyWSuzXKCiU1Ey1346tTYiqOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=regnyFw0R6W22F/Gwd8wsAAoymzMMppho/+65KpIsgg9eAvR3IhBwR6Dc2fxqdINIip3Suf7KzUcC+6x2P1R+PB/nYNRfQ7vowXTMoEFbeMXNaymfjYz1IOSodhOKCNuVQN5rebJN7dDc6OPHeOa5e6suJyrVT65Junv8bOighs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hpw6zyen; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779151419; c=relaxed/simple;
+	bh=nzMxY8+UnJdBw3CvpnvLTddYG+/Acq9tPNOa+ulvV9w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CfKLhA0I8gRwfmjOLuJd/ZTpTHbU7ZVbpGF8vNCvGsPoDr/VPG7XbfZ3ScsTiYZbpvQ1pqIjBsHv2g2n+Y2t4/GR9qx8crcUdiLDtBhz4ygpgXjRG9RBWivpoO1FiMnTz5ElwQ9IgyGyBcJxj+hwYCs/mK1HC6NkasIauWXMhkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g4GqQCHp; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hpw6zyen"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3C9C2BCB7;
-	Tue, 19 May 2026 00:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779149867;
-	bh=dM8m+QgHdXt1PXx03ijyWSuzXKCiU1Ey1346tTYiqOE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Hpw6zyenAU4wJg5pZxIgfkyucFnl20LWjrTMfbUVqjojcEbA+88lQS0HhVb5zYED5
-	 /tHTJ0uuBow8ImDJPUOkyLqaFuTvSVJ/I96p7McwiAwzqPNMGPk62IlXcD/s+HafXQ
-	 Aj2pep2MCTwa7JcJBQ8l2mYg5xvLAOk0mXQqMbKp4VIw1T73lQVlXHp5kgN4nROSb/
-	 8FRwKRK6+h8VJ9BvIViU5AWXIZqG5pffQvhX9iLKhZyv7EGAhYZlguaOe3yfgszXJ9
-	 F/PeRcxFbxFxLN3f4E1ZNsoVDHsATgu+5ooL7bMot0KT75xsaehwJFQdyn4DvkU6Vb
-	 wFMrd47q4+0Cg==
-Date: Mon, 18 May 2026 17:17:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/3] net: phy: micrel: Code clean-up
-Message-ID: <20260518171746.353a7c76@kernel.org>
-In-Reply-To: <20260518171551.1eb8b09c@kernel.org>
-References: <cover.1778856199.git.christophe.jaillet@wanadoo.fr>
-	<20260518171551.1eb8b09c@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g4GqQCHp"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2ba3245a43dso30931505ad.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 May 2026 17:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1779151418; x=1779756218; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pW+SZ4DiHEbAMVxFiDO/o07/N3cCEF7bkyUCt/9G1kY=;
+        b=g4GqQCHpVRILL+3L21l/0nPBlT2QwhztIwNWT6vDXj0iXNuyexvlUCYj0TRHp92qaR
+         RWCmXS3ecGrk4ZSHFKLcnXUVkZNEq93UkbZZlxAlKrh0mRnmqMiYRq2XARg9trE5tQaZ
+         N3W0W957FcrwUV6XHUy3Ln/6ZacCmtJEwZfRsppucD4JW++qyb9101FfbIiJ4E612HvI
+         v+NRxKnWNq3Ky5e0n1mqIPR3g4ZvFunRiA/HREdHJ96j4VsEmDMd8OVmS8HGJn2n5utS
+         YywAthg69cdJXhuvzHNSPvc5txWYWo9qmz4aFyn53qP6+OqWuAdIuSUNrunGEHoUiZZD
+         TIhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779151418; x=1779756218;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pW+SZ4DiHEbAMVxFiDO/o07/N3cCEF7bkyUCt/9G1kY=;
+        b=ZCl1VtfxXO/fUGPj28VTFIJErAKUey8YiQiMyPz8uykmSYfuXGxXDUbpiKLjahEx1c
+         YykWm4O0eRhT5yPSCLgUohpPcBI0siue0jLWyaRCaNAxBiBUx436ePXvgj1BRxo6EG4j
+         OIG9aafMd2ZeXOeJkvEBoogqaHrjI42P0n4lQ6c7dwquIJUT3IzTEVFbyzxmHqQxacKt
+         tPWlR4k0TWkrHPMk05WoIc7cjw9ajUuohC2hQQQADTwjPWsbMPm0bgIIdepuM7G0zvCn
+         bgX1vkPVkzpPKLUCDOqz4stBPkKJnSldqik+BBo81YWZX8N4uAV81t51KfHsMSWIdmJk
+         KWJA==
+X-Forwarded-Encrypted: i=1; AFNElJ/uYndJ6NFqDpeQkHPMM3x0FeqmtG0+8l+HxQEUb7YqHwkiQZ0PDRErbqby7Ep4TRvjnoVQk4FTntI/zWSknxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTYuHIaUHnnJrJCOVOAGdeR88C7wY8kG+FCOZnkckZ/ki6Devj
+	KyW8Q76J5UphLx35fmvSGBiSZxa/Lo/vRiHEh/dwSTq9f1RwxZHd42r8SljqdUXU+7sJnNHiVLC
+	emGTlQA==
+X-Received: from plfn12.prod.google.com ([2002:a17:902:e54c:b0:2b0:c9c5:109b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22d0:b0:2b4:61cc:37a8
+ with SMTP id d9443c01a7336-2bd7e82bb9cmr183810785ad.17.1779151417754; Mon, 18
+ May 2026 17:43:37 -0700 (PDT)
+Date: Mon, 18 May 2026 17:41:00 -0700
+In-Reply-To: <20260422130307.1171808-1-piotr.zarycki@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <87v7djgoji.fsf@redhat.com> <20260422130307.1171808-1-piotr.zarycki@gmail.com>
+X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
+Message-ID: <177915101375.2229640.7454102060975937754.b4-ty@google.com>
+Subject: Re: [PATCH v2] KVM: selftests: hyperv_tlb_flush: replace NOP loop
+ with udelay()
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, vkuznets@redhat.com, 
+	Piotr Zarycki <piotr.zarycki@gmail.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, shuah@kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 18 May 2026 17:15:51 -0700 Jakub Kicinski wrote:
-> On Fri, 15 May 2026 16:50:23 +0200 Christophe JAILLET wrote:
-> > This serie is only some clean-up related to
-> > drivers/net/mdio/mdio-mscc-miim.c
-> > 
-> > It depends on a patch called "[PATCH net-next] net: phy: micrel: use dev_err_probe()"
-> > that has been sent recently.
+On Wed, 22 Apr 2026 15:03:07 +0200, Piotr Zarycki wrote:
+> Replace the open-coded NOP loop with udelay() which was added to KVM
+> selftests in commit 6b878cbb87bf ("KVM: selftests: Add guest udelay()
+> utility for x86"). The NOP loop is CPU speed dependent while udelay()
+> provides a deterministic delay regardless of host CPU frequency.
 
-Oh, missed this of course. No auto-tester will get this sort of note.
-Posting patches with dependencies is not "supported".
-I've have expected you to know better..
+Applied to kvm-x86 selftests, thanks!
 
-> > Note that in the 2nd patch, the order of the calls in the remove
-> > function is changed. I don't think that it matters, but I'm always
-> > relunctent to change such things.
-> > 
-> > The patches are compile tested only.  
-> 
-> ... against the wrong base tree I suspect? :S
-> 
-> Applying: net: mdio: mscc-miim: Remove some redundant code
-> Applying: net: mdio: mscc-miim: Use devm_clk_get_optional_enabled()
-> error: patch failed: drivers/net/mdio/mdio-mscc-miim.c:318
-> error: drivers/net/mdio/mdio-mscc-miim.c: patch does not apply
-> Patch failed at 0002 net: mdio: mscc-miim: Use devm_clk_get_optional_enabled()
-> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+[1/1] KVM: selftests: hyperv_tlb_flush: replace NOP loop with udelay()
+      https://github.com/kvm-x86/linux/commit/749fbf2bdcd7
 
+--
+https://github.com/kvm-x86/linux/tree/next
