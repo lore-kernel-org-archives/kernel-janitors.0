@@ -1,131 +1,159 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57BA3C343B
-	for <kernel-janitors@vger.kernel.org>; Thu, 21 May 2026 12:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2845327144B;
+	Thu, 21 May 2026 16:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779367783; cv=none; b=Etu/2gFKGpjNsJEEgNCR+fcWyOUPtZ2pizn50qJreidptZA/CGUxMbIiY2N9NBkn6D5uqpzOuZl2zH7DkPLlkcnM02xjm3FbqnkT27zP/aCm09T+PZ5ILpu/O/Jksk4rKqnmg2l6rbQ1oCBm2WugrCB7imSQBqnwZDLyvqoDRXE=
+	t=1779381213; cv=none; b=Rl1zRJHAsqtOF/DfPW3YgQ1gEplF4UTfktV0nmXC5ei2xNzcv69sPoJc8jlwuA8+xTFT6KopCYy+s7TFvKwUxyEVYa+QFSwzhP3ow9D/i61nSOV5gS/EBZ3HgIbfGgZc2pvqr2ie1CsHCecjnrRhF8rummi965h3S8/xRBQBocE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779367783; c=relaxed/simple;
-	bh=wigWFtjyEa+VCBZgvrGiZjEW95od0zj93AXCLLanc/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i424UxguXza/IZyYY/jUl5V5rgtJococc2V8V1Yz7e+K1cYjKWavYKPoI0EmQPvte+Deic3Agj38RfpcHnZCThQNZJ4C3PGGNm0B37wJySvkxYmyzVjlvjrtIFgphar/02tMASE4EUKz7zdJaFZ7SJcyCNgPy4WBkbmz4UnzsVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaykBOUh; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779381213; c=relaxed/simple;
+	bh=NMqvX0XzGNzABtxfF6My97YobrBkluVTxdK2KsDCGCc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=mziLKnHPF3vXnLS4WG6ZaYqoJAUlrGFHgO8HmnJr1K4uhI8wtbeKxKuXeo8QSFGLmk7xLJTmWBOaYeBJxxYyRh1TIMghKvI8NkOTNqEHAaK+S2Dxx1nghpzJmnduyiD/X7FhgW0Dd/dz9KQL/hkpr8szH/EnWAXJWomy+VqFn6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PNA4zEuF; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaykBOUh"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-48fde648a71so43859775e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 May 2026 05:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779367780; x=1779972580; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3FOLDoUTVhvtMvpFRrgXFdt2ND7UZm3SuSUfzhbpzKo=;
-        b=VaykBOUhtlW88xUww3Jn5n8ZoH/J009CQrx1v1vDaCNrv3+YyuH/fRW2keFMJzUlVX
-         VdEGp0dnCqEdkx9wl+a8j7+8Q9/SERvqCcnXg9ZwfrjRvDe4w3DhYB6NEjbNDwXh61HL
-         hfEX2fBsGwsUFq4yYoD6BddM+16lBOR/yXgto2fZGDJb0wZOAW8ffS0D60mRhTrvNMiq
-         IXruIKVEmjHzAX4Tu0UmfNMrzBNcRGOOplb2hDcgIL/NPdS/2ECYJO4oO9fNAwCyEFPf
-         +xHyv4zHnCaI93HCTE3MIyZKLtrDrclTvN+KszVa/Ojru1dZc7NIwFl6EikzLxvSgP9y
-         q4fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779367780; x=1779972580;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3FOLDoUTVhvtMvpFRrgXFdt2ND7UZm3SuSUfzhbpzKo=;
-        b=YWeJv4RSCQ3aJ+L5NTIxypTMjXsGycrg8qclKNNdKXolnoOkoFsGswJxcpDzaddcpj
-         OIIatp+/cuBMwu8RjzJ4a8goK2VnVa0FZB9Tvhossccwdh+TOVjBDbhpur3VbkfMGvBH
-         3A8aY7DE7ewJ6dUHazC7QEg0Ol3E1O4SOrNX31NqjCl8yEpmYtLZzHKDvm0HB4s4dYdx
-         7MRuBpXNOhpQAc+3BHyrraTri4mMbjFtkneyr2b2THwkNU2A4h41tFnVZt0V94TQBoW2
-         fJ+0/J69HJpa7Bfo/5dUhFWZtYKlgh+V9+9oAicd0pjIEc3nJ52iz1fFi275/oLXaquH
-         TbLw==
-X-Forwarded-Encrypted: i=1; AFNElJ87azvYi/jg4D15DTVXI6i+wwWv9GyA/Kqs5DVqwNaBAoJ/xck2luVh8kF2O41MgLu4URuvVYQtXmOOySZ/drk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGoKDHvTqwQ/T7OFi9w7lKYIVf8qQLa/KV5aTYnmFawg9Yo4Rm
-	FzGamW9ZpwVvuZ5VKCpoSk8CwoeT9z0nhvqHd0vZn8DFyrxnfd8ABF1Y
-X-Gm-Gg: Acq92OHgvKC37PHXve4Zg5wN3K/vqje1NEzBcM/Ohup71jqa2sGEua9JoZRFiue7mim
-	8p5ZuacqMqA1HAevmNbIdCT0Qp0q7zAheN/XKSaPI6sz/lpFPWQ2WVZaNhN09YZu+uHN6ZRappH
-	BOw2Cu1wVdnPtU4jWqSPAqo4NpjeDhCQg+mYA0gsC0V6a6vdtec+vzSFWezG+eQUVTIDU685CV2
-	zh/3b8SiIhidDLI+2woss9KieI3EGLYsJkSRyVhbrEQXZvkL7GmN0R/Z7J57TuBktWsDms83u53
-	C+KodSBTTGIGEaYXvwVHCguu+yCmtiQgq6FWZRO821QoHrkMwcwbNk+y9uroIffrIliPXuNm5fn
-	npQyy+TfYZoyiWQ6LDXp0Zmxr96uTAyX2PadV1IltymbQhYOJDIpUtruQLtijkIQ9Y3mDEOAIgE
-	TVPg3SiOHSnxmgHdl9F+XkER0=
-X-Received: by 2002:a05:600c:8286:b0:489:32b:ac0b with SMTP id 5b1f17b1804b1-4903606a0bdmr35037485e9.6.1779367780083;
-        Thu, 21 May 2026 05:49:40 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49035c219a0sm16144605e9.5.2026.05.21.05.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2026 05:49:39 -0700 (PDT)
-Date: Thu, 21 May 2026 15:49:36 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: David Carlier <devnexen@gmail.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: lan966x: cleanup error handling in
- lan966x_fdma_rx_alloc_page_pool()
-Message-ID: <ag7_YBWRpRmY9MGT@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PNA4zEuF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1779381203; x=1779986003; i=markus.elfring@web.de;
+	bh=NMqvX0XzGNzABtxfF6My97YobrBkluVTxdK2KsDCGCc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PNA4zEuFzZZT5Uh/81UOwWXi+z0md0Cn2CHtuoQvNWJ/7M1NEFj3f5D150XB4iWF
+	 DugOLSjS6JpjGDYXxZqgd7UiA6KuM76upaQSLN0Z5Q6pPanNlngdFvfg3/gBabMAT
+	 n7mEfUUuvK9IsY7+b6DhZrut5OkHaRHNPktKLLTHi/Trp7rAXhTgSjJ6CXgtlR1t3
+	 hb2djWHYrejmT2VwjJiyJqEAnDVXth6seOi7LIUj5lM1SHCPtl68qgQ8td/+QyhEC
+	 BAkBmZ8/17roRTks1mYnaLKtOoXMcA/1z2Jv2e32YkHBxDF1X/NAJ+X595s6Lklzz
+	 1Ms3Iapnj1J4DrFTmA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCGWc-1wYJXt1eEc-005KON; Thu, 21
+ May 2026 18:33:23 +0200
+Message-ID: <2bc78c8a-191f-4657-9ed9-a271c86a4b92@web.de>
+Date: Thu, 21 May 2026 18:33:21 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: Dinh Nguyen <dinguyen@kernel.org>, kernel-janitors@vger.kernel.org,
+ Tze Yee Ng <tze.yee.ng@altera.com>
+Cc: stable@kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20260521031415.3247663-1-dinguyen@kernel.org>
+Subject: Re: [PATCH] firmware: stratix10-rsu: Fix NULL deref on rsu_send_msg()
+ timeout in probe
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260521031415.3247663-1-dinguyen@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/ae7lDBbnfMYPpkMAUZPMjAdEtmir9yAsACrFfiIz4obC6iveTh
+ tzMWGSA0BZTHXe6GpdlsJTSRT7Z7e30uHrplKBhgYEQXdBOQnVVwPk8rfwxLHAf474odLxo
+ 6e8DTh4+yvR6nCJNsVn5cGb8CYQ4XMuUJskSXTuctraZSWfMnp2faGKn6Oy6+XA3xA9zvvD
+ ORAciPdPVzfk4CxUSLH9A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:a+UHtghOp/s=;kMSXLlbXw8Xanyai4hs1UfdiRpa
+ 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
 
-This code works, but there are a few things to tidy up:
-1. No need to an unlikely() because IS_ERR() already has an unlikely()
-   built in.
-2. No need to use PTR_ERR_OR_ZERO() because it's not an error pointer.
-3. Use the returned error code directly instead of using groveling in
-   rx->page_pool to find it.
+=E2=80=A6
+> Apply the same cleanup pattern to the remaining failure paths: remove th=
+e
+> async client, free the channel, and return early so no further messages =
+are
+> queued on a channel whose scl has been cleared.
+=E2=80=A6
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+How do you think about to avoid a bit of duplicate source code
+in the implementation of the function =E2=80=9Cstratix10_rsu_probe=E2=80=
+=9D?
+https://elixir.bootlin.com/linux/v7.1-rc4/source/drivers/firmware/stratix1=
+0-rsu.c#L715-L807
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c b/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c
-index f8ce735a7fc0..2d1c38289bb4 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c
-@@ -91,7 +91,7 @@ static int lan966x_fdma_rx_alloc_page_pool(struct lan966x_rx *rx)
- 		pp_params.dma_dir = DMA_BIDIRECTIONAL;
- 
- 	rx->page_pool = page_pool_create(&pp_params);
--	if (unlikely(IS_ERR(rx->page_pool)))
-+	if (IS_ERR(rx->page_pool))
- 		return PTR_ERR(rx->page_pool);
- 
- 	for (int i = 0; i < lan966x->num_phys_ports; ++i) {
-@@ -106,7 +106,7 @@ static int lan966x_fdma_rx_alloc_page_pool(struct lan966x_rx *rx)
- 					   rx->page_pool);
- 	}
- 
--	return PTR_ERR_OR_ZERO(rx->page_pool);
-+	return 0;
- }
- 
- static int lan966x_fdma_rx_alloc(struct lan966x_rx *rx)
-@@ -115,8 +115,9 @@ static int lan966x_fdma_rx_alloc(struct lan966x_rx *rx)
- 	struct fdma *fdma = &rx->fdma;
- 	int err;
- 
--	if (lan966x_fdma_rx_alloc_page_pool(rx))
--		return PTR_ERR(rx->page_pool);
-+	err = lan966x_fdma_rx_alloc_page_pool(rx);
-+	if (err)
-+		return err;
- 
- 	err = fdma_alloc_coherent(lan966x->dev, fdma);
- 	if (err) {
--- 
-2.53.0
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv7.1-rc4#n526
 
+Regards,
+Markus
