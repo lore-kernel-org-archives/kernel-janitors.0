@@ -1,56 +1,54 @@
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+Received: from smtp.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D685037F018
-	for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 12:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C8C382F00
+	for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 12:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779712279; cv=none; b=YX0uRvI9GWBn7qOWrJh7LLlqWFhli2HNEESs6yY+WphDiVspTKRiPyfXj3tsB6qRxpONJ88pW+YJdsF10Y+4qX3Dz8pfkIo8mPueOjHKZ8+AWns4vKRLyc5ei6UPBNeUkUxxlKicvzfSz49jZg/xB/cAKxp3Gc5mBwbggyr2jMw=
+	t=1779712602; cv=none; b=NreqTNXa53kcgfNVGb8mgPRpKhpuXs9RMb9nomWwIz/wQD8bhZDTC0aj0SRh1HxDyUz11DlgBj8yAS1ekwNUbjfmC5euEoNhd9PmA/9zU5C1WxCan8/l2tL6l/GGAMLOXVrt4jcN0qPEobNRU2oTNS20yzjqsso7thXhH7+geuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779712279; c=relaxed/simple;
-	bh=VrkAKFVICdseo5IERnTZKJChm5LvacJ6c/KKmZN7LkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ruzD4K/pf4K/mbDwE9Y4z9Ap/Nw7jTxP3RrSUfgn133JpHrWX4g/tZhUHDxIkCG2B8L84tQtoA4sdo1Hd3cuTjY55PtthuWuiWOCqdUdiA5OTNaqxWTiqjgI02V7HLnk6s/dRvCmeUV/mqh14qdI14dqqEvdJs/2wAj4OFUJuVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tqPBHSC0; arc=none smtp.client-ip=80.12.242.23
+	s=arc-20240116; t=1779712602; c=relaxed/simple;
+	bh=TZOaeH+vP4WW5Gs9wH47yeeHPvP/6SqcD+GMNd6E5gI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e9Eqc9if/bUhzl+SGTVg0qJCaohGs0/YHhPYwIyNYDrOsoVsUExc2y/U+hw5xdwaZSZgTP1JDC1kEDWHmtJgGwObZMcvtlDqxh3UADapJrY7lWqfBeXtQ+m1eceiv0lXF+EVTyuuUCRNme+OqK9zptojBlM9aMP9mWPq6f/YaEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=WIonNY/4; arc=none smtp.client-ip=80.12.242.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tqPBHSC0"
-Received: from fedora.home ([10.64.95.102])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WIonNY/4"
+Received: from fedora.home ([10.65.86.64])
 	by smtp.orange.fr with ESMTP
-	id RUSbwisXnTilpRUSbwCGeI; Mon, 25 May 2026 14:31:09 +0200
+	id RUWnwAa6tjnMPRUWnwWTxi; Mon, 25 May 2026 14:35:29 +0200
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPSA
-	id RUSRwq2akQMzxRUSRwv4V0; Mon, 25 May 2026 14:31:02 +0200
+	id RUWdwkexnb370RUWdw6JPe; Mon, 25 May 2026 14:35:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1779712262;
-	bh=+24KCHj8Nhbt66nix0buOwJbN6z4qiKLJeZ5FnCFY+o=;
+	s=t20230301; t=1779712522;
+	bh=ljvFcHVr5NanSDqM3RBqxRSwTWh7Ck4wjtjVJuilOnw=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=tqPBHSC08dB51FytLI07zypkiHsmNulKxzm+DD6cQVpPAWR90GVK/yYtPQwhd+X3O
-	 61FvAsTzGFC/hf1HbZDfYnmYIzaEzbqQwytc5aJoVH53R6h/k3W4yrV/VJAAp7Qm8V
-	 xeS7o5Kn+qH6tbo+hRMhnwzE4zOC5KWpnDniOqVXi+/4aadK7QksAIfUL+Ck8zqfOX
-	 okS67F/r1wJPODEZ6CR6lUvyCt9+XsV2boWisGX2Ub07QhwMY/Yjc6LCVRvYvZHSLX
-	 sN5o1S9bd0hoP+Tllj9A4Sr/P1+wmBV4hm+ICvJHkHM97LMS2RAhNUQm8BsvBJP7Yf
-	 vAM8Gu8NMfdVg==
+	b=WIonNY/4gKDnfqCVHquYVLbYKe9nCgMH5xepGWVv/w096T2UKTolcCStk+GyLi5l0
+	 vQbrw7FbnzLiPeZY+RJi+PpvZw49lJP89HSXBntrI7sXBeoC3Uj2LOTIDLQXkA/aM3
+	 VKbaxv31PLQFBr9cVOie//0eO9jqEzN20lCsgt6sXNFoTez8A40Y2ozcXSrlSnGARe
+	 4IWetzYobZFiUrKIa79A7YKWq37adtSgYBxq0HYWI829T9PwIctZ4GmBJJxZEOwmvc
+	 vZN3pGJXaX9feHVrwzs1hvFDlObXadBpryj2JXIkkrX4ovIac3q79zpJLxsjixYqPI
+	 agIenAIN/4jQQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 25 May 2026 14:31:02 +0200
+X-ME-Date: Mon, 25 May 2026 14:35:22 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>
+To: Matthew Brost <matthew.brost@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	intel-xe@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/vkms: Constify struct configfs_item_operations and configfs_group_operations
-Date: Mon, 25 May 2026 14:30:56 +0200
-Message-ID: <ade89ec366460754dd1746dd8001afb53cfaffbf.1779712234.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/xe/configfs: Constify struct configfs_item_operations and configfs_group_operations
+Date: Mon, 25 May 2026 14:35:15 +0200
+Message-ID: <ee83bb3bc0518db4a0a73c3e8df814a45549a064.1779712504.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -71,139 +69,58 @@ On a x86_64, with allmodconfig, as an example:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  21554	  10096	    128	  31778	   7c22	drivers/gpu/drm/vkms/vkms_configfs.o
+  34095	  15704	    128	  49927	   c307	drivers/gpu/drm/xe/xe_configfs.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  22546	   9104	    128	  31778	   7c22	drivers/gpu/drm/vkms/vkms_configfs.o
+  34447	  15352	    128	  49927	   c307	drivers/gpu/drm/xe/xe_configfs.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 ---
- drivers/gpu/drm/vkms/vkms_configfs.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/xe/xe_configfs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index 7551b8c7766d..b2b3343f9d35 100644
---- a/drivers/gpu/drm/vkms/vkms_configfs.c
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -189,7 +189,7 @@ static void crtc_release(struct config_item *item)
- 	}
- }
- 
--static struct configfs_item_operations crtc_item_operations = {
-+static const struct configfs_item_operations crtc_item_operations = {
- 	.release	= &crtc_release,
- };
- 
-@@ -231,7 +231,7 @@ static struct config_group *make_crtc_group(struct config_group *group,
- 	return &crtc->group;
- }
- 
--static struct configfs_group_operations crtcs_group_operations = {
-+static const struct configfs_group_operations crtcs_group_operations = {
- 	.make_group	= &make_crtc_group,
- };
- 
-@@ -276,7 +276,7 @@ static void plane_possible_crtcs_drop_link(struct config_item *src,
- 		vkms_config_plane_detach_crtc(plane->config, crtc->config);
- }
- 
--static struct configfs_item_operations plane_possible_crtcs_item_operations = {
-+static const struct configfs_item_operations plane_possible_crtcs_item_operations = {
- 	.allow_link	= plane_possible_crtcs_allow_link,
- 	.drop_link	= plane_possible_crtcs_drop_link,
- };
-@@ -345,7 +345,7 @@ static void plane_release(struct config_item *item)
- 	}
- }
- 
--static struct configfs_item_operations plane_item_operations = {
-+static const struct configfs_item_operations plane_item_operations = {
- 	.release	= &plane_release,
- };
- 
-@@ -393,7 +393,7 @@ static struct config_group *make_plane_group(struct config_group *group,
- 	return &plane->group;
- }
- 
--static struct configfs_group_operations planes_group_operations = {
-+static const struct configfs_group_operations planes_group_operations = {
- 	.make_group	= &make_plane_group,
- };
- 
-@@ -438,7 +438,7 @@ static void encoder_possible_crtcs_drop_link(struct config_item *src,
- 		vkms_config_encoder_detach_crtc(encoder->config, crtc->config);
- }
- 
--static struct configfs_item_operations encoder_possible_crtcs_item_operations = {
-+static const struct configfs_item_operations encoder_possible_crtcs_item_operations = {
- 	.allow_link	= encoder_possible_crtcs_allow_link,
- 	.drop_link	= encoder_possible_crtcs_drop_link,
- };
-@@ -462,7 +462,7 @@ static void encoder_release(struct config_item *item)
- 	}
- }
- 
--static struct configfs_item_operations encoder_item_operations = {
-+static const struct configfs_item_operations encoder_item_operations = {
- 	.release	= &encoder_release,
- };
- 
-@@ -510,7 +510,7 @@ static struct config_group *make_encoder_group(struct config_group *group,
- 	return &encoder->group;
- }
- 
--static struct configfs_group_operations encoders_group_operations = {
-+static const struct configfs_group_operations encoders_group_operations = {
- 	.make_group	= &make_encoder_group,
- };
- 
-@@ -579,7 +579,7 @@ static void connector_release(struct config_item *item)
- 	}
- }
- 
--static struct configfs_item_operations connector_item_operations = {
-+static const struct configfs_item_operations connector_item_operations = {
- 	.release	= &connector_release,
- };
- 
-@@ -628,7 +628,7 @@ static void connector_possible_encoders_drop_link(struct config_item *src,
- 	}
- }
- 
--static struct configfs_item_operations connector_possible_encoders_item_operations = {
-+static const struct configfs_item_operations connector_possible_encoders_item_operations = {
- 	.allow_link	= connector_possible_encoders_allow_link,
- 	.drop_link	= connector_possible_encoders_drop_link,
- };
-@@ -677,7 +677,7 @@ static struct config_group *make_connector_group(struct config_group *group,
- 	return &connector->group;
- }
- 
--static struct configfs_group_operations connectors_group_operations = {
-+static const struct configfs_group_operations connectors_group_operations = {
- 	.make_group	= &make_connector_group,
- };
- 
-@@ -750,7 +750,7 @@ static void device_release(struct config_item *item)
+diff --git a/drivers/gpu/drm/xe/xe_configfs.c b/drivers/gpu/drm/xe/xe_configfs.c
+index 32102600a148..5c2072f18a57 100644
+--- a/drivers/gpu/drm/xe/xe_configfs.c
++++ b/drivers/gpu/drm/xe/xe_configfs.c
+@@ -838,7 +838,7 @@ static void xe_config_device_release(struct config_item *item)
  	kfree(dev);
  }
  
--static struct configfs_item_operations device_item_operations = {
-+static const struct configfs_item_operations device_item_operations = {
- 	.release	= &device_release,
+-static struct configfs_item_operations xe_config_device_ops = {
++static const struct configfs_item_operations xe_config_device_ops = {
+ 	.release	= xe_config_device_release,
  };
  
-@@ -802,7 +802,7 @@ static struct config_group *make_device_group(struct config_group *group,
+@@ -855,7 +855,7 @@ static bool xe_config_device_is_visible(struct config_item *item,
+ 	return true;
+ }
+ 
+-static struct configfs_group_operations xe_config_device_group_ops = {
++static const struct configfs_group_operations xe_config_device_group_ops = {
+ 	.is_visible	= xe_config_device_is_visible,
+ };
+ 
+@@ -950,7 +950,7 @@ static bool xe_config_sriov_is_visible(struct config_item *item,
+ 	return true;
+ }
+ 
+-static struct configfs_group_operations xe_config_sriov_group_ops = {
++static const struct configfs_group_operations xe_config_sriov_group_ops = {
+ 	.is_visible	= xe_config_sriov_is_visible,
+ };
+ 
+@@ -1054,7 +1054,7 @@ static struct config_group *xe_config_make_device_group(struct config_group *gro
  	return &dev->group;
  }
  
--static struct configfs_group_operations device_group_ops = {
-+static const struct configfs_group_operations device_group_ops = {
- 	.make_group = &make_device_group,
+-static struct configfs_group_operations xe_config_group_ops = {
++static const struct configfs_group_operations xe_config_group_ops = {
+ 	.make_group	= xe_config_make_device_group,
  };
  
 -- 
