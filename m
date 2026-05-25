@@ -1,148 +1,128 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29876384CE2
-	for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 13:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779715417; cv=pass; b=CvImjNtPtgFZEP4LgtXPixzMo6ePTZCFNqn3/exoB1CsceLTXAFuNX+b9JAK/ulAlEaHEEGS+ihPB9fMw9z8La9Ccg5CGB5zW0GmjvPYeXeuAvwQAGAthZa6IzsgzOub0pHrgIeOSU8yTJGczHobVtDrrV7yL5vf0mtr+IzOw4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779715417; c=relaxed/simple;
-	bh=+BdezTZZ2xJDU1plnc5GlgQRS1RzxYkyrenMWctrdX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MeVquFxxw2xIt+DoHaWFQEhCEa59lYZ4NodYoXke5mMd40010jqczfys+V2NBlqPYyJRDl/Wc8+DeQx5o2TK6Wu+x9LEP1Kf58kNlTzE5xgzWk11hrLUhao8LnSaoHe8++SgOWLMYsCfxBMJ+yFOOQNmL7r1OhLE9lXmEmiYrCI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=o3qKi6tb; arc=pass smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9688242048
+	for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 16:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779725587; cv=none; b=fb1SAHGfGn+voO59WpvjYLU3aN+8qsyWZ2WABVAyeOjtfF7MIxq8XpAEJCsCS6HWfRLXHxP2wnV18Qi+acF/Hhu3sZfLSFx33O5vjNth4odL2XJS54kPqiciRZD2xGLx969Fc4r1wV3TTI+togzBZTUNiUQI05vkTG3hcR1hBoo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779725587; c=relaxed/simple;
+	bh=s5w53t4HZEfOpMWOAkkPTvlM5cQcOCdRUzSMehtyGEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fg0YZ3UMjGKSyR6HiJpErkcFh5vpfr7cPZfw25JrySOmou9tH7HxsAdaK/MV88N/WyUhefqx9AcLxQPwKoYBOZKhnF5/cfzQ4g2u78wivBdKwV2h5qi4NNJ5t9U4mUl4UxdcicC7N87KJkl1YkeK8FbA0qFoHEeo1RP4IF1pZtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kS1DMu6i; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o3qKi6tb"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7cb343d343fso88080387b3.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 06:23:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779715415; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Ugek11efEVbgfbkU6rpqUnurwG+9/PnjMe5ky+EmMp+W//FQouw+XzQhMBXFSUePCO
-         KbE+l1g/Mb9JFBeZLo81AtkwAtOYrvTqN2BPDkaXLLV4hIS0+8htmyGjX5HEfOMyST8C
-         U99lHj5LlPg6tUiCUgOUyFeboPNFkpaNx2n5plHezoUbsiAnd0Z9Oe53BC3LCKbj9jpz
-         Ntbx0srWOgu0wLIwESoLla2b2RkeEXyvrqj76qjJOgXX8CyKvS/aUxqMAfLWcldjLyW0
-         cvyADMI45Zf1ogyOnSVj20ADL2qTdF3x5SpJ/WEfQl12xqsqS7JGMYXRwH5dn18rL7Gj
-         wMOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bZlVCaPkKYN85O4NgITQHjQkGhUnieAIagC6kg3O9Os=;
-        fh=IkGrtr3YqKfTqEdGmG65/hAqQFFBp4dQ3u6zIxl6y3c=;
-        b=Ztyb7LzdabjrjRCfQ8rPTRi8Dg90iPF86PbrbeSOUJePA6HBamghIqlDAU9rQluRqQ
-         eTVsvhwNBHsbmqZEgQ/L1jXke9cj7kIgMXEC4qAm9QhPagUkC98vWlWa5AASvoXhPcDR
-         wbqjG1JETwaKkI3gLKQUmQeiswFLs9wBEydE47SRHVReQC3BKkKjsRKf2fB/LFGvD/kE
-         x8sE2Yt511PoD6nzkfz62eotTn2WTNcI4Xg2a0C6+AC6ClsTfqxAG8gegrVnQOWwqOJc
-         zSyRE9xWawD1qZHVLmxLeeMm+qpZ80FDRD21jP1lminBTzvIVIqcpIHOwB5C8VoeKQbO
-         5ggA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kS1DMu6i"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-441209fb77eso6015727f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 09:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779715415; x=1780320215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bZlVCaPkKYN85O4NgITQHjQkGhUnieAIagC6kg3O9Os=;
-        b=o3qKi6tbhy6mP8W3bDryxKx2J9ZHqmDDE0y3V/Tw7rjeAQx4NDIu2J52ehStSi9qTl
-         xU2mUWDGmJhIL0nl74RmEcgE6+jobVvFiQla1ik4HNZNIYyYgVN0jEi+vcvu1LMmHdUA
-         qXE6M+K7zGHz5IgE7FJquLzGuKl1/+Sjs1jNLEilzkC5bzVORNRIKvA77BLrg+Cy8eEv
-         4y1d7qWI/SLtBg8ScIpQG5IBHN4if3Z9WiNjBqtMGku9J11199E59k/zXpb9HqF9Oy8F
-         vYbVU5D6i2ahSMjf0Gj6Bymlgkaw1nMgEYalrcRe8w9JiSoSFAefgjgcrKdDbrp1WMcE
-         AWBA==
+        d=gmail.com; s=20251104; t=1779725583; x=1780330383; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PrUkFmsyhM+H1pzZoLfPMsL3Oa/eAQefGicPa01J8aw=;
+        b=kS1DMu6iT6wKVRxaPin7EgPS7Cw9/Pt3WcjoUuYVh9fpumC5IoI/6d1RkxVJfBuVtS
+         VWVIpYdKK5RzWqtObG8JD5M91ESXgm9MROtxzeVHJu4FkMcK/tRAPBJOt++CjlF8bOrJ
+         viTwzjeTTdLZ14eluw9HcGFfMkic6lDfqgfzxKVuFzQ+Joa5uDV30/AP6Nr0Hwx/4urj
+         k37EdlUQoyANmWVkoQRyMKjYhnppCQZddKZK23UH4Fl61SX7QuBjSQAfOmN+mb7TwtJi
+         hwL4PW0fyWVAsCsxD0n9l7gWFKnuFKAn5MLjiZHnFXsbvq65wC/xV2LmM3nAbrJ6LGb9
+         CIjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779715415; x=1780320215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bZlVCaPkKYN85O4NgITQHjQkGhUnieAIagC6kg3O9Os=;
-        b=EvBajP949LUrvoQN5dRo6D5sYZJ5Los2MC1qch2nSL4gqXafWZ+vWaQiZ9s5HjKJko
-         BpnfdYUuGhaoB2P96JVWND8u/C6jL4/NBoSuxn0y8jhvsCkUgh4n5a8TqljtncY7AFmD
-         m+1hibIK/yqNV9ODt2pA0dZj4TK9FXYCXGpPBoiZdUInY+ubTUnqaSgHMGiuncMSGyGl
-         58Xjpr+aafVpvG948qDBDo19AngnFHVjeoDvLEnekjXXv1t2cI+w5BTWqnro/NzCsD4E
-         HGPWVA0sTHpPvPkcBTGz5H6onKL/9Wj7RmIg+o4Z+VX2WJ/WTXATP0H5W0i7aUXpS1RX
-         qoCg==
-X-Forwarded-Encrypted: i=1; AFNElJ/gZ+zmTAKqoYQOBFiBqsgpYiSycpN4dCneUeon/mLYdPumb5TuNP2pTSZZpEfgmZfDRKj07jdpjDl0F7CvbEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd6nScfIdPYcWNQ/W8UQn7QY0CGEIBzYAcUvMSlNHDwssXMI2N
-	VTsvJEcu3ZE60dCOHd6k+tpaBy3Uz/5XJk2yDGV42Mz8N2GIOjbnSug5pK6ZeVo8v6KPoIPlHCz
-	ERlBMHZR6G4hK63cWUVFc++emRMtxRDo=
-X-Gm-Gg: Acq92OGgtfQlAT36pzn0X+e5rVwAemuMSEx7ilJKXWKdt2UgoomXn4kwjkOkrLBi8cc
-	HGZsBvBaAtOugqU9y5vNvdEhLpXslYsHpK3TLrUMgNZyqdrTtjD2gv41BIAR1BlL2vrfLemS3hV
-	kD5qhj651MxSCYa30DGjhAB/kHTuExvFa4omzmbW/ty9lOuxjfKwR4oTwjBhoHHe5b30XrNDyHO
-	lHxSp0s/OoX0p4c2J1x/sMwe2iT+rxPjmAbB1plNcP0/1YwtGhLdub2Iof5rnY1uZIvZSyabIkw
-	hOfj9Ns=
-X-Received: by 2002:a05:690c:88:b0:7bd:5c77:1aa9 with SMTP id
- 00721157ae682-7d330de95ebmr168149997b3.0.1779715415111; Mon, 25 May 2026
- 06:23:35 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779725583; x=1780330383;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PrUkFmsyhM+H1pzZoLfPMsL3Oa/eAQefGicPa01J8aw=;
+        b=DeRH2Kp3b9Ph/5LfSLm8JPYpNbxLYuuJuweoYXGvHlxGeihZtePxWy6pDuSg1FAuIR
+         nSkNJBwLVovMF1vXoz5l+xaHEn3sdxNpYSkBuOqz4sADYaSyvIHCWA0U0oSXp8IXfOlc
+         4ntD4aRV91kyeJrHm7gruHHXlX6hUIC+qNDvOs2EADzJvskcUwpiKdSRq22VheelJt1A
+         jK9mKQOfiUdxKViLz60N6yoRgy7LcwZR8pNKhvFbjTPMgUEV7gxU//ywXCt+WvtbBpPR
+         W/ode3MWd2CBIZpPZhHrw5wHPULI4drEuxtqBYqcsxPK2xQxuRRiC8u4S3mgde/g1cJ5
+         RGTg==
+X-Forwarded-Encrypted: i=1; AFNElJ8Em9m9h1K9cFsJOaukrzpvluJ/4nIN+dURnHnrGkNmPEYF9DEQrxaq4QfUcW/tjvBqgE5cXNEydMuAFa2c63I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7QB2SQz5Ybb7ENaQzXs23gZGtQmihq6qzr9tbJWe8AXWH2CU2
+	nM0b6xij1PYOqyDwB1si0TEBNFabpV7Ka7MYlFUwVzvbbnNjbpfp7U8Y
+X-Gm-Gg: Acq92OFvyutnwVWX1Smw7R70wkzj7kYKIBu977087rvqChyh1MGi8w5msXq+Kj1ajRQ
+	528O1IVAoXWdA+Ru6XVYpUnmfQwjmgVV8R0I/fLbwBq7cmV2ABovdOHAjCTDo91UV4csCtn2nIK
+	XUcZ08bviw/UTJLSMD79ezRAZvTbTFaon8ET+rX4clThpH0Q87aLf+osZ0WhIu/QD3yj0JGFZFV
+	cTCwnEPNRt4j1D8CruzE6G1L+OtxzIh4Y508OYY3J+YcPuNOiHhN8f3Obs309aFM/zy2YfCI2eY
+	Vt0G4s1rgT7s9AVvBHVd2W4anjEhs4+SzQlR5oH481XB0tz9k709NmCqkBisSfX5M8DfuzS6rgh
+	mrptLHZZ85MP1kbH7J9gMS56ZLEDe1RHlsGk1nT4Ooidlh2tYT/a8QIAP/x6sS9hsP1VDvZrlXO
+	djmo7G9IoYeRZmJYd81m6x+CHYGaLjYxvxAQ==
+X-Received: by 2002:a05:6000:1889:b0:45e:8edc:dacc with SMTP id ffacd0b85a97d-45ea31ce398mr31640895f8f.27.1779725582779;
+        Mon, 25 May 2026 09:13:02 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d47b82sm28136573f8f.19.2026.05.25.09.13.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 May 2026 09:13:01 -0700 (PDT)
+Date: Mon, 25 May 2026 19:12:57 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Maxwell Doose <m32285159@gmail.com>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: core: fix uninitialized data in debugfs
+Message-ID: <ahR1CUxzMkYDwVvO@stanley.mountain>
+References: <ahP3S9nOYN3pG-Fp@stanley.mountain>
+ <CAKqfh0H0Z0xr4bAjctr9h95QTuEUTF1eCgBsRZVHn_KrkZZX3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ahP3IjYJ87bNc1De@stanley.mountain>
-In-Reply-To: <ahP3IjYJ87bNc1De@stanley.mountain>
-From: Maxwell Doose <m32285159@gmail.com>
-Date: Mon, 25 May 2026 08:21:51 -0500
-X-Gm-Features: AVHnY4Ix5-r5MLMK4Wc8I9sdlBI7sguJNq-iT4KeCM14tJZaMcIUgMB0PpPnph4
-Message-ID: <CAKqfh0ErCJV9yV0kbgmvpRYzD5sFEaUxTrXxDKVVeEA8m3WhRQ@mail.gmail.com>
-Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix uninitialized data ni ad3552r_hs_write_data_source()
-To: Dan Carpenter <error27@gmail.com>
-Cc: Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, linux@analog.com, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKqfh0H0Z0xr4bAjctr9h95QTuEUTF1eCgBsRZVHn_KrkZZX3g@mail.gmail.com>
 
-Hi Dan,
+On Mon, May 25, 2026 at 08:17:28AM -0500, Maxwell Doose wrote:
+> Hi Dan,
+> 
+> On Mon, May 25, 2026 at 2:19 AM Dan Carpenter <error27@gmail.com> wrote:
+> >
+> > If *ppos is non-zero then simple_write_to_buffer() will not initialize
+> > the start of buf[].  Non zero values for *ppos aren't going to work
+> > anyway.  Test for them at the start of the function and return -EINVAL.
+> >
+> > Fixes: 6d5dd486c715 ("iio: core: make use of simple_write_to_buffer()")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> > The original copy_from_user() code was better:
+> > https://staticthinking.wordpress.com/2026/05/23/simple_write_to_buffer-is-complicated/
+> > ---
+> >  drivers/iio/industrialio-core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> 
+> Codewise looks good but often times people will prefer
+> 
+> if (*ppos || count >= sizeof(buf))
+> 
+> over
+> 
+> if (*ppos != 0 || count >= sizeof(buf))
 
-On Mon, May 25, 2026 at 2:16=E2=80=AFAM Dan Carpenter <error27@gmail.com> w=
-rote:
->
-> If the *ppos value is non-zero then the simple_write_to_buffer() function
-> won't initialized the start of the buf[] buffer.  Non-zero values for
-> *ppos won't work here generally, so just test for them and return -EINVAL
-> at the start of the function.
->
+In this context, I feel like either is acceptable since zero
+represents the number zero.  I have a blog about that which I have
+been trying to promote.  #SEO
 
-Please see my other email, you're also returning -ENOSPC instead of
--EINVAL here...
+https://staticthinking.wordpress.com/2024/02/20/when-to-use-0/
 
->
-> Fixes: b1c5d68ea66e ("iio: dac: ad3552r-hs: add support for internal ramp=
-")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/iio/dac/ad3552r-hs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-> index a9578afa7015..6bc64f53bce9 100644
-> --- a/drivers/iio/dac/ad3552r-hs.c
-> +++ b/drivers/iio/dac/ad3552r-hs.c
-> @@ -549,7 +549,7 @@ static ssize_t ad3552r_hs_write_data_source(struct fi=
-le *f,
->
->         guard(mutex)(&st->lock);
->
-> -       if (count >=3D sizeof(buf))
-> +       if (*ppos !=3D 0 || count >=3D sizeof(buf))
->                 return -ENOSPC;
->
+> 
+> Regardless,
+> 
+> Reviewed-by: Maxwell Doose <m32285159@gmail.com>
+> 
 
-See above comment.
+Thanks.  And you're other comments with regards to -EINVAL and
+-ENOSPC are obviously correct.
 
-best regards,
-max
+regards,
+dan carpenter
 
-
-
->         ret =3D simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbu=
-f,
-> --
-> 2.53.0
->
->
