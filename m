@@ -1,72 +1,73 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D33735F5E9
-	for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 06:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4ED3C1F3A
+	for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 07:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779692206; cv=none; b=XC5gPGTm6YZIF45wDARjH19DiFxIgF+yEEzc5kDXpVpt9joNODj74mxuIZxpEyTWRGdc5sPJLbepsFzgljpnmD12suCIAbVjfNCiIq0/yMc8ApoSnu2i+/rVe0OfYZf7gQEAiU9D//oR2aiIaGJ01s5JooFguhmU09LQBxnvS/k=
+	t=1779693293; cv=none; b=FyATF0FuZ3hgrV4NlqWWcyLIPbFB9MyZg410jJ+Tp2z0Yi7OEMqwgy6i86vkFN8glmEAW+KJRdQWKqXt32D6bW+0RDJjnQZt0N/hJ7WmY7yCFU+/7jXQvEqgERa1F0Kfl+FKCSRV1rfDoa78ShigVJ5Yh3KGQbAEg0EI3c29P1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779692206; c=relaxed/simple;
-	bh=jDVOMYhYewn6ATtZbKp3VJy/YN+xTXplywg9VZlCfOA=;
+	s=arc-20240116; t=1779693293; c=relaxed/simple;
+	bh=1xXVGaPB55QHeEo8SAN3bkN5O/LMUFsXfkgs6gm+HdE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JyQEein+fOYYccOcKueOBC+2aQxFLtsP6P6sKt9MYbk/3R7cbJiBjjA90mKLXIJUnWW9cMfMFctcRZe8NqD+sc6yiT/gcREfhP90cAhKqHvvFjI8qANjl0GyJbU8wxKd4rgS6YoZFQYqNo5dT8zmDWz+aiEJZKLJJztXkpsBoSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gxscjd6x; arc=none smtp.client-ip=209.85.221.49
+	 Content-Disposition; b=KRSvNBYlI2TvIKp5UCFh4mqY659Z/wcZUzUU7c+XD/c8ZDAGYf6EMUhfTgQUzMfViMv9Ap/dngVUnTxw4mMXtoUQwU83eY06/h6dPvHPAiWf5e16SPc8MB/r94RAoAxjWjOrSIrXv/or6a4ZfJJWzVC8miA7wyegn87PvCU5BFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXBqeiWf; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gxscjd6x"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43fe608cb92so5558560f8f.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 24 May 2026 23:56:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXBqeiWf"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-490686877a1so2269855e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 25 May 2026 00:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779692200; x=1780297000; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779693287; x=1780298087; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GW1L+sX0aQAPGDZcLmvDCGiKclqdN5QY1XJTp1+tXFo=;
-        b=Gxscjd6x0aoKCADdgTqMaBa/5VQ/n4Ru5Ap84EhCmT6zDhO79/Pecodw3cfEpvvJlH
-         8Bb/fCyxbJYuRaZbIZzhLdxNQbvwR0YLy0DdXrgUwSzMP5jo1Vl8dd5NsVUolf73usi8
-         oKXW9PUBFyb+kt4/zlVQ/RLFR3Ie7pCN1sSzK0WTPeufj7+GQEPW+UWXp4cikoUIFw9N
-         Q8O7giN6AKQISk0k/B1AZXxDWMbTtmqTVCDz+Zh0MhnqlNmvBiZUkQD9wG4s1nlwuE1j
-         Eb+ChdSCebUTVSujtZ98K2mQhTnjYg4sjxPOg/3pqpq2NCRuLrx6fDPAZYFSdwt6Rs4U
-         uIhA==
+        bh=O5YPxs0JzfTvXLL6qyKCCkEFV46IOQigJmqAvNQ18D8=;
+        b=hXBqeiWfuUtjshM2blBevtFzsNe0l9/RjzwpZInEoOPJtgzCzmSCnaBWLhnSLEjsh7
+         LsqXzVbdSDfXNn6HLEdNlU7crzS7CiVJR9IRkGONRCLWegNoYIymfIN8hv14n0tUqT8d
+         70CRkV1V8SWrQbPX2gn4XqAZ6PCBhgV4l5PUa+lM6X5ELCw6/ieECwYSJ+oziaOcgr3F
+         /vNa1hIXnT3DCEO6LI7h7csgpsB7f0SV71jsHdtgWrg3A9XW80DSndBJ3gKTc6TgEF/R
+         nm8w+c4Sogq8np8mA7HzhUkvl3Ygo+7ssgD6vqQnOBQVIgOQ9BQjyDDFHcmTmUTaZ2h9
+         Gpng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779692200; x=1780297000;
+        d=1e100.net; s=20251104; t=1779693287; x=1780298087;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GW1L+sX0aQAPGDZcLmvDCGiKclqdN5QY1XJTp1+tXFo=;
-        b=Bt7KDxOT12364zr2ldTwmKWkX98JqQN6GUeeJw8+E8WgDAfcJf7/HiPSNMx5pKvRLN
-         wrQzmVbSQITHbk9796QiH18wSB+gxWLSJ1ZONyajRjz9vdBZOdGFvfZQ1buArtdK8IEo
-         QFWymOrrg8cxteoSxOowXejxZa1whxl6AVMFyrXoazCWYTqHgZUMxMqSkfGngiqxD4XA
-         jUGT5xroqwg4nPt+nlB/F1x+l4vCpiTggt6bjPiR6OpjZ8mF+ZEtoBA0FiprC0LXIo53
-         L5CRSKw6bCR8zeDxpkecxanrAgUWTy1UdVFr7ULj6fhVN9iO/GXtc4FZS/F++Yt4DMKP
-         hylw==
-X-Forwarded-Encrypted: i=1; AFNElJ+fADfeouT2yEtAedSBkefKQ+lIuYjUZVc+1WhnUJugLd/GFpeJyOZOPOOqlQ8EhHtAMbNeAUsoCCy9JT3v+VA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLU/k4rTKfyV7V4Iwpd5nMMUJayiTo/gaGpz450kXKKC9Uy6RU
-	806Lqjz1hKjni0nsDHAs9P0c6kes/F21wawgEOVISgi4mBXErIRN4G33
-X-Gm-Gg: Acq92OGkT7I3WDQKiJ8b0HN0wkyTnBhrmbJwirv1OWvnuPaIjEfwlUcJTujCO0WgCe3
-	vdVPnClmAnHAPzM18Qizp1sais5vEle+Arn/fdw9T3FkxsEmhCfKcmnBV78E0Lm2NTqYj5uVNnb
-	VYZ+lbbqiuIicG6REqCkdAqzmiDpeA1MQd2kVta+fRydevgMsjq/ii7sAaQ7XHBtOVZD6WaPNH/
-	D/w5IbugVyPjjfWtUuLRP+eBiaVCgtdFKYPXuWuuPlNtUqP8DpM1odMJo/yRMj9JN4sUUTaigum
-	BplqGerwOVdPAeEFmeROozz4+kROWUk8kP2Q2CgL9JEUczkagJ1kPeXDpaCnHDi+evqvyRlOD/5
-	Y2OkMFTnwXK7Ar1TMSBT8ViLA2AG4ufdG7igHVPxyG1awBIS/MNS6l/vjWgbFQCVvg4r4rjovbE
-	CQYW4rqJBgx04y21vPTi1GEWmdD0j4Fk85eA==
-X-Received: by 2002:a5d:588d:0:b0:455:7c9f:a49e with SMTP id ffacd0b85a97d-45eb38c5508mr24586775f8f.25.1779692200400;
-        Sun, 24 May 2026 23:56:40 -0700 (PDT)
+        bh=O5YPxs0JzfTvXLL6qyKCCkEFV46IOQigJmqAvNQ18D8=;
+        b=hgqw1IW1GVxP/YAxLc8VHxPZDjvsPBMxYQU2YryFf2+okxdtg5NsSpMDv/jA8XvbgW
+         MFqBM4Qk7pROXa4B1k/v2gkSh7ARDQ9qkS2QSpHEjVJEYNscinSWcpmD12hah7KPuK+t
+         sQ2HUguITbBv1bWMfkq5oagPWwhwYiW4B0gSpz/RWwz3KOanKif3IdER2DBuRYV8kk5Y
+         yRVQSoGidA4GnWMEBc31AFejK7NEEV0jmoB44JxLvxIyY5zyF6hb2BOh7ABGMJQFEA26
+         KXmn1tO4WLTzeXEVOjYCrHqlPXCpnNI7n7mqypAdhniwlHqwMUfXBDVBeP8krKy/HWv1
+         mA7w==
+X-Forwarded-Encrypted: i=1; AFNElJ8kSjIWc42MHZlaN/yflql73ZA5j7eMP4iqwunHVrI93xbX4vnG1xeTXqyR9s1nULdV+IbFAm0t3UF1qlDRjUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhOyCZ/GHU8r9KwZ+SdoQjacLbLpgjurNG8wcy9wFjn1VGF5vU
+	1p81+6/BF+zdExtvWv5JxIngiclR8N2IxHEBmbbavx9Vqas56ZBr0CPJ/EZklw==
+X-Gm-Gg: Acq92OH59uImTm3z8PFU30QudolWE/USxlKcVdlM72DVQZOHoNU5vyT7lKWB3DX+8lK
+	4+IN8+JZry1ak2dKFnAqceJCl7WeEoM7YCgPL5gR5SOnkN3HoI1RoDCDrVqa+ZLbP+T/EjTUdUO
+	V6TN0MhbgZLabAGt0E2g9Djyhk8v+XNjZHtI6azOj8Ojl/pFnpA07fnkdwrgVw5JchpMaIzct9m
+	Gissii2ZrPMvH15S85tnjoqh54d2aONnb6XfhYFlJljkZXU8Nkx5hqnjZEnP8RQ3Y4A52agVnVe
+	Y1WSi8dPpj4RPM8qu4lBOdVmMiILbDbcZb0recDbMeAV1CyLaYcIuHzHFpwftTYjQXSSCi0P2fd
+	INmKhYlg/w6R+owGRPd6bKrFFkD8UT9mlCM9RzLekOUrMcCEWx63qlxToWCA3sHv1ONo80xeR2C
+	JuwmMP7CObqd+90/4xhEW3sts=
+X-Received: by 2002:a05:600c:8599:b0:48f:e230:29f4 with SMTP id 5b1f17b1804b1-490426ade02mr136310365e9.15.1779693286465;
+        Mon, 25 May 2026 00:14:46 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d5c32esm23804272f8f.26.2026.05.24.23.56.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490454ea134sm255601535e9.8.2026.05.25.00.14.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2026 23:56:39 -0700 (PDT)
-Date: Mon, 25 May 2026 09:56:36 +0300
+        Mon, 25 May 2026 00:14:45 -0700 (PDT)
+Date: Mon, 25 May 2026 10:14:42 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Stefan Kerkmann <s.kerkmann@pengutronix.de>,
-	Kees Cook <kees@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: mwifiex: remove an unnecessary check
-Message-ID: <ahPypOdz-KXh5KAJ@stanley.mountain>
+To: Karol Wachowski <karol.wachowski@intel.com>
+Cc: Karol Wachowski <karol.wachowski@linux.intel.com>,
+	Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] accel/ivpu: prevent uninitialized data bug in debugfs
+Message-ID: <ahP24m6Mii9EDL7Q@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,62 +78,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-We know that "start_raw" is true so remove this check and pull the code
-in an tab.
+The simple_write_to_buffer() will only initialize data starting from
+the *pos offset so if it's non-zero then the first part of the buffer
+uninitialized.  Really, if *pos is non-zero then this code won't work
+so just check for that at the start of the function.
 
+Fixes: 320323d2e545 ("accel/ivpu: Add debugfs interface for setting HWS priority bands")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- .../net/wireless/marvell/mwifiex/sta_cmd.c    | 35 ++++++++-----------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+ drivers/accel/ivpu/ivpu_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-index 70ce31d7c76e..623ddde8c8e5 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-@@ -1568,28 +1568,23 @@ int mwifiex_send_rgpower_table(struct mwifiex_private *priv, const u8 *data,
- 			return -EINVAL;
- 		}
+diff --git a/drivers/accel/ivpu/ivpu_debugfs.c b/drivers/accel/ivpu/ivpu_debugfs.c
+index 189dbe94cf14..dc20bc73c6ed 100644
+--- a/drivers/accel/ivpu/ivpu_debugfs.c
++++ b/drivers/accel/ivpu/ivpu_debugfs.c
+@@ -450,7 +450,7 @@ priority_bands_fops_write(struct file *file, const char __user *user_buf, size_t
+ 	u32 band;
+ 	int ret;
  
--		if (start_raw) {
--			while ((*pos != '\r' && *pos != '\n') &&
--			       (token = strsep((char **)&pos, " "))) {
--				if (ptr - hostcmd->cmd >=
--				    MWIFIEX_SIZE_OF_CMD_BUFFER) {
--					mwifiex_dbg(
--						adapter, ERROR,
--						"%s: hostcmd is larger than %d, aborting\n",
--						__func__, MWIFIEX_SIZE_OF_CMD_BUFFER);
--					return -ENOMEM;
--				}
-+		while ((*pos != '\r' && *pos != '\n') &&
-+		       (token = strsep((char **)&pos, " "))) {
-+			if (ptr - hostcmd->cmd >= MWIFIEX_SIZE_OF_CMD_BUFFER) {
-+				mwifiex_dbg(adapter, ERROR,
-+					"%s: hostcmd is larger than %d, aborting\n",
-+					__func__, MWIFIEX_SIZE_OF_CMD_BUFFER);
-+				return -ENOMEM;
-+			}
+-	if (size >= sizeof(buf))
++	if (*pos != 0 || size >= sizeof(buf))
+ 		return -EINVAL;
  
--				ret = kstrtou8(token, 16, ptr);
--				if (ret < 0) {
--					mwifiex_dbg(
--						adapter, ERROR,
--						"%s: failed to parse hostcmd %d token: %s\n",
--						__func__, ret, token);
--					return ret;
--				}
--				ptr++;
-+			ret = kstrtou8(token, 16, ptr);
-+			if (ret < 0) {
-+				mwifiex_dbg(adapter, ERROR,
-+					"%s: failed to parse hostcmd %d token: %s\n",
-+					__func__, ret, token);
-+				return ret;
- 			}
-+			ptr++;
- 		}
- 	}
- 
+ 	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, pos, user_buf, size);
 -- 
 2.53.0
 
