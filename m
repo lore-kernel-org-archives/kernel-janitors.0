@@ -1,141 +1,134 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D736355F49
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 08:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6243D903A
+	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 09:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779784472; cv=none; b=fK8D6YpbrtyhRxec7M4cEFfFr2M1MNWCVlBjE+w0g32TM8wpksXNTEYXmIR3yNvKn+WH9k1z2dOTKWsjskE0kfDL5/GsOx46jf+cywPgBKM2FwtfCcyKPfPbHF4jseCbX/BMP2ZdN6RWCpBPGfy7lxayva8QTh7oln4DsFhOx9I=
+	t=1779789547; cv=none; b=gLDH+PNW35ZEHuhDtZrixXFnqdhEH74nKz+flUQeM+Wu4btIF9ybJr6yEK+i/Cn6RqBntdXDtiVW+Q5b7KlDRVdWfgJidgvyH5FiiEe1gNmZFK1cOkjzaIncQ5UHStxaS0eVyXt15sEoyNxBWAgaPpg/8LScTphf/9wvpP3QpMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779784472; c=relaxed/simple;
-	bh=r0V5PDc0tAB3YdalBAkHscENpcgskMZKfwJi2KAAaig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tpsZyMFi+yXY7ErBWLcQIVe8iPBeBxUt5x44NpOS/pRkLOt1JC0FIG4nGScPCD7UrhAVG78N9nB2PvQhTPHuE6wIvEKXvEzJDuxd/kj+oqlfHvuWS+K+GZzy/AwBRkluG3Pbcs6fsAjSFOdSyOmZR3bnV6yGT3XkICgTn8gzM6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MSFLpdkJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VqCGE/KC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779789547; c=relaxed/simple;
+	bh=vQkzABbgpFu7zVsXWnxe8cy9Q3NRoLN87pCu/DZh4oA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=inTAVjrNA/AfHqcswjQAjWR89TKVj/SHtB8C9yy4wSzYSoqVgDmtA6M6DMluJUaSyfGE0VBp/6EAXQzdU+wF28gflS0R0BtOVx2LmiR/et06OEw++p4MJxtFMxXasVEHrBT5XZcooTnWqACxWZr36P/Ws+ENCtovrLtumeYGoCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qzMmg9BD; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MSFLpdkJ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VqCGE/KC"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64Q8VNP54117526
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 08:34:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tl88GlS8D1gVY09CHUPoKRipf/qb9KLr/K7ftvfo4oY=; b=MSFLpdkJx7ps3G2L
-	OkjSLTVz4ZIESBqc6sYGG4xY1pfLPLv0WHkJQOLQp35aYwXSV6IHwbXI0iN3L4hV
-	3D8qWTfJ9+kAjmBfpfc1xYTChCpNj9jTauPHcHbBzTA53j3ao8ruryZxIFX0r22N
-	1S9XmEQUyuj8vXKzbniUyy9ZNqvHxNKoU3YS85bJlmXvr56HiI67IHRK4RbrQRr+
-	Wgp625ZjkO5s9cYxNmVu50d4+Hy/yulTepVyxXenvzF2nM69dilN0yr0R44jg8gp
-	TTYguub6uaop0Gh8kbCyGXmlI0swJIEDntTHkLA6liGcLuhxZX9V0rOFtKbMpnuM
-	cTApBA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ecquday7g-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 08:34:30 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50fb3403e99so40765421cf.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 01:34:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qzMmg9BD"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-49050bfe053so5237045e9.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 02:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779784470; x=1780389270; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tl88GlS8D1gVY09CHUPoKRipf/qb9KLr/K7ftvfo4oY=;
-        b=VqCGE/KCANeiqkV8TjKv1Ib1eByKWm0/wha4FtffSl3PtDcfNqs1dEN/WS6rNv3ZD1
-         ILcgm6prrr/tU/xYUK8KzeLqYgplZCYwIpeWRxR18eWklIajxvjSoQtWLd7Ks4pLgBJG
-         NQSnXrQoueXR+L6kd4WWNP2pA8Ma+87GsY4o1Fcpfa9UeUEUpGI61QzrKUgVA9BMps5q
-         2W+OY4dVwqj6Uv970SdeQxzcvK6cZKNW9Rmm6p8HxYe9bUUG3kOOX89sU2ft4xbrB75O
-         yE3+k5W9G8WOk7MbxzYL23YMx+1w3SQFYJFPjr842DMkmF4TCiL8dRDVYgBwfsu2xT21
-         iOYg==
+        d=gmail.com; s=20251104; t=1779789544; x=1780394344; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QLRYLwQRn5cN/q/sqko/HgmBpICy8QtK1o9ym5629xQ=;
+        b=qzMmg9BD4fTQxd7pM4s5ooOjWLSuHp8jHAhUB5CirChfBtKNgxSCciz5+ehIYF7CLY
+         J+dCOqFYJPNE6ks4oOK32Cm986F1qy0+EOzLuFvN5SxMLOIL6maYypsljGKoEku1/RwA
+         q8FM7yMNSkYvQMXimgCAtMCEpnk0QfQ1NLepK663QQm6XJ0W2A/01TIo+euqPU+8LcLc
+         Am4du0zavM94x0cwQu2ohAT7j0BTLq9T6arZzjAovESbGwdL4wT6hyouUYLE4M7WJnhl
+         OU9Hxd2jVUZ5NejpEIr0rfmlFbVxRF98rui6XFfo6NNyvlgcIkFDBtXe4gbaX/i66jok
+         COwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779784470; x=1780389270;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tl88GlS8D1gVY09CHUPoKRipf/qb9KLr/K7ftvfo4oY=;
-        b=sDO/0y4VfjUm0Cq7DGX2pTU8NMIXXHU75+DEwavV9X4tJc2N1oaYpVHETihZPZbKid
-         O6IxAgEvsC0yWDMsk7D0jE2eS7ZqZy0/F7nl2S32HuQBHbLcKBajKYSUfIAsMT7LAYFC
-         rbgiEUg8V5MtPLYFFIfogBnisRpAQskGJu4ACTjnvaJwqcTFBYnkzdyDvxuydSgDeYv0
-         PAZQoAk2ajk4cj3LXU6Ob6P3Q8We13OEne38Ike4fGK+ioaJ8HubhsfkSWCAZHckWslO
-         BBWt1J4P3BsUwmbPvcxiJc4isDpmk9oBEgW27suAjD/EDlAad0MMSy9444TSypvUZDXw
-         EX3g==
-X-Forwarded-Encrypted: i=1; AFNElJ/SSMWt2+6n0lvLdITT7mtXSgbufP8Bu4by06wXJomop37IHdYajRHZsOnZGoVfr9gp/KaW0NJrG5wOioQYmNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMEIcE3s322u7XMUbVuTrmKqHW+YUEIEqhvh6119cqrLMUequM
-	HOrBLdlDGBXeA8Pz30CcKWpL2DbKhHAFlpVDX4OjRdfBNbn76ahobGobyHCRc+LYMf/DyczcvN0
-	SGQko4gbmbM3ptuC3eWE56aMSvOoGuXRVV/pjD+9ZLZRI+dLFp49H8VGqzUzTmPy7jerTKUeht5
-	4C4+E=
-X-Gm-Gg: Acq92OFfs2foQ5+FkOBF27Ld1G9iKJRIc3mg6GM51EbVD6+9XtEpQ3zPx3ZonW0oXrm
-	20QIr4uGesF0SfYvvm/6dgCngac4tjHU+2YpkSXQ0au+SeD1A/CdWKZ8uItzHvXtghF3rkOR8Du
-	VWA/U5Rm/YiIL7KeM8m4l8b2smXNEOnnJ5HPvnYsr/D3qEiXzVosSmUtwOk+67xqNa6VWlBYj8O
-	BKFJvAT+q66z3gL17ZY1CjQbeIAWbLvX1bzqnuBCsEsIuufGaMgVb2fby5wLU7FnUtdarwgi7VG
-	j4yOwf2KJ7OTiTWGoYNI9kAJqSY3Dw4/x5ANz5Xxkbd8sTJ81+Ff62yOxakDYiP4hpddYXXSQZl
-	/4a3mxjXI/KIN+Zm0tTv356L9rVgrFEKtbQKYFVGijsIjq/bX2tUzYqUHmNFZ
-X-Received: by 2002:ac8:5a03:0:b0:509:3940:30ea with SMTP id d75a77b69052e-516d46421b3mr234437961cf.55.1779784469766;
-        Tue, 26 May 2026 01:34:29 -0700 (PDT)
-X-Received: by 2002:ac8:5a03:0:b0:509:3940:30ea with SMTP id d75a77b69052e-516d46421b3mr234437801cf.55.1779784469368;
-        Tue, 26 May 2026 01:34:29 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:77fb:9b68:d26a:48e6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49048c6acf8sm92904325e9.10.2026.05.26.01.34.28
+        d=1e100.net; s=20251104; t=1779789544; x=1780394344;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QLRYLwQRn5cN/q/sqko/HgmBpICy8QtK1o9ym5629xQ=;
+        b=oryJszeN4oVcwPQtOkcw5pK0lmzHMoFauUWMRqoupqJq+0S/FRGUjwbyqlwnf5Ao/r
+         2+3s2YYIm8cx2Q9Zj8Z2R/CQoE3pPAOmREBosXWz12lPP+W5fr0WOCk4B4Uueom7uByB
+         M0BLkVQ7ISYP4D3wJoevQ6M4fDuLsrbjZE8nxFKk9hWrgH2ZWf8781gnbvn717740uzL
+         nxAf+mOYG17miQwPy0etxvjvLqyk10y3wKQhK1q+DK+frdhy/9vdjps6+nEoKwGogfA8
+         wdf1amBOitioMdWJxatY5x5mn3MDHLNZuTzFyKjBTYUVsET2PIcyPmn5wa4UPKEsUuOH
+         /OvA==
+X-Forwarded-Encrypted: i=1; AFNElJ+49K5YtWNZr2FiTK6Drz71hB7lGOzYGopIThkSMSBfc9/vWzyuoCmv2pCdEw0D3zSTM6RWafY3jIqGGGBKvKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0FC+N0k+odkXwWu5iuQa1TQaeXxYN1WfyaWXpaoUoZu1D7M6z
+	wz2WBc59H15zDMq5ZD3g8ptbz7rPf7BLesuAgGdQlqP4kS7NJKAQVdvd
+X-Gm-Gg: Acq92OEz3jRjuThPgvLoxz3A2wdW4soUQKQYRHJ3dJTAAT3+nuIHM1ynYsUqxIsh7NQ
+	0kMiGXh350mvXmA9GRgtOH3RSuU72eHsyc8zSDhBzMvfObqw1XyVdRKytti2ZirOOKdVWbuBeoa
+	9poROjB4ETwxXN65ooA0JsKo06SDzNASjqZO4kcv1kYJULrv6SFmx8QcpnUxEZAuDxqJaW5bROD
+	rWp2XNfFEskJIcCM7OTWNQmKTkMovEc64Y/UA1m0Jd2A3+hgowpQ1Vu9sPJdZWAedpzWR34/Rmh
+	59R7ijD0NTClI1wxSz8AHNmakjB4bm09HXb46mpXM0a+wEKULCK+DWhvSnfETrrFK0CoHJwg12v
+	RoyY8pj5wKJuS8i/d56bc80N6UWLXbTqvrTcMebCXCD22LvmmIviYRRgfG4WDxLbNpny4zY2DS9
+	h8yefuJvPaxElKCIRhCmVFXwU=
+X-Received: by 2002:a05:600c:4688:b0:490:4224:e0a2 with SMTP id 5b1f17b1804b1-49042ae265bmr307954735e9.33.1779789543584;
+        Tue, 26 May 2026 02:59:03 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49044f2bad3sm339178815e9.0.2026.05.26.02.59.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 01:34:28 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Dan Carpenter <error27@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gpio: virtuser: Fix uninitialized data bug in gpio_virtuser_direction_do_write()
-Date: Tue, 26 May 2026 10:34:19 +0200
-Message-ID: <177978444195.19212.8380742657499672783.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <ahP3BJWWy-m_qI0X@stanley.mountain>
-References: <ahP3BJWWy-m_qI0X@stanley.mountain>
+        Tue, 26 May 2026 02:59:02 -0700 (PDT)
+Date: Tue, 26 May 2026 12:58:59 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, linux@analog.com,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix uninitialized data ni
+ ad3552r_hs_write_data_source()
+Message-ID: <ahVu497RZjJxn7dj@stanley.mountain>
+References: <ahP3IjYJ87bNc1De@stanley.mountain>
+ <CALSJ-wCcZ9XNTrcvq1TabT--vA5v0gritbpfNG6n0aKRXuSiKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: CqvyLa_7IryqDf10gKUESQJ3wuslAp7M
-X-Proofpoint-GUID: CqvyLa_7IryqDf10gKUESQJ3wuslAp7M
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDA3MyBTYWx0ZWRfX3Ez8jEV+NQyr
- ObHmRnlnL8KmX25n3wg2HxWkRkLujPLRwdjWgcRx6cHSIqvfoaMmKHug1VXFEf9rM+RWzFiAPwQ
- GWFE6F+7kz5kPKeGiWiopQ0jnc04esHbbtxsw8pjCLxHHadMxSBzxPaE23qdQzqeuh2yWYUZBP6
- LhDlC8iZkR95btBhTmJWVqnwqHI2aHM5uvPZUTxL39FE/TK1gg0N++9zegWgK7lLvY1oJMpL+id
- kqpcx1h5DEntAqyrxZbvRMyHOZY15tXbFH/kCm5ofEpiskT425xQ4a4xOfUuMLwqaIcs37vMWHt
- yqsxBt+N1wQpNq/48V/TSFpGvgC9FPR3lUAoAkeHwC8z0p4Y6CPSVMM0jLSloIQFZE4VrWroGMr
- o8usPlUqE6fer1g4H09B5kgZSSvp8CdPJ9cA2Hkk0eNm2FD2pyw6AIN6iXhX4x0nTMdQFJsWvmf
- IPQONqUIWDstLvTyDIg==
-X-Authority-Analysis: v=2.4 cv=C9jZDwP+ c=1 sm=1 tr=0 ts=6a155b16 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=kcc5haGlxQAlbyrUhMAA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-26_02,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 clxscore=1011 phishscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605260073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALSJ-wCcZ9XNTrcvq1TabT--vA5v0gritbpfNG6n0aKRXuSiKA@mail.gmail.com>
 
-
-On Mon, 25 May 2026 10:15:16 +0300, Dan Carpenter wrote:
-> If *ppos is non-zero then simple_write_to_buffer() won't initialize the
-> start of the buffer.  Really, non-zero values for *ppos aren't going to
-> work at all.  Check for that return -EINVAL at the start of the function.
+On Mon, May 25, 2026 at 01:11:42AM -0700, Angelo Dureghello wrote:
+> Hi Dan,
 > 
+> On Mon, May 25, 2026 at 10:15:46AM +0300, Dan Carpenter wrote:
+> > If the *ppos value is non-zero then the simple_write_to_buffer() function
+> > won't initialized the start of the buf[] buffer.  Non-zero values for
+> > *ppos won't work here generally, so just test for them and return -EINVAL
+> > at the start of the function.
+> >
+> > Fixes: b1c5d68ea66e ("iio: dac: ad3552r-hs: add support for internal ramp")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> >  drivers/iio/dac/ad3552r-hs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
+> > index a9578afa7015..6bc64f53bce9 100644
+> > --- a/drivers/iio/dac/ad3552r-hs.c
+> > +++ b/drivers/iio/dac/ad3552r-hs.c
+> > @@ -549,7 +549,7 @@ static ssize_t ad3552r_hs_write_data_source(struct file *f,
+> >
+> >  	guard(mutex)(&st->lock);
+> >
+> > -	if (count >= sizeof(buf))
+> > +	if (*ppos != 0 || count >= sizeof(buf))
+> >  		return -ENOSPC;
+> >
+> >  	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf,
+> > --
 > 
+> thanks for the fix,
+> 
+> Reviewed-by: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> it looks like this may fix an additional overflow in case ppos is near the
+> end of buf[].
 
-I tweaked the commit message a bit for clarity, thanks.
+simple_write_to_buffer() won't overflow.  It takes ppos into consideration
+properly.
 
-[1/1] gpio: virtuser: Fix uninitialized data bug in gpio_virtuser_direction_do_write()
-      https://git.kernel.org/brgl/c/39785f2b3e9fb8f3375dde1e3e4c94ff953871af
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> But i am actually missing the use case when ppos is non zero, can this
+> happen from shell "echo" ? Or some fseek/dd is needed to trigger it ?
+
+I've never actually tried to do this.  I think lseek() or fseek() would
+work.  But also the simple_write_to_buffer() function itself updates
+*ppos so multiple writes would do the trick as well.
+
+regards,
+dan carpenter
