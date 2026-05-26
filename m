@@ -1,104 +1,141 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE8A50276;
-	Tue, 26 May 2026 06:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D736355F49
+	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 08:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779775588; cv=none; b=DjG99xE1F0tZc/hdqA6ZNPeCqUzh4K1w3QnxjIIonRwKbJMNn4y1f3rYjMVN2HGgdVqL7BROpCFulJmcE2L5viu7HpedTdamgnFzFUD+EZJuuLR1UzkYo4VTfqMM1KqSkGn7dW422k2cXsp+cxAgOd8PxBzyHGlc6SxgrFcY76A=
+	t=1779784472; cv=none; b=fK8D6YpbrtyhRxec7M4cEFfFr2M1MNWCVlBjE+w0g32TM8wpksXNTEYXmIR3yNvKn+WH9k1z2dOTKWsjskE0kfDL5/GsOx46jf+cywPgBKM2FwtfCcyKPfPbHF4jseCbX/BMP2ZdN6RWCpBPGfy7lxayva8QTh7oln4DsFhOx9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779775588; c=relaxed/simple;
-	bh=jSQ2/6HZxVPvd7ej0vQenXuyViIh2JUb5nln9NM0vtg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=U3XiQ3LfhDtFv84paN/+Ja0DGYTVd3eht4gaA0kTuvwv3hNl7MxRWnbvPRkyOz4yqnalzNZr9iYtFzRlqafGqUkJaWgpAHrBNpiZ4mNv2MxjjLgk94TmCsIBs5rmWpY4+EyEKNC8BiwK7UT9D4+34e2aH+cb5fLWoazWe/dmsFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ktf1rbNI; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1779784472; c=relaxed/simple;
+	bh=r0V5PDc0tAB3YdalBAkHscENpcgskMZKfwJi2KAAaig=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tpsZyMFi+yXY7ErBWLcQIVe8iPBeBxUt5x44NpOS/pRkLOt1JC0FIG4nGScPCD7UrhAVG78N9nB2PvQhTPHuE6wIvEKXvEzJDuxd/kj+oqlfHvuWS+K+GZzy/AwBRkluG3Pbcs6fsAjSFOdSyOmZR3bnV6yGT3XkICgTn8gzM6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MSFLpdkJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VqCGE/KC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ktf1rbNI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1779775586; x=1811311586;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=jSQ2/6HZxVPvd7ej0vQenXuyViIh2JUb5nln9NM0vtg=;
-  b=Ktf1rbNIq7jymOKVa/iLBsmTxQood3hJH/kxcAvDBq35fH94bWfbgI9e
-   2swmd81wI1VcCQ30zw1Rg/H8ccUkQZ7FAhJrPx5Clgr/6iYzfkIbQo5/5
-   yTMiPI6nI86gEqi5aXAXTUDbNyzCUXfmQIl5egLqD0uPZV7swekA6e0P0
-   CcG4MtrS2YuKx+qeeqKBhevOA+0gn7xJlx/GwoIzlfLvGgS/jKMxqNM2U
-   a+3fnWGkU2nfiq9yU+He+JG5xCIrqsYMZZ5da7KgmvWvC09frMcC0rehL
-   hm1/oZ8O5HjTVzDJnchm7khTjlxwVvrq3hkgfqekHg8E5RbrD+0corDGZ
-   Q==;
-X-CSE-ConnectionGUID: 3/aGbqa6QyuqhjCSRsQVRQ==
-X-CSE-MsgGUID: 6q8qOi6vSZSKO3qU7smrlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="98008249"
-X-IronPort-AV: E=Sophos;i="6.24,169,1774335600"; 
-   d="scan'208";a="98008249"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2026 23:06:26 -0700
-X-CSE-ConnectionGUID: 7z48n7yZRdylXMGq7pWGmA==
-X-CSE-MsgGUID: YgoCyO9aSvOAGXut+qHEiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,169,1774335600"; 
-   d="scan'208";a="241988971"
-Received: from soc-pf6038af.clients.intel.com (HELO [10.217.180.37]) ([10.217.180.37])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2026 23:06:23 -0700
-Message-ID: <764ba649-9a96-44c4-95f2-8dcf2f425133@linux.intel.com>
-Date: Tue, 26 May 2026 08:06:20 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MSFLpdkJ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VqCGE/KC"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64Q8VNP54117526
+	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 08:34:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tl88GlS8D1gVY09CHUPoKRipf/qb9KLr/K7ftvfo4oY=; b=MSFLpdkJx7ps3G2L
+	OkjSLTVz4ZIESBqc6sYGG4xY1pfLPLv0WHkJQOLQp35aYwXSV6IHwbXI0iN3L4hV
+	3D8qWTfJ9+kAjmBfpfc1xYTChCpNj9jTauPHcHbBzTA53j3ao8ruryZxIFX0r22N
+	1S9XmEQUyuj8vXKzbniUyy9ZNqvHxNKoU3YS85bJlmXvr56HiI67IHRK4RbrQRr+
+	Wgp625ZjkO5s9cYxNmVu50d4+Hy/yulTepVyxXenvzF2nM69dilN0yr0R44jg8gp
+	TTYguub6uaop0Gh8kbCyGXmlI0swJIEDntTHkLA6liGcLuhxZX9V0rOFtKbMpnuM
+	cTApBA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ecquday7g-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 08:34:30 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50fb3403e99so40765421cf.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 May 2026 01:34:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779784470; x=1780389270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tl88GlS8D1gVY09CHUPoKRipf/qb9KLr/K7ftvfo4oY=;
+        b=VqCGE/KCANeiqkV8TjKv1Ib1eByKWm0/wha4FtffSl3PtDcfNqs1dEN/WS6rNv3ZD1
+         ILcgm6prrr/tU/xYUK8KzeLqYgplZCYwIpeWRxR18eWklIajxvjSoQtWLd7Ks4pLgBJG
+         NQSnXrQoueXR+L6kd4WWNP2pA8Ma+87GsY4o1Fcpfa9UeUEUpGI61QzrKUgVA9BMps5q
+         2W+OY4dVwqj6Uv970SdeQxzcvK6cZKNW9Rmm6p8HxYe9bUUG3kOOX89sU2ft4xbrB75O
+         yE3+k5W9G8WOk7MbxzYL23YMx+1w3SQFYJFPjr842DMkmF4TCiL8dRDVYgBwfsu2xT21
+         iOYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779784470; x=1780389270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tl88GlS8D1gVY09CHUPoKRipf/qb9KLr/K7ftvfo4oY=;
+        b=sDO/0y4VfjUm0Cq7DGX2pTU8NMIXXHU75+DEwavV9X4tJc2N1oaYpVHETihZPZbKid
+         O6IxAgEvsC0yWDMsk7D0jE2eS7ZqZy0/F7nl2S32HuQBHbLcKBajKYSUfIAsMT7LAYFC
+         rbgiEUg8V5MtPLYFFIfogBnisRpAQskGJu4ACTjnvaJwqcTFBYnkzdyDvxuydSgDeYv0
+         PAZQoAk2ajk4cj3LXU6Ob6P3Q8We13OEne38Ike4fGK+ioaJ8HubhsfkSWCAZHckWslO
+         BBWt1J4P3BsUwmbPvcxiJc4isDpmk9oBEgW27suAjD/EDlAad0MMSy9444TSypvUZDXw
+         EX3g==
+X-Forwarded-Encrypted: i=1; AFNElJ/SSMWt2+6n0lvLdITT7mtXSgbufP8Bu4by06wXJomop37IHdYajRHZsOnZGoVfr9gp/KaW0NJrG5wOioQYmNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMEIcE3s322u7XMUbVuTrmKqHW+YUEIEqhvh6119cqrLMUequM
+	HOrBLdlDGBXeA8Pz30CcKWpL2DbKhHAFlpVDX4OjRdfBNbn76ahobGobyHCRc+LYMf/DyczcvN0
+	SGQko4gbmbM3ptuC3eWE56aMSvOoGuXRVV/pjD+9ZLZRI+dLFp49H8VGqzUzTmPy7jerTKUeht5
+	4C4+E=
+X-Gm-Gg: Acq92OFfs2foQ5+FkOBF27Ld1G9iKJRIc3mg6GM51EbVD6+9XtEpQ3zPx3ZonW0oXrm
+	20QIr4uGesF0SfYvvm/6dgCngac4tjHU+2YpkSXQ0au+SeD1A/CdWKZ8uItzHvXtghF3rkOR8Du
+	VWA/U5Rm/YiIL7KeM8m4l8b2smXNEOnnJ5HPvnYsr/D3qEiXzVosSmUtwOk+67xqNa6VWlBYj8O
+	BKFJvAT+q66z3gL17ZY1CjQbeIAWbLvX1bzqnuBCsEsIuufGaMgVb2fby5wLU7FnUtdarwgi7VG
+	j4yOwf2KJ7OTiTWGoYNI9kAJqSY3Dw4/x5ANz5Xxkbd8sTJ81+Ff62yOxakDYiP4hpddYXXSQZl
+	/4a3mxjXI/KIN+Zm0tTv356L9rVgrFEKtbQKYFVGijsIjq/bX2tUzYqUHmNFZ
+X-Received: by 2002:ac8:5a03:0:b0:509:3940:30ea with SMTP id d75a77b69052e-516d46421b3mr234437961cf.55.1779784469766;
+        Tue, 26 May 2026 01:34:29 -0700 (PDT)
+X-Received: by 2002:ac8:5a03:0:b0:509:3940:30ea with SMTP id d75a77b69052e-516d46421b3mr234437801cf.55.1779784469368;
+        Tue, 26 May 2026 01:34:29 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:77fb:9b68:d26a:48e6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49048c6acf8sm92904325e9.10.2026.05.26.01.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2026 01:34:28 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Bartosz Golaszewski <brgl@kernel.org>, Dan Carpenter <error27@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] gpio: virtuser: Fix uninitialized data bug in gpio_virtuser_direction_do_write()
+Date: Tue, 26 May 2026 10:34:19 +0200
+Message-ID: <177978444195.19212.8380742657499672783.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <ahP3BJWWy-m_qI0X@stanley.mountain>
+References: <ahP3BJWWy-m_qI0X@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/ivpu: prevent uninitialized data bug in debugfs
-From: "Wachowski, Karol" <karol.wachowski@linux.intel.com>
-To: Dan Carpenter <error27@gmail.com>,
- Karol Wachowski <karol.wachowski@intel.com>
-Cc: Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
- Oded Gabbay <ogabbay@kernel.org>,
- Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <ahP24m6Mii9EDL7Q@stanley.mountain>
- <9a6b239c-d970-4ec3-abf0-6b900b786279@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <9a6b239c-d970-4ec3-abf0-6b900b786279@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: CqvyLa_7IryqDf10gKUESQJ3wuslAp7M
+X-Proofpoint-GUID: CqvyLa_7IryqDf10gKUESQJ3wuslAp7M
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDA3MyBTYWx0ZWRfX3Ez8jEV+NQyr
+ ObHmRnlnL8KmX25n3wg2HxWkRkLujPLRwdjWgcRx6cHSIqvfoaMmKHug1VXFEf9rM+RWzFiAPwQ
+ GWFE6F+7kz5kPKeGiWiopQ0jnc04esHbbtxsw8pjCLxHHadMxSBzxPaE23qdQzqeuh2yWYUZBP6
+ LhDlC8iZkR95btBhTmJWVqnwqHI2aHM5uvPZUTxL39FE/TK1gg0N++9zegWgK7lLvY1oJMpL+id
+ kqpcx1h5DEntAqyrxZbvRMyHOZY15tXbFH/kCm5ofEpiskT425xQ4a4xOfUuMLwqaIcs37vMWHt
+ yqsxBt+N1wQpNq/48V/TSFpGvgC9FPR3lUAoAkeHwC8z0p4Y6CPSVMM0jLSloIQFZE4VrWroGMr
+ o8usPlUqE6fer1g4H09B5kgZSSvp8CdPJ9cA2Hkk0eNm2FD2pyw6AIN6iXhX4x0nTMdQFJsWvmf
+ IPQONqUIWDstLvTyDIg==
+X-Authority-Analysis: v=2.4 cv=C9jZDwP+ c=1 sm=1 tr=0 ts=6a155b16 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=kcc5haGlxQAlbyrUhMAA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-26_02,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 bulkscore=0
+ malwarescore=0 suspectscore=0 clxscore=1011 phishscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605260073
 
-On 25-May-26 9:25, Wachowski, Karol wrote:
-> On 25-May-26 9:14, Dan Carpenter wrote:
->> The simple_write_to_buffer() will only initialize data starting from
->> the *pos offset so if it's non-zero then the first part of the buffer
->> uninitialized.  Really, if *pos is non-zero then this code won't work
->> so just check for that at the start of the function.
->>
->> Fixes: 320323d2e545 ("accel/ivpu: Add debugfs interface for setting 
->> HWS priority bands")
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->> ---
->>   drivers/accel/ivpu/ivpu_debugfs.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/accel/ivpu/ivpu_debugfs.c b/drivers/accel/ivpu/ 
->> ivpu_debugfs.c
->> index 189dbe94cf14..dc20bc73c6ed 100644
->> --- a/drivers/accel/ivpu/ivpu_debugfs.c
->> +++ b/drivers/accel/ivpu/ivpu_debugfs.c
->> @@ -450,7 +450,7 @@ priority_bands_fops_write(struct file *file, const 
->> char __user *user_buf, size_t
->>       u32 band;
->>       int ret;
->> -    if (size >= sizeof(buf))
->> +    if (*pos != 0 || size >= sizeof(buf))
->>           return -EINVAL;
->>       ret = simple_write_to_buffer(buf, sizeof(buf) - 1, pos, 
->> user_buf, size);
-> 
-> Thanks for submission.
-> 
-> Reviewed-by: Karol Wachowski <karol.wachowski@linux.intel.com>
 
-Applied to drm-misc-fixes.
+On Mon, 25 May 2026 10:15:16 +0300, Dan Carpenter wrote:
+> If *ppos is non-zero then simple_write_to_buffer() won't initialize the
+> start of the buffer.  Really, non-zero values for *ppos aren't going to
+> work at all.  Check for that return -EINVAL at the start of the function.
+> 
+> 
+
+I tweaked the commit message a bit for clarity, thanks.
+
+[1/1] gpio: virtuser: Fix uninitialized data bug in gpio_virtuser_direction_do_write()
+      https://git.kernel.org/brgl/c/39785f2b3e9fb8f3375dde1e3e4c94ff953871af
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
