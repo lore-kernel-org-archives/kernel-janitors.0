@@ -1,99 +1,65 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B3C3CCFB2
-	for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 07:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548E2EBB99
+	for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 12:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779868273; cv=none; b=Qw+p24nHM7DA7/KGjWGDPgAK9rPzqowmIz2KFY0vYV1G7iK+R9J+5b6eEIrS6sdwNDhOYK7oKOVj2yockDWRq3BOM3IJKZ3SKo1emDSR9E9w+aTR37uFcmA1xIRaXKfpU1sfKK1JYk+rsjxWziIeh5uDCGxUWjrT7zI2dFeTCAI=
+	t=1779883552; cv=none; b=ACEdaK6Qm9ZQfKPtrV00X1E8TwLyZgxuEXdRjLkkjuV+2oDy2C3CL+GiehONBzfKFU/zsaIBe1cIBIfSDxUS+YQrhhVxcGkJpCnlm0HFwWQbGmalyaPTJ9yMq9eVncHDwcgTKDBXS8y3OO3cofIDm69MTmAB6oZ4JBuZD5RQuOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779868273; c=relaxed/simple;
-	bh=MFJ7p0ek93ocdXzcV2D0uW/LP/j6s/gdUJMtK3WCwlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SFC1Qp2zNtLzv/VaobaN9PIEfRJQ0SSyvHzUs6U/YVEhO+xQO7ilEHUS3hJo5ClzqMAm8fpf8kRiiYRhM3J0TqWORbs/+jm0sQYs9GMc/Mvkp86UKJ+ESOYVl1yF8H+6lvevzhY6iKgy6vV6yn0HWsOESqaa/nVaKSUaksHCH7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dG0qNuEM; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779883552; c=relaxed/simple;
+	bh=adYa1Lpyft+sSshPCyVT78ZL4TPiNqJulxJyuE0U0s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OoZKInqyWTkI2tHWXPsAwGD01yqMFyDmDbfes+N8HAAS108lLj7b97G/ar+O/Rmd4MNHY6W8BDCa51DDzjAoZOp00/n/rwojAQUoW7C+uD5YGwU1rdVV0SLDEXXBZycsZJPnCHJ9C7/YDaIRWLYU4afEIxOkjHEZN8baARcv24g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8WKEWja; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dG0qNuEM"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-44e1ebb3122so6950358f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 00:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779868270; x=1780473070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h7OwHHgSk6i3h5lpw50D8kABzoCUKVGoS97ipLWF/eE=;
-        b=dG0qNuEML6b0aWLyHaKa8/rpphJmiWEOcv19PURrj3jPau8DU1beMtEA0790KTdpX0
-         SoXpYrU+fPJxsGPffeM+aurAz1c0iqYK0K5vRefGNl2V+y79rt15Nuf/yCX2WF2OwHI5
-         wUr7DRQht8+WrWG0nUwr73pxo5Y2Eh5jwTlarWlcMTHDHjpllFkM74ZaUm9ivhN3BGi7
-         Belo7cnLbDrZvcHDompKXziGPiyAy/01doWd0kNyOdynZeOVpUpjHwe2ehgM2cPFJb8i
-         oBfum/LXFe4/0EQxH19cXZEaaV5sC7+KQP++8WDKn2bckAJ8g0fH2qbsUj3f2UgvE+5Q
-         PHSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779868270; x=1780473070;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h7OwHHgSk6i3h5lpw50D8kABzoCUKVGoS97ipLWF/eE=;
-        b=qBPdp6+ZBKb7+25R9+jqbTCTGO303WRHYEAPR2xkWFJfR36vQpLnx5u9INmxTNMWLQ
-         23gzjQJJKYcxag82LoaYQ5ZB0z5PcQA/dvOsDKJEjDS+rlP75hl3LzdhM09CTzM2Vub5
-         nz8Npiv09O9lyHFci+Pld3aV5A+d/sAUCVOnMT4RoLcwl8bTj9KL0VLumKew/jpV4tis
-         XkoLPc4vOBaNTZbZefNg2BZtoq4mRgq0JGDMAYJ5Pn7LddnwCiwJ7yHBC5o+Gpfa6QNz
-         dho2TODypPHvDQ3df6QVQ9rp0NoQQB0LEcJjilA6UN0S0RxuOZSE6qZVsnrxJroUMa81
-         1y1A==
-X-Gm-Message-State: AOJu0YwHQuXVF6qItakTX436qw4F6w1axRL2P1Mo1TMynXpnVEAxsNeI
-	d2LCNbo7Wox4WpKJVlCl7wu9BSNdFJDGx+96wGAJ9/KO9zeVdrJ4n86j
-X-Gm-Gg: Acq92OGyLWtTCCeoQHhG3YPDtrx4/lB4DTeeeRtsAW3yKUk9M1aBdHvFJe7yHi/0DWE
-	Q+sK0LBjd9bhEMqq0vPxjdffFfRXeqAFo+AlxVRJhMcVE4iD3Hflww91dd2lwx+i6/IAzcBboCQ
-	iFGlyt/Itjb37KcoTnPmxTmDiVvGRTItHa+zBQpetqNiUtUcGeQvZ4kPNt7shx23+M1ex5V3Tq1
-	BtkvGDWtc4z8vInNEWK1x9Itx7kvrIlPImqy2hMwLKQ+F2Cv4XLVEQ2yILR8tLksqh5OUutvjpa
-	ZL/lDcVhShRQFrL+ItghYuL5EXF+EpGjYFSO+sL4hF7OQbkEKYecefRyBHho9MMsZuIdjKgjaSB
-	g2XOJ1y7+NRPa1G1nywHVVozQxkfDF+UR9rac6peOmg3KHzmBvaJlVyNFxMKyuf3PvNCQDSJKkH
-	kczb6M4q2xp75tTvwMFXjqFAKLKYrTYc6G
-X-Received: by 2002:a5d:5d02:0:b0:43e:b0f8:66f1 with SMTP id ffacd0b85a97d-45eb3afd371mr36058575f8f.43.1779868270259;
-        Wed, 27 May 2026 00:51:10 -0700 (PDT)
-Received: from localhost ([87.254.0.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45edb5b28absm4145652f8f.27.2026.05.27.00.51.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2026 00:51:09 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Hyunchul Lee <hyc.lee@gmail.com>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ntfs: Fix spelling mistake "etnry" -> "entry"
-Date: Wed, 27 May 2026 08:49:41 +0100
-Message-ID: <20260527074942.17393-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8WKEWja"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317F21F000E9
+	for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 12:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779883551;
+	bh=adYa1Lpyft+sSshPCyVT78ZL4TPiNqJulxJyuE0U0s4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Q8WKEWjaXbwcTY8fK04gUvgp4uwbEkzZyAeAX1M/KCn4w9S9Vwtv6Cav4JrSriQCy
+	 QC88bIHBm9pDF9QSPegXWXgz6UqAfSfPqQXIy3JWCU4zXRS0/pY8FIPGHFuON0QNX7
+	 w2tHEwizWzTrLHHnUQHHRCbTcc3YmoBu52N+E4jps0+0luN+B+Ft8xmazDVk6kQcva
+	 GzCQku2HFbqSPtxddPwNk+ZCRqABkSOFd40nTql2SRAIrZWWaFu9eTq9jjSWvT5Myk
+	 RuyXwzOx8Xqn9xrTFKtB/NVVfSHPocO2oa187u/WT2IU/1S101fEhW5bJVGfL/z2xD
+	 EeXFqEINVNESA==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-bd3d7c29b4dso1677011866b.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 05:05:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/zn8FLSiFkO2E8a2YJPwkRAnR4lZ9ICFwA7srpnSkTs8csp9BqfizQdA97QnXK4HjtZche0hvp6NJlNo6GUAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMup2pTBW0KEA2PTYQbI4+gDzC/ipZ0zNJ9QYIu2UMgPYPvw2z
+	zDp3IXPy+vTb4CQVxL1Faq+rZ0o7DipKJjqmvn1n/u4In++b7TOgRVxCKFtWEO3Y9oqImGVso9T
+	WzoZvo+wFhpL39qrO08E8GFDeahz4V+Q=
+X-Received: by 2002:a17:907:9309:b0:bd1:2c29:a6ac with SMTP id
+ a640c23a62f3a-bdd269b6755mr1466163366b.44.1779883549805; Wed, 27 May 2026
+ 05:05:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20260527074942.17393-1-colin.i.king@gmail.com>
+In-Reply-To: <20260527074942.17393-1-colin.i.king@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 27 May 2026 21:05:37 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-y1bP+=2PrPf_wGkCotT7j0OrVVV89US4siaO=k2v=Jg@mail.gmail.com>
+X-Gm-Features: AVHnY4KxVlAW9Fk2OSBRPw728Xn8jdObUeEIwAXQ0pQn8bvqeW0R2z4AL8FpkGc
+Message-ID: <CAKYAXd-y1bP+=2PrPf_wGkCotT7j0OrVVV89US4siaO=k2v=Jg@mail.gmail.com>
+Subject: Re: [PATCH] ntfs: Fix spelling mistake "etnry" -> "entry"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Hyunchul Lee <hyc.lee@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a ntfs_error message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ntfs/index.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ntfs/index.c b/fs/ntfs/index.c
-index 00e17637f771..8371ff4303e7 100644
---- a/fs/ntfs/index.c
-+++ b/fs/ntfs/index.c
-@@ -340,7 +340,7 @@ int ntfs_index_entries_inconsistent(const struct ntfs_volume *vol,
- 
- 		if (le16_to_cpu(ie->length) < sizeof(struct index_entry_header)) {
- 			ntfs_error(vol->sb,
--				   "Index etnry too small in inode %llu.",
-+				   "Index entry too small in inode %llu.",
- 				   inum);
- 			return -EIO;
- 		}
--- 
-2.53.0
-
+On Wed, May 27, 2026 at 4:51=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in a ntfs_error message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Applied it to #ntfs-next.
+Thanks!
