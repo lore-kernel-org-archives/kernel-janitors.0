@@ -1,65 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548E2EBB99
-	for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 12:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B202836F
+	for <kernel-janitors@vger.kernel.org>; Thu, 28 May 2026 00:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779883552; cv=none; b=ACEdaK6Qm9ZQfKPtrV00X1E8TwLyZgxuEXdRjLkkjuV+2oDy2C3CL+GiehONBzfKFU/zsaIBe1cIBIfSDxUS+YQrhhVxcGkJpCnlm0HFwWQbGmalyaPTJ9yMq9eVncHDwcgTKDBXS8y3OO3cofIDm69MTmAB6oZ4JBuZD5RQuOw=
+	t=1779928347; cv=none; b=GC4uDHbfJCQVqJ3wyKljq3zr8BEsnhdDSXvl8FU7wEV7QWLBQqMSsEkFm6ObSsHHndg4xcbSpnxBdSHCHBHD2Rljb0/mRfx3zzQ7S90S9AQsIfXO5aDpWsOTzAnSJfO5qC/fFVmJgR2DT5AxAWtOKf3N0c1F1oMq6d+qsmkEhY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779883552; c=relaxed/simple;
-	bh=adYa1Lpyft+sSshPCyVT78ZL4TPiNqJulxJyuE0U0s4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OoZKInqyWTkI2tHWXPsAwGD01yqMFyDmDbfes+N8HAAS108lLj7b97G/ar+O/Rmd4MNHY6W8BDCa51DDzjAoZOp00/n/rwojAQUoW7C+uD5YGwU1rdVV0SLDEXXBZycsZJPnCHJ9C7/YDaIRWLYU4afEIxOkjHEZN8baARcv24g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8WKEWja; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779928347; c=relaxed/simple;
+	bh=SIdgCfvVi8ryrtDQzE292WHB3pDjoSEA5ktRL6ryWJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kGkZb9HybBtORcU0lmUn73P8OING/H4/QsR3ySy2Igp0+YZSxl01RGNmZkYI5V7X10PkZ+e7E0cTBH33dhKKAvL5Um2uJVuc+NUCUwK/8ClYIDaOCLLD3OYFBFkyU2TaGwXNWlP9MccQyr83bdIEHDagS9i4I+j+sMjVBJSUCek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dyisPlEH; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8WKEWja"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317F21F000E9
-	for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 12:05:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779883551;
-	bh=adYa1Lpyft+sSshPCyVT78ZL4TPiNqJulxJyuE0U0s4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Q8WKEWjaXbwcTY8fK04gUvgp4uwbEkzZyAeAX1M/KCn4w9S9Vwtv6Cav4JrSriQCy
-	 QC88bIHBm9pDF9QSPegXWXgz6UqAfSfPqQXIy3JWCU4zXRS0/pY8FIPGHFuON0QNX7
-	 w2tHEwizWzTrLHHnUQHHRCbTcc3YmoBu52N+E4jps0+0luN+B+Ft8xmazDVk6kQcva
-	 GzCQku2HFbqSPtxddPwNk+ZCRqABkSOFd40nTql2SRAIrZWWaFu9eTq9jjSWvT5Myk
-	 RuyXwzOx8Xqn9xrTFKtB/NVVfSHPocO2oa187u/WT2IU/1S101fEhW5bJVGfL/z2xD
-	 EeXFqEINVNESA==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-bd3d7c29b4dso1677011866b.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 May 2026 05:05:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/zn8FLSiFkO2E8a2YJPwkRAnR4lZ9ICFwA7srpnSkTs8csp9BqfizQdA97QnXK4HjtZche0hvp6NJlNo6GUAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMup2pTBW0KEA2PTYQbI4+gDzC/ipZ0zNJ9QYIu2UMgPYPvw2z
-	zDp3IXPy+vTb4CQVxL1Faq+rZ0o7DipKJjqmvn1n/u4In++b7TOgRVxCKFtWEO3Y9oqImGVso9T
-	WzoZvo+wFhpL39qrO08E8GFDeahz4V+Q=
-X-Received: by 2002:a17:907:9309:b0:bd1:2c29:a6ac with SMTP id
- a640c23a62f3a-bdd269b6755mr1466163366b.44.1779883549805; Wed, 27 May 2026
- 05:05:49 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dyisPlEH"
+Message-ID: <935aaec5-5417-3cde-f944-3c04ffbd3458@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1779928342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NU+WkG0JMZCGGSqCR8dN7ZBIBOJxhf8qjGX+ma2NsKg=;
+	b=dyisPlEHNGROmDO3PIu1xSoLKqbJ5ya7lkt4PEAUuiOJahBM0lcV7KL1qiKyDISpRWGvHn
+	PU9aaAfjRJt1t0zYYK+VV8AbVWnhtYyWhAho5LVkMGWMq37hd+4E6BJrMBblf7z4Ug1ArL
+	mdEYdaIAxL+2EOtvyfHtndikc337ELA=
+Date: Wed, 27 May 2026 20:31:59 -0400
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260527074942.17393-1-colin.i.king@gmail.com>
-In-Reply-To: <20260527074942.17393-1-colin.i.king@gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 27 May 2026 21:05:37 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-y1bP+=2PrPf_wGkCotT7j0OrVVV89US4siaO=k2v=Jg@mail.gmail.com>
-X-Gm-Features: AVHnY4KxVlAW9Fk2OSBRPw728Xn8jdObUeEIwAXQ0pQn8bvqeW0R2z4AL8FpkGc
-Message-ID: <CAKYAXd-y1bP+=2PrPf_wGkCotT7j0OrVVV89US4siaO=k2v=Jg@mail.gmail.com>
-Subject: Re: [PATCH] ntfs: Fix spelling mistake "etnry" -> "entry"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Hyunchul Lee <hyc.lee@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm: zynqmp_dp: Fix uninitialized variable in debugfs()
+Content-Language: en-US
+To: Dan Carpenter <error27@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <ahP3Xagt1LJrhmFl@stanley.mountain>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <ahP3Xagt1LJrhmFl@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 27, 2026 at 4:51=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in a ntfs_error message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Applied it to #ntfs-next.
-Thanks!
+On 5/25/26 03:16, Dan Carpenter wrote:
+> If the *ppos is non-zero then simple_write_to_buffer() will not
+> initialize the start of the buf[] buffer.  It doesn't really make sense
+> to allow non-zero values for *ppos, so check for that at the start and
+> return -EINVAL.
+
+non-zero ppos seems to be handled properly by simple_write_to_buffer.
+
+--Sean
+
+> Fixes: 28edaacb821c ("drm: zynqmp_dp: Add debugfs interface for compliance testing")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>   drivers/gpu/drm/xlnx/zynqmp_dp.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> index 7fb11b0a44f0..847179476041 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> @@ -1888,6 +1888,9 @@ static ssize_t zynqmp_dp_pattern_write(struct file *file,
+>   	ssize_t ret;
+>   	int pattern;
+>   
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+>   	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, user_buf,
+>   				     count);
+>   	if (ret < 0)
+> @@ -2028,6 +2031,9 @@ static ssize_t zynqmp_dp_custom_write(struct file *file,
+>   	ssize_t ret;
+>   	char buf[sizeof(dp->test.custom)];
+>   
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+>   	ret = simple_write_to_buffer(buf, sizeof(buf), ppos, user_buf, count);
+>   	if (ret < 0)
+>   		return ret;
+
