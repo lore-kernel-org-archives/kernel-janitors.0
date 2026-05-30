@@ -1,73 +1,68 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D251BBBE5
-	for <kernel-janitors@vger.kernel.org>; Sat, 30 May 2026 19:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D694C22D7B9
+	for <kernel-janitors@vger.kernel.org>; Sat, 30 May 2026 19:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780170355; cv=none; b=XoJOrAI+b4f1nLTxYWWReWcXFUXtZijOq4rY0n0lLP2LYMS9zOJx1/LtPZZtaIe25oF8Vfn6AjwwWFAgpwaRk9wqUA3bN7x2Qy1AQLeLrLbwvP7/IaiKQS1sArcgXYE4AAox5GxZfVDuNYk6MQ+gG+g+Mk32JwvrG60VrjrfQq8=
+	t=1780170395; cv=none; b=QjecGGl9sqFK0/lmRGtl8rciia+iUA8rSpipQsdWRHcetcKYlLKfjljfUs9EUxQ17S3csJI8xDelmXEJMqkebRbLB+HkAwHMXK64ZxmAVWb65FNSsVqyIeKX9Gbw+mgG1wvu19FpUoM/0Oca0rOO34qhF9nZdmiC31yKgoC2Gsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780170355; c=relaxed/simple;
-	bh=nYlM2G8ceGl3y9T5fnmZhdbw8OoHi6DfQitXHZGs+Xo=;
+	s=arc-20240116; t=1780170395; c=relaxed/simple;
+	bh=VVpqD6XQvQ0hsn9rYeTCvVf98ujTYmtQjqkHwHTJY9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u7ZJ05oBeckzeXlZnq+ysLS8Sk1XqAV9gVmUboFUqVR/kE/uDl+A8HTtp/GyxwZFxraW10yP8VR6+O3T25Ll6VLvVNiWaGDRjqoaQpk4fkqWG48yGjF6wBnaYcTXyQKA13A1cu4lrsJXOCuRcBBIBJ70JhhCf/u4BJsS3DHm4Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=p/6dimAW; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition; b=TIGW/y9d6l9oAM1xSfCPzT//FEvYMCf7T01O2jbJ2Qr9pLUsT7UDGaN8VlqyrYwnxKknK8rFNca035/LYtohPajfmn+tFr1LksBbhTRqSmDuGFKO63sOgXK0gfnGpXqTxWKDoxhshHpIMFG6XuSSJRh+98SFG7eaGAjGAd3pPRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwU2XVjP; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p/6dimAW"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-490a7a9f81bso387725e9.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 30 May 2026 12:45:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwU2XVjP"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49042aeeb75so105883795e9.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 May 2026 12:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780170352; x=1780775152; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780170392; x=1780775192; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=sp2k/2dsuU3p5cNxUvdrCd2ECXlssNRbjfeNkqPWDi0=;
-        b=p/6dimAWFhxgAFQz8VMJid+2/ubVOs/09iXD6eanc2QUidoqI6a5oEuV/wZBJDGAZt
-         DKo0iAPNbqW3x5Mlsmmi0ToI1icHv/7QZSagdxndY27kuNuLUf5bD5DqKC2H2CIWxWLI
-         gkC2UuaGVlUi70nGUK4cgwelwahpqIuAfJ043bIukQ5C3bO6+yJyVJSybbMD/yPkHgyD
-         sY4c4ZNE/LA3uR4ghM2rgQVF6QMAY8pAtZD11zNSeOR0e/5zfbOXZ3MIWrD4ruVtlPnv
-         SRkml10O5eOSOBXknup0ybPH1rpcCVG69RHM4yJwGsd7y2IUZFF9hcye1gQgLrK8pjlA
-         pG7A==
+        bh=DTsXxYtkmpIvlZM5dyNHUEKfbTrmEuygZlatwKABRFY=;
+        b=CwU2XVjPLt03K0RtfkCPQJpdWHkDDx75945symKS9wv8HN6EhKZhSqTBvT78FH4G4M
+         ClICkSrL6jpevcmR8G3LmuI1KEo9EHmu2gQ6ir3pKTQ9+W2LSJpgbhIHVRNlFga0FPFa
+         iuRKxD/7RMYLzCbq4sSLzWzHj6fsdFXPy0D+cpa/7YzCvrxeCrzYU5dYJ439ZMWYTa+2
+         Zo+GlAKEgS6Xz2TwiMQgljzVWateoVwFVuD5xQEFg6Lrn1hs7WGVVjh6pxBWHkOPENch
+         8Li2bgpr6ikRIiQ69X3l7UI8Ba2pTlTGS9ZmHeHBqDM4O7agvIgGSF83VO8l27GI1OWJ
+         WkwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780170352; x=1780775152;
+        d=1e100.net; s=20251104; t=1780170392; x=1780775192;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sp2k/2dsuU3p5cNxUvdrCd2ECXlssNRbjfeNkqPWDi0=;
-        b=FbZpiYEn8fP0b56T0bOtlYMpXFM5PZaBicW0ukblpWsR0SbooQPS9qZCFxDERPf7hx
-         /xECUny8LE+B3FxrQOUGwNfVXEhxO2KicyNzCb8hIgsrNXAVvEYUYYb5Rzy1mAqVxN4M
-         /vaRtSOlQtjVpUvjujjnbQ1jlSVsW0sAbUUf8myCbcXCYDifL/pqBmnic7rkpDOSDH8p
-         FR7zmRyk47tKYXysXIe40WhjNbHHsOSRDJv5F8eFuAM7z/6IlksgSfCYCJkDvzCCg3eE
-         8DKP6E8wNQW+J8V0XPX6OEL6ikm5EGCZq3bf5LG1EeUcQ3lKX2DqAmahlr9N3aPZ4DcJ
-         5KUA==
-X-Forwarded-Encrypted: i=1; AFNElJ95T7I2DjQeXS5lujA6ZMyXimQYF/tLwCye/jGzI9W5P00cUkpQba1swmnSj2sAnK8VDS6WIxE84rhnmPNbGE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0a2SgYBAwAwyJ2yNJTFnM1Fte45QbIIq1Klz+GjHSnK3BLoYp
-	s8eeJVmwTTp3pWMsOgB4LgYxj6YjJ3aPrmQnNPd0JYQJYHmEhKcEqPE6
-X-Gm-Gg: Acq92OGanhZKocIOKmODPYhm7JJ+OPpFVCr/n24qVNBrH4u5z6x7wem2KkzxVXQ24h8
-	qoMFhGvlw0fUqToVIE/0NQHVSojUClvZGW/lEbH/cMOMLvnucqUXWl8CgQ00F3Yy90y+9LqThTb
-	1JodP+ofwqB8enjEXPGAeaCsi8JOAWEAvYODxWONDlX/4E44qu95StGMK9waP+Dp535fhvWF0u/
-	ZoZhUyf5Jj2hrZOsm2p0guLyVbbDqEG3izHe8/A+USc6osz6OSWOw2qKyA70E9LpaOUNBBauLUb
-	s+YAneOcPHLzQ9ihH1UtLE2zPqM4ZT6hMkTL396qiSCDSodANpR/tpQPFt1EAx/bWqy5dgTseSd
-	WgggAKC4Nmxia64ENbLba5ZU5BKie6fOrMGTvmmSKxjZmHvntm3In+E3ni/qdO0lV3eXh6G0mOV
-	4Sw9JHxvklczgRyfd1LXmuhTDilI7MGadfommiWTVp/ic/
-X-Received: by 2002:a05:600c:314e:b0:48f:e230:29f4 with SMTP id 5b1f17b1804b1-490a2a78973mr64877725e9.15.1780170352446;
-        Sat, 30 May 2026 12:45:52 -0700 (PDT)
+        bh=DTsXxYtkmpIvlZM5dyNHUEKfbTrmEuygZlatwKABRFY=;
+        b=PELEUmP8+pvcZ2omM6Vp0Vhhz/4aKbSGQqUmnHUPiLbPsUnzEQI38uIobT8GSvggEx
+         LRyK2NKjI2FlXNA6ppZimpzS2d1OYaXe4ZxjiAv55XQPyeihfWW39mzZ0RFRJ+/6othl
+         2XHEaSMKemjrpkgeYefairQG601/gtfPUw1GNUq+WOCcYnX+lHwAYC6iQ5+WtEWCof6/
+         IIOC0HrGaDltL19BGU7Kt3T5nopLqJzdvJwTYemkcHmOUJKDf6+MdS4amSvmdYScz8b8
+         kRyCI4T95dBR551u2ETgmRFPJ7FTNhXrQRhZhXG3bvdrgeIqS4N/9fhBDJ2pX3iDdL64
+         8KTw==
+X-Gm-Message-State: AOJu0YxVrQTviOaVaYxzoeqZNHkgn7nfZplFqkCc2yo+oSvK+FEIgSew
+	R4Vw2UoqRYy1i1w+7iFXtEbnnHwrkS6ufonBYKnXESbITsEZptVAhp76
+X-Gm-Gg: Acq92OG2VkYuRxJnh8no5AnLea3aIDZO6Uqay2KOiIFnrEUSFzuG/rq98D8pzipaboe
+	wft3mqzrOOdK0UwjtuV77t1wX+3OJsB5mI+SAYncWm+Bvo2ThqiYgHfoWi1pPDcjk/vdAjgeC8O
+	ONMX8mu2v/HPTAkjHbEKpvM43bvrEN4tgKyjm1N8kVJx8wVFd6UwzYscggjis91pRv73S6S3TJC
+	T7GFSm5rk6HpqWXqHx0eiRPFsfU8btJR7Zz+Rs5op4X4SiY1JBOr2fRPgW3jRbS9XAZomNGwJWG
+	lNjI1J3JV2bIipTzMvPDkTqaQtb0cpEM3TATGsk/TjCISvzMQeXks6XyQer6DVnw9GZqMU+HJzs
+	33QzLaa0gCLy/YgHz82vOR4PfJmAWqjAkGpQMgTt8FpDWlPGZqeNJqZ/1TtX0Ew7VSt6jAkyS8i
+	Ei60AgZJ16ThJ18xKfSYKqHLQHgMeGESqBgQ==
+X-Received: by 2002:a05:600c:c108:b0:490:50c5:8153 with SMTP id 5b1f17b1804b1-490a290de68mr77500885e9.2.1780170392123;
+        Sat, 30 May 2026 12:46:32 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909caa7eeesm126175175e9.10.2026.05.30.12.45.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909ca6575csm199859345e9.4.2026.05.30.12.46.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 May 2026 12:45:51 -0700 (PDT)
-Date: Sat, 30 May 2026 22:45:48 +0300
+        Sat, 30 May 2026 12:46:31 -0700 (PDT)
+Date: Sat, 30 May 2026 22:46:28 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Deepak Ukey <deepak.ukey@microchip.com>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Radha Ramachandran <radha@google.com>,
-	Viswas G <Viswas.G@microchip.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: pm8001: Fix error code in non_fatal_log_show()
-Message-ID: <ahs-bEsBJH0KhnsX@stanley.mountain>
+To: Steen Hegelund <steen.hegelund@microchip.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] net: microchip: sparx5: Support for copying and
+ modifying rules in the API
+Message-ID: <ahs-lCAXXikkaHky@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,36 +71,58 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-The non_fatal_log_show() function is supposed to return negative
-error codes on failure.  But because the error codes are saved in
-a u32 and then cast to signed long, they end up being high positive
-values instead of negative.  Remove the intermediary u32 variable
-to fix this bug.
+Hello Steen Hegelund,
 
-Fixes: dba2cc03b9db ("scsi: pm80xx: sysfs attribute for non fatal dump")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/scsi/pm8001/pm8001_ctl.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Commit 465a38a269e9 ("net: microchip: sparx5: Support for copying and
+modifying rules in the API") from Nov 23, 2022 (linux-next), leads to
+the following Smatch static checker warning:
 
-diff --git a/drivers/scsi/pm8001/pm8001_ctl.c b/drivers/scsi/pm8001/pm8001_ctl.c
-index bb38b2d63acb..a27f3287748e 100644
---- a/drivers/scsi/pm8001/pm8001_ctl.c
-+++ b/drivers/scsi/pm8001/pm8001_ctl.c
-@@ -588,10 +588,7 @@ static DEVICE_ATTR(fatal_log, S_IRUGO, pm8001_ctl_fatal_log_show, NULL);
- static ssize_t non_fatal_log_show(struct device *cdev,
- 	struct device_attribute *attr, char *buf)
- {
--	u32 count;
--
--	count = pm80xx_get_non_fatal_dump(cdev, attr, buf);
--	return count;
-+	return pm80xx_get_non_fatal_dump(cdev, attr, buf);
- }
- static DEVICE_ATTR_RO(non_fatal_log);
- 
--- 
-2.53.0
+	drivers/net/ethernet/microchip/vcap/vcap_api.c:3516 vcap_filter_rule_keys()
+	error: double free of 'ckf' (line 3516)
 
+drivers/net/ethernet/microchip/vcap/vcap_api.c
+    3506         int idx;
+    3507 
+    3508         if (length > 0) {
+    3509                 err = -EEXIST;
+    3510                 list_for_each_entry_safe(ckf, next_ckf,
+    3511                                          &ri->data.keyfields, ctrl.list) {
+    3512                         key = ckf->ctrl.key;
+    3513                         for (idx = 0; idx < length; ++idx)
+    3514                                 if (key == keylist[idx]) {
+    3515                                         list_del(&ckf->ctrl.list);
+--> 3516                                         kfree(ckf);
+    3517                                         idx++;
+
+The "idx++" makes it look like we're going to keep iterating through
+this inner loop.  Why not just break instead?  If we keep iterating
+and find another match it leads to a double free.
+
+    3518                                         err = 0;
+    3519                                 }
+    3520                 }
+    3521         }
+    3522         if (drop_unsupported) {
+    3523                 err = -EEXIST;
+    3524                 fields = vcap_keyfields(ri->vctrl, ri->admin->vtype,
+    3525                                         rule->keyset);
+    3526                 if (!fields)
+    3527                         return err;
+    3528                 list_for_each_entry_safe(ckf, next_ckf,
+    3529                                          &ri->data.keyfields, ctrl.list) {
+    3530                         key = ckf->ctrl.key;
+    3531                         if (fields[key].width == 0) {
+    3532                                 list_del(&ckf->ctrl.list);
+    3533                                 kfree(ckf);
+    3534                                 err = 0;
+    3535                         }
+    3536                 }
+    3537         }
+    3538         return err;
+    3539 }
+
+This email is a free service from the Smatch-CI project [smatch.sf.net].
+
+regards,
+dan carpenter
