@@ -1,49 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDA93F44CF
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F003F4137
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780345249; cv=none; b=prBKnM4Sj3EcloM6Y2Bb7Br/MDmrr9vpP8Zi2tlzUFaa6lPtXBcgJnhhuA5L7wJmr75IRkZRdAGDjsy1OIX3Jz0tFKmGSTzpUTL2u6J79UNAS86b68erwRrUDtxOPQmv8RDi0tPw/3TQM2PMbAMdgMOAsXaPapHIeTs1CySuYqw=
+	t=1780345255; cv=none; b=LcjPCoy3Dz3oTl/1y5TxJOLso+dMN5+Z7bZE5rYwqMPRo/4QmhtjL8pGf4r6wceinyjEG5oTg2yiWzwW1oO7Cs5tZT13l9YLkLrW674y0vFvzgelRJUDfAv26Ua1q/JUPohCB/p5KKZv4paIpVKVwd49+uqRS7uvcrZyLTZKJSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780345249; c=relaxed/simple;
-	bh=1gBQDa8/YxQQsJ8JnTJlyMdna+QxpU+A8Pyf9TMkwFE=;
+	s=arc-20240116; t=1780345255; c=relaxed/simple;
+	bh=T9U7wVldKRlzUX+iFltU2canoCuZeGvOEwocp4VLd7w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jXXRguMw5+6md1bbqLkW8VLVq3iPKg1+Xqu9C/zNRxeWaksrH+hc5dM5r8vZcEO0LcbeWE/UwsILBryn740+gHV42q4o1gk1yxhQeGx9cUd1g+eLTnwiD66+Xik5jwZqbFc5/Coq6S7k1O5+GrXzh1CuQL4YyiKp5TwbgrQ9fOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ro9l1H9V; arc=none smtp.client-ip=80.12.242.22
+	 MIME-Version; b=XZooiJ1UhRoj5SiKSx6yTHLiZK83il9FU9tFx+YED2UR2YYIJatcbujYUB9mXFoz0pqC4sq9wfiVv5C4+PMFHbYTWDQwU2lLUN3u2FQr6L/WDetgIZkz55ySxVvLlLdcZSYxZiH99y+eAZbruX9ZrFkz4fczEk+hpjobya2GQFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bshP9Aji; arc=none smtp.client-ip=80.12.242.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ro9l1H9V"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bshP9Aji"
 Received: from fedora.home ([10.64.95.106])
 	by smtp.orange.fr with ESMTP
-	id U96kwvRAYPl3nU96kwwAQU; Mon, 01 Jun 2026 22:19:34 +0200
+	id U96swZYhjG0XwU96swCqO8; Mon, 01 Jun 2026 22:19:42 +0200
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPSA
-	id U96bwqrR9v48RU96kwPnw3; Mon, 01 Jun 2026 22:19:34 +0200
+	id U96bwqrR9v48RU96rwPoC0; Mon, 01 Jun 2026 22:19:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1780345174;
-	bh=xcBOGte96v6r7Ztz2bjbZESrvCFLxIHxsvHhIN1kMZw=;
+	s=t20230301; t=1780345182;
+	bh=0RRXyKmmVz4UT0DXeGKQ7+Tn4qUBejGCdUpZtcd+hmc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ro9l1H9Vu9dvaJ5KnLprAu+aCGHcVCpDZvAPQPnnV+CbbrOvgLlDqnzak6XH0kIXt
-	 o8EyLf/v+N647CV0w2ayz/vlsa4wcMKDUtjg2eopaD7CTvbEjpCVPbsh1i19mBJOW8
-	 Q8a3plpuM8cAuzkwXXpK9coxOhK2HGUwXAXrlqZeSwI5tpPI4fsEHWR4XOTCPV/Ybm
-	 LYdx4FBlBXksvbGCcUarcXGfoG9PlYDOQm2YRpQIo2MZ5jxOSK9B1rjhAkLmiJqrOq
-	 nMUu6qowDbE25rkYXphRi9k9TOeTsR6BZqt4kEneuOeKftnr7Fc4QclIlKpLRnuwKP
-	 Vaq+wfDUMBVrw==
+	b=bshP9AjiZgFEyhXii1+PaK7O9cagOisNnwWBbjSjxrKa0hEw4VXabwsAUZHSZeFl9
+	 EeZgJxF4/v1uQ1+5z6Q/Vb82MhMu+ckcseRHSahoz1n3yT8btozZiJX/fEhbLgTl+o
+	 XAiRqhB0bi8yoDy+xQxDue/GgcXqTh9zyNNgV+skoOQ8OqDMC++IfXGOQreCRpvu+7
+	 kUhPwgzheisG9RErEm1JE28++pKhaUBE8lggpydJVm+hmyJifaAjNQ6TSNC8ttcSp4
+	 iZrUo6t31xcRGxQAB0rBjh+yUo4cSyARudBSWmrr3+7wWNKIkJORDEAnF9ruNgCyf5
+	 6P0K2yj2lc8Lg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 01 Jun 2026 22:19:34 +0200
+X-ME-Date: Mon, 01 Jun 2026 22:19:42 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: tglx@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 1/7] irqchip: Constify "struct irq_chip *" parameter in chained_irq_xxx() functions
-Date: Mon,  1 Jun 2026 22:19:01 +0200
-Message-ID: <7960039f11796ae113a6322f62af629a56cdeeca.1780343698.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 3/7] pinctrl: samsung: Constify "struct irq_chip *" parameter in to_exynos_irq_chip()
+Date: Mon,  1 Jun 2026 22:19:03 +0200
+Message-ID: <25b70558d35ce4686eed3520588581c5f2f880f8.1780343698.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
@@ -55,10 +55,9 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-chained_irq_enter() and chained_irq_exit() don't modify their 'chip'
-parameter.
+to_exynos_irq_chip() doesn't modify its 'chip' parameter.
 
-So change the prototype of these functions to accept const struct irq_chip
+So change the prototype of this function to accept const struct irq_chip
 pointer.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
@@ -66,35 +65,26 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Compile tested only
 
 Changes in v2:
-   - None
+   - New patch
 
-v1: https://lore.kernel.org/all/dcc2288daad066ac7f5dcb1fd6c4d36192cf5f7a.1731835733.git.christophe.jaillet@wanadoo.fr/
+v1: none
 ---
- include/linux/irqchip/chained_irq.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/irqchip/chained_irq.h b/include/linux/irqchip/chained_irq.h
-index dd8b3c476666..f248d63acfca 100644
---- a/include/linux/irqchip/chained_irq.h
-+++ b/include/linux/irqchip/chained_irq.h
-@@ -13,7 +13,7 @@
-  * Entry/exit functions for chained handlers where the primary IRQ chip
-  * may implement either fasteoi or level-trigger flow control.
-  */
--static inline void chained_irq_enter(struct irq_chip *chip,
-+static inline void chained_irq_enter(const struct irq_chip *chip,
- 				     struct irq_desc *desc)
- {
- 	/* FastEOI controllers require no action on entry. */
-@@ -29,7 +29,7 @@ static inline void chained_irq_enter(struct irq_chip *chip,
- 	}
- }
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 81fe0b08a9af..e8b2d47ebe45 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -50,7 +50,7 @@ static u32 eint_wake_mask_values[MAX_WAKEUP_REG] = { EXYNOS_EINT_WAKEUP_MASK_DIS
+ 						     EXYNOS_EINT_WAKEUP_MASK_DISABLED,
+ 						     EXYNOS_EINT_WAKEUP_MASK_DISABLED};
  
--static inline void chained_irq_exit(struct irq_chip *chip,
-+static inline void chained_irq_exit(const struct irq_chip *chip,
- 				    struct irq_desc *desc)
+-static inline struct exynos_irq_chip *to_exynos_irq_chip(struct irq_chip *chip)
++static inline struct exynos_irq_chip *to_exynos_irq_chip(const struct irq_chip *chip)
  {
- 	if (chip->irq_eoi)
+ 	return container_of(chip, struct exynos_irq_chip, chip);
+ }
 -- 
 2.54.0
 
