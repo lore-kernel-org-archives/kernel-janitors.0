@@ -1,52 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02B13EAC8D
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA2038BF81
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780345732; cv=none; b=K7tqFbjwGP8ChDC+Hy9f9eMmc+q/SWWJBtuQes/Q2GVF9lsR7SydTGMfGZzy8Vr3IgOvrt20IYVL98UF93sAwkxG5I58GK60wj9WzfjRj9ZMWknnRwBdopSfMULqV0/Zk4f/61FqB4X1++leS4Cj4AVUvRhDi5ABKAPI4N16LG4=
+	t=1780345745; cv=none; b=rWl4D+3/L36eOlwOCbIOs8DDSLEy7L4GELTPYlzrtCClMuRUXP9CAYZgSqLf92bvdA8b8K6odcD6OBRxril5v3jUsQ7A24NJBlNduYKwSf0ODjWTFKEURIplnnQKmSiuMEYozZfvlaUT8ZLHL0cqLndJF133srn5v/C16N3VQEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780345732; c=relaxed/simple;
-	bh=UckaZ2SFQdkZriUJnf9Y0+PT7uk2z4a6ae3g8atXg3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lFezhk7r+fZC/aaYpHT/JdNvltkiaY7dueR6tbyjRrzJ5W/mvr0nvjgv5eDuzoRwfS6MKoSzd6nUrYBorhNHhVZTV19FfjSXA4vkGrkB7lDGjknQlg5wDudB93BVmAcMfVuvz/h8UhnntvFgU4x9ceiktkHXw+frbJD4e0LWD1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UQp1NnIz; arc=none smtp.client-ip=80.12.242.15
+	s=arc-20240116; t=1780345745; c=relaxed/simple;
+	bh=jl1Zsm0wL98zkeJM65iM95Qa7NgoDJxQSo29J76E1lQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InmbGTvoITT4cbh2BioAOYsRwkwni6Uk23mma1FeWPFBNseq1gZafsPEyPB6Sdqdxe8QSxEqyKRlnVgHnWvF+hUf40yUeieaWrsUaifAUjRw37oVnW7uVRbz4o+/brRrGjSeUuSVuXtgJxeN2Ggvq25yic/wCQx8d8eteRJKByw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JOalvAdB; arc=none smtp.client-ip=80.12.242.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UQp1NnIz"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JOalvAdB"
 Received: from fedora.home ([10.64.95.106])
 	by smtp.orange.fr with ESMTP
-	id U96ywn4EWXwA3U96ywrpBn; Mon, 01 Jun 2026 22:19:48 +0200
+	id U96jw61YWI5dgU96jwZrNY; Mon, 01 Jun 2026 22:19:33 +0200
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPSA
-	id U96bwqrR9v48RU96ywPoNi; Mon, 01 Jun 2026 22:19:48 +0200
+	id U96bwqrR9v48RU96bwPnhE; Mon, 01 Jun 2026 22:19:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1780345188;
-	bh=kdzuyFpd1BA9avZeTWSyR24HjtqOQIPWU/SROmBTPzU=;
+	s=t20230301; t=1780345165;
+	bh=4pum406ZtKWvbd3nd+0Sze7VQN/sIYpjG15h7vBSQcc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UQp1NnIzlXLF4k3lPjlIC99uyjiiYcGaFwQZaAw4zsOOZsQRpjSXoyI0obISkllCi
-	 f88m2lhsBPV5UrY92Cvt/QG7tl1gpDNAvaUZ+GqvQbRbuMaxJJd5Nl3syWOEqtx0VB
-	 qZ9mMqFKgHge889K+mNUjcUx4MeGupuygBgeNPVwGNEKx3Oj73lN566e/e2pWi0ZZ+
-	 Oz059oStgWPz9iRlthWJYgLYsJ/UNsh4dBHWwl2Z0e/OHt9dMv561a3BKAmWz/zLsF
-	 iWH1xJXRa3vHVBz6K2SdwYgzC52p4AUQ6HmhGD/uluqHJNXb8qL2RB1huA4Fhv9/87
-	 b2nADvOnMp1AQ==
+	b=JOalvAdB29pJ75i3iP/jJTHZ558VHoD7zfkfFVxTjvdYQcztvBofKxig5NgU8tVB7
+	 dscjA2QECyxIPAL5te/nrNH8cxXd4gXtyNdERHTL7hC9CXTXO2JyHEqm58QGnOGzl3
+	 qBzmzeWPBrxF2mdnZeRrTRp65NJad1ciSQO33w75Qtd/xFI923CacVg9oEj+RuxgQO
+	 G79wpNFSspIs1pN/tE6bgflIv2909oE66JhU6oKqlfTdxoPaIhYxsC5IhpdVdNWL31
+	 cayH5YeQARd9YRa4ZqqJ8ZUB+zmiZHUMyvs6ncOQFhEavr+JMF9YcLouqu9/8kmBEe
+	 5bPI+m97WFMXA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 01 Jun 2026 22:19:48 +0200
+X-ME-Date: Mon, 01 Jun 2026 22:19:25 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: tglx@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 5/7] x86/irq: Constify a struct irq_chip *
-Date: Mon,  1 Jun 2026 22:19:05 +0200
-Message-ID: <c31599ead770495f3f4674f9a83c3459e9dcb133.1780343698.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/7] Initial steps to constify irq_chip
+Date: Mon,  1 Jun 2026 22:19:00 +0200
+Message-ID: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -55,40 +52,266 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-irq_data_get_irq_chip() will also return a const struct irq_chip * and some
-const qualifier will also be needed in some places.
+This v2 is related to an old v1 from 11/2024. [0]
+The goal of this v2 is to address the comment made on patch 4/5. It
+was asked to make a treewide update using a coccinelle script.
 
-So, start to add some of these const qualifiers at the places that are
-not spotted by the coccinelle script that does most of the work.
+So, better late that never, here it is.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
-
-If preferred, this could be done differently. If the scope of chip was
-reduced, the const would be added by the cocci script in the next patch.
-
-Changes in v2
-   - New patch
-
-v1: none
----
- arch/x86/kernel/irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index ec77be217eaf..7afbdf0ee13b 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -522,7 +522,7 @@ void fixup_irqs(void)
- 	unsigned int vector;
- 	struct irq_desc *desc;
- 	struct irq_data *data;
--	struct irq_chip *chip;
-+	const struct irq_chip *chip;
+ * * * * * * * * * * * * * * * * * *
  
- 	irq_migrate_all_off_this_cpu();
- 
+Struct irq_chip holds many function pointers and so, is a good
+candidate for constification.
+
+
+Some steps to constify these structures have already been done in 2022
+with commit 393e1280f765 ("genirq: Allow irq_chip registration functions
+to take a const irq_chip") and ef6e5d61eb7a ("genirq: Allow
+irq_set_chip_handler_name_locked() to take a const irq_chip")
+
+However these commits introduce some ugly casting to store some const
+parameters into non-const struct members. [1] [2]
+
+The goal of this serie is to remove these cast and have a cleaner and
+safer API.
+
+It will need to constify the return value of irq_get_chip(),
+irq_data_get_irq_chip() and irq_desc_get_chip() which are widely used.
+
+
+Patch 1, 2 and 3 only update the prototypes of some functions and
+should be straightforward.
+They could be applied even in case of comment/build failure in the
+other patches.
+
+Patch 4 and 5 update files that do not match the coccinelle script that
+does most of the job.
+
+Pacth 6 is generated by coccinelle. It does 99% of the upgrade.
+The script is included.
+
+Finaly, patch 7 correctly constify the 'chip' field in struct irq_data,
+update corresponding asseccors and remove the now useless cast in
+irq_set_chip_handler_name_locked() and irq_set_chip().
+
+
+This has been 95% build-tested on x86.
+So it is likely that some corner cases will be spotted by build-bots
+on other architectures.
+Sorry about that, but I don't have enough cycles on my personnal
+machine to cross-build the serie on different architecture.
+
+CJ
+
+[0]: https://lore.kernel.org/all/cover.1731835733.git.christophe.jaillet@wanadoo.fr/
+[1]: https://elixir.bootlin.com/linux/v7.1-rc5/source/kernel/irq/chip.c#L48
+[2]: https://elixir.bootlin.com/linux/v7.1-rc5/source/include/linux/irqdesc.h#L250
+[3]: https://elixir.bootlin.com/linux/v7.1-rc5/A/ident/irq_chip
+
+
+Christophe JAILLET (7):
+  irqchip: Constify "struct irq_chip *" parameter in chained_irq_xxx()
+    functions
+  irqchip: Constify "struct irq_chip *" parameter in cond_xxx_eoi_irq()
+  pinctrl: samsung: Constify "struct irq_chip *" parameter in
+    to_exynos_irq_chip()
+  irqchip: Constify some struct irq_chip *
+  x86/irq: Constify a struct irq_chip *
+  treewide: Constify some struct irq_chip *
+  genirq/chip: Constify the 'chip' field in irq_data
+
+ arch/alpha/kernel/irq.c                       |  2 +-
+ arch/arc/kernel/mcip.c                        |  2 +-
+ arch/arm/mach-omap2/prm_common.c              |  2 +-
+ arch/mips/alchemy/devboards/bcsr.c            |  2 +-
+ arch/powerpc/kvm/book3s_hv.c                  |  2 +-
+ arch/powerpc/platforms/44x/uic.c              |  2 +-
+ arch/powerpc/platforms/52xx/media5200.c       |  2 +-
+ arch/powerpc/platforms/85xx/common.c          |  2 +-
+ arch/powerpc/platforms/85xx/mpc85xx_8259.c    |  2 +-
+ .../platforms/85xx/socrates_fpga_pic.c        |  2 +-
+ arch/powerpc/platforms/86xx/pic.c             |  2 +-
+ arch/powerpc/platforms/chrp/setup.c           |  2 +-
+ arch/powerpc/platforms/embedded6xx/hlwd-pic.c |  2 +-
+ arch/powerpc/platforms/embedded6xx/mvme5100.c |  2 +-
+ arch/powerpc/platforms/pasemi/setup.c         |  2 +-
+ arch/powerpc/platforms/pseries/setup.c        |  2 +-
+ arch/powerpc/sysdev/ge/ge_pic.c               |  2 +-
+ arch/powerpc/sysdev/mpic.c                    |  2 +-
+ arch/powerpc/sysdev/tsi108_pci.c              |  2 +-
+ arch/powerpc/sysdev/xics/xics-common.c        |  2 +-
+ arch/riscv/kernel/sbi-ipi.c                   |  2 +-
+ arch/sh/boards/mach-se/7343/irq.c             |  2 +-
+ arch/sh/boards/mach-se/7722/irq.c             |  2 +-
+ arch/sh/boards/mach-x3proto/gpio.c            |  2 +-
+ arch/sh/kernel/cpu/irq/ipr.c                  |  2 +-
+ arch/x86/kernel/apic/io_apic.c                |  2 +-
+ arch/x86/kernel/irq.c                         |  2 +-
+ drivers/clocksource/timer-clint.c             |  2 +-
+ drivers/edac/altera_edac.c                    |  2 +-
+ drivers/gpio/gpio-altera.c                    |  4 +--
+ drivers/gpio/gpio-aspeed-sgpio.c              |  2 +-
+ drivers/gpio/gpio-aspeed.c                    |  2 +-
+ drivers/gpio/gpio-ath79.c                     |  2 +-
+ drivers/gpio/gpio-bcm-kona.c                  |  2 +-
+ drivers/gpio/gpio-blzp1600.c                  |  2 +-
+ drivers/gpio/gpio-brcmstb.c                   |  2 +-
+ drivers/gpio/gpio-cadence.c                   |  2 +-
+ drivers/gpio/gpio-dwapb.c                     |  2 +-
+ drivers/gpio/gpio-eic-sprd.c                  |  2 +-
+ drivers/gpio/gpio-ep93xx.c                    |  2 +-
+ drivers/gpio/gpio-ftgpio010.c                 |  2 +-
+ drivers/gpio/gpio-hisi.c                      |  2 +-
+ drivers/gpio/gpio-hlwd.c                      |  2 +-
+ drivers/gpio/gpio-idt3243x.c                  |  2 +-
+ drivers/gpio/gpio-loongson-64bit.c            |  2 +-
+ drivers/gpio/gpio-mpfs.c                      |  2 +-
+ drivers/gpio/gpio-mvebu.c                     |  2 +-
+ drivers/gpio/gpio-mxc.c                       |  4 +--
+ drivers/gpio/gpio-npcm-sgpio.c                |  2 +-
+ drivers/gpio/gpio-pl061.c                     |  2 +-
+ drivers/gpio/gpio-rda.c                       |  2 +-
+ drivers/gpio/gpio-realtek-otto.c              |  2 +-
+ drivers/gpio/gpio-rockchip.c                  |  2 +-
+ drivers/gpio/gpio-rtd.c                       |  2 +-
+ drivers/gpio/gpio-sprd.c                      |  2 +-
+ drivers/gpio/gpio-tangier.c                   |  2 +-
+ drivers/gpio/gpio-tegra.c                     |  2 +-
+ drivers/gpio/gpio-tegra186.c                  |  2 +-
+ drivers/gpio/gpio-tqmx86.c                    |  2 +-
+ drivers/gpio/gpio-vf610.c                     |  2 +-
+ drivers/gpio/gpio-xilinx.c                    |  2 +-
+ drivers/gpio/gpio-xlp.c                       |  2 +-
+ drivers/gpio/gpio-zynq.c                      |  2 +-
+ drivers/gpu/drm/msm/msm_mdss.c                |  2 +-
+ drivers/gpu/ipu-v3/ipu-common.c               |  4 +--
+ drivers/iio/adc/stm32-adc-core.c              |  2 +-
+ drivers/iio/industrialio-trigger.c            |  4 +--
+ drivers/irqchip/exynos-combiner.c             |  4 +--
+ drivers/irqchip/irq-aclint-sswi.c             |  2 +-
+ drivers/irqchip/irq-al-fic.c                  |  2 +-
+ drivers/irqchip/irq-armada-370-xp.c           |  2 +-
+ drivers/irqchip/irq-aspeed-i2c-ic.c           |  2 +-
+ drivers/irqchip/irq-aspeed-scu-ic.c           |  4 +--
+ drivers/irqchip/irq-ast2700-intc1.c           |  2 +-
+ drivers/irqchip/irq-ath79-misc.c              |  2 +-
+ drivers/irqchip/irq-bcm2836.c                 |  2 +-
+ drivers/irqchip/irq-bcm6345-l1.c              |  2 +-
+ drivers/irqchip/irq-bcm7038-l1.c              |  2 +-
+ drivers/irqchip/irq-bcm7120-l2.c              |  2 +-
+ drivers/irqchip/irq-brcmstb-l2.c              |  2 +-
+ drivers/irqchip/irq-dw-apb-ictl.c             |  2 +-
+ drivers/irqchip/irq-econet-en751221.c         |  2 +-
+ drivers/irqchip/irq-gic.c                     |  2 +-
+ drivers/irqchip/irq-goldfish-pic.c            |  2 +-
+ drivers/irqchip/irq-idt3243x.c                |  2 +-
+ drivers/irqchip/irq-imx-mu-msi.c              |  2 +-
+ drivers/irqchip/irq-ingenic-tcu.c             |  2 +-
+ drivers/irqchip/irq-lan966x-oic.c             |  2 +-
+ drivers/irqchip/irq-loongarch-avec.c          |  2 +-
+ drivers/irqchip/irq-loongson-eiointc.c        |  2 +-
+ drivers/irqchip/irq-loongson-htpic.c          |  2 +-
+ drivers/irqchip/irq-loongson-htvec.c          |  2 +-
+ drivers/irqchip/irq-loongson-liointc.c        |  2 +-
+ drivers/irqchip/irq-loongson-pch-lpc.c        |  2 +-
+ drivers/irqchip/irq-lpc32xx.c                 |  2 +-
+ drivers/irqchip/irq-ls1x.c                    |  2 +-
+ drivers/irqchip/irq-mmp.c                     |  2 +-
+ drivers/irqchip/irq-mscc-ocelot.c             |  2 +-
+ drivers/irqchip/irq-mvebu-pic.c               |  2 +-
+ drivers/irqchip/irq-mvebu-sei.c               |  2 +-
+ drivers/irqchip/irq-pruss-intc.c              |  2 +-
+ drivers/irqchip/irq-realtek-rtl.c             |  2 +-
+ drivers/irqchip/irq-riscv-aplic-direct.c      |  2 +-
+ drivers/irqchip/irq-riscv-imsic-early.c       |  2 +-
+ drivers/irqchip/irq-sifive-plic.c             |  4 +--
+ drivers/irqchip/irq-sp7021-intc.c             |  2 +-
+ drivers/irqchip/irq-starfive-jhb100-intc.c    |  2 +-
+ drivers/irqchip/irq-stm32-exti.c              |  2 +-
+ drivers/irqchip/irq-sunxi-nmi.c               |  2 +-
+ drivers/irqchip/irq-ts4800.c                  |  2 +-
+ drivers/irqchip/irq-versatile-fpga.c          |  2 +-
+ drivers/irqchip/irq-vic.c                     |  2 +-
+ drivers/irqchip/irq-vt8500.c                  |  2 +-
+ drivers/irqchip/irq-xilinx-intc.c             |  2 +-
+ drivers/irqchip/qcom-irq-combiner.c           |  2 +-
+ drivers/mfd/fsl-imx25-tsadc.c                 |  2 +-
+ drivers/misc/rp1/rp1_pci.c                    |  2 +-
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  2 +-
+ drivers/pci/controller/dwc/pci-keystone.c     |  4 +--
+ .../pci/controller/dwc/pcie-designware-host.c |  2 +-
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c |  2 +-
+ drivers/pci/controller/dwc/pcie-keembay.c     |  2 +-
+ drivers/pci/controller/dwc/pcie-sophgo.c      |  2 +-
+ drivers/pci/controller/dwc/pcie-uniphier.c    |  2 +-
+ .../controller/mobiveil/pcie-mobiveil-host.c  |  2 +-
+ drivers/pci/controller/pci-ftpci100.c         |  2 +-
+ drivers/pci/controller/pci-mvebu.c            |  2 +-
+ drivers/pci/controller/pci-tegra.c            |  2 +-
+ drivers/pci/controller/pci-xgene-msi.c        |  2 +-
+ drivers/pci/controller/pcie-altera-msi.c      |  2 +-
+ drivers/pci/controller/pcie-altera.c          |  4 +--
+ drivers/pci/controller/pcie-apple.c           |  2 +-
+ drivers/pci/controller/pcie-brcmstb.c         |  2 +-
+ drivers/pci/controller/pcie-iproc-msi.c       |  2 +-
+ drivers/pci/controller/pcie-mediatek-gen3.c   |  2 +-
+ drivers/pci/controller/pcie-mediatek.c        |  2 +-
+ drivers/pci/controller/pcie-rockchip-host.c   |  2 +-
+ drivers/pci/controller/pcie-rzg3s-host.c      |  2 +-
+ drivers/pci/controller/pcie-xilinx-cpm.c      |  4 +--
+ drivers/pci/controller/pcie-xilinx-nwl.c      |  6 ++---
+ drivers/pci/controller/plda/pcie-plda-host.c  |  6 ++---
+ drivers/pinctrl/actions/pinctrl-owl.c         |  2 +-
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c         |  2 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c      |  2 +-
+ drivers/pinctrl/intel/pinctrl-baytrail.c      |  2 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c    |  2 +-
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c     |  2 +-
+ drivers/pinctrl/mediatek/mtk-eint.c           |  2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c   |  2 +-
+ drivers/pinctrl/nuvoton/pinctrl-ma35.c        |  2 +-
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c     |  2 +-
+ drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c     |  2 +-
+ drivers/pinctrl/nuvoton/pinctrl-wpcm450.c     |  2 +-
+ drivers/pinctrl/pinctrl-apple-gpio.c          |  2 +-
+ drivers/pinctrl/pinctrl-at91-pio4.c           |  2 +-
+ drivers/pinctrl/pinctrl-at91.c                |  2 +-
+ drivers/pinctrl/pinctrl-equilibrium.c         |  2 +-
+ drivers/pinctrl/pinctrl-ingenic.c             |  2 +-
+ drivers/pinctrl/pinctrl-keembay.c             |  2 +-
+ drivers/pinctrl/pinctrl-microchip-sgpio.c     |  2 +-
+ drivers/pinctrl/pinctrl-ocelot.c              |  4 +--
+ drivers/pinctrl/pinctrl-pic32.c               |  2 +-
+ drivers/pinctrl/pinctrl-pistachio.c           |  2 +-
+ drivers/pinctrl/pinctrl-rp1.c                 |  2 +-
+ drivers/pinctrl/pinctrl-single.c              |  2 +-
+ drivers/pinctrl/pinctrl-st.c                  |  4 +--
+ drivers/pinctrl/qcom/pinctrl-msm.c            |  2 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c      | 14 +++++------
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |  4 +--
+ drivers/pinctrl/spear/pinctrl-plgpio.c        |  2 +-
+ .../starfive/pinctrl-starfive-jh7100.c        |  2 +-
+ .../starfive/pinctrl-starfive-jh7110-aon.c    |  2 +-
+ .../starfive/pinctrl-starfive-jh7110-sys.c    |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c         |  2 +-
+ drivers/sh/intc/core.c                        |  4 +--
+ drivers/sh/intc/internals.h                   |  2 +-
+ drivers/sh/intc/virq.c                        |  2 +-
+ drivers/soc/fsl/qe/qe_ic.c                    |  6 ++---
+ drivers/spmi/spmi-mtk-pmif.c                  |  2 +-
+ drivers/spmi/spmi-pmic-arb.c                  |  2 +-
+ include/linux/irq.h                           |  6 ++---
+ include/linux/irqchip/chained_irq.h           |  4 +--
+ include/linux/irqdesc.h                       |  4 +--
+ kernel/irq/chip.c                             | 25 ++++++++++---------
+ kernel/irq/cpuhotplug.c                       |  2 +-
+ kernel/irq/debugfs.c                          |  2 +-
+ kernel/irq/ipi.c                              |  4 +--
+ kernel/irq/kexec.c                            |  2 +-
+ kernel/irq/manage.c                           | 22 ++++++++--------
+ kernel/irq/migration.c                        |  2 +-
+ 190 files changed, 243 insertions(+), 242 deletions(-)
+
 -- 
 2.54.0
 
