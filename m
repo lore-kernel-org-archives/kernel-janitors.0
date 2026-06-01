@@ -1,49 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB2D3EAC8D
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02B13EAC8D
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780345730; cv=none; b=UfVQOKLMoMSpz1EPr9rtH/8XKz/QwH1j+yd3Tq+W+DPerXiDrl06LVSUaRcyT5JMzwy49IMwidcT1LvspAlixO/sa/GjQDrlMfdYPn7tvZ5uZBKrdV3qEaQLNmqMNhye0YRQXvfTuZ+58iTxq48P0vjFeXoDW3bF1UEvqg+AMfk=
+	t=1780345732; cv=none; b=K7tqFbjwGP8ChDC+Hy9f9eMmc+q/SWWJBtuQes/Q2GVF9lsR7SydTGMfGZzy8Vr3IgOvrt20IYVL98UF93sAwkxG5I58GK60wj9WzfjRj9ZMWknnRwBdopSfMULqV0/Zk4f/61FqB4X1++leS4Cj4AVUvRhDi5ABKAPI4N16LG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780345730; c=relaxed/simple;
-	bh=gKPnNB3JD2aPiYaHv4nie4tYSgwzP1lFAFwEIvJrmFQ=;
+	s=arc-20240116; t=1780345732; c=relaxed/simple;
+	bh=UckaZ2SFQdkZriUJnf9Y0+PT7uk2z4a6ae3g8atXg3k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ptJneDYnfn214ePBVBQRKX4Y5njF6k5IKGUtH1k2bpkpww3IuQTIRHYXBKWqhUPIAxWwWbltJ7kBoUXejtsZ6Qn4FH31b75jRRD1VqPUQdY+CH1jCY+JnLm3GP5w0Wj4XKVk0fjMQlin9dyChwBvX918sRVyJxeUc7xlawz1o80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QL5HykZ4; arc=none smtp.client-ip=80.12.242.17
+	 MIME-Version; b=lFezhk7r+fZC/aaYpHT/JdNvltkiaY7dueR6tbyjRrzJ5W/mvr0nvjgv5eDuzoRwfS6MKoSzd6nUrYBorhNHhVZTV19FfjSXA4vkGrkB7lDGjknQlg5wDudB93BVmAcMfVuvz/h8UhnntvFgU4x9ceiktkHXw+frbJD4e0LWD1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UQp1NnIz; arc=none smtp.client-ip=80.12.242.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QL5HykZ4"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UQp1NnIz"
 Received: from fedora.home ([10.64.95.106])
 	by smtp.orange.fr with ESMTP
-	id U96owPWhS3f8AU96owluyW; Mon, 01 Jun 2026 22:19:38 +0200
+	id U96ywn4EWXwA3U96ywrpBn; Mon, 01 Jun 2026 22:19:48 +0200
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPSA
-	id U96bwqrR9v48RU96nwPo2e; Mon, 01 Jun 2026 22:19:37 +0200
+	id U96bwqrR9v48RU96ywPoNi; Mon, 01 Jun 2026 22:19:48 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1780345177;
-	bh=BFjG4ezBEHZTOxg2018d1I+h7/1DOGqjn78CYnXyNLg=;
+	s=t20230301; t=1780345188;
+	bh=kdzuyFpd1BA9avZeTWSyR24HjtqOQIPWU/SROmBTPzU=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QL5HykZ4spHKOL0g0q2EwvK8PjOHkIyBMTpMEvLojUO/r+n3dZXJwxqZYYHKf6zeh
-	 AgFph/UCPpS4UT9ZDMfUW85Zcc4zddXTCnGL/+v12/4kF7TONKAMnlMGU2E5Q8mN4g
-	 3Kou7cSr+bV/5lz07f//z3eiXIfN4zW7vv9vrEhfOy/TOwe0ZMMTmjKJcGcjSP0PM6
-	 yrt65ea1007aAqeFT6984uUta3S3mOdId2IfVy+QHQRNFtPEz4Vg9HgnS3KVtKtL9U
-	 +sAlMrtdXKe2xm25f54XJDu2SCsnMnQAmfk3ljo6oZbk8sGMhNpDxYu+9IEMVmdf7W
-	 iVQ9d4PLJBO9g==
+	b=UQp1NnIzlXLF4k3lPjlIC99uyjiiYcGaFwQZaAw4zsOOZsQRpjSXoyI0obISkllCi
+	 f88m2lhsBPV5UrY92Cvt/QG7tl1gpDNAvaUZ+GqvQbRbuMaxJJd5Nl3syWOEqtx0VB
+	 qZ9mMqFKgHge889K+mNUjcUx4MeGupuygBgeNPVwGNEKx3Oj73lN566e/e2pWi0ZZ+
+	 Oz059oStgWPz9iRlthWJYgLYsJ/UNsh4dBHWwl2Z0e/OHt9dMv561a3BKAmWz/zLsF
+	 iWH1xJXRa3vHVBz6K2SdwYgzC52p4AUQ6HmhGD/uluqHJNXb8qL2RB1huA4Fhv9/87
+	 b2nADvOnMp1AQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 01 Jun 2026 22:19:37 +0200
+X-ME-Date: Mon, 01 Jun 2026 22:19:48 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: tglx@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 2/7] irqchip: Constify "struct irq_chip *" parameter in cond_xxx_eoi_irq()
-Date: Mon,  1 Jun 2026 22:19:02 +0200
-Message-ID: <4bff474cf71dc5f5e2fa4334eef4d501e8a67bf6.1780343698.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 5/7] x86/irq: Constify a struct irq_chip *
+Date: Mon,  1 Jun 2026 22:19:05 +0200
+Message-ID: <c31599ead770495f3f4674f9a83c3459e9dcb133.1780343698.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
@@ -55,47 +55,40 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-cond_unmask_eoi_irq() and cond_eoi_irq() don't modify their 'chip'
-parameter.
+irq_data_get_irq_chip() will also return a const struct irq_chip * and some
+const qualifier will also be needed in some places.
 
-So change the prototype of this function to accept const struct irq_chip
-pointer.
+So, start to add some of these const qualifiers at the places that are
+not spotted by the coccinelle script that does most of the work.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only
 
-Changes in v2:
-   - Update cond_eoi_irq() which is new since v1
+If preferred, this could be done differently. If the scope of chip was
+reduced, the const would be added by the cocci script in the next patch.
 
-v1: https://lore.kernel.org/all/db3ec8b3425552b3921281e88fe6a0b1cd55e20f.1731835733.git.christophe.jaillet@wanadoo.fr/
+Changes in v2
+   - New patch
+
+v1: none
 ---
- kernel/irq/chip.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/irq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index b635e3c5d5b6..04e478a2adaa 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -699,7 +699,8 @@ void handle_level_irq(struct irq_desc *desc)
- }
- EXPORT_SYMBOL_GPL(handle_level_irq);
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index ec77be217eaf..7afbdf0ee13b 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -522,7 +522,7 @@ void fixup_irqs(void)
+ 	unsigned int vector;
+ 	struct irq_desc *desc;
+ 	struct irq_data *data;
+-	struct irq_chip *chip;
++	const struct irq_chip *chip;
  
--static void cond_unmask_eoi_irq(struct irq_desc *desc, struct irq_chip *chip)
-+static void cond_unmask_eoi_irq(struct irq_desc *desc,
-+				const struct irq_chip *chip)
- {
- 	if (!(desc->istate & IRQS_ONESHOT)) {
- 		chip->irq_eoi(&desc->irq_data);
-@@ -720,7 +721,7 @@ static void cond_unmask_eoi_irq(struct irq_desc *desc, struct irq_chip *chip)
- 	}
- }
+ 	irq_migrate_all_off_this_cpu();
  
--static inline void cond_eoi_irq(struct irq_chip *chip, struct irq_data *data)
-+static inline void cond_eoi_irq(const struct irq_chip *chip, struct irq_data *data)
- {
- 	if (!(chip->flags & IRQCHIP_EOI_IF_HANDLED))
- 		chip->irq_eoi(data);
 -- 
 2.54.0
 
