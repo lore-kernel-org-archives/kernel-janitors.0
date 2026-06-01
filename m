@@ -1,48 +1,49 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2FF30B51A
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 16:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCAB3403EA
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780331861; cv=none; b=XvMuqa2BuyELJaZoQuDwkcs50Kwo7kK9rWELJV+Oj8ax3cbvBn5cC8XvK027HTwWOgegGXd+Cl7NRUrdiSM3sXwUGRSyO5D+Wv+OcDRZpXMo5v9C2ePi9/hlflIZXEdA+2p68juJqGKJYmAek6RfJqwS4fSTHwNqvRhxp1GaX8o=
+	t=1780345197; cv=none; b=SJopJrsThzzfHgurkh+RUt+Uy0Ogen4C+xFjkkK7z5cJtqpZHZGaO94DPYuuMQHBkJhl8F+Ms9WwGWcfeEJ7beoy1rILOiA7l8gt+FAXjItTdwKDPCRXs7IkBixqRUAN4AbYNde47xLihJ9NBXY6/GpTfRmZGsNXnSBM4FX942k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780331861; c=relaxed/simple;
-	bh=Fpa+Y3wGljrjGDrEab4srBFvANcD+YDLHVtJERSbVHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=SS9XlgQbJ5l+WUtu98Hjh8+beCBEzTG2m7YogNsz/Xii9sOEERTGHFhDqyB86s4IBOWqm+FQ7Sxyw4zwl2isbea3Fo/BvQpcLvSfkClRrvd2PsIoD2RIVFRyGG1U7pb0+sutDkn/dwDilBZsPW/nvhBfi1xRhWN8N/s8emMT284=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nm5N/9A0; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1780345197; c=relaxed/simple;
+	bh=WBwTJv7OLU7Ns/6laTRB1O9XGSuOyNd1Z7hU4nz8qbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j8xw3cKZlzns9utND+IG/u/Kjj9cA7kNiS21MYg93wEJIh7rNjH2y9CcfAbMUG9/Kio2b42t1nt4VpVL2lc3e4gxl5TaF880zowwbQ78nrHWfQoVvAvDSvPkGpysRcS1wOVnh0M5B+uIEGZB7v9FgOTXv/lXMsKrR2SUUIJ/Cys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p6oQL4ZN; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nm5N/9A0"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260601163738euoutp02847ad52b668c1e65413b88395b30bec1~1AmSa5Z5C1802218022euoutp02t
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 16:37:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260601163738euoutp02847ad52b668c1e65413b88395b30bec1~1AmSa5Z5C1802218022euoutp02t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1780331858;
-	bh=HOPkb021PiOaW1OHD+i+UWem8WVDeRSNsS4mbrrwvl4=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Nm5N/9A0nLpT0Er/vqVAtyIa96TQC+IeA6wU8Vynar2lH+oR4sAgMJ8ryFFGvcYRa
-	 aFZdNqtleSxIi1lkZ2upJi4SReKuUd85P9IOHY75s6iLvj5Vl0aRz+R+X5Y+MxEnIB
-	 i+DsN/mdfEt6tUHUqWmbGnhy44BnPHzctgixUmKs=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260601163737eucas1p19d7a2bf830568053314738a191cbd591~1AmReR3Xx2137421374eucas1p1N;
-	Mon,  1 Jun 2026 16:37:37 +0000 (GMT)
-Received: from AMDC4843.eu.corp.samsungelectronics.net (unknown
-	[106.120.77.61]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260601163737eusmtip25f369c4744cb268b102dd1d52dc750bc~1AmRM16mN0856308563eusmtip24;
-	Mon,  1 Jun 2026 16:37:37 +0000 (GMT)
-From: Jakub Raczynski <j.raczynski@samsung.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	kuba@kernel.org, Jakub Raczynski <j.raczynski@samsung.com>
-Subject: [PATCH net-next v3] net/sun: Fix multiple typos in comments
-Date: Mon,  1 Jun 2026 18:37:27 +0200
-Message-Id: <20260601163727.554364-1-j.raczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p6oQL4ZN"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPSA
+	id U96bwqrR9v48RU973wPoWz; Mon, 01 Jun 2026 22:19:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1780345193;
+	bh=hzHHvUm2l5weDDKP+zE7rqXQMyF1TVPDFIpkSrC7Mvw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=p6oQL4ZNm4b6ruODwQkjMBCu4yFsNa8lCz52hNzuimyEZl/kRByfeacY5tWOxRQYS
+	 tGCcDk52lacFnJuAK/18HE/LCq3yYSBqI6stRVN/rALZCthz/O4Yz98eY2/CJwxNr3
+	 OLfE9cuo2YXLtg/FAGrnQ2W/mIavu7lHeSm/9qxSOR+DGVeNDLCM38E0XuQBy8zjUm
+	 mcuwCfEDkYaZLY3aod3h4JjK9LILsSwVpspCYNT0SfFhNVfbJkW7pdvznxQTsY5ssv
+	 jw+Kb5Ad9XQbO+NQkuGiDvWotxFYuWXl71qAl9TVZT7GSCEEAQ9aR70n9Tfd870n4d
+	 AgMAwX8MLLN5g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 01 Jun 2026 22:19:53 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: tglx@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 7/7] genirq/chip: Constify the 'chip' field in irq_data
+Date: Mon,  1 Jun 2026 22:19:07 +0200
+Message-ID: <41b4818e14f2f6e6a7406751d65b59899bd40331.1780343698.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,228 +51,98 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260601163737eucas1p19d7a2bf830568053314738a191cbd591
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260601163737eucas1p19d7a2bf830568053314738a191cbd591
-X-EPHeader: CA
-X-CMS-RootMailID: 20260601163737eucas1p19d7a2bf830568053314738a191cbd591
-References: <CGME20260601163737eucas1p19d7a2bf830568053314738a191cbd591@eucas1p1.samsung.com>
 
-There are some typos in comments and while they are harmless and not visible,
-there is no reason not to fix them. Fix the ones that are not register related,
-which might have intentional naming convention.
+Commit 393e1280f765 ("genirq: Allow irq_chip registration functions to take
+a const irq_chip") and ef6e5d61eb7a ("genirq: Allow
+irq_set_chip_handler_name_locked() to take a const irq_chip") have
+introduced some ugly casting to store some const parameters into non-const
+struct members. [1] [2]
 
-Signed-off-by: Jakub Raczynski <j.raczynski@samsung.com>
+Correctly constify this 'chip' field in struct irq_data, update
+corresponding asseccors and remove the now useless cast in
+irq_set_chip_handler_name_locked() and irq_set_chip().
+
+[1]: https://elixir.bootlin.com/linux/v7.1-rc5/source/kernel/irq/chip.c#L48
+[2]: https://elixir.bootlin.com/linux/v7.1-rc5/source/include/linux/irqdesc.h#L250
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Changes in v3:
-- Just fix typos, no funny business, no changing spaces
-- Restore commit message to original
+Compile-tested only, on x86
+
 Changes in v2:
-- Fix typo within typo fix ('empirical' word)
-- Change autoneg related sentence to make sense
-- Fix double spaces in lines where typos are fixed.
-  Add annotation to commit message why only these
+   - New patch
 
-Link to v2:
-https://lore.kernel.org/netdev/20260512151931.3576906-1-j.raczynski@samsung.com/
-Link to v1:
-https://lore.kernel.org/kernel-janitors/20260428101728.3537456-1-j.raczynski@samsung.com/
+v1: none
+---
+ include/linux/irq.h     | 6 +++---
+ include/linux/irqdesc.h | 4 ++--
+ kernel/irq/chip.c       | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
- drivers/net/ethernet/sun/cassini.c |  8 ++++----
- drivers/net/ethernet/sun/cassini.h | 16 ++++++++--------
- drivers/net/ethernet/sun/sunbmac.h |  2 +-
- drivers/net/ethernet/sun/sungem.c  |  4 ++--
- drivers/net/ethernet/sun/sungem.h  |  4 ++--
- drivers/net/ethernet/sun/sunhme.c  |  2 +-
- 6 files changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
-index 823870c999bf..9a8b5cf2d648 100644
---- a/drivers/net/ethernet/sun/cassini.c
-+++ b/drivers/net/ethernet/sun/cassini.c
-@@ -1027,7 +1027,7 @@ static int cas_pcs_link_check(struct cas *cp)
- 			 * point a bit earlier in the sequence. If we had
- 			 * generated a reset a short time ago, we'll wait for
- 			 * the link timer to check the status until a
--			 * timer expires (link_transistion_jiffies_valid is
-+			 * timer expires (link_transition_jiffies_valid is
- 			 * true when the timer is running.)  Instead of using
- 			 * a system timer, we just do a check whenever the
- 			 * link timer is running - this clears the flag after
-@@ -4545,7 +4545,7 @@ static int cas_get_link_ksettings(struct net_device *dev,
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index efa514ee562f..cde56cb98db3 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -183,7 +183,7 @@ struct irq_data {
+ 	unsigned int		irq;
+ 	irq_hw_number_t		hwirq;
+ 	struct irq_common_data	*common;
+-	struct irq_chip		*chip;
++	const struct irq_chip	*chip;
+ 	struct irq_domain	*domain;
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ 	struct irq_data		*parent_data;
+@@ -817,13 +817,13 @@ extern int irq_set_msi_desc_off(unsigned int irq_base, unsigned int irq_offset,
+ 				struct msi_desc *entry);
+ extern struct irq_data *irq_get_irq_data(unsigned int irq);
+ 
+-static inline struct irq_chip *irq_get_chip(unsigned int irq)
++static inline const struct irq_chip *irq_get_chip(unsigned int irq)
+ {
+ 	struct irq_data *d = irq_get_irq_data(irq);
+ 	return d ? d->chip : NULL;
+ }
+ 
+-static inline struct irq_chip *irq_data_get_irq_chip(struct irq_data *d)
++static inline const struct irq_chip *irq_data_get_irq_chip(struct irq_data *d)
+ {
+ 	return d->chip;
+ }
+diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
+index dae9a9b93665..53dbed301375 100644
+--- a/include/linux/irqdesc.h
++++ b/include/linux/irqdesc.h
+@@ -162,7 +162,7 @@ static inline struct irq_data *irq_desc_get_irq_data(struct irq_desc *desc)
+ 	return &desc->irq_data;
+ }
+ 
+-static inline struct irq_chip *irq_desc_get_chip(struct irq_desc *desc)
++static inline const struct irq_chip *irq_desc_get_chip(struct irq_desc *desc)
+ {
+ 	return desc->irq_data.chip;
+ }
+@@ -247,7 +247,7 @@ irq_set_chip_handler_name_locked(struct irq_data *data,
+ 
+ 	desc->handle_irq = handler;
+ 	desc->name = name;
+-	data->chip = (struct irq_chip *)chip;
++	data->chip = chip;
+ }
+ 
+ bool irq_check_status_bit(unsigned int irq, unsigned int bitmask);
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 957e4264bf46..b97881ac7775 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -45,7 +45,7 @@ int irq_set_chip(unsigned int irq, const struct irq_chip *chip)
+ 	int ret = -EINVAL;
+ 
+ 	scoped_irqdesc_get_and_lock(irq, 0) {
+-		scoped_irqdesc->irq_data.chip = (struct irq_chip *)(chip ?: &no_irq_chip);
++		scoped_irqdesc->irq_data.chip = chip ?: &no_irq_chip;
+ 		ret = 0;
  	}
- 	if (linkstate != link_up) {
- 		/* Force these to "unknown" if the link is not up and
--		 * autonogotiation in enabled. We can set the link
-+		 * autonegotiation is enabled. We can set the link
- 		 * speed to 0, but not cmd->duplex,
- 		 * because its legal values are 0 and 1.  Ethtool will
- 		 * print the value reported in parentheses after the
-@@ -4797,7 +4797,7 @@ static void cas_program_bridge(struct pci_dev *cas_pdev)
- 	 */
- 	pci_write_config_word(pdev, 0x50, (5 << 10) | 0x3ff);
- 
--	/* The Read Prefecth Policy register is 16-bit and sits at
-+	/* The Read Prefetch Policy register is 16-bit and sits at
- 	 * offset 0x52.  It enables a "smart" pre-fetch policy.  We
- 	 * enable it and max out all of the settings since only one
- 	 * device is sitting underneath and thus bandwidth sharing is
-@@ -4904,7 +4904,7 @@ static int cas_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	/*
- 	 * On some architectures, the default cache line size set
--	 * by pci_try_set_mwi reduces perforamnce.  We have to increase
-+	 * by pci_try_set_mwi reduces performance.  We have to increase
- 	 * it for this case.  To start, we'll print some configuration
- 	 * data.
- 	 */
-diff --git a/drivers/net/ethernet/sun/cassini.h b/drivers/net/ethernet/sun/cassini.h
-index 2d91f4936d52..0c24547a4534 100644
---- a/drivers/net/ethernet/sun/cassini.h
-+++ b/drivers/net/ethernet/sun/cassini.h
-@@ -259,7 +259,7 @@
- 
- /* output enables are provided for each device's chip select and for the rest
-  * of the outputs from cassini to its local bus devices. two sw programmable
-- * bits are connected to general purpus control/status bits.
-+ * bits are connected to general purpose control/status bits.
-  * DEFAULT: 0x7
-  */
- #define  REG_BIM_LOCAL_DEV_EN          0x1020  /* BIM local device
-@@ -404,7 +404,7 @@
- 						    GMII on SERDES pins for
- 						    monitoring. */
- #define   SATURN_PCFG_FSI             0x00000200 /* 1 = freeze serdes/gmii. all
--						    pins configed as outputs.
-+						    pins configured as outputs.
- 						    for power saving when using
- 						    internal phy. */
- #define   SATURN_PCFG_LAD             0x00000800 /* 0 = mac core led ctrl
-@@ -622,7 +622,7 @@
- 						      enabled */
- #define    RX_CFG_SWIVEL_MASK           0x00001C00 /* byte offset of the 1st
- 						      data byte of the packet
--						      w/in 8 byte boundares.
-+						      w/in 8 byte boundaries.
- 						      this swivels the data
- 						      DMA'ed to header
- 						      buffers, jumbo buffers
-@@ -1248,7 +1248,7 @@
-  */
- #define  REG_MAC_TX_STATUS                 0x6010  /* TX MAC status reg */
- #define    MAC_TX_FRAME_XMIT               0x0001  /* successful frame
--						      transmision */
-+						      transmission */
- #define    MAC_TX_UNDERRUN                 0x0002  /* terminated frame
- 						      transmission due to
- 						      data starvation in the
-@@ -1414,7 +1414,7 @@
-  * when passed to the host. to ensure proper operation, need to wait 3.2ms
-  * after clearing RX_CFG_EN before writing to any other RX MAC registers
-  * or other MAC parameters. alternatively, poll RX_CFG_EN until it clears
-- * to 0. similary, HASH_FILTER_EN and ADDR_FILTER_EN have the same
-+ * to 0. Similarly, HASH_FILTER_EN and ADDR_FILTER_EN have the same
-  * restrictions as CFG_EN.
-  */
- #define  REG_MAC_RX_CFG                 0x6034  /* RX MAC config reg */
-@@ -1670,7 +1670,7 @@
-  * programmed in frame mode. load this register w/ a valid instruction
-  * (as per IEEE 802.3u MII spec). poll this register to check for instruction
-  * execution completion. during a read operation, this register will also
-- * contain the 16-bit data returned by the tranceiver. unless specified
-+ * contain the 16-bit data returned by the transceiver. unless specified
-  * otherwise, fields are considered "don't care" when polling for
-  * completion.
-  */
-@@ -1734,7 +1734,7 @@
- #define    MIF_CFG_POLL_REG_SHIFT       3
- #define    MIF_CFG_MDIO_0               0x0100 /* (ro) dual purpose.
- 						  when MDIO_0 is idle,
--						  1 -> tranceiver is
-+						  1 -> transceiver is
- 						  connected to MDIO_0.
- 						  when MIF is communicating
- 						  w/ MDIO_0 in bit-bang
-@@ -1750,7 +1750,7 @@
- 						  mode, this bit indicates
- 						  the incoming bit stream
- 						  during a read op */
--#define    MIF_CFG_POLL_PHY_MASK        0x7C00 /* tranceiver address to
-+#define    MIF_CFG_POLL_PHY_MASK        0x7C00 /* transceiver address to
- 						  be polled */
- #define    MIF_CFG_POLL_PHY_SHIFT       10
- 
-diff --git a/drivers/net/ethernet/sun/sunbmac.h b/drivers/net/ethernet/sun/sunbmac.h
-index d379bd407eca..85778edcf8dc 100644
---- a/drivers/net/ethernet/sun/sunbmac.h
-+++ b/drivers/net/ethernet/sun/sunbmac.h
-@@ -205,7 +205,7 @@
- #define FRAME_WRITE           0x50020000
- #define FRAME_READ            0x60020000
- 
--/* Tranceiver registers. */
-+/* Transceiver registers. */
- #define TCVR_PAL_SERIAL       0x00000001 /* Enable serial mode              */
- #define TCVR_PAL_EXTLBACK     0x00000002 /* Enable external loopback        */
- #define TCVR_PAL_MSENSE       0x00000004 /* Media sense                     */
-diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
-index 234ffc3c6a61..b56a0d4cdb12 100644
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -2179,7 +2179,7 @@ static void gem_do_stop(struct net_device *dev, int wol)
- 	 * if we did. This is not an issue however as the reset
- 	 * task is synchronized vs. us (rtnl_lock) and will do
- 	 * nothing if the device is down or suspended. We do
--	 * still clear reset_task_pending to avoid a spurrious
-+	 * still clear reset_task_pending to avoid a spurious
- 	 * reset later on in case we do resume before it gets
- 	 * scheduled.
- 	 */
-@@ -2362,7 +2362,7 @@ static int __maybe_unused gem_resume(struct device *dev_d)
- 	gem_do_start(dev);
- 
- 	/* If we had WOL enabled, the cell clock was never turned off during
--	 * sleep, so we end up beeing unbalanced. Fix that here
-+	 * sleep, so we end up being unbalanced. Fix that here
- 	 */
- 	if (gp->asleep_wol)
- 		gem_put_cell(gp);
-diff --git a/drivers/net/ethernet/sun/sungem.h b/drivers/net/ethernet/sun/sungem.h
-index 626302a9bc89..b921d3074017 100644
---- a/drivers/net/ethernet/sun/sungem.h
-+++ b/drivers/net/ethernet/sun/sungem.h
-@@ -352,7 +352,7 @@
- #define MAC_HASH14	0x60F8UL	/* Hash Table 14 Register	*/
- #define MAC_HASH15	0x60FCUL	/* Hash Table 15 Register	*/
- #define MAC_NCOLL	0x6100UL	/* Normal Collision Counter	*/
--#define MAC_FASUCC	0x6104UL	/* First Attmpt. Succ Coll Ctr.	*/
-+#define MAC_FASUCC	0x6104UL	/* First Attempt. Succ Coll Ctr.*/
- #define MAC_ECOLL	0x6108UL	/* Excessive Collision Counter	*/
- #define MAC_LCOLL	0x610CUL	/* Late Collision Counter	*/
- #define MAC_DTIMER	0x6110UL	/* Defer Timer			*/
-@@ -657,7 +657,7 @@
- 
- /* MIF Frame/Output Register.  This 32-bit register allows the host to
-  * communicate with a transceiver in frame mode (as opposed to big-bang
-- * mode).  Writes by the host specify an instrution.  After being issued
-+ * mode).  Writes by the host specify an instruction.  After being issued
-  * the host must poll this register for completion.  Also, after
-  * completion this register holds the data returned by the transceiver
-  * if applicable.
-diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
-index 4c9d5d4dd8a0..a70f704eb9f3 100644
---- a/drivers/net/ethernet/sun/sunhme.c
-+++ b/drivers/net/ethernet/sun/sunhme.c
-@@ -1118,7 +1118,7 @@ static void happy_meal_transceiver_check(struct happy_meal *hp, void __iomem *tr
-  *
-  * We use skb_reserve() to align the data block we get in the skb.  We
-  * also program the etxregs->cfg register to use an offset of 2.  This
-- * imperical constant plus the ethernet header size will always leave
-+ * empirical constant plus the ethernet header size will always leave
-  * us with a nicely aligned ip header once we pass things up to the
-  * protocol layers.
-  *
+ 	/* For !CONFIG_SPARSE_IRQ make the irq show up in allocated_irqs. */
 -- 
-2.34.1
+2.54.0
 
