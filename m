@@ -1,317 +1,191 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA2038BF81
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jun 2026 20:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780345745; cv=none; b=rWl4D+3/L36eOlwOCbIOs8DDSLEy7L4GELTPYlzrtCClMuRUXP9CAYZgSqLf92bvdA8b8K6odcD6OBRxril5v3jUsQ7A24NJBlNduYKwSf0ODjWTFKEURIplnnQKmSiuMEYozZfvlaUT8ZLHL0cqLndJF133srn5v/C16N3VQEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780345745; c=relaxed/simple;
-	bh=jl1Zsm0wL98zkeJM65iM95Qa7NgoDJxQSo29J76E1lQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InmbGTvoITT4cbh2BioAOYsRwkwni6Uk23mma1FeWPFBNseq1gZafsPEyPB6Sdqdxe8QSxEqyKRlnVgHnWvF+hUf40yUeieaWrsUaifAUjRw37oVnW7uVRbz4o+/brRrGjSeUuSVuXtgJxeN2Ggvq25yic/wCQx8d8eteRJKByw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JOalvAdB; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8666133A03F;
+	Tue,  2 Jun 2026 01:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780365188; cv=fail; b=P91scLqC1CKorV7EOlJ2nahVah7zJgHglUhlmb5l3NSOYCUM2YYUCQEMBo1CQrL5XWkwyyrCtv3BKJAuUvk9EoYVKsmbWBJX/M22yuUa2uFLm2Mohv0FhlyTKwAcbN91ex51lnuCRebOhGOOxYwdGhkzilCVLCRF7S7m+p6U90M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780365188; c=relaxed/simple;
+	bh=AlVJrgzbI34aeq+XxJK1zbEap4UUFQ4AIQtdgt2YGrg=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=NdmIdcU02M7ThJkbgB9MRF6Ssv/rmMSggeYYvSxByUqCgcvcwj5dyMQ7KNwv89RI8TDTbP7tWm2aZk9CVALf+gVP2hQrxkepluKHM01rpR8ciE0f8pTg9Bjed1APG3vikoPP1jDajFcHY23gP8Lu71aXhaFZSfGnfKS9myddCMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MNsyJH7G; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wEnz4f2D; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JOalvAdB"
-Received: from fedora.home ([10.64.95.106])
-	by smtp.orange.fr with ESMTP
-	id U96jw61YWI5dgU96jwZrNY; Mon, 01 Jun 2026 22:19:33 +0200
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPSA
-	id U96bwqrR9v48RU96bwPnhE; Mon, 01 Jun 2026 22:19:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1780345165;
-	bh=4pum406ZtKWvbd3nd+0Sze7VQN/sIYpjG15h7vBSQcc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JOalvAdB29pJ75i3iP/jJTHZ558VHoD7zfkfFVxTjvdYQcztvBofKxig5NgU8tVB7
-	 dscjA2QECyxIPAL5te/nrNH8cxXd4gXtyNdERHTL7hC9CXTXO2JyHEqm58QGnOGzl3
-	 qBzmzeWPBrxF2mdnZeRrTRp65NJad1ciSQO33w75Qtd/xFI923CacVg9oEj+RuxgQO
-	 G79wpNFSspIs1pN/tE6bgflIv2909oE66JhU6oKqlfTdxoPaIhYxsC5IhpdVdNWL31
-	 cayH5YeQARd9YRa4ZqqJ8ZUB+zmiZHUMyvs6ncOQFhEavr+JMF9YcLouqu9/8kmBEe
-	 5bPI+m97WFMXA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 01 Jun 2026 22:19:25 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: tglx@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 0/7] Initial steps to constify irq_chip
-Date: Mon,  1 Jun 2026 22:19:00 +0200
-Message-ID: <cover.1780343698.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MNsyJH7G";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wEnz4f2D"
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 651Gu9lJ3467533;
+	Tue, 2 Jun 2026 01:52:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=7t4GY7xxVpyBitwa+a
+	mM3AFhkba7WVNftvfQRSRrBFc=; b=MNsyJH7GmaIrBbqYyXee0hCx8BlRjnx/Hg
+	BZxMQNnvHCTJk/ITN9Kt/0vc1FxI0hlSynksgIntFUGGyvAjEpLAKKpHZt0cES6p
+	EjeUXP4BYt1XvWSH1K+vTS29YbKM9HFUWXi1uonsgPIwn2UjbO2O+8MoHupBHyIv
+	RObDLNi0Uk6IRP6GOy7dr6oekveYfpOokHNVsZE+22BTC15v7L6uq/+BgPZ/kQ1U
+	chVD3bOJu8zydIVOgy4xrZMDlrI3OVWYugXErX1/tOJhoDqr6j545xZ5YUeXYRop
+	mnT2M33E1uEDfjEBxb+mWVaU9hpFemHRc8lMTf+a/6KaVBNGEnvw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4efqxdb7jj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Jun 2026 01:52:57 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 6521nrJk026007;
+	Tue, 2 Jun 2026 01:52:57 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011004.outbound.protection.outlook.com [40.93.194.4])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4efpbc616h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Jun 2026 01:52:57 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ssrNQXoqaR7VNJrXcA7BcIgYNNf/kpEDTQu/m89fS+FoMCF828rIo7snKdubBQI6c+pLQPdkXK0oCodHE/V5mi9+nXFYJETemSM7RQdpNrxjDDR6Qg3BzBBRBlMnD9I4SxuGLYrOwMZX1/VbIgl0WGG+IyIbeLqAUf81j+AeWjo48DfUFspOCc4Wj7QvSvU5e7NV2NH1NQ3JMJ83CT3M+3AGl7AVVG70asBu1on4hYXuN+WvhEhVLrj23As4BZ8qYQjb4Bi1/mwqZxjIsyw0h4gjJif69vMY7H80tZC1HTznHoA53R96Hy7gcmo5ye0O9FHJZ9kEvPnJ5bNSSU2H7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7t4GY7xxVpyBitwa+amM3AFhkba7WVNftvfQRSRrBFc=;
+ b=b0LbFKvjDjoqYMJxyoHyI2mP8MIm9W/nHnqw08hNI0Clx4ufJlwq03tQ7bISRzb/Xq7JxH15uW3a2gDBa1lSfkete/wx6MlVU7DzRbbNFumos10Xr6bsOT5ecAn38hUf5kfeOxNNBuApx8LWhS+DeNZKO+eW80ft1vFRkbNm1KiOIN+5Ncw4zMahYsHM7STLdxj/l+5ju9Iv5BDWesOMkBwz6KC5t2MLXTnLMj2ou0yj9ECzoNkrtQ1mcwIXeESwxtxYsq/h2vegqXBmS8KucO9J7CwcoDHFS3AkGaxDxPcVTEJWsb9odXnazqF2DfNHO3mDji4T1DtuDC1rDzeGiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7t4GY7xxVpyBitwa+amM3AFhkba7WVNftvfQRSRrBFc=;
+ b=wEnz4f2D+zEMpA7dto+47N6FTPncXWy3d/MB0ZW/2sCAxPx2hKuOu1Olkh6dyVVX7mmATJ4EBNxyUHo89450RCv8yVvCeWNgCNRe/jvMeywWo/uhyZcoe+/euJzxQQn8cNXuctABbHe1YNsUZ6Dmqr61udlxM91IoTSoU9fSiC4=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by CY8PR10MB6729.namprd10.prod.outlook.com (2603:10b6:930:94::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.16; Tue, 2 Jun 2026
+ 01:52:54 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::e525:dd71:b002:6ad5]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::e525:dd71:b002:6ad5%6]) with mapi id 15.21.0071.011; Tue, 2 Jun 2026
+ 01:52:54 +0000
+To: Dan Carpenter <error27@gmail.com>
+Cc: Deepak Ukey <deepak.ukey@microchip.com>,
+        Jack Wang
+ <jinpu.wang@cloud.ionos.com>,
+        "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>,
+        "Martin K. Petersen"
+ <martin.petersen@oracle.com>,
+        Radha Ramachandran <radha@google.com>,
+        Viswas G <Viswas.G@microchip.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: pm8001: Fix error code in non_fatal_log_show()
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <ahs-bEsBJH0KhnsX@stanley.mountain> (Dan Carpenter's message of
+	"Sat, 30 May 2026 22:45:48 +0300")
+Organization: Oracle
+Message-ID: <yq11pepaeul.fsf@ca-mkp.ca.oracle.com>
+References: <ahs-bEsBJH0KhnsX@stanley.mountain>
+Date: Mon, 01 Jun 2026 21:52:52 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: YQBPR0101CA0167.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:f::10) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|CY8PR10MB6729:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5cfd786-a7bf-4aeb-7248-08dec049a976
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|18002099003|22082099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	qVAZ3E4DpbIz5rIp8AFedLtnjG1dcctSrILX6VGB3SNV0wFomroPKYsnUAT+b+fzGRBYeV0W+jyzTRrtkPgrFw4DJwTu2SFseBUXlnlHKLhIcuFIi2REhcnIBS26rjWQv/gh/s++7f8z47Ej0uBGWk/MJaDU/tWeqnO+8s+koCgZhUVlj2dzJK4Hnxq8WZJb+cwp4P7BfyS9qAzfSXg0Na4yT7Q15+QpBYTdml6CzTZFd4WVd5tAO1gb/B1x+F4sKQSOZbqp11U+7N0NqXUkANeY2NrfMf4GBPgWlk888WQsliPffYBmwgWVtKQucW0ktGbzceLSbXAPU52d4CQjFjWOPwH80O6GWlbNvZhvjnzqSPtRs8HXlJzjQqB4C7WfXKDn631qbLp6/qqRdYdahrw/PQ1r4ghjuNg3GcycDNCa4RlF4YBmYiSbTF+5UsQbEoBUscRurCltxKjU7r5lna/JyInpI6h7H2//hi1jLkt/uEAxHS4ma3iGc21ZFUnOSfyl7jcdIqou3+5Fy80D79r+0+Ype05JOOP2vXt/RpfBqEVrPx5nyeTRhlEq19CFetel+d5dyjArIfXhWbAUWpZRYIqwEUzd3nLfs8zXbYgyzEAe0KK8KY1+hr9JiYzykB7wzyxDC646z5KMzk6uQW7udDx3USR4SfD6ccyCPdN0WyISch3NhgqG8Xm37BXt
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(18002099003)(22082099003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?n8i+XIJo1LB2SmG7KW4XLPC3IemTszrBhdSNdiramNLKhxvOQFWa8sAz15aX?=
+ =?us-ascii?Q?pX4dh+ltVfGoDOmV9SUC8/9h06zMiruzYYCL7BxtOs65Ao8/pW0jKszdQxBM?=
+ =?us-ascii?Q?6C3nonCxFtwN4WAnv2d1poLT8r/qVhOscxz2pSI9QE+DMBq95Yaci+3E/KyF?=
+ =?us-ascii?Q?dPeR5ZnmLcMpOnSv/0WJMm1Ovksj1LU96AI/WK9hr1C+LCYo7xkW8UG7pbWV?=
+ =?us-ascii?Q?bziUCfB+WAmrrF8pHAsBtbxRZQ2wpQN7TPAmQFk2vNRvGldr6v4eJUUNE1Kd?=
+ =?us-ascii?Q?TZJXBBZuZH8cntxYG3g5XFlUxiv2UX6NHGbvdwnUdDF8n3MSjXqVANuYG6PH?=
+ =?us-ascii?Q?MkxdXrDXaDdvJgByQhfScJF9HXoNO2DYlx6p5BC5hp8FAD6iZBSzZbBkwTvx?=
+ =?us-ascii?Q?kdXOajYiOXE7ky5S7e7YoUodqaCZ106RROg9c5XthDjkF5ah3/7bTwykblw0?=
+ =?us-ascii?Q?fAHg5u3YsByazMOkT/RCXT7K22ijL6ln1tUG7kKnKUwtHktOsooWXrZAQZHe?=
+ =?us-ascii?Q?naOMabpiLYYgjBpZWWFCZMZnN7TcPYwY4A++rfJCKLxI/Qi5RBl5SXhrS3R2?=
+ =?us-ascii?Q?6mXCSl+LGXkmsFsfZ+vQG2a5oR4spJvjekSUr7N9tlDv0IiNGPjtVYv2lxNL?=
+ =?us-ascii?Q?uEfrNvTMeb2s6zVAnvN42DtnvNSIqi5ypkUNiIk6S214FLvYLvcP26JAlPvc?=
+ =?us-ascii?Q?lT0lxd8/uFPUVwUwp8VieBsGzqQVCGRySQ6zFtt/psrV9Y1Vgkl6f9XmTMNW?=
+ =?us-ascii?Q?VUhRGB1qvSPJd2PtT8z6oyuAVioFwNAIZLDZJZ6qEoXcuBwmvipgZ1vUhb5e?=
+ =?us-ascii?Q?TphcA0AlsvA4SIMsfHuPYOaR6TgxgWSTqi3lg8wIyXHhLejqkQIoYIC52Fwl?=
+ =?us-ascii?Q?MgTj76VqRKBXpbKQ0FfJYBNugFxkxmvICQ9aICtprOHmywAnP3VX6a0aL8A5?=
+ =?us-ascii?Q?dyO55ZR8h8rF8FSTqNVLIYAoPeAEXmTSR6cX9c/bFxS5xrqT/cv13jS7WLil?=
+ =?us-ascii?Q?K3zVYOXkTC90tBbCwLP5mDImVSVBC5qo1UCsAHW/fOsVYobxXL7H5FJVsD/P?=
+ =?us-ascii?Q?DVCUq3OcXRzR1HvW/4Qs5jp0Zv66ZEW2yovOiUI8ds5Wsc0N5hINV2GjaXUJ?=
+ =?us-ascii?Q?9gukNWwG2F938xe3yH9C7N3/W1bl4jIdMrxpmoFHbh6PpUPcgjZend+oPWCY?=
+ =?us-ascii?Q?ToC+P3zx0/3Y5qmr+QGeENNlZRcR7d8Lbu95Xh38ZCcbgP8YIEk4J1fgb7ii?=
+ =?us-ascii?Q?umhKFcDteD2XcyvDGP1F57vuptqdq1FbjXGolXwPLCJ4ULGEqmLEvTSV/SAF?=
+ =?us-ascii?Q?lmRXze0tx8IYC5VqTlf8QcPmfQeNYaICe54h8/yZhySvNLv8Beww/y4rCPor?=
+ =?us-ascii?Q?MDfvmKIb1bK0pXYyXsnOeXT7XanuZrMIWh1MpYdSnEIwIH+OCs4BcUtyJap5?=
+ =?us-ascii?Q?y4GPysuvmY/BWYwYzbnwzNsnkCNPDuetZmnbY17XK2NoVQTRp8ZKbmSTd86e?=
+ =?us-ascii?Q?ih2jUSnmwvDxbOzsfiiqwa0miQVR+JjqgEaoGZQCpeW0PPfWtdZKspENzB/z?=
+ =?us-ascii?Q?bNSS2Ltzi2/dM7H/2ovvqJOd9O/ECgCsyFWPVpsMJBaHOSAJd673uMIl5+7f?=
+ =?us-ascii?Q?WqjWAHIUnWog0BnGfSAxw6jeBoWBxbQHJccEULns+wRCot6ArR7Nwlebk6N6?=
+ =?us-ascii?Q?2LwQ/z479yScQPWkca9O9IqSZBmeXAKZzuQSPh97ryCoh//YmmuS1pknyyl4?=
+ =?us-ascii?Q?1QDkJ60q/ZRcNRsy2yBRd3QP7V93qB4=3D?=
+X-Exchange-RoutingPolicyChecked:
+	sk4nC31av1gvyIYQ2pEhkZNQyB4WIAz43A4bx5vpYLD6uyoEGthpi2p3YXoYsA4HiTgkI3T1Kgnph58Mz6bi9Z2lSajQNVjd7pHWhSw2r4YtyTIIGJZoacNyEGvH5cvpIBFO9OOO5V2+fwcOaknJsff1mzCTk7HLfcNP6VGNR4AG9LAJCwh4EjlZK1c7kLixYpDAX3zKLSAxEfFHOynssFaed/6r6i+I++NvmmtkTolYq4xsigae6XfpcQs236s0VHaszUTH7tj1jdUn/cnL4igedL7XPilVs8V7CJS3CJYEDTQnZDqgnPYX6iOv8bY9BEZUeZjq9CHeVy2+4al92A==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	tvYTXuVQ3HG2EP/VCBPecbWFaK15sqHvjr34HFkMWCuCA3zGuCEwEnEvG5ir/k8tkIUVzSIQCaXBXzjdt775trwuhfmrC9s6XweDQc2EjFeVLBO2gaWAqCB5fC4truW2QzD2rXvncpSUn/uzhAP9Ya8zDt+AbTPMarbXlqrEo6O+19o1sUmseWSxI832MVfKjHvV5DpKLvGEVf7boXlzY1wKt3mgwsdBYygnzKQqB7oaO2h6p7T7tqNq1Ui8CrBwczkC4R1Wyepj2iSfbA6yLWi8NjI+7q10UGwrYzrq9kwEhJd8XBFxirbGISjYgDjopXF6DCSqS8uqlCVf/JMwWy2WFL7RRcA8yyTp0G4z6GZdNCdPtAH+8dorctSjvRn1qzHVgU/nPuxaRZRaOYgFO+yQdXc9F3S07wQ6iY3lP7JSo8gEY/oA6AW6YAWY8tO6zAacSduALJhG0I75DObQDxAngRhd7MgqVXi+m/PU3ZGpkG8fN4d35TyBAU0ohdW7DoAqP+fW5Bxl68u6ORmHa1YBggik/vzKyQeZuMrdxE32U1E6CDx5nFhRCpzUAGUVwFvVnKlLv2AMRDf1u54oiweR6fdndPpQV51Kw77vgK0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5cfd786-a7bf-4aeb-7248-08dec049a976
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2026 01:52:54.2392
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fL6k8oejIqo3+fpPtsAe0uPyg0FHMUH4mku4EGJUJ0aII6YFmRVCSQCDJn//KnbA7bMTUATEKZT25/a5FF6SYf3PTps9uq5M1n0qAm5s8cg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6729
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-01_07,2026-05-28_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 adultscore=0
+ phishscore=0 mlxlogscore=807 suspectscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2605130000 definitions=main-2606020015
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjAyMDAxNSBTYWx0ZWRfX/Zi8oDWEa+4C
+ 5sro1154ks2kIPNfP5TNCTATIBu7kWJnTHzsnMPwx+cb2ItM56QPe/AZfnp1gjPE1apAesWJZbt
+ C6600FYyVleoZTB8NYirtbXFrKJp0GP3uq31wtmpSY2Ia3aKH9nXhkJt/7JjxHrXu74shczgXBg
+ MYaroEj9ykHagjBuqLs96rPyVmzVMJEetMnz3vDvgJdK/FNvdKaef51rfk18HdfKvCbD2RxWdFP
+ 2gCfMx82c7KHkVha711VeRmdtko7aFJCjo/7BID7X33dTnPkM3mt6416vKVSIiddc6KR7WiY+bg
+ WhpCWHRLoFPOdozHM6lgEcb7xsWMS2DZqqnkeyzXGUj1pYi5AQmKkLsFHcb7z+NFAMLoRGuG7mc
+ 5cVC/ZmzWDpoA8Oylu1U7Ug+zfm+9yQuDEnfrVX+fX4C2g0MCb18BH6DqP6TKhFO1KZ0VEJWf+J
+ aRUhkZ4+qsnvVtxdHYw==
+X-Proofpoint-GUID: vw2PMocb5hcTjdWRZnGah_Hh_j2kQi5N
+X-Proofpoint-ORIG-GUID: vw2PMocb5hcTjdWRZnGah_Hh_j2kQi5N
+X-Authority-Analysis: v=2.4 cv=Po+jqQM3 c=1 sm=1 tr=0 ts=6a1e377a cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=FelO9ux0wxsA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=jiCTI4zE5U7BLdzWsZGv:22
+ a=BqU2WV_vvsyTyxaotp0D:22 a=WwpDaH9WuNZY06HOqTkA:9
 
-This v2 is related to an old v1 from 11/2024. [0]
-The goal of this v2 is to address the comment made on patch 4/5. It
-was asked to make a treewide update using a coccinelle script.
 
-So, better late that never, here it is.
+Dan,
 
- * * * * * * * * * * * * * * * * * *
- 
-Struct irq_chip holds many function pointers and so, is a good
-candidate for constification.
+> The non_fatal_log_show() function is supposed to return negative error
+> codes on failure. But because the error codes are saved in a u32 and
+> then cast to signed long, they end up being high positive values
+> instead of negative. Remove the intermediary u32 variable to fix this
+> bug.
 
-
-Some steps to constify these structures have already been done in 2022
-with commit 393e1280f765 ("genirq: Allow irq_chip registration functions
-to take a const irq_chip") and ef6e5d61eb7a ("genirq: Allow
-irq_set_chip_handler_name_locked() to take a const irq_chip")
-
-However these commits introduce some ugly casting to store some const
-parameters into non-const struct members. [1] [2]
-
-The goal of this serie is to remove these cast and have a cleaner and
-safer API.
-
-It will need to constify the return value of irq_get_chip(),
-irq_data_get_irq_chip() and irq_desc_get_chip() which are widely used.
-
-
-Patch 1, 2 and 3 only update the prototypes of some functions and
-should be straightforward.
-They could be applied even in case of comment/build failure in the
-other patches.
-
-Patch 4 and 5 update files that do not match the coccinelle script that
-does most of the job.
-
-Pacth 6 is generated by coccinelle. It does 99% of the upgrade.
-The script is included.
-
-Finaly, patch 7 correctly constify the 'chip' field in struct irq_data,
-update corresponding asseccors and remove the now useless cast in
-irq_set_chip_handler_name_locked() and irq_set_chip().
-
-
-This has been 95% build-tested on x86.
-So it is likely that some corner cases will be spotted by build-bots
-on other architectures.
-Sorry about that, but I don't have enough cycles on my personnal
-machine to cross-build the serie on different architecture.
-
-CJ
-
-[0]: https://lore.kernel.org/all/cover.1731835733.git.christophe.jaillet@wanadoo.fr/
-[1]: https://elixir.bootlin.com/linux/v7.1-rc5/source/kernel/irq/chip.c#L48
-[2]: https://elixir.bootlin.com/linux/v7.1-rc5/source/include/linux/irqdesc.h#L250
-[3]: https://elixir.bootlin.com/linux/v7.1-rc5/A/ident/irq_chip
-
-
-Christophe JAILLET (7):
-  irqchip: Constify "struct irq_chip *" parameter in chained_irq_xxx()
-    functions
-  irqchip: Constify "struct irq_chip *" parameter in cond_xxx_eoi_irq()
-  pinctrl: samsung: Constify "struct irq_chip *" parameter in
-    to_exynos_irq_chip()
-  irqchip: Constify some struct irq_chip *
-  x86/irq: Constify a struct irq_chip *
-  treewide: Constify some struct irq_chip *
-  genirq/chip: Constify the 'chip' field in irq_data
-
- arch/alpha/kernel/irq.c                       |  2 +-
- arch/arc/kernel/mcip.c                        |  2 +-
- arch/arm/mach-omap2/prm_common.c              |  2 +-
- arch/mips/alchemy/devboards/bcsr.c            |  2 +-
- arch/powerpc/kvm/book3s_hv.c                  |  2 +-
- arch/powerpc/platforms/44x/uic.c              |  2 +-
- arch/powerpc/platforms/52xx/media5200.c       |  2 +-
- arch/powerpc/platforms/85xx/common.c          |  2 +-
- arch/powerpc/platforms/85xx/mpc85xx_8259.c    |  2 +-
- .../platforms/85xx/socrates_fpga_pic.c        |  2 +-
- arch/powerpc/platforms/86xx/pic.c             |  2 +-
- arch/powerpc/platforms/chrp/setup.c           |  2 +-
- arch/powerpc/platforms/embedded6xx/hlwd-pic.c |  2 +-
- arch/powerpc/platforms/embedded6xx/mvme5100.c |  2 +-
- arch/powerpc/platforms/pasemi/setup.c         |  2 +-
- arch/powerpc/platforms/pseries/setup.c        |  2 +-
- arch/powerpc/sysdev/ge/ge_pic.c               |  2 +-
- arch/powerpc/sysdev/mpic.c                    |  2 +-
- arch/powerpc/sysdev/tsi108_pci.c              |  2 +-
- arch/powerpc/sysdev/xics/xics-common.c        |  2 +-
- arch/riscv/kernel/sbi-ipi.c                   |  2 +-
- arch/sh/boards/mach-se/7343/irq.c             |  2 +-
- arch/sh/boards/mach-se/7722/irq.c             |  2 +-
- arch/sh/boards/mach-x3proto/gpio.c            |  2 +-
- arch/sh/kernel/cpu/irq/ipr.c                  |  2 +-
- arch/x86/kernel/apic/io_apic.c                |  2 +-
- arch/x86/kernel/irq.c                         |  2 +-
- drivers/clocksource/timer-clint.c             |  2 +-
- drivers/edac/altera_edac.c                    |  2 +-
- drivers/gpio/gpio-altera.c                    |  4 +--
- drivers/gpio/gpio-aspeed-sgpio.c              |  2 +-
- drivers/gpio/gpio-aspeed.c                    |  2 +-
- drivers/gpio/gpio-ath79.c                     |  2 +-
- drivers/gpio/gpio-bcm-kona.c                  |  2 +-
- drivers/gpio/gpio-blzp1600.c                  |  2 +-
- drivers/gpio/gpio-brcmstb.c                   |  2 +-
- drivers/gpio/gpio-cadence.c                   |  2 +-
- drivers/gpio/gpio-dwapb.c                     |  2 +-
- drivers/gpio/gpio-eic-sprd.c                  |  2 +-
- drivers/gpio/gpio-ep93xx.c                    |  2 +-
- drivers/gpio/gpio-ftgpio010.c                 |  2 +-
- drivers/gpio/gpio-hisi.c                      |  2 +-
- drivers/gpio/gpio-hlwd.c                      |  2 +-
- drivers/gpio/gpio-idt3243x.c                  |  2 +-
- drivers/gpio/gpio-loongson-64bit.c            |  2 +-
- drivers/gpio/gpio-mpfs.c                      |  2 +-
- drivers/gpio/gpio-mvebu.c                     |  2 +-
- drivers/gpio/gpio-mxc.c                       |  4 +--
- drivers/gpio/gpio-npcm-sgpio.c                |  2 +-
- drivers/gpio/gpio-pl061.c                     |  2 +-
- drivers/gpio/gpio-rda.c                       |  2 +-
- drivers/gpio/gpio-realtek-otto.c              |  2 +-
- drivers/gpio/gpio-rockchip.c                  |  2 +-
- drivers/gpio/gpio-rtd.c                       |  2 +-
- drivers/gpio/gpio-sprd.c                      |  2 +-
- drivers/gpio/gpio-tangier.c                   |  2 +-
- drivers/gpio/gpio-tegra.c                     |  2 +-
- drivers/gpio/gpio-tegra186.c                  |  2 +-
- drivers/gpio/gpio-tqmx86.c                    |  2 +-
- drivers/gpio/gpio-vf610.c                     |  2 +-
- drivers/gpio/gpio-xilinx.c                    |  2 +-
- drivers/gpio/gpio-xlp.c                       |  2 +-
- drivers/gpio/gpio-zynq.c                      |  2 +-
- drivers/gpu/drm/msm/msm_mdss.c                |  2 +-
- drivers/gpu/ipu-v3/ipu-common.c               |  4 +--
- drivers/iio/adc/stm32-adc-core.c              |  2 +-
- drivers/iio/industrialio-trigger.c            |  4 +--
- drivers/irqchip/exynos-combiner.c             |  4 +--
- drivers/irqchip/irq-aclint-sswi.c             |  2 +-
- drivers/irqchip/irq-al-fic.c                  |  2 +-
- drivers/irqchip/irq-armada-370-xp.c           |  2 +-
- drivers/irqchip/irq-aspeed-i2c-ic.c           |  2 +-
- drivers/irqchip/irq-aspeed-scu-ic.c           |  4 +--
- drivers/irqchip/irq-ast2700-intc1.c           |  2 +-
- drivers/irqchip/irq-ath79-misc.c              |  2 +-
- drivers/irqchip/irq-bcm2836.c                 |  2 +-
- drivers/irqchip/irq-bcm6345-l1.c              |  2 +-
- drivers/irqchip/irq-bcm7038-l1.c              |  2 +-
- drivers/irqchip/irq-bcm7120-l2.c              |  2 +-
- drivers/irqchip/irq-brcmstb-l2.c              |  2 +-
- drivers/irqchip/irq-dw-apb-ictl.c             |  2 +-
- drivers/irqchip/irq-econet-en751221.c         |  2 +-
- drivers/irqchip/irq-gic.c                     |  2 +-
- drivers/irqchip/irq-goldfish-pic.c            |  2 +-
- drivers/irqchip/irq-idt3243x.c                |  2 +-
- drivers/irqchip/irq-imx-mu-msi.c              |  2 +-
- drivers/irqchip/irq-ingenic-tcu.c             |  2 +-
- drivers/irqchip/irq-lan966x-oic.c             |  2 +-
- drivers/irqchip/irq-loongarch-avec.c          |  2 +-
- drivers/irqchip/irq-loongson-eiointc.c        |  2 +-
- drivers/irqchip/irq-loongson-htpic.c          |  2 +-
- drivers/irqchip/irq-loongson-htvec.c          |  2 +-
- drivers/irqchip/irq-loongson-liointc.c        |  2 +-
- drivers/irqchip/irq-loongson-pch-lpc.c        |  2 +-
- drivers/irqchip/irq-lpc32xx.c                 |  2 +-
- drivers/irqchip/irq-ls1x.c                    |  2 +-
- drivers/irqchip/irq-mmp.c                     |  2 +-
- drivers/irqchip/irq-mscc-ocelot.c             |  2 +-
- drivers/irqchip/irq-mvebu-pic.c               |  2 +-
- drivers/irqchip/irq-mvebu-sei.c               |  2 +-
- drivers/irqchip/irq-pruss-intc.c              |  2 +-
- drivers/irqchip/irq-realtek-rtl.c             |  2 +-
- drivers/irqchip/irq-riscv-aplic-direct.c      |  2 +-
- drivers/irqchip/irq-riscv-imsic-early.c       |  2 +-
- drivers/irqchip/irq-sifive-plic.c             |  4 +--
- drivers/irqchip/irq-sp7021-intc.c             |  2 +-
- drivers/irqchip/irq-starfive-jhb100-intc.c    |  2 +-
- drivers/irqchip/irq-stm32-exti.c              |  2 +-
- drivers/irqchip/irq-sunxi-nmi.c               |  2 +-
- drivers/irqchip/irq-ts4800.c                  |  2 +-
- drivers/irqchip/irq-versatile-fpga.c          |  2 +-
- drivers/irqchip/irq-vic.c                     |  2 +-
- drivers/irqchip/irq-vt8500.c                  |  2 +-
- drivers/irqchip/irq-xilinx-intc.c             |  2 +-
- drivers/irqchip/qcom-irq-combiner.c           |  2 +-
- drivers/mfd/fsl-imx25-tsadc.c                 |  2 +-
- drivers/misc/rp1/rp1_pci.c                    |  2 +-
- drivers/pci/controller/dwc/pci-dra7xx.c       |  2 +-
- drivers/pci/controller/dwc/pci-keystone.c     |  4 +--
- .../pci/controller/dwc/pcie-designware-host.c |  2 +-
- drivers/pci/controller/dwc/pcie-dw-rockchip.c |  2 +-
- drivers/pci/controller/dwc/pcie-keembay.c     |  2 +-
- drivers/pci/controller/dwc/pcie-sophgo.c      |  2 +-
- drivers/pci/controller/dwc/pcie-uniphier.c    |  2 +-
- .../controller/mobiveil/pcie-mobiveil-host.c  |  2 +-
- drivers/pci/controller/pci-ftpci100.c         |  2 +-
- drivers/pci/controller/pci-mvebu.c            |  2 +-
- drivers/pci/controller/pci-tegra.c            |  2 +-
- drivers/pci/controller/pci-xgene-msi.c        |  2 +-
- drivers/pci/controller/pcie-altera-msi.c      |  2 +-
- drivers/pci/controller/pcie-altera.c          |  4 +--
- drivers/pci/controller/pcie-apple.c           |  2 +-
- drivers/pci/controller/pcie-brcmstb.c         |  2 +-
- drivers/pci/controller/pcie-iproc-msi.c       |  2 +-
- drivers/pci/controller/pcie-mediatek-gen3.c   |  2 +-
- drivers/pci/controller/pcie-mediatek.c        |  2 +-
- drivers/pci/controller/pcie-rockchip-host.c   |  2 +-
- drivers/pci/controller/pcie-rzg3s-host.c      |  2 +-
- drivers/pci/controller/pcie-xilinx-cpm.c      |  4 +--
- drivers/pci/controller/pcie-xilinx-nwl.c      |  6 ++---
- drivers/pci/controller/plda/pcie-plda-host.c  |  6 ++---
- drivers/pinctrl/actions/pinctrl-owl.c         |  2 +-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c         |  2 +-
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c      |  2 +-
- drivers/pinctrl/intel/pinctrl-baytrail.c      |  2 +-
- drivers/pinctrl/intel/pinctrl-cherryview.c    |  2 +-
- drivers/pinctrl/intel/pinctrl-lynxpoint.c     |  2 +-
- drivers/pinctrl/mediatek/mtk-eint.c           |  2 +-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c   |  2 +-
- drivers/pinctrl/nuvoton/pinctrl-ma35.c        |  2 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c     |  2 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c     |  2 +-
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c     |  2 +-
- drivers/pinctrl/pinctrl-apple-gpio.c          |  2 +-
- drivers/pinctrl/pinctrl-at91-pio4.c           |  2 +-
- drivers/pinctrl/pinctrl-at91.c                |  2 +-
- drivers/pinctrl/pinctrl-equilibrium.c         |  2 +-
- drivers/pinctrl/pinctrl-ingenic.c             |  2 +-
- drivers/pinctrl/pinctrl-keembay.c             |  2 +-
- drivers/pinctrl/pinctrl-microchip-sgpio.c     |  2 +-
- drivers/pinctrl/pinctrl-ocelot.c              |  4 +--
- drivers/pinctrl/pinctrl-pic32.c               |  2 +-
- drivers/pinctrl/pinctrl-pistachio.c           |  2 +-
- drivers/pinctrl/pinctrl-rp1.c                 |  2 +-
- drivers/pinctrl/pinctrl-single.c              |  2 +-
- drivers/pinctrl/pinctrl-st.c                  |  4 +--
- drivers/pinctrl/qcom/pinctrl-msm.c            |  2 +-
- drivers/pinctrl/samsung/pinctrl-exynos.c      | 14 +++++------
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |  4 +--
- drivers/pinctrl/spear/pinctrl-plgpio.c        |  2 +-
- .../starfive/pinctrl-starfive-jh7100.c        |  2 +-
- .../starfive/pinctrl-starfive-jh7110-aon.c    |  2 +-
- .../starfive/pinctrl-starfive-jh7110-sys.c    |  2 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c         |  2 +-
- drivers/sh/intc/core.c                        |  4 +--
- drivers/sh/intc/internals.h                   |  2 +-
- drivers/sh/intc/virq.c                        |  2 +-
- drivers/soc/fsl/qe/qe_ic.c                    |  6 ++---
- drivers/spmi/spmi-mtk-pmif.c                  |  2 +-
- drivers/spmi/spmi-pmic-arb.c                  |  2 +-
- include/linux/irq.h                           |  6 ++---
- include/linux/irqchip/chained_irq.h           |  4 +--
- include/linux/irqdesc.h                       |  4 +--
- kernel/irq/chip.c                             | 25 ++++++++++---------
- kernel/irq/cpuhotplug.c                       |  2 +-
- kernel/irq/debugfs.c                          |  2 +-
- kernel/irq/ipi.c                              |  4 +--
- kernel/irq/kexec.c                            |  2 +-
- kernel/irq/manage.c                           | 22 ++++++++--------
- kernel/irq/migration.c                        |  2 +-
- 190 files changed, 243 insertions(+), 242 deletions(-)
+Applied to 7.2/scsi-staging, thanks!
 
 -- 
-2.54.0
-
+Martin K. Petersen
