@@ -1,170 +1,278 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA82129E117;
-	Thu,  4 Jun 2026 10:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58853B6350
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jun 2026 10:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780569014; cv=none; b=YnuLgP9SHH1tHA8QdODk9Fpm1mMgViq4SpdYlD30UQ68ckvh5mUyGXKQ3KCbxXQAGKK3J3Mhwrc/1hSKxBZlLti6A0GuItZacYpZx2f+3zrzToUFhOteO+liM0KXfIm97M4hw/CQxvJuoXcU+LZQyoTwHjy2ATAPYRkCUqn5CrY=
+	t=1780569538; cv=none; b=NqZgfdq7JSnSBJzOCZuHX+oj0cvwXMuIIbkh2fJ+5eGuojBriWQsf5r/F3vtgoLA1nbpUQGOLUjAp9jvX3YfhlMyHUCEPGr8EmAd3i1LGRwzI25nhr6OlY1BRbSt4IRQ4dfUr2C0lERYj4a7qYuFnU1pQI3izGWdFknnTfARoAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780569014; c=relaxed/simple;
-	bh=vYswXubELzRmgNe9b3hapeZFs2aXiICmyr5minHpNZo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lTn8yLGKGAYeiLpFHdNPonWyvV/uEiiFEZ+BiSgZfdGDHBGRbnuIuTMEXDzSIJuEmZrnEZA5gvcONVNTjw6jHsyhmgbUGuGojdqCzfD2sAAQOYpGXQwftpRiopBkcvLtqz4zs582BVLaQ/7z3weru5VEecxqHWcbPgfvdZUkNgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tvh6c0BQ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1780569538; c=relaxed/simple;
+	bh=A2FA4+4zqguO5QNN4RXEtflKaYVcPDCWYZtFRotBZ+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tmrp9r3RcwTp5yDqCB5UkwY3pSmNq87//Mcnz+Kr320L9ASmgq3POnkMSmv1j9j4rEeciuLengJdzikRU07QRyaVurbkjGl059oWxXIWsYeef7LIg2ZCe2ZxqGnwsT+Py2+i5yYdOYBEsjGZKVO1TD2aeTRf1aNZmi6utE5s1KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJThbBfd; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tvh6c0BQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1780569005; x=1781173805; i=markus.elfring@web.de;
-	bh=r7rAMpDSDceaCAPQ08VLCgVs9VtjsEi/WQC9FYlKCw8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tvh6c0BQJAcJ/xU20pJA6MbH1J0m6Ex5d4U8Hzs1IelMKPKuOsfQOt/SHOZzAaeG
-	 nIQoMwwEWan1FIEUWjSqydUzKx6zNYHvW8bECwVVC75RUtCr5Ue0HW45305uJj1dt
-	 SBkBWHjFJ5NyLMI7WvbKoWlcbUffw1ZrCFEWt0h3eHHa/7KXNJ5M20/yQ9sROvY3D
-	 pfUCPnvUSz5wY5YROYHG4Fa6nGwYp3TpKSW6Ep/OXDLaFoWolymYGNJSiff36fZLB
-	 i0kdIp7i3isT0yqtPyzlibOWhr+DRwcV+V+Ux7W9NJkqZijPGfxkHWIbDMcgWnAjY
-	 hwq2L94c1cGuiNRbWA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M9IOj-1waqMs26rv-00EaMJ; Thu, 04
- Jun 2026 12:30:05 +0200
-Message-ID: <73999e78-39c5-4d46-a787-ded4da25d243@web.de>
-Date: Thu, 4 Jun 2026 12:30:03 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJThbBfd"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-45f3cf907ceso264764f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jun 2026 03:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780569535; x=1781174335; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6auMQAe41NOse7PoQBUlEGRJKpz7mD51EHhcTvl6K8E=;
+        b=EJThbBfdSYYvLmtlLu19jSerqBmaWU+Vt35GeOabLIs09PB6x8rCrD4O/KKuH6vRLD
+         UGSTUdX+93FUfaA3sgrGRMokNRRwDFm/Rrc2DJ7QEm743RAG2Vz26C14Ge8Wftoc0T2M
+         e+7yCDWFP6kj/nYCBfLw9xxhyP2x4J/TMV8vpZIhhHQ1E/I4ml1+dZk9mk5bG+QiFMHL
+         Arw3ogfnlGIDNZG4HT2ZSUHE850fkPBKgKesr7/SFBwAqYVDIfH7Su4/lC12/OKFWCLL
+         QBrmuJhR+IVjhAV1bDy2iAKX2uLqZeHbNPejNPBXj1sZM+QU9tKrZkmlC2iOAVSOH9fw
+         Z++Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780569535; x=1781174335;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6auMQAe41NOse7PoQBUlEGRJKpz7mD51EHhcTvl6K8E=;
+        b=tH7rWbPJA5q8ktvTvbbxkd7/4myO6MJBbEGIGgtD1NqDTZHnDTcuetav6+tn9hk4Q2
+         RZWT/Ae/i6TEl++dYwrZU1lcy5NvMUBued3an4D9wq1JjBGmjdt6qKs4GM736E0D2ZOi
+         q6oOfi9bvvPv82OALtSq/dsrWCVAJzUeAeTwINQnFXc8nO6RV+gV5wicIpqleSSeOvvt
+         Tfl70xrsDyw1gasZoLZoE1dG/nbixjCU20iZbheXLm1EtT2Pg88brEirX1KqtebS1ZaN
+         YnSnXL94anOwFSIp/vQaBfNefP0/F8NEAzTo+BxGOQVs1TYbu2I7z5tEwaWYEM8y8ThA
+         78cA==
+X-Forwarded-Encrypted: i=1; AFNElJ8FTTXxMyqhJ0pC7/wBcmkxWfX6fY5MlbuDhm5Fcw7HSkUbuV3S/9rQM+MtJQDb0MGuNII2jH/fF7m0wWYyLIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtI5WSlmTWYsYgyObM8UMy3FYeg7uPXwwfhwOFIXqdKIvqPE0B
+	9int4kSjlv18OqPZ+AGWM5yJXe13FvBtDci2LFuBp/9FeXAuSlyoEzPc
+X-Gm-Gg: Acq92OEoEqRLPPflBa+dvd/Z3qsrmdYLwLpJ7hVA27EQfkejncLSzlcQVZ6I91VLxsL
+	YDGdtMGl8v/Wz+Rtv8MwoQe7O53SGulzaxa/qEcFHzNaIBmdMbOOMxBsbZUEgvSfpjjD/ddaluk
+	xSxmnLNVRqwehgEk+XzmOsQPxHDuo8h7qHsMZdHqw7srGM9B0HzWHi3bnffHNdAjPdls/w5ar5f
+	/9NPw7SiCdF5TAjvvH+C+5WyyTQeWh8hkPXmj6KdAiCS7MiitrRpGd6JjmebaOxwlLpwX9qJpvF
+	WjicYv7Ki9GeOyh17W0YpUvr+vqigneNzgnr4BjTHhA2QbLOb+nfG1IPXxDqsg0XUF7zHsbW/n1
+	5Q6VgSpYQdYQanE08yswrH7elD+L4cVn21NycFHNYGafFxyB/a7Tkl2QbLpVNvX8ByeZ90hb94V
+	aDuWfRKTuBviDNCZNX53+Pdz4H+89+TQ==
+X-Received: by 2002:a05:600c:1551:b0:490:5466:8576 with SMTP id 5b1f17b1804b1-490b5e9fca9mr121187635e9.1.1780569535088;
+        Thu, 04 Jun 2026 03:38:55 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3d66c8sm56569815e9.10.2026.06.04.03.38.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2026 03:38:54 -0700 (PDT)
+Date: Thu, 4 Jun 2026 13:38:50 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Maxwell Doose <m32285159@gmail.com>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: backend: fix uninitialized data in debugfs
+Message-ID: <aiFVuvVtaWbjfVzA@stanley.mountain>
+References: <ahP3O2tQdu4dNx_c@stanley.mountain>
+ <CAKqfh0En4pHqSfxfd2FHSDTxfWx6BfJLfeQ3xup4bwfLSTrZRA@mail.gmail.com>
+ <20260526191946.409160c8@jic23-huawei>
+ <aiEpmqKwFuIMRfdl@ashevche-desk.local>
+ <aiEtIGOFhF8AfUCT@stanley.mountain>
+ <aiExQzpIOwPgwd3-@ashevche-desk.local>
+ <aiE3N6zErq2WcCvS@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Boqun Feng <boqun@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Waiman Long <longman@redhat.com>,
- Will Deacon <will@kernel.org>
-Content-Language: en-GB, de-DE
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] locking/lockdep: Simplify data output in lockdep_stats_show()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5xGfatZoLJ0ThEnCL4DX/J8t+xba7txbVRQyeAoPIll7C6YxybV
- N3p20wRHlcMby8zJ9xbaN6iSqXmStKOX8XlWtyWxYt7C28cjqmTMt73OqSPYJBvyi7P796o
- nlVtpr/38orQ/6Qs05ghGjX1vE4Ahfdm86P8omgTn87WBXOg1f1EvvozwYUdWFpX944ZhOu
- zWTRQ5C8M5kPzH5nxaQww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dF4nDGJwOEw=;f7bIXjbvy1K0gebrdfJFTqa2TUe
- +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
+Content-Type: multipart/mixed; boundary="cRxskUAI1uPQGXpF"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aiE3N6zErq2WcCvS@ashevche-desk.local>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jun 2026 12:23:32 +0200
 
-Move the specification for a line break from a seq_puts() call
-to a seq_printf() call.
+--cRxskUAI1uPQGXpF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The source code was transformed by using the Coccinelle software.
+On Thu, Jun 04, 2026 at 11:28:39AM +0300, Andy Shevchenko wrote:
+> On Thu, Jun 04, 2026 at 11:03:15AM +0300, Andy Shevchenko wrote:
+> > On Thu, Jun 04, 2026 at 10:45:36AM +0300, Dan Carpenter wrote:
+> > > On Thu, Jun 04, 2026 at 10:30:34AM +0300, Andy Shevchenko wrote:
+> > > > On Tue, May 26, 2026 at 07:19:46PM +0100, Jonathan Cameron wrote:
+> > > > > On Mon, 25 May 2026 08:20:31 -0500
+> > > > > Maxwell Doose <m32285159@gmail.com> wrote:
+> > > > > > On Mon, May 25, 2026 at 2:17 AM Dan Carpenter <error27@gmail.com> wrote:
+> > > > > > >
+> > > > > > > If the *ppos value is non-zero then simple_write_to_buffer() will not
+> > > > > > > initialize the start of the buf[] buffer.  Non-zero ppos values aren't
+> > > > > > > going to work at all.  Check for that at the start of the function and
+> > > > > > > return -EINVAL.
+> > > > > > 
+> > > > > > Commit message is incorrect, it looks like you're returning -ENOSPC here...
+> > > > > Tweaked and applied to the fixes-togreg branch of iio.git + marked for stable.
+> > > > 
+> > > > I was stumbled over these patches by Dan. Since the file_operations for the code
+> > > > in question do not define .llseek, the seek is not supported and will return
+> > > > -ESPIPE. I'm not sure why we have these patches to begin with. Dan, can you
+> > > > elaborate on the case where the *ppos is not 0, please?
+> > 
+> > > The simple_write_to_buffer() will update *ppos so partial writes are
+> > > supported in that way.
+> > 
+> > Can you show the step-by-step scenario? I'm still fail to see how it may be happen.
+> > Is it somewhere inside the kernel loop? Which VFS function(s) is responsible for
+> > that in such a case?
+> 
+> Even if ppos is advanced, the simple_write_to_buffer()
+> https://elixir.bootlin.com/linux/v7.1-rc6/source/fs/libfs.c#L1188
+> won't write more than available in the buffer. Is the available also
+> being advanced somehow?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/locking/lockdep_proc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+It's not a buffer overflow, it's an uninitialized data bug.
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 1916db9aa46b..b376fbc81ac0 100644
-=2D-- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -381,9 +381,7 @@ static int lockdep_stats_show(struct seq_file *m, void=
- *v)
- 	/*
- 	 * Zapped classes and lockdep data buffers reuse statistics.
- 	 */
--	seq_puts(m, "\n");
--	seq_printf(m, " zapped classes:                %11lu\n",
--			nr_zapped_classes);
-+	seq_printf(m, "\n zapped classes:                %11lu\n", nr_zapped_cla=
-sses);
- #ifdef CONFIG_PROVE_LOCKING
- 	seq_printf(m, " zapped lock chains:            %11lu\n",
- 			nr_zapped_lock_chains);
-=2D-=20
-2.54.0
+I used Google AI to create a test case but my qemu system is arm64
+and the test case is in assembly so I'm not sure how useful it is.
+(Also I modified the Google AI code and the test case is garbage).
+My test case writes 10 bytes of data at a time.  I've attached the
+test debugfs kernel module.
 
+Here is the code from the kernel:
+
+drivers/iio/industrialio-backend.c
+   149  static ssize_t iio_backend_debugfs_write_reg(struct file *file,
+   150                                               const char __user *userbuf,
+   151                                               size_t count, loff_t *ppos)
+   152  {
+   153          struct iio_backend *back = file->private_data;
+   154          unsigned int val;
+   155          char buf[80];
+
+buf is uninitialized.  In my test code, I initialized it to all U
+characters which stands for uninitialized.
+
+   156          ssize_t rc;
+   157          int ret;
+   158  
+   159          if (*ppos != 0 || count >= sizeof(buf))
+                    ^^^^^^^^^^
+I added this check on *ppos but imagine it's not there and *ppos is
+non-zero.
+
+   160                  return -ENOSPC;
+   161  
+   162          rc = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
+
+The simple_write_to_buffer() function is designed to support partial
+writes so it leaves the first 0 to *ppos characters alone.
+
+   163          if (rc < 0)
+   164                  return rc;
+   165  
+   166          buf[rc] = '\0';
+
+The return is the number of characters written (starting at *ppos).  I'm
+doing 10 character writes so it is 10.  The first 10 characters are
+uninitialized.  In my test output you can see it prints ten U characters.
+
+   167  
+   168          ret = sscanf(buf, "%i %i", &back->cached_reg_addr, &val);
+                             ^^^
+Uninitialized variable.
+
+   169  
+
+root@test:/home/ubuntu/mnt/progs/tmp/sysfs# ./a.out 
+Enter a line of text to save: 123456789012345678901234567890
+[ 4266.853201] pos=0 count=10
+[ 4266.853451] rc=10 buf 1234567890
+[ 4266.854774] pos=10 count=10
+Writing to file character by character...
+[ 4266.858582] rc=10 buf UUUUUUUUUU
+[ 4266.858698] pos=20 count=10
+[ 4266.858740] rc=10 buf UUUUUUUUUU
+[ 4266.858798] pos=30 count=10
+[ 4266.858834] rc=10 buf UUUUUUUUUU
+[ 4266.858888] pos=40 count=10
+[ 4266.858924] rc=10 buf UUUUUUUUUU
+[ 4266.859015] pos=50 count=10
+
+regards,
+dan carpenter
+
+--cRxskUAI1uPQGXpF
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="hello_debugfs.c"
+
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/debugfs.h>
+#include <linux/fs.h>
+#include <linux/uaccess.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Developer");
+MODULE_DESCRIPTION("A Hello World Module with debugfs functionality");
+MODULE_VERSION("1.0");
+
+static struct dentry *dir_ret = NULL;
+static struct dentry *file_ret = NULL;
+
+// Triggered when a userspace process reads the debugfs file
+static ssize_t hello_write(struct file *fp, const char __user *user_buffer, size_t count, loff_t *position)
+{
+	char buf[60] = "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU";
+	int rc;
+
+	pr_info("pos=%lld count=%lu\n", *position, count);
+
+	rc = simple_write_to_buffer(buf, sizeof(buf), position, user_buffer, count);
+	if (rc < 0)
+		return rc;
+	buf[rc] = '\0';
+
+	pr_info("rc=%d buf %s\n", rc, buf);
+
+	return count;
+}
+
+// Map the custom read logic to file operations structure
+static const struct file_operations hello_fops = {
+	.owner = THIS_MODULE,
+	.write = hello_write,
+};
+
+// Module Initialization
+static int __init hello_init(void)
+{
+	pr_info("hello_debugfs: Module loaded successfully\n");
+
+	// 1. Create top-level parent directory in debugfs root
+	dir_ret = debugfs_create_dir("hello_dir", NULL);
+	if (IS_ERR(dir_ret)) {
+		pr_err("hello_debugfs: Failed to create parent directory\n");
+		return PTR_ERR(dir_ret);
+	}
+
+	// 2. Create target communication file inside the parent directory (Read-only for all: 0444)
+	file_ret = debugfs_create_file("hello_file", 0444, dir_ret, NULL, &hello_fops);
+	if (IS_ERR(file_ret)) {
+		pr_err("hello_debugfs: Failed to create communication file\n");
+		debugfs_remove_recursive(dir_ret);
+		return PTR_ERR(file_ret);
+	}
+
+	return 0;
+}
+
+// Module Cleanup
+static void __exit hello_exit(void)
+{
+	// Recursively destroys the created files and directory nodes
+	debugfs_remove_recursive(dir_ret);
+	pr_info("hello_debugfs: Module unloaded successfully\n");
+}
+
+module_init(hello_init);
+module_exit(hello_exit);
+
+--cRxskUAI1uPQGXpF--
