@@ -1,170 +1,189 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B10C24E4C6;
-	Thu,  4 Jun 2026 14:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE1324E4C6;
+	Thu,  4 Jun 2026 14:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780584749; cv=none; b=I1nVw1UydVc/PNI2fd7mzrXdZxN1luIWzlbzxT8NwOUt8BxpQ2GI8SttQMI1hkDdXZEv2AsyptKMHR3nJX257L0xDsQ4SJbJYjQap8VrmZo4n5uHn5c1ta4gn07lHSB5it0HVNu2Cd2wkMkSYZCJzsfuUbGIF5J1utnPxHJT6Sg=
+	t=1780584780; cv=none; b=LNGE23wGcBpfp8hhvLFKUGv+QQisdYD8Pm/nRPyM+QpPnG+nH8eZwau9YvCWIoV+ClpNkW9lLDDZx0kC82LXR74g/Tx9Zn5RhbdFt/7hDjqzXlKIoJ0o7VkindR7yuGFxYXBBG29RQYXMJabsB6gyue5U8zPj0iutWpYjLFdwUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780584749; c=relaxed/simple;
-	bh=HC/bCcPm92UYYhfX5I6Ro+Tuzt8xgIXRNr18EYzLw7o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kxCgneOqbofUe3dKSZjpIDA1nGAuL729XvVksM0sJ4zJPiuYjbjd700A9dZDDuIzDF+yJo1IWXJ6wuPjCifBuR2wHnSGO/SVES7NUOjjZ2C+FPPZ4nCJ/8vh8xx1YYrRHaVWv5U4Np970Wll/ndAEZY23jLO3bZW6d4miKcsVkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kQp9y9FV; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1780584780; c=relaxed/simple;
+	bh=PFFS18fGXkBmAJzBywl0m3FV/3BpcxB4PCUQYefIrvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUSA4IIsAEubKs9ef0vGWz5ao0s27EBv9NCjDBMA4DU23dvDiEEq8lYG/6bs5X/tBJmz46Pf+6lM54/gXpnCIFyA1tjEdrkq7BKhVIfV1Dm7vWmWah5jEKQeQtSB5zcc37xQDOAkUi8w1UK4eOjvHgJc8lNR03degbkdnkk3f2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mDGMIaTw; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kQp9y9FV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1780584719; x=1781189519; i=markus.elfring@web.de;
-	bh=W4oIBjrN+XTlUmnrdLQ3lwaTgZZSEKPpTG337cjqbOM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kQp9y9FVvHSexqKKy9e6bGP68rxp6DCqKmfsRbM8QCQXgJpyFqtbqT1nLB/jRKbw
-	 eIWeR7sKcVbIBDu+zhzfAuGzjDKzxHtHlbZ34/vlFHCVnrU3Mc1ujCnGNWDsCcbnj
-	 c+XNuNW49eWvA5cankQv00Es5eA012E7EwpqDpwl6WuQR/imDPPgTEagop3/YN4in
-	 oHIDj5e83vgX5sc4cjOjjn3sSqAqPf6HXG+Let2MLcH/z6LRHy4vmC+cFOoYCnBX8
-	 I//cpU6TxSY1sGQqTc/5cfbKu1exmOlO1bUwk54Jp0RjE7/z1BhYnV0/fMNNFTbPX
-	 WQIF8RW446G5Q3DW4Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBRn-1x9QGA1aKr-00oT0q; Thu, 04
- Jun 2026 16:51:59 +0200
-Message-ID: <b01a6836-87a7-479a-90a8-3542e8d1b9eb@web.de>
-Date: Thu, 4 Jun 2026 16:51:57 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mDGMIaTw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780584779; x=1812120779;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PFFS18fGXkBmAJzBywl0m3FV/3BpcxB4PCUQYefIrvg=;
+  b=mDGMIaTwvGHhmWF0odGsT0ezy/yUVfig9xHetcHF7mOjuBBy2ZmiAegd
+   Aycpb37cTMqohPutdu6rw0BhVFbpu9puHR209BILyEenwO6o1HTnKi6wr
+   rvf1Khb9www6y4JWJmQGkvztJY8i39DXVTgJZxadNAVVjqkltZ9/i1WrG
+   YYA7H3WCCE9lrTlYkEhV3LyBzPmK9b+qIgx7pkZ4Rx6QwGZm5xWq+Py7J
+   dObYqI8KBvT7Tvuco2Zsw3bFpTt75fzVF4DaZaY2JKzDEhaCaS6nvKvw8
+   2bkSMguO4N/8b27iTyy9OWUtoT8dhjrFe39tY9svkwmOUBSWrVVGRSfxf
+   Q==;
+X-CSE-ConnectionGUID: yhUSo2KvRQa++gRxhsOlbw==
+X-CSE-MsgGUID: 4UYWCzVhSKC/q7Po4I5AjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="80552062"
+X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
+   d="scan'208";a="80552062"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 07:52:58 -0700
+X-CSE-ConnectionGUID: v37vaXfaTuWht3t7ETZh/w==
+X-CSE-MsgGUID: eUbmcpguSkO3K7ooVjZ+gw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,187,1774335600"; 
+   d="scan'208";a="243489388"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.47])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 07:52:56 -0700
+Date: Thu, 4 Jun 2026 17:52:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Maxwell Doose <m32285159@gmail.com>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: backend: fix uninitialized data in debugfs
+Message-ID: <aiGRRbOMmEyGbIM0@ashevche-desk.local>
+References: <ahP3O2tQdu4dNx_c@stanley.mountain>
+ <CAKqfh0En4pHqSfxfd2FHSDTxfWx6BfJLfeQ3xup4bwfLSTrZRA@mail.gmail.com>
+ <20260526191946.409160c8@jic23-huawei>
+ <aiEpmqKwFuIMRfdl@ashevche-desk.local>
+ <aiEtIGOFhF8AfUCT@stanley.mountain>
+ <aiExQzpIOwPgwd3-@ashevche-desk.local>
+ <aiE3N6zErq2WcCvS@ashevche-desk.local>
+ <aiFVuvVtaWbjfVzA@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/3] LoongArch: Delete unnecessary braces in show_cpuinfo()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: loongarch@lists.linux.dev, George Guo <dongtai.guo@linux.dev>,
- Hengqi Chen <hengqi.chen@gmail.com>, Huacai Chen <chenhuacai@kernel.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>, Wang Xuerui <kernel@xen0n.name>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <c36cab4c-0a91-4802-8693-a6ae3cee65b1@web.de>
-Content-Language: en-GB, de-DE
-In-Reply-To: <c36cab4c-0a91-4802-8693-a6ae3cee65b1@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NnvLYjQ8nv8rCbqCcurKqdXGvnB0NPrXZky/FFgw93G9PraTbvG
- Qj0R/3/cDhNw33bAz3CdY4dJfqBE4uBmAQZ5WqeR7CEUeAJ8C4Uq0ObUQ6zQb0hXfB+cLbc
- JaDd1kcZdBPZf5iS0F1nM9cQnXcMUYb1LHw/oiP7Hj/KUJ5bHf8UI5iPHqPXjosVbLOH1T8
- FubndcIt6b4CiXtE3J+vA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mG+iDfMOJgQ=;8Bu8h5WRLXhPr1wXKqAD5L6rtTU
- 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
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aiFVuvVtaWbjfVzA@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jun 2026 16:16:43 +0200
+On Thu, Jun 04, 2026 at 01:38:50PM +0300, Dan Carpenter wrote:
+> On Thu, Jun 04, 2026 at 11:28:39AM +0300, Andy Shevchenko wrote:
+> > On Thu, Jun 04, 2026 at 11:03:15AM +0300, Andy Shevchenko wrote:
+> > > On Thu, Jun 04, 2026 at 10:45:36AM +0300, Dan Carpenter wrote:
+> > > > On Thu, Jun 04, 2026 at 10:30:34AM +0300, Andy Shevchenko wrote:
+> > > > > On Tue, May 26, 2026 at 07:19:46PM +0100, Jonathan Cameron wrote:
+> > > > > > On Mon, 25 May 2026 08:20:31 -0500
+> > > > > > Maxwell Doose <m32285159@gmail.com> wrote:
+> > > > > > > On Mon, May 25, 2026 at 2:17 AM Dan Carpenter <error27@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > If the *ppos value is non-zero then simple_write_to_buffer() will not
+> > > > > > > > initialize the start of the buf[] buffer.  Non-zero ppos values aren't
+> > > > > > > > going to work at all.  Check for that at the start of the function and
+> > > > > > > > return -EINVAL.
+> > > > > > > 
+> > > > > > > Commit message is incorrect, it looks like you're returning -ENOSPC here...
+> > > > > > Tweaked and applied to the fixes-togreg branch of iio.git + marked for stable.
+> > > > > 
+> > > > > I was stumbled over these patches by Dan. Since the file_operations for the code
+> > > > > in question do not define .llseek, the seek is not supported and will return
+> > > > > -ESPIPE. I'm not sure why we have these patches to begin with. Dan, can you
+> > > > > elaborate on the case where the *ppos is not 0, please?
+> > > 
+> > > > The simple_write_to_buffer() will update *ppos so partial writes are
+> > > > supported in that way.
+> > > 
+> > > Can you show the step-by-step scenario? I'm still fail to see how it may be happen.
+> > > Is it somewhere inside the kernel loop? Which VFS function(s) is responsible for
+> > > that in such a case?
+> > 
+> > Even if ppos is advanced, the simple_write_to_buffer()
+> > https://elixir.bootlin.com/linux/v7.1-rc6/source/fs/libfs.c#L1188
+> > won't write more than available in the buffer. Is the available also
+> > being advanced somehow?
+> 
+> It's not a buffer overflow, it's an uninitialized data bug.
+> 
+> I used Google AI to create a test case but my qemu system is arm64
+> and the test case is in assembly so I'm not sure how useful it is.
+> (Also I modified the Google AI code and the test case is garbage).
+> My test case writes 10 bytes of data at a time.  I've attached the
+> test debugfs kernel module.
+> 
+> Here is the code from the kernel:
+> 
+> drivers/iio/industrialio-backend.c
+>    149  static ssize_t iio_backend_debugfs_write_reg(struct file *file,
+>    150                                               const char __user *userbuf,
+>    151                                               size_t count, loff_t *ppos)
+>    152  {
+>    153          struct iio_backend *back = file->private_data;
+>    154          unsigned int val;
+>    155          char buf[80];
+> 
+> buf is uninitialized.  In my test code, I initialized it to all U
+> characters which stands for uninitialized.
+> 
+>    156          ssize_t rc;
+>    157          int ret;
+>    158  
+>    159          if (*ppos != 0 || count >= sizeof(buf))
+>                     ^^^^^^^^^^
+> I added this check on *ppos but imagine it's not there and *ppos is
+> non-zero.
+> 
+>    160                  return -ENOSPC;
+>    161  
+>    162          rc = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
+> 
+> The simple_write_to_buffer() function is designed to support partial
+> writes so it leaves the first 0 to *ppos characters alone.
 
-Do not use curly brackets at one source code place
-where a single statement should be sufficient.
+If you wrote as many bytes as required, *ppos left on the 'count', and next
+writes go after that. So, why *ppos is not 0? Maybe the issue that we need
+somewhere reset *ppos to 0?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- arch/loongarch/kernel/proc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+>    163          if (rc < 0)
+>    164                  return rc;
+>    165  
+>    166          buf[rc] = '\0';
+> 
+> The return is the number of characters written (starting at *ppos).  I'm
+> doing 10 character writes so it is 10.  The first 10 characters are
+> uninitialized.  In my test output you can see it prints ten U characters.
+> 
+>    167  
+>    168          ret = sscanf(buf, "%i %i", &back->cached_reg_addr, &val);
+>                              ^^^
+> Uninitialized variable.
+> 
+>    169  
 
-diff --git a/arch/loongarch/kernel/proc.c b/arch/loongarch/kernel/proc.c
-index cc1b7a96bb0f..bc1cd400025c 100644
-=2D-- a/arch/loongarch/kernel/proc.c
-+++ b/arch/loongarch/kernel/proc.c
-@@ -96,10 +96,9 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 		seq_puts(m, " lbt_mips");
-=20
- 	seq_printf(m, "\nHardware Watchpoint\t: %s", str_yes_no(cpu_has_watch));
--	if (cpu_has_watch) {
-+	if (cpu_has_watch)
- 		seq_printf(m, ", iwatch count: %d, dwatch count: %d",
- 		      cpu_data[n].watch_ireg_count, cpu_data[n].watch_dreg_count);
--	}
-=20
- 	seq_puts(m, "\n\n");
-=20
-=2D-=20
-2.54.0
+> # ./a.out 
+> Enter a line of text to save: 123456789012345678901234567890
+> [ 4266.853201] pos=0 count=10
+> [ 4266.853451] rc=10 buf 1234567890
+> [ 4266.854774] pos=10 count=10
+> Writing to file character by character...
+> [ 4266.858582] rc=10 buf UUUUUUUUUU
+> [ 4266.858698] pos=20 count=10
+> [ 4266.858740] rc=10 buf UUUUUUUUUU
+> [ 4266.858798] pos=30 count=10
+> [ 4266.858834] rc=10 buf UUUUUUUUUU
+> [ 4266.858888] pos=40 count=10
+> [ 4266.858924] rc=10 buf UUUUUUUUUU
+> [ 4266.859015] pos=50 count=10
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
