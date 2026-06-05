@@ -1,58 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E191F3B38AF
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jun 2026 02:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A817B3E6DD0
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jun 2026 02:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780628304; cv=none; b=nWovbC1TzWz96xL7rbbzVl6o/ewJglJHtamahrhtqoFo87wrP2zAVCHywedm5kBb2Wnz7BPyBpOoy95lE3ENI1IZwn0ehi+4I4HYDVXJ6YWKZALPI4Y6EBaDPRavt4nbnySNAiFmw00t0Sy5lpGeYSYn+Otud0mJbqOW2gGXZKM=
+	t=1780628370; cv=none; b=h4ou9GElTO2PyhOx/ygZXaP/+SuQxrWfBz0mHZAcIGOY2LOR5G1TbQfaOtg0nphWBPgsPsKnQ0kG2Hc0W8kQH+dyehryy+KPqmtGaul0L3HuMsQNnXVy6hbIVoM7sZnSBuAEyJ8anRXpE7+eNIRLgfyJjo3p/bzN6y8ON2ylPDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780628304; c=relaxed/simple;
-	bh=o+/PtSqXAX34dsMuEnsO65jQvtJSlKeuiNIBboPvtkE=;
+	s=arc-20240116; t=1780628370; c=relaxed/simple;
+	bh=nktvDi+xKyZUj7RdPCtd0VHwAzm5FVUJAEzFFALvsO4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XcobTn8AR8FNwOufH2PFIX7Si9RowfsIR+fk6egFqsIiS2sR0FasQAQYEa8nR89Lnbll/3KCIjvtLtTp2+ezf3Al+0J1lZHLYeb2GgUWI8bu6HrqlSEhCF1qmWx1bkaBa/7kDV3zfUknPFmUduzy9TRm4g8dIxSllELW/I+okE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eua4KSTI; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=NTkDuWqhk+OYpS3iJHNm5cygQ8XCgQ/nN3RWhqNWM1avb/8MxooYhuxxk+ddKJNsQgIScEriX4zRQTQqMj3eRaht1xiByeeG4U/bk5cpK1nbx0jWSTxL4wv/dRJxc2+wgpoB/Nctqu08m8Sv8mWsV/iT1OAm3AjpY6xeWqkzTcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mv0FWlR+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eua4KSTI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539681F00898
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jun 2026 02:58:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mv0FWlR+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D3A1F0089A
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jun 2026 02:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780628300;
-	bh=o4/gtuY4rDjODNkSVcliXzjeCYk36SUwHSb1oQckJyM=;
+	s=k20260515; t=1780628365;
+	bh=2BnhDWEdcgX7kHMY2/Qtsi0IbV+ry1r6Jf76CFL9m/Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Eua4KSTIguulYp/inuy0aWnD1493Rhz4OXyVbzXxg1jcN6GAyASf0MuDRM2tgjDol
-	 fVjjwVl+Wa6EYxv/Hf1Fv0JzlMvYyjoKyJJ/WXXk5SyMGNsX32naHGKYWhb7DVo7bs
-	 tA2oufhi7ahqWfq1sAnOJpbno/IeSKNmqrtMLSD28YZPvOy0odsWwjiuWYkQ/aVV1d
-	 uhv7CNfco5BNVg+sp/TINT8IXRGksYViTVFgDROC+/1rs2+7qnmkm44T1edFNSQI4j
-	 tLZ9Y3Yq/giWtI8EcZq39Opwi9x72IgZGFjYiP2LuUThPhTnFlywrpHz7OHCufl8Gr
-	 5BqUrsWH6sGtg==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-68c08bfe5afso2583109a12.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jun 2026 19:58:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9QgEm81dkizxPIUWDXTXFEEQIrCdNtMg5UQRMx4tedp4duH61U+iyUSWmEWIk/qmB9YEzMsXM/3lgPe0NnabE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXrAMSdL4KNS7d6Bi6lsrT9GBN2OjhJcwE7tRN2+Nd+3jRvls/
-	aluRSBBMhjlR86wLz8btYQBslJVn9jB7OKZ4SebosG4oNtnxEOFmhCyw8zkj6+EH3dzGsEmUyXu
-	d34F3kJVeZK95RU22DsHiS4yecvhT0kw=
-X-Received: by 2002:a17:907:96a2:b0:bda:8e57:5639 with SMTP id
- a640c23a62f3a-bf370f6abd5mr64198466b.20.1780628299069; Thu, 04 Jun 2026
- 19:58:19 -0700 (PDT)
+	b=Mv0FWlR+dBWKuVb4Y9dVK3UDsi6Kbfy/4WlrzbUhl4MVyC50NqG6lqiq2Mre3PisU
+	 8aS6f3Bd+atNg9r94lu8gArlIe4QVTlKVTEY+Us7L/QqHiTeqaJ/NnhjuqoUgJgM3p
+	 Z/zlS5iONYLkRwGRA7O7A3ZY6AfBOmN4fDqO6qkNl57ijYQjKSUjtytymkfy9ViegO
+	 zIxxLwxdpmSJ6i8p1SAV3noZ86iRH8+s06DMLxeq1GipiDKCABt9a7RiYRTZtjh4Og
+	 brdfFE1nXgyDiEqj8Nr49HIti8m1k/2j+hKt29PlYORG91G+KRLO9NbRmTu4UBJr+8
+	 PWDSI6fy7xWGw==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-beb8a08a6c8so203285566b.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jun 2026 19:59:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9DVCGo5hZ1QJDNtrhW7WmLjTw+q9nJeMOECzHfIwOfwPUolRxUUrH6co+QvIuUmp8BWvTyuHHWLBJOcMSE9tQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygYoSOug+Wamw4b/xg8ojwbzuAXGbnUq/PLGqM+u6kaI3Hs8nL
+	MHEmCwT3XhWBe3kk+/rhaWjgKTFjbKITXg8XehjWOvjGXjJu2/T55wIoENQAM6XlAkmfiP22nU3
+	Sn7xuk0m3ap2fqCiQLAEf9ps7pv65tEM=
+X-Received: by 2002:a17:907:6e9f:b0:beb:7979:47dd with SMTP id
+ a640c23a62f3a-bf3738f1f81mr69734766b.27.1780628364047; Thu, 04 Jun 2026
+ 19:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e9e46083-c250-4e12-8620-f590e9501a25@web.de>
-In-Reply-To: <e9e46083-c250-4e12-8620-f590e9501a25@web.de>
+References: <c36cab4c-0a91-4802-8693-a6ae3cee65b1@web.de>
+In-Reply-To: <c36cab4c-0a91-4802-8693-a6ae3cee65b1@web.de>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 5 Jun 2026 10:58:39 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6eFwN-f3UnXxo==Ywt80krR5L_8qFTWriwSpk5sF978A@mail.gmail.com>
-X-Gm-Features: AVVi8CdZ5nQcQsP6vzLwlMEtDKpuY1W5PFb2ZlJD6pFiZ_GeiQdNlREzTC0FhBc
-Message-ID: <CAAhV-H6eFwN-f3UnXxo==Ywt80krR5L_8qFTWriwSpk5sF978A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] MIPS: kernel: proc: More efficient data output in show_cpuinfo()
+Date: Fri, 5 Jun 2026 10:59:44 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7cEN+zw6M8ZyJUNGNv=Q-M=vyG3ocwDqn41ZHQvBJVCg@mail.gmail.com>
+X-Gm-Features: AVVi8Cdslvam3EeatbYu5wGh9V7ZzQ4_XDnT4ntjrZfZ1GNSK5Yng0l-ez8zUPA
+Message-ID: <CAAhV-H7cEN+zw6M8ZyJUNGNv=Q-M=vyG3ocwDqn41ZHQvBJVCg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] LoongArch: More efficient data output in show_cpuinfo()
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-mips@vger.kernel.org, 
-	=?UTF-8?Q?Thomas_Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: loongarch@lists.linux.dev, George Guo <dongtai.guo@linux.dev>, 
+	Hengqi Chen <hengqi.chen@gmail.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Wang Xuerui <kernel@xen0n.name>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -62,23 +63,22 @@ I suggest squash these pieces to a single patch.
 
 Huacai
 
-On Fri, Jun 5, 2026 at 1:52=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
+On Thu, Jun 4, 2026 at 10:48=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
 >
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 4 Jun 2026 19:33:55 +0200
+> Date: Thu, 4 Jun 2026 16:40:05 +0200
 >
 > A few update suggestions were taken into account
 > from static source code analysis.
 >
-> Markus Elfring (4):
+> Markus Elfring (3):
 >   Simplify data output
->   Combine two seq_puts() calls
->   Use seq_putc() calls
 >   Delete unnecessary braces
+>   Combine two seq_puts() calls
 >
->  arch/mips/kernel/proc.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
+>  arch/loongarch/kernel/proc.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 >
 > --
 > 2.54.0
