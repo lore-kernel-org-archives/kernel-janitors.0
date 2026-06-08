@@ -1,106 +1,100 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5101937BE96
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jun 2026 12:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6381A08A3
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jun 2026 12:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780921560; cv=none; b=qMx/IB2FR3TJSlqg3WQ4trmacZp4cwA9SFwA54v1kudoy6lIAqsRbjVG/a9vwlChWvJqllAZAlKwsR2rzFy4bZrwW/WEre02ejvuwva+H2JdQNbU7sCsJaxSePsk1IJLCBak0nK8qsCKFhdXFiquRa5nJysL6JlYJOQGXPr7r6s=
+	t=1780922096; cv=none; b=LKgJ2F0f4Fwzn7EWSz6Mggem6iV8feL4D/eQLOJsFuQ354Ap8H4n+OhJUvD3ANOwt8LoPGy90/nDFdnLSx+oHv3NEHECQi/ODn15YgZwF7GfmWfC8P/HyWWb6IwmjIyydCLw8TbeErCp1e6EraMIPG14EzlOHgIVW4au2wtWTec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780921560; c=relaxed/simple;
-	bh=MWsgaJtgG2Cozntxy0sxcikOkG1G/1hY3SQFXFF+e0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=coV78wSQKsJTdEMjD3hlW3UNzuBQbp9dMP/sEDTRgyFbX9omvFAFmskSRXuw9/kbssd2Gj1QisHiUxzaCkpWNp1fyL8qh2BrLUUtF+h1X/h3F8uyZMCsr89zKpIRfWBRhkGfvI+EWdBzzXM6YA/bkUoyBpDMQZ0bqq968sIwACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RK+koJs0; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1780922096; c=relaxed/simple;
+	bh=DlPYUgHKFlKkxwKG/MJLNLlN2G2FcsJYjaMptCVzgjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Bz9WyoosHwey7Zvk9uS/lVCb4BKD9tmkAoYbIKzmtL92H+RBbN36320zndu8aBCjD5W4hXQZYJeCnUArDjCukjJNTXU+2zW6plZf4iMnvxt/nYPj+EfY2rOoWKEeodtIXMW7eaLUXxNgq4LIfTU1uKAHo2P6AcQCpXsTf2pt7k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqqaUyRL; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RK+koJs0"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-490bc6a7958so37659495e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jun 2026 05:25:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqqaUyRL"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-bec49f7e35eso570261166b.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jun 2026 05:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780921558; x=1781526358; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HToUuJ6es2zjFw8PTyZUYRF4Q9UIJtuonF67RdPYTL8=;
-        b=RK+koJs08hL93jsKkVI/2MT0F2hxjwtDKskuWduC9unKWmIgOmpn1mN3H7LgZKksdA
-         j63pQgXIKj4yGPYD7uZGIFSiupNzHRRuxQsQaT0JDpF1QiABQAbqRSi/5qMou9nB80jU
-         yt8eBvjPVLseS9lN4j0mZ01nwr0lXtGJLL8B0L7CgoKl/Ev57+wHt7wkpWJsJr2/tVyt
-         k+PE6Tr/VgNpU54LsIdS84lj2N6tyflIqv5lLAr+syxsz2QzoiuZ9Yw/P0va/7lwCNHi
-         JsJpZBDjPSu2ToV2HJCDh6F3dcvfwyQlB2DWeNWY09jKXaO/VGaTE8pMKE7t80jGHbpc
-         MeTg==
+        d=gmail.com; s=20251104; t=1780922094; x=1781526894; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=51QOmcfHJGG9xTSzJNyI3kOBUAZjF52SeLGAO8MU7Gw=;
+        b=UqqaUyRL2FfjTlL3FQFTV6QdsRSw3BoEk8sx+3JRlYzMZ2wfLF3zn4gaQaRDRSUq4S
+         q38xgBJk1ZqWAncuvsdniWs22+qL5SH9OIaFuKPfKbSiV9dS/oMIhG4ILqhJfhaF88Hg
+         NUyIetiI1Ua8/xMbiTaj8g6gWAd5/lTllHLo3Ul1dl+Ay4hwrxdahsr0is2DjG8V+bc2
+         qmqAlKcozgXPmsWHILkAn3VsKwyqj36gxvxccv+cCUnKO5cpLU/s1SxzKUtPIxpqyxRT
+         I6FWwyQqev4HsrXEMQUbtkGiSEhxdPrSSHiNPuDKVG1NL5EydThcPY6M7lzBsF1utOLJ
+         aPeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780921558; x=1781526358;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HToUuJ6es2zjFw8PTyZUYRF4Q9UIJtuonF67RdPYTL8=;
-        b=QsSECbxc/2VNwAIKaKEdSwXu9x8FEGpucz2RkcbmlKJSQGXdBCKEk4/KDFiwyARzgo
-         /L22wHfzj9Xf8iflr/CbJ0MggubItYgvbK0y0RD8PgzX4jono4pdmvftsBfbIaHj0wIS
-         mrAWAXd1XodfP9e96tU3Io/e8ykGI7mRJKi0XmMyq229xCcHLUhn7U3ZWyH175/aEg2a
-         luWZlZUPSNWKXOeqsQiJRLz9/K8sqLZoYwtITBWk4mbZPywv9gCFqnIxXJoWOdC5Yzr4
-         D4yNtVvEj7+NPLSYUm0Fi594rYIpkitmh2LVIy0wVnE7uw74hu0k0zWbhkZWP4SSxTs9
-         5z2w==
-X-Gm-Message-State: AOJu0YxO/3ieDfGxEjISllmrsLkku6Yphfq8dDTBFo8TblvVPdxV1nVK
-	oTrRrIgzXLh/hGf6/y9WcQiRjCPjXvxStUDOeaKZ5qsVI/QcFKxdwIlA
-X-Gm-Gg: Acq92OE5uEA43O/6dfmk+8mLiON6lda6sbzkatdfzHv0jE26MnqQ59DdPN1enTx0ez1
-	ANzYmIY+jIH938mmwa0DmQC5zTrWRMKi5sdMniwBi2WUZJqdVF6MhqeHn/akAC0SyhNXrTZSCIl
-	x2sgWgJxF2L5JWnXTRq/DI6szPbD5H3S1vd/2Q9OrB7N0vILcMjxXRzYABvjRaL9gTACpxwoez/
-	HPhXMk6lgC2+0tqkWBN/FYV6ASp7aFXuIaivTgRLu5R8gvzDxguN++lBpA6b6xA6F6EmEoJN4dU
-	1X8yFOMU6U3xa2X1PgUCfHUNWOWNnzLgbwPpGrEPSfUXYLRIalot2mNbQsex34Gjxo3Mxujkq6X
-	4GFogWpdwh7HDeRtnvnf0YFqPy/4iZdYGoVoL03gqCa8lr8JigOLtSigkUQOv5cvoQzhqcepli1
-	iqd2AK40ssiZHhnolr71UyqGzM3NtbKnoY
-X-Received: by 2002:a05:600c:8208:b0:490:ad1e:1846 with SMTP id 5b1f17b1804b1-490c2cf6718mr190635455e9.9.1780921557568;
-        Mon, 08 Jun 2026 05:25:57 -0700 (PDT)
-Received: from localhost ([87.254.0.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f351d69sm94264837f8f.29.2026.06.08.05.25.57
+        d=1e100.net; s=20251104; t=1780922094; x=1781526894;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=51QOmcfHJGG9xTSzJNyI3kOBUAZjF52SeLGAO8MU7Gw=;
+        b=dt00jG7EvCKVr6vtMaKDUlNaL8VJ9G2gG1bj9YEadqND84sDJqeNHXe1mNvezlc0/c
+         vTiY090hnjuuEFFrL0ZErO3AxqO6LHjnScbJaOlsSww7TrknrJLQ6WAHpPePE4KQEX9L
+         L0xUhxxbZPzRxHhL1tWvZlBY+MuBMAlPyijX2VbeUuF/uKDzM+fHXy59/TBFkWw5ogWN
+         O5Gci/K9wCmST4+uVaOs+xmQYLu/jD4wbcORx2zSF4MA13HV18fXRE3fBnWz+vAHTjib
+         hbwvC7YouPJudfjIm97q/0rqWe/DqaiwVRuFDiZTTEqGLUNw9kT4/Cb3uQ/GuoqPLRXo
+         uYlw==
+X-Forwarded-Encrypted: i=1; AFNElJ+cIFL4c9NeCtXH4GACvMSev4n8zvqJ3xZ2hIurSdCtQPbTxi5p7uUBf9zJrsIxk4VmSdpwNvn2zm5ivpTXKzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHMm+ymmk3Tn7ER5aUAMfHp31mUc+ZHApqvau1TUTNbPhg0YNR
+	8rY/ioBilP1AvYen8jzIKCDp6vGRUeXjZ8elp4OXTJSp2Lq9/MXX0BXK
+X-Gm-Gg: Acq92OG2Ur7uWRFkLxhHzMbc68sh5ldXZ5pIVf8OXY3Xj/1RgkKxfWZsl19uHMCDPEm
+	DrnhUWAPpa/YzwYWSICMB8L6zz/x08HABCp+OczEvEXspwXt5GxG8sJwl6JtGMFiZr4LhC0yFIE
+	wK3aq/qeOb8MtqQBvo85O+nmrYhc0Zm3TetsB2r+mCbUtcQhTk7uT8bN9+F9UjSzcRv6cvF9OJn
+	3X9nJSpOhaQq+qWNIHBiA8HUTxqWRV+N0f5xdxrpQkKVoayca0aGZD3zz/zsYZFQCJ3a8UGdTGd
+	07jPuEdAD0n4jdzmvdNAuO5MQyuCgpyQAnXySF9w1OT0CxE5VYFJoNA1gzsY69nFl8tf8F/WIHR
+	I5ymupRkcKGeNML1yjAMfiGuNIcq5rciJ5LNvmMT172jNINl5+HMt11cb+OxuGvwGKxzmr2gz+Y
+	OXBWD9SOM9i+uar1A9wZ0oTWd2G3AS
+X-Received: by 2002:a17:906:8a76:b0:bee:280b:8bed with SMTP id a640c23a62f3a-bf370e6217fmr535751166b.22.1780922093816;
+        Mon, 08 Jun 2026 05:34:53 -0700 (PDT)
+Received: from localhost ([43.225.189.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bf055303fc6sm877557266b.42.2026.06.08.05.34.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2026 05:25:57 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/display: make read-only array rates static const
-Date: Mon,  8 Jun 2026 13:24:27 +0100
-Message-ID: <20260608122427.48375-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.53.0
+        Mon, 08 Jun 2026 05:34:53 -0700 (PDT)
+Date: Mon, 8 Jun 2026 15:34:46 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Kuan-Chung Chen <damon.chen@realtek.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] wifi: rtw89: debug: fix off by on in rtw89_ppdu_str()
+Message-ID: <aia25i0ds3B6QF6c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Don't populate the read-only array rates the stack at run time,
-instead make it static const.
+This > comparison should be >= to avoid an out of bounds access.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: 419ed7f4a053 ("wifi: rtw89: debug: extend bb_info with TX status and PER")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/i915/display/intel_hdmi.c | 2 +-
+ drivers/net/wireless/realtek/rtw89/debug.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-index 9076c2b176ec..351a62654a8d 100644
---- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-@@ -71,7 +71,7 @@
+diff --git a/drivers/net/wireless/realtek/rtw89/debug.c b/drivers/net/wireless/realtek/rtw89/debug.c
+index 8f5af873e09f..5786120602ab 100644
+--- a/drivers/net/wireless/realtek/rtw89/debug.c
++++ b/drivers/net/wireless/realtek/rtw89/debug.c
+@@ -4348,7 +4348,7 @@ static const char *rtw89_ppdu_str(struct rtw89_dev *rtwdev, u8 type, u8 subtype)
+ 	const struct rtw89_chip_info *chip = rtwdev->chip;
+ 	const struct rtw89_ppdu_info *ppdu_info;
  
- bool intel_hdmi_is_frl(u32 clock)
- {
--	u32 rates[] = { 300000, 600000, 800000, 1000000, 1200000 };
-+	static const u32 rates[] = { 300000, 600000, 800000, 1000000, 1200000 };
- 	int i;
+-	if (type > ARRAY_SIZE(rtw89_ppdu_infos))
++	if (type >= ARRAY_SIZE(rtw89_ppdu_infos))
+ 		return "RSVD";
  
- 	for (i = 0; i < ARRAY_SIZE(rates); i++)
+ 	ppdu_info = &rtw89_ppdu_infos[type];
 -- 
 2.53.0
 
