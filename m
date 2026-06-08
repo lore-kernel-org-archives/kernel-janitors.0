@@ -1,70 +1,75 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288AC370AE4
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jun 2026 12:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5101937BE96
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jun 2026 12:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780921211; cv=none; b=inzrfx/XTKRRPIVzBiM2YrDFEZ+ONEHhRHK2k7uEdCRsanue9NiG8ys3YZIQ4BsHfpIwL1gB0SEWQLS91fJj/DSOLphc2OnbiqdPK148O9KeHMo9Cfs1tEri3zyWRKbO1bYbiDciWYk0ZoGO7cg/mLNev58XMVc7gGKGz3T8KxE=
+	t=1780921560; cv=none; b=qMx/IB2FR3TJSlqg3WQ4trmacZp4cwA9SFwA54v1kudoy6lIAqsRbjVG/a9vwlChWvJqllAZAlKwsR2rzFy4bZrwW/WEre02ejvuwva+H2JdQNbU7sCsJaxSePsk1IJLCBak0nK8qsCKFhdXFiquRa5nJysL6JlYJOQGXPr7r6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780921211; c=relaxed/simple;
-	bh=8Oi1ZNabz6ivVcx7FnkiWY6VwxVK9IKtr28z5yyrbl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cR350TyJhZm//bpFD9bKhbN9mqt0rkCP2r/sZu3dyrOeHx/Nq3xyJAixxKSSuaGw0g1yoJ41nLzriXqxKwWUoQYEzqgdNSoBl8TIbli5dEnKFKtACEuH9Ngz5OQIcSF77nTeV2B845zRfD4kYINRgn3rPUozbnUxB1rdlnRdJYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfniGzfb; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1780921560; c=relaxed/simple;
+	bh=MWsgaJtgG2Cozntxy0sxcikOkG1G/1hY3SQFXFF+e0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=coV78wSQKsJTdEMjD3hlW3UNzuBQbp9dMP/sEDTRgyFbX9omvFAFmskSRXuw9/kbssd2Gj1QisHiUxzaCkpWNp1fyL8qh2BrLUUtF+h1X/h3F8uyZMCsr89zKpIRfWBRhkGfvI+EWdBzzXM6YA/bkUoyBpDMQZ0bqq968sIwACU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RK+koJs0; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfniGzfb"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-490a76757e5so27158105e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jun 2026 05:20:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RK+koJs0"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-490bc6a7958so37659495e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jun 2026 05:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780921208; x=1781526008; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780921558; x=1781526358; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ohRW9gG8lyl3LlFf2CuuLurz89yotsvIxB/I8LMv+rA=;
-        b=RfniGzfbPWGcR4wgP2VeOZmMvJD+T+/K4y0UgECX4lJ+lWfqbl3OhZMjNspLPLi5u4
-         opJnjrAavy0AYL7vTHRP561WaZNPOtFsThwFYBB6xQKt2V6lscOlX8otRAkHA05POIOy
-         CRGJZVLnX3H6uIQBoxOemtfG2wdH4IwAeOqps3A0EpmJQPLMkXYmjinys4ekZjlDgWj3
-         LjfUF9lg3hLdXmyf0JoZ4jWDver8TQp6xK78pvkHLFx4mCNpp0rXUKyYZv5+jNJlk5fV
-         ANqt7+xhgn/VnLDKphCgt7bm5bYb2aNY57hFHQPTPXuepvZdGP9XQVOETqVy1jTmEqMx
-         G6KA==
+        bh=HToUuJ6es2zjFw8PTyZUYRF4Q9UIJtuonF67RdPYTL8=;
+        b=RK+koJs08hL93jsKkVI/2MT0F2hxjwtDKskuWduC9unKWmIgOmpn1mN3H7LgZKksdA
+         j63pQgXIKj4yGPYD7uZGIFSiupNzHRRuxQsQaT0JDpF1QiABQAbqRSi/5qMou9nB80jU
+         yt8eBvjPVLseS9lN4j0mZ01nwr0lXtGJLL8B0L7CgoKl/Ev57+wHt7wkpWJsJr2/tVyt
+         k+PE6Tr/VgNpU54LsIdS84lj2N6tyflIqv5lLAr+syxsz2QzoiuZ9Yw/P0va/7lwCNHi
+         JsJpZBDjPSu2ToV2HJCDh6F3dcvfwyQlB2DWeNWY09jKXaO/VGaTE8pMKE7t80jGHbpc
+         MeTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780921208; x=1781526008;
+        d=1e100.net; s=20251104; t=1780921558; x=1781526358;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ohRW9gG8lyl3LlFf2CuuLurz89yotsvIxB/I8LMv+rA=;
-        b=M5UuerGeYGwOIfjN8zzsCy56UZT7KH4ZuGxoQzFj15RvKs/CJUGkV8zktd/mcNnbMt
-         jfu2NwHYHXrpXr1Ab6I/cLRw71b00EoCsYzuec5atOoaFJ6ct+8wkA/TBYqQiflplCtM
-         cYhZF8noNMwrmVikQqZN6wa4eRpZSzFYXbHD59FIhJGotbK05d8YYbHGGtUdgXHfdPe1
-         A3dIfUFeLucmPwl3+l65+zHJ7OV8ttzy2ime+rC5gsoCPjFgy8hcT3cIRDHnVO2+h/XH
-         UEbePgSRq7x/hgXG9aDpuT96afJ5JwsNQP5vA5qwX7tca8QaleCrE75AxVgD8vXj94Wv
-         vSkg==
-X-Gm-Message-State: AOJu0Yz6bpOmGlNNI7lvp8kBsbCtZxgqT0P2n37HHBHG/FzSmbfIVMIs
-	wzFtMYZnwdGi1TBqJzX3VvGnFIPbKR2+dHZNBDHtTpL6e8BKE2ZbJXrs
-X-Gm-Gg: Acq92OFLAEg6Jekf82zBTJ1ar4Qp0duZu9AfT4g1vFafNnJe/B0+Y/cisv0ke6q1iyD
-	SPuifMPvi8CGT8e6AM6biu4rU5eJcjkxFWGI6LhXRTS48YPRZ/pml2HUuRu9Bz1OVOykMQI0ckN
-	+BUI7XeEDItPak7Ef4omb9cop+b/9fN5uIXG3FilYt0ey+cXuExsh+3W0ObhqV2U8dcM4+vYJF9
-	sgPaY3mA6dhRDp7Fhakdm04u7Qrdz338Y4HL2Xj8ocVJr0n+IHvNC4xl7dslzJR8AiLOfK1Dyfe
-	7BmiM5aXwXVqtIb1pilmXj0VD6kRv0J2u+EeBQQnyBpaK3CliYjBq/tl/uQxdmsPn4YcJJq3s9w
-	tGHl3cW8H17IQLASKG5h9hHi6aFAL4WUVGxWwxf/+jsYSoVRPU0uuQV2n+ehrlblJ50Fc7drtMj
-	3p6zSfWQ0iPs73PJ+d+qjnH5bSeKNLwSJd
-X-Received: by 2002:a05:600c:5248:b0:490:c024:2ec8 with SMTP id 5b1f17b1804b1-490c2522657mr251577045e9.0.1780921208481;
-        Mon, 08 Jun 2026 05:20:08 -0700 (PDT)
+        bh=HToUuJ6es2zjFw8PTyZUYRF4Q9UIJtuonF67RdPYTL8=;
+        b=QsSECbxc/2VNwAIKaKEdSwXu9x8FEGpucz2RkcbmlKJSQGXdBCKEk4/KDFiwyARzgo
+         /L22wHfzj9Xf8iflr/CbJ0MggubItYgvbK0y0RD8PgzX4jono4pdmvftsBfbIaHj0wIS
+         mrAWAXd1XodfP9e96tU3Io/e8ykGI7mRJKi0XmMyq229xCcHLUhn7U3ZWyH175/aEg2a
+         luWZlZUPSNWKXOeqsQiJRLz9/K8sqLZoYwtITBWk4mbZPywv9gCFqnIxXJoWOdC5Yzr4
+         D4yNtVvEj7+NPLSYUm0Fi594rYIpkitmh2LVIy0wVnE7uw74hu0k0zWbhkZWP4SSxTs9
+         5z2w==
+X-Gm-Message-State: AOJu0YxO/3ieDfGxEjISllmrsLkku6Yphfq8dDTBFo8TblvVPdxV1nVK
+	oTrRrIgzXLh/hGf6/y9WcQiRjCPjXvxStUDOeaKZ5qsVI/QcFKxdwIlA
+X-Gm-Gg: Acq92OE5uEA43O/6dfmk+8mLiON6lda6sbzkatdfzHv0jE26MnqQ59DdPN1enTx0ez1
+	ANzYmIY+jIH938mmwa0DmQC5zTrWRMKi5sdMniwBi2WUZJqdVF6MhqeHn/akAC0SyhNXrTZSCIl
+	x2sgWgJxF2L5JWnXTRq/DI6szPbD5H3S1vd/2Q9OrB7N0vILcMjxXRzYABvjRaL9gTACpxwoez/
+	HPhXMk6lgC2+0tqkWBN/FYV6ASp7aFXuIaivTgRLu5R8gvzDxguN++lBpA6b6xA6F6EmEoJN4dU
+	1X8yFOMU6U3xa2X1PgUCfHUNWOWNnzLgbwPpGrEPSfUXYLRIalot2mNbQsex34Gjxo3Mxujkq6X
+	4GFogWpdwh7HDeRtnvnf0YFqPy/4iZdYGoVoL03gqCa8lr8JigOLtSigkUQOv5cvoQzhqcepli1
+	iqd2AK40ssiZHhnolr71UyqGzM3NtbKnoY
+X-Received: by 2002:a05:600c:8208:b0:490:ad1e:1846 with SMTP id 5b1f17b1804b1-490c2cf6718mr190635455e9.9.1780921557568;
+        Mon, 08 Jun 2026 05:25:57 -0700 (PDT)
 Received: from localhost ([87.254.0.141])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc23394asm386889605e9.0.2026.06.08.05.20.08
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f351d69sm94264837f8f.29.2026.06.08.05.25.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2026 05:20:08 -0700 (PDT)
+        Mon, 08 Jun 2026 05:25:57 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Koby Elbaz <koby.elbaz@intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Ariel Suller <ariel.suller@intel.com>,
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] accel/habanalabs: make read-only array edma_queues_id static const
-Date: Mon,  8 Jun 2026 13:18:37 +0100
-Message-ID: <20260608121838.48011-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/i915/display: make read-only array rates static const
+Date: Mon,  8 Jun 2026 13:24:27 +0100
+Message-ID: <20260608122427.48375-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,35 +80,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array edma_queues_id on the stack at run
-time, instead make it static const.
+Don't populate the read-only array rates the stack at run time,
+instead make it static const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/accel/habanalabs/gaudi2/gaudi2.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/display/intel_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-index 5d9c6f0698b7..1d4154cebcff 100644
---- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
-+++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-@@ -10668,10 +10668,12 @@ static int gaudi2_memset_memory_chunk_using_edma_qm(struct hl_device *hdev,
+diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+index 9076c2b176ec..351a62654a8d 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+@@ -71,7 +71,7 @@
  
- static int gaudi2_memset_device_memory(struct hl_device *hdev, u64 addr, u64 size, u64 val)
+ bool intel_hdmi_is_frl(u32 clock)
  {
--	u32 edma_queues_id[] = {GAUDI2_QUEUE_ID_DCORE0_EDMA_0_0,
--					GAUDI2_QUEUE_ID_DCORE1_EDMA_0_0,
--					GAUDI2_QUEUE_ID_DCORE2_EDMA_0_0,
--					GAUDI2_QUEUE_ID_DCORE3_EDMA_0_0};
-+	static const u32 edma_queues_id[] = {
-+		GAUDI2_QUEUE_ID_DCORE0_EDMA_0_0,
-+		GAUDI2_QUEUE_ID_DCORE1_EDMA_0_0,
-+		GAUDI2_QUEUE_ID_DCORE2_EDMA_0_0,
-+		GAUDI2_QUEUE_ID_DCORE3_EDMA_0_0
-+	};
- 	u32 chunk_size, dcore, edma_idx, sob_offset, sob_addr, comp_val,
- 		old_mmubp, mmubp, num_of_pkts, busy, pkt_size, cb_len;
- 	u64 comp_addr, cur_addr = addr, end_addr = addr + size;
+-	u32 rates[] = { 300000, 600000, 800000, 1000000, 1200000 };
++	static const u32 rates[] = { 300000, 600000, 800000, 1000000, 1200000 };
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(rates); i++)
 -- 
 2.53.0
 
