@@ -1,80 +1,112 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A15724BD03;
-	Tue,  9 Jun 2026 00:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7014349CC5;
+	Tue,  9 Jun 2026 01:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780965885; cv=none; b=EGdmkirnozNPHEgZms9J1XrR5MVLRFHGfqN8xG/nN847DuzZ2ByCfXVxxKL8dnMVQ8RvwciHLmDJ5+T46LI010wSAA1FnDiJ1bq80MKzDanx0rCCAd17Pu5r4htfh/fEhy3zpUbcnDlwog8ny426xLXAuLrx4JbADovxrBcuyO8=
+	t=1780969158; cv=none; b=LgNNVTJQsSpJVlgufoIXkpRRia82BzfC2vg7dso5X1ljXKFnKrIBwlvZkbWoh+AOSbO+LBKlKXlXsUy2QnDRsReJpvcW3s2qteinO98qNw+cykkkrVyREOYOWW4u00FACGalsrjDvvXT929FNQNMaofCvSe2fC1Zb9EHZ6zYcZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780965885; c=relaxed/simple;
-	bh=OMOnNf67dhajL95LBndmKkwgnUOwdYU9XDWpBEw6ZcY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UHgPJarW5k3vZXvYM01ShNmNssKA9Jkxl7nFRXFsqv+BhEW5TN/ZH8J6xurdGhW+dCsAahTavmo6hYKIibUtj8di6MUytMTzNgf7wL7rygR94kLmyWGFRosS+f3T3pnc3aZUeDBQayRlPBR3Pbkek+s6RExDB/qByaqahMKRloQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=iX7VOQNI; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1780969158; c=relaxed/simple;
+	bh=fvMCTVcN6KAdLp2AWixciq+uVtvac0zYkxWj+S5hoM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HQESuDmOq8FxOZsA/G44kn0U6pL1I3x6SJO/6Bs2HxjVx/ebRjWdblMhVXACA1LRSw7lpydsgc5bCrp5wprTXEMG8qeDpwHmTje09W385jTWiSV/fZXht78R11z/W2tBFE2s48LUToA89G6Zwgbh1njQmBHLLZRU5OezsZnRb6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lb69LlS3; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="iX7VOQNI"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6590icYG34019531, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1780965879; bh=OMOnNf67dhajL95LBndmKkwgnUOwdYU9XDWpBEw6ZcY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=iX7VOQNIAftuMlYCQBw19C8m7fxpsSsKsWbh49TCnOzVNOJO54NIzEHEAnQ9U7EBo
-	 dXGAbuM1+3pofuGQfNbmUPbkvmI5JERhuYQs6f3UbI7J8+j/0U4ZlXIfsr68fJiOw+
-	 9t0qlfRiKKsgsRMOfuBFHlZM+eUmrZI21RvtmPBfrAeMg/a7OMvZHALWt3vVf1E6hI
-	 HzfSvLwewICm6e40v9voZ6k+LfuqZ4vSM3T+338pm6n5+5mLln1wU7742IUc9CsWGb
-	 MTQpPpzBF88pbmAUHt78h/6t7sboo2ITnpihKsFqghX7EgpdvmDnRRQF6odPfa9/Rb
-	 TbgJ4+WCieHUg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6590icYG34019531
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 9 Jun 2026 08:44:38 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 9 Jun 2026 08:44:39 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 9 Jun 2026 08:44:39 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::e6fd:5a3f:8946:92c4%10]) with mapi id
- 15.02.2562.017; Tue, 9 Jun 2026 08:44:39 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Dan Carpenter <error27@gmail.com>, Damon Chen <damon.chen@realtek.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH next] wifi: rtw89: debug: fix off by on in
- rtw89_ppdu_str()
-Thread-Topic: [PATCH next] wifi: rtw89: debug: fix off by on in
- rtw89_ppdu_str()
-Thread-Index: AQHc90NBELWPFUshn0eHlWtcYb9z6LY1Y0Tw
-Date: Tue, 9 Jun 2026 00:44:38 +0000
-Message-ID: <68c89cedd8d746c7b694a5ec98064d15@realtek.com>
-References: <aia25i0ds3B6QF6c@stanley.mountain>
-In-Reply-To: <aia25i0ds3B6QF6c@stanley.mountain>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lb69LlS3"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65900LdE2349178;
+	Tue, 9 Jun 2026 01:39:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=Lcl0BstYUxsefBqwipch3xQFnip0+fHwevCBG6NBclQ=; b=
+	lb69LlS3m3K2kUUJlfIih7FxdCf1u7hjb1jy22xcv4FSRaeL5QyW7EX3Xsa1SqGR
+	NIKkLeOQ5kxcIAVuaSrwB1/w0BcjqOLL275a/T3sdzN3ZYbPU2mOEhGVhsmwIcAN
+	LOCfHyZKG+9TRnMSXriulb5AKqX0XwWkDADMtUeDSYCjsx7jVwOMxhf9EhL3K2lF
+	fKeIqzNGIFxNEQfL2zxl62pTEru/fVy8p1MzrUwRSDP/UkXJgidjazu2/684eprX
+	1c90OMYzJre36nhBzbFEDFh7rUFlrZZ+geebXWVgTQyWbOzqauC/3yZeiqTmPPdE
+	2vZiAw1Ep3nAKhXKGVKOTg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4emab4kh1f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 09 Jun 2026 01:39:10 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 6591caFP028119;
+	Tue, 9 Jun 2026 01:39:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4ema0pgerw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 09 Jun 2026 01:39:09 +0000 (GMT)
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 6591d6Ap030153;
+	Tue, 9 Jun 2026 01:39:09 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4ema0pgepy-7;
+	Tue, 09 Jun 2026 01:39:09 +0000 (GMT)
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Deepak Ukey <deepak.ukey@microchip.com>, Dan Carpenter <error27@gmail.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Radha Ramachandran <radha@google.com>,
+        Viswas G <Viswas.G@microchip.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: pm8001: Fix error code in non_fatal_log_show()
+Date: Mon,  8 Jun 2026 21:39:00 -0400
+Message-ID: <178094912085.1810714.11673729902733436074.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <ahs-bEsBJH0KhnsX@stanley.mountain>
+References: <ahs-bEsBJH0KhnsX@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-08_06,2026-06-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=810
+ adultscore=0 suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2605130000 definitions=main-2606090013
+X-Authority-Analysis: v=2.4 cv=cL/QdFeN c=1 sm=1 tr=0 ts=6a276ebe b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=jiCTI4zE5U7BLdzWsZGv:22 a=o5oIOnhZENCTenyL_yNV:22 a=VwQbUJbxAAAA:8
+ a=7xTS_6aSO5IyjhvCIu4A:9 a=QEXdDO2ut3YA:10 a=5yU3S35YU4bGjq-dph-N:22
+ a=Bho9c0fBagfJEIQBS7DQ:22 cc=ntf awl=host:13723
+X-Proofpoint-GUID: STkDJLyVl765nYv7hfLOWN7wb2lwavl6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDAxMyBTYWx0ZWRfX2Ac11xUC+G0O
+ x4XrHzM1kL3jncpS0+3MUoGWf43ZBFwH7tYEZ6lockGfrYd9Yy397i097gxs3Pk+ya1v6BAalK6
+ OaGbh81fmQVtrxC0qWTsLVkus5NNsGZjE7IF4B1kI7Uza294ZcuIUAdFtAO+qilzGAWPSR4lwt5
+ CuTMbzCbB+hznM1+Pq21venz5vO6CO749MdawKHr8uIutv5a6sR3BBhoIapsaK3zBi9871H3k0N
+ rIaNYWIaG5kQK9uUsRRqXZ0ger+23yXuppsSUFQzCkq4ED6K0z5lVWRmQgYXHhbpT8PcPQyP1ex
+ px0DE73e4zmnltJls21bVyFmirSr7HocoWxLey7XDRnn0SEFOZzS4BLyHfWta2DsRwCDptlKxx+
+ w0Ww4bXV/k8BFLrkLqyJBGLqj4nbDOf/V80Ig1X5QFrIRcY5x3KhZzZelIYDhsruUz/DOUU+0SK
+ +NApLa1ZFfF2TMNi1uziVki6RVI+gdQjAwdc5hJc=
+X-Proofpoint-ORIG-GUID: STkDJLyVl765nYv7hfLOWN7wb2lwavl6
 
-Dan Carpenter <error27@gmail.com> wrote:
-> This > comparison should be >=3D to avoid an out of bounds access.
->=20
-> Fixes: 419ed7f4a053 ("wifi: rtw89: debug: extend bb_info with TX status a=
-nd PER")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+On Sat, 30 May 2026 22:45:48 +0300, Dan Carpenter wrote:
 
-Thanks for the finding.=20
+> The non_fatal_log_show() function is supposed to return negative
+> error codes on failure.  But because the error codes are saved in
+> a u32 and then cast to signed long, they end up being high positive
+> values instead of negative.  Remove the intermediary u32 variable
+> to fix this bug.
+> 
+> 
+> [...]
 
-Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Applied to 7.2/scsi-queue, thanks!
 
+[1/1] scsi: pm8001: Fix error code in non_fatal_log_show()
+      https://git.kernel.org/mkp/scsi/c/1b6f03b7ae9e
 
+-- 
+Martin K. Petersen
