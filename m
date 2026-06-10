@@ -1,147 +1,195 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9089342982C
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jun 2026 15:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2011A683E;
+	Wed, 10 Jun 2026 16:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781104959; cv=none; b=sk753re6h+A3KxKAwFu4nCPVGtOfArJj/N74ws5RFA7pp1DS98KyAPWcicglXxYoOiGqggZXoDOm3cR4JKBrUokqM/uNqyDrS/+pLdgUwq58pmBWQDXZJo3de0Sg9trCz5hItFlxfi+dpoDIdfvXI43fZ32Ti2ogX+idh5anF00=
+	t=1781109318; cv=none; b=o6M74gtW3GBPxpcA8IGV3UjwN1URW8SOggwkacqkSU5GJ4sjhIg7umtnqPzxKxSVoxcmxrW0/hGnzCDt1ZwNr4iT6glnW6HzGQo2d7DtI0CLDEoYH9g+US8R5Y714x6FUpq8ooU7LbpWBdP+j0ETj2c8mAv2FWS8Mu1kQiRNcio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781104959; c=relaxed/simple;
-	bh=TMkRIjsVvgVjorZf5zlOnBmya7zcbOedJN+u8pQergc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UNZ0aVsdhxvR6IIxeiZpQujYzEvb+uHl7R2wj0AalBaeWO5v2Ern0ZQj41pGCE8URZerAMGr6zSUoZwHKMl/Pszbeb2+4rLROEK1RD57nZrES7hvLEhBGsNRGJpsvf15j+v+7HqiJwHlwT9Dm73jY/gh4hmxWqLTwehyqi3Qr24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0rJFNSk; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781109318; c=relaxed/simple;
+	bh=B7VzD0VMGSa5uz2dpU/gQmT5ltM7u/YBrB6Ph/C5o/g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=sClL4OObP8YBnWuBRYtKAOM6ltToqH5f7nHe8sA77NGck9SWychm9GJ+fLwZQ0DYPS2WFX8D9eXRzW+5+z6QGFTQbQvvdTWpSVERIhZVpYbonyDy/Qm61ivXxbUwAJ2BS8Ud1TiSIBStzCG4b6CQpxmAKMOFY5oa7RE4+zP2WeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rJQXZXbF; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0rJFNSk"
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-6cfcad4f979so5747649137.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jun 2026 08:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781104957; x=1781709757; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KnoKGqOpcZWatdjAe7DrhKmxmFRx0h9ZTTRZbMMBycg=;
-        b=f0rJFNSkJQXLRmAVXQU0578OuIbgtjG4LDtJYwAl8/Uoeo/xb+jb1TeQWZG1jRLl6W
-         /Q7JRKpPJ3hMWcyQy1/jeJbQIyzrbxlocgiKR1n0xFpLNN5AomV5a5pKGtFl5H57WZPe
-         ODYo/rJqGrHlGUxXYYddiryGIgPpm2zxSQ8jiOviKW84MGXZdr1vwGdUYjn1uxEhM0fq
-         xnjTzUHqmP8DsEaVuv2yJtZq9H8uXtQOB3S114/x7xuQPyo5O8qEZl4mVBwo7nS9Ga0D
-         CqHMdc6h7QeapURMPS3F7UhEjh14fqzC/QW7MkflF4BDx9XB6m+NrGxaOdoyqP+ASOME
-         ddmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781104957; x=1781709757;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KnoKGqOpcZWatdjAe7DrhKmxmFRx0h9ZTTRZbMMBycg=;
-        b=CKN62/X5X6FISu16U4FEJBA/oF+hNiaoRxZ5qtAwrlYFNFylzUix7pQ3TJl6vEGiEm
-         i7Yw6hav2K7yZJF3M6swM0nPY46PNdQd6yuwHUznzwqJPgVBOkvGiKSF5sHkZ+SswAHf
-         X4q21NGa0NZ9F3NlTB3nF2CMlVLupZVuD0kltbRXRzhFytp1C7GNCLOlBJGmDIyunyvX
-         myEZ2ayNpiPmIfgOuI/iPDRZSX8TDjnmCPXe3KfRd47Ak/6nbuARQwP0qdlGA/cLlBhZ
-         F0q8zpdvzpnn+0i8vivoMUDFoO7TmEQ9cTZ/hbB0pVXGM4suYZqs1N6i6VfLvP7Sb9xH
-         y68w==
-X-Gm-Message-State: AOJu0YyZnUtZlEv9oObeUUhb0GnlsSMJG3XVlCvsLpEHElQNWuBUtHxs
-	3UUhdb/L4c5j9Y8uKrB+gIMsPd0OJmFMnxDoN29sTkcuyC6NwQD/zacHnji25Va4
-X-Gm-Gg: Acq92OGfv+RnXEnKlNaxjFR8G3ZAP3wuG9OFj7pBIOWRtRMTvuRBFsIZ8J3A9hAInru
-	CKJTFJYtbPuHQ4bdAuq+aFYvCKsITn6OfSannaxFOapxW9Q7ZYbovx8qqaeGcREz9EPcm5YaLwj
-	4i3JWCcKQ2LZyk/a53RD533meulfgM2EEqBnCxVy5EOdIIZdQwtNT1ddToCMYgYs840ns222oAa
-	CN4Xkq1QlnBE3nFDKEZSAE7dW4D4RXMx1QfMbsJ89URpdKiPtHvqbcIkelMVGFJpwq9Hx/7m7Bh
-	qV3nX93VYsD4xXoqbVLbR4HW3CjAost2nKp+Pgii9DsE/QZ0HaDe1WLZ+1TEaRUJvJ8eTnFbMES
-	x9mZZuvfUiDch/WH+xjauHNvzvrt5k20L2i0U8id8lfcUJF1IvbAzZELJPvlVnIk/7l7B+uZ9Ar
-	Cpv2Ft80I7aitpwi4NyPa+zi8nFrJC
-X-Received: by 2002:a05:6102:3e1f:b0:631:41f9:ffa2 with SMTP id ada2fe7eead31-6ff0d95de5emr15239959137.29.1781104957440;
-        Wed, 10 Jun 2026 08:22:37 -0700 (PDT)
-Received: from localhost ([43.225.189.119])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-6eb5764dda8sm20133615137.5.2026.06.10.08.22.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 08:22:36 -0700 (PDT)
-Date: Wed, 10 Jun 2026 18:22:30 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: [bug report] mei: fix error flow in probe
-Message-ID: <aimBNn8rdCamCkrk@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rJQXZXbF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1781109310; x=1781714110; i=markus.elfring@web.de;
+	bh=KPdC4IPGQi4/Z2c7KMBvhRTcEpfgtQSsY83dB8z/weQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rJQXZXbFkZxEUeclVGyZO2KauZGVeMeWj8rncFCo+pKxf4gKwg0MAncu49Ac7aUD
+	 8QdY/iVr1KqldzpL+xulwB2CooCOjjh2xVzE+k+wMn9zW5lnfWofHJcfZogNni4cW
+	 a4wCXiamdFjwVDJf/1OMlE10yGGdZVTY1QQ8iboPL0gkhhWbOHlB6kXAvK0ZkW0WE
+	 85G4RREK45qzA/aQ26p1Qv+qR+F51+1hihUeGqdQAIxZARfw9tfMIsFmvlI4l5eeL
+	 BkAECxjYfkMo6M6inPRxuH3pkksljZIHfWVdjKJHoMeRJFZyuoix83ihNII+nrZit
+	 jJsuK5fnSAzgswZFcA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9qcr-1wcZ5P0hcr-004GhR; Wed, 10
+ Jun 2026 18:35:10 +0200
+Message-ID: <0d2d7158-45c3-4c8b-8ca5-33a5b3445343@web.de>
+Date: Wed, 10 Jun 2026 18:35:08 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
+ Trond Myklebust <trondmy@kernel.org>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Chuck Lever <chuck.lever@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] NFS: Use common error handling code in nfs_alloc_server()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GosjgYMlhmd5bO8yn7eDGYYnDb2KSZoSSFD6U3igB9p1ii00Wrq
+ quM7wulB5eY6YWRr8dUhPItHfuCq7hF21zGR21t2sMMOIXUWbFLVIrNBHL+zqWMsV+3bAhx
+ iHjTrH4LvovW6EsmVovpW3eb6thNoRbDn/WKmipgazxapvBdoB+Bd/ezYbjPEmUEWlWZ5w6
+ V42qMiOP5DObblqfXFI4Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:g4CfFqlQm3A=;D4AC7SzrDvb68dfd2Ez1bs1PtWD
+ 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
+ z5SFaHGrtXJYitXQefXM8RddVPg=
 
-Hello Alexander Usyskin,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jun 2026 18:28:17 +0200
 
-Commit 1ebc180d2b90 ("mei: fix error flow in probe") from Nov 2, 2025
-(linux-next), leads to the following Smatch static checker warning:
+Use an additional label so that a bit of exception handling can be better
+reused at the end of this function implementation.
 
-	drivers/misc/mei/platform-vsc.c:384 mei_vsc_probe()
-	error: potential zalloc NULL dereference: 'mei_dev->cdev'
+This issue was detected by using the Coccinelle software.
 
-drivers/misc/mei/platform-vsc.c
-    334 static int mei_vsc_probe(struct platform_device *pdev)
-    335 {
-    336         struct device *dev = &pdev->dev;
-    337         struct mei_device *mei_dev;
-    338         struct mei_vsc_hw *hw;
-    339         struct vsc_tp *tp;
-    340         int ret;
-    341 
-    342         tp = *(struct vsc_tp **)dev_get_platdata(dev);
-    343         if (!tp)
-    344                 return dev_err_probe(dev, -ENODEV, "no platform data\n");
-    345 
-    346         mei_dev = kzalloc(size_add(sizeof(*mei_dev), sizeof(*hw)), GFP_KERNEL);
-    347         if (!mei_dev)
-    348                 return -ENOMEM;
-    349 
-    350         mei_device_init(mei_dev, dev, false, &mei_vsc_hw_ops);
-    351 
-    352         mei_dev->fw_f_fw_ver_supported = 0;
-    353         mei_dev->kind = MEI_DEV_KIND_IVSC;
-    354 
-    355         hw = mei_dev_to_vsc_hw(mei_dev);
-    356         atomic_set(&hw->write_lock_cnt, 0);
-    357         hw->tp = tp;
-    358 
-    359         platform_set_drvdata(pdev, mei_dev);
-    360 
-    361         vsc_tp_register_event_cb(tp, mei_vsc_event_cb, mei_dev);
-    362 
-    363         ret = mei_register(mei_dev, dev);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/nfs/client.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-If mei_register() fails to allocate mei_dev->cdev
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 73b95318ba48..50482257667d 100644
+=2D-- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -1063,10 +1063,8 @@ struct nfs_server *nfs_alloc_server(void)
+ 		return NULL;
+=20
+ 	server->s_sysfs_id =3D ida_alloc(&s_sysfs_ids, GFP_KERNEL);
+-	if (server->s_sysfs_id < 0) {
+-		kfree(server);
+-		return NULL;
+-	}
++	if (server->s_sysfs_id < 0)
++		goto free_server;
+=20
+ 	server->client =3D server->client_acl =3D ERR_PTR(-EINVAL);
+=20
+@@ -1087,10 +1085,8 @@ struct nfs_server *nfs_alloc_server(void)
+ 	atomic_long_set(&server->nr_active_delegations, 0);
+=20
+ 	server->io_stats =3D nfs_alloc_iostats();
+-	if (!server->io_stats) {
+-		kfree(server);
+-		return NULL;
+-	}
++	if (!server->io_stats)
++		goto free_server;
+=20
+ 	server->change_attr_type =3D NFS4_CHANGE_TYPE_IS_UNDEFINED;
+=20
+@@ -1103,6 +1099,10 @@ struct nfs_server *nfs_alloc_server(void)
+ 	rpc_init_wait_queue(&server->uoc_rpcwaitq, "NFS UOC");
+=20
+ 	return server;
++
++free_server:
++	kfree(server);
++	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(nfs_alloc_server);
+=20
+=2D-=20
+2.54.0
 
-    364         if (ret)
-    365                 goto err;
-    366 
-    367         ret = mei_start(mei_dev);
-    368         if (ret) {
-    369                 dev_err_probe(dev, ret, "init hw failed\n");
-    370                 goto err;
-    371         }
-    372 
-    373         pm_runtime_enable(mei_dev->parent);
-    374 
-    375         return 0;
-    376 
-    377 err:
-    378         mei_cancel_work(mei_dev);
-    379 
-    380         vsc_tp_register_event_cb(tp, NULL, NULL);
-    381 
-    382         mei_disable_interrupts(mei_dev);
-    383 
---> 384         mei_deregister(mei_dev);
-
-Then it leads to a crash here.
-
-    385 
-    386         return ret;
-    387 }
-
-This email is a free service from the Smatch-CI project [smatch.sf.net].
-
-regards,
-dan carpenter
