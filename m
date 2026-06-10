@@ -1,184 +1,82 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AEE39A06A;
-	Wed, 10 Jun 2026 08:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228C023507B
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jun 2026 08:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781079621; cv=none; b=MED+qiSlD8MTZkjJ7xdpUxxIVWMTGsKCChaX9U6R/1i+BIWJD0ZkZ7ie470fJ2IWR/zADZfutI388cRST3I1knZ8OKJ8xiIya6Ibk3q4n/uVktKprI1HlTU2sIkw0wcWEtfhf759yyK78rIb0nxinPOlwq/pnN7VX9c+iWy9iTA=
+	t=1781079921; cv=none; b=iUiBJ4KGd56jyXPXcWGgXhtRcp5oCw48uNW5QaWrxN0e3KwTBiaFiZUdMBsKF+kXjfs+pJMVG13EdnALbsK2A/cMUTpCyU5NKwts9CqucaBJBrsms5w9dccf43TaZkft3eRoZkbYVrr3fEqKtrWk/TkaOIb/2wm4aByEWQrzfak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781079621; c=relaxed/simple;
-	bh=6+Su6fY3gVNk9tajvvQ5ZnhDi7uIVJmxh2Tuw3CcFoE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=q46aGKzCqtMbEsw5w6hQYirJ9mkJJnPdTr/U7Btn/Z+/twMa7o2qhyeJ59emK3t5YQQeExEljqcAV9hZye4+ezx/tKcBeIl485qhNJ9nlhRWEQlggX2ktimtP3yyIJITR8RP2475km4GrYGF0DFOpQAeDA788RpJBlocpHgssow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=adjP6mZq; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1781079921; c=relaxed/simple;
+	bh=Q1aLiqvcZDHuzaVTIEpNY+4GR4dMo3MFSw+WfQlB+oQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C/Dd9qhwvOltbkJNfE2llqwAYu26X+Kl1xTzJAr2ERS78U0F+FRKJt/fyAGgKL5QG668jwXIUPz/vXdZxv0Co4cDVgbcCETH83P/j10PFnm/ZvsXzNPmklRD0pyIcZFNTQDANFo9l8Yp5wVs3P6sUGLp0cuy0ahzp2LX8vLflMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=lB4h/7aA; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="adjP6mZq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1781079611; x=1781684411; i=markus.elfring@web.de;
-	bh=ZecaPoWhKZ7SG+Fblu1EYox89+E6+mi5hzvNFNqSVlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=adjP6mZqzxTzpZVKFBCWZx63fjEbAhEqYhkCLpqE+BlsqreqTOEMNhcU1nSBUehj
-	 gyUqYiXGJoIkKROdx1u5n8PLwvDqgO3X+HX8qyM96+b042vkvBEC2tpncO7jtna2n
-	 hrGN8Chl9//PIJaaKrG/UsjabL1jWVYRCUNvN3UNfCjqltYDulxuls324xfoO1rLj
-	 fFkZLxhhtj/4kImBcNcHXgA7tI3qGYhWK0D9enecfGe/hTJ7p2zrhgAln192Zcwon
-	 vkZFIyXpV0XCLzNHqQkkHbGYlCN6opvzqadZPYWE9z6SUdGLhPXkF9BhBlpdP0IBZ
-	 KlY+mNVOMkq5vOaPEQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MDdy7-1wPpdc0mgx-00Gy7m; Wed, 10
- Jun 2026 10:20:11 +0200
-Message-ID: <f0b4e354-9ed7-43f5-8ffe-97019e421c02@web.de>
-Date: Wed, 10 Jun 2026 10:20:07 +0200
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="lB4h/7aA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Q1
+	aLiqvcZDHuzaVTIEpNY+4GR4dMo3MFSw+WfQlB+oQ=; b=lB4h/7aAdxeGaHaN42
+	nOReJgqxkbjPcEMvBD0hQ4SPLeVG/1pG+23wl6GNonZB1YoFC9LDtrRQgcGD/LlL
+	QfkqbQwZPo/ZVTzyY++7nxiMmDExE27cUAl6EoULG0jSM6punn0Z+9Cvw0GQq7Jm
+	XpEfoS+uAQiZuc0avoj/9VhO0=
+Received: from zhang.. (unknown [])
+	by gzsmtp3 (Coremail) with UTF8SMTPSA id M88vCgD3f1xbHylq98LzAQ--.7858S4;
+	Wed, 10 Jun 2026 16:25:01 +0800 (CST)
+From: Ziran Zhang <zhangcoder@yeah.net>
+To: kalyanipatra2003@gmail.com
+Cc: kernel-janitors@vger.kernel.org,
+	Ziran Zhang <zhangcoder@yeah.net>
+Subject: Re: Seeking janitor beginner tasks
+Date: Wed, 10 Jun 2026 16:24:34 +0800
+Message-ID: <20260610082434.4170-1-zhangcoder@yeah.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CACjYBvhy53AmyEgdcxP33T10a7ag1b8dHdY1JgKWghrgpQSghg@mail.gmail.com>
+References: <CACjYBvhy53AmyEgdcxP33T10a7ag1b8dHdY1JgKWghrgpQSghg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Shiraz Saleem <shiraz.saleem@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH net-next] i40e: Use common error handling code in
- i40e_register_auxiliary_dev()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tt9ftAsMhV2Xd5ExyAJN/6mxy3Lt8yKWDmD1QMqMky0DtigoRPw
- 6Hi+W+WTbQ2VT+Cj+zvDkqYWAEsyxCf+pxXrjijeQnv13roYXBBBlCicCP3KW+OE/uA7LZq
- LO//PTXNS+TkXL+/GuWhjEMT/+Klqkc1KPyhFn4KDoVnHDbsFGlk478AtGH9pGNNeq9tMud
- 7YpkVq1+r9yhMpxkZ/ypQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dwusOkWI3Rs=;QxSCW9bZ9gk2f5pm6Sjnn+XhAnT
- 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
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:M88vCgD3f1xbHylq98LzAQ--.7858S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1rWF47Aw4UWFy5ury8Xwb_yoWDtrc_u3
+	ykt3sFgrW8AFWDAr45GF4YkrZayrWDWry8JryF9ayUX3y7Zws3GFs5Kr9rZwn8Jw4vkFn8
+	W3ZrZ34xuw1avjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
+X-CM-SenderInfo: x2kd0wpfrgv2o61htxgoqh3/1tbiOB7DhGopH14nsgAA32
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jun 2026 10:02:58 +0200
+On Fri, 30 Jan 2026 17:29:56 +0530, Kalyani patra wrote:
+> Hello,
+> I recently started learning Linux kernel development and would like to
+> contribute for the first time. I wanted to ask if there are any
+> beginner-friendly tasks, janitor issues, or recommended places where
+> junior/new contributors can find suitable work. I've been routed to
+> tools/testing/selftests by linux-newbie. While I'm looking into it, if
+> there are any cleaning tasks that I can take on, I'd be glad to
+> contribute to it and learn more progressively.
+> I apologize if this question has been asked before.
+> Thank you for your time and guidance.
+> Best regards,
+> Kalyani Patra
 
-Use an additional label so that a bit of exception handling can be better
-reused at the end of an if branch.
+Hi Kalyani,
 
-This issue was detected by using the Coccinelle software.
+Welcome!
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/ethernet/intel/i40e/i40e_client.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+You can start with these simple tasks:
+- Fix spelling mistakes in comments.
+- Add const to static structures.
+- Use ARRAY_SIZE() instead of hardcoded numbers.
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_client.c b/drivers/net/e=
-thernet/intel/i40e/i40e_client.c
-index 84a97ca8a6d8..389b8b83afbd 100644
-=2D-- a/drivers/net/ethernet/intel/i40e/i40e_client.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_client.c
-@@ -304,15 +304,15 @@ static int i40e_register_auxiliary_dev(struct i40e_i=
-nfo *ldev, const char *name)
- 	ldev->aux_dev =3D aux_dev;
-=20
- 	ret =3D ida_alloc(&i40e_client_ida, GFP_KERNEL);
--	if (ret < 0) {
--		kfree(i40e_aux_dev);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto free_aux_dev;
-+
- 	aux_dev->id =3D ret;
-=20
- 	ret =3D auxiliary_device_init(aux_dev);
- 	if (ret < 0) {
- 		ida_free(&i40e_client_ida, aux_dev->id);
-+free_aux_dev:
- 		kfree(i40e_aux_dev);
- 		return ret;
- 	}
-=2D-=20
-2.54.0
+You can visit https://lore.kernel.org/kernel-janitors/ to see how others do it.
+
+Use scripts/checkpatch.pl on your changes.
+Before sending a patch, make sure your changes compile successfully.
+
+Regards,
+Ziran Zhang
 
