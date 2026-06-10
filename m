@@ -1,23 +1,23 @@
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C73940D579
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jun 2026 01:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4A432B123
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jun 2026 01:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781055799; cv=none; b=JxaoDvtdTGQsYdbe6CAYXW6mFnIAbvrXrYAVaXlCw6z2vty6daJ1FOlsm/NUmOosH4MnWKfmNA01QQbPqGgA7IOJCi0Uem7rx2O9QeP7HfgRhbCoEfNd5uq1uToWbLXpELeGv+M/RWuvsw6LpvEG7J625tVQ2SotcjZpbF/+BEk=
+	t=1781055799; cv=none; b=qSxZL2R0xCUggutWTC2qFd6Ku5HSNYiAsLW671B9SypTZUgLi77IMp7qln42ovYyrA2737ZrMg9opOBCDqMgJtx6OqzrVdayBC064Dut15Qk44zAuw/fl1FzobCYoqzbaOtnlJoRSe3+dZyL+jQIu4t0bQN648OiWyauvZ/3dYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1781055799; c=relaxed/simple;
-	bh=gBjtOY7lKVNmTlrhArEPxxvqjpn2aT0p9xFCWvNXJH8=;
+	bh=ulNUZ2iQx6p7wV4Ub1VR0m1YNzi2Jnzt9tiTtrasEMU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gqu+4uIacrR8/H5LvkZZT4/CWis5LyHKtuk/Eque3bZ4SIxplrC+VTybpumPzry3T55HdtUqnNDXEGV9ckFAprU3XGVQt0O5E1UlIV/MiQF2pThze2Iu7crsOKOdLJAsMsBTc1sbfbTDucRR9uV3xm5jytfcYS3GHapJNn2BdXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=linux.aimannajjar.com; arc=none smtp.client-ip=91.218.175.179
+	 In-Reply-To:To:Cc; b=uNOgIvwCJVYapAd1HbaFgl5B5coWb84kNO11GSx3mxq0afdVsIkSBIxnm9NdsqCgIAHD7ukGqfmHnXXmqUh2OE8RdQ8pGUJxLvrGHUKSuoWm2O/p/S6EbCd99R4AoUgyyY91Qpe/2HbCN14nfhKB0buj280ztHlGDwKpj7CHLjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=linux.aimannajjar.com; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.aimannajjar.com
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Aiman Najjar <aiman@linux.com>
-Date: Tue, 09 Jun 2026 21:42:56 -0400
-Subject: [PATCH 2/2] staging: rtl8723bs: drop GEN_EVT_CODE macro and
+Date: Tue, 09 Jun 2026 21:42:55 -0400
+Subject: [PATCH 1/2] staging: rtl8723bs: drop GEN_CMD_CODE macro and
  capitalize labels
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -27,22 +27,22 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260609-rtl8723bs-code-style-v1-2-daa0e85359a6@linux.com>
+Message-Id: <20260609-rtl8723bs-code-style-v1-1-daa0e85359a6@linux.com>
 References: <20260609-rtl8723bs-code-style-v1-0-daa0e85359a6@linux.com>
 In-Reply-To: <20260609-rtl8723bs-code-style-v1-0-daa0e85359a6@linux.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev, 
  linux-kernel@vger.kernel.org, Aiman Najjar <aiman@linux.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781055789; l=6061;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781055789; l=23623;
  i=aiman@linux.com; s=20260606; h=from:subject:message-id;
- bh=gBjtOY7lKVNmTlrhArEPxxvqjpn2aT0p9xFCWvNXJH8=;
- b=8VxHQb/LQZqUBdtvvODowqWdnACtoBflbQdsZ+BqM6mXOMXUlQ/iIon8a5nL314WDqMKQQZHj
- uFf6fVs3AYKDW1cZm3CFYMVjDBnd/ofXIIPfmhap8slJwP4Qt2qxyem
+ bh=ulNUZ2iQx6p7wV4Ub1VR0m1YNzi2Jnzt9tiTtrasEMU=;
+ b=0cm61o9YvBp4HUI/izJaMbwNzpmVNQag27VEh6Tg1d/xZz7AR4d4gOCip5ihA8NVVXS/4EDea
+ PQ1FveDeWyuCLvQv5ALAIzu9reXHZ6tiLA8BevUFHKBD2WSt/l8j5jU
 X-Developer-Key: i=aiman@linux.com; a=ed25519;
  pk=iKg5UkqF2CmKvQwe+Jp8Cf4JOcIHoyvApdVll0sJHu8=
 X-Migadu-Flow: FLOW_OUT
 
-The use of GEN_EVT_CODE macro to generate event enum label name is applied
+The use of GEN_CMD_CODE macro to generate cmd enum label names is applied
 inconsistently and is confusing, it also makes it harder to make use of
 tools such as clangd when looking up symbols.
 
@@ -51,149 +51,671 @@ new capitalized names instead of the current camel case ones.
 
 Signed-off-by: Aiman Najjar <aiman@linux.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c    | 12 +++---
- drivers/staging/rtl8723bs/include/rtw_event.h    |  4 --
- drivers/staging/rtl8723bs/include/rtw_mlme_ext.h | 54 ++++++++++++------------
- 3 files changed, 33 insertions(+), 37 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_ap.c       |   4 +-
+ drivers/staging/rtl8723bs/core/rtw_cmd.c      | 190 +++++++++++++-------------
+ drivers/staging/rtl8723bs/core/rtw_mlme.c     |   4 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  18 +--
+ drivers/staging/rtl8723bs/include/rtw_cmd.h   | 154 ++++++++++-----------
+ 5 files changed, 181 insertions(+), 189 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+index 4b4012411011..5a183b169282 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ap.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+@@ -1237,7 +1237,7 @@ u8 rtw_ap_set_pairwise_key(struct adapter *padapter, struct sta_info *psta)
+ 		goto exit;
+ 	}
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, _SetStaKey_CMD_);
++	init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, SET_STA_KEY_CMD);
+ 
+ 	psetstakey_para->algorithm = (u8)psta->dot118021XPrivacy;
+ 
+@@ -1300,7 +1300,7 @@ static int rtw_ap_set_key(struct adapter *padapter,
+ 
+ 	memcpy(&psetkeyparm->key[0], key, keylen);
+ 
+-	pcmd->cmdcode = _SetKey_CMD_;
++	pcmd->cmdcode = SET_KEY_CMD;
+ 	pcmd->parmbuf = (u8 *)psetkeyparm;
+ 	pcmd->cmdsz =  (sizeof(struct setkey_parm));
+ 	pcmd->rsp = NULL;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+index c1185c25ed36..b3637796187d 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
++++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+@@ -11,78 +11,78 @@
+ #include <linux/delay.h>
+ 
+ static struct _cmd_callback rtw_cmd_callback[] = {
+-	{GEN_CMD_CODE(_Read_MACREG), NULL}, /*0*/
+-	{GEN_CMD_CODE(_Write_MACREG), NULL},
+-	{GEN_CMD_CODE(_Read_BBREG), &rtw_getbbrfreg_cmdrsp_callback},
+-	{GEN_CMD_CODE(_Write_BBREG), NULL},
+-	{GEN_CMD_CODE(_Read_RFREG), &rtw_getbbrfreg_cmdrsp_callback},
+-	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
+-	{GEN_CMD_CODE(_Read_EEPROM), NULL},
+-	{GEN_CMD_CODE(_Write_EEPROM), NULL},
+-	{GEN_CMD_CODE(_Read_EFUSE), NULL},
+-	{GEN_CMD_CODE(_Write_EFUSE), NULL},
+-
+-	{GEN_CMD_CODE(_Read_CAM),	NULL},	/*10*/
+-	{GEN_CMD_CODE(_Write_CAM),	 NULL},
+-	{GEN_CMD_CODE(_setBCNITV), NULL},
+-	{GEN_CMD_CODE(_setMBIDCFG), NULL},
+-	{GEN_CMD_CODE(_JoinBss), &rtw_joinbss_cmd_callback},  /*14*/
+-	{GEN_CMD_CODE(_DisConnect), &rtw_disassoc_cmd_callback}, /*15*/
+-	{GEN_CMD_CODE(_CreateBss), &rtw_createbss_cmd_callback},
+-	{GEN_CMD_CODE(_SetOpMode), NULL},
+-	{GEN_CMD_CODE(_SiteSurvey), &rtw_survey_cmd_callback}, /*18*/
+-	{GEN_CMD_CODE(_SetAuth), NULL},
+-
+-	{GEN_CMD_CODE(_SetKey), NULL},	/*20*/
+-	{GEN_CMD_CODE(_SetStaKey), &rtw_setstaKey_cmdrsp_callback},
+-	{GEN_CMD_CODE(_SetAssocSta), &rtw_setassocsta_cmdrsp_callback},
+-	{GEN_CMD_CODE(_DelAssocSta), NULL},
+-	{GEN_CMD_CODE(_SetStaPwrState), NULL},
+-	{GEN_CMD_CODE(_SetBasicRate), NULL}, /*25*/
+-	{GEN_CMD_CODE(_GetBasicRate), NULL},
+-	{GEN_CMD_CODE(_SetDataRate), NULL},
+-	{GEN_CMD_CODE(_GetDataRate), NULL},
+-	{GEN_CMD_CODE(_SetPhyInfo), NULL},
+-
+-	{GEN_CMD_CODE(_GetPhyInfo), NULL}, /*30*/
+-	{GEN_CMD_CODE(_SetPhy), NULL},
+-	{GEN_CMD_CODE(_GetPhy), NULL},
+-	{GEN_CMD_CODE(_readRssi), NULL},
+-	{GEN_CMD_CODE(_readGain), NULL},
+-	{GEN_CMD_CODE(_SetAtim), NULL}, /*35*/
+-	{GEN_CMD_CODE(_SetPwrMode), NULL},
+-	{GEN_CMD_CODE(_JoinbssRpt), NULL},
+-	{GEN_CMD_CODE(_SetRaTable), NULL},
+-	{GEN_CMD_CODE(_GetRaTable), NULL},
+-
+-	{GEN_CMD_CODE(_GetCCXReport), NULL}, /*40*/
+-	{GEN_CMD_CODE(_GetDTMReport),	NULL},
+-	{GEN_CMD_CODE(_GetTXRateStatistics), NULL},
+-	{GEN_CMD_CODE(_SetUsbSuspend), NULL},
+-	{GEN_CMD_CODE(_SetH2cLbk), NULL},
+-	{GEN_CMD_CODE(_AddBAReq), NULL}, /*45*/
+-	{GEN_CMD_CODE(_SetChannel), NULL},		/*46*/
+-	{GEN_CMD_CODE(_SetTxPower), NULL},
+-	{GEN_CMD_CODE(_SwitchAntenna), NULL},
+-	{GEN_CMD_CODE(_SetCrystalCap), NULL},
+-	{GEN_CMD_CODE(_SetSingleCarrierTx), NULL},	/*50*/
+-
+-	{GEN_CMD_CODE(_SetSingleToneTx), NULL}, /*51*/
+-	{GEN_CMD_CODE(_SetCarrierSuppressionTx), NULL},
+-	{GEN_CMD_CODE(_SetContinuousTx), NULL},
+-	{GEN_CMD_CODE(_SwitchBandwidth), NULL},		/*54*/
+-	{GEN_CMD_CODE(_TX_Beacon), NULL},/*55*/
+-
+-	{GEN_CMD_CODE(_Set_MLME_EVT), NULL},/*56*/
+-	{GEN_CMD_CODE(_Set_Drv_Extra), NULL},/*57*/
+-	{GEN_CMD_CODE(_Set_H2C_MSG), NULL},/*58*/
+-	{GEN_CMD_CODE(_SetChannelPlan), NULL},/*59*/
+-
+-	{GEN_CMD_CODE(_SetChannelSwitch), NULL},/*60*/
+-	{GEN_CMD_CODE(_TDLS), NULL},/*61*/
+-	{GEN_CMD_CODE(_ChkBMCSleepq), NULL}, /*62*/
+-
+-	{GEN_CMD_CODE(_RunInThreadCMD), NULL},/*63*/
++	{READ_MACREG_CMD, NULL}, /*0*/
++	{WRITE_MACREG_CMD, NULL},
++	{READ_BBREG_CMD, &rtw_getbbrfreg_cmdrsp_callback},
++	{WRITE_BBREG_CMD, NULL},
++	{READ_RFREG_CMD, &rtw_getbbrfreg_cmdrsp_callback},
++	{WRITE_RFREG_CMD, NULL}, /*5*/
++	{READ_EEPROM_CMD, NULL},
++	{WRITE_EEPROM_CMD, NULL},
++	{READ_EFUSE_CMD, NULL},
++	{WRITE_EFUSE_CMD, NULL},
++
++	{READ_CAM_CMD, NULL},	/*10*/
++	{WRITE_CAM_CMD, NULL},
++	{SET_BCNITV_CMD, NULL},
++	{SET_MBIDCFG_CMD, NULL},
++	{JOIN_BSS_CMD, &rtw_joinbss_cmd_callback},  /*14*/
++	{DISCONNECT_CMD, &rtw_disassoc_cmd_callback}, /*15*/
++	{CREATE_BSS_CMD, &rtw_createbss_cmd_callback},
++	{SET_OP_MODE_CMD, NULL},
++	{SITE_SURVEY_CMD, &rtw_survey_cmd_callback}, /*18*/
++	{SET_AUTH_CMD, NULL},
++
++	{SET_KEY_CMD, NULL},	/*20*/
++	{SET_STA_KEY_CMD, &rtw_setstaKey_cmdrsp_callback},
++	{SET_ASSOC_STA_CMD, &rtw_setassocsta_cmdrsp_callback},
++	{DEL_ASSOC_STA_CMD, NULL},
++	{SET_STA_PWR_STATE_CMD, NULL},
++	{SET_BASIC_RATE_CMD, NULL}, /*25*/
++	{GET_BASIC_RATE_CMD, NULL},
++	{SET_DATA_RATE_CMD, NULL},
++	{GET_DATA_RATE_CMD, NULL},
++	{SET_PHY_INFO_CMD, NULL},
++
++	{GET_PHY_INFO_CMD, NULL}, /*30*/
++	{SET_PHY_CMD, NULL},
++	{GET_PHY_CMD, NULL},
++	{READ_RSSI_CMD, NULL},
++	{READ_GAIN_CMD, NULL},
++	{SET_ATIM_CMD, NULL}, /*35*/
++	{SET_PWR_MODE_CMD, NULL},
++	{JOIN_BSS_RPT_CMD, NULL},
++	{SET_RA_TABLE_CMD, NULL},
++	{GET_RA_TABLE_CMD, NULL},
++
++	{GET_CCX_REPORT_CMD, NULL}, /*40*/
++	{GET_DTM_REPORT_CMD,	NULL},
++	{GET_TX_RATE_STATISTICS_CMD, NULL},
++	{SET_USB_SUSPEND_CMD, NULL},
++	{SET_H2C_LBK_CMD, NULL},
++	{ADD_BA_REQ_CMD, NULL}, /*45*/
++	{SET_CHANNEL_CMD, NULL},		/*46*/
++	{SET_TX_POWER_CMD, NULL},
++	{SWITCH_ANTENNA_CMD, NULL},
++	{SET_CRYSTAL_CAP_CMD, NULL},
++	{SET_SINGLE_CARRIER_TX_CMD, NULL},	/*50*/
++
++	{SET_SINGLE_TONE_TX_CMD, NULL}, /*51*/
++	{SET_CARRIER_SUPPRESSION_TX_CMD, NULL},
++	{SET_CONTINUOUS_TX_CMD, NULL},
++	{SWITCH_BANDWIDTH_CMD, NULL},		/*54*/
++	{TX_BEACON_CMD, NULL},/*55*/
++
++	{SET_MLME_EVT_CMD, NULL},/*56*/
++	{SET_DRV_EXTRA_CMD, NULL},/*57*/
++	{SET_H2C_MSG_CMD, NULL},/*58*/
++	{SET_CHANNEL_PLAN_CMD, NULL},/*59*/
++
++	{SET_CHANNEL_SWITCH_CMD, NULL},/*60*/
++	{TDLS_CMD, NULL},/*61*/
++	{CHK_BMC_SLEEPQ_CMD, NULL}, /*62*/
++
++	{RUN_IN_THREAD_CMD, NULL},/*63*/
+ };
+ 
+ static struct cmd_hdl wlancmds[] = {
+@@ -301,7 +301,7 @@ int rtw_cmd_filter(struct cmd_priv *pcmdpriv, struct cmd_obj *cmd_obj)
+ {
+ 	u8 bAllow = false; /* set to true to allow enqueuing cmd when hw_init_completed is false */
+ 
+-	if (cmd_obj->cmdcode == GEN_CMD_CODE(_SetChannelPlan))
++	if (cmd_obj->cmdcode == SET_CHANNEL_PLAN_CMD)
+ 		bAllow = true;
+ 
+ 	if ((!pcmdpriv->padapter->hw_init_completed && !bAllow) ||
+@@ -343,8 +343,8 @@ struct	cmd_obj	*rtw_dequeue_cmd(struct cmd_priv *pcmdpriv)
+ 
+ void rtw_free_cmd_obj(struct cmd_obj *pcmd)
+ {
+-	if ((pcmd->cmdcode != _JoinBss_CMD_) &&
+-	    (pcmd->cmdcode != _CreateBss_CMD_)) {
++	if ((pcmd->cmdcode != JOIN_BSS_CMD) &&
++	    (pcmd->cmdcode != CREATE_BSS_CMD)) {
+ 		/* free parmbuf in cmd_obj */
+ 		kfree(pcmd->parmbuf);
+ 	}
+@@ -501,7 +501,7 @@ int rtw_cmd_thread(void *context)
+ 			break;
+ 		}
+ 
+-		if (pcmd->cmdcode == GEN_CMD_CODE(_Set_Drv_Extra)) {
++		if (pcmd->cmdcode == SET_DRV_EXTRA_CMD) {
+ 			extra_parm = (struct drvextra_cmd_parm *)pcmd->parmbuf;
+ 			if (extra_parm->pbuf && extra_parm->size > 0)
+ 				kfree(extra_parm->pbuf);
+@@ -546,7 +546,7 @@ u8 rtw_sitesurvey_cmd(struct adapter  *padapter, struct ndis_802_11_ssid *ssid,
+ 
+ 	rtw_free_network_queue(padapter, false);
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara, GEN_CMD_CODE(_SiteSurvey));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara, SITE_SURVEY_CMD);
+ 
+ 	/* psurveyPara->bsslimit = 48; */
+ 	psurveyPara->scan_mode = pmlmepriv->scan_mode;
+@@ -609,7 +609,7 @@ u8 rtw_createbss_cmd(struct adapter  *padapter)
+ 	}
+ 
+ 	INIT_LIST_HEAD(&pcmd->list);
+-	pcmd->cmdcode = _CreateBss_CMD_;
++	pcmd->cmdcode = CREATE_BSS_CMD;
+ 	pcmd->parmbuf = (unsigned char *)pdev_network;
+ 	pcmd->cmdsz = get_wlan_bssid_ex_sz((struct wlan_bssid_ex *)pdev_network);
+ 	pcmd->rsp = NULL;
+@@ -642,7 +642,7 @@ int rtw_startbss_cmd(struct adapter  *padapter, int flags)
+ 		}
+ 
+ 		INIT_LIST_HEAD(&pcmd->list);
+-		pcmd->cmdcode = GEN_CMD_CODE(_CreateBss);
++		pcmd->cmdcode = CREATE_BSS_CMD;
+ 		pcmd->parmbuf = NULL;
+ 		pcmd->cmdsz =  0;
+ 		pcmd->rsp = NULL;
+@@ -777,7 +777,7 @@ u8 rtw_joinbss_cmd(struct adapter  *padapter, struct wlan_network *pnetwork)
+ 	pcmd->cmdsz = get_wlan_bssid_ex_sz(psecnetwork);/* get cmdsz before endian conversion */
+ 
+ 	INIT_LIST_HEAD(&pcmd->list);
+-	pcmd->cmdcode = _JoinBss_CMD_;/* GEN_CMD_CODE(_JoinBss) */
++	pcmd->cmdcode = JOIN_BSS_CMD;
+ 	pcmd->parmbuf = (unsigned char *)psecnetwork;
+ 	pcmd->rsp = NULL;
+ 	pcmd->rspsz = 0;
+@@ -811,7 +811,7 @@ u8 rtw_disassoc_cmd(struct adapter *padapter, u32 deauth_timeout_ms, bool enqueu
+ 			kfree(param);
+ 			goto exit;
+ 		}
+-		init_h2fwcmd_w_parm_no_rsp(cmdobj, param, _DisConnect_CMD_);
++		init_h2fwcmd_w_parm_no_rsp(cmdobj, param, DISCONNECT_CMD);
+ 		res = rtw_enqueue_cmd(cmdpriv, cmdobj);
+ 	} else {
+ 		/* no need to enqueue, do the cmd hdl directly and free cmd parameter */
+@@ -847,7 +847,7 @@ u8 rtw_setopmode_cmd(struct adapter  *padapter, enum ndis_802_11_network_infrast
+ 			goto exit;
+ 		}
+ 
+-		init_h2fwcmd_w_parm_no_rsp(ph2c, psetop, _SetOpMode_CMD_);
++		init_h2fwcmd_w_parm_no_rsp(ph2c, psetop, SET_OP_MODE_CMD);
+ 		res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 	} else {
+ 		setopmode_hdl(padapter, (u8 *)psetop);
+@@ -904,7 +904,7 @@ u8 rtw_setstakey_cmd(struct adapter *padapter, struct sta_info *sta, u8 unicast_
+ 			goto exit;
+ 		}
+ 
+-		init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, _SetStaKey_CMD_);
++		init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, SET_STA_KEY_CMD);
+ 		ph2c->rsp = (u8 *)psetstakey_rsp;
+ 		ph2c->rspsz = sizeof(struct set_stakey_rsp);
+ 		res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+@@ -955,7 +955,7 @@ u8 rtw_clearstakey_cmd(struct adapter *padapter, struct sta_info *sta, u8 enqueu
+ 			goto exit;
+ 		}
+ 
+-		init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, _SetStaKey_CMD_);
++		init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, SET_STA_KEY_CMD);
+ 		ph2c->rsp = (u8 *)psetstakey_rsp;
+ 		ph2c->rspsz = sizeof(struct set_stakey_rsp);
+ 
+@@ -993,7 +993,7 @@ u8 rtw_addbareq_cmd(struct adapter *padapter, u8 tid, u8 *addr)
+ 	paddbareq_parm->tid = tid;
+ 	memcpy(paddbareq_parm->addr, addr, ETH_ALEN);
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, paddbareq_parm, GEN_CMD_CODE(_AddBAReq));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, paddbareq_parm, ADD_BA_REQ_CMD);
+ 
+ 	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+@@ -1028,7 +1028,7 @@ u8 rtw_reset_securitypriv_cmd(struct adapter *padapter)
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = NULL;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+@@ -1061,7 +1061,7 @@ u8 rtw_free_assoc_resources_cmd(struct adapter *padapter)
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = NULL;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+@@ -1094,7 +1094,7 @@ u8 rtw_dynamic_chk_wk_cmd(struct adapter *padapter)
+ 	pdrvextra_cmd_parm->type = 0;
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = NULL;
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+@@ -1343,7 +1343,7 @@ u8 rtw_lps_ctrl_wk_cmd(struct adapter *padapter, u8 lps_ctrl_type, u8 enqueue)
+ 		pdrvextra_cmd_parm->size = 0;
+ 		pdrvextra_cmd_parm->pbuf = NULL;
+ 
+-		init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++		init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 		res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 	} else {
+@@ -1384,7 +1384,7 @@ u8 rtw_dm_in_lps_wk_cmd(struct adapter *padapter)
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = NULL;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+@@ -1446,7 +1446,7 @@ u8 rtw_dm_ra_mask_wk_cmd(struct adapter *padapter, u8 *psta)
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = psta;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+@@ -1479,7 +1479,7 @@ u8 rtw_ps_cmd(struct adapter *padapter)
+ 	pdrvextra_cmd_parm->type = 0;
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = NULL;
+-	init_h2fwcmd_w_parm_no_rsp(ppscmd, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ppscmd, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ppscmd);
+ 
+@@ -1550,7 +1550,7 @@ u8 rtw_chk_hi_queue_cmd(struct adapter *padapter)
+ 	pdrvextra_cmd_parm->size = 0;
+ 	pdrvextra_cmd_parm->pbuf = NULL;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+@@ -1642,7 +1642,7 @@ u8 rtw_c2h_packet_wk_cmd(struct adapter *padapter, u8 *pbuf, u16 length)
+ 	pdrvextra_cmd_parm->size = length;
+ 	pdrvextra_cmd_parm->pbuf = pbuf;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+@@ -1677,7 +1677,7 @@ u8 rtw_c2h_wk_cmd(struct adapter *padapter, u8 *c2h_evt)
+ 	pdrvextra_cmd_parm->size =  c2h_evt ? 16 : 0;
+ 	pdrvextra_cmd_parm->pbuf = c2h_evt;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, GEN_CMD_CODE(_Set_Drv_Extra));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, SET_DRV_EXTRA_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index ddfc56f0253d..ddddd5e462b4 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -1862,7 +1862,7 @@ signed int rtw_set_auth(struct adapter *adapter, struct security_priv *psecurity
+ 
+ 	psetauthparm->mode = (unsigned char)psecuritypriv->dot11AuthAlgrthm;
+ 
+-	pcmd->cmdcode = _SetAuth_CMD_;
++	pcmd->cmdcode = SET_AUTH_CMD;
+ 	pcmd->parmbuf = (unsigned char *)psetauthparm;
+ 	pcmd->cmdsz =  (sizeof(struct setauth_parm));
+ 	pcmd->rsp = NULL;
+@@ -1933,7 +1933,7 @@ signed int rtw_set_key(struct adapter *adapter, struct security_priv *psecurityp
+ 			goto exit;
+ 		}
+ 
+-		pcmd->cmdcode = _SetKey_CMD_;
++		pcmd->cmdcode = SET_KEY_CMD;
+ 		pcmd->parmbuf = (u8 *)psetkeyparm;
+ 		pcmd->cmdsz =  (sizeof(struct setkey_parm));
+ 		pcmd->rsp = NULL;
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index abcc666d5dbe..833f802ffe62 100644
+index 5f00fe282d1b..abcc666d5dbe 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -4400,7 +4400,7 @@ void report_survey_event(struct adapter *padapter, union recv_frame *precv_frame
+@@ -4391,7 +4391,7 @@ void report_survey_event(struct adapter *padapter, union recv_frame *precv_frame
  
- 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
- 	pc2h_evt_hdr->len = sizeof(struct survey_event);
--	pc2h_evt_hdr->ID = GEN_EVT_CODE(_Survey);
-+	pc2h_evt_hdr->ID = SURVEY_EVENT;
- 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+ 	INIT_LIST_HEAD(&pcmd_obj->list);
  
- 	psurvey_evt = (struct survey_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
-@@ -4453,7 +4453,7 @@ void report_surveydone_event(struct adapter *padapter)
+-	pcmd_obj->cmdcode = GEN_CMD_CODE(_Set_MLME_EVT);
++	pcmd_obj->cmdcode = SET_MLME_EVT_CMD;
+ 	pcmd_obj->cmdsz = cmdsz;
+ 	pcmd_obj->parmbuf = pevtcmd;
  
- 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
- 	pc2h_evt_hdr->len = sizeof(struct surveydone_event);
--	pc2h_evt_hdr->ID = GEN_EVT_CODE(_SurveyDone);
-+	pc2h_evt_hdr->ID = SURVEY_DONE_EVENT;
- 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+@@ -4444,7 +4444,7 @@ void report_surveydone_event(struct adapter *padapter)
  
- 	psurveydone_evt = (struct surveydone_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
-@@ -4498,7 +4498,7 @@ void report_join_res(struct adapter *padapter, int res)
+ 	INIT_LIST_HEAD(&pcmd_obj->list);
  
- 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
- 	pc2h_evt_hdr->len = sizeof(struct joinbss_event);
--	pc2h_evt_hdr->ID = GEN_EVT_CODE(_JoinBss);
-+	pc2h_evt_hdr->ID = JOIN_BSS_EVENT;
- 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+-	pcmd_obj->cmdcode = GEN_CMD_CODE(_Set_MLME_EVT);
++	pcmd_obj->cmdcode = SET_MLME_EVT_CMD;
+ 	pcmd_obj->cmdsz = cmdsz;
+ 	pcmd_obj->parmbuf = pevtcmd;
  
- 	pjoinbss_evt = (struct joinbss_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
-@@ -4547,7 +4547,7 @@ void report_wmm_edca_update(struct adapter *padapter)
+@@ -4489,7 +4489,7 @@ void report_join_res(struct adapter *padapter, int res)
  
- 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
- 	pc2h_evt_hdr->len = sizeof(struct wmm_event);
--	pc2h_evt_hdr->ID = GEN_EVT_CODE(_WMM);
-+	pc2h_evt_hdr->ID = WMM_EVENT;
- 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+ 	INIT_LIST_HEAD(&pcmd_obj->list);
  
- 	pwmm_event = (struct wmm_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
-@@ -4593,7 +4593,7 @@ void report_del_sta_event(struct adapter *padapter, unsigned char *MacAddr, unsi
+-	pcmd_obj->cmdcode = GEN_CMD_CODE(_Set_MLME_EVT);
++	pcmd_obj->cmdcode = SET_MLME_EVT_CMD;
+ 	pcmd_obj->cmdsz = cmdsz;
+ 	pcmd_obj->parmbuf = pevtcmd;
  
- 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
- 	pc2h_evt_hdr->len = sizeof(struct stadel_event);
--	pc2h_evt_hdr->ID = GEN_EVT_CODE(_DelSTA);
-+	pc2h_evt_hdr->ID = DEL_STA_EVENT;
- 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+@@ -4538,7 +4538,7 @@ void report_wmm_edca_update(struct adapter *padapter)
  
- 	pdel_sta_evt = (struct stadel_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
-@@ -4644,7 +4644,7 @@ void report_add_sta_event(struct adapter *padapter, unsigned char *MacAddr, int
+ 	INIT_LIST_HEAD(&pcmd_obj->list);
  
- 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
- 	pc2h_evt_hdr->len = sizeof(struct stassoc_event);
--	pc2h_evt_hdr->ID = GEN_EVT_CODE(_AddSTA);
-+	pc2h_evt_hdr->ID = ADD_STA_EVENT;
- 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+-	pcmd_obj->cmdcode = GEN_CMD_CODE(_Set_MLME_EVT);
++	pcmd_obj->cmdcode = SET_MLME_EVT_CMD;
+ 	pcmd_obj->cmdsz = cmdsz;
+ 	pcmd_obj->parmbuf = pevtcmd;
  
- 	padd_sta_evt = (struct stassoc_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
-diff --git a/drivers/staging/rtl8723bs/include/rtw_event.h b/drivers/staging/rtl8723bs/include/rtw_event.h
-index 62e0dec249ad..e5cb46c2a731 100644
---- a/drivers/staging/rtl8723bs/include/rtw_event.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_event.h
-@@ -64,10 +64,6 @@ struct wmm_event {
- 	unsigned char wmm;
+@@ -4584,7 +4584,7 @@ void report_del_sta_event(struct adapter *padapter, unsigned char *MacAddr, unsi
+ 
+ 	INIT_LIST_HEAD(&pcmd_obj->list);
+ 
+-	pcmd_obj->cmdcode = GEN_CMD_CODE(_Set_MLME_EVT);
++	pcmd_obj->cmdcode = SET_MLME_EVT_CMD;
+ 	pcmd_obj->cmdsz = cmdsz;
+ 	pcmd_obj->parmbuf = pevtcmd;
+ 
+@@ -4635,7 +4635,7 @@ void report_add_sta_event(struct adapter *padapter, unsigned char *MacAddr, int
+ 
+ 	INIT_LIST_HEAD(&pcmd_obj->list);
+ 
+-	pcmd_obj->cmdcode = GEN_CMD_CODE(_Set_MLME_EVT);
++	pcmd_obj->cmdcode = SET_MLME_EVT_CMD;
+ 	pcmd_obj->cmdsz = cmdsz;
+ 	pcmd_obj->parmbuf = pevtcmd;
+ 
+@@ -5085,7 +5085,7 @@ void survey_timer_hdl(struct timer_list *t)
+ 			return;
+ 		}
+ 
+-		init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara, GEN_CMD_CODE(_SiteSurvey));
++		init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara, SITE_SURVEY_CMD);
+ 		rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 	}
+ }
+@@ -5696,7 +5696,7 @@ u8 chk_bmc_sleepq_cmd(struct adapter *padapter)
+ 		goto exit;
+ 	}
+ 
+-	init_h2fwcmd_w_parm_no_parm_rsp(ph2c, GEN_CMD_CODE(_ChkBMCSleepq));
++	init_h2fwcmd_w_parm_no_parm_rsp(ph2c, CHK_BMC_SLEEPQ_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+@@ -5734,7 +5734,7 @@ u8 set_tx_beacon_cmd(struct adapter *padapter)
+ 				      pmlmeinfo->hidden_ssid_mode);
+ 	ptxBeacon_parm->network.ie_length += len_diff;
+ 
+-	init_h2fwcmd_w_parm_no_rsp(ph2c, ptxBeacon_parm, GEN_CMD_CODE(_TX_Beacon));
++	init_h2fwcmd_w_parm_no_rsp(ph2c, ptxBeacon_parm, TX_BEACON_CMD);
+ 
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+diff --git a/drivers/staging/rtl8723bs/include/rtw_cmd.h b/drivers/staging/rtl8723bs/include/rtw_cmd.h
+index c4c3edee809d..af94d31425ba 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_cmd.h
++++ b/drivers/staging/rtl8723bs/include/rtw_cmd.h
+@@ -551,9 +551,6 @@ struct RunInThread_param {
  };
  
--#define GEN_EVT_CODE(event)	event ## _EVT_
+ 
+-#define GEN_CMD_CODE(cmd)	cmd ## _CMD_
 -
 -
--
- struct fwevent {
- 	u32 parmsize;
- 	void (*event_callback)(struct adapter *dev, u8 *pbuf);
-diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-index 95769f90d196..5adcff9a734b 100644
---- a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-@@ -679,33 +679,33 @@ void rtw_dummy_event_callback(struct adapter *adapter, u8 *pbuf);
- void rtw_fwdbg_event_callback(struct adapter *adapter, u8 *pbuf);
+ /*
+ 
+ Result:
+@@ -630,86 +627,81 @@ struct _cmd_callback {
+ };
  
  enum {
--	GEN_EVT_CODE(_Read_MACREG) = 0, /*0*/
--	GEN_EVT_CODE(_Read_BBREG),
--	GEN_EVT_CODE(_Read_RFREG),
--	GEN_EVT_CODE(_Read_EEPROM),
--	GEN_EVT_CODE(_Read_EFUSE),
--	GEN_EVT_CODE(_Read_CAM),			/*5*/
--	GEN_EVT_CODE(_Get_BasicRate),
--	GEN_EVT_CODE(_Get_DataRate),
--	GEN_EVT_CODE(_Survey),	 /*8*/
--	GEN_EVT_CODE(_SurveyDone),	 /*9*/
+-	GEN_CMD_CODE(_Read_MACREG),	/*0*/
+-	GEN_CMD_CODE(_Write_MACREG),
+-	GEN_CMD_CODE(_Read_BBREG),
+-	GEN_CMD_CODE(_Write_BBREG),
+-	GEN_CMD_CODE(_Read_RFREG),
+-	GEN_CMD_CODE(_Write_RFREG), /*5*/
+-	GEN_CMD_CODE(_Read_EEPROM),
+-	GEN_CMD_CODE(_Write_EEPROM),
+-	GEN_CMD_CODE(_Read_EFUSE),
+-	GEN_CMD_CODE(_Write_EFUSE),
 -
--	GEN_EVT_CODE(_JoinBss), /*10*/
--	GEN_EVT_CODE(_AddSTA),
--	GEN_EVT_CODE(_DelSTA),
--	GEN_EVT_CODE(_AtimDone),
--	GEN_EVT_CODE(_TX_Report),
--	GEN_EVT_CODE(_CCX_Report),			/*15*/
--	GEN_EVT_CODE(_DTM_Report),
--	GEN_EVT_CODE(_TX_Rate_Statistics),
--	GEN_EVT_CODE(_C2HLBK),
--	GEN_EVT_CODE(_FWDBG),
--	GEN_EVT_CODE(_C2HFEEDBACK),               /*20*/
--	GEN_EVT_CODE(_ADDBA),
--	GEN_EVT_CODE(_C2HBCN),
--	GEN_EVT_CODE(_ReportPwrState),		/* filen: only for PCIE, USB */
--	GEN_EVT_CODE(_CloseRF),				/* filen: only for PCIE, work around ASPM */
--	GEN_EVT_CODE(_WMM),					/*25*/
-+	READ_MACREG_EVENT = 0,		/*0*/
-+	READ_BBREG_EVENT,
-+	READ_RFREG_EVENT,
-+	READ_EEPROM_EVENT,
-+	READ_EFUSE_EVENT,
-+	READ_CAM_EVENT,			/*5*/
-+	GET_BASICRATE_EVENT,
-+	GET_DATARATE_EVENT,
-+	SURVEY_EVENT,			/*8*/
-+	SURVEY_DONE_EVENT,		/*9*/
+-	GEN_CMD_CODE(_Read_CAM),	/*10*/
+-	GEN_CMD_CODE(_Write_CAM),
+-	GEN_CMD_CODE(_setBCNITV),
+-	GEN_CMD_CODE(_setMBIDCFG),
+-	GEN_CMD_CODE(_JoinBss),   /*14*/
+-	GEN_CMD_CODE(_DisConnect), /*15*/
+-	GEN_CMD_CODE(_CreateBss),
+-	GEN_CMD_CODE(_SetOpMode),
+-	GEN_CMD_CODE(_SiteSurvey),  /*18*/
+-	GEN_CMD_CODE(_SetAuth),
+-
+-	GEN_CMD_CODE(_SetKey),	/*20*/
+-	GEN_CMD_CODE(_SetStaKey),
+-	GEN_CMD_CODE(_SetAssocSta),
+-	GEN_CMD_CODE(_DelAssocSta),
+-	GEN_CMD_CODE(_SetStaPwrState),
+-	GEN_CMD_CODE(_SetBasicRate), /*25*/
+-	GEN_CMD_CODE(_GetBasicRate),
+-	GEN_CMD_CODE(_SetDataRate),
+-	GEN_CMD_CODE(_GetDataRate),
+-	GEN_CMD_CODE(_SetPhyInfo),
+-
+-	GEN_CMD_CODE(_GetPhyInfo),	/*30*/
+-	GEN_CMD_CODE(_SetPhy),
+-	GEN_CMD_CODE(_GetPhy),
+-	GEN_CMD_CODE(_readRssi),
+-	GEN_CMD_CODE(_readGain),
+-	GEN_CMD_CODE(_SetAtim), /*35*/
+-	GEN_CMD_CODE(_SetPwrMode),
+-	GEN_CMD_CODE(_JoinbssRpt),
+-	GEN_CMD_CODE(_SetRaTable),
+-	GEN_CMD_CODE(_GetRaTable),
+-
+-	GEN_CMD_CODE(_GetCCXReport), /*40*/
+-	GEN_CMD_CODE(_GetDTMReport),
+-	GEN_CMD_CODE(_GetTXRateStatistics),
+-	GEN_CMD_CODE(_SetUsbSuspend),
+-	GEN_CMD_CODE(_SetH2cLbk),
+-	GEN_CMD_CODE(_AddBAReq), /*45*/
+-	GEN_CMD_CODE(_SetChannel), /*46*/
+-	GEN_CMD_CODE(_SetTxPower),
+-	GEN_CMD_CODE(_SwitchAntenna),
+-	GEN_CMD_CODE(_SetCrystalCap),
+-	GEN_CMD_CODE(_SetSingleCarrierTx), /*50*/
+-
+-	GEN_CMD_CODE(_SetSingleToneTx),/*51*/
+-	GEN_CMD_CODE(_SetCarrierSuppressionTx),
+-	GEN_CMD_CODE(_SetContinuousTx),
+-	GEN_CMD_CODE(_SwitchBandwidth), /*54*/
+-	GEN_CMD_CODE(_TX_Beacon), /*55*/
+-
+-	GEN_CMD_CODE(_Set_MLME_EVT), /*56*/
+-	GEN_CMD_CODE(_Set_Drv_Extra), /*57*/
+-	GEN_CMD_CODE(_Set_H2C_MSG), /*58*/
+-
+-	GEN_CMD_CODE(_SetChannelPlan), /*59*/
+-
+-	GEN_CMD_CODE(_SetChannelSwitch), /*60*/
+-	GEN_CMD_CODE(_TDLS), /*61*/
+-	GEN_CMD_CODE(_ChkBMCSleepq), /*62*/
+-
+-	GEN_CMD_CODE(_RunInThreadCMD), /*63*/
++	READ_MACREG_CMD,	/*0*/
++	WRITE_MACREG_CMD,
++	READ_BBREG_CMD,
++	WRITE_BBREG_CMD,
++	READ_RFREG_CMD,
++	WRITE_RFREG_CMD, /*5*/
++	READ_EEPROM_CMD,
++	WRITE_EEPROM_CMD,
++	READ_EFUSE_CMD,
++	WRITE_EFUSE_CMD,
 +
-+	JOIN_BSS_EVENT,			/*10*/
-+	ADD_STA_EVENT,
-+	DEL_STA_EVENT,
-+	ATIM_DONE_EVENT,
-+	TX_REPORT_EVENT,
-+	CCX_REPORT_EVENT,		/*15*/
-+	DTM_REPORT_EVENT,
-+	TX_RATE_STATISTICS_EVENT,
-+	C2HLBK_EVENT,
-+	FWDBG_EVENT,
-+	C2HFEEDBACK_EVENT,               /*20*/
-+	ADDBA_EVENT,
-+	C2HBCN_EVENT,
-+	REPORT_PWR_STATE_EVENT,		/* filen: only for PCIE, USB */
-+	CLOSE_RF_EVENT,			/* filen: only for PCIE, work around ASPM */
-+	WMM_EVENT,			/*25*/
- 	MAX_C2HEVT
++	READ_CAM_CMD,	/*10*/
++	WRITE_CAM_CMD,
++	SET_BCNITV_CMD,
++	SET_MBIDCFG_CMD,
++	JOIN_BSS_CMD,   /*14*/
++	DISCONNECT_CMD, /*15*/
++	CREATE_BSS_CMD,
++	SET_OP_MODE_CMD,
++	SITE_SURVEY_CMD,  /*18*/
++	SET_AUTH_CMD,
++
++	SET_KEY_CMD,	/*20*/
++	SET_STA_KEY_CMD,
++	SET_ASSOC_STA_CMD,
++	DEL_ASSOC_STA_CMD,
++	SET_STA_PWR_STATE_CMD,
++	SET_BASIC_RATE_CMD, /*25*/
++	GET_BASIC_RATE_CMD,
++	SET_DATA_RATE_CMD,
++	GET_DATA_RATE_CMD,
++	SET_PHY_INFO_CMD,
++
++	GET_PHY_INFO_CMD,	/*30*/
++	SET_PHY_CMD,
++	GET_PHY_CMD,
++	READ_RSSI_CMD,
++	READ_GAIN_CMD,
++	SET_ATIM_CMD, /*35*/
++	SET_PWR_MODE_CMD,
++	JOIN_BSS_RPT_CMD,
++	SET_RA_TABLE_CMD,
++	GET_RA_TABLE_CMD,
++
++	GET_CCX_REPORT_CMD, /*40*/
++	GET_DTM_REPORT_CMD,
++	GET_TX_RATE_STATISTICS_CMD,
++	SET_USB_SUSPEND_CMD,
++	SET_H2C_LBK_CMD,
++	ADD_BA_REQ_CMD, /*45*/
++	SET_CHANNEL_CMD, /*46*/
++	SET_TX_POWER_CMD,
++	SWITCH_ANTENNA_CMD,
++	SET_CRYSTAL_CAP_CMD,
++	SET_SINGLE_CARRIER_TX_CMD, /*50*/
++
++	SET_SINGLE_TONE_TX_CMD,/*51*/
++	SET_CARRIER_SUPPRESSION_TX_CMD,
++	SET_CONTINUOUS_TX_CMD,
++	SWITCH_BANDWIDTH_CMD, /*54*/
++	TX_BEACON_CMD, /*55*/
++
++	SET_MLME_EVT_CMD, /*56*/
++	SET_DRV_EXTRA_CMD, /*57*/
++	SET_H2C_MSG_CMD, /*58*/
++
++	SET_CHANNEL_PLAN_CMD, /*59*/
++
++	SET_CHANNEL_SWITCH_CMD, /*60*/
++	TDLS_CMD, /*61*/
++	CHK_BMC_SLEEPQ_CMD, /*62*/
++
++	RUN_IN_THREAD_CMD, /*63*/
+ 
+ 	MAX_H2CCMD
  };
  
+-#define _GetBBReg_CMD_		_Read_BBREG_CMD_
+-#define _SetBBReg_CMD_		_Write_BBREG_CMD_
+-#define _GetRFReg_CMD_		_Read_RFREG_CMD_
+-#define _SetRFReg_CMD_		_Write_RFREG_CMD_
+-
+ #endif /*  _CMD_H_ */
 
 -- 
 2.54.0
