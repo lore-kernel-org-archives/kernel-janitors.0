@@ -1,116 +1,200 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3DA403B0F;
-	Tue,  9 Jun 2026 21:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C73940D579
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jun 2026 01:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781040973; cv=none; b=OCejaEvZakYX0iXMsagszh/DWuKqedyIaHuwVHIupT5hYGPOIUNFEFz/usxE8ZPHjQrSE2o5MmYg3ADT1i16qiddWRGR0p0R3VL03+ykcHAP/zIryK2d6QsGABNvcwJoBCiI3WrSa2d0570mVOuCYjXjNvQPb0fuIbu4ZW1WUWs=
+	t=1781055799; cv=none; b=JxaoDvtdTGQsYdbe6CAYXW6mFnIAbvrXrYAVaXlCw6z2vty6daJ1FOlsm/NUmOosH4MnWKfmNA01QQbPqGgA7IOJCi0Uem7rx2O9QeP7HfgRhbCoEfNd5uq1uToWbLXpELeGv+M/RWuvsw6LpvEG7J625tVQ2SotcjZpbF/+BEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781040973; c=relaxed/simple;
-	bh=TfRtoTukIxNTpCmnZepw81KvhCR4VU8Z1a9IfYc6ZVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bcEsk3xoakgF0+RJ8a1Wfi0xryhsNf8w7Lm9ogW0OpxiU9ubetP6IWB6bf34byCVCut/H/0lTaKMQRxY1k/8p/ItlAagjxJ2pYNrGHe0W4/phJuqYyNhgph8seuBnWTZCJ/qpPUv5CDfUptdRTb1LJXuzzEFbH/K306hYapnfVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hy9gBwc6; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hy9gBwc6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781040971; x=1812576971;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TfRtoTukIxNTpCmnZepw81KvhCR4VU8Z1a9IfYc6ZVE=;
-  b=Hy9gBwc6K09HGn90OiEJ0aBw4bhl13UjVU1fNYqcc5tPX3GYfmpckOrw
-   e11EIM5G2N2UAd1R6TurvrXuUDzh8qHOIIOJZfGBCsWkUZDgVCp/5oV+B
-   mw2bA01XnNFR/xUF3m5BTiZSd2LA669hCSl1j/RCZS2WKxVhHFHAprQPb
-   WnLFRqbH9qVqYdRJmFdBN9lQGT0BhKseRtmcvssZgx0AMj4wITGru9Ohq
-   g3sIBqTAkVsKXrbwelzJMunHc1nfH8Y4MtZ6pJjSP9JpFLDgI53qTr1Aa
-   S04wPH094dtoodjzSXx0BU7N7khzE4QsHGIbelo/AAtkkUOXe5rlLlSpT
-   g==;
-X-CSE-ConnectionGUID: waoeuhdWTtmiAanyLnBD8Q==
-X-CSE-MsgGUID: XY1FH1PdRJitfeXv3YYHqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11812"; a="81568539"
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; 
-   d="scan'208";a="81568539"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2026 14:36:08 -0700
-X-CSE-ConnectionGUID: jLq7otKERSmpgjp1FbtyGw==
-X-CSE-MsgGUID: 6n3pgaEJQruzMsXRRTKhEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; 
-   d="scan'208";a="245838578"
-Received: from anguy11-upstream.jf.intel.com ([10.166.9.133])
-  by orviesa008.jf.intel.com with ESMTP; 09 Jun 2026 14:36:07 -0700
-From: Tony Nguyen <anthony.l.nguyen@intel.com>
-To: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	edumazet@google.com,
-	andrew+netdev@lunn.ch,
-	netdev@vger.kernel.org
-Cc: Jakub Raczynski <j.raczynski@samsung.com>,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: [PATCH net-next 04/15] net/intel: Replace manual array size calculation with ARRAY_SIZE
-Date: Tue,  9 Jun 2026 14:35:45 -0700
-Message-ID: <20260609213559.178657-5-anthony.l.nguyen@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20260609213559.178657-1-anthony.l.nguyen@intel.com>
-References: <20260609213559.178657-1-anthony.l.nguyen@intel.com>
+	s=arc-20240116; t=1781055799; c=relaxed/simple;
+	bh=gBjtOY7lKVNmTlrhArEPxxvqjpn2aT0p9xFCWvNXJH8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gqu+4uIacrR8/H5LvkZZT4/CWis5LyHKtuk/Eque3bZ4SIxplrC+VTybpumPzry3T55HdtUqnNDXEGV9ckFAprU3XGVQt0O5E1UlIV/MiQF2pThze2Iu7crsOKOdLJAsMsBTc1sbfbTDucRR9uV3xm5jytfcYS3GHapJNn2BdXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=linux.aimannajjar.com; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.aimannajjar.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aiman Najjar <aiman@linux.com>
+Date: Tue, 09 Jun 2026 21:42:56 -0400
+Subject: [PATCH 2/2] staging: rtl8723bs: drop GEN_EVT_CODE macro and
+ capitalize labels
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260609-rtl8723bs-code-style-v1-2-daa0e85359a6@linux.com>
+References: <20260609-rtl8723bs-code-style-v1-0-daa0e85359a6@linux.com>
+In-Reply-To: <20260609-rtl8723bs-code-style-v1-0-daa0e85359a6@linux.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Aiman Najjar <aiman@linux.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781055789; l=6061;
+ i=aiman@linux.com; s=20260606; h=from:subject:message-id;
+ bh=gBjtOY7lKVNmTlrhArEPxxvqjpn2aT0p9xFCWvNXJH8=;
+ b=8VxHQb/LQZqUBdtvvODowqWdnACtoBflbQdsZ+BqM6mXOMXUlQ/iIon8a5nL314WDqMKQQZHj
+ uFf6fVs3AYKDW1cZm3CFYMVjDBnd/ofXIIPfmhap8slJwP4Qt2qxyem
+X-Developer-Key: i=aiman@linux.com; a=ed25519;
+ pk=iKg5UkqF2CmKvQwe+Jp8Cf4JOcIHoyvApdVll0sJHu8=
+X-Migadu-Flow: FLOW_OUT
 
-From: Jakub Raczynski <j.raczynski@samsung.com>
+The use of GEN_EVT_CODE macro to generate event enum label name is applied
+inconsistently and is confusing, it also makes it harder to make use of
+tools such as clangd when looking up symbols.
 
-There are still places in the code where manual calculation of array size
-exist, but it is good to enforce usage of single macro through the whole
-code as it makes code bit more readable.
-While at it, beautify condition surrounding it by reversing check and remove
-unnecessary casting.
+Replace them with writing the enum labels directly and adopting
+new capitalized names instead of the current camel case ones.
 
-Signed-off-by: Jakub Raczynski <j.raczynski@samsung.com>
-Reviewed-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
+Signed-off-by: Aiman Najjar <aiman@linux.com>
 ---
- drivers/net/ethernet/intel/i40e/i40e_adminq.h | 2 +-
- drivers/net/ethernet/intel/iavf/iavf_adminq.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c    | 12 +++---
+ drivers/staging/rtl8723bs/include/rtw_event.h    |  4 --
+ drivers/staging/rtl8723bs/include/rtw_mlme_ext.h | 54 ++++++++++++------------
+ 3 files changed, 33 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_adminq.h b/drivers/net/ethernet/intel/i40e/i40e_adminq.h
-index 1be97a3a86ce..dcf3baec7b73 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_adminq.h
-+++ b/drivers/net/ethernet/intel/i40e/i40e_adminq.h
-@@ -109,7 +109,7 @@ static inline int i40e_aq_rc_to_posix(int aq_ret, int aq_rc)
- 		-EFBIG,      /* I40E_AQ_RC_EFBIG */
- 	};
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index abcc666d5dbe..833f802ffe62 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -4400,7 +4400,7 @@ void report_survey_event(struct adapter *padapter, union recv_frame *precv_frame
  
--	if (!((u32)aq_rc < (sizeof(aq_to_posix) / sizeof((aq_to_posix)[0]))))
-+	if (aq_rc >= ARRAY_SIZE(aq_to_posix))
- 		return -ERANGE;
+ 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
+ 	pc2h_evt_hdr->len = sizeof(struct survey_event);
+-	pc2h_evt_hdr->ID = GEN_EVT_CODE(_Survey);
++	pc2h_evt_hdr->ID = SURVEY_EVENT;
+ 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
  
- 	return aq_to_posix[aq_rc];
-diff --git a/drivers/net/ethernet/intel/iavf/iavf_adminq.h b/drivers/net/ethernet/intel/iavf/iavf_adminq.h
-index bbf5c4b3a2ae..dd2f61172157 100644
---- a/drivers/net/ethernet/intel/iavf/iavf_adminq.h
-+++ b/drivers/net/ethernet/intel/iavf/iavf_adminq.h
-@@ -113,7 +113,7 @@ static inline int iavf_aq_rc_to_posix(int aq_ret, int aq_rc)
- 	if (aq_ret == IAVF_ERR_ADMIN_QUEUE_TIMEOUT)
- 		return -EAGAIN;
+ 	psurvey_evt = (struct survey_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
+@@ -4453,7 +4453,7 @@ void report_surveydone_event(struct adapter *padapter)
  
--	if (!((u32)aq_rc < (sizeof(aq_to_posix) / sizeof((aq_to_posix)[0]))))
-+	if (aq_rc >= ARRAY_SIZE(aq_to_posix))
- 		return -ERANGE;
+ 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
+ 	pc2h_evt_hdr->len = sizeof(struct surveydone_event);
+-	pc2h_evt_hdr->ID = GEN_EVT_CODE(_SurveyDone);
++	pc2h_evt_hdr->ID = SURVEY_DONE_EVENT;
+ 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
  
- 	return aq_to_posix[aq_rc];
+ 	psurveydone_evt = (struct surveydone_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
+@@ -4498,7 +4498,7 @@ void report_join_res(struct adapter *padapter, int res)
+ 
+ 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
+ 	pc2h_evt_hdr->len = sizeof(struct joinbss_event);
+-	pc2h_evt_hdr->ID = GEN_EVT_CODE(_JoinBss);
++	pc2h_evt_hdr->ID = JOIN_BSS_EVENT;
+ 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+ 
+ 	pjoinbss_evt = (struct joinbss_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
+@@ -4547,7 +4547,7 @@ void report_wmm_edca_update(struct adapter *padapter)
+ 
+ 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
+ 	pc2h_evt_hdr->len = sizeof(struct wmm_event);
+-	pc2h_evt_hdr->ID = GEN_EVT_CODE(_WMM);
++	pc2h_evt_hdr->ID = WMM_EVENT;
+ 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+ 
+ 	pwmm_event = (struct wmm_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
+@@ -4593,7 +4593,7 @@ void report_del_sta_event(struct adapter *padapter, unsigned char *MacAddr, unsi
+ 
+ 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
+ 	pc2h_evt_hdr->len = sizeof(struct stadel_event);
+-	pc2h_evt_hdr->ID = GEN_EVT_CODE(_DelSTA);
++	pc2h_evt_hdr->ID = DEL_STA_EVENT;
+ 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+ 
+ 	pdel_sta_evt = (struct stadel_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
+@@ -4644,7 +4644,7 @@ void report_add_sta_event(struct adapter *padapter, unsigned char *MacAddr, int
+ 
+ 	pc2h_evt_hdr = (struct C2HEvent_Header *)(pevtcmd);
+ 	pc2h_evt_hdr->len = sizeof(struct stassoc_event);
+-	pc2h_evt_hdr->ID = GEN_EVT_CODE(_AddSTA);
++	pc2h_evt_hdr->ID = ADD_STA_EVENT;
+ 	pc2h_evt_hdr->seq = atomic_inc_return(&pmlmeext->event_seq);
+ 
+ 	padd_sta_evt = (struct stassoc_event *)(pevtcmd + sizeof(struct C2HEvent_Header));
+diff --git a/drivers/staging/rtl8723bs/include/rtw_event.h b/drivers/staging/rtl8723bs/include/rtw_event.h
+index 62e0dec249ad..e5cb46c2a731 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_event.h
++++ b/drivers/staging/rtl8723bs/include/rtw_event.h
+@@ -64,10 +64,6 @@ struct wmm_event {
+ 	unsigned char wmm;
+ };
+ 
+-#define GEN_EVT_CODE(event)	event ## _EVT_
+-
+-
+-
+ struct fwevent {
+ 	u32 parmsize;
+ 	void (*event_callback)(struct adapter *dev, u8 *pbuf);
+diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
+index 95769f90d196..5adcff9a734b 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
+@@ -679,33 +679,33 @@ void rtw_dummy_event_callback(struct adapter *adapter, u8 *pbuf);
+ void rtw_fwdbg_event_callback(struct adapter *adapter, u8 *pbuf);
+ 
+ enum {
+-	GEN_EVT_CODE(_Read_MACREG) = 0, /*0*/
+-	GEN_EVT_CODE(_Read_BBREG),
+-	GEN_EVT_CODE(_Read_RFREG),
+-	GEN_EVT_CODE(_Read_EEPROM),
+-	GEN_EVT_CODE(_Read_EFUSE),
+-	GEN_EVT_CODE(_Read_CAM),			/*5*/
+-	GEN_EVT_CODE(_Get_BasicRate),
+-	GEN_EVT_CODE(_Get_DataRate),
+-	GEN_EVT_CODE(_Survey),	 /*8*/
+-	GEN_EVT_CODE(_SurveyDone),	 /*9*/
+-
+-	GEN_EVT_CODE(_JoinBss), /*10*/
+-	GEN_EVT_CODE(_AddSTA),
+-	GEN_EVT_CODE(_DelSTA),
+-	GEN_EVT_CODE(_AtimDone),
+-	GEN_EVT_CODE(_TX_Report),
+-	GEN_EVT_CODE(_CCX_Report),			/*15*/
+-	GEN_EVT_CODE(_DTM_Report),
+-	GEN_EVT_CODE(_TX_Rate_Statistics),
+-	GEN_EVT_CODE(_C2HLBK),
+-	GEN_EVT_CODE(_FWDBG),
+-	GEN_EVT_CODE(_C2HFEEDBACK),               /*20*/
+-	GEN_EVT_CODE(_ADDBA),
+-	GEN_EVT_CODE(_C2HBCN),
+-	GEN_EVT_CODE(_ReportPwrState),		/* filen: only for PCIE, USB */
+-	GEN_EVT_CODE(_CloseRF),				/* filen: only for PCIE, work around ASPM */
+-	GEN_EVT_CODE(_WMM),					/*25*/
++	READ_MACREG_EVENT = 0,		/*0*/
++	READ_BBREG_EVENT,
++	READ_RFREG_EVENT,
++	READ_EEPROM_EVENT,
++	READ_EFUSE_EVENT,
++	READ_CAM_EVENT,			/*5*/
++	GET_BASICRATE_EVENT,
++	GET_DATARATE_EVENT,
++	SURVEY_EVENT,			/*8*/
++	SURVEY_DONE_EVENT,		/*9*/
++
++	JOIN_BSS_EVENT,			/*10*/
++	ADD_STA_EVENT,
++	DEL_STA_EVENT,
++	ATIM_DONE_EVENT,
++	TX_REPORT_EVENT,
++	CCX_REPORT_EVENT,		/*15*/
++	DTM_REPORT_EVENT,
++	TX_RATE_STATISTICS_EVENT,
++	C2HLBK_EVENT,
++	FWDBG_EVENT,
++	C2HFEEDBACK_EVENT,               /*20*/
++	ADDBA_EVENT,
++	C2HBCN_EVENT,
++	REPORT_PWR_STATE_EVENT,		/* filen: only for PCIE, USB */
++	CLOSE_RF_EVENT,			/* filen: only for PCIE, work around ASPM */
++	WMM_EVENT,			/*25*/
+ 	MAX_C2HEVT
+ };
+ 
+
 -- 
-2.47.1
+2.54.0
 
