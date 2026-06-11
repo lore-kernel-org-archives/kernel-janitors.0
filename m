@@ -1,72 +1,113 @@
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E113F929B;
-	Thu, 11 Jun 2026 12:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2894C33D4F8
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 13:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781182799; cv=none; b=C9ROGK3v57LEKcgj6ZWTig/A9KlBGVhnbw9VgPdAMmARdLXmooO0g8GEc5Qcw/BWHBVjxBV1+kQti0ZSJxQ1uDTBroGnk3Qun80y/x5TxhJe+sw9irQRyXM4SeDe2E4iSIsK67Q4D9gCro91Xku/iMjuuJiytROkPs43FVrD/5s=
+	t=1781184331; cv=none; b=XTgPEx+iNVzTkSBI8ubVwYilFiia/Nek44NrEM/NBpgUaDUofA8zgtkvQMuTMCKMJesxXtvjZuQ5V33IRnnKFydGKn86OvU6smR49dW0N/rv0Q796pyHTXTAFZ2BUiRYjnKrSxVmbrLrUbBqXTnYaw2d2+UmzaUyuUca0IOOxhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781182799; c=relaxed/simple;
-	bh=oLgcLB3EJ51Lvj/Bkpu4LzG3g5635hL3//HgZNG/TzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SPksvJiP4qA+DzKDQ2Nf32q9p3qhmDtmYlHsXHrIi6Rxj/hPpaKRWWFHpSxxvAM3hJ6JFc6D5sdlemziv/Iw89kFkboCpRSpFZLbaR7K4fMKmWFxOFSehMhl1EELueqUTlZ8QUgvu7iMt4KZX+idwuqiD1WsqwH7WIhlBV/L8EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 03204A05F8;
-	Thu, 11 Jun 2026 12:59:50 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 3129338;
-	Thu, 11 Jun 2026 12:59:49 +0000 (UTC)
-Date: Thu, 11 Jun 2026 08:59:49 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
+	s=arc-20240116; t=1781184331; c=relaxed/simple;
+	bh=Fu38BJtlNxHdYkzxYiDkmFGEJknuthrKvC9QgjDc1Ts=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EhSLdwrDINvrhMZQLtYfM/lxeL7aJprEDOrLpfx0U20VdHSQvT7A9pkRRTk+oT+XxAx7PpcL7ORgfR504vfUyEPm959QG6A1ax+etHJRpma4VaYfNqtTy9WNZpi/4A/DCxzgNxVkDzeW4fjgqXJjwkxkpTRXLX2+jdgbHxBUoUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IGESorKq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IGESorKq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781184329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aYS/g97xEYMH+/CRm1WrC2o941rbaUtEct5ejr/IBAw=;
+	b=IGESorKq1BJr5KgFwcIBmhwO4uaLRd21tu/vYPtloe+Kj8BWHKhxEMfYrAepFRwczMQ7uN
+	F0k3pbtqMp3vwURVsRHlNYKdUNNRdVtmT0tPcupoYNRgCvEecGfqjsAl7mRfHr2T0lNAmm
+	cX4fTILI6k1hW9eEUVEjTQPje7xUw1I=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-543-rUnDC8c_PZqYMPibc2vVVg-1; Thu,
+ 11 Jun 2026 09:25:26 -0400
+X-MC-Unique: rUnDC8c_PZqYMPibc2vVVg-1
+X-Mimecast-MFC-AGG-ID: rUnDC8c_PZqYMPibc2vVVg_1781184325
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D1452183076A;
+	Thu, 11 Jun 2026 13:25:24 +0000 (UTC)
+Received: from [10.44.48.10] (unknown [10.44.48.10])
+	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E957A175F;
+	Thu, 11 Jun 2026 13:25:22 +0000 (UTC)
+Date: Thu, 11 Jun 2026 15:25:17 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-trace-kernel@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/3] tracing/user_events: Simplify data output in
- user_seq_show()
-Message-ID: <20260611085949.59017a55@gandalf.local.home>
-In-Reply-To: <6762145e-3e51-43b8-8bca-a9dd200b54e2@web.de>
-References: <596c2f16-a12c-4e24-8a8c-1243dce354ec@web.de>
-	<b95f18bb-6603-4c22-b224-0226a49d26b3@web.de>
-	<20260609121348.303ca675@fedora>
-	<6762145e-3e51-43b8-8bca-a9dd200b54e2@web.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
+    Benjamin Marzinski <bmarzins@redhat.com>, 
+    Mike Snitzer <snitzer@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: dm: Use common error handling code in three functions
+In-Reply-To: <3b8e5056-0611-43eb-9fc3-c82f0511d466@web.de>
+Message-ID: <fd9dc2eb-5fb2-fda0-1e8d-e1c7c2f4aee9@redhat.com>
+References: <be375668-6d07-4070-9b08-d6445afa324f@web.de> <d802f7e7-9ed7-e7f9-89c5-19cdc9806367@redhat.com> <3b8e5056-0611-43eb-9fc3-c82f0511d466@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: cdumqrpwp36c14rccxwgpxei79h6rh4f
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 3129338
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18HIymanurRIToNi1ZnI3eMektQ5mD3NwE=
-X-HE-Tag: 1781182789-343621
-X-HE-Meta: U2FsdGVkX1+l7x5aMffYe5Ktm6WwiGkYPXDobEZgNRFIO1bai3fv/20JfYiv2eMI6nLX1OuDwWc3/3ClAWxN7+iFcW05pY5sgJX104znMbHFT3agPhFcQAkdXZZnT5/d3Ld6qk7WtQO2UlEC+rvIlNy0etuBzpqSRr6oJ5Fz9E2iYPM7H3oU8NKqWZ+HxnWfa1IrTkHz3hkb7S5I/ADNJFUX44Bey3TcSUnFa72quSaAzxi/4zYqtpzbpxRjuYSWlc0t+AoXz3HhvQXMwkBjfQQauLp0Lkk0NJHzhRZaGIWY2srkwoI0ROmRnTasHzrQBZWGl/baY4pNy6W0uGi6kbme1ue4iG4S9WNcOYSqYTr7SoSiqr/0ZggLT+uROdx/
+Content-Type: multipart/mixed; boundary="-1463811712-182789233-1781184324=:83913"
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 
-On Tue, 9 Jun 2026 18:44:04 +0200
-Markus Elfring <Markus.Elfring@web.de> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> >> @@ -2800,8 +2800,7 @@ static int user_seq_show(struct seq_file *m, void *p)
-> >>  
-> >>  	mutex_unlock(&group->reg_mutex);
-> >>  
-> >> -	seq_puts(m, "\n");
-> >> -	seq_printf(m, "Active: %d\n", active);
-> >> +	seq_printf(m, "\nActive: %d\n", active);
-> >>  	seq_printf(m, "Busy: %d\n", busy);  
+---1463811712-182789233-1781184324=:83913
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+
+
+On Thu, 11 Jun 2026, Markus Elfring wrote:
+
+> >> Use additional labels so that a bit of exception handling can be better
+> >> reused at the end of three if branches.
+> >>
+> >> This issue was detected by using the Coccinelle software.
 > > 
-> > This isn't a critical section and I find the original way easier to read.  
+> > Hi
+> > 
+> > I think that jumping into a nested block isn't good practice and it makes 
+> > the code harder to read and maintain. I would redo the patches so that 
+> > they jump to the end of the topmost function block, for example:
+> Thanks for your constructive feedback.
 > 
-> Would you prefer to use a seq_putc() call instead at such a source code place?
-> https://elixir.bootlin.com/linux/v7.1-rc7/source/kernel/trace/trace_events_user.c#L2803
+> Can any further adjustments become feasible for the design goal “Centralized exiting of functions”?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v7.1-rc7#n526
 
-Sure, why not.
+I think that this document is OK.
 
--- Steve
+> Would you find goto chains applicable for another while?
+> https://cmu-sei.github.io/secure-coding-standards/sei-cert-c-coding-standard/recommendations/memory-management-mem/mem12-c/
+
+I think goto chains are ok if there are few variables to free.
+
+> How do you think about to increase the application of scope-based resource management?
+> https://elixir.bootlin.com/linux/v7.1-rc7/source/include/linux/cleanup.h
+
+I am not a fan of these. I think that goto is OK if there are few 
+variables to clean-up. If there is a large number of variables to clean 
+up, it's better to zero-fill the whole structure and free the entries 
+unconditionally (kfree does noting if it gets NULL) - see for example 
+dm_integrity_ctr - it allocates the structure with kzalloc_obj and on any 
+error it jumps to the label "bad" that calls dm_integrity_dtr - and 
+dm_integrity_dtr frees all non-NULL entries.
+
+Mikulas
+
+> Regards,
+> Markus
+---1463811712-182789233-1781184324=:83913--
+
