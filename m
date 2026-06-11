@@ -1,171 +1,76 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7999E2F1FE3;
-	Thu, 11 Jun 2026 05:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E08A1A6806
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 07:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781156021; cv=none; b=Fyn4WiUIahpuLvNVZzBM04gdI7aUW/g8UI9KMiOd9vNvgIrRAfuxw0wRFbt/LdqLhU7w337AXs8k0rqFQlv5YmV5rn/FN3Y5NHBO8Zyg82Wy0FOsRxe0Eh4lJ4LO4tAO4nG0jBCU6wu9SQTMdpwiLpega52fFBA30ldP8CM4bk0=
+	t=1781162477; cv=none; b=CqYrhCPXGL6lKk0+OIP6QpCDfDhvcsxDkBPSME2sJ+AMKY27Y0NoD9dCH1CE1ei2BNHzMbFadYmwYrO3/M85PES0a63nBVI9h6fyCEIwQLgQB+qJxgxgNv6T4vdHHFNubtwBzuodJZt/7hOKhk0ur9m57YYTwzKYoprSnKCfBhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781156021; c=relaxed/simple;
-	bh=F5U58Q+TlC8jAdccS7G+VZQOPyL9LzR95X7Vhw0XclU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uK4SXhpT+Zw6uw4RqAReXTb8ai3bRyNKDTfTSUO4JQkORrqXkrfzJUjf49fwjrMakyXRIDaISwO/mrGvCRi0Lfhl+g/aHSstP9p1JB7cTjW+EiSuRwW1ofUfdWiH2QFAHl9+tEVcDfL0J2/B5P6d5esrlv1HnmMsIzQKT3v0wLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ADr/ILkl; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1781162477; c=relaxed/simple;
+	bh=vqXBRCfdJypCWOvjzMy3+kaVRxBBLR15tEPZD8ww7IM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WBfd81Z4XcTvsnndZt5tPyTsPfzciPjKY8L6xYlBBFEfgZuAq5d4SfEdg2v3+YCL80fH7B/6CA0PoZbxSx2rhhv4QP6nn+/2UgVQjjkZbILbSYN/xa19ZZiMZgBpabBVIIsM+hYhYInCWQri6/U/w01GHv/1IWNDCqA5JgYdYWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yg2mNsza; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ADr/ILkl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1781156015; x=1781760815; i=markus.elfring@web.de;
-	bh=F5U58Q+TlC8jAdccS7G+VZQOPyL9LzR95X7Vhw0XclU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ADr/ILklFSXNR0qoSR2q+MoHHoKZFxmwYpSVm5HXgXlj8MDXlTuL8EMUwBsQa2w+
-	 0JNoQjC3EZge7scU+JzmMbQrqvv7D0dAuNEMdY5HZ/Kh5wj5f96BqShRiD89PrX6/
-	 Dh89spsxXnpaiHaXmuoKA0fRfeY4RTvXQEQcRWC4Lj5bviTWeHOnSvK5xAdSkkoy3
-	 CNi3M4phMLz5ZvXdx3LwK9/R0uFqOhYyecYbZAF1QIPfJJMgE+jZzCqkHIpD/Adat
-	 4IKBtErddDMKMf+tbWZM24d0CwSqKh41VHl3n0SeHoKe/1yvK8ucTQ4K00UYS6DAN
-	 4T7CXEsuqeTMLr7L1w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhjm-1wyfqi3VkU-00ZGYD; Thu, 11
- Jun 2026 07:33:34 +0200
-Message-ID: <3b8e5056-0611-43eb-9fc3-c82f0511d466@web.de>
-Date: Thu, 11 Jun 2026 07:33:25 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yg2mNsza"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 70F09C49F64;
+	Thu, 11 Jun 2026 07:21:16 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 352DE5FF03;
+	Thu, 11 Jun 2026 07:21:14 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A755106B9E31;
+	Thu, 11 Jun 2026 09:21:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1781162473; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=sx2Lw2VBfVAh5bZFaQYxdt+bBNldzZyEUbKgaWFmh4Y=;
+	b=Yg2mNszaQYtR6t73fwlwIAi5MN/X/qea8mGzSZoO4CIn0VdD0BYFOKodl828+oQqvfl0Hf
+	do4r3S8Sh6nLJZrb27JTuDZdCwezhLk6sX8eJJp0wie/z3EECGj21/8u4KeZwef8SJLARn
+	7t1tXi7rh8E0p89sYOOdxgljsgpl5K2OVTh/kXk669bXnuNkJ959qEmvhqKjKjTKX2f3wq
+	zE3m947uyTlFDVI/D8tna7jLG0XBtD8zq0cAKFFS2lzBVaRvweX+TUcbvVjrJqXv640Ctn
+	8Ny/dq+RQOwh+ZNeV+GiNUP91xqwYLkQGsfuv4BUN1km5GASvs75EvKdvCZz5Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: linux-mtd@lists.infradead.org, Kees Cook <kees@kernel.org>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+In-Reply-To: <e3b98bb6-62e3-4370-9050-de48250a0398@web.de>
+References: <e3b98bb6-62e3-4370-9050-de48250a0398@web.de>
+Subject: Re: [PATCH] mtd: cfi: Use common error handling code in two
+ functions
+Message-Id: <178116247248.423856.8903595196251166869.b4-ty@bootlin.com>
+Date: Thu, 11 Jun 2026 09:21:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: dm: Use common error handling code in three functions
-To: Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev
-Cc: Alasdair Kergon <agk@redhat.com>, Benjamin Marzinski
- <bmarzins@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <be375668-6d07-4070-9b08-d6445afa324f@web.de>
- <d802f7e7-9ed7-e7f9-89c5-19cdc9806367@redhat.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <d802f7e7-9ed7-e7f9-89c5-19cdc9806367@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:j5FK80TwxozBZYOg+KtPI33s1NuB0oltfPwknO2k1ku/FUkjf93
- 1QJig1kMkjq3FN3Q5QnaYJHMKPW8aOMioEk2wi9eYwY+s08TbND2yLgmInDaBiWdmHced4+
- rTwQV81gE8GWls+/UrDrSx7FE0A7eODyrZx3SEeAb0/3VI7UAe74gjzpD016UiFS5YQBRsU
- cdBbFGmpbL7U9qmmPpRWg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HzjRugHBduI=;y2ZPWX9F0As5KcjY5EIqoiRZjnH
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
->> Use additional labels so that a bit of exception handling can be better
->> reused at the end of three if branches.
->>
->> This issue was detected by using the Coccinelle software.
->=20
-> Hi
->=20
-> I think that jumping into a nested block isn't good practice and it make=
-s=20
-> the code harder to read and maintain. I would redo the patches so that=
-=20
-> they jump to the end of the topmost function block, for example:
-Thanks for your constructive feedback.
+On Wed, 10 Jun 2026 09:21:46 +0200, Markus Elfring wrote:
+> Use additional labels so that a bit of exception handling can be better
+> reused at the end of two function implementations.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> 
 
-Can any further adjustments become feasible for the design goal =E2=80=9CC=
-entralized exiting of functions=E2=80=9D?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv7.1-rc7#n526
+Applied to mtd/next, thanks!
 
-Would you find goto chains applicable for another while?
-https://cmu-sei.github.io/secure-coding-standards/sei-cert-c-coding-standa=
-rd/recommendations/memory-management-mem/mem12-c/
+[1/1] mtd: cfi: Use common error handling code in two functions
+      commit: cf4ff717af69cfe2dff8ddb843dce36205cb3c40
 
-How do you think about to increase the application of scope-based resource=
- management?
-https://elixir.bootlin.com/linux/v7.1-rc7/source/include/linux/cleanup.h
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
 
-Regards,
-Markus
+Kind regards,
+Miquèl
+
