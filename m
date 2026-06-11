@@ -1,237 +1,115 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E502E62B3;
-	Thu, 11 Jun 2026 10:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECF23CC7DC
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 10:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781172173; cv=none; b=ZZXTsbfqVxT/vMSDKBur31ER5oEfjG/69VoDMYAE1tx+m+dg5TGJu1FvRFtUuncL0/CdzNxPjBX/6vsHTdTQ8ppKBSkK0IvRCdRM83BstIKLPrcBszmdkPgSJ0oxV/THberTKUy5ML4QELMwMFO4VHPB5aab61uCy4YKwJB0cIQ=
+	t=1781173658; cv=none; b=JRln+XIe8V1fArtGLZsKZNtTY1OBJfiQ7dKtsXuOyJ/hE/cbHDYO3oEnooK86W2hQzNqSeUPa9xmfouSYif09LsB6UybiKTC9jspVQyVgKxoD9e/cZgoP4mdCCL13JzwMdiOGdc+W5XXT43daT7TDKIwbWpbEFjrKJzh0/52+EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781172173; c=relaxed/simple;
-	bh=LDh5wcdtbFwGNTFR7JrFNqtdewLYa6kYiw25GNFx2d0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=aX2I2yKUlT5Dp51rW2Hw9xm1j1Hog/t0JkoXZ5aT5pGGqojWdRrFE6JCAUhQN1TTPuH24/zaFSoxFw2n2QPfNJtRuhs0bWiYWEwlVo2GOPtDVu4PyKGXJH9xXVPGFIANpPby+9RRu6V9aB23oe8feEzpHwy4AVE2/MZeoTlM5mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Qy6+O7Vj; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1781173658; c=relaxed/simple;
+	bh=fXKbee91Nqu7cJHnMhqQL9Q3B32VX3O8hKOJ+Vq54Og=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SHnu8Nf/MlHVH6nNHMnEFiKS0CMv1shPy870janpVthO5fZ1/hl0wgzpwlturm8hiKX14Cqk6B/+nJXvY1lBUk8db6GWoIBPrwZYZbVO0B0HxQjwC2gESwqnYnQknAENEs5BeqxG+rJ1ykJaT0pV8p25y/k8X0Q9IjoxmUbBC1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWzFXU56; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qy6+O7Vj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1781172150; x=1781776950; i=markus.elfring@web.de;
-	bh=RVp3bryiEwMVR9Bz4t9wj5CzsTTsZiHsrQL/9DA6uVk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Qy6+O7VjCAIks2rGWFFV8PrXIiAGqlvBVGXllxTHCfsI+AItYTuOP8dMX3hufI4X
-	 GTEP0XH/DG+m7Nik5jhNEs7T4z4ZVOACdnrOoq+1bin4+t4S8vBSRtXrY7dE0Nee6
-	 OxbMC5LNYww0SIpTjd0zXycAiPNCodlMCLuJD4u5TFR9ZeeIcOweEEBE3GXZir2Lu
-	 DYo1FpDpscGk4a5abnCHIa71aqGwyB76ZAXGIc1AUAABtLZoIJumtCXpv8GAzOw3G
-	 xxmnU2L11JIrsSaw1hTWIrXzXDPNDiyS+bKqnMkfPRzCnvBwpVyia5HvrQlSyMKMw
-	 hAKkwUceDLS6zhQ2TA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKuOP-1woShn0kAf-00Tbct; Thu, 11
- Jun 2026 12:02:30 +0200
-Message-ID: <690827f2-e746-4378-bb7c-9948cd69dc15@web.de>
-Date: Thu, 11 Jun 2026 12:02:27 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWzFXU56"
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-91578122305so1227608485a.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 03:27:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781173656; x=1781778456; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tIFb7lA47yKA03mD5eNYLcNFMgrB7SUavs+fhnXbFgg=;
+        b=JWzFXU56FTDIePDWdBVAny5xCsG+miaLP9Az2m2LU9VieDCmViakcI2rATIRPshsic
+         h5wFm9/W1F+z5KWjy9j7Q8pX08MvySgo6aHncBNP4SAYkPI0g94XHG5reNmNn4T7jtLH
+         mrLxjopfrR34x65Pn//11VCHXpDHeG6mDb1xlrGLYK1IwgBpQRE9yMsmNbn/ACWByVtv
+         D1ZXbWvmQfH0uaFrDdpX5Ct/vUPWwCCtictIls7svY+tbQ1LftOezNlxItybVX+pvKaI
+         aRkS/L+Eh7SECQn96HoEGd8xHTJwFoMchKag7k0BFBPAGFQfzPjxryNjDIWO4Xl7fEza
+         pO+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781173656; x=1781778456;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tIFb7lA47yKA03mD5eNYLcNFMgrB7SUavs+fhnXbFgg=;
+        b=FouwF9aE6DGiU74To9maNrB/TaOs1HCHoxF+odxuhryB1v3f5eOfPVjvVUTLGkXW47
+         ZWJ0rYmyyKt+BJV8Q2cRKOUqQTfeMbvLTT8SBgth+wTZiQTXSQxqup+yLUZ9KljqQGmx
+         BJU7lRvPz6AMZFJCQ1uC9FU6ELBzcVOm8rlsM/R4v9EBMXCj9aFb1jZQwBCOyH4fEgFG
+         nX4MShdhAevnCiZe5iNlGM3WLw0i9wg+2PF960fvXSUme6F0GgrJGSTM+oDpsXdMJxTh
+         L/3epMGSEGLH4HMOV1rfkcvUZ6X928vA/vEhkt0/c2QnvoVcKBs58McR/p1sIs+fawIt
+         oUgg==
+X-Forwarded-Encrypted: i=1; AFNElJ9Xqj1mkeiu/BwFzPnSECPoR8bWBB5CFDBhgOnLFua1AxicqNu8bRJRJp9NafAVaIdjSWBRPKHWFnyhP52qW74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3l5Fq53d+2Tj+lTtxinKTsqFTk0OBK3SGUwF8wkM0lT71Hz4f
+	b2+Dwqd4xBhe11fEa7g5Swhrs3NJc9Bo+usmZUhnWUvp2F1IzJqsagGd
+X-Gm-Gg: Acq92OGcazjyYpXxeBZVUH9SpvcBbgqR+bm3E3VA8zfV26JpUcO3VlJA/G3zDuTsHsH
+	oIn70EWs7VkqTH9DZXAea512LJ8zlGqBUfj4Yn9FWHWGhqzrG1Roa8/Y1KbJ7nh73q3GJID8v6Q
+	1aZKulruvUSjZB3SIYrayDqY1IukVw+bozJ1+d76PbPPnXVzC4CM+aOPVw6va8ppdsD9UcFh7+A
+	oONY+t22ntVHr8Q8XrElB78McMtayOA8UsQOiZrM0KOaBb6RfKN7wqserUE3aNovBTEQyRcZun7
+	CW+XXNcFzFPDF3lHEQBDwpdfQgC9uMvA9EJRGdzJZmgY9kRpjvyiNSbpddKc4UrBKqKZxcjjlcC
+	xsnP5rtGjY8ZpzzcklGnr7YhNFaHoA/XdsaihM/T8cj+qIkWtcC+ZH//+VIZPpArmmdVKf82GBG
+	aW9FyaMhp+vSoHOgV9Xw95sCHe21M=
+X-Received: by 2002:a05:620a:710b:b0:915:8055:3f91 with SMTP id af79cd13be357-9160b042de9mr330058185a.43.1781173656224;
+        Thu, 11 Jun 2026 03:27:36 -0700 (PDT)
+Received: from localhost ([149.40.50.215])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9160aca325csm147320685a.11.2026.06.11.03.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jun 2026 03:27:35 -0700 (PDT)
+Date: Thu, 11 Jun 2026 13:27:30 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: [PATCH next] drm/msm/adreno: fix use after free on error path in
+ a6xx_gpu_init()
+Message-ID: <aiqNktNfXiaPhje3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- Christophe Leroy <chleroy@kernel.org>, Roy Pledge <Roy.Pledge@nxp.com>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] soc: fsl: dpio: Use common error handling code in two
- functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fuDLab4raeHeNjF0RATfEmeR7VH3vJWK57SXK1kirrMtbYFEjOI
- LvJyGwUY0TGbWwOfvK64Mzy0+eCJKPYm3/UwZwzvBqKT+KziDhhvCLRyP8AKG6HvJy06675
- qL2gxcpH/R4HaWQ5TnS2XH7BXRfqd8UbR6oVJNk2Ntk3DQTDR85RKGZlcSmkOx666FGsury
- QuQlQx/nDXBIRSPLOtVIA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BQ93aTbI3z4=;BYb50u7xgDv79aFopJVKLCOua+v
- 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
- aMamHMDEvs9p7dkKm7lLrpT73joh8ruJIXP/QG+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jun 2026 11:56:18 +0200
+The a6xx_destroy() function frees "a6xx_gpu" and so "adreno_gpu" points
+to freed memory.  Preserve the error code before freeing the memory to
+avoid a use after free.
 
-Use additional labels so that a bit of exception handling can be better
-reused at the end of two function implementations.
+Fixes: d158886cba08 ("drm/msm/adreno: Trust the SSoT UBWC config")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/soc/fsl/dpio/dpio-service.c | 30 ++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/soc/fsl/dpio/dpio-service.c b/drivers/soc/fsl/dpio/dp=
-io-service.c
-index 317ca50b0c2b..025d9fb5660d 100644
-=2D-- a/drivers/soc/fsl/dpio/dpio-service.c
-+++ b/drivers/soc/fsl/dpio/dpio-service.c
-@@ -140,10 +140,8 @@ struct dpaa2_io *dpaa2_io_create(const struct dpaa2_i=
-o_desc *desc,
- 		return NULL;
-=20
- 	/* check if CPU is out of range (-1 means any cpu) */
--	if (desc->cpu !=3D DPAA2_IO_ANY_CPU && desc->cpu >=3D num_possible_cpus(=
-)) {
--		kfree(obj);
--		return NULL;
--	}
-+	if (desc->cpu !=3D DPAA2_IO_ANY_CPU && desc->cpu >=3D num_possible_cpus(=
-))
-+		goto free_obj;
-=20
- 	obj->dpio_desc =3D *desc;
- 	obj->swp_desc.cena_bar =3D obj->dpio_desc.regs_cena;
-@@ -158,11 +156,8 @@ struct dpaa2_io *dpaa2_io_create(const struct dpaa2_i=
-o_desc *desc,
- 	qman_256_cycles_per_ns =3D 256000 / (obj->swp_desc.qman_clk / 1000000);
- 	obj->swp_desc.qman_256_cycles_per_ns =3D qman_256_cycles_per_ns;
- 	obj->swp =3D qbman_swp_init(&obj->swp_desc);
--
--	if (!obj->swp) {
--		kfree(obj);
--		return NULL;
--	}
-+	if (!obj->swp)
-+		goto free_obj;
-=20
- 	INIT_LIST_HEAD(&obj->node);
- 	spin_lock_init(&obj->lock_mgmt_cmd);
-@@ -192,6 +187,10 @@ struct dpaa2_io *dpaa2_io_create(const struct dpaa2_i=
-o_desc *desc,
- 	obj->frames =3D 0;
-=20
- 	return obj;
-+
-+free_obj:
-+	kfree(obj);
-+	return NULL;
- }
-=20
- /**
-@@ -665,10 +664,8 @@ struct dpaa2_io_store *dpaa2_io_store_create(unsigned=
- int max_frames,
- 	ret->max =3D max_frames;
- 	size =3D max_frames * sizeof(struct dpaa2_dq) + 64;
- 	ret->alloced_addr =3D kzalloc(size, GFP_KERNEL);
--	if (!ret->alloced_addr) {
--		kfree(ret);
--		return NULL;
--	}
-+	if (!ret->alloced_addr)
-+		goto free_ret;
-=20
- 	ret->vaddr =3D PTR_ALIGN(ret->alloced_addr, 64);
- 	ret->paddr =3D dma_map_single(dev, ret->vaddr,
-@@ -676,14 +673,17 @@ struct dpaa2_io_store *dpaa2_io_store_create(unsigne=
-d int max_frames,
- 				    DMA_FROM_DEVICE);
- 	if (dma_mapping_error(dev, ret->paddr)) {
- 		kfree(ret->alloced_addr);
--		kfree(ret);
--		return NULL;
-+		goto free_ret;
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index 8b3bb2fd433b..a44380316aaa 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -2770,8 +2770,9 @@ static struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+ 
+ 	adreno_gpu->ubwc_config = qcom_ubwc_config_get_data();
+ 	if (IS_ERR(adreno_gpu->ubwc_config)) {
++		ret = PTR_ERR(adreno_gpu->ubwc_config);
+ 		a6xx_destroy(&(a6xx_gpu->base.base));
+-		return ERR_CAST(adreno_gpu->ubwc_config);
++		return ERR_PTR(ret);
  	}
-=20
- 	ret->idx =3D 0;
- 	ret->dev =3D dev;
-=20
- 	return ret;
-+
-+free_ret:
-+	kfree(ret);
-+	return NULL;
- }
- EXPORT_SYMBOL_GPL(dpaa2_io_store_create);
-=20
-=2D-=20
-2.54.0
+ 
+ 	/* Set up the preemption specific bits and pieces for each ringbuffer */
+-- 
+2.53.0
 
