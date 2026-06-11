@@ -1,64 +1,65 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51D52D73A6;
-	Wed, 10 Jun 2026 23:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A63C2BFC8F;
+	Thu, 11 Jun 2026 02:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781135967; cv=none; b=IA1Cz5bkovSVYXX/UWqEzfbNsWE2kqEU4jefUfVffoetER1oslvzY6Dxn0b+8j+fG2tr+G5CzcqMHsa9ou6qJn/+vxgbe4XOCHsoVRTV1wUyj+eR7hZX2QuWAbjn57ChNIJutmzb8JodNA9PvY5emQeDJ0/yRNYkwlO8R6Edsz0=
+	t=1781144802; cv=none; b=qSsoaVsAUDnrcQD4BOS6HKRTREPXsTY65qCb+j4OQCK/5znI5Fnxnpx82HiHgP6WFxztJG2h+/X/NTflyoXsmOnbpvf+BpjkHi58cO6j7v1pYzjFlfMU88p2b8A3p6a/4UjOOSumP4/zLvk8kkU7sqZkjyOtQau9HQt0zlZdBwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781135967; c=relaxed/simple;
-	bh=VF45dCW/6FZM+u1WySh5cu8z2ymhxf5zcT1yGqk06jE=;
+	s=arc-20240116; t=1781144802; c=relaxed/simple;
+	bh=42ocNaY4J5enhd7f4uXUrDsldtOXegJngP81m4fa5o8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsgUTm7y0EkOV789XOXKfj/l+hldFJXwEvefgi65ro8J5LIY+dD+bw4HvrkeNRsPpEwm3fx6YOgGGWJzPd2c/4IqlFdvqOoMkY9hyDXishKGuMrnyLL2E7vTIDhxpHH/GUjqzUm2YGmg8vDUignxd1rEWun38EThcYItzvILEFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UDAZ2K2O; arc=none smtp.client-ip=192.198.163.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=SsIBq+axcgzFLf0ga2gYcuwt9R33zZ00H2PSzwFfNx056ayJ5Gn+dk9UFX5ja2dxek4//9yVfbX3xKEyqGHAYjudMXbhZc3K0YjbchLxjiDFfdYl7T5T7vyqVLf8WSiTx90Xbf5ogZOA9X3quSL39YxqyPjGqZozKY+mJm4IXYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lXf7Rwdz; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UDAZ2K2O"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXf7Rwdz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781135964; x=1812671964;
+  t=1781144800; x=1812680800;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=VF45dCW/6FZM+u1WySh5cu8z2ymhxf5zcT1yGqk06jE=;
-  b=UDAZ2K2Oa3Uc8z0NBNb1YmFnrKCqrtQsAeY/sizDtwgeoIXbfxoc+C3W
-   fHYOiQfboh+xB6xGpQEDTFFio1sfShz8ooH4rApIOS+VPIbFfYHIo6vNK
-   3U6WB1A7xugAIJu9+QjgnXEotdrDbx1DdYQ67c6o/YmyZCGEj3zMpGcCq
-   hBluNIIUeXwzmjv1MXKYRUUAuzAhZ1Hx+CrkCsSpJLryRTKmqFyC9hQhI
-   cllYlj9eyoVSXj7odMZKzEWw9zSPMYNC39yxZrI3Rz9oMdWnYfgTJC4Ig
-   jTnwBROAXXAkJHxP8sLpHBKdGRMHkKoitH+V/3A7FGK53sgudX2NIzQvB
+  bh=42ocNaY4J5enhd7f4uXUrDsldtOXegJngP81m4fa5o8=;
+  b=lXf7Rwdzu8IlPHocgOXUksVyXHxT91z0pp8BC2rhJ+5jBNicStH/9GaB
+   /C5MwpGAOxJuNE0+3C1rgD2ut+c6eO2l7nUS7JxfxSImOymEMvkCOc6fb
+   lePcoyGLKegVmdx8WGNya0D7toDMqwxWx2i3074mdDVsyu8HcnuKucC2D
+   pntT3VP66msFe1GmkjdfHjgCOVOXdk2+pphJLKeLBda+4NyucUKs1Zr62
+   s+e+ywYxeFJ4bW3yNA+Uiz4n7Qd0dxFtpYmMAce5iuZMgaGttaTEWqw24
+   8CdLCQioDcBACbnfpkM7d7V3+52+Ifbkg+jtMdvjyDWXMboqAyN6Btdt8
    A==;
-X-CSE-ConnectionGUID: ph+OEL67QlOFbP9dLCwPfQ==
-X-CSE-MsgGUID: OMxFL3SXRZ21b5zngd72Fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="81988312"
-X-IronPort-AV: E=Sophos;i="6.24,197,1774335600"; 
-   d="scan'208";a="81988312"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2026 16:59:23 -0700
-X-CSE-ConnectionGUID: nzPkJjzCQtOUvreQIIZpZQ==
-X-CSE-MsgGUID: FQQeWEyuTBCPjn6d3GeniA==
+X-CSE-ConnectionGUID: LiBoSU9PQKq3d0wwkSD0Qg==
+X-CSE-MsgGUID: 6XQmXaKbS9SAH3mS48Co4Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="81695346"
+X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; 
+   d="scan'208";a="81695346"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2026 19:26:40 -0700
+X-CSE-ConnectionGUID: 1CfD3wkvSDiRCrnQE4hKnA==
+X-CSE-MsgGUID: lMipG0LISgmMXjJCBe5GgQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,197,1774335600"; 
-   d="scan'208";a="276520370"
+X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; 
+   d="scan'208";a="284426761"
 Received: from lkp-server01.sh.intel.com (HELO f0d55cb201f0) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 10 Jun 2026 16:59:20 -0700
+  by orviesa001.jf.intel.com with ESMTP; 10 Jun 2026 19:26:37 -0700
 Received: from kbuild by f0d55cb201f0 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wXSpI-00000000M0w-35LF;
-	Wed, 10 Jun 2026 23:59:16 +0000
-Date: Thu, 11 Jun 2026 07:58:19 +0800
+	id 1wXV7p-00000000MBy-3uM3;
+	Thu, 11 Jun 2026 02:26:34 +0000
+Date: Thu, 11 Jun 2026 10:26:17 +0800
 From: kernel test robot <lkp@intel.com>
 To: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Johan Hovold <johan@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
 	kernel-janitors@vger.kernel.org,
 	Adrian Korwel <adriank20047@gmail.com>,
 	Felix Gu <ustc.gu@gmail.com>
 Subject: Re: [PATCH] USB: serial: io_ti: Use common error handling code in
  do_download_mode()
-Message-ID: <202606110758.5k78JhiV-lkp@intel.com>
+Message-ID: <202606111021.E9ag1FLC-lkp@intel.com>
 References: <188a2ea8-6bb6-46aa-883d-a1472b35217f@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -85,38 +86,33 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/USB-serial
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git usb-next
 patch link:    https://lore.kernel.org/r/188a2ea8-6bb6-46aa-883d-a1472b35217f%40web.de
 patch subject: [PATCH] USB: serial: io_ti: Use common error handling code in do_download_mode()
-config: powerpc-randconfig-002-20260611 (https://download.01.org/0day-ci/archive/20260611/202606110758.5k78JhiV-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260611/202606110758.5k78JhiV-lkp@intel.com/reproduce)
+config: i386-buildonly-randconfig-003-20260611 (https://download.01.org/0day-ci/archive/20260611/202606111021.E9ag1FLC-lkp@intel.com/config)
+compiler: clang version 22.1.3 (https://github.com/llvm/llvm-project e9846648fd6183ee6d8cbdb4502213fcf902a211)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260611/202606111021.E9ag1FLC-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202606110758.5k78JhiV-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202606111021.E9ag1FLC-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   drivers/usb/serial/io_ti.c: In function 'do_download_mode':
->> drivers/usb/serial/io_ti.c:1325:8: error: 'vheader' undeclared (first use in this function); did you mean 'freader'?
-     kfree(vheader);
-           ^~~~~~~
-           freader
-   drivers/usb/serial/io_ti.c:1325:8: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/usb/serial/io_ti.c:1326:8: error: 'header' undeclared (first use in this function); did you mean 'freader'?
-     kfree(header);
-           ^~~~~~
-           freader
->> drivers/usb/serial/io_ti.c:1336:8: error: 'record' undeclared (first use in this function); did you mean 'ror8'?
-     kfree(record);
-           ^~~~~~
-           ror8
->> drivers/usb/serial/io_ti.c:1338:8: error: 'firmware_version' undeclared (first use in this function); did you mean 'free_firmware_version'?
-     kfree(firmware_version);
-           ^~~~~~~~~~~~~~~~
-           free_firmware_version
+>> drivers/usb/serial/io_ti.c:1325:8: error: use of undeclared identifier 'vheader'
+    1325 |         kfree(vheader);
+         |               ^~~~~~~
+>> drivers/usb/serial/io_ti.c:1326:8: error: use of undeclared identifier 'header'
+    1326 |         kfree(header);
+         |               ^~~~~~
+>> drivers/usb/serial/io_ti.c:1336:8: error: use of undeclared identifier 'record'
+    1336 |         kfree(record);
+         |               ^~~~~~
+>> drivers/usb/serial/io_ti.c:1338:8: error: use of undeclared identifier 'firmware_version'
+    1338 |         kfree(firmware_version);
+         |               ^~~~~~~~~~~~~~~~
+   4 errors generated.
 
 
-vim +1325 drivers/usb/serial/io_ti.c
+vim +/vheader +1325 drivers/usb/serial/io_ti.c
 
   1065	
   1066	static int do_download_mode(struct edgeport_serial *serial,
