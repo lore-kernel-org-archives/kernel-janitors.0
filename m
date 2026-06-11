@@ -1,153 +1,128 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB56F3CE080
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 10:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CFE3CAA5D;
+	Thu, 11 Jun 2026 11:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781173800; cv=none; b=B2e9gVnRVGVmmstgE8EzQAlNL8TRDVkDg+HB5lmifuiP4w9be//zx/5wxnzNGPJdPxHC9yBTROdscSG3q5diC+82tmo2jUYsnTQaYuVleZP/nEuwrcLr65SPuIr+JHn0xNcXjDZRDSQbj+CxuvuPGeJI0/b3LV3UuNE+kvEouwk=
+	t=1781175977; cv=none; b=Uj5heMaESRWxzLnBHsBmPuuF0dTbmjfFMXFyNCk+QTYs/4dF3P9o/peh2aFul8CrHEO4zvIqw2NRrJj5xFgtWWSr0AiCzdMZuTlManTN5Z5hRv8ZUuSuoZRW8/oyGF05Rl0+6UHH3+0bkXWe7ALWMFt346znkFWbUCAFoByjqcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781173800; c=relaxed/simple;
-	bh=6BtBfy3blHmdDbzQ0mHVTFkA9pNVSOFmH6q84PkUHjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a+kJhXJilYNBAHzw/Ei/Xj1VTG6YIYlTHhKh3wcJliIHZdk8FqUQO7IFwoIwJYff/SP2gmaxJZbi7jdfGNfxVFYjem0Qwt0cyXEpLA2Mca42eR2TUx0xUnhfEEIXetO1xQfywFa5V4W0VpqxWZCyq6GUq89f3OenlA0NOCuvhVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ibH1AWNM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CKIAYAbs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1781175977; c=relaxed/simple;
+	bh=GHpkckXUoEFdar/SCuYs43YCPZSDC+k7gKcr2KHVi9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=utUWo6Oe/IGL7SnuAaPWsPYBG8J/TqLybXhF3zjz3sv800R5QFAM1Q4X0cWV0LAsGyBKMg/bgx0lhkbHVwFfza3oCUkyWKB0YScb15nkwGdtkaBp2hS2pTLB4Yh9WiZUd55J3an7+hZQsX/90EUsxHh9Dt+41TVgeI1zVPlv42Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VRKtSCk6; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ibH1AWNM";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CKIAYAbs"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65BA1Rhw168063
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 10:29:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AsbX8LJfzS1TZMIkwbo3ResQeTNTfuQ6Cs6WQoVUlHE=; b=ibH1AWNMnqYf4733
-	LM3sye481UJUyBjAz4Y94Pl8IXMLtxnri52mTXTxtJZihbXU4FmaO1gxGWNKAD3r
-	9xdVnyRYvtg3rCPxCd0NRuxZK0dTMOGFxtFITJ8Bdn/yeb+NSneRS91QI8Tx+m14
-	FOHZg09oek6hql1MrQplonw93stutFwXWdoENOxRTRhgK+J7L1vEtPJe3HAgUXVS
-	RTMMPQxF64ONp0qUmauT3WM2aFZQnqLNNXCRcnnJZwK2BRLSSwDEK7L6LuDA8cU2
-	ZTMjGFDCNbthikmmh4gD3ZkcJnidVdH4DKYG9hnLCjqQ74PWKwWwBIu+jCfhPVWC
-	ia3MoQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eqe6uaxq0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 10:29:57 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-5176891d0a9so19897361cf.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jun 2026 03:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781173797; x=1781778597; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AsbX8LJfzS1TZMIkwbo3ResQeTNTfuQ6Cs6WQoVUlHE=;
-        b=CKIAYAbs1CoiFkGiy4nZC0w4VhpvbMYgBFhzgLbMqnvoG00kCiZ1E/mMCMCDkURxb4
-         3tz2O313sHFXejEl//uQl05trklGYNqvmAoGkCP5AVN7Ka8HwojKmZtOHfbDlV9FDnf6
-         PZGa1aj+XpklWdRnTrRqkM8Vytg4w1Uxgl5GIazQrRmKLZj7l/LWx6uNaWjR49Mn8Rt7
-         i5kmBSgn92OFbK9+LMwGIHdBHFY4jqPL5/AzCRgfkBnh4X+l1qv/qmyWaLIzod6q+A/K
-         k2WLvQi1yF3eeLOw3jFODZctNJC9kCmpQrOVuKluvVFMwuEtwAugKMcEWt5VFGKcXRBp
-         GdYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781173797; x=1781778597;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AsbX8LJfzS1TZMIkwbo3ResQeTNTfuQ6Cs6WQoVUlHE=;
-        b=cMgCcyK1qroE269kER9sUm0dSHaBEUCoAEY/Rycv7hE0NCKmoflREk23yPZcuSZ5TE
-         9B/DhkQuthrSQooDCwMIwVhaY7uzpEVYz7swbUbzcPCbUGNliV0ehuYaW6cgPhEVj93j
-         pkW0TiIrJA61MjEmpkh8kyLHQxeZwwxHHDxM1wicYfLXXiQfCTJVlWq9Q3KFFD3u6T2t
-         CzF7MY4jQI0qGbzsIfhLUmrYxOkOi7uM0CdbGoH//zdT0R6b5qs+I2CVrB2aSoxSTdVl
-         /LkljEdL1i3tEsZYyG9JNVidLcl/QdZCIcTUONMck2vrk/AuOoGUD8jwTCXhjotqJi0O
-         RN3A==
-X-Forwarded-Encrypted: i=1; AFNElJ9A+vKRxO/hJvsP6lajPPt/Wfrzby24FcuINFxN4fdFqgRzsaj46USTaO0HUsoY6k21QgGnfeLzNdBM7eV3/Ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD2slxixfArCKvg6uiwDtexXxe9ZnriFBtdt4MbZtLZoY3BPfx
-	mfbLouxPo1Bm5+jDyUaXtwUSm1IuL21PcZiti5T8zX4tohtYiS+UPqKfybS2/Vb6+hztlMcFDWp
-	H4A5YLu019hdJ/Cs/DuAj/iBEmoG/nJzZuEpgA1kvy6beJ3Dsr2Po8WRT1H/fg71vOyunazI=
-X-Gm-Gg: Acq92OFCt+dcmH3xB6+lbFsyIPyHznG+GYllXrfeDykuLmpuBzQHGLc+9nHVOf8MSuF
-	xrZgE7IdStScb7c5dH5TZOJvDwCGGJ3jpxAgjlDyKGpWqVIrXWvvqbO1QOTs+KHLLq5IF5JLDOo
-	o/1gPYw2qe484K9JJ3cTmVizJ5fe/TVQeF82lKSe5B41NgI62jTMDk/AXxaqQ0uIgjW+KQ0sgJB
-	sX2PQ0c3K2aKC2If1DKM6T54lTHmULkkPpHZInXravQ5g8Zdqhqf05kPFBwthNftds53MvMGaJf
-	kE8cwAyVoU4uTkrBCMSvauDPd7Wc3qhC+z/49ILNESvZcLoqJuqdkiu/5iiUmDOFut1lly7tM3u
-	+ULTKilHEsXBjtNcPa9Ol6MVuKbrWVV1ll/hmQn+V20VTWwoGavd827yT
-X-Received: by 2002:a05:622a:1dc4:b0:517:5af6:77f9 with SMTP id d75a77b69052e-517ee1d207fmr22539751cf.3.1781173797071;
-        Thu, 11 Jun 2026 03:29:57 -0700 (PDT)
-X-Received: by 2002:a05:622a:1dc4:b0:517:5af6:77f9 with SMTP id d75a77b69052e-517ee1d207fmr22539341cf.3.1781173796593;
-        Thu, 11 Jun 2026 03:29:56 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68e6585154dsm10778203a12.15.2026.06.11.03.29.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jun 2026 03:29:55 -0700 (PDT)
-Message-ID: <90de58eb-b440-44ee-882c-cb52d0f816cf@oss.qualcomm.com>
-Date: Thu, 11 Jun 2026 12:29:53 +0200
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VRKtSCk6"
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65B8w8ED3839579;
+	Thu, 11 Jun 2026 11:05:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=ce5IvPFnAqcEf6ab8GHoKaB5RLDO7
+	4q2dOCP/D1pjwk=; b=VRKtSCk6C12WSiuZbgGWmCNAwX+4IK1267djygrBTz/xa
+	3lGHxM27qh5Yw927mPN7M+nYyl7ouzudHgV0nB76hZUTs91IoChXkgvkgCPy6JGp
+	rS1A+j0yrblcWTa/HJWKKbvRydpwLa0w8OtsQ/OFAkQ9skJWUwG7yfOm6wejgjNM
+	MCdhNo8Zz2MSPfl1VtZebNfZzhZRI3TSF7CRH21AefFeVbHFWCvTLKO5TcM0Ij9r
+	HqJ1RlSEdeRx/FORHhp7usn5l3dXGjYRWWM++g8/B0jLMFy5W7BAwOCg2Pf97wj2
+	cnjPbtKmLp3N4SXPFQAQLczClHC10R3Mt8rc9ewbg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4eqe6us1ep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jun 2026 11:05:56 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 65BB37dc014786;
+	Thu, 11 Jun 2026 11:05:55 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4eqjtvjm09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jun 2026 11:05:55 +0000 (GMT)
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 65BB5sFn025703;
+	Thu, 11 Jun 2026 11:05:55 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4eqjtvjkyr-1;
+	Thu, 11 Jun 2026 11:05:54 +0000 (GMT)
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, error27@gmail.com, sashiko-bot@kernel.org
+Subject: [PATCH] firmware: imx: Fix device context UAF in close
+Date: Thu, 11 Jun 2026 04:05:22 -0700
+Message-ID: <20260611110534.573543-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] drm/msm/adreno: fix use after free on error path in
- a6xx_gpu_init()
-To: Dan Carpenter <error27@gmail.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-References: <aiqNktNfXiaPhje3@stanley.mountain>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <aiqNktNfXiaPhje3@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDEwNSBTYWx0ZWRfX5mDvT6CvSZ4K
- yD2IciXAJ+LSArkIZLSrZpxjtyGEzSGS3OKH1LE+S/jiSQkdT1RdZObb+2K2uNspMC2j9IXAV45
- pRozbNq7a7mACOVjVMZk5sJxiqbZZL4=
-X-Authority-Analysis: v=2.4 cv=atOCzyZV c=1 sm=1 tr=0 ts=6a2a8e25 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=CLLU5E3UPER3H5ubdxMA:9 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDEwNSBTYWx0ZWRfXw60RAOupXyuD
- bhCOUGBrStFrRUKNIHR6FIi7QK9kzShmvFemH+OypTnVhf/TgxUq4Mu/zuzkt3daXsTY5w/RIYr
- mFl3U3DOOA7lpzaE0oXJDZd+nYXPitZ1z2q/J6DrOa+tv96gdXTG12ay21kDX8xg3RMJ4HaU8qa
- oL3kazKXMajsieXAXe1l9syQgVz4y8RL0rarPXJD07k8azPOxtOC+bWJceC7r3Vp1swOYwmRnTC
- DRpMApOpddn65AmTx+lg0AsIq1Y3JOwvX/BzxtA3iynepaa1/xjDRra1He/wbd13YPJzF0q+NQz
- pBY3vjQDIKVIe54y4PORsOyGWzd8D+8kB32JHIxqz+hGfCyP/CykYS4Wz2vK9RfgB6aFaT/pKNr
- lWhH6vRD831HE1RtTwD4EdBCO05ZLHezYWOvAqqheZbuyZ9+G0zl76ppaqqqopybz6Kg9NMQufH
- qaPZmTtI1Q40ujBMLKg==
-X-Proofpoint-GUID: Ek0rqXt6219WT8Pt2kVTOnvqHTCJO-iZ
-X-Proofpoint-ORIG-GUID: Ek0rqXt6219WT8Pt2kVTOnvqHTCJO-iZ
+Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-11_02,2026-06-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0
- malwarescore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606040000
- definitions=main-2606110105
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999
+ spamscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2606040000 definitions=main-2606110111
+X-Proofpoint-GUID: WO9dpoTKbTX7adXHMUuvAeu75OZnJVTW
+X-Proofpoint-ORIG-GUID: WO9dpoTKbTX7adXHMUuvAeu75OZnJVTW
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDExMSBTYWx0ZWRfX71uLciI0Cpsf
+ 8fTJbjGGPKIWQDDysOF2RBmxda/erywcpf/Y42KWgwk3I8zNN3dnWBU93CobeDubeil39Slcxvu
+ v3KtQD/azA3RiuhxvZhLVjIynq0YO6H2SGhBju0xpmGfTh8NiNWR
+X-Authority-Analysis: v=2.4 cv=edINubEH c=1 sm=1 tr=0 ts=6a2a9694 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=jiCTI4zE5U7BLdzWsZGv:22
+ a=3I1J8UUJPc9JN9BFgKH3:22 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=z1jSPYMi4rPRFrry188A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDExMSBTYWx0ZWRfX+xSexBPtlxnL
+ 7L7StVmJ7+bf1SkQOvDdy7U0f2vvtIWOmxgrL+Gkp8fDH3/5LNztbEgvlMOt0FnSfpsI6s23L/Y
+ xri1HeGPjgFED5IVHkreGvFmmDbPUFipRykxWb2g9QEw6ZhQCWpXwCwRYS3VBRSKe3ja0J5htaJ
+ x9W47UtpUt4WhGPrTwxItLUTtPr7uJX0cbQLT/Fv/QK0EJ2Nw6obr8i2l8d6RISwdb5jC3kTIpJ
+ UhC+CyKLs3st7oiT6XDJe25RJ3REcLRrU0FPMhjZjYJuDCKKbUt0jiIOJtgvF+netJYd2dRugbm
+ JE6tY7RSHnGAP/4VRD6VgY/vwj9JoBsMZFsgWxCUCivL600ipE9D2xa4UFGAfs/2DLddNNxUk6U
+ YsFl5Db9cybngJOtWP/myqX7aBRGtx5jV+t/hRS4pMYvXOg7jObX2547NS5tiBU7gIMxH5QlBMi
+ vVOB8FZ/+UdXOAhJwqQ==
 
-On 6/11/26 12:27 PM, Dan Carpenter wrote:
-> The a6xx_destroy() function frees "a6xx_gpu" and so "adreno_gpu" points
-> to freed memory.  Preserve the error code before freeing the memory to
-> avoid a use after free.
-> 
-> Fixes: d158886cba08 ("drm/msm/adreno: Trust the SSoT UBWC config")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
+se_if_fops_close() frees dev_ctx while still inside a
+scoped_cond_guard() that holds dev_ctx->fops_lock. During the cleanup
+phase it would do a mutex_unlock(dev_ctx->fops_lock) leading to UAF.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Fix it by freeing dev_ctx only after leaving the guarded scope.
 
-Konrad
+Fixes: 2768fdfd5585 ("firmware: drivers: imx: adds miscdev")
+Reported-by: sashiko-bot@kernel.org
+Closes: https://lore.kernel.org/all/20260528094337.9C1D41F00A3A@smtp.kernel.org/
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+Only compile tested.
+
+ drivers/firmware/imx/se_ctrl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/imx/se_ctrl.c b/drivers/firmware/imx/se_ctrl.c
+index 8fab3b7767b7..fc3bbd1788bd 100644
+--- a/drivers/firmware/imx/se_ctrl.c
++++ b/drivers/firmware/imx/se_ctrl.c
+@@ -887,9 +887,10 @@ static int se_if_fops_close(struct inode *nd, struct file *fp)
+ 		list_del(&dev_ctx->link);
+ 
+ 		kfree(dev_ctx->devname);
+-		kfree(dev_ctx);
+ 	}
+ 
++	kfree(dev_ctx);
++
+ 	return 0;
+ }
+ 
+-- 
+2.50.1
+
