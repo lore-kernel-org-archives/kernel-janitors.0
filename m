@@ -1,122 +1,178 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4CA72627;
-	Sun, 14 Jun 2026 08:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0022494D8;
+	Sun, 14 Jun 2026 08:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781424685; cv=none; b=I7BgFI5GFje+Rr4j1EwCEKM77DlhuB/5VwjlvUiYh/I8wm0ZkoyGpQ4HBW6c2jTlmgL2Gp6RVN9odmrr0vgAqEvg3brDQN9qv3PjRasvS3or4jXheX5M2ZmxIaAUKccgGKfXgMhIF61NDmbY43bZTjkeaEsaz7Ieu8JDaRYzbeE=
+	t=1781426553; cv=none; b=tjWHRG3lyCOfIMZ3h44HsQZZaDC9ZmpuIiq+FwQ/d8DQASzNVsfdDwlfPZxpNB5SZZQkTMWkp5ca0c1GhlZ7eOEVNplJ2zy7gjPURtaUzu+5E7hP7GSguYsSSBJvvW959/bi2wR6EMS4AjxwDF4+XvqOu4wNo0rIciQlh4zQpak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781424685; c=relaxed/simple;
-	bh=2L9slhqDOSFx/KSHxGOfTJAUE+WqxSE6lFTTc+UazIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XyiBiFtIiF+uRWlo6FZwaBPh2eqsv5pVYb6lgrlUoQyfEKSn2s/75ATvGbVVYJZP7vYCZfdlchGXxKqaS6Zhi886fMO6MAvKXQ59ASNwgispSc88ckUFj5qcWEc6vkGo04rSNc0mYDH6DRSyOo8t6R/q67Iv/bJtxBLXHRLbEpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UbQUiuGS; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1781426553; c=relaxed/simple;
+	bh=/AY8hCOaE12WjJQgjjLVPhzCDtI8XZxpywY7lyjhxJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=D+GEHuvL19sRCRuy8iQYQQV55dAfPdZs41pejy42m5m9JHi0BuZhMnvvx8dp9kLZhdwtw4hiqDOQobPClqMxquBzDGgVG40gzBuuiiUu9/TrMSD1RjZFL4SrETaWQ18nqAq2mw1CZDS1HEsrwKNRpXL4us9IG6LGYQGiolqewaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RFqK9FPh; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UbQUiuGS"
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65E602A42470398;
-	Sun, 14 Jun 2026 08:10:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=dBwUVwpF8UpikfXpB7S+S5Lp8Cw6O
-	YyIpZSLG9xcbEw=; b=UbQUiuGSqbUGLgB2Xj+2boy9kjp5iw897D3qSOuDvPQvk
-	UiN9fd45dsXXeFFrmBa/aYz9o8ZtWt3t0uNCm3nqDlDagC0Z3sQgeIvLwweYWb01
-	vq2yTTC39RKvCEXSEcX4dt/7/5WoFbH52kOCSfCGeWVIZzgPXifHNN91q1WnSi29
-	N+TKUluVWsMT8oWQ0CJdR5q8v1KL1OC5KIwQeh3dzdHY64+Y/cE5gGfXI7sXphVI
-	WxWvGg6iT0W/5ct2zsOHYRRaQf4OIjhrvRv3AyPeAnNdshXBOs7iUlwNA1gyRnEu
-	4x/1Kry7ZZsngevoQ+g2bx856F2Zv8lL8eUpjNY8w==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4es1828wug-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 14 Jun 2026 08:10:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 65E885E0026285;
-	Sun, 14 Jun 2026 08:10:56 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4erwna11kc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 14 Jun 2026 08:10:56 +0000 (GMT)
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 65E8AtO2037257;
-	Sun, 14 Jun 2026 08:10:55 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4erwna11jp-1;
-	Sun, 14 Jun 2026 08:10:55 +0000 (GMT)
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, error27@gmail.com,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: [PATCH] mtd: virt_concat: fix use-after-free in mtd_virt_concat_destroy_joins()
-Date: Sun, 14 Jun 2026 01:10:52 -0700
-Message-ID: <20260614081052.1332702-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RFqK9FPh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1781426540; x=1782031340; i=markus.elfring@web.de;
+	bh=0wsfsUh14GQ2uPjN3Z6KS8RkOQnQJEt+AzHmc542Fls=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=RFqK9FPhDaWuz56RJhxwi1cx98QrNj6WSEIzhSUESumtWOPEM/s5bw/00RnDb3Y7
+	 MghENUxQG7D8SFpNixFIHZ99DU8xlokvva5V3voqlljDjY2VhVkpI4v5ad88B6eqD
+	 gzocchuRiw/hLgQjzvUldf4NJJsh1p6C04p+95cSj3WoRwAiLX4gefPGUzbkTwcLc
+	 BnskmVdePhiY39Us29OHSD/KsfdO+lH0uthOG4xagVajDKan1bd6CzOqeTiTKzVPb
+	 zIoLzOAuJSbBuoQPtLlwMUMCCnAOmjXOeu6Os3618rOMVukoOrq5kt27iorASCjPs
+	 CxKhusYai8NteBDIIA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8Bvz-1wcpI72RqV-002cC7; Sun, 14
+ Jun 2026 10:42:20 +0200
+Message-ID: <9957a128-2c58-4d0c-967d-9f93ef970e1e@web.de>
+Date: Sun, 14 Jun 2026 10:42:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-14_01,2026-06-12_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
- malwarescore=0 adultscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2606040000 definitions=main-2606140079
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE0MDA4MCBTYWx0ZWRfX1qxXwMMO7i6C
- CRf3UNZcADoVeKRcKfS/b1pXl8F5Q93PZMFudSHA2U3sTJp9+WsCMv52WS2w6yRzIxAwoILi1qx
- Xj8uNYGUIW/Has3HQhCM8Vxn9iGqlmVKo0XA5rOvtn96OU/+6Rf2
-X-Proofpoint-GUID: doz40zM_JbgHqJJDka8rBcJWYndIVSQq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE0MDA4MCBTYWx0ZWRfX6P7pE3nGYj0M
- t7UrQKwv+96nP5aHYqTG4ewk96TS1BTRHqnD52wp6Qir9C9oTYxliLy7AsLt5ZDgq6dHtm7Pnf3
- iot/RCEhVjyC6DG3A55kYuSIVzQ1qyeTFoYO6sRR+i0s0PhEFv2atKfWGHLwVglgL9Pm2wBUe5V
- ouXRXLv853KWDk8I1elT6IJaHcuk04CynqUusOHkYKUyi0CLzIEgMQO+vlUu64vioxLDCTahF3y
- raw945mX6q9hSMiHXT41U7RKit+zuAg2W2hyYRCIPTuCG9RZNWdwAwpvz7DTcA7nn2ngCoS5TyL
- W5KMcZES/QQEmBJVwPjPs0VVPcxOnhbRXRH7p6OaNvbfVfl1k+huNON49flkP04mehQPIeJpNIm
- vdTHpa2MuYcpDyXwv9McF6o+uruTaQlYm3Ll8iqytyku6l359Pffwber3t+yv0u09RUC7VnbDCb
- dyfk31Rcs7oICyVtEtw==
-X-Proofpoint-ORIG-GUID: doz40zM_JbgHqJJDka8rBcJWYndIVSQq
-X-Authority-Analysis: v=2.4 cv=Rr/16imK c=1 sm=1 tr=0 ts=6a2e6211 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=jiCTI4zE5U7BLdzWsZGv:22
- a=BqU2WV_vvsyTyxaotp0D:22 a=yPCof4ZbAAAA:8 a=v0qoSzXYcCiXLhW8FuoA:9
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 1/2] NFS: Prevent resource leak in nfs_alloc_server()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
+ Benjamin Coddington <bcodding@redhat.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ Trond Myklebust <trondmy@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Chuck Lever <chuck.lever@oracle.com>
+References: <0d2d7158-45c3-4c8b-8ca5-33a5b3445343@web.de>
+ <1c8e10c9-def7-4f0d-8aa1-23c8035a38c8@wanadoo.fr>
+ <4f7c0c98-62b6-44e0-87b4-35abc46303de@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <4f7c0c98-62b6-44e0-87b4-35abc46303de@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Psc2bjEPkGKgkMp3etYV/M2wBQ+gFWrEhve5pqAqc/OWERm5XtQ
+ kopGrLqCBOHEcEKHZDE9DboiJ0CcASEilE+ifzY5hd41b4DqRDxj8fDk234JqOzdhxbhLbJ
+ AZZverwRP8GQG7WLqjy9AwA9nM8U9JMZP/YbzqGxJKoaA71JkZPV4wTycT5DWTVxIez/tjO
+ SXKNtyvqExXi2QknUwOKQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xxV1SAMbYWs=;ASkGCjPYnBzDOL9+sIP1x8iG/sq
+ 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
 
-mtd_concat_destroy() frees item->concat so calling
-mtd_virt_concat_put_mtd_devices(item->concat) leads to a use after free.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jun 2026 09:56:35 +0200
 
-Fix this by moving mtd_virt_concat_put_mtd_devices() before
-mtd_concat_destroy()
+It was overlooked to call ida_free() after a failed nfs_alloc_iostats() ca=
+ll.
+Thus add the missed function call in an if branch.
 
-Fixes: 43db6366fc2d ("mtd: Add driver for concatenating devices")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is static analysis finding by Smatch, only compile tested.
----
- drivers/mtd/mtd_virt_concat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 1c7251187dc067a6d460cf33ca67da9c1dd87807 ("NFS: add superblock sysf=
+s entries")
+Cc: stable@vger.kernel.org
+Reported-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Closes: https://lore.kernel.org/linux-nfs/1c8e10c9-def7-4f0d-8aa1-23c8035a=
+38c8@wanadoo.fr/
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/nfs/client.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mtd/mtd_virt_concat.c b/drivers/mtd/mtd_virt_concat.c
-index 37075ead0f33..a3fb96788e9d 100644
---- a/drivers/mtd/mtd_virt_concat.c
-+++ b/drivers/mtd/mtd_virt_concat.c
-@@ -75,8 +75,8 @@ void mtd_virt_concat_destroy_joins(void)
- 		if (item->concat) {
- 			mtd_device_unregister(mtd);
- 			kfree(mtd->name);
--			mtd_concat_destroy(mtd);
- 			mtd_virt_concat_put_mtd_devices(item->concat);
-+			mtd_concat_destroy(mtd);
- 		}
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 73b95318ba48..e15568e388f8 100644
+=2D-- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -1088,6 +1088,7 @@ struct nfs_server *nfs_alloc_server(void)
+=20
+ 	server->io_stats =3D nfs_alloc_iostats();
+ 	if (!server->io_stats) {
++		ida_free(&s_sysfs_ids, server->s_sysfs_id);
+ 		kfree(server);
+ 		return NULL;
  	}
- }
--- 
-2.50.1
+=2D-=20
+2.54.0
 
