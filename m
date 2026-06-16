@@ -1,102 +1,121 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E29436342
-	for <kernel-janitors@vger.kernel.org>; Tue, 16 Jun 2026 10:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1442639023B;
+	Tue, 16 Jun 2026 10:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781604802; cv=none; b=ZGAZnkYAOH+TU5JNvNwB3nHjdJW2A5b9tuU881T07k+zIfcT6IdktMcbsAUtOfLO6IzvMkaWKd9GcA5qyeuFmzfpWXUixZpRDF0vRoI6g3GKRlhAzPAHPVwOCn0f2DJH/EwbUAXPflU2KI11rTJkvLXUDMrdSinoJtFb+zGPdi4=
+	t=1781604909; cv=none; b=Jdcmh03j/8uDwITZD9rIA2XpfpxkA4rTsyt+yIb67mEMNSvi4XkZ8WbaZSwzoghF5ly8gLg2srca5zcy/Z3ASsGaHEmlZyYaTR7aB9ruYYvjrPB59MhzHzl53EyZRuQA9FZryFxJVGlMkkMohxoz/0VNHRZo7RBqz8ZIYbk+x3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781604802; c=relaxed/simple;
-	bh=xfrZmesiSEPynX9YX7U8MOnPvnmdik4XXr5qgkOwJik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FruvXW2FfRbMny6pTFdAAF8ptGyfzwLWguPBqT9yzL0FDNWiyEk3GFiOu/6agES3RlYjYXvwK1TKZ25YdgYpiKrFIapBtAaOyqcAOrLupTum26Rzbmj6Kctwf4jDwRcNGVv5HgRGoobuuSsNKVzJunrnyehaaLufl4s0s6DPWcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KLgsjCAM; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781604909; c=relaxed/simple;
+	bh=axGORA2xv9Q4MO1Qg9A3DGnnH0QVhVui4sFHzIxMGMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HSBmbPVygsFS1H6ODN1zldiEK0UZGbY+gSq/clcTYMMA565uTokXlNfhBD+S5RkT1QSRdLI/cI8fodF+GaVFV8RWjXDdW3XzGrD+x1KwtWtC/EFkuM1y1mCoMwAFnEGVae+gO6am1rl2t6IixIvqflhZ6uk5/I82s2gJNZ1yE4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eroxbPzq; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLgsjCAM"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-9157d3f2098so508524385a.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Jun 2026 03:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781604800; x=1782209600; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+M/4BfCg4kebp/5c+3KqKstn3ZcQMD8Dq5coTSVGSOk=;
-        b=KLgsjCAMl/E+ge90HpDPWTRdL6NiLZJPLEzQfmfhtIkntwdp7wIOzz8AxvCcO7nuPo
-         sR73631XjK2B+MwpcCKNi+Acg4lp/JjMFJXvrkh3F8tvusXReG6eUIZbZLEcjp+UfMuJ
-         3hc+6N0yUnoSf01CRLikIRemZlXkfI7rCJJVwqDTL+HZ49kT/220xHUxYueSS6C1mD76
-         6+A7cEM5S/XFULzDPcP4e04UHQTfYGDRCz/jjkquJrUQ4GblPvpP2sHEwTRLBRQ10yI/
-         ejlYsva3MpuiwzO68A4twhs/7CdewbuoV14SIF1jr1dAjucFjqKraZGOQqZ1XEaNot4+
-         2HAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781604800; x=1782209600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+M/4BfCg4kebp/5c+3KqKstn3ZcQMD8Dq5coTSVGSOk=;
-        b=GANDdkfopWVQ0YV4ZcNFJhRrg3vdA7GLEafUvPFsDDKodA1nQwISTdmp/FcnynyCB0
-         DhSZYvgez8SJiNc3eVVOdcVVcEe4dX9+NDaLfjsqjpUAIsVlKq7Vrjb0mDZqQcN3mlKZ
-         B+uF9rSnR1OY5ANfnweFenrcC/2kFulAT6R2XbCC65cNjvjv2emRzMyDJqurtqmvSsxs
-         bzRT3NiFAkrUkUOBBcYnZAAmsA9A1U3e+mV2YgsWnkmp6QH/F3jdm6FdPjebEAqoJwZf
-         Kkr1WTHzuCbx5ibTW8o44TPum1pP7OJjDXf4TF5ucuZEUn5scLe0vdjv+5q1X4AKc1Nd
-         s4fw==
-X-Forwarded-Encrypted: i=1; AFNElJ+qEVynkjP1Hd+m0eTkLm8/m1Z2czpHlEKyWZR6hu8jpGxvIuHHE1c2ci0YJQiG1sWnioijgySRsCMMJAPlT+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj1LgnSp2MA7IiUXtjYBmfDX+3k+q/jJsNUDJ5PVkjGyrQoD9w
-	xaZDf2HjwpXoIKw4KGHpbDQTOoy/nNtRfEU6YD+7VhzTjDiMvS6ncJj8
-X-Gm-Gg: Acq92OHaIYqEBI7qWFiVRDX8zZS6DW6CpNiHX9JM9Vxb4R1v4KUlv4ngwfQZdSj4900
-	SngN4yzA4lgnBR1lWwfTkRYbECdLRugwZX00qRlXEatnC8l8DdvqFtfAk7d19jvIJ2o5JB6lzzx
-	FzJ2MsQfgCB5TbEQYYcEYP4axblz9DB/+KndIhnbFM83i9r7oyzYazVN+3acifkpzxTq55g6VAW
-	fuErGwDA00y/IQyDAY4c53uErdx1hFsdUZP/wBNGwFd+jm3gQ65/qXZMbA7PKueWLfJwlD3gLjF
-	AYSl/Ehe6sZYBbb3EE/TJd/X3zZlEK94lMzn5m+7Q0DYbkuUzjVkbdwFDFf/xwr9L9fFfZVwGJ/
-	WtBQMUQKVrxKf428UNdBZoC1Pyb0mNu4EbAgYgBl8HoSh9gO3KdqgZ+UzvdruDRi3g88pDhwvZW
-	FDLc2aXcPi2j02dWzU
-X-Received: by 2002:a05:620a:628b:b0:915:86c6:8432 with SMTP id af79cd13be357-9161bc4aa09mr2765037285a.14.1781604800130;
-        Tue, 16 Jun 2026 03:13:20 -0700 (PDT)
-Received: from localhost ([43.225.189.75])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9161a03bd31sm1425927085a.34.2026.06.16.03.13.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2026 03:13:19 -0700 (PDT)
-Date: Tue, 16 Jun 2026 13:13:13 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mtd: virt_concat: fix use-after-free in
- mtd_virt_concat_destroy_joins()
-Message-ID: <ajEhuS8xwcX1AA_I@stanley.mountain>
-References: <20260614081052.1332702-1-harshit.m.mogalapalli@oracle.com>
- <DJADQJ8GEDNF.334T2EXRX7DXJ@bootlin.com>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eroxbPzq"
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65FKGMeo1349670;
+	Tue, 16 Jun 2026 10:14:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=NDZ/rNAyyiQztJHXv1jXH/dgpJCxA
+	0grh9rlj860HiU=; b=eroxbPzqEiFUuwHPbjsRZJ80Hfzrmd8WJptwMYnZERr6t
+	sB7dvzVyOjhBEwoFl23cbBwG42G+ufm09yvfqzh3QGQxAOx+VjsrCiRjpJDn3QzP
+	van1+ALTzfduWhwC603ayEooqSlEp25AsIyYZoqXOdOoMunhW0tVDWrYYiPBojLh
+	Oo5X65wB6AY1J3EZwh9SeA9+VPZPrOuTqhdk6/jcp8WPq8wxjlCmdgsCNtKNrmuO
+	JGiTV+ZMqxcoWbueGp1Zg302KCC2f+vrN9k1HGsljEJKGq7FTRanpzI+ijWkrqGd
+	RPoIVJVX6LXnpOygGSSFLh5PyhKR+GlSa3XVL9nqA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4es1acc62f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jun 2026 10:14:45 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 65GAD9MI017054;
+	Tue, 16 Jun 2026 10:14:44 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4etq679av2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jun 2026 10:14:44 +0000 (GMT)
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 65GAEhUc021963;
+	Tue, 16 Jun 2026 10:14:43 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4etq679aup-1;
+	Tue, 16 Jun 2026 10:14:43 +0000 (GMT)
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, error27@gmail.com,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: [PATCH] mtd: virt_concat: fix use-after-free in mtd_virt_concat_destroy()
+Date: Tue, 16 Jun 2026 03:14:39 -0700
+Message-ID: <20260616101439.1489392-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DJADQJ8GEDNF.334T2EXRX7DXJ@bootlin.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-16_03,2026-06-15_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2606040000 definitions=main-2606160103
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE2MDEwMyBTYWx0ZWRfX3G+bETHaEmfM
+ ZmNeyMKvsbk8lLdwyh6X1GQK6nh1Zl8z5fX8sv8QdY3wqqUblLsQ30pX3ErRjo3oSFDAUWNIOsw
+ PKlNxS2iuX8dJrwf75gAZEi1LpWZucLiXcT6eZv7XpCitD5yWQjlL0LmIY7azXvhTayVtAuSjeK
+ eWtyhdSHMGLlDmVMJBndcjwWSH6XCTJqpozi0MOCMSp1qrWeMlkRbjLBAcElOQspD5yEP9yifdC
+ SBF/xSMhuhSk++bPWzjcVi0x1aJ/YFWKnWJUfOXHJBdVeFgf2G+aKPYLkHG4xzknVtamcV0xmV2
+ 3OtQBNrtDi5sTUlT7FYk0xUG5iXSeL529toZTCfQFA/piXC0Pw20IzZrB4GdrVjrsL8HEyGzkg8
+ AymUSH/ubeQmXahQn8U3yDQ5/Y+m57S2KQn7OY8g0pi0OdInVoa1dOjDhTaYCVjytU/tjrOCqw0
+ Fy6HijH+dJbPC8DlCFw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE2MDEwMyBTYWx0ZWRfX5S1cS4IG8QRG
+ ZCNYH/johDAAXa25pWiHVL50RYLzp59egxgcKf91CRXGKNivMyT6VF6AXhc5edNiTgcSrr4l+OL
+ NjukKWoxLPsPo7VBHiQpKtWjcV4T/AZNzlPRMAMQiGSv2yxIGtPs
+X-Proofpoint-ORIG-GUID: lQaW7GYi0jxgZ1WDebdFVYXrAkF9fXwj
+X-Proofpoint-GUID: lQaW7GYi0jxgZ1WDebdFVYXrAkF9fXwj
+X-Authority-Analysis: v=2.4 cv=IqQutr/g c=1 sm=1 tr=0 ts=6a312215 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=jiCTI4zE5U7BLdzWsZGv:22
+ a=RD47p0oAkeU5bO7t-o6f:22 a=yPCof4ZbAAAA:8 a=gnUwlkPgrbXfXN16ycUA:9
 
-On Tue, Jun 16, 2026 at 11:51:53AM +0200, Luca Ceresoli wrote:
-> Issue 2: in mtd_virt_concat_destroy_joins():
-> 
-> 	list_for_each_entry_safe(item, tmp, &concat_node_list, head) {
-> 		mtd = &item->concat->mtd; [0]
-> 		if (item->concat) { [1]
-> 
-> At line [0] we dereference item->concat, but at line [1] we apparently
-> handle the case where item->concat can be NULL. Either [1] is always true
-> and we can remove the if(), or [1] can be false, so [0] is a bug and should
-> probably be moved to inside the if().
+mtd_concat_destroy() frees item->concat so calling
+mtd_virt_concat_put_mtd_devices(item->concat) after that leads to a
+use-after-free.
 
-That's not a dereference on line 0, it's pointer math.  So the code
-works.  But a lot of people find the distinction confusing.
+Fix it by moving mtd_virt_concat_put_mtd_devices() before
+mtd_concat_destroy().
 
-regards,
-dan carpenter
+Fixes: 43db6366fc2d ("mtd: Add driver for concatenating devices")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+ drivers/mtd/mtd_virt_concat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/mtd_virt_concat.c b/drivers/mtd/mtd_virt_concat.c
+index a3fb96788e9d..c872a8827718 100644
+--- a/drivers/mtd/mtd_virt_concat.c
++++ b/drivers/mtd/mtd_virt_concat.c
+@@ -126,8 +126,8 @@ int mtd_virt_concat_destroy(struct mtd_info *mtd)
+ 		if (concat->mtd.name) {
+ 			del_mtd_device(&concat->mtd);
+ 			kfree(concat->mtd.name);
+-			mtd_concat_destroy(&concat->mtd);
+ 			mtd_virt_concat_put_mtd_devices(item->concat);
++			mtd_concat_destroy(&concat->mtd);
+ 		}
+ 
+ 		for (idx = 0; idx < item->count; idx++)
+-- 
+2.50.1
 
