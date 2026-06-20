@@ -1,58 +1,54 @@
-Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF43323507B;
-	Sat, 20 Jun 2026 19:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F311FBEBC;
+	Sat, 20 Jun 2026 19:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781982241; cv=none; b=USXC1tHHs6bKKALTrpNdK72NM1Pekf3KBv6qMNk8cXSFasTKBNn4GvZIX+sV+c9v6XRNrzzoAzMb0NQEH4K/oDwoY5wW4SMlv9gFfwP4ZB76DH+A6wb+1LFffJJY71li2CtZEg9RNq/yRO3ylKY5Ivg1g6bjkI52CfM16kHxZvg=
+	t=1781983479; cv=none; b=GY5fH5YHWTAhcEquwpPnDd8NNmfmyARDGB5rvAiOygRVY6BMft68eE73XQHv/5BhqC//csc41vfKbykyfqHza4Yij40QZNliGkZhfVv1R5hi7ddTlQezPIRc+0UR7h3XYb7RwE6l8XgI3Jvi9/5CHAMgt4TbHZj/UynmalUKYn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781982241; c=relaxed/simple;
-	bh=FI6bw++Kc7axxgvlIih929lfgrsE4naItQl/pu1oNzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FnMDfi+PmqItxmSA6Mm1JxVqGC4ApHBtF7bDCwSnK5p0QNw5k0vKxSdfTfzBBWtHZOPUaEXVLzrR47P/+Zu8xS9z0mcL0XKvklYnrMqbpU8Ude4iQHmWEuZEVpksNoDNZWtDOVGxQOT3TAzLgw1KJDgogeH40qqFBTUp+ACUFt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ew2OekyL; arc=none smtp.client-ip=80.12.242.76
+	s=arc-20240116; t=1781983479; c=relaxed/simple;
+	bh=XM1gxbuIM/7HKnffyWoU5gWx7Yh3OJCTVHy4NZh8xwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FKzkNZV9YIxuar9+BWp7j2QDpa8mXGzDHZiWhdFadBig8Icij6bnN+xHyLn0VjXcyOWzO3P88JWQpuMvRJ9heCcvqGs8raKStw4UmoUBs7WUHdaKDKmmlhrbFtZw/cDLgM5w9mfGaHkHj9012SKsPBVNwD1ciJhCaMyrW/n22pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CPfNc7aJ; arc=none smtp.client-ip=80.12.242.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ew2OekyL"
-Received: from fedora.home ([10.65.86.64])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CPfNc7aJ"
+Received: from fedora.home ([10.64.95.109])
 	by smtp.orange.fr with ESMTP
-	id b0yywSlMgHZYzb0yywfRHs; Sat, 20 Jun 2026 21:03:56 +0200
+	id b1HpwZlX4ax7Wb1HpwH03C; Sat, 20 Jun 2026 21:23:25 +0200
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPSA
-	id b0yqwzd9alGVGb0yqw9nCW; Sat, 20 Jun 2026 21:03:49 +0200
+	id b1HgweBLQJg5rb1HgwxhOy; Sat, 20 Jun 2026 21:23:17 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1781982229;
-	bh=Tnzf/9MYbLhRoMLq6dvHjdTcKxmYKFVyOTlXu1yZe5k=;
+	s=t20230301; t=1781983397;
+	bh=BXuclxyE0Xm6M4y3OOnY9C1tyOXzRvsIL00sMzI/lx8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Ew2OekyL8uTsQBxLeGyJ/LlvqL1cjFH8Bow26ldviiQkX9Q/ZNjmn07ByMPeELrTT
-	 UsCIdcryBYHQBcS0LwgFgaNwybqnw9aMrMvW98+GLVP0SbSWqG3csVG/QMiT48Bf8+
-	 E5hJHgcYSufOO9UoOUgB9saZhP3165/TSEOhavNJzRX3o+/cQ4CSH8lOPbAXiXT7de
-	 w8weFMji3UvE4PxqFZsxfZrpKuMuDLboveiAzElEUzH8vuntXjAXDXg/jsRlZxewK5
-	 U3K0/L/g8V29TtU0QLVt3F40H5qaRTvG5mXVt4mkotb3FauiMePD+EkSx/xYQBQxM3
-	 EDzzek7axzvbw==
+	b=CPfNc7aJrn9Kd1Es8rvp3iQSoDsSaBla/lhU7swKETXxd1ZXFl2yhlwqCm/t2ZIxl
+	 ykJ29e9rXKoViyInWAG/Sus3qfoILWkDC7dflcadIQ1AP82e/SQUSZMbb+l0I5/gB9
+	 vWFmyKQL42MSnZxcpac0C3W9OJlBy5YaLOlWqO1+Xtm9008Y15pPGbl1lEITfqMwB4
+	 th7iYf7cTp6xswu+QoJiS3UrdERDjQa0p3foLrkiBQPppXw48oC+q9DimeIYR1U64+
+	 qOqVPNK2ELL83i1xhZkVRJwYnnvSv8d2A8tnlYvbQ8mZ/7y6T8sNdgMiuwesFEacIV
+	 g9zw3WgD42/mQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jun 2026 21:03:49 +0200
+X-ME-Date: Sat, 20 Jun 2026 21:23:17 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Felix Kuehling <Felix.Kuehling@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Xiaogang Chen <xiaogang.chen@amd.com>
+	Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: [PATCH] drm/amdkfd: Fix an error handling path in amdgpu_amdkfd_get_dmabuf_info()
-Date: Sat, 20 Jun 2026 21:03:45 +0200
-Message-ID: <44cbc1d12fc00121d40ce793074bc5e1d497c932.1781982199.git.christophe.jaillet@wanadoo.fr>
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] drm/tegra: Fix a strange error handling path
+Date: Sat, 20 Jun 2026 21:23:14 +0200
+Message-ID: <308ea09281bd0b3fb0ec7e90e23012c0783f373c.1781983379.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,34 +58,43 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the memory allocation fails, the reference on 'dma_buf' still needs to
-be released, as already done in the other error handling path.
+The resource freed at the 'put_aux' label is "sor->aux->dev".
+However, this resource is taken after devm_tegra_pmc_get(), so there is no
+point to release it in this error handling path.
 
-Fixes: f54ce9e8cbd3 ("drm/amdkfd: Let driver decide buffer size at AMDKFD_IOC_GET_DMABUF_INFO ioctl")
+This is harmless because put_device() will be called with a NULL pointer,
+but this is confusing.
+
+So, fix the logic and return directly.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Compile tested only.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
-index c693c508df1a..e1afdad07c43 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
-@@ -603,8 +603,10 @@ int amdgpu_amdkfd_get_dmabuf_info(struct amdgpu_device *adev, int dma_buf_fd,
- 		if (*metadata_size <= buffer_size) {
- 			*metadata_buffer = kzalloc(*metadata_size, GFP_KERNEL);
+This is not a bug, so no need for a Fixes tag.
+If needed anyway, it was introduced by commit e68c4244136b ("drm/tegra:
+Explicitly specify PMC instance to use")
+---
+ drivers/gpu/drm/tegra/sor.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 4032c6ad45bc..e384cbd0cbf7 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -3764,10 +3764,8 @@ static int tegra_sor_probe(struct platform_device *pdev)
+ 	sor->num_settings = sor->soc->num_settings;
  
--			if (!*metadata_buffer)
--				return -ENOMEM;
-+			if (!*metadata_buffer) {
-+				r = -ENOMEM;
-+				goto out_put;
-+			}
+ 	sor->pmc = devm_tegra_pmc_get(&pdev->dev);
+-	if (IS_ERR(sor->pmc)) {
+-		err = PTR_ERR(sor->pmc);
+-		goto put_aux;
+-	}
++	if (IS_ERR(sor->pmc))
++		return PTR_ERR(sor->pmc);
  
- 			r = amdgpu_bo_get_metadata(bo, *metadata_buffer, *metadata_size,
- 						   NULL, &metadata_flags);
+ 	np = of_parse_phandle(pdev->dev.of_node, "nvidia,dpaux", 0);
+ 	if (np) {
 -- 
 2.54.0
 
