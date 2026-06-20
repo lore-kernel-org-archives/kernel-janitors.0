@@ -1,51 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA3C41C72;
-	Sat, 20 Jun 2026 19:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4D22571DA;
+	Sat, 20 Jun 2026 19:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781983991; cv=none; b=slnzOIkOZQ0Rms7JbJyc2IxjDlR3XhaMwj7nlPqPPWwbflMejNFw9VidtKVmlIAAn7SmNbi4Ga47kEi4zF7gJrOGxQ8YchDLerLMVKeqf+mdteXfJcFWmrJPHJ9PUohaqO/nffYczV5MIOlak0FFtF7AMHjVtKtfB9/0zVHe4Ng=
+	t=1781984945; cv=none; b=bL5y84Z3nMtxRUfcsrspBBxO6P4hBBRT7gXeAUijW45NM908Kfn2oHa5soNVw9DtHK7Iegj37UqeDf0nKekB/Dz7Eds38gOTg6JQIakD8/yrJvfGq6j4hQaCfhVrutIEJ5RKERpxfwj0TrE8Nhfxai3z8LWL65W3E06GZ9RPWEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781983991; c=relaxed/simple;
-	bh=wzgvTOJfuaj5S9B9flSBzpAtRCfBo/HRym41UEdWWaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZaYR9tAvS81JvCKZXCbb6vNqACdN56/daW5Dk4clvTetDibjeIWmQvogfH6KBaq/Ntqz8YgwjCfYJyYrGs/mNYEZJ45XkKDTmHigevRBBxsrajy/VcouCG0MzFtK6XTFtppldocRhezAPYEwPE9rC7roxnqCUYj9Kgc3x95Emo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nNUSMIUF; arc=none smtp.client-ip=80.12.242.70
+	s=arc-20240116; t=1781984945; c=relaxed/simple;
+	bh=gHZxsX8bY6Zhd3K5Hf0IjdC4MpUB6U7+gcFfrfmOpJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ooZM8whCMYr1aMErVn+Gp0sdJeE+Xzncm66m4rN8PHy8TfHHiUSVdxqC/Yx+iXXVbDKwdTMIuyfDu4BeOsGDk7RnWCX6N44LbtLM/DEtmuycaFvz4CsCeeGn51fh0qE7Qv99KcXGovYSfoTFFQbpepeJu9TiHMK4Wops6HgV4hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZE7ofwaH; arc=none smtp.client-ip=80.12.242.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nNUSMIUF"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZE7ofwaH"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPSA
-	id b1RCwPqLOPooTb1RDwwtW5; Sat, 20 Jun 2026 21:33:08 +0200
+	id b1gawLfr9VbDYb1gbwqvkU; Sat, 20 Jun 2026 21:49:01 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1781983988;
-	bh=otIVsKHQILgMiNi6xzRj+CP8TEISa+XW8sPwAjZtq+Q=;
+	s=t20230301; t=1781984941;
+	bh=vRNWjvfotB+kRrLOF2yEOhQj5VtGit3V7+2y36dr6PA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=nNUSMIUFpcIJx1oaAamMX5HlPRTBlvz0BOBT8qcpXVX3QntjCfqIvrfMbKj/L8ckf
-	 RRaWzlMauq7PO8yNwq7fqd2Kmgs1PwvpFfvIPWtRzyQob9nXT9StDJKASFOg3cRJbX
-	 wlewdd4bPWwbOJPsqQTKDlBBTXkI9BXc172UoQCZcuolgMLtg7Bzp2vZjkdKsnIhhz
-	 Pvqwf2Lgo+aep8jOYXmz5Nv6u5KVbXunXxuFF4Yw+tMmS9GCzBo7ksa7yHxrya0ro8
-	 ZxzN5SzfpjH25TplQhdrfY2eo60LZPEw07KkAET6j7Jhz6p7f87B5466I17RfB+7O8
-	 BBReYd9vlZHZg==
+	b=ZE7ofwaHic4aJ18mr0Ol4YQKwDeahXb/FrMZoQ7OGVPQ7ZQHurgS4pm8DncFF/LyI
+	 ymFeqFc3kmBHnL6LtkOmxrAeMr/+Z8ju1xTxsUqbMrPcq3yN34VeRXN23n5qFtZu0A
+	 XdAWVwpG6ErZ8W2y4s1en00jixYK3BH4uniV34QYBoxwnJYxlMRCTIQHW3vEO8dzyd
+	 6ni8OHpStM3D5a2Q0mL8f672Jp/tGN8Zme1zN4+OQgyY1IrwJY/PvX1ZLWxUZwtVvz
+	 eBxcOKjPnxC7adh5DXCi7HLImEzJ1+wuem8cJZ9AhCXtRSEu3KTG6VfOIwYMahCDr8
+	 ItSpWHl+D4OMg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jun 2026 21:33:08 +0200
+X-ME-Date: Sat, 20 Jun 2026 21:49:01 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Benjamin Marzinski <bmarzins@redhat.com>,
-	Linlin Zhang <linlin.zhang@oss.qualcomm.com>,
-	Eric Biggers <ebiggers@google.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	"John W. Linville" <linville@tuxdriver.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dm-devel@lists.linux.dev
-Subject: [PATCH] dm-inlinecrypt: Fix an error handling path in inlinecrypt_ctr()
-Date: Sat, 20 Jun 2026 21:33:03 +0200
-Message-ID: <2b6e6b71e66fbe90c75791669a9e16a36b48f7f6.1781983971.git.christophe.jaillet@wanadoo.fr>
+	linux-wireless@vger.kernel.org
+Subject: [PATCH] wifi: cfg80211: Fix an error handling path in cfg80211_wext_siwscan()
+Date: Sat, 20 Jun 2026 21:48:56 +0200
+Message-ID: <a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -55,36 +51,34 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All error handling paths, except but this one, branch to the 'bad' label in
-the error handling path.
+If the test against IEEE80211_MAX_SSID_LEN fails, then 'creq' leaks.
+Use the existing error handling path to fix it.
 
-If not done, there is a memory leak and some sensitive data may be kept
-around.
-
-So, fix this error path and also do the needed clean-up.
-
-Fixes: e7f57d2c47e2 ("dm-inlinecrypt: add target for inline block device encryption")
+Fixes: 2a5193119269 ("cfg80211/nl80211: scanning (and mac80211 update to use it)")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only
 ---
- drivers/md/dm-inlinecrypt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/wireless/scan.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-inlinecrypt.c b/drivers/md/dm-inlinecrypt.c
-index be1b4aa8f28b..bb4ded4757d1 100644
---- a/drivers/md/dm-inlinecrypt.c
-+++ b/drivers/md/dm-inlinecrypt.c
-@@ -347,7 +347,8 @@ static int inlinecrypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	err = get_key_size(&argv[1]);
- 	if (err < 0) {
- 		ti->error = "Cannot parse key size";
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto bad;
- 	}
- 	ctx->key_size = err;
- 
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index 05b7dc6b766c..38001684014d 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -3612,8 +3612,10 @@ int cfg80211_wext_siwscan(struct net_device *dev,
+ 	/* translate "Scan for SSID" request */
+ 	if (wreq) {
+ 		if (wrqu->data.flags & IW_SCAN_THIS_ESSID) {
+-			if (wreq->essid_len > IEEE80211_MAX_SSID_LEN)
+-				return -EINVAL;
++			if (wreq->essid_len > IEEE80211_MAX_SSID_LEN) {
++				err = -EINVAL;
++				goto out;
++			}
+ 			memcpy(creq->req.ssids[0].ssid, wreq->essid,
+ 			       wreq->essid_len);
+ 			creq->req.ssids[0].ssid_len = wreq->essid_len;
 -- 
 2.54.0
 
