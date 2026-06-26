@@ -1,176 +1,160 @@
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFF249E5;
-	Fri, 26 Jun 2026 11:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8647317144;
+	Fri, 26 Jun 2026 16:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782472420; cv=none; b=ayuXGsG7oC1ObMMZhODb9PYeOumDu2B4eBRlzyuVjMrmBtHvEEzWSddgOhQwDikRKUh00DR+vSz7vashi25IY35Cpkl7qVn8JJVh+YTNGYHdI3Dtqt6jdzG0z+g9iRv4JEIxAC5CedIglqAD5c5Bwg11C39M7OmuUnddqSCId1o=
+	t=1782492522; cv=none; b=G1Ux3h95zwhLPlWR27fAgkgHGt6WvYC5i42vjkRwkLuHL36G+tY6DBxWNC1hjQ1liBDK0NzbERPRBNxc0l6v9NtYoQT68PPGEKHYAHmBnWwFclCLsR+tGrPvd5VbvqFw6PR7Ge6NjUPHvqWMANI7DkdaKPwQob0gIstrGWR6H7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782472420; c=relaxed/simple;
-	bh=jYzUyNg2BzCyHCyljmNgyoGO/ZTdxbKiDL8aakP5lfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMBlwNe1ZXY6rnB2vnky5yU8upcfh2LAbdKnK6bjOh8NU6mn3OJzzO355v5q7jg9HVv37bsLfcofmdiFOppcE6WiIcnag3zy4Oy63GNIiD+gsbSxoCgdB6Y7f4+LGv4u4BGpDacJHs+hf9hIVrDWx9GTK6wAWcTkTgnkEJW0TMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=0k67a980; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kDa5RLBJ; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1782492522; c=relaxed/simple;
+	bh=0r9WB+JvDOVqSN7EWPziE3y0xVpQV9z6CLpEvpznNQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W8LgnRsqkPJtJwQTCpZM/xk4ZzW2Eng7nJa+J6xHMFnuH7cxvsNxaWOs3PU6UBJqkekk8hxzYeVFY3o/HdZCh90yIC4FlsryH+nm5ZCx2Xi/SYcmpsfR2fmrwnwMhTZz4IFAG0+cyPRmPzIqDf7+XTxQtBoM/ToPogIbTSMZg+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pmlxH3VD; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="0k67a980";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kDa5RLBJ"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B8937140007F;
-	Fri, 26 Jun 2026 07:13:37 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Fri, 26 Jun 2026 07:13:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1782472417;
-	 x=1782558817; bh=DkIe6IIzIUkERQp92F7R/s+OmVtx8U2AcTyMiuEsWgU=; b=
-	0k67a980kWftSOcF7jfkk1zO4cQ3IAv7isyRla7/0kKaAzli+CHbtlvLLNk3/2lB
-	2F19i/kE/JwhdvyUW/xlQs4EAAtecznwywpm/18CF/i2IzzV369aB5O/cka2RIRF
-	aRrojHOnT3/XfP0n4TSZGwtGs6Fk+l5yuEch93oETdoB1TfJImHhiyQQwI7D8QF9
-	kzr3u8eY1+kofldTK89iADcssIshMb5trx8ChES2dJzwauRANxBOvTrJmk179N6z
-	xm9i6BjxbqzVsZqZxQgyNp6E7LTY5cZAOwhuGWe2ecWEQcp9tI3Zajxa+549izfU
-	Q51cViciQfLs0WejqKZZkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782472417; x=
-	1782558817; bh=DkIe6IIzIUkERQp92F7R/s+OmVtx8U2AcTyMiuEsWgU=; b=k
-	Da5RLBJ30pp3SCtYuJlm6WTd/m735dc9CI7N86GMMw4zA+HxnL28b17cgoUVGfkn
-	JJZK50DXxHhZlPFQliRWsNR2kYKgiXQHpbod/eBGNlnlJ3/BQQeMPKNSn2l7hVb0
-	2Cun0WDG+Y/nMIEqePUdVXoLZ8433aLbWaco+fXlKtIoMgS473nMkmuk5/Crh8V8
-	IL/vte491PULcDAbs+J0FJ7EzUlp550nEFy3x2PBqof/y4yim1vxzPFJrQU+MOBH
-	ueuKrbU9UhmaCNTPzrUi9XNIpHCKJBoWj7e0cLpxm5uDWQRGKZeqtBuZiD8dmjiW
-	/BLJgLkFj3smmVXKGsJvw==
-X-ME-Sender: <xms:4V4-aminitDdt67_kalg3Ns6470fTFqB2XFwz_3sRHV1-YXgnUYLBg>
-    <xme:4V4-ai0igp4BO5UuA0BSrcp-Ixu4Fac2Aoe5bDdw7dA-FHUqimEkgYvVPH8rRB0oP
-    eJbC8DjnOdFKirFyvmTAw7dIuJNkYyh38VQtSwr4wvwO5vnCb2AUcc>
-X-ME-Received: <xmr:4V4-apc06rdRtg4oYIEd-qyNg0BY2ZRml0NtO33Yo_GP8sKHHADC2_O1UFEQLQ_s5W9W9scdBYZ8cEpeNewjAZzKXY2W17A>
-X-ME-Proxy-Cause: dmFkZTEOMnDGdv4SKZybQRnJFhQ2b2puCOF8Gi4tPKLS+dShR42im2dB84oOC6xbbUbZIR
-    EAsYI8B5frFZG2t2qhVZwlQJDMXLUiMZ+xxTO+ccsNzthSaLskYxfqb3iqNDQ74A1CYiiG
-    AH7fqyXm0RXCv0VqwR33BNKqbcw4h0x9SCj2zKGiVjqQoO3bVSFG76CZrsf/zintw+aZNV
-    b//WFjv+zsA3Uq9veav1RNTVAi92O5ul+fAdZntY0/l7qH3ej+dz66hjOOsGa/NlAqPNT3
-    BW18REP4l61fxjXhBOav/dJR8DYSKqmz+Mz+zFyxpYtpGkJD3srV6tr7YWQ6pDtaxL4DHd
-    0z0ow+ItPg+G2OCRG8gbDlINeoMDUnFBJYCg4e3jrklP1B/6v55AHfplVFm4HZIp+GyBfZ
-    jjoCIm2jYmOfjcv+omWbwKx8rLjeQm7Lj4ZlhnOs3sGLYyONk3YQ++3DAH4t/ZSPBkN299
-    goAOjB61iJuRSrUGa8fbo4/heWNfoteQb7JHGGHZwpCiDJSf44kOcL7W0V+XLLFEBn/17G
-    USrkhUXVN0PGlGaJhySn50EwDrxLF2xXVbM+lAhvyY6oXG0dqqf1Xuo2K6HRunzHuImvKQ
-    aSam3BYBtDrLspoD+nB61OzU9dRaO7IuDXFHnvhXuWBS8BCrkgKOSKoQGjJA
-X-ME-Proxy: <xmx:4V4-aoxL2lnT0Weexu0o7yWyvTN8RJULMLGjBjVr2mvvSX60UKeMww>
-    <xmx:4V4-ahyJbLWG-oCU0S51_Ys_sggBq6x-slo4hEaQnxv2XNjQon7fVA>
-    <xmx:4V4-apZaNJv0ttRLLRnIWa3VRhYVHR1AzD4IxPqU12yjIXOscMnpvA>
-    <xmx:4V4-aq1jjn5lfDK-YetlQ7Yto80wZIIiYliwh4auzcee5LmfHPU6ew>
-    <xmx:4V4-avpRDZOWQO_lki_qF8JPsBMTHWIXT8vTHcjQCu3bR_AGxwjo7PN0>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 26 Jun 2026 07:13:36 -0400 (EDT)
-Date: Fri, 26 Jun 2026 13:13:34 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Dan Carpenter <error27@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] thermal/drivers/rcar: fix error checking in probe()
-Message-ID: <20260626111334.GB1325538@ragnatech.se>
-References: <aj5WnseULiwgmlWv@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pmlxH3VD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1782492501; x=1783097301; i=markus.elfring@web.de;
+	bh=cq3OsnIEaNxXV0IVloJnCEarbh4R9Gmloj/wfWIwC18=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pmlxH3VDwAY8RqXrhV3YaXan/Lz+/WMCHyMwBTnWIdMw4pX9gjPqpmzCvUmL88fn
+	 ledi5AqaTDsDlpMJvfAvmIUDk6QgzBp5DxSOoY8+kVtFKZlvNDt7uS8Irvc3gw/Zi
+	 ++WESJbTAuEgoU+4wMQzSFj/53NSPGtxBbtZvfJlvv8DqirrTwWoNIPTCQORgRe/1
+	 f4yvl9EFTHIwNQ2n6aeN5H1SYHQpkJKImPhFTlvupwOUfC2I0Egi4i3RuyzSIsxyz
+	 6rcCi/9Cy9VNovniHNAX29fUOO1mzTDMpGZtPzfUYFfVwePA2m+KZtEDoagiyQ6Xu
+	 KQ3N+kibiOEnR7L/vQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJnrX-1wstA41SSP-00KxJ3; Fri, 26
+ Jun 2026 18:48:21 +0200
+Message-ID: <196e07e8-aeb4-478d-bb05-1faaea976e08@web.de>
+Date: Fri, 26 Jun 2026 18:48:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aj5WnseULiwgmlWv@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: block: partitions: Use seq_buf_putc() in cmdline_partition()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-block@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jens Axboe <axboe@kernel.dk>, Josh Law <objecting@objecting.org>,
+ Kees Cook <kees@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Woradorn Laodhanadhaworn <woradorn.laon@gmail.com>
+References: <59dfd2ef-2fda-4dd0-a288-52c35613e778@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <59dfd2ef-2fda-4dd0-a288-52c35613e778@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eq18YjzQYC7WQl+AyAH2x10ntsCTmCeoGj2gWtky/2kaQ8N2Y03
+ 6qA8qGyvGjoBXpub3mJmseABGCLcoKQzjdMiQtPmeQ87hnm+GTYXvwQuOg8vu6oa2JIphcF
+ 16GadylVgq/jOxpWDi0SfHrakBcTr+zDw+DE/yXZd4djXxyO3Fnmpy+faQYLvMiievrGsQc
+ 4sex4lN1ZAsDNB+877KGQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0NdExzu81hU=;GqSut3gtQuApedkeObKApBU4vgE
+ JsOFh5KgK2WDmFbR6GoGZD6MI9hfghjxuNyeMiayyZ6PExD55fg7lfaalq9AR52EeGQsH6P3M
+ iXqvCye5AuPiqHAwdlQTZXZsZ1ftyhTFTn1M1AQYic9G9txkZl9flq1uuAiNVZkosnx91xtq3
+ 0vM7GZwKK4QGASmI2N8iQNlo0oJSfsJ+op25e8zljFi3CyWqOaZL0cpH8AaU0gzgAgWNJKFTt
+ 57tX/qMJ/TU89Q7NeT+rp95q8C52y35vVwTrNcV0jz1LAtJ5OPLzlLRw3hSRSD02vnNMrGml/
+ D5hwLKwzWrjyq/w69kgLFIVm2ZVlsVn7nM7EgY2KGiRWKzoF8XXs7YCVVI2Gv7cIJ1KiOkZon
+ klNJEcY9oSA5jCwXeNdyNWJs2ATsgRjkvMcG0ZFJ3VZ5QG9OKJ0Vz8kUVvZb+EaG/v40FHDmk
+ Oq0SgxcPNFycoIUHJ2OaZPdvLpLgmXjiu0xB6iDd5SsXjMpruJ/oRRucrxBQ2E/rieOC0K/Vj
+ t4PIibc4aWcj34jO9ZFlMqqvtGjhybIPU6XEYpQjOIZMqB3q8/qi2hqqqnG84aIwcybjqhpgz
+ jxJ6hzIXSKTtCd4A+cruWT2DWvAkQ8lqKftWLxlYjyqv6UZk0hkktdnubxjovp7/qHLL4Y15l
+ uRf1BB8xtBGlOjMZ8tcAHg7sVsFVAL41vnoHwZ3QhtAhRxpfipx8owi0UWMFedT6GCYPl16go
+ u17l6O32Tz26livMKUcw7JAbuhhiUQL5CULBYapyKPPEOzb/u/UN6hXJRq83Ax0b7gKMnk9VI
+ 5o+fCD2AZOd0lImIAlLNUYl03fELBxpOjOZH/0bAYwYicGSY8EYzvUOAlUw5+zIGBwHwYqFrk
+ oWe02gB1YYeLiX+a9eFoNyexMdUOKAUt4yh8EoRQ8vTbr9DYbq7iO9qJEd8rcHwuTLlHNSGVa
+ toxDg5IME9KIbqXaVp++T22uMbK2LWOCu8BKQORMhoTJeoVPoem/OU9g/wPtLkRnSfkA1F1tw
+ IRDs+6z28H/aXNnUDJB7ETeB0GfdTsOvQ4DDasv09xKedl6JBzrXCb7Kj9brIQuj0Z3JrlXpL
+ T3dtfZgJRpkT8gn0Tf7O1gPV2IwKIZ4VPH4jbXYHDlwbhGOF4Ux0+NpwbTBRuHj8do/BGhu0D
+ x4MSwlvhNXVJNwBrpgqKf8/9pPLv0nzS3CZwYhDfsgYoItFXsmvaGnJ0haeP2PACGmnDgWx1i
+ 1dktncIGfLtW8Ar8AjIM/xvhzCgAPWDcbLF0d9EXfFzwgvZXDdLWMzZD/9CtOIfiKGrn44p+U
+ 58Jv/z/CkEe5AKtKqm/qxJeHwhVilwZeBpPvdCQum/8utzzs1iBaRhBdZiaxpbLw+M6ziveNy
+ LKxJvSF3xw8D23HTxLWnAXRDRbxFKhXUChbs0nK60Vwz9VwraaWcNJfk3a8YlJfvsUSlFYunD
+ TbuypgHIgRWy6uqdM1ahAiKQV5bYeNVIvAnyLAIfWTuBroVwxrD3Uxv0vGAreR1uehcwl0Ox2
+ JXUVtX/TLhXrqUFoJ0isnwuS8yDkXZr2uurBOUfL5jJIWyn+h6G3tSgkngxcCqAhT0T7sUu7s
+ mmT5w3Qbr/mL7hGmYRDy3ct6TmNjb9g00tf/jyzyTYKnfGLsZ/5CdjpPVPy5FLIlQ4lQl2ZEa
+ usE45YzcdSJEUXQt0HFuDl6N6m6uWzrdLfgNWiZSFPGyGJ+XPnZNgzJ2DdN3PgjOZqCJfNnzN
+ M8zun/c1ZSp3iu8PUZKHEwpLDwT7fALLiTESSdzf+04CJT7/2reT+fZLyPh/7Cicfr4s31dSi
+ DaHCny+9cwIWBJTc5086JHhFOWN86LgaluJ4xbQ7F4ZVIq77tadmcjw2UaX4GB79fqenAojF2
+ HN8TPdMw3WuLTXnpWeBDFYpmwrVb0yDrxgdcHFOmbek3qGLk1WgLE8MlUx/S1MmC4AKvAe2Hv
+ uH2NCHXaGWO3MCO3SuDGdR4H2MkfMqQ5lQxCZHgWH1H9V2W/jJQ86F7+IlfNbt0rq9DJmvhxR
+ 9WHrzLXoRnrMijecKxwpaX3sregBVKtKqZOn4tVfAnX9yg3wASi5EVGZKVorL/2tJW4tU/f20
+ +vHKFShrbi5+14EbDhnQ8IQyeddpbQM4Rq/lJ2Q9e91htHrq2CujxPjqu6Ad4rZGW0ypcnINb
+ 23rfJQsvTmpAUQL+Lb8080SwVxJ5GJE8aOKl9kWG28c6Z42rD5/2p0vIlBObJ6Z4Yn/pM9Dkg
+ Yqkmcvnk+gBptfA/7Ke/AK0685JT6eaG1cOSpAImMsGcs7L7TgodSdEY96eAQiAcpLz3p9p9h
+ 7Ta0rv22MWfUkmom/WX3mbopeqgsBQVbJwuq5sHPCSrjz4KDEihu24hS8eoLviwK2Z47y3b/H
+ MQHF7O38wiGTgubmy5YZV5lhCFiQmrQQRsL4Hb+gQNi9sMcw1C7KnWm2OT7knGBcZADM6KMvh
+ No9hfsmxRlqhiu5MZSUXfs9Kj2LbH06cqwK5U7nxmcbJL6EjYpY0kLeD2WmZV0ouiEF8/ieCl
+ kA5lk4RAwqYpCNZcWcVtFhkoHNed3cneVmWABfD89Fe1KvGSHZcZ0kK8GijWRzGtYk+LfUhq5
+ TIPC+1fBYUrtmi60hXhiIrn7aB0TqdYfwWCryixvgUVHAfmJyS9ledQGOqbn61wWU6THIQIj4
+ f0F+e0FJibjPJV5h8c8p28P3STKJGKrgr8ux+KAiYE8/ryYhQk26JzRGg+fpoqVh2VfGMdN70
+ DHmBWHA/5SdAAwQWJlFacnpDnj97Ue82VgZAFrS97ptSIGj+60m2aQ3JZ55yEy4ymbcI4ZHQB
+ cCbVUgsFMvza499tYT2FqwS1dnNNg1H0AQrr4HvbILP3Q3Hzyo71LG6PpLQLd6mQFOXPC1kcR
+ Ns1bESvXtV+nghaGBj6uzO3Pcpq8r5pHD4N8U9ycejfx5yo4K76COYiESxhGkaJ/moqtFl0GO
+ 8I75dZQrfkp4UNLF8XYnJfr/H03pBhsEM2DflOvSJJvSqLetrRceKyrwroBSJ0Ma2JBWRFZ8U
+ 3i/n9M2U1tz+3EcPrKZZVhX0V3itPwCMO3fCDH1QtDYvKRV+cMs+Ei5vTr2u84fRC7M3ls5EE
+ r0YHuJEgF1asHL48MCYEfQl1eAq5BV+CP0bSEJNzV06ZvilJWdqCwMx0RQ6Ml3JU9Oz8eaf6Q
+ Ena2ZeaU4NXXM1wjZ9zUae2DO7bg3I5P6lnDu5joQMrvghS8RKd5CT/pPK/QmbjtbcoXyjipI
+ FUdHElXLhR59rkIAdYm1r03W6CigApXWKdSNLQ+pR5fNw86MjN2mu8MzkHZMPuNksyu/1Dr3C
+ l3DolLPhHrFPUhPyRFDcuWz5CZgIJs3mdXWX0Fk99n9eSHaCjUGp8GvWWa4FzrkGXO4FrnSNk
+ EBgccs8uImq4jpUtwRkI5eNQxSnLCbaQA3/qlqIwM+yGoJ9S+pRYpzmJZIe4prEvvd2Lxgdk/
+ tsIvOkpG7BcfTAKoYlyto8DpSz+YTY6spQmaXkzzSRoJmF90pJ5zoWVgA52I8XRcDVVn1bbtB
+ Ru+ZpGEMjVue8UFqJZYTKZyzay0TguRrGzoPq9BsqSCoWOhv2OAv7JcaOCLASRw7Ld4PmA9at
+ +/CysjcI1wVRuuiy+vmFvcIva2gPLfy9dZxXJyAN+dSGFKhOkc7M/BFlPzGOGC3VOKH1p8bs2
+ tNxCWLfdagevgVcP4mdjsCn0k53C6IntGghZNO5gNlpspn02pF+/yXA9O5PD7QT+gKLYE9GFh
+ QaK0N2vBhmZmDb1YqZ1bgfiZ2mgFrYZu//34gvdBC7a+keXYgmNom9mEYycV4xMhJ9N7w4o2J
+ GgRSJJsaATMzhoHIKoGUwXq2tozl06Y9nCP9ZZ+SLl/j/WEM4OWUhu8g+ZxEMWkRBG5vpVrGM
+ Wpz+xUBcBygIxhFG/8a57KUQCDJpl6U7TEoy6Cxv9zjTsIdX+anctDUeUqg4Vvt+lhOnsSlgw
+ FmMAniBjnjfe1PTiHktknADvpNmbC9CnMvjXkv7e3uR5hHaPJvU8LJ3yWTdc7affAlMzbXsHp
+ 6WMIuUG5N/qfJ8x/p27IleZ7e7yIKT3tkzPzmPc9qSHJytovHcHCc0Jl4YO0HkWAJ+5596E2I
+ oONLShw8uq9fQozodyJKuuY5lnHb5k7EygUDFEtr6lHwA1BQdNFGWucqFNT22j9nwkUbByKni
+ Ps+7taDXVD/T2f0CkO+gB+jjkZyjO7ZI4UlaniHluW1CbE+oTth20HAMZD147Y5NgWjJ2ZA4O
+ nj8beJt5fvWb0L2txigWh0eUGOXGtJtKqE8e9XaX/ewmy0Ig6N9orL8chAe2/S/JcVrovlfM+
+ wUqw3D0YfKYYB7gqmWroWV8stHf8EYa7at6BkbN4bRJ+WO3wTM3Si/04uLAhjw3xmHzg+ST3W
+ po1qmQmEMGWX60Bvd0ZiHHGnKrTVsOv4SLoAZQLwGlRRpxYclj8YfEsoXZvvrF/ZixoV/YHhg
+ 377MnJVyvX/3fnw7fKQdupQiRdFOxh2xWpkV5OqQ26Hs+LhR0yZqTmNnOWXOW3RYynUh8ZkuE
+ kAm8I9J5W1JK6so+vbjdfV/p2RPgPf5IUP1uBFwRb8+JEQD2uXAY9TSAJWDZgvKHOdTFcPkeD
+ CysOQ4zNbpnvp5iOJxRCw8GatMfKVhcPA2e2FWGlENHNF5nh8NDxrUoMQCs2OY+4dVlV8Zg6n
+ RtGsSw0T6uKmrP1knUZKkYrSF+qLwKmIRvBeUT2QGB9EaxRZVbn5g1kdAXZaBVmvMExJjxZ1t
+ tynVFcmMPqxCOZ0uEBmtxUaac5mImsbmO4jKGIUCsvYOZrJg+wLZ/FK8pAHy8wQR5oWq3eqQo
+ 6rOqmbCPGTv2+1eZTe+X9Te9FEHG2OG/jiBz/u6M8pgCUKWBDac+C83KZQ/c1X9D8XwEGqr8h
+ sKEVEZ9yEQmVAK+tdXpJxsENap9usgwFKfASgl+9P8WycDy5jKAVksms+ntWlILmEkV+wTvrC
+ 0vMObJ2FHxk3KyEVEV07QSdMUuFMSPssI23hQwlawKMqFlTDAAVUxA+0vO/xOa+DR1/GuejFB
+ DqtRmU1soGXtYlp8VvappU3R97tBuQ8BPlo34+oocSHI53o1LdMPo7zi+PDG/I/g736jZoupJ
+ S5fHEtdVw16eaHgt783uidz7vgaJR5qBEn5Ki3+2bgNZ1HTaaNq49sfxZZhK3gqNCVosZc+My
+ iLryYwqoT/GMX5WLRxYNFUQWtnJ13XM/tguBJo1k7Fk5MqHkHEWwUBSr2Urq/uSdrLzL0Eob5
+ pl35srlh+u/KfpoqzGV0YWFcPTPbB4fMUKf/fpigzN6U8bf7MuhNK9rR8eAt4na3X9aEjgavf
+ fthgak/olg0YGTeASiGqnwpR56iKSizatqKXos6tzBFykO+qePjCLunVGxWDv2Q4TO0Pnp5l4
+ H5yPHvgiAx2jLYYVrPpXST2sp6CIAUSeBS3aHl+eHeDYHn3TtLAJUkpNdHawaeW0RXRRe27Fs
+ uRrA1bIi1QC4O0mNGTYTLaAmBwBWhbhB/djSbRzdVErtG0SzWBksFv6ExFTmGQJVzV8VSqtwL
+ UnZ95w==
 
-Hi Dan,
+> All affected source code places could be adjusted at once
+> if the change acceptance would evolve accordingly.
+>=20
+> 18 source files are left over for similar development considerations.
+>=20
+>=20
+>  block/partitions/cmdline.c | 4 +---
 
-Thanks for your work.
+Will development interests grow for remaining update candidates?
 
-On 2026-06-26 13:38:22 +0300, Dan Carpenter wrote:
-> This code accidentally calls thermal_zone_device_enable() before checking
-> whether thermal_zone_device_register_with_trips() failed.  Move the call
-> until later to avoid an error pointer dereference of "priv->zone".
-> 
-> The driver works differently depending on if we are using OF thermal or
-> not.  We use thermal_add_hwmon_sysfs() if we are using OF thermal and
-> call thermal_zone_device_enable() if not.  We can share same error check
-> for if either of these fail.
-> 
-> Moving the thermal_zone_device_enable() call is a bit cleaner as well.
-> The original code used a three step process to cleanup:
-> 1. Call thermal_zone_device_unregister() to cleanup.
-> 2. Set priv->zone to an error pointer to preserve the error code.
-> 3. Set priv->zone to NULL to avoid a second call to
->    thermal_zone_device_unregister() in the rcar_thermal_remove()
->    function.
-> 
-> Now we can just do a direct goto error_unregister and rcar_thermal_remove()
-> handles the cleanup properly.
-> 
-> Fixes: bbcf90c0646a ("thermal: Explicitly enable non-changing thermal zone devices")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+See also:
+Clarification approach =E2=80=9CUsing seq_buf_putc() calls more often?=E2=
+=80=9D
+https://lore.kernel.org/cocci/3455eaa7-297f-46c9-a8ab-91e5bfbe0105@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2026-06/msg00030.html
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> v2: Use the correct fixes tag and re-write the check in a cleaner way.
-> v3: Share the same error checking as a further cleanup.  The
->     thermal_add_hwmon_sysfs() and thermal_zone_device_enable() functions
->     really do serve the same purpose even though their names are
->     different.
-> 
->  drivers/thermal/renesas/rcar_thermal.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/thermal/renesas/rcar_thermal.c b/drivers/thermal/renesas/rcar_thermal.c
-> index 6e5dcac5d47a..fd686da9252e 100644
-> --- a/drivers/thermal/renesas/rcar_thermal.c
-> +++ b/drivers/thermal/renesas/rcar_thermal.c
-> @@ -492,12 +492,6 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->  				"rcar_thermal", trips, ARRAY_SIZE(trips), priv,
->  						&rcar_thermal_zone_ops, NULL, 0,
->  						idle);
-> -
-> -			ret = thermal_zone_device_enable(priv->zone);
-> -			if (ret) {
-> -				thermal_zone_device_unregister(priv->zone);
-> -				priv->zone = ERR_PTR(ret);
-> -			}
->  		}
->  		if (IS_ERR(priv->zone)) {
->  			dev_err(dev, "can't register thermal zone\n");
-> @@ -506,11 +500,12 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->  			goto error_unregister;
->  		}
->  
-> -		if (chip->use_of_thermal) {
-> +		if (chip->use_of_thermal)
->  			ret = thermal_add_hwmon_sysfs(priv->zone);
-> -			if (ret)
-> -				goto error_unregister;
-> -		}
-> +		else
-> +			ret = thermal_zone_device_enable(priv->zone);
-> +		if (ret)
-> +			goto error_unregister;
->  
->  		rcar_thermal_irq_enable(priv);
->  
-> -- 
-> 2.53.0
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
+Regards,
+Markus
