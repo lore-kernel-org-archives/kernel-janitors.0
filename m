@@ -1,150 +1,199 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazolkn19013073.outbound.protection.outlook.com [52.103.74.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77224329371
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Jul 2026 03:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782875092; cv=none; b=mtqko75cRkWN1/Kodlv43I5O1//KkfpGctlyOQ2qVyKI+cB8hYnUr/e5i+T0Kf+MmMInDsai549hwFV7UGc/m/dHNaGLUdrgr9nENVzG3yNnj9LcjmoCVVLoR5lS5xAp3BgrH+qiLj2KMJURhddWfog8/xHWdZnhOOrMKvJrTwo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782875092; c=relaxed/simple;
-	bh=2Jg+aOfLexsl4IhrEflsYtUIJytswVTro/wp/06/3xQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rat4Z9VDMBtx9uPQzplX5LmJYJCdvYwXaauZDWZxZqIkrF14HO5vEiEttBq5Orl2rhEm6vlkYjkk/BeAbmzpRSdcXJQN9hwXeSXBqVn5FuJ0476fxD+lY0HyhDJ39WvwCJ3jYPran67QouwtV5agJ5W7dCKoJpQL/Vxwl+YWGV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZep78r5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qkgxvlyg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2F91531E8;
+	Wed,  1 Jul 2026 03:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.74.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782876551; cv=fail; b=WKl3/0CU3jGusTuYVAp7MffJVaNGOUwsUnGsbfpSl6z0S+Tfe3qTezkAAQ0ZiXfaqzLWAKC4w7Tnq6gSHECgAFVcFTUOG7gV3WczgoGMLNK2EAZ43R1aliDOMY4AQyG099WAOTCW7gAGDSs0HxAQuX5MPSQ27JMdpZhImSkiF4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782876551; c=relaxed/simple;
+	bh=ouqMbgIDm7ow1OTahdhfeP+rhkSmsH/WpC8eP29YvMY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZLOG/rkHrdQh8e7nBu+Lmdl8ikTED9F84IQywTFntMSHBZz2tCIMfsGL1PRxWlHVsjCR2ukGlHiYcwuNZIc0xW8y7Xf+QSs/cA7DgOO7AJpFQbXuFPodjAp9/0hywdLtyqhzbsAQOdUMm+19X6JxdrebQi5ZDS6duDplgqf/QSU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=fxtD7ffS; arc=fail smtp.client-ip=52.103.74.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZep78r5";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qkgxvlyg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1782875090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lCaMYc8eNrfsW+6kx9m1j6d4lfDzKZwvqiqCl5u41Vk=;
-	b=OZep78r5E94HhoNIh5+3YWq6USO5nPf0+KN7AUkPJRwB4R/2g0c1PoVEYIOw50F+ZKJTRt
-	8gxce4Cp4RfFgIZ1RDN8O+UP91KGGokrKYx+ZBk0F0vIRjA0pRaZSDHmv+kYOhT/qTv73g
-	hIbGzsEaDL9Ffsa9oHhX46+nuom5UwQ=
-Received: from mail-dl1-f71.google.com (mail-dl1-f71.google.com
- [74.125.82.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-0L07pHvZPAeoRSpcLxqqkQ-1; Tue, 30 Jun 2026 23:04:49 -0400
-X-MC-Unique: 0L07pHvZPAeoRSpcLxqqkQ-1
-X-Mimecast-MFC-AGG-ID: 0L07pHvZPAeoRSpcLxqqkQ_1782875088
-Received: by mail-dl1-f71.google.com with SMTP id a92af1059eb24-139f2c46ef1so243247c88.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jun 2026 20:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1782875088; x=1783479888; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCaMYc8eNrfsW+6kx9m1j6d4lfDzKZwvqiqCl5u41Vk=;
-        b=QkgxvlygYUvTHBe/z7q7bflFxxAHhJ5IEwOPQ4d0tf5NRq4K4U+3JbR1oa7IMO9duB
-         ey1zwyYEFvIkWbVVIcTNcmy1+SiJ7e1UyQ1Aq33Sr94HOoXM5BQ0hrWfxl5xVKIycKcc
-         hyMDWQwze3Iplpnm3XtZKBeRYQm/VHj8gP8ydTGyxis1u+YJWyXH40O3uGnwM6ZfQqh6
-         gXMxrhLHSsMWDiCR/1sxWih0Jh/3AWSrhbIdMbi33j2jQIPJvWqEg6bpGkre5KmNnSrB
-         3EoaSXyn56AvHDVqNQJaJbEkj8wlEaKpzlVsMhw+6aUI1p6Jf+ijP2wzIPvyNYpTh0Tq
-         Vwlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782875088; x=1783479888;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lCaMYc8eNrfsW+6kx9m1j6d4lfDzKZwvqiqCl5u41Vk=;
-        b=n+EmzyvMZ+xW2UyC9vjjPhT/UK6z6jIQOf5S0rQiF9TpMKAIVrzuIxJpYlkxr6j+Rh
-         wOlssfffFkIIsop4hL1xhibn0eyYT1pwxOKjIXe3Ik8IgmdypfEpu8byxi3jtOKVmcNz
-         3H7JZ5P01DriYOFgvxcI5d15GFwer4SNxiNeFeQhNgD5dtrMp0kc+11kV3lo2hh1g2V3
-         V6p9dg/e5Yjo/2p9nnmf4RU7c9V57HZwBNgLc6wRFfi8IcSdDBkM0xJSQLeZsFtyqdGF
-         Vqj82kPVVbcWuHQ0L3VTQWeUgk9rpjQVEjY449gob1AnECbGRVHdhpetn6WDz1nkz42e
-         iGtQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/SDzGN38BAz1hmfbBijZVzEttW7veVURpwjtKlfyac+qzia0RigGd2JpPOl4RNolC43i4k0EqtIf+RsQr1g0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSfSjx/Lh31DF51kdLZNATL+y76dZWmdS5Enx86umgxdQVXZVQ
-	G5LMjgXcPj+LX/8ZUC30MXSUtgs0sL6qgaUYEwbYKCMsqqF9RRik7RuhxRdVfa1bMnkflEHtYgV
-	ziOBDOF9sqWLHCfOrs+ux58RV3e39nn8Wjul4HuGJ1PCSLQk7u8PIAyInEQklCG8m+xmp1A==
-X-Gm-Gg: AfdE7cn3lkve0mR7+vXzB9bA+/W4G7c6YNUUZ/aAXGPJpfBKIrgMu3TxPsr2RmON+Zk
-	qtOIJL4SnBcAvchL3mM1qI5bXlQEy5CK6Tr7XwQTIsjU+DzqYr2ylIx4WClEzbVg4uddbrj6wCH
-	mBILyWk/r1ZGvxT0bDtWe1RHV+uA912hQRaZAkqUbVJbkXLHu51unv6KC3JWVHMNHnKWl0ZxcQe
-	AaBbXiRWukU08DajON2bfCfwkBF5PIV/5UH6NkNU/CwxTcCBY0diZ7IcZQ68UllEvwDOLQPuKMG
-	tYN8zfGb3rzBDwnpNHOeTRKQumsusPNOCy6JTn92L8ZJfjPzLbPaEtcKA2YL5gdL5wa38PTI239
-	JeREsUHSZhB8FsC47f/vItYQO6IsDEMz5CiqeWAxXSJ4DIRHR6Cesykg=
-X-Received: by 2002:a05:7022:23a3:b0:139:ed5a:eef3 with SMTP id a92af1059eb24-13b315a4cd0mr2248696c88.50.1782875087299;
-        Tue, 30 Jun 2026 20:04:47 -0700 (PDT)
-X-Received: by 2002:a05:7022:23a3:b0:139:ed5a:eef3 with SMTP id a92af1059eb24-13b315a4cd0mr2248677c88.50.1782875086647;
-        Tue, 30 Jun 2026 20:04:46 -0700 (PDT)
-Received: from localhost.localdomain.com (122-63-73-73.mobile.spark.co.nz. [122.63.73.73])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b2abbba8dsm15858670c88.13.2026.06.30.20.04.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 20:04:46 -0700 (PDT)
-From: Tao Liu <ltao@redhat.com>
-To: pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	bhe@redhat.com,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	linux-integrity@vger.kernel.org,
-	pratyush@kernel.org,
-	Markus.Elfring@web.de,
-	kernel-janitors@vger.kernel.org,
-	Tao Liu <ltao@redhat.com>
-Subject: [PATCH v3] riscv: Fix a NULL pointer dereference in machine_kexec_prepare
-Date: Wed,  1 Jul 2026 14:57:33 +1200
-Message-ID: <20260701025732.66330-2-ltao@redhat.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="fxtD7ffS"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lEfonfu+SCAluExq2r9SnW0h/9uEh7tzHIYaPWI8yumjetdcQiL/TcIwq0nwpeN8azK2wUlovlp2nsT0aRYQ+iYFhRWiojypNROrd+p7svV63pEeJhrsdBP3HIW6AoG3YNyzp0KAYI4DH2MqU2+w8916xFjP9Ln8l/ITwn0BKaqzynSM7LSSdqbCcFxXjXKWDEgawfzP3BGuauuyctMnZJbmjbxQ79Y1HkqwMqgbYRQoIzFA2ceuu6RfEACM/ZN9XjH+I48GmQKzl0a7ytF8IBF/epB83skk3hYNgVBdQBI6L1U6iWqwYOJIwxWCbkcvB2ynjJzEdXH+Xa5yTicn1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ErW+6EK3mXFurUZfepSXAdiyKBP4miK50Z6tfKbk75s=;
+ b=ckbsSvxF+Fm+uzADvC7syGOIJHEvVY6H9W3VmKje+BlyW6KHlJjitAnFyuw71Dg/CjF9HazGDYb94XBFClXAb5EhTboaSNs5O49LOchirv5Aj2cYTVYZ6S/LAiLOGzbWolkwEW3AZ3mj0NtEKpm/aaEFH8aus0CeFwwznOQgOdxLTDUAKcYrbIW9jqrzuCDvuHkguKzo3vAlI7v/YVi8yr/1qmugA7siHm0uafEsbcnPKFqlO/1qyKuyV2CASOYvwkRN3eL2nKOP/d4SdXm8mNdoa8VX8ugfN4+Y6dT3CPGZnmy6djjQ8f/kVQUEg04rIhdAv08OWiiunMOzbML04A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ErW+6EK3mXFurUZfepSXAdiyKBP4miK50Z6tfKbk75s=;
+ b=fxtD7ffSXbzl66NtQvWk6kURXw0ZtLjko+1vvt9T3XdmLorteyB206hiuEXv4l7uEn2rgifjdpHDP1z8tL2padoD6u5FGxEEbiEqbCsxWco2Qo22wZRU2+HnZyDIYcTEo3GqGeHdmLtIzYZ03YC8q0WEcNiZeoaiZCCwt+DMXQ9rM77WwqJIbe75SlroIyzIZKTuyAUM9kw2f3jjkUHe6mjm2RQ3cJ1SMLX+EWf/BL8TmguvMVWk7ZdLxuigBAAJ1aEsFU++FMv8iXIJTEboi50XGgF5FZEUrZIM0Jxq4IzSkWy4LvIi+wHhW5w8CrfMJS29bRzbgCoDFMJLtMqTpw==
+Received: from SE3PR04MB8922.apcprd04.prod.outlook.com (2603:1096:101:2e9::7)
+ by TYZPR04MB6279.apcprd04.prod.outlook.com (2603:1096:400:288::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Wed, 1 Jul
+ 2026 03:29:04 +0000
+Received: from SE3PR04MB8922.apcprd04.prod.outlook.com
+ ([fe80::3450:f139:5238:8f58]) by SE3PR04MB8922.apcprd04.prod.outlook.com
+ ([fe80::3450:f139:5238:8f58%5]) with mapi id 15.21.0181.008; Wed, 1 Jul 2026
+ 03:29:04 +0000
+Message-ID:
+ <SE3PR04MB8922E2267F05A514AD33F9D3F3F62@SE3PR04MB8922.apcprd04.prod.outlook.com>
+Date: Wed, 1 Jul 2026 11:28:55 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] riscv: Fix a NULL pointer dereference in
+ machine_kexec_prepare
+To: Tao Liu <ltao@redhat.com>, pjw@kernel.org, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kexec@lists.infradead.org, bhe@redhat.com, zohar@linux.ibm.com,
+ roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, linux-integrity@vger.kernel.org,
+ pratyush@kernel.org, Markus.Elfring@web.de, kernel-janitors@vger.kernel.org
+References: <20260701025732.66330-2-ltao@redhat.com>
+Content-Language: en-US
+From: "Nutty.Liu" <nutty.liu@hotmail.com>
+In-Reply-To: <20260701025732.66330-2-ltao@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TPYP295CA0059.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:8::20) To SE3PR04MB8922.apcprd04.prod.outlook.com
+ (2603:1096:101:2e9::7)
+X-Microsoft-Original-Message-ID:
+ <f47ff8af-beee-48ea-ba49-95386526213e@hotmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SE3PR04MB8922:EE_|TYZPR04MB6279:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5055ffdf-0315-445d-9a8c-08ded720e658
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|12121999013|19101099003|25010399006|15080799012|5072599009|4140399003|55001999006|6090799003|23021999003|8060799015|19110799012|4302099013|440099028|3412199025|10035399007|40105399003|52005399003|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bnVNMHdoclcwLzZzY3czOFZtL1ZqVHRFK1BYNnRFdU1GTzJCeTVZRkRSakdS?=
+ =?utf-8?B?Q3M0L1hCTnFBQll5YWN6TGNsc1krV0l1Z1pib29lZ1lSQTdOOWdrU09ySTRF?=
+ =?utf-8?B?MnpBZWZjUUFnSWVCZzViNWtkOG1OR2FFZkttTVdOcFY5VDlFNktvSXNUa3BM?=
+ =?utf-8?B?V0V1UnJ6VHB1Nm56aHBzWWxyU2diTmtpMS83UDVpLzZLR0lMcDlkSzJQVWR5?=
+ =?utf-8?B?QXBpVE9uVTdZcEEvOEZRMnRmcTBnOXhVN1pBWEdDUzVyN3FFUkZLZ29mVUY5?=
+ =?utf-8?B?OWJydGV1Q0xZeUZWS3hoa2lKNFM0RjZRRVBPZnVtV3BZeXZtT1dINzdhYUNj?=
+ =?utf-8?B?UGkzWjlRVnpXUEhNK1ZlMjFYNkVqdldtcUdJMlBINjFnTzk0aDVxRitlbGJT?=
+ =?utf-8?B?NmFHZ3hUVm10Lzh5RllQTzB1NUhXNDdXa0J3WXNyVU1IWmZlMEovVElCZnMy?=
+ =?utf-8?B?WDRDdXZhNEFXd3Bya0YyV2lpMjN6Uy9ialdsNzQwL3ljalFPdy9OMmtYclZ0?=
+ =?utf-8?B?bG9VQlBobHp6ZGMrR25xYUFYcjNqZFJ2OHdEUHdXbnIxaFN2TmNkbjM2Z3Ux?=
+ =?utf-8?B?cFZsVnRZSDhIRnI1VEgwZEluWWpsNWYxdWlNbU1uMnpuQm9PS1FSdklia1o1?=
+ =?utf-8?B?RFd0NWIxTXJiUzg4eWtMQjZjU2Njdkg3TXJjTWRLNFlPMnFXRHg3ZHJKRW0r?=
+ =?utf-8?B?OFlGblF2dkVOdW03MXJYVmRIcFZudTBsckxwN1JaaSswUUZSM1hNWDdCZXgy?=
+ =?utf-8?B?V1E2dE14dURhV2tSelV2V3Y5SExiZ3JtcEFJTS9CVVJVRXc4REdXa0toY09B?=
+ =?utf-8?B?NmovSit6NWpRdWU5MWNxZkprOUNlVG1BVXp1ZXQxUFBnam5GMkZPeHpYZVpV?=
+ =?utf-8?B?K09EMElZMXQ4Y2N0NDRVZ3h2NDhQWkJoaVBMZDBiOTROeDJGZVNESHNxUFVp?=
+ =?utf-8?B?dElDOUxPRjUvY0MvR1k0UnVTV2ZwTVhrZVRhK0ZxYlZUb3NYeG41NlNKMlNG?=
+ =?utf-8?B?ckpxQzVkS2Y5YldXMllJNmNYb1p1Yjhrb1VQMlR4L2dPOVRtemJTV1FxcTFS?=
+ =?utf-8?B?R0l5bnU4ZDM0OURNOVIzYllCWnJZNXVkbzZhaVZoR1MzRjZ2V2lrbVVtRERH?=
+ =?utf-8?B?Z1VIUWt5dVhvOU94WVZ2Z2ZnMm80TVN3Tk85UGt1c3NiWlJYMnBzVTJoTjky?=
+ =?utf-8?B?UC9tV0NhV1ZCbGR6YjJ0S2IxVDlHWjRyYlRDSzVHS1pGSm5xb3BXS0JLWUlX?=
+ =?utf-8?B?WWRTdjR5dzViQkJsNjBVS1N0MG4yaUhRaGNZRHRONWtBTXdHb09lRDd1b1hB?=
+ =?utf-8?B?NGlablpWaHhrSnVuT1BNVFQ5aEl3eDRSRXJ1YjBpNm1SWER4Q3JNWk5ZejVY?=
+ =?utf-8?B?SlU5ZDZ3cEYxSjZlTEhFTmFta3dyWXhPT1gzOFFVMDc0aVcyWVRsakJFRXlp?=
+ =?utf-8?B?THBWYmRPQUVEcVlxZWwybkV2STZsY2xWc0p1NGM0eHB3WkxlM3dsREtOMDN2?=
+ =?utf-8?Q?w4DKGE3SF4+y9USupXMaVpHsxnU?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXROaXRRYUppOTZna2xDR0dpTm0zRGk0aG8zaVIwekoyZCtnUW1md2lZNXZu?=
+ =?utf-8?B?UTRNMWp4WGR0d3FYbUZiWENkZUpJeVhBaHUzVDRETW94MWo1U3RURUpmUDJz?=
+ =?utf-8?B?Z0lhOGdqYk5jWXhBMEUyNi9IZXZwZFFlWlA3WHhlOEMvVVduY0dpSkFndUdZ?=
+ =?utf-8?B?UjM2YjlZcVVhYld6dlJvMlppZGNBRVY5L3lPTWZaTS8rZFh0UU1JRVJ6VjFR?=
+ =?utf-8?B?ZTZCSTV0OG9hVFZiMkI2T0tBK096UTdxbllJUjUwbTBLYlRvd3FGQUcyZUlS?=
+ =?utf-8?B?R1hmdHdOcGhJRkRVeTMySjJuRVJaMUs2Ykw0a2dLdjFDbzViZUlRcGd1eDhM?=
+ =?utf-8?B?RnpzckNJMXlDNVBWU0VoTUtrTTcyaXZySnE4aHNtWE5NZmsvbDVBY0JnVTFT?=
+ =?utf-8?B?SEd4YTBwMUdYZ250K1BDT0VXbUJzZjZxRytabzZtRDlmeW96d0g5TVg2ZTRW?=
+ =?utf-8?B?YmRzUnM3RUhtUkx2SU5jeGNoZ1ZFZGdYOG5WSXRsWnAxWUhyZk5neHFCVkJ6?=
+ =?utf-8?B?ZUpJeFgya2VSL3Y3UXJYNkNJdmVGL09tWHBGbUdaRjZsM0RxRFpteXRzMXRG?=
+ =?utf-8?B?c2FtSFo3RHMyTWVNL2F4RGJnbWpBUk00RERtZ0t3bVJkbVdObXF2S2Z5akl0?=
+ =?utf-8?B?dzVUejRhY2RIa2RzYU44VHpHS0NndG1RMlZhVEMxVmJsVmVUZFRyVjlZYkJQ?=
+ =?utf-8?B?UzBjREpEUUQ1QjNTeEJuYzlVMWhJMmFxTm5lYWNhclJMTDBoVGo4T2hpSlE0?=
+ =?utf-8?B?UmxKY29rSjVxOWl4NFpWelY0eCszeEZJQnJNUGJQZTNGckYvbThDOFN1VFVD?=
+ =?utf-8?B?UHQzRXlmSnJrR2hFL3lCTWw1ZmtuKzVMdnpGK25qRktNbi8rQzlnZlVkWGRi?=
+ =?utf-8?B?MFk4amZhcE92akJPL2R3V1I2TWhRQlFPb1JQUXBzVlFsZVFHVnpPbGdUVUxG?=
+ =?utf-8?B?cW1YWDlnenhZOGEzSUlLaXpHR215OEVmMno3UUgwRHhtL01iWWVtQkg1cHAw?=
+ =?utf-8?B?cW5NV0xXbENESXBNbEJFcXY2eWRDeWd2Y3NBd3BXNHU3VUNWTzJjWTlJK1Iv?=
+ =?utf-8?B?OXhxc3U1Y2VPNytoRS9yaGNxaUNFZ090WFhTZnp1VU8xa0laWGN3SEJYdzhZ?=
+ =?utf-8?B?TzVaMzhuMXVXamhLcEp6NU9STk1LWDh6aG9hMGFsU1pUS3BWcDVzOG1IQmtJ?=
+ =?utf-8?B?MThiNU1ONTU0SUVQeFJhNGRPeGgxMTZCSUdIUWNtbW0wVHRYeWdmbERDRFJN?=
+ =?utf-8?B?SUFrWUd5aklUczJtSFBXL0VzUW9Qc0MrRlJIT2tMRG9lVmFUakp4MVpQSU9I?=
+ =?utf-8?B?UDBSU0tGMUVhQ2g3UVJWem1NVm9wSFJpWHZ3dGZWNHNWNS90VUVyZWc5bUdH?=
+ =?utf-8?B?a28zZ2ZtZ3lvWXFnQXlGZkpZeWRvVThmUkRUY25PM3JBRENWMmRWR3JBTzlQ?=
+ =?utf-8?B?Y2g5bUNUa3UyV1oxYWtJQlora2czc1I3WXFReUpOMjhDWE5ZQUpDdndyZG1v?=
+ =?utf-8?B?TUoyOFJ6Y3dtWE9obnJQNlFqV0k5UmNiRjBLZlVxRkxQZWpnK0RhRTZYTFpm?=
+ =?utf-8?B?bzJDOXhKdlBXREg1MkxDc3R6YzBjOFR0a24xbEpmSFh5UUNjZnBSWmtFLzV3?=
+ =?utf-8?B?ZjJtVkJtUnR5WDVzMDQrMi9iZFNaRGp5YlhURk1KSnkyakJtc3A0Z3ZOcjFK?=
+ =?utf-8?B?Lzdla3RJNXA1bENQOFk1QkRVVmU3T3B1Rml0WUY2VG4zSEF3WEFaZEJxMVhm?=
+ =?utf-8?B?KzZGVi90clE4b1NPaVM5M1F1OGZab0xLQzJKU0xHMTZkTjNMQ0VjRkgvWi91?=
+ =?utf-8?B?NVo1ajFIYnNBVFVVSW1IZDVYd1pMaHR5YUtPL2ZMVy9sRnAyTFRDUzN2Y1JJ?=
+ =?utf-8?Q?a5jklfsrcxPlF?=
+X-OriginatorOrg: sct-15-20-9412-4-msonline-outlook-c3e7a.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5055ffdf-0315-445d-9a8c-08ded720e658
+X-MS-Exchange-CrossTenant-AuthSource: SE3PR04MB8922.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2026 03:29:04.2425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB6279
 
-A NULL pointer dereference issue is noticed in riscv's machine_kexec_prepare,
-where image->segment[i].buf might be NULL and copied unchecked.
 
-The NULL buf comes from security/integrity/ima/ima_kexec.c:
-ima_add_kexec_buffer(), where kbuf is added by kexec_add_buffer(),
-but kbuf.buffer is NULL.
+On 7/1/2026 10:57 AM, Tao Liu wrote:
+> A NULL pointer dereference issue is noticed in riscv's machine_kexec_prepare,
+> where image->segment[i].buf might be NULL and copied unchecked.
+>
+> The NULL buf comes from security/integrity/ima/ima_kexec.c:
+> ima_add_kexec_buffer(), where kbuf is added by kexec_add_buffer(),
+> but kbuf.buffer is NULL.
+>
+> Fix this by simply adding a check before copy.
+>
+> Fixes: b7fb4d78a6ad ("RISC-V: use memcpy for kexec_file mode")
+> Acked-by: Baoquan He <bhe@redhat.com>
+> Acked-by: Pratyush Yadav <pratyush@kernel.org>
+> Signed-off-by: Tao Liu <ltao@redhat.com>
+It would be better to add the log of the dereference calltrace.
+Otherwise,
+Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
 
-Fix this by simply adding a check before copy.
-
-Fixes: b7fb4d78a6ad ("RISC-V: use memcpy for kexec_file mode")
-Acked-by: Baoquan He <bhe@redhat.com>
-Acked-by: Pratyush Yadav <pratyush@kernel.org>
-Signed-off-by: Tao Liu <ltao@redhat.com>
----
-
-v3 -> v2: Add fixes tag; Replace "reference" to "dereference".
-link to v2: https://lore.kernel.org/linux-riscv/20260627222602.23594-2-ltao@redhat.com/
-link to v1: https://lore.kernel.org/linux-riscv/20260529032739.13264-2-ltao@redhat.com/
-
----
- arch/riscv/kernel/machine_kexec.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
-index 2306ce3e5f22..afc68f6a4aa1 100644
---- a/arch/riscv/kernel/machine_kexec.c
-+++ b/arch/riscv/kernel/machine_kexec.c
-@@ -41,6 +41,13 @@ machine_kexec_prepare(struct kimage *image)
- 		if (image->segment[i].memsz <= sizeof(fdt))
- 			continue;
- 
-+		/*
-+		 * Some segments (e.g. IMA) reserve space but have no buffer
-+		 * loaded yet. Skip them as they cannot contain an FDT.
-+		 */
-+		if (image->segment[i].buf == NULL)
-+			continue;
-+
- 		if (image->file_mode)
- 			memcpy(&fdt, image->segment[i].buf, sizeof(fdt));
- 		else if (copy_from_user(&fdt, image->segment[i].buf, sizeof(fdt)))
--- 
-2.54.0
-
+Thanks,
+Nutty
+> ---
+>
+> v3 -> v2: Add fixes tag; Replace "reference" to "dereference".
+> link to v2: https://lore.kernel.org/linux-riscv/20260627222602.23594-2-ltao@redhat.com/
+> link to v1: https://lore.kernel.org/linux-riscv/20260529032739.13264-2-ltao@redhat.com/
+>
+> ---
+>   arch/riscv/kernel/machine_kexec.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
+> index 2306ce3e5f22..afc68f6a4aa1 100644
+> --- a/arch/riscv/kernel/machine_kexec.c
+> +++ b/arch/riscv/kernel/machine_kexec.c
+> @@ -41,6 +41,13 @@ machine_kexec_prepare(struct kimage *image)
+>   		if (image->segment[i].memsz <= sizeof(fdt))
+>   			continue;
+>   
+> +		/*
+> +		 * Some segments (e.g. IMA) reserve space but have no buffer
+> +		 * loaded yet. Skip them as they cannot contain an FDT.
+> +		 */
+> +		if (image->segment[i].buf == NULL)
+> +			continue;
+> +
+>   		if (image->file_mode)
+>   			memcpy(&fdt, image->segment[i].buf, sizeof(fdt));
+>   		else if (copy_from_user(&fdt, image->segment[i].buf, sizeof(fdt)))
