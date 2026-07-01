@@ -1,181 +1,215 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9570F3B7B84;
-	Wed,  1 Jul 2026 07:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD40C28CF6F;
+	Wed,  1 Jul 2026 10:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782891038; cv=none; b=r7GZwENNEGJfkHAwJgxCUyXxfwgXMxiuEKxE7V4eQAw933HE/XpN1HwU5yR3Qn0ug4FmySLCFpNAGrIbn7mJppZstPhy8XwOZc/LGkJJd8VpkzEwJK9YcoQaCOsJOt8TLKzhkV6/g0BzY8vB6OMiDBHl6j9+7smUiZghHd6TwJc=
+	t=1782902051; cv=none; b=dKQcegwXNi3I0V+vJ+/frvqbyXdEN21hvH9nlHV7YlanYa3HgiqGKuVT/Q4fKbdj0wqDFoby7wZqtPjFLhbYXqw7kj11T0tkEnpzvEYxbgubNaEqrdZQ7xET1ethZs5wS0uKat84eEAOvseQIDJjGl5K9Ljiy4KzGPo/8Ug6Jyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782891038; c=relaxed/simple;
-	bh=N0I6J160K+5ExKKrUj97M4iwuMnS7WPEKdrVJdNkhlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcZYGb2NeiUbmROoXeo/kyyBeiOo7xTlV5qudpgQZSOchMTi5JfamwrR+SU/cgGMcKONfCXmL4/F2azY/NRHQPG8U1GAOp7JWDFwBxWzfn/VLQ5fTk098G6JBYd94MXesUzjcMzMB9Krt468j7QkB3cWcVw2S7hIWOs4cCqGL2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WmE+HoAt; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1782902051; c=relaxed/simple;
+	bh=//n8yQuXqMJdDkaH6TBXQfhz4KmXuGeEU0bKrvBD9Vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgXahGk3MuvMMMa/TmgIQ7qqC7PuyzGbknEdJW0LlKz+x+P5khvFXEaC0unXomKls5KgKAcjglSWT5s1fOaKO37Ko2kgX4JGDlp7h/l3awelCNVJQSZTGkjIL2j/cEw+ghMoEupSZUTPK2/I7orrdopYGmIE8h5U0GUz5T2I+pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6ETZcbq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WmE+HoAt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1782891017; x=1783495817; i=markus.elfring@web.de;
-	bh=sgLbiTi1LVVZ4wsZ4kcyM+8tmekf7TPrI0d8WGqQT64=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WmE+HoAte1UJ6Gjs86At0Z9EeAujKW7y6lbhXlOPbgzHHFFrhOtTT48uye81jBws
-	 H8Y85iJ393j7ptposuBG65ZvIg0SW/BU/dPd+2QRHHpWdxZmrqRN/Car7OyRUdQx2
-	 fkqiGTpo2WM+IepkJn+vxenyLXiaAPWJMF2f6Q6JMRcGaJhU6xMP4GoN3HtNVA4x9
-	 CCIa0LtQJCd6LIWCILuDmy9maAkKGTkartNXHUXEuRAZHDzG/+5eOER7rizFiARGk
-	 or1i81eKdbj7e0Cba0Se9GhHAc85cGK5l+TOdyUJGEFg7UyDjMVaUZZkd7syB1f/O
-	 Z1YwtS2jZdXK255ngw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5Qq9-1we0aK0Qdh-009Y96; Wed, 01
- Jul 2026 09:30:17 +0200
-Message-ID: <aa402cf5-6c7c-479b-ba0b-577ed10a3e3d@web.de>
-Date: Wed, 1 Jul 2026 09:30:13 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6ETZcbq"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A3B691F000E9;
+	Wed,  1 Jul 2026 10:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782902049;
+	bh=YC0bKrHQX1xBvkTArSRGDEKnTsZ6m1fH5b4vYO718+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=i6ETZcbq3Ja5CM55rpJXRjrob3vRGBXuOFcb+/fD8tm2KMfrmZHGV8JvKtBfIHuhQ
+	 iegJirAfp2Z+TOwirR4Las7MlTZnz286OEkzfDpfywbScC3lHKTq0zEKepm2Mugh8K
+	 sghr4eSwknKkzslD4JE9cVTz6ULE9s3FsMADZCyrbN+dWqkHciegCqpVfz6dRib1VE
+	 yGUJU0JxxWaiCaziPKmGA8pZ2xoAeS1XZCXxiqzF662dU4QoD9WtisPOcL3OI50D5u
+	 oFZ3+oedgCJH3rN4CKR06W0MTGB4hiVrDph9Wt+QoV3E7FAVnyi8RoMGx4GRUft+K0
+	 bOy1Ji1yuEGpg==
+Date: Wed, 1 Jul 2026 13:34:05 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Tao Liu <ltao@redhat.com>
+Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+	bhe@redhat.com, zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+	linux-integrity@vger.kernel.org, pratyush@kernel.org,
+	Markus.Elfring@web.de, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3] riscv: Fix a NULL pointer dereference in
+ machine_kexec_prepare
+Message-ID: <akTsE_jYq-GtXcpF@kernel.org>
+References: <20260701025732.66330-2-ltao@redhat.com>
+ <akSOb1_1tcJvFyda@kernel.org>
+ <CAO7dBbVftLUhd2qrh7hmijTB3PEPfZAhykCGqEfrPoOcSrrj-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ASoC: SOF: topology: Use more common error handling code in
- sof_link_load()
-To: Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
- sound-open-firmware@alsa-project.org
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <40b93192-68d2-4de1-845b-9c9ba994a75b@web.de>
- <178281882519.79320.1939247511595511190.b4-ty@b4>
- <2811c5cd-f2a2-418e-a5ba-b1c68ef5f1b9@web.de>
- <b04d8e4d-3d13-467b-841f-262204514377@sirena.org.uk>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <b04d8e4d-3d13-467b-841f-262204514377@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MbXnXvxrzX/+OZaZjCx+FQDpWTIpyn7kitUQhi6UNWNoDqWHl2W
- XQGH6/gt6NmWkVm7e8C6NP2hNbSuV3UJIw8DddCnZyF2bL/gF7qjBi33m8b7fuiPbi3dtln
- bUUxXfMpBcAPmWrrOe+qK8u3qV0OooxOZWKSETXGYKHsp7uYTT2rg1pHNNHhrK99lVetYCu
- O2jmp+wvt6Oo5UJReHw/A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pXllAXmQ6y4=;+UF3aw9ilZBdZA/tpq5pGA0z4sq
- 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
- Rp8mYWx4h8nFIMLQnK8PPCJI2o36IRcvPZe01qJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO7dBbVftLUhd2qrh7hmijTB3PEPfZAhykCGqEfrPoOcSrrj-w@mail.gmail.com>
 
->> Will the chances grow that further development ideas also from my chang=
-e selection
->> can be integrated better?
->=20
-> Please don't send content free pings
+On Wed, Jul 01, 2026 at 04:58:09PM +1200, Tao Liu wrote:
+> Hi Jarkko,
+> 
+> On Wed, Jul 1, 2026 at 3:50 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Wed, Jul 01, 2026 at 02:57:33PM +1200, Tao Liu wrote:
+> > > A NULL pointer dereference issue is noticed in riscv's machine_kexec_prepare,
+> > > where image->segment[i].buf might be NULL and copied unchecked.
+> > >
+> > > The NULL buf comes from security/integrity/ima/ima_kexec.c:
+> > > ima_add_kexec_buffer(), where kbuf is added by kexec_add_buffer(),
+> > > but kbuf.buffer is NULL
+> >
+> > This should have a proper call sequence. Now the root cause is
+> > obfuscated.
+> 
+> Sure, I will attach the stack trace in v4. Here is the one:
+> 
+> [   62.867540] kexec_file(Image): Loaded kernel at 0x80200000
+> bufsz=0x34ed800 memsz=0x35d0000
+> [   62.879983] Unable to handle kernel access to user memory without
+> uaccess routines at virtual address 0000000000000000
+> [   62.880736] Current kexec pgtable: 4K pagesize, 57-bit VAs,
+> pgdp=0x00000001062eb000
+> [   62.881185] [0000000000000000] pgd=00000000413b4401,
+> p4d=000000004151bc01, pud=00000000415b7801, pmd=0000000040af5801,
+> pte=0000000000000000
+> [   62.881969] Oops [#1]
+> [   62.882077] Modules linked in:
+> [   62.882717] CPU: 1 UID: 0 PID: 894 Comm: kexec Not tainted 7.1.1 #4
+> PREEMPT(lazy)
+> [   62.883037] Hardware name: QEMU QEMU Virtual Machine, BIOS
+> edk2-20260508-2.fc44 05/08/2026
+> [   62.883365] epc : __memcpy+0xd4/0xf8
+> [   62.883685]  ra : machine_kexec_prepare+0x8a/0x298
+> [   62.883914] epc : ffffffff81393ee8 ra : ffffffff800366ca sp :
+> ff20000004a83d10
+> [   62.884214]  gp : ffffffff83258db8 tp : ff6000008573db80 t0 :
+> ffffffff80033640
+> [   62.884433]  t1 : 2152ffffffffffc0 t2 : 0000000003000000 s0 :
+> ff20000004a83d80
+> [   62.884710]  s1 : 0000000000000000 a0 : ff20000004a83d10 a1 :
+> 0000000000000000
+> [   62.884987]  a2 : 0000000000000028 a3 : 0000000000000028 a4 :
+> 0000000000000000
+> [   62.885208]  a5 : 0000000000000000 a6 : 0000000104e33fff a7 :
+> 0000000000000000
+> [   62.885486]  s2 : ff60000082a35800 s3 : 0000000000000000 s4 :
+> 0000000000000010
+> [   62.885774]  s5 : 0000000000000028 s6 : ff20000004a83d10 s7 :
+> 0000000000000005
+> [   62.886005]  s8 : 00000000000000c0 s9 : 000000000ac0d220 s10:
+> ffffffff835420e8
+> [   62.886218]  s11: 0000000000000000 t3 : ffffff800000007c t4 :
+> ff1c000002138d00
+> [   62.886515]  t5 : ffffffffffffffff t6 : ff20000004a83d10 ssp :
+> 0000000000000000
+> [   62.886860] status: 0000000200000120 badaddr: 0000000000000000
+> cause: 000000000000000d
+> [   62.887162] [<ffffffff81393ee8>] __memcpy+0xd4/0xf8
+> [   62.887388] [<ffffffff801b253a>] __do_sys_kexec_file_load+0x1b2/0x338
+> [   62.887612] [<ffffffff801b26e4>] __riscv_sys_kexec_file_load+0x24/0x40
+> [   62.887855] [<ffffffff81395ea4>] do_trap_ecall_u+0x1a4/0x5a8
+> [   62.888134] [<ffffffff813a9eec>] handle_exception+0x16c/0x178
+> [   62.888445] Code: 7613 07f6 ca05 86b3 00c5 e7b3 01f5 8fd5 8b8d eb89
+> (4198) 0591
+> [   62.889223] ---[ end trace 0000000000000000 ]---
+> Segmentation fault         kexec -l /boot/vmlinuz-7.1.1
+> --initrd=/boot/initramfs-7.1.1.img --reuse-cmdline
+> 
+> (gdb) p image->segment[0]
+> $3 = {{buf = 0x0, kbuf = 0x0}, bufsz = 0, mem = 10737586176, memsz = 4096}
+> 
+> The buf = 0x0 and bufsz = 0 comes from ima_add_kexec_buffer(), thought
+> I'm not sure why it added a NULL segment, but it is no harm to add a
+> NULL checker here in case any other scenarios similar as IMA.
 
-How did you come to such a view after I dared to present reminders
-for two concrete patches which can eventually be taken better into account
-also by known patchwork interfaces?
+The mission oriented purpose of kernel's git log is to be a quick
+checklist for bisecting bugs for instance. You have a dump of details
+there for a transcript. Now you should do rationalize that because how
+can you otherwise trust your own code?
 
+Here's one recent example from me:
 
->                                      and please allow a reasonable time
-> for review.
+https://lore.kernel.org/linux-integrity/20260509185108.2681198-1-jarkko@kernel.org/
 
-Some years passed accordingly.
+This is IMHO way more important part for a bug fix like this than the
+code change itself.
 
+It's the "engineering part" of the  equation.
 
-> Sending content free pings adds to the mail volume (if they are seen at
-> all) which is often the problem and since they can't be reviewed
-> directly if something has gone wrong you'll have to resend the patches
-> anyway, so sending again is generally a better approach though there are
-> some other maintainers who like them - if in doubt look at how patches
-> for the subsystem are normally handled.
-I hope that remaining development ideas can occasionally be handled in
-more constructive ways.
+> 
+> >
+> > >
+> > > Fix this by simply adding a check before copy.
+> > >
+> > > Fixes: b7fb4d78a6ad ("RISC-V: use memcpy for kexec_file mode")
+> > > Acked-by: Baoquan He <bhe@redhat.com>
+> > > Acked-by: Pratyush Yadav <pratyush@kernel.org>
+> > > Signed-off-by: Tao Liu <ltao@redhat.com>
+> > > ---
+> > >
+> > > v3 -> v2: Add fixes tag; Replace "reference" to "dereference".
+> > > link to v2: https://lore.kernel.org/linux-riscv/20260627222602.23594-2-ltao@redhat.com/
+> > > link to v1: https://lore.kernel.org/linux-riscv/20260529032739.13264-2-ltao@redhat.com/
+> > >
+> > > ---
+> > >  arch/riscv/kernel/machine_kexec.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
+> > > index 2306ce3e5f22..afc68f6a4aa1 100644
+> > > --- a/arch/riscv/kernel/machine_kexec.c
+> > > +++ b/arch/riscv/kernel/machine_kexec.c
+> > > @@ -41,6 +41,13 @@ machine_kexec_prepare(struct kimage *image)
+> > >               if (image->segment[i].memsz <= sizeof(fdt))
+> > >                       continue;
+> > >
+> > > +             /*
+> > > +              * Some segments (e.g. IMA) reserve space but have no buffer
+> > > +              * loaded yet. Skip them as they cannot contain an FDT.
+> > > +              */
+> >
+> > This is destined to rot over time. It also adds up also potentially to
+> > the backporting effort while backporting to stable kernes. And most
+> > importantly. Please, don't document every other null check.
+> 
+> OK, will get rid of it.
 
-Regards,
-Markus
+general rules of thumb i personally follow usually:
+
+1. features/improvements: can be a bit more eager with comments
+2. bugs: you really have to have rationale for having a commnet. E.g.,
+   mandatory SAFETY comment in linux-rust would obviously qualify.
+3. both: if you add a comment are you sure it won't rot over time?
+
+> 
+> Thanks,
+> Tao Liu
+> 
+> >
+> > > +             if (image->segment[i].buf == NULL)
+> >
+> > if (!image->segments[i].buf)
+> >
+> > > +                     continue;
+> > > +
+> > >               if (image->file_mode)
+> > >                       memcpy(&fdt, image->segment[i].buf, sizeof(fdt));
+> > >               else if (copy_from_user(&fdt, image->segment[i].buf, sizeof(fdt)))
+> > > --
+> > > 2.54.0
+> > >
+> > >
+> >
+> > BR, Jarkko
+> >
+> 
+
+BR, Jarkko
