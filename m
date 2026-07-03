@@ -1,98 +1,98 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AADE3BB132
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Jul 2026 10:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F866370AD7
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 Jul 2026 11:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783076398; cv=pass; b=FbxQ0RZDH8e5s5HtaBXqRHbhAouv1DcqGsZc1q6cG3SYUZ0r8KWZ3tj9u1t69PWbGsWvBCuJpOI4W2aEA/aVbm+lO7lRD3iTjJfuh1vV7gCrEgT/d/GMFaSBMm3xwqkQoNCDvibZFRTNxvQo+bSiPUOH208nBWEGnkb2PGPeZOQ=
+	t=1783076957; cv=pass; b=LEC3bllCQ8VCrOZobOLi9kGEnn1YmWLYZBrbABF2hHRe5TCcVExc79XsNoTCsKQryNfXt4zrJjhZngUJSx4MW3xI4xduS1heM+JZLauwGh+xqvZcyEz77AJ6HisjLQ5JGyir+80USmTUFACQPiwX8OeGEXWC7Nh4pGj0ODmbB04=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783076398; c=relaxed/simple;
-	bh=Kdp2PH2HMMYY6AaCbfMKyegYJNpecovxW46S2fuHfAc=;
+	s=arc-20240116; t=1783076957; c=relaxed/simple;
+	bh=ky6LfkgCQQeUzwvB4OpjP0MRqV9I5n463ukg4Hx0N0s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N2sFrJRPC1XQYwvLt0nf51EYtktGT92FLj5FsVBLnG2y+Z/vxjkA2x91NPipwABKgLust1lsaTEQAgFqPtYXRjwaJbODGrWuEPhe4r/XTxDs7HBxdDDTCSIOh7yI1fuplXEnZ0Q9xQIHEWvcQd1b9aCBPh5mErFyrXf2ezKW5rk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WqamhOy7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=bVeDA70K; arc=pass smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=DD6/74GZR1UH1EjkoyisNB8CYRUTRA/ztlXBj6/5F4JZY+4xFbjhdrHCrb04GSm6lBz+PDxhAoZ4GbvAt1paA51KP5EtSW54Q2C7k/4txSj7oCSDf/zO2ODhWxcjKg44nWxB5S3t0OEVG1uoJpdRuY6DPk2f0vBzm8/WiMW7u5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aenZx4wq; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pnvxf+pP; arc=pass smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WqamhOy7";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="bVeDA70K"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aenZx4wq";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pnvxf+pP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783076396;
+	s=mimecast20190719; t=1783076955;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=90otGYM9YNogT3/612Z38WIGOFh0NDbrJXj/gkAcc4M=;
-	b=WqamhOy7gAPRXxJTOKPKH2HeG4kK/3+d6KDRhFpYzsnfwCBofBxDy5BYHkcrmv8LYpjFKs
-	YCFlvV0XWpBHQZX3FToxaG4G5t1tfCH8XtCInEA9vthZlwnXLVT/64xspo5I9YslKhBaBy
-	jZNpAMsupqCdNol0+zfADB6YFMlgNYU=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Uh7HGlG5BHoSUsvlsYaBrF++hCjSyZH34tmkueyHFBM=;
+	b=aenZx4wq18Qu+HQG3r2Zu1xEl0SqOCuCzLU62fubE8S3MiX8XJsPJh2rOxuIB+c0rLKHjr
+	hhPFnFCDzE//KpkTkISYOCjpohOVbFUwdpXaxZGiHUEyJn2Z7EbhJAFue07fMFkWzYTcsI
+	J6g0cAwKMZLo8WO/0yqDJu41TgC2zqs=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-wdB8EppwO66nld5nqmHzrg-1; Fri, 03 Jul 2026 06:59:53 -0400
-X-MC-Unique: wdB8EppwO66nld5nqmHzrg-1
-X-Mimecast-MFC-AGG-ID: wdB8EppwO66nld5nqmHzrg_1783076393
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e52306621so33384985a.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 03 Jul 2026 03:59:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783076393; cv=none;
+ us-mta-288-and6eMDPPbCcAZRhpr8n-Q-1; Fri, 03 Jul 2026 07:09:13 -0400
+X-MC-Unique: and6eMDPPbCcAZRhpr8n-Q-1
+X-Mimecast-MFC-AGG-ID: and6eMDPPbCcAZRhpr8n-Q_1783076953
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51c0e702df8so5800621cf.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 Jul 2026 04:09:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783076953; cv=none;
         d=google.com; s=arc-20260327;
-        b=pE8Tj31TYEnENu0YqXu2a92Z5sf0sdjt/SnA1P+eS1T4BbVd8VkgkP78nxClQBr9xJ
-         Wrjre7BsETOY+1Ucq7Q1zP8tRnlMpvfEnwxPpjIZibz/7AVra180h2EVbmTwRouUKvqY
-         zTP1lH2kf1cRCh7sNt+6uODFLRZZf/R+S7xBz/fHJkoDFyXB+phpGXipeehE4n5QWKaZ
-         KweZUsz9IJYHt6ADXCC+63adUiApE/RjLKypRQ4IVKUY9OcN1T34vt1R4f8z2mN75QVi
-         W28JLAjLLLxK0ajzN2QiunP6XkXOMA5Tb56h2PvKFljKYyjgN07byYmu7k5xSID6BEgk
-         ZBNw==
+        b=XWvboA17C/llzgk+obi6ip33P2ZFr/X0tETlfpz/24dd+0+e+ykZFF8xzo9+3SWpzx
+         0Iv2DvPYRBCmewNCo04uuTGALLAKbrw5nofCwCvYoDvC2lOHOc84uAWq+Q3U1H9eupB5
+         /hkJwxMw/s8PJFbUQ2cDv3BgG+oqaz5N+/2fcpJI7sS1iW9MluUqM4TaESOzfh6lrwNu
+         torxImkAGHDcPCPHwYXgLI4/y/ZNokY7i1kgtk+MuE1l016g/nSF1CQx9UCBOui+Im6A
+         Mgckwb+1b3Kqtm4O+XXTDN12rMQnGIOPRwojZbPvFWH7YOKZuM80Bv+T0/D4cBFga+Ss
+         zp5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=90otGYM9YNogT3/612Z38WIGOFh0NDbrJXj/gkAcc4M=;
-        fh=Im0iOkL+UBobE0a8/UxL7dMytdxwnC1uT8TkuSmaSdA=;
-        b=A+3uCN0hif2QMD+vRaMPFGmmRzp2pYMdhLepNi/tV3UXFTictX0GWydDb3tpbKFwmm
-         Jiz/g41vIZOLSVLGR/B4an3pRXsNz6ZRSJ7Jn66H3pIiUDPw+uZypATnoj8drC2yrJNO
-         VUFVMQ67HXw4/q/eO7hbMD8vUrxicwLr5TF1jtNwM2HPjq8WDVx4h98jx6TO724Mf2Lp
-         wlJ0bvToEwty6nbGWwlJ5nmEFcJH/MBaVIE1FASsR7jTaBEvMZWEn/3ovpaMMzsc8xXV
-         CrfQkBXmkO67k3PK5ZSF8DZwF6mIjSHrbp7K5SQ6LrKaLFqCmCaQoDw/SwESijRhqcPL
-         FPZQ==;
+        bh=Uh7HGlG5BHoSUsvlsYaBrF++hCjSyZH34tmkueyHFBM=;
+        fh=o9LmcpOsZGLyrfifTUGO1kDu96kLFIioD6n1b+eX9Aw=;
+        b=hfkG5lyRdd4PDHqUTesX00B81BsGfn6HirGHf228fsi+XxoEiySiGiAA/0xlQ4509f
+         pRw4gzURIIJQnrZ8b9xKMCT2l/36ZNwheI1vB0Q8TdyZ7mzhwM6ykfl9Ihkyi4VsacbI
+         vVIqIKUlHdY1tT7C7rWfwTCIgrKIWct8o8u2VG8MRpgQOtBsJM0SWgcgM44cSEdod5DN
+         2vPnNYrOjLMrS00F+5m49Tnb7Ri3Zyvx0kLa5Ys0OGJY1eOGt/piirgPejZrobo3M52m
+         WNyEJQgq+GozfaLtMGWqEx/dGHCq4dEWerPtTNBsmJdXa6XiO4MYcrNlBOwVlXNUBOvR
+         DXEw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783076393; x=1783681193; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1783076953; x=1783681753; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=90otGYM9YNogT3/612Z38WIGOFh0NDbrJXj/gkAcc4M=;
-        b=bVeDA70K4ksaazHQYpA4UhYenAC8HV7yk4Klli93b3vflFTJ6anQYho56kSrGKUjfp
-         HnfNKpSb9KK92mHt4YS8KGQP1kHs5nT07oQ5Dli2GpkTIRHvsMNr4/BsC2l2d0b7rOyi
-         ujXHDmKA1w8MZnorBPyDSiiZKlfGtL3TyVf8I7t/EwWWxyaro60F9Z0+AZWXMeTRWj2X
-         /lzm/nT0OtY9MsivKvy9apty16/AWkOlFBefkjmTQ75vQEYXAt1xsPpHIg7C488p5u9W
-         qr+sGD0nz+ENmnbqSkQgGXFnqBCAje/4mQnSlkuu/ST/kM2Ryg+JOO09uoH1mMqysMQt
-         7xBw==
+        bh=Uh7HGlG5BHoSUsvlsYaBrF++hCjSyZH34tmkueyHFBM=;
+        b=Pnvxf+pP9TXtXtwpsPVDzKav6wvk/MOHiTfMg+tkFZhXZ7rn0zXJdjjnfHncje2s8m
+         +QVUgISyhBs6RMYI3SLOAw253sB56X7tVOXauxVzajJTt6Ni1O0DUzYXoOba86Loiq9e
+         tFQHKefzHODVJBoE2MTSicJp7g/OC9Nb76Ut5L7nrqO/D/iGOESsCabf9FX89jRun8IL
+         zlUVqvLqcqZlMBkxqpVWaSiYmE90eHlck2ySnNQ2/rUCfQ2K1kjPXI67Fdw4+IWBGqeh
+         wjjoyuUzuoAWULEoDUr70JIktIZn6JhJ0YURg8z1Ker14Vxwysy5mh7PmMAsUpG9eSx3
+         a2Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783076393; x=1783681193;
+        d=1e100.net; s=20251104; t=1783076953; x=1783681753;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=90otGYM9YNogT3/612Z38WIGOFh0NDbrJXj/gkAcc4M=;
-        b=tDtnk1hkve/We8FSh5O+wmNiUK0ARyGVrXZMbTITdL7e/9TB00bL8yfQn51u0ZniuC
-         +xi6BlJnVvA73Ze8yOatl15sP8h17trdQO+rrM9zTnlJfHGSagJc0apNP25AxcWbgVVc
-         rOdCKdaMffhu4fElaSNzhKjF2iwSbKCCRjdnZvDvJ1BNS/Ff0J2Sn/6yVvuYjWqxvhlX
-         dRMh1ki0sHXNSKvKinMjzGwPtNuIkGNOP5YPkfuKlbR7Xbw7iH8SxFu+pjirMDYMBPxm
-         fzxX2wlLRzz8sTBOPrbgORHz+VRNIiUgAGQNKb/AxkqwA4nVSSUyDV9f6CFz16qNq5k7
-         OW/w==
-X-Forwarded-Encrypted: i=1; AFNElJ/4twR5AriOPAMlppb5pnDukZuGn0yJaJ5mkya/2bfbeDonfUrU4ZJl2FT4uP+19FyDZhObJ307c8jIlRareS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz8qY5VfU7aioVa2E19T6l6UWiJxKL0OSbfcaux0vPrJW6OsI5
-	mYjdqIE/T3QG4s/XzqLHhB177bpFoycIpmxxGOj7tsMMTpjw3OY7wFd2fZi06RHFsGRqFYC6dOu
-	MEswqldZkJgvSBCKn8Aa9Nx+GszCmd2tNLHJHx5bfE7OxmGLqTLCCBrMwjmY+og9COoykKdvT2T
-	i8Vv8S3DPdNbx59g3O3fgKg0XpkDPPQppqKYA15hoql4aw
-X-Gm-Gg: AfdE7cmdajxxYDid1KnjPXELuDVazkrv9H0cufsENqV8ZOdr/pHQVg2rYSHgmhTkviV
-	6E+VAT/aNM2xctO7C1iptuHmbql4e+xhV60bAcI4ekEw50/jm6QaSS5DM1tl3LAryaEZv5dJV0v
-	sCbMdsbcstpxcAMpuN3ZDjFYNP7bmBcRdUM1iZG+Bi76YHR+0/GzArH4cVPlFFmKdPiw==
-X-Received: by 2002:a05:620a:4016:b0:92e:6a43:4768 with SMTP id af79cd13be357-92e781cde5emr1264293885a.11.1783076392674;
-        Fri, 03 Jul 2026 03:59:52 -0700 (PDT)
-X-Received: by 2002:a05:620a:4016:b0:92e:6a43:4768 with SMTP id
- af79cd13be357-92e781cde5emr1264290485a.11.1783076392257; Fri, 03 Jul 2026
- 03:59:52 -0700 (PDT)
+        bh=Uh7HGlG5BHoSUsvlsYaBrF++hCjSyZH34tmkueyHFBM=;
+        b=Hx/rBD5aThqlrcDlEAgKUl7YQssBctyE4prtt6COQ95GKR2ZGEb2oZTbw+t8tB/RaD
+         3qrEBHjXStspuifWfvAa3Vq4XssJzc00zBC8+REm7GzzSrve5cagrp9x1it/a4Ameogd
+         z8DAOAPPErGNFuWz155HsGjwPVqzGweXzvCegCqgGJDwQH76XADc2/AcwSz9AREd+gQL
+         XrnPJyjabRTDGWcyKNN3JGBnWg6UsdYaNLb9PyhL/UGdtM7b2dTLGqG6Pn6W7te9naiD
+         D84Tg87MbnFT+DapCB1Lxo1TIeOush+9UWhKTjRloViPKHIB9Sp9e4MVyBQhAQspnMyc
+         Vekg==
+X-Forwarded-Encrypted: i=1; AFNElJ9h9e49J462h6OsmNdEv66bQpEghKuBLeG01q//uImW7yANds7Hjj8erRrxRy+56NzRW3ijZyp/D/jOcmtpbvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCtCs9ouytN068oeUHpaEKphH+7GgPwBcNvN4RAnC9mWXrE29x
+	IM35UFuZE0OWvgKjHUTTfJFU0bXVW/PW9W05nat2wLjCyme0CQvpyz5v1Ue5itQmPYF1mel0PO4
+	mvkWZOw30YdJk0O+OtoFRnLAtH7A75DSQ+7f9cJ36Fprc/r3yLjgVdTudCfnFqj5bZp/OqjnvBI
+	RJWutQYhclu15ucM8v41LMKnlhEs8sxw0b7ADL1PExRUYV
+X-Gm-Gg: AfdE7clXNt0JIcxJj3zIqvSBs8NNapDCQ96jbsbYbnhmL7eWeAWoFQaHvT1Gd4JUdDv
+	7UmD3HXS8q4m/dLepHKQLGOi8APKZZbu0Ea8MdqT7fhDtkGvmNi9nfzaZQblkOydqZMulrH+eeD
+	93pSShYsA2/XCT4XrL/xRD4NcPfN44IQoGdcJ0r6oCjEifcnpCny9gMElBrl2j9j7+zg==
+X-Received: by 2002:a05:622a:44:b0:51c:24c:59de with SMTP id d75a77b69052e-51c26b629eamr143143251cf.72.1783076953340;
+        Fri, 03 Jul 2026 04:09:13 -0700 (PDT)
+X-Received: by 2002:a05:622a:44:b0:51c:24c:59de with SMTP id
+ d75a77b69052e-51c26b629eamr143142551cf.72.1783076952684; Fri, 03 Jul 2026
+ 04:09:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -100,46 +100,45 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260701025732.66330-2-ltao@redhat.com> <akSOb1_1tcJvFyda@kernel.org>
- <CAO7dBbVftLUhd2qrh7hmijTB3PEPfZAhykCGqEfrPoOcSrrj-w@mail.gmail.com> <2vxz33y2j4mi.fsf@kernel.org>
-In-Reply-To: <2vxz33y2j4mi.fsf@kernel.org>
+ <CAO7dBbVftLUhd2qrh7hmijTB3PEPfZAhykCGqEfrPoOcSrrj-w@mail.gmail.com> <akTsE_jYq-GtXcpF@kernel.org>
+In-Reply-To: <akTsE_jYq-GtXcpF@kernel.org>
 From: Tao Liu <ltao@redhat.com>
-Date: Fri, 3 Jul 2026 22:59:15 +1200
-X-Gm-Features: AVVi8Cezbo0yX7OHAq34QhJe08uT7CxY47RNCIsfCYAyC3SXHTFCS-ZJgPFpSss
-Message-ID: <CAO7dBbXBc4kvE2J09EhBs+MYpcJOV1UdNnSG=5RqcUUqimU5Qg@mail.gmail.com>
+Date: Fri, 3 Jul 2026 23:08:35 +1200
+X-Gm-Features: AVVi8Cclc4CZSlkWyFCrDTmGWrXtXO513XB-yjh4k4HPtk_zt3VKjRYaC6ARqq0
+Message-ID: <CAO7dBbVoppy-1AY8paE8KBb93UubhBHBhvsgjOm0Hnbxiq4byQ@mail.gmail.com>
 Subject: Re: [PATCH v3] riscv: Fix a NULL pointer dereference in machine_kexec_prepare
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, pjw@kernel.org, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, bhe@redhat.com, 
-	zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, linux-integrity@vger.kernel.org, 
-	Markus.Elfring@web.de, kernel-janitors@vger.kernel.org
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kexec@lists.infradead.org, bhe@redhat.com, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	linux-integrity@vger.kernel.org, pratyush@kernel.org, Markus.Elfring@web.de, 
+	kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Pratyush,
+Hi Jarkko,
 
-On Thu, Jul 2, 2026 at 12:06=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
+On Wed, Jul 1, 2026 at 10:34=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
 >
-> On Wed, Jul 01 2026, Tao Liu wrote:
->
+> On Wed, Jul 01, 2026 at 04:58:09PM +1200, Tao Liu wrote:
 > > Hi Jarkko,
 > >
 > > On Wed, Jul 1, 2026 at 3:50=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.o=
 rg> wrote:
-> >>
-> >> On Wed, Jul 01, 2026 at 02:57:33PM +1200, Tao Liu wrote:
-> >> > A NULL pointer dereference issue is noticed in riscv's machine_kexec=
-_prepare,
-> >> > where image->segment[i].buf might be NULL and copied unchecked.
-> >> >
-> >> > The NULL buf comes from security/integrity/ima/ima_kexec.c:
-> >> > ima_add_kexec_buffer(), where kbuf is added by kexec_add_buffer(),
-> >> > but kbuf.buffer is NULL
-> >>
-> >> This should have a proper call sequence. Now the root cause is
-> >> obfuscated.
+> > >
+> > > On Wed, Jul 01, 2026 at 02:57:33PM +1200, Tao Liu wrote:
+> > > > A NULL pointer dereference issue is noticed in riscv's machine_kexe=
+c_prepare,
+> > > > where image->segment[i].buf might be NULL and copied unchecked.
+> > > >
+> > > > The NULL buf comes from security/integrity/ima/ima_kexec.c:
+> > > > ima_add_kexec_buffer(), where kbuf is added by kexec_add_buffer(),
+> > > > but kbuf.buffer is NULL
+> > >
+> > > This should have a proper call sequence. Now the root cause is
+> > > obfuscated.
 > >
 > > Sure, I will attach the stack trace in v4. Here is the one:
 > >
@@ -206,38 +205,104 @@ ght
 > > I'm not sure why it added a NULL segment, but it is no harm to add a
 > > NULL checker here in case any other scenarios similar as IMA.
 >
-> From my reading of the IMA code, I think they do so because they don't
-> want to add a buffer to the kimage just yet. This is because there can
-> be IMA measurements between kexec load and kexec reboot. So they use
-> kexec_add_buffer() to reserve the physical address space, then they vmap
-> the destination pages in ima_kexec_post_load(), and then update the
-> destination pages directly via a reboot notifier. So they do not have a
-> buffer copied to the destination pages at the time of
-> kexec_add_buffer().
+> The mission oriented purpose of kernel's git log is to be a quick
+> checklist for bisecting bugs for instance. You have a dump of details
+> there for a transcript. Now you should do rationalize that because how
+> can you otherwise trust your own code?
 >
-> Now all that is fairly convoluted and not very obvious, but I am not
-> sure if there is a better way of doing this off the top of my head.
+> Here's one recent example from me:
+>
+> https://lore.kernel.org/linux-integrity/20260509185108.2681198-1-jarkko@k=
+ernel.org/
+>
+> This is IMHO way more important part for a bug fix like this than the
+> code change itself.
+>
+> It's the "engineering part" of the  equation.
+>
+> >
+> > >
+> > > >
+> > > > Fix this by simply adding a check before copy.
+> > > >
+> > > > Fixes: b7fb4d78a6ad ("RISC-V: use memcpy for kexec_file mode")
+> > > > Acked-by: Baoquan He <bhe@redhat.com>
+> > > > Acked-by: Pratyush Yadav <pratyush@kernel.org>
+> > > > Signed-off-by: Tao Liu <ltao@redhat.com>
+> > > > ---
+> > > >
+> > > > v3 -> v2: Add fixes tag; Replace "reference" to "dereference".
+> > > > link to v2: https://lore.kernel.org/linux-riscv/20260627222602.2359=
+4-2-ltao@redhat.com/
+> > > > link to v1: https://lore.kernel.org/linux-riscv/20260529032739.1326=
+4-2-ltao@redhat.com/
+> > > >
+> > > > ---
+> > > >  arch/riscv/kernel/machine_kexec.c | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > >
+> > > > diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/=
+machine_kexec.c
+> > > > index 2306ce3e5f22..afc68f6a4aa1 100644
+> > > > --- a/arch/riscv/kernel/machine_kexec.c
+> > > > +++ b/arch/riscv/kernel/machine_kexec.c
+> > > > @@ -41,6 +41,13 @@ machine_kexec_prepare(struct kimage *image)
+> > > >               if (image->segment[i].memsz <=3D sizeof(fdt))
+> > > >                       continue;
+> > > >
+> > > > +             /*
+> > > > +              * Some segments (e.g. IMA) reserve space but have no=
+ buffer
+> > > > +              * loaded yet. Skip them as they cannot contain an FD=
+T.
+> > > > +              */
+> > >
+> > > This is destined to rot over time. It also adds up also potentially t=
+o
+> > > the backporting effort while backporting to stable kernes. And most
+> > > importantly. Please, don't document every other null check.
+> >
+> > OK, will get rid of it.
+>
+> general rules of thumb i personally follow usually:
+>
+> 1. features/improvements: can be a bit more eager with comments
+> 2. bugs: you really have to have rationale for having a commnet. E.g.,
+>    mandatory SAFETY comment in linux-rust would obviously qualify.
+> 3. both: if you add a comment are you sure it won't rot over time?
+>
 
-Thank you very much for resolving my confusion! Now I understand it
-much better...
+Thank you very much for providing detailed guidance on code commenting
+and commit log drafting. I really appreciate your help with those!
 
 Thanks,
 Tao Liu
 
->
 > >
-> >>
-> >> >
-> >> > Fix this by simply adding a check before copy.
-> >> >
-> >> > Fixes: b7fb4d78a6ad ("RISC-V: use memcpy for kexec_file mode")
-> >> > Acked-by: Baoquan He <bhe@redhat.com>
-> >> > Acked-by: Pratyush Yadav <pratyush@kernel.org>
-> >> > Signed-off-by: Tao Liu <ltao@redhat.com>
-> [...]
+> > Thanks,
+> > Tao Liu
+> >
+> > >
+> > > > +             if (image->segment[i].buf =3D=3D NULL)
+> > >
+> > > if (!image->segments[i].buf)
+> > >
+> > > > +                     continue;
+> > > > +
+> > > >               if (image->file_mode)
+> > > >                       memcpy(&fdt, image->segment[i].buf, sizeof(fd=
+t));
+> > > >               else if (copy_from_user(&fdt, image->segment[i].buf, =
+sizeof(fdt)))
+> > > > --
+> > > > 2.54.0
+> > > >
+> > > >
+> > >
+> > > BR, Jarkko
+> > >
+> >
 >
-> --
-> Regards,
-> Pratyush Yadav
+> BR, Jarkko
 >
 
