@@ -1,163 +1,165 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21D245039
-	for <kernel-janitors@vger.kernel.org>; Sun,  5 Jul 2026 23:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783294414; cv=none; b=iMSIatcTRLGdWYYkDkyeNpaDMWu4a8CKGj8AtC8ClSaN0qH8ml1kQLYswkHYiGSHJxK8RJ/zBKXi7uFphKE5Qf9EgEmJW4DCWULDhY+Zs0Ec5Iq7g7qigYQiB2sEn/ViiG+mPY3R/EdLk0cf2bQB/GpU6dvaGxTAQ6F9v0gHmbs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783294414; c=relaxed/simple;
-	bh=KKBCh644BzCDLwoBLFIkcmm2m/854E+YvviVeczjB8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XRK5R+XjTKdJYVaPm13KJhjYakm0c6ekLgGJ+d63oT/hsnv2IPCA0u8/cLOK/sTpUGiBqr2XME9iLfDJXe7Xz+CF5hWdaAsk9om/a7mOaBhyreWo/ECeYSaIGppKW/7JaXJ27iohrCsnPAJ6lpn9CrlIcv/N+IjzzErAnHmQ7Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A5azpq2h; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=FpnqmFNE; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F6442A9D
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Jul 2026 00:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783296280; cv=pass; b=Pm8CUqnUefYBmwfjB5BkeI3zf2q0yEvcJl8Shfllm9FPHStRQmJ5devdYi3GlSiWKRcQ4W6aUfTx5cnKsSq+Fy+EWaXIO+EV22nj+guQ/DcnyS8o7s3p9nVUfgQlPWUtUWqEoSFS/4w6o4rUjvrW5nzWxx6sK57ahC8XGlc2Axo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783296280; c=relaxed/simple;
+	bh=gDia0DoYIpwPsuYDBJR9TVRq1ZkrfGuScKjEdDaH/ok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aslYvHOy+ar9DUp0VQtG82UQ9Px0DnIBEgQ6TcwXzE1EOC8l/2NC06qQ6R47a7dsgNE8w/SBhM409P+EAv2I48esIYH53OvGLSv5h6cYRhipVERg5g115fPPBbc5vqhm3YRZJRkW1N96X0hL+qW60hEnqDNOTbZFger22LQVR1Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gk4kq7Qh; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aBVZw5Y1; arc=pass smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A5azpq2h";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="FpnqmFNE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gk4kq7Qh";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aBVZw5Y1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783294411;
+	s=mimecast20190719; t=1783296277;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qWgX8hRK0wDWBZMkA2UqYafCnMgGjGfI+mUA5gi2rBg=;
-	b=A5azpq2hMANT/BSqbO1dwauryo24U4lH0fAPpVhCOlNAVgBDTuToNBWyH9jXGjQyLqa91T
-	dLUx8IsHQ9N/ko5Sq+z1qztqhKnfOeaHTjXUNDzD+hPhNIJyst8MpfO8v7gvgNfxZmlvbg
-	qfN9E4e+i2ek8eBNj07NonXkd1IfS2E=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gDia0DoYIpwPsuYDBJR9TVRq1ZkrfGuScKjEdDaH/ok=;
+	b=gk4kq7QhAiuD9jB06rYEYsf7/sj7aOI+fGN/5W9qvIP3uePPQtGfXk7ag6nIpPKg641JTH
+	pQbLMbuLBtITdM+txx7zJYZKd1K5TGN2i893tgYLXCg7H8jgv13FmOMtlCXdGOR2BmZzli
+	/+sgrBiXopsAnzTCscc0IzznuGT9A9k=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-164-rmeZWbz9PwylNWPXmNx3Xg-1; Sun, 05 Jul 2026 19:33:30 -0400
-X-MC-Unique: rmeZWbz9PwylNWPXmNx3Xg-1
-X-Mimecast-MFC-AGG-ID: rmeZWbz9PwylNWPXmNx3Xg_1783294410
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2c8018f11fbso25226875ad.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 05 Jul 2026 16:33:30 -0700 (PDT)
+ us-mta-392-lrqvuip4MM2yaUmKPSoZiw-1; Sun, 05 Jul 2026 20:04:35 -0400
+X-MC-Unique: lrqvuip4MM2yaUmKPSoZiw-1
+X-Mimecast-MFC-AGG-ID: lrqvuip4MM2yaUmKPSoZiw_1783296275
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e5e38fbc5so216743685a.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 05 Jul 2026 17:04:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783296275; cv=none;
+        d=google.com; s=arc-20260327;
+        b=KWrMdxlmQJyHvsqfqTbXIPPGx0a/lIclVzCHsuSBi8d+89lbKI3fMlTwkyY00+Mnkz
+         TLR6STyjB9zZNIdwsvoqFzYHVKTyBRgX3h7SuEiN3uVllOaJkg5zRIuFsj+0ZGBJXb/z
+         rh94W4W8SHOhUuUTP1pZtHo/QZFvnsxNezyHLqNzrg55KJ4GkAZyj1a4Cpu4iX0t6ZqG
+         rx/pae8qfxstRIJNHzwjwvepQ11FjVdkOUXj2RgDr+0cfUogrJNxSClgLUpgNBzY7KX4
+         OlCwSDbJav+cQ3+huea32LkgOuTFEaPwoO8wz8glVTE4YX+x/YlESNxT+mnTbsg+Le9Z
+         JIRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=gDia0DoYIpwPsuYDBJR9TVRq1ZkrfGuScKjEdDaH/ok=;
+        fh=PpFyt0oTmlm4YTKEz1RKBGJS00br0vbBsAVIJeu20G0=;
+        b=T7fxlvMP0VGE3OrS/x5st+AETTJneRKODHXFJ0svirJHTEFB5jU6hT9d34RNHQTSU8
+         8sXr3d6vFRsbFKCjIn6u7xciMnQeeewlupwM0GuqxzYqHnN6jpC2TUFkD4W0bekS5bIf
+         m0jlEHLyHl7qWs21Qx8oE1pEn7ibIQmVIIPgEgq6oq5EUgu9yBFjcaEinmzpqY41ZO+d
+         Yl3lPjjzUzjkdbyFChwtaN9kmjJFI694da20wxdC82Jad78JfkafvTHNW6GRzxcDbCM5
+         jtCS42/RiVSIdSlpi02NbliyE0Ci8go/DlB27FcvUPmmfyeHtFG/fYa/8dy+DyHafMIa
+         qvmA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783294409; x=1783899209; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qWgX8hRK0wDWBZMkA2UqYafCnMgGjGfI+mUA5gi2rBg=;
-        b=FpnqmFNEuJ6nXLI34u38m7AWzOSKckRcd4Oil3p0vNBFyl4ZXQnLEtJZuZy4Zars2I
-         rprGplV7Qd1TawcxJkLBRoyFeKTXMJSSVDtO5i9M7F4KFT7TUqU5/yNBUIV7btLL5Bnb
-         B62Fq8rFrEh8k6KY0KVcTfaaAScnwlNZ4GvLRjdPEjVzhBJUmszrlGk1GFZXJKylVrc1
-         8beS0JG052NRUSutnDhE7yte0M0eaOv/qyFZy3wTeHWyATJeGtJX+LxhR4q9GDgwj0RI
-         hl24/Ocyw2LLKP/b0oUdOMqYhhH+8/9SfMM4ln3Moh9R4jcCuXBf7CamJVvZsWw09eb4
-         VsIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783294409; x=1783899209;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1783296275; x=1783901075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qWgX8hRK0wDWBZMkA2UqYafCnMgGjGfI+mUA5gi2rBg=;
-        b=RJ5ZKbjCwCpxs0wbbD6prVnttFZlZs+T50On5tbiF6rT3+lsqrL9zEHAoT+nZzqVC7
-         2lz8FzXrpKMfu+2RJN2tOEAss/EVcqUN3Sv4ZGnBmKTUUGnLHMdH8bpbHa0iDh+UYgC9
-         2fDvCG4f+I9SW46yvRRr1faoaZg7KoLjQX4INC6quHaRggD11V/FXtYDtOXy+OpGoCch
-         dCH3dnaAKDggPu7SdXdwSlH0prUCuc2hCrOxTqtCIFJFXlHU711X1tCc/+RKHzy2Ji69
-         JVF5jfjVJwvwdXN+5wUxGWtGf5dwg4WvE/l55KjKJib4tgMiW2BRmqkmz/HubpC39+eM
-         HJeA==
-X-Forwarded-Encrypted: i=1; AHgh+RoOOVcsPkhRFABWRkuA1xP50uIcPFaprFT7bJP36eg58ZPMxFI9b09bszvwFy7qsbwMPWSap0iivquz4+XreKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQeMzyA4DGviIxavvDZOOK3GFTb7nxJUp34XwW57Qsn0mjqUy8
-	3lg8JP7WguzmlHJVpZhQkGDL0h1f09l2Vnd421BhRd8XJ9g4wmG3q1ziVApSrW0U4tZEASI3rmc
-	uwGoc0L+hULTy/B0+mleAK4/2kGPgg5Csk57Emwwqgd9fnnGAXJFBQMr8MiGBb+pMnlgETQ==
-X-Gm-Gg: AfdE7cl1+EJgxAwmxjydeLhHzsGIYdo2e/YEuhrfWwVqT/vR9M6d3xXd6nHQ18/HgLO
-	xBq/loY42haJ8bJO1jm527wgO9G8i0B++MxwArk/3TgC/n5qu4J823xf9MSMCVbKZ6W5J3Tzfq+
-	Fa4eUYZcJX5pSQHKD0an0tRrGZNw5UXa11qXU/beRyUydXtpiwDVUzywA8y4/aXJH6lnIlSC3ES
-	yK3+LEXxL2jG8yi0chfyJZ9ZLd1AHZP72GdOi3ORlNpKBCMzjOVv5fdl+S8nEGi5+OwbMwbzXxw
-	akR0jqnTqSjFK1dT9h503YBfd1kOycWV5mGtbCjbw9pAvszpzHB7f7xlbryv7JaGj7MSr+E+7f0
-	zpikjXrXonLEAsVfieac5fLQ9Ugb6EvlF7CbTS25Pzw6CaXpwgTU2je+TDQ==
-X-Received: by 2002:a17:902:fa84:b0:2ca:52ce:6f91 with SMTP id d9443c01a7336-2cbb9eb434bmr53329185ad.27.1783294409470;
-        Sun, 05 Jul 2026 16:33:29 -0700 (PDT)
-X-Received: by 2002:a17:902:fa84:b0:2ca:52ce:6f91 with SMTP id d9443c01a7336-2cbb9eb434bmr53328835ad.27.1783294409024;
-        Sun, 05 Jul 2026 16:33:29 -0700 (PDT)
-Received: from localhost.localdomain.com (122-63-66-137.mobile.spark.co.nz. [122.63.66.137])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cad789237bsm38168945ad.71.2026.07.05.16.33.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jul 2026 16:33:28 -0700 (PDT)
-From: Tao Liu <ltao@redhat.com>
-To: pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	bhe@redhat.com,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	linux-integrity@vger.kernel.org,
-	pratyush@kernel.org,
-	Markus.Elfring@web.de,
-	kernel-janitors@vger.kernel.org,
-	jarkko@kernel.org,
-	Tao Liu <ltao@redhat.com>,
-	stable@vger.kernel.org,
-	Nutty Liu <nutty.liu@hotmail.com>
-Subject: [PATCH v5] riscv: Prevent NULL pointer dereference in machine_kexec_prepare()
-Date: Mon,  6 Jul 2026 11:27:07 +1200
-Message-ID: <20260705232706.30265-2-ltao@redhat.com>
-X-Mailer: git-send-email 2.54.0
+        bh=gDia0DoYIpwPsuYDBJR9TVRq1ZkrfGuScKjEdDaH/ok=;
+        b=aBVZw5Y1yVpL4eUFLlW2MAJlUNaHFtNqQ7iZPRY4ZrVBp6Hmku7SiWAJ5G4erEeUdg
+         r7v9jqgX/l4ZJLPfuO3Is4lneaww2sCyGKYT8A6V5dNDpxCsQgiZG9BBo+4eIXuHkLM2
+         qduL58fF5z3d2pVNnegufdx5r3gtgL7j8q9D+SYRQUci3FikzArBmWoaL4FzDHxABanM
+         Vt+KLr+0ACsi2UmTdCv4nDBJjNQza6vkfSJ8Ne4wO7VbV44Sgy/xCpGaa/WZjXzrJ1nv
+         Mz+l1LRt9lkUqTV7qnPayluV2BJXsLo6fm3X+GFt5Bkp0Nn0aRvO+jOVIUrm+d1w7Wb5
+         jCDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783296275; x=1783901075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gDia0DoYIpwPsuYDBJR9TVRq1ZkrfGuScKjEdDaH/ok=;
+        b=gT6tCdaXzeG7vN9vt00b+PEyOMKqdqgADRtcA5aPdgCOqifoX7Uu65REq8vAvSjqqf
+         44QE3NuDUZBrdCC4hpZU1A6IaT4Uzre2sFe4ZGkRyZfRLVWtI9p+HLVG1a6egGwlGRzR
+         H+UcqOGDNR8gImco/2DMSrrHlADGeWCPQMNXilGhwQ6HrnUporIArHzTi/da8UHB7iaQ
+         zJFBIuvSuizdPWl+Gzclg7+tMLEQpUrjKVyyE/h1fWwgbnPQNHyCK0ytbjUaVfMhUXsG
+         xgT1p2pRJGhW11w7qEEgjHRacLgUiOdJo7zP96R3YDxFnMKaaYC7fO053DgFzQIFRWZB
+         0Wpw==
+X-Forwarded-Encrypted: i=1; AHgh+RrdCMowDx4jWpnWVn2VnQUNamXKZOeRx/wRbNOtPvw7MuDl5jVMUuvJwUrX0HP47VuTYLI77zi500efhUZ8Kgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye3C2ZtargBnrN4ndVWWSUDKYIDSsVL8kikYAap9b/IINiyUP4
+	NUFy7+KarOAg1ujf6Q0DPtKO+LMtfhAm2vHwrQdbTRGM9Cj+kH+bbAN5nTTkxfpisc3xdJW8pza
+	vzkHbweaaQB/6b4I7+74VR5Hj9Q7kg6HqVeaJUPNzOC5puinZjP8D/nHt/f48NyQbLawQMSGZ5f
+	sFv96DbFD+lkTnBt17Y6XZPZqiTmOOSi1UYSLqN7BEUkT9
+X-Gm-Gg: AfdE7clUyjOhVmtp0+B7av/geEbdulJG62q95k9uvLl46q7CBL7egtO39//vNRB0xLs
+	TF1jo0YoXrWolTKNzoCTQVtBR/f2/+PfBs1bpErj78cnUX+zcuBO6xWVXVKfNr7I0VuNASRmkf3
+	5zzgsuS8JCzKA6cjZl2OQTniRP2J+8RTLRb9uZWbCg5h6ybqNcxEwZ
+X-Received: by 2002:a05:622a:16:b0:517:580c:bcd3 with SMTP id d75a77b69052e-51c4c20cba0mr122057601cf.19.1783296274723;
+        Sun, 05 Jul 2026 17:04:34 -0700 (PDT)
+X-Received: by 2002:a05:622a:16:b0:517:580c:bcd3 with SMTP id
+ d75a77b69052e-51c4c20cba0mr122056741cf.19.1783296273461; Sun, 05 Jul 2026
+ 17:04:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260703111530.91285-2-ltao@redhat.com> <5df82d42-89cd-4e39-95a9-a0f164c0ac58@web.de>
+ <2vxzqzlkf7a3.fsf@kernel.org>
+In-Reply-To: <2vxzqzlkf7a3.fsf@kernel.org>
+From: Tao Liu <ltao@redhat.com>
+Date: Mon, 6 Jul 2026 12:03:57 +1200
+X-Gm-Features: AVVi8CcjKi4ma2Wic4NJ9zPTMxZKVqVzntIjTUPD2jSDdeylkQQJ6VcTIYGM5zI
+Message-ID: <CAO7dBbVmLi8gWcntM9tn2g=GWgAkYQB1P7_-J1Kf8wYrd0Ucww@mail.gmail.com>
+Subject: Re: [PATCH v4] riscv: Prevent NULL pointer dereference in machine_kexec_prepare
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-riscv@lists.infradead.org, 
+	kexec@lists.infradead.org, linux-integrity@vger.kernel.org, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>, kernel-janitors@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nutty Liu <nutty.liu@hotmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A NULL pointer dereference issue is noticed in riscv's machine_kexec_prepare(),
-where image->segment[i].buf might be NULL and copied unchecked.
+Hi Pratyush & Markus,
 
-The NULL buf comes from ima_add_kexec_buffer(), where kbuf is added by
-kexec_add_buffer(), but kbuf.buffer is NULL, then it is copied without
-a check in machine_kexec_prepare():
+On Sat, Jul 4, 2026 at 2:59=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org>=
+ wrote:
+>
+> On Fri, Jul 03 2026, Markus Elfring wrote:
+>
+> >> A NULL pointer dereference issue is noticed in riscv's machine_kexec_p=
+repare(),
+> >> where image->segment[i].buf might be NULL and copied unchecked.
+> > =E2=80=A6
+> >
+> > Would it be helpful to append parentheses to a function name also in th=
+e summary phrase?
+> >
+> > Why was such a hint not be taken into account from a previous suggestio=
+n?
+>
+> Oh come on, this is a really really minor nitpick. The fact that
+> machine_kexec_prepare is a function is fairly obvious when reading the
+> patch. In fact, the first sentence of the commit message uses the
+> parentheses.
+>
+> So yes, it would have been nice to have them in the subject. But no,
+> this is not at all worth anyone's time to fix. Certainly not at all
+> worth a v5.
+>
+> Please, let's not nitpick our contributors into giving up.
+>
 
-  kexec_file_load
-    -> kimage_file_alloc_init()
-       -> kimage_file_prepare_segments()
-          -> ima_add_kexec_buffer()
-             -> kexec_add_buffer()
-    -> machine_kexec_prepare()
-       -> memcpy()
+Thanks for the review and for pointing out the issues in my patch.
 
-Address this by adding a check before the data copy attempt.
+I'm still new to kernel patch submission and clearly have a lot to
+learn. I appreciate all the feedback. Thanks again for your patience
+and guidance.
 
-Fixes: b7fb4d78a6ad ("RISC-V: use memcpy for kexec_file mode")
-Cc: stable@vger.kernel.org
-Closes: https://lore.kernel.org/kexec/CAO7dBbVftLUhd2qrh7hmijTB3PEPfZAhykCGqEfrPoOcSrrj-w@mail.gmail.com/
-Acked-by: Baoquan He <bhe@redhat.com>
-Acked-by: Pratyush Yadav <pratyush@kernel.org>
-Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
-Signed-off-by: Tao Liu <ltao@redhat.com>
----
+Thanks,
+Tao Liu
 
-v5 -> v4: 1) Add parentheses to function name in patch subject
-
-link to v1: https://lore.kernel.org/linux-riscv/20260529032739.13264-2-ltao@redhat.com/
-link to v2: https://lore.kernel.org/linux-riscv/20260627222602.23594-2-ltao@redhat.com/
-link to v3: https://lore.kernel.org/linux-riscv/20260701025732.66330-2-ltao@redhat.com/
-link to v4: https://lore.kernel.org/linux-riscv/20260703111530.91285-2-ltao@redhat.com/
-
----
- arch/riscv/kernel/machine_kexec.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
-index 2306ce3e5f22..738df176ff6f 100644
---- a/arch/riscv/kernel/machine_kexec.c
-+++ b/arch/riscv/kernel/machine_kexec.c
-@@ -41,6 +41,9 @@ machine_kexec_prepare(struct kimage *image)
- 		if (image->segment[i].memsz <= sizeof(fdt))
- 			continue;
- 
-+		if (!image->segment[i].buf)
-+			continue;
-+
- 		if (image->file_mode)
- 			memcpy(&fdt, image->segment[i].buf, sizeof(fdt));
- 		else if (copy_from_user(&fdt, image->segment[i].buf, sizeof(fdt)))
--- 
-2.54.0
+> --
+> Regards,
+> Pratyush Yadav
+>
 
