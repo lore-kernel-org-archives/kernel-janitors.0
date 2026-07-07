@@ -1,63 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEE63F54C6;
-	Tue,  7 Jul 2026 11:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F703F23A4;
+	Tue,  7 Jul 2026 20:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783422427; cv=none; b=cawY0SqcAxzSCsY4JMKz8h0tfSpS8Mn/L/xnuZ4qdnz+RoTn9W+B4bdJw3o67mBUpVMWrCFUz7K4cqgzLgr7FRjDH8AcJ2MKq/+saAh7ncW5j3nlFbRakR+msf42+/d8btBdyduzHzE4KorA1ZwA137HErrLgXBqJRqXDokP2Bc=
+	t=1783457051; cv=none; b=V5Cy20vcr6kqLNAaBakk6E+fCs4jbEyev9KLGkfthppR9Y8thT1zmkFAn3oF0wZFRHQ5xYqvuqqRxmWeLnaiSkVl/6PJj5DEWCDSd1FMhhCK+pXGzfJ/nEle4jwXtzghq0fqIayKvpx+XJOkRa1ta+QRsL1e49q1PG+IRlg4mjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783422427; c=relaxed/simple;
-	bh=Q2BxHU+Chcy2pNXcAvXAqQ4GSijY/vUGiHC4rdywJHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pY5+iXP8kBx463tToaTtat3L1zTiJAPtKMFrRK/q9Yyb5FD1e1/bGOvJ/xNLtGgIQ11/wZVO68HyrvlLHllY9kmN5TC/9uSTgQCo3cWLelrbRnn3cc27r0zxOmQyWcokTw0qcz/a68sEcnwIWG5C53sXOsvfTfErgO5bwD+esgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rsFSJT8r; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783457051; c=relaxed/simple;
+	bh=4LwkHrmEkZ/w0rTKdZFWp6HHbkBzF2K/UCOe/6HNkiQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M9Ao3r6smSL1GE+uPxQlsVe3Itiy2Sd2Gyq4IyyRezlu82Y8sRFlFhKeFOTUztHlTvbKfsyu3oDdhlGTU9Tp63miXBRLNVRe99dLwJxrcilZalrfVc6EBUfAqbDtA87gQyVw1J+05IhHGehxOVYvc8qDilC0xfko6YVfcvQyFQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hurranet.com; spf=pass smtp.mailfrom=hurranet.com; dkim=pass (2048-bit key) header.d=hurranet.com header.i=@hurranet.com header.b=im1EhK7L; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hurranet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hurranet.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rsFSJT8r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAC51F000E9;
-	Tue,  7 Jul 2026 11:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1783422424;
-	bh=oA46KZkzbHFz9M8Ztg+TbQgcKcjuTALJQXyIsDbrdag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=rsFSJT8rESOSygea6lviv+AjctqtzDOqq7w6iOSzqu0x2tGaxG31uEGb7n4rQKQqr
-	 jcOEuGF694bcOqwd1+0J9DATqsNrp1ZnheO0r5cW6qU/tW6meiTSSPKDpt+gdE0tKb
-	 E9CRJGJyACCHdVfY/Q1eEY3A1Khdti2+aNk6ytR4=
-Date: Tue, 7 Jul 2026 13:07:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Aiman Najjar <aiman@linux.com>
-Cc: kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: rtl8723bs: drop GEN_CMD_CODE macro and
- capitalize labels
-Message-ID: <2026070750-myself-hardhat-295f@gregkh>
-References: <20260609-rtl8723bs-code-style-v1-0-daa0e85359a6@linux.com>
- <20260609-rtl8723bs-code-style-v1-1-daa0e85359a6@linux.com>
+	dkim=pass (2048-bit key) header.d=hurranet.com header.i=@hurranet.com header.b="im1EhK7L"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gvtVr5Nr4zKw1P;
+	Tue, 07 Jul 2026 22:44:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hurranet.com;
+	s=MBO0001; t=1783457044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oa464xCUGkmiGy9zkxLRJVpNeIXjkXZ5GwRr5B/+Ozs=;
+	b=im1EhK7LMr0ClEG3wcjhPE32ifSEYqhG0arf514OnpMkV9c8PApulKDU8yqphFkW4y5Uzt
+	80+2DF2HtbP88S8O/w9Q3ypK//czNOWHqYMj+Pbk2xYiIHAc8RAo8GmAYrQoZ8Ljw30zWq
+	NXlEybUfiR+FQ6kueyEPTiVdDg9sBIVm54ggauaqPQpJx5nzgIk1iUagWH4utClzpXA2+0
+	cFxDDyr9wsZdANe/tAkBYdiM7G6qD7rN1UtoYAYx9uVYXcayooX7n4QvAnCvnYlqT6cteR
+	phi1/xuuiOyxZtDKIzJs0KLuH6VicecEl3pA5UpBAsPpW/jIfAgIHCtGZPeaPA==
+From: Aiman Najjar <aiman.najjar@hurranet.com>
+Subject: [PATCH v2 0/2] staging: rtl8723bs: enum labels naming, coding
+ style
+Date: Tue, 07 Jul 2026 16:43:38 -0400
+Message-Id: <20260707-rtl8723bs-code-style-v2-0-df50f0eead17@hurranet.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260609-rtl8723bs-code-style-v1-1-daa0e85359a6@linux.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPpkTWoC/4WNQQ6DIBBFr2JmXRrEiNBV79G4AJzWaawYQKMx3
+ r1qD9DlS95/f4WIgTDCLVsh4ESRfL+DuGTgWtO/kFGzMwguJJdcs5A6VYnCRuZ8gyympUPGVZV
+ bxa2stIZ9OgR80nxmH/WP42jf6NLROoyWYvJhOX+n/PD+XEw546wxhqMqi1Ibee+oH+er8x+ot
+ 237ArNVoqLKAAAA
+X-Change-ID: 20260609-rtl8723bs-code-style-0871b80b6799
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org, Aiman Najjar <aiman.najjar@hurranet.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783457042; l=1495;
+ i=aiman.najjar@hurranet.com; s=20260606; h=from:subject:message-id;
+ bh=4LwkHrmEkZ/w0rTKdZFWp6HHbkBzF2K/UCOe/6HNkiQ=;
+ b=WirCTj71y5YfcByNoiWTGbuyDgtI2y9MOatE7YJ1i2t4TdRkigYg0ybjdd57b2PU1FzGhe3w9
+ U1HNnNyqegACLSGAVuC4YB/UHPtagXLsOEixkGM7SaVaIjqprCCj7IR
+X-Developer-Key: i=aiman.najjar@hurranet.com; a=ed25519;
+ pk=iKg5UkqF2CmKvQwe+Jp8Cf4JOcIHoyvApdVll0sJHu8=
 
-On Tue, Jun 09, 2026 at 09:42:55PM -0400, Aiman Najjar wrote:
-> The use of GEN_CMD_CODE macro to generate cmd enum label names is applied
-> inconsistently and is confusing, it also makes it harder to make use of
-> tools such as clangd when looking up symbols.
-> 
-> Replace them with writing the enum labels directly and adopting
-> new capitalized names instead of the current camel case ones.
-> 
-> Signed-off-by: Aiman Najjar <aiman@linux.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_ap.c       |   4 +-
->  drivers/staging/rtl8723bs/core/rtw_cmd.c      | 190 +++++++++++++-------------
->  drivers/staging/rtl8723bs/core/rtw_mlme.c     |   4 +-
->  drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  18 +--
->  drivers/staging/rtl8723bs/include/rtw_cmd.h   | 154 ++++++++++-----------
->  5 files changed, 181 insertions(+), 189 deletions(-)
+Hi Greg, sorry it seems I had used the wrong base tree.
+I've rebased now in this v2 series. Thanks for reviewing :)
 
-Does not apply to the latest tree :(
+Enum labels generated by token-pasting macros adopt camel case. This
+patch removes the use of macro to generate the enum label names and
+adopts new captialized names.
+
+Signed-off-by: Aiman Najjar <aiman.najjar@hurranet.com>
+---
+Changes in v2:
+- Rebased series onto correct upstream tree, i.e. gregkh/staging-testing
+  instead of mainline and resolve minor conflicts
+- No functional code changes
+- Link to v1: https://patch.msgid.link/20260609-rtl8723bs-code-style-v1-0-daa0e85359a6@linux.com
+
+---
+Aiman Najjar (2):
+      staging: rtl8723bs: drop GEN_CMD_CODE macro and capitalize labels
+      staging: rtl8723bs: drop GEN_EVT_CODE macro and capitalize labels
+
+ drivers/staging/rtl8723bs/core/rtw_ap.c          |   4 +-
+ drivers/staging/rtl8723bs/core/rtw_cmd.c         | 190 +++++++++++------------
+ drivers/staging/rtl8723bs/core/rtw_mlme.c        |   4 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c    |  30 ++--
+ drivers/staging/rtl8723bs/include/rtw_cmd.h      | 154 +++++++++---------
+ drivers/staging/rtl8723bs/include/rtw_event.h    |   4 -
+ drivers/staging/rtl8723bs/include/rtw_mlme_ext.h |  54 +++----
+ 7 files changed, 214 insertions(+), 226 deletions(-)
+---
+base-commit: 955bd61f814c3f5a44bb805e1ba55ddb77cb7fdf
+change-id: 20260609-rtl8723bs-code-style-0871b80b6799
+
+Best regards,
+--  
+Aiman Najjar <aiman.najjar@hurranet.com>
+
