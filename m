@@ -1,72 +1,70 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F242E7394
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 Jul 2026 19:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D0E36C9ED
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 Jul 2026 19:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783712060; cv=none; b=taNE29KYDvrOEPwrXH+HBIPQws92C4fb8chZtvXQF+stsC8YsxXkXGbtlCjS2ydMOyEhs6ydI9yo6ykBRs8kI695sOhCvySLY/n/xLgODPluc2FrENJc1Wn01kYvd5g7vZX0XW/xUVKigl0nIVNUFmHgL0tY+xs92vk1J15AY0E=
+	t=1783712093; cv=none; b=rMEQLmGmcuHHw40LKdUrl4jcKnxgGw1L/jzu9xCF9KrKav/23q/YOocRymD5jb6QObylT8uJAkMGVqxGRezHJiSwwXDNFzX4ve2LG7Gu7s9qHQn7JvE0RQcT2SeI3+j1NJEkfC0nUrcH44RfO9iTiVjzWPOag7b4CH798v5c8eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783712060; c=relaxed/simple;
-	bh=qHpuXgwyDt7gd+u5X5Fkon+TXwHaSS4B0GanO68bKIY=;
+	s=arc-20240116; t=1783712093; c=relaxed/simple;
+	bh=KmBGpsdU90+XcIpNlny7ColdyT1dxXntHoxal9Hypzc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n92tJjr3Amih5naEHSP0De2XPqYvpP+KktovSYfFlFB/g1/QaUVxN/5M993h0JNDbwNjFOP8l2d4qo+5AIN+ma/WvH0UHW3rTLJk/+f1ZwQPqYl1kKD/3CS0jXLJQKiDYE+lsJMtfYgPMh725ex81dR/5N1iHR40tXJ+Nu8yL2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mp7BUVRC; arc=none smtp.client-ip=209.85.221.52
+	 Content-Disposition; b=rdSe0V738oHcGBp8s5ddjV9FtHTbc93mCChYV7nfr/XoebcCopfYhqoRXMAOB8BD3gRQQ9Oy/OMD8X9IraEHkd/Ks9N/Cx9WKTode74k5w34IM8xr+6KcXQDoZM9sqUdalogJQohXBYHrbCpNBDpCGa9JsoxGtZTq6TlLJWAVyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8kEU2yv; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mp7BUVRC"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-47df6a2c809so287107f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Jul 2026 12:34:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8kEU2yv"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-493c733f15aso12246215e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Jul 2026 12:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783712057; x=1784316857; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783712088; x=1784316888; darn=vger.kernel.org;
         h=content-disposition:content-type:mime-version:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=SfcK5+z71wUpvsd64BXWRq+fNxeTLDfjOVwwJT3IZWQ=;
-        b=mp7BUVRCV6sBSk3Cyl0MmDhzS0DpU1e+WtFIJKshfm5vJ+Wmr/hE9ygy2/w/EpMwxY
-         5freLJnLgcWP9u5secg2uhg6fUdXf8Q6H57dzAnXJlGGj+zl6s6xMGOv9Ybanw6ZTH+y
-         ySWOdxo/AHjFgIOBYPN0C26uTmIjtixY5UpwVrImj9js3CwxZ6ySpwVplWAaZ/icVVMz
-         14CNLvxuTWWGVGzmIjbaIk+HzLrOXhhT2OQtI41UmOCDvfZ3UM40lI/ce8Z0nDs45prq
-         cN3sekgLqWtMox7PjY6zLsmX7Pmhy5y3kLZ7mVER2wj+hMNANw432iXKOMjaYxZpoLpU
-         JH/Q==
+        bh=z7NmwwroSRG4UcBUsiNQaC1xyIcCpFcVskhrEQYEsBc=;
+        b=N8kEU2yvPCfs3KJbWEHf+Zs3b0mUziCr+8XzQzGgQiZcoAygVixr9E5vlft5XZs+gR
+         nsIXwxIy6O9qn6iMClhEWdg1x/QtUX2u3VRfDnNSE2WgDvjhSlu0PXsxFOGuNlro2OTn
+         zY4MnPQCOf8IIRG5Yef7IJuG3V4Dtt3J+y6c9RyOzq+2SM67vPdWDn151G48FWGLyIBn
+         mDE/1L9flF4vLjhZsyCKZFlX36QH/MXoKSGm07GBwdO6f+i6OoXIpkzkxaemti+HQx3f
+         w8TU3bCAnJZAgiIs3FuKykmve2BOz/gj3/72WESLBUXfsxFvxHqdgsIy/pNBSlU/tw9P
+         ot0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783712057; x=1784316857;
+        d=1e100.net; s=20251104; t=1783712088; x=1784316888;
         h=content-disposition:content-type:mime-version:message-id:subject:cc
          :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=SfcK5+z71wUpvsd64BXWRq+fNxeTLDfjOVwwJT3IZWQ=;
-        b=YrMDEBq+3H5xwuUpF1CL9SR5sTItdzXWoN+D1VBfZ0Slt9Yr1K3yFOizfer/SI6U6W
-         rVO2zU7HX6qgDtfjKCA0q467uBnlBwF6Bgo7rRg60aPzTYprzDmaJvdx7H7QLkgX9q2u
-         HLW/VH2D9rl2hnictKo78L3p/YeT95N6HA8HoRNeH9tW0VSRfd08NmjWHrzMMNzecOQn
-         U3a38baId2cBYnqQ4hGpOhVimRq1x4SxILwALXTXxMDJLrr+ZkabQwvB4fUL6hH6VtRr
-         uTSYjs+BCkp+cTkCE2WhA0BR56BpqYXTq/ulYDjBRyAjacdk5/qQ2YcFfHmJzShM3bnL
-         By9w==
-X-Forwarded-Encrypted: i=1; AHgh+RpnMpJpbsh8NxnByT7Ar6w5OoirxmjVIn0mayF+Knzb5DFPIOg3TgKj4VFosYOKajEyIYi+ymqII5fO7pqcgN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdisYx8wZNRdDMTdM0YfK0VNx4ZJQy98TbRLiN8tl/vRVMINaP
-	v/c3ORJ9i97CySTxxlayX5vU/LFgy40p4VCEQnviK5gKOVJpkQigT3Zt
-X-Gm-Gg: AfdE7cmwago7v/IsFBcYS6tciefbnYZ3dT6y1q/wRyvGyjh1k3WxBuOZLFV1KUGhgYw
-	HCLEVuY9UeW7W9AYNYWRKEF6roxD98HLMSuxNGfiAAnIm/pY52W4NBKBcfPSleldUkxXpjPcq/Z
-	R6pOcp4CMsT9q/mRD+HmRyMlE9ZGfmtrI1msyOw3oh3CFYooS6TpL6T8J6GeNSkMA1SjdRlzVaH
-	B1c3Fejiw4UbO9IDc5zr8QaDNvIHLU5zbemZkgJEFVsJhmzPzRKAkx12+1o/qi24PyJuERwFWrg
-	DsKuHW5G4zY6ZChlvp5kZkQlcr23Au+ZVKqfhLbOgt+OMtUGBIW6P1XQqjIXiOxuFkOoJAwX1v0
-	FG7z2S4d72PCaws4aKjdG9iOxL8L3DSTMsVQu++ohyGYZxljEuHp/IyUZK9lR/rAQrowsy+wgtM
-	JDyqFwXaKP
-X-Received: by 2002:a5d:5c84:0:b0:478:65a8:6305 with SMTP id ffacd0b85a97d-47f2dcebd30mr143287f8f.49.1783712057358;
-        Fri, 10 Jul 2026 12:34:17 -0700 (PDT)
+        bh=z7NmwwroSRG4UcBUsiNQaC1xyIcCpFcVskhrEQYEsBc=;
+        b=F5Lhb+1Gk5oRqxw6QItbvzboyqNurM45U7hCtV3YBC6R08SGs1OIPAEy8S04swPfds
+         1fYd4ap0ZQ4/LXQ5AslR/zKsgt0EQAJ/gWItuXT8zFx3EHF+tS6g9jATvTR1BvwfrErJ
+         AoR3WcgYRmGK9WK1sKE5qK8A5PNF/PMAOEbxCKsPdujPOGoJsvmsV8oXs3I8O+kVAbyA
+         rsW1wIhfH+J9nzDMGtI8ynnOdI47XrbKNQSxfQVCzJ1hbhgfVi6WDA1A9rP1MY6Rx0vs
+         pp0I377rqcz0X+u9+agg206lia3a1gY1tiMmkAOluzUW0V0nxhc4euOTYx5virvxUtjp
+         bHgg==
+X-Forwarded-Encrypted: i=1; AHgh+RoBpqokMcW9/V/ZxzIpFfpOiXvWPFB/7Thfo49SVgEwnG+kpH1F0Qjofyb0xOS613FruoCTiP5zHUO6cMwdHs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxznnFifru2IYlJXmRK82bFV97JjY1+C/wrmdz94+9pgVWgtFlm
+	aL17M+l7/iQon4pySXKGYVAyVKHzMWhsHKdCGge6WclZqrNdkGmybViw
+X-Gm-Gg: AfdE7cmMPQiws0tkIn/DpIfJj2/ic0ud2YZpDCVtFwYfSbkFX3XYDC7/uapHEdUtfjI
+	CQEwqXmP9wofgEYeVntjgYuSvENGkjlQW/oxbhzVhNAd2pAy0H/MRPEAGtbRsEBRa946RimJPWo
+	nQvsMH74OlUgXiTh/HI8r43Nx7E6kL/SmMppCiYqQ1OUnWyTRc+GUChZ+0RSQMdUUqF99BvXCAe
+	zjikJ/+wvb31cT76WyjSkdfA1dAtnWTLAIaEtHdObk0ib4nrVUAPswWu71kmB0gy/awbREkh2M4
+	LY8UlyBkHBGhk0Vh3n4KYlXnSD5fYGWBLnUeA02pQFYmIkUx1st7S63HD+n6e4GBHWrWOiLHCz2
+	mjBwiM9rQUiJ4VBhE8kYJ3YiHraGZEC9aDwZFyJznKrVSiL2aJ9vR51ata+hlLXVCfwaaUbUAm5
+	kyc4ISihuA
+X-Received: by 2002:a05:600c:4f94:b0:493:c0c1:3930 with SMTP id 5b1f17b1804b1-493f87d9dd1mr1807215e9.1.1783712088295;
+        Fri, 10 Jul 2026 12:34:48 -0700 (PDT)
 Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47aa0f214d2sm61104797f8f.33.2026.07.10.12.34.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493f3a60404sm67839735e9.1.2026.07.10.12.34.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 12:34:16 -0700 (PDT)
-Date: Fri, 10 Jul 2026 22:34:13 +0300
+        Fri, 10 Jul 2026 12:34:47 -0700 (PDT)
+Date: Fri, 10 Jul 2026 22:34:44 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Deepak Sikri <deepak.sikri@st.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cpufreq: Fix an IS_ERR() vs NULL bug in
- spear1340_set_cpu_rate()
-Message-ID: <alFJNUllC3JOKv6z@stanley.mountain>
+Subject: [PATCH] regulator: adp5055: Fix error code in adp5055_of_parse_cb()
+Message-ID: <alFJVBbiFNxhqa_1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,31 +75,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The clk_get_parent() function doesn't return error pointers, it returns
-NULL on error.  Update the error checking to match.
+This code accidentally returned the wrong variable instead of a negative
+error code.  Return -EINVAL.
 
-Fixes: 420993221175 ("cpufreq: SPEAr: Add CPUFreq driver")
+Fixes: 147b2a96f24e ("regulator: adp5055: Add driver for adp5055")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/cpufreq/spear-cpufreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/regulator/adp5055-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-index 81a0780b2ebf..ffe5eda82f0b 100644
---- a/drivers/cpufreq/spear-cpufreq.c
-+++ b/drivers/cpufreq/spear-cpufreq.c
-@@ -79,9 +79,9 @@ static int spear1340_set_cpu_rate(struct clk *sys_pclk, unsigned long newfreq)
- 	int ret = 0;
+diff --git a/drivers/regulator/adp5055-regulator.c b/drivers/regulator/adp5055-regulator.c
+index a79274d530df..194dcfe4f527 100644
+--- a/drivers/regulator/adp5055-regulator.c
++++ b/drivers/regulator/adp5055-regulator.c
+@@ -224,7 +224,7 @@ static int adp5055_of_parse_cb(struct device_node *np,
+ 		adp5055->dvs_limit_upper[id] = pval;
  
- 	sys_clk = clk_get_parent(spear_cpufreq.clk);
--	if (IS_ERR(sys_clk)) {
-+	if (!sys_clk) {
- 		pr_err("failed to get cpu's parent (sys) clock\n");
--		return PTR_ERR(sys_clk);
-+		return -EINVAL;
- 	}
+ 	if (adp5055->dvs_limit_upper[id] > 192000 || adp5055->dvs_limit_upper[id] < 12000)
+-		return dev_err_probe(config->dev, adp5055->dvs_limit_upper[id],
++		return dev_err_probe(config->dev, -EINVAL,
+ 			"Out of range - dvs-limit-upper-microvolt value.");
  
- 	/* Set the rate of the source clock before changing the parent */
+ 	ret = of_property_read_u32(np, "adi,dvs-limit-lower-microvolt", &pval);
 -- 
 2.53.0
 
