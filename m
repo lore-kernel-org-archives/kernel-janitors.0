@@ -1,88 +1,39 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC6330B535
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Jul 2026 13:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283B039EB40;
+	Sun, 12 Jul 2026 13:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783863034; cv=none; b=I9talN3RHy7c9UuktPAPy4cFLpF+scNFhtBaUii2omhZBZceUl0ErnpSBevF7ZLml8q7NJnkc/JPCQMJkq6NZ9Resd4gusHcDR2wKqitY2emiazgC8sJdtLTMzYZGGWBtWZDkESaSnqRr5YXBS0oOqINKKgfAqoi3TdpZVDZGpY=
+	t=1783864616; cv=none; b=tvcKQmINXFQ0JLEQT89rIZHgV+HLUyszzsSVY7Tps/MirLJsKMsDLP2Gs6bG58VzF/wg6HLx19E3qIXIUighfpw+OrAGgCbrX4AANMCPRvvuTee7Z/8t51fJZrqsWOecpxn0yqQ+DJ7zQYwwczQ8K9L6W1A5+EkjkFbIvo7Os/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783863034; c=relaxed/simple;
-	bh=lb/BAo8nt/synyDfbm+lEnhjYWT3KhROXJZc8197IhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diiIfAN3ADUx6mpYv9e+klSRqUik6C4+zbfgg3/r8a4hbFm/XKJAg3Dj6I3/uu1peK1eAQkilZpLHcF9fhvCpYQkOflGSYNdoO846fVF24C1NdCWvii4C0OeUAlXLuuddVxizIhc+FwooHPFKk1f97JAo7ICnVttFaZbMojgJPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yk71QcsP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KFnzSenR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783864616; c=relaxed/simple;
+	bh=lWqFer+ezL4yGoS8CAC+vZsRIvt8a9gUUxzTD2B2/P0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Wx09J4VXHMePZ1OZzU1i8EHfDABcNLl0YLKCI8JQMcf/ysvMZuAk5apI0YmjXh++aVWodkJ8MogBcvgXyl/ZUBoHwhZYnBPgKSLEZQakTgYON6vDLuV5XS5pg8HjvPyJoH1t3KI/rcLgnWtU3CfvNSgZuY2zUa60wV4Shp1UQus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h5BeW8fi; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yk71QcsP";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KFnzSenR"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66CAcdsM2324521
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Jul 2026 13:30:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4uHhiyPDur1M8sX3vop9wkmPBwPJCdrUdMn078zxrjg=; b=Yk71QcsPfmUAcpUC
-	ri8yyNK/LBXK3z7oCGi56+sC8lkTtaoIbICpaSXoI6gyN52T0Ah9a+Y3vh9+DB+H
-	AKU3gmMiNqaxgQcqxC7bz9297hdJ3MzuDncRBqOGu5FFQqLv89JGYRKKd+LE1DSH
-	cxz5HfyxEnp1ONorkGHNEDYXanVEMFSflDFybOJXwrSmaojBImpLTm9yN32JTySW
-	nXvavCffINO6Z/BriIejal/N1nNssPwjmJTrI6Hb9dExke9UUg+/x8RnowOrFiYs
-	h0uy45MkVBKf6vK2KApCfVq3dpquMXuhYtLFCNWhoxy+rGCaMdLa8zgDbsnFW+Z0
-	41THug==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fbeehjvd7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Jul 2026 13:30:32 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2cc73f47bdcso40369295ad.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 12 Jul 2026 06:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783863025; x=1784467825; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4uHhiyPDur1M8sX3vop9wkmPBwPJCdrUdMn078zxrjg=;
-        b=KFnzSenRKG75KSFm37V4OJvAdEGjwr87WC9v/zM52Vx/KHxxbapalBe+/UL+ww3Cc3
-         J2sfJy2vMhy2ZXn5yb87JoPYMneY5tF0vBxUjKCrx87tRFZAw9YtWzyrAmwQCE/9ByRc
-         lGzBXTqH2lBoQgc31gUxH4re7x+sNT+VqQcU3jc7m+aMnc0oW4IumpWpVtdHb/j4JtCx
-         qBhoxDbvlzLLzJXluRk0LzhwTLpLgqHvbHzsgaY3ZjP20lOgqcvG40pHsW3NW8WheuPn
-         qm7PCxcG0W9ARH/4Xb5IPtqtdVAS4jiB4xgQFOUB2suWYlh9C6K2Qsde7VtKaaYPPR/0
-         cXvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783863025; x=1784467825;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4uHhiyPDur1M8sX3vop9wkmPBwPJCdrUdMn078zxrjg=;
-        b=sfTpYQ5KQalQMDkIrOJWdsgsKecvRR+2fTsxv2gN9M6dyGbpmfFXzIHdpT819ivYoM
-         Tr54LFa/sVW74VKWAbLhpQ7xPmsC+gmga5f3mm3X8d1Yxa9Xs/3kOGiRvwrnXLTYvSaU
-         wCWpMWiayO198To4O0pjabQxK/Q09eENDyC4BrqIBOIUmM1dTG1ynCqh4Uw0EWtQ80bd
-         T+yG4aagBCopBgg8Zr1NWAaBiFB60M9K15zKJbfUZbATvjCFad70e1Tkge6uiZWM7q7N
-         Sc/qd8mrqr6njmKSduQ23nLFI2YoXlsgmgi/67XqrTBxPyp2oZglCV/poXx1DfGtMODH
-         ekdg==
-X-Forwarded-Encrypted: i=1; AHgh+RoD3VFDX4y4/5OhJe41rCAcURSrKGwrncbC9GJmCabA62EUXMLQqri6RdkNzyFb8aqOx9Kkx7+EiitUVMmQPD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd3NbCu+THnWG1ASIAdgAO6Qlq/DCMHl40a98EXmpjixTmUa/t
-	zCLJ8fjQhzrGe6DJtIWqkfBMBFtF4xNdQxSNqef0FQfIcaAO0JA9wlRCBPXEAhx95ZAmJ2fL0Cx
-	i92Rjs8BRmyE/NclSA9L9ltxEYiHKU6zfUMMC++WtYkVSJCdA4uGDouN/6eu3a+yMVKCJvv0=
-X-Gm-Gg: AfdE7clOvQMBahu+Cvv1VOfWwWmjoqjrefKojiFTS+fM5V1goFh126x/luZHJyCfVW6
-	xCKZJZxmCTLQG3zEnWvl98uBatU7MMyxQd9y2mm23Ux+fmh6Pu06XhgXZgzeBziKgrXQhqBTZCt
-	P4z7FnXizRN9tzGGnWazIKND8msd1zqWtEPyYylqhe2zC1sj0Ff/XSvjvWlpeESdbmpBgjFtQvA
-	LkxN+MmrjA/W3XJ+6OSvCnE068p9egS3rbVc1dMwhWsKTZ9/kksw+cjNT07sDa7hlXVHNOVImwA
-	Tc1r048LwyQBRSAywoAfkvash0nTQC6n2I1UnMBd8e4AWghPLFijaFs4EKPGduC/LOc8d/Bnf5a
-	CJDingXiyo0ocEd7nUnPQtuBtkLG1IKv3Qa8imC5qSKbFZTBsuRA9ZEcmD351B/Rp3uXchMGUoT
-	DdKqujBOs=
-X-Received: by 2002:a17:902:f68c:b0:2c9:abe1:c352 with SMTP id d9443c01a7336-2ce9eab4f48mr68185505ad.13.1783863025148;
-        Sun, 12 Jul 2026 06:30:25 -0700 (PDT)
-X-Received: by 2002:a17:902:f68c:b0:2c9:abe1:c352 with SMTP id d9443c01a7336-2ce9eab4f48mr68185185ad.13.1783863024679;
-        Sun, 12 Jul 2026 06:30:24 -0700 (PDT)
-Received: from [10.133.33.247] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ccc9bfe040sm85304465ad.31.2026.07.12.06.30.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Jul 2026 06:30:24 -0700 (PDT)
-Message-ID: <c0800c49-3435-4e89-87b2-21dfa20ae58b@oss.qualcomm.com>
-Date: Sun, 12 Jul 2026 21:30:16 +0800
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h5BeW8fi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1783864573; x=1784469373; i=markus.elfring@web.de;
+	bh=4OWfFxi/5gajJeHLHLArP8k2NHzKPGSTY+ry5mqrEHw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=h5BeW8fiNo/jw3jhs5ITIe7OzFUCZ9fKIunZhsanum96xxFdpQ0EP0wuvzQFYI3t
+	 Weudv1LJ6d4HY+Gr8dK/+Svzzi/Zu7q2JofrGPz1rIwIgnSp5TiTk/dms4xikiIwE
+	 vBhwfx8F4q4nIWq5HfTLJuEaYdEsfS2OQ3ECaL3IYPLKlOmeaKxjDlMNyRkGdUhBT
+	 5zR9XhXe8DnUg+Yv13CpSkXfvGLXu75/r2MmFuAe//CnPbfe5+oBuU4iNOpA4PVBA
+	 vuW92oJ9sza57/AkH2hsjU2ScV3ewTt42nHN3S8CSRJ5iSMdoqHNFZ/mBDVgBt49h
+	 tKzeDa1iXTOgtFN8dw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4vNQ-1xAN691YtI-00rLR9; Sun, 12
+ Jul 2026 15:56:13 +0200
+Message-ID: <1fe66c80-dfa5-4ef1-aec0-8f7fc3f2fe21@web.de>
+Date: Sun, 12 Jul 2026 15:56:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -90,86 +41,146 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: Fix an IS_ERR() vs NULL bug in
- spear1340_set_cpu_rate()
-To: Dan Carpenter <error27@gmail.com>, Deepak Sikri <deepak.sikri@st.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        zhongqiu.han@oss.qualcomm.com
-References: <alFJNUllC3JOKv6z@stanley.mountain>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <alFJNUllC3JOKv6z@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEyMDE0MiBTYWx0ZWRfX3RMvd2nq4bzt
- sd4oiNDOgfe2a49GRUbUgDQHgTJ/kio9pWY03sMlGbctPb4vQtnTA9GcRQssUHyzPSsruPhOwJF
- QY3cH02PmD9hesrGZ6Wstah2JdRou1I=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEyMDE0MiBTYWx0ZWRfX58CiR5WCStou
- 77FiFZW/LS8P1p0glPsvD7NV1L7vrSmlJIiwdFCNSKtr2t8plZbeQoGhLnK7qOFFKa72lOrCv86
- iVaFqc5v6cVyYx4J7gyXvXECQpp1qKQOqeOxLsapmqNj2f3H0/Af2rUYZqKaFGBmuf9jjpQr06P
- yseQ2w0qUxx3ICWNSYg0uiFnKzkZ4lV4J+cuy5/OwvvPM3o+aKvqOHNLBwV5Z/iRqpyWASVK3D3
- siKcER1Hh2YVg+46MG0YCY8BHSsOzU/JYVgKM0dlZp68OJKGYfOmhlE5g+glQHCYAkdyf9AS7ZN
- 0temehYicPWqj+YTg3ul0GNJre+70K9xMsIv5EtOIcQ3U3swWsbUbKM1M5RQczKvz1IiZIAqQLA
- WMZzwz9wIT/tPH9y02alCYf5Fmo3c7SA8JtAjxrIkxhS/XQ6g/oxwuMfNT8GSrl6cQaxgxWrcdo
- WMSVniBwjovfj3A02XA==
-X-Proofpoint-GUID: PoxS7oDHpYBiEB0JS9Urx7PZKpOEXzHM
-X-Proofpoint-ORIG-GUID: PoxS7oDHpYBiEB0JS9Urx7PZKpOEXzHM
-X-Authority-Analysis: v=2.4 cv=aPvAb79m c=1 sm=1 tr=0 ts=6a5396f8 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=N0crexS4lfU0QNQj-gkA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-12_04,2026-07-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 adultscore=0 suspectscore=0 bulkscore=0
- clxscore=1011 priorityscore=1501 spamscore=0 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607120142
+To: driver-core@lists.linux.dev, Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jonathan Cameron <jic23@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] driver core: faux: Move a variable assignment behind a
+ condition check in faux_device_destroy()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nAcCHU5KR634wKcdEzIqDQNe6baZx5BV8dBaZ2TweXAQ+tzfj8C
+ gB4nOm5b2iOZ0ScdgE8/7xF3t4u6O7YPv8cAwQIkJWDxwED5so6pzSNfcLEtz0yEayfIctN
+ Ub47TUDnTF32v/sHcwyed1LNM+pTds2yXyNWyxMjbzsDUMqZuxQHbfLsy9brfwnWZIbyyWl
+ 5oHCVnphS5TfvYLpi7h7w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ese2CKQ3EHc=;TIoXLDLp/mj6PmQrC8lvY2/x/tQ
+ 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
 
-On 7/11/2026 3:34 AM, Dan Carpenter wrote:
-> The clk_get_parent() function doesn't return error pointers, it returns
-> NULL on error.  Update the error checking to match.
-> 
-> Fixes: 420993221175 ("cpufreq: SPEAr: Add CPUFreq driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 12 Jul 2026 15:45:19 +0200
 
-Nice catch, thanks for the fix.
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the function =E2=80=9Cfaux_device_destroy=E2=80=9D.
 
-Nit: the subject is too generic and can be misread as a cpufreq core
-fix. It is better to scope it to the driver, e.g. "cpufreq: spear: ...".
+Thus avoid the risk for undefined behaviour by moving the assignment
+for the variable =E2=80=9Cdev=E2=80=9D behind a condition check.
 
-With that:
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Fixes: 35fa2d88ca9481e5caf533d58b99ca259c63b2fe ("driver core: add a faux =
+bus for use when a simple device/bus is needed")
+Cc: stable@vger.kernel.org
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/base/faux.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/base/faux.c b/drivers/base/faux.c
+index a8329f88222e..4eb22d082552 100644
+=2D-- a/drivers/base/faux.c
++++ b/drivers/base/faux.c
+@@ -221,11 +221,12 @@ EXPORT_SYMBOL_GPL(faux_device_create);
+  */
+ void faux_device_destroy(struct faux_device *faux_dev)
+ {
+-	struct device *dev =3D &faux_dev->dev;
++	struct device *dev;
+=20
+ 	if (!faux_dev)
+ 		return;
+=20
++	dev =3D &faux_dev->dev;
+ 	device_del(dev);
+=20
+ 	/* The final put_device() will clean up the memory we allocated for this=
+ device. */
+=2D-=20
+2.55.0
 
-> ---
->   drivers/cpufreq/spear-cpufreq.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-> index 81a0780b2ebf..ffe5eda82f0b 100644
-> --- a/drivers/cpufreq/spear-cpufreq.c
-> +++ b/drivers/cpufreq/spear-cpufreq.c
-> @@ -79,9 +79,9 @@ static int spear1340_set_cpu_rate(struct clk *sys_pclk, unsigned long newfreq)
->   	int ret = 0;
->   
->   	sys_clk = clk_get_parent(spear_cpufreq.clk);
-> -	if (IS_ERR(sys_clk)) {
-> +	if (!sys_clk) {
->   		pr_err("failed to get cpu's parent (sys) clock\n");
-> -		return PTR_ERR(sys_clk);
-> +		return -EINVAL;
->   	}
->   
->   	/* Set the rate of the source clock before changing the parent */
-
-
--- 
-Thx and BRs,
-Zhongqiu Han
