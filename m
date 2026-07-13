@@ -1,41 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8012D3FE645;
-	Mon, 13 Jul 2026 12:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F6C43B3E0;
+	Mon, 13 Jul 2026 14:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783944294; cv=none; b=Bqc15cPLYjHnctqP/sRkA719BY2ejNxpk9F+Er2QvZVOhWfhRPPWH3aiLwGMvuQaBlbayZs4cETPVnY46KAgurOlxVEK7/o5y1f+G541/+uBX+miQ7lu4BBmEfNlVTYNbOppWJmbxO2PA+L/e+8t9jQfPrjD2dP5dEtyWzO7sbE=
+	t=1783951561; cv=none; b=FxXxfLbWtG9S4mqRFvFTOhUdGX0Jltl1RUoGYj2w/8SZMctBI1IAZ9IVGzF9Eq+QCO2RpN8a3CjcVsqS1/rC2PSj7quS1zeyhwVukT+i1MPS7FgLjiE3NQ191YTXfFIC9N0YkMwhrYwlQt9mnRfSVS5p/m5GCpS3n2CMwFb4zaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783944294; c=relaxed/simple;
-	bh=CcryPpPGx8Vno1IrQO7Ts++Vg74AP3Q43dkspRBYPVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vAw5xx2BYNYwYZNIlovyNuBx37SLb2wocESYifjntfogIAnkH0yAV56vv+HGpJ3XhvXYaYmwDPNcUOcppf1O+orKUtLJT17DTu3PUr3paX5gQmouDPCliQtxwgXWZsRWmj4epsR0/Zq4NgkitgTKiTkiWf9ies2Z4ZnDjMd9qio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=omAtwdMI; arc=none smtp.client-ip=212.227.17.12
+	s=arc-20240116; t=1783951561; c=relaxed/simple;
+	bh=6sd8ejxUGNj9iOtbqewhskm32l8XlmxEvvR2EQAh7YU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UZScpPFq27sbBhUx0ZBIvx4QO3C9lM5u1JmIwSV4gKiFS0zsYfrhPF1ciEFBWs7OtrRjQj7GXrHdWsKOJ5YjyXc8kiuGJETea2k4b0GTqsO1r6X6Rjzm6+Oilj7eMShtp5/8Txq0V6Je60zGqHHH3jt7NMiXASI0OEkkCjPsTeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=q0Hjk0dS; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="omAtwdMI"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="q0Hjk0dS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1783944288; x=1784549088; i=markus.elfring@web.de;
-	bh=GJ2aa1eLZsaKqSyi9iohfKxWHpgNySjagm7TlBRdvRY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=omAtwdMImvfjUTMlx4I7yl7K/yR3lPKkTiMU2vya65U2RqUCtGoYC6/DSuFAebH4
-	 UYR6S1l8VGsN77bbvXfCaBnZWZjAXaMicrquw3MYSQKZ9MslRQbA+U8panmNfrd9l
-	 dgw7dXfGfUO2nPm9kfC+mYWVWLqAsIBvvmSuWJT9lKb8KsGtj+IU+guzoD5CzY05w
-	 BVtVoJClGVUG79YdnBdIpaozKjQ0qsDuKZAGpDT6zoSko9V5rECxckVXZYMxEhXBQ
-	 QKq8JpYf+pM1F04EOe+UAF4nQyvi0NJQoXiEONwwlJWpg3DRmOluwWOtPUecU/Zch
-	 /suMds9maFWthoJDGA==
+	s=s29768273; t=1783951557; x=1784556357; i=markus.elfring@web.de;
+	bh=IN1IQs896HSaIw9gEbrqKaClxJt5RzMdKHMvraSsIio=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=q0Hjk0dSX2p6Y6fnLhzEmrxuAD9/dIL8t6tLZkncNVbtqwdpgN1dCbjvAu0FiCGh
+	 93XR/evK0CPKUCaeCnfFMwd8UNjIz0cw1EJihBYbGXWxtj2aydroJulvLvj0vmwIt
+	 D+oE0GAWPueocHbLXQCJ1R4GJ8UhzcTB2L9kaWg7ggc2xV2M4jhcQ9ECdfWbkyHb/
+	 JOca63O6f6sX48KlrNUEUN2CN38Lclf4vm1SLhbtsxQy4XFK7vt2gXYMUfHrWYmYu
+	 Yrb8ztUxjpr1TMwKUaMrf30pg6NAouNTqVDBBbgHehtlBSZXMwWotXhW+5SypvKHh
+	 MLD+49DARya0nRYIRg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N45xz-1x9kZ71NhZ-011AZa; Mon, 13
- Jul 2026 14:04:48 +0200
-Message-ID: <90a1a726-0e8f-463f-b424-30e3737e75f9@web.de>
-Date: Mon, 13 Jul 2026 14:04:46 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDvDi-1wqwnw3duG-008vCf; Mon, 13
+ Jul 2026 16:05:56 +0200
+Message-ID: <e81277a0-93f8-45e9-9fa4-7c2c2df9c311@web.de>
+Date: Mon, 13 Jul 2026 16:05:53 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,136 +41,154 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gfs2: Move a variable assignment behind a null pointer
- check in inode_go_dump()
-To: Andreas Gruenbacher <agruenba@redhat.com>, cluster-devel@redhat.com,
- kernel-janitors@vger.kernel.org
-Cc: Bob Peterson <rpeterso@redhat.com>, cocci@inria.fr,
- LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <5800e1f5-8681-e140-fef0-8b2c3b4b6efa@web.de>
- <CAHc6FU4RekTwC9jH-H898PCyufrE59NYqZWy_V3p7R7dOCaTDA@mail.gmail.com>
+To: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ Tvrtko Ursulin <tursulin@ursulin.net>,
+ =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
 Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAHc6FU4RekTwC9jH-H898PCyufrE59NYqZWy_V3p7R7dOCaTDA@mail.gmail.com>
+Subject: [PATCH] drm/i915/bios: Move a variable assignment behind a null
+ pointer check in intel_bios_encoder_supports_dp_dual_mode()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bGBuFJVQmlHXm2w9s+M5cp8qOLl0D3efNs05k/7d+C+zJOskvvU
- XuJtun/JAo5iXjXzIFpyJmuEydijj+mfqKm3RLiw6Bw2hvKVH5AmegGIrbiwIgQyIHLXLGi
- JMK715k3k+cd3kV2vimYWvlgpSGP80SNa6rhPin7P0kYR1biPwCngPoL6M92xR/VvSDBOgc
- 4N0e5bRV13QtlrUydYaDg==
+X-Provags-ID: V03:K1:AGCv3si7pPH/jwVPGEDa/a4Gmy9w8/cL73mE/HY67HNX3d+sY5Z
+ C58P4Nn/oryUeQvtlygm8FWT6oHpeLcG5NB32NY1LS2cMxuuoM/Q+uuk5csqXMhickScT22
+ FR1fQY5SId6UI3OHX/d3XpVU4MCuKMRJ183DRjXpdGSJyZip8N29wQU7E/M+Xf9vZqzLnLX
+ hhRuAMHLP5GL40agOxRTQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:B5V4EkbhwkE=;WF5JoE8qb1H72aw4PhVTnGDuSq5
- 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
- =
+UI-OutboundReport: notjunk:1;M01:P0:Ek2Z/cCXGqU=;FWnwjbl8MR+daRXRfpbV6+arv8y
+ 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
 
->> The address of a data structure member was determined before
->> a corresponding null pointer check in the implementation of
->> the function =E2=80=9Cinode_go_dump=E2=80=9D.
->>
->> Thus avoid the risk for undefined behaviour by moving the assignment
->> for the variable =E2=80=9Cinode=E2=80=9D behind the null pointer check.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Fixes: 27a2660f1ef944724956d92e8a312b6da0936fae ("gfs2: Dump nrpages fo=
-r inodes and their glocks")
->=20
-> Okay, that's a worthwhile cleanup.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 13 Jul 2026 15:56:46 +0200
 
-Thanks for a bit of positive feedback.
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the function =E2=80=9Cintel_bios_encoder_supports_dp_dual_mode=E2=80=9D.
 
-Why is this implementation detail still questionable so far?
-https://elixir.bootlin.com/linux/v7.2-rc2/source/fs/gfs2/glops.c#L541-L565
+Thus avoid the risk for undefined behaviour by reducing the scope for
+the variable =E2=80=9Cchild=E2=80=9D behind condition checks.
 
+This issue was detected by using the Coccinelle software.
 
->                                    It doesn't actually fix a bug, so
-> I'm not going to add a Fixes tag, though.
+Fixes: 044cbc7a74c136f12a80c855cadd1b085084aef1 ("drm/i915/bios: Nuke DEVI=
+CE_TYPE_DP_DUAL_MODE_BITS")
+Cc: stable@vger.kernel.org
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/i915/display/intel_bios.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-How does your view fit to information in an article like =E2=80=9CFun with=
- NULL pointers, part 1=E2=80=9D
-(by Jonathan Corbet from 2009-07-20)?
-https://lwn.net/Articles/342330/
+diff --git a/drivers/gpu/drm/i915/display/intel_bios.c b/drivers/gpu/drm/i=
+915/display/intel_bios.c
+index 97cbae2e547e..1c4760373514 100644
+=2D-- a/drivers/gpu/drm/i915/display/intel_bios.c
++++ b/drivers/gpu/drm/i915/display/intel_bios.c
+@@ -3514,8 +3514,6 @@ bool intel_bios_is_port_present(struct intel_display=
+ *display, enum port port)
+=20
+ bool intel_bios_encoder_supports_dp_dual_mode(const struct intel_bios_enc=
+oder_data *devdata)
+ {
+-	const struct child_device_config *child =3D &devdata->child;
+-
+ 	if (!devdata)
+ 		return false;
+=20
+@@ -3523,6 +3521,8 @@ bool intel_bios_encoder_supports_dp_dual_mode(const =
+struct intel_bios_encoder_da
+ 	    !intel_bios_encoder_supports_hdmi(devdata))
+ 		return false;
+=20
++	const struct child_device_config *child =3D &devdata->child;
++
+ 	if (dvo_port_type(child->dvo_port) =3D=3D DVO_PORT_DPA)
+ 		return true;
+=20
+=2D-=20
+2.55.0
 
-Regards,
-Markus
