@@ -1,112 +1,75 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2694CA264
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 19:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762492931FE;
+	Tue, 14 Jul 2026 22:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784056554; cv=none; b=FZSA+6aA/wEHfzfeKcBqTHKmQwBLwVr3IPMBZxo2ddTmYmdZ8zYwoubpbLNZej1Kdec1iMEADf5PU0O2ql91DZNOAnPZa1B2oVQOs6EiGzjYobRgkrJW/tgNOj5I+pJZwCPiRMTbzq+yaN8noR08QL4Ev7xwHawkL3bRCZ7h/OY=
+	t=1784067647; cv=none; b=djlNLz/vDpLgcTFbTcAnVtikyeSnxJ+9IaFKIOl6rHbVlwaLf6aj3gjcVZwDJrv7rq6GYYtuBbZu3QLZinCpL2w35wV5dtiJKivZjS9FGOpZSlH4tWd8eFg7F9hfgW0khnfWl+n7PWFPYvyBxt6hdWjAfr90lkxDf6bqXQ39kls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784056554; c=relaxed/simple;
-	bh=gR9OgTYQ9fjGLmRFLC+m4hXCInJcvIxRkK82+UFP0WA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zze8q0og/3+2NSBGfbfvdbpF7Ukz5BKdwHLefiGwKYTn+zwSQ/Gc4qZCrenrbfh5LHO3O8yt2YLKxqfATFeRlpG1rOOlrj5uilPQC3FAcJFiJpFXPl/iSou7pO13AQYdec0Aq8D7zP3MmTj29r09y5+5Yh3zYJZ0AevoBykwYXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZbECPdR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784067647; c=relaxed/simple;
+	bh=0QYRChUHk2McANE8rfcAYC59eQhkwhxcDIib4MzazXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0AY/NwyY23BvepXAGkNUpSjxboTYJesh1OO4DMfYd6Kpxz1rOj9J1W0gxSEmoO9+x3gkLuQxljHEBjSrdd+4GBHCb0ZXtSV6sAjCENgdGflC09dMYP5Zy7p2/cpTS41Bd6kGT3tSx2RfwbD0OI+VpTKAOf95NtJM+KcANXZ2W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=c9g3O8TR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZbECPdR"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-493f60208a5so39826605e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 12:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784056551; x=1784661351; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NVmBD966C9OYKfvXL3zarSW+MDcZqfgKZz9YMy/NnbI=;
-        b=YZbECPdR6rWvh190eaGYke7OS2atGHLooE8+c+qhcZhnxQg6hewjaMF5ITtSusz4A1
-         fY0mkOcp5BjIADrtbo4Q5/ygJnKDsgrXIqso/paKsDmp2Hpaq8T2nh8AT/H57O5l1dn5
-         Mp2JvgqFJq+8Uasr4QFQ8HDy+h7Gom/LrUp/OlrNwygZ+cdxsRgcFaELkGz49H2vGSca
-         Ukl+qvwdTBtF38JfUHV/MQU73npyFeiizRv7yt/qWphKZoXqAHrWSRbyx5EkGxbdUh9k
-         pQVvdzDr+h/gzenV3MGC3BO2jrCxeCwiE3CdYv8+6NQ1X9JQ3A4pmcZLYJS0RBwpy0gN
-         kCng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784056551; x=1784661351;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=NVmBD966C9OYKfvXL3zarSW+MDcZqfgKZz9YMy/NnbI=;
-        b=ihS4K/C5VKz7iv2yhx2z7EV1t5CF9/+Y1E+2ydH89J1rCgBr365DBCfLZET9ihqSO4
-         5txMNAZV5m35LjOtIGDnFRijyhT8v9KhMbq0QO+sN7UwTe2ABOzInhcUfH0e65MWVrq7
-         dKruaNWhpjS/8LIqAb9yymSZzlBjSOtdQwMEwcw571mARnY0E0q5aV2weMgPnNscgbVy
-         8aeHIn8jQRipEoPA7uQYfMkiov12W+WIp0bwUff0ufPOm6r2tXiBYNg3ItJBhXXJ4sBa
-         yanhUScp3VC2kprx7E3QySE38LL+4Mz39DcDhoX7GJ8znrmCuT+0cYo+4rqFsII8H2lp
-         YNlw==
-X-Gm-Message-State: AOJu0Yy/0VTfpH9P5cpD0n3f+KSy7eA7B2siEakFKFUwveGJx6ECouct
-	47OnVNOQAdmnEZ/7w3xm9BCX1wHrOPMHMF/YF5Sd2e3ZxeKR56ztxWZk
-X-Gm-Gg: AfdE7cnDXFlloXpohRN20987SAHdnOFuwn6NNvIj0u4VW/73MftpSI/JqBO6ArC2R1h
-	8VAYkbiviuVgL7bjfSM0Ywp3aQlVGdFOaiZl2UbsBny/tPhUcNMd6q55doGR6b9HNWei742QAGu
-	9ZJoxnlbsOCCQyBe12o2X4y6XMBOuy2m2EbJ09lm8R6wOXI6fJHndEnuHibLQXPUn1Jbs6Q0g6K
-	Uz006cUCQ5UR4coQZw4EQfkXe5CyJOlYAQBxhk9+gwpI7flezrobNrTYAy4vW3PO1+wIm/iFYiD
-	FtXe9V/OB8FdlVFq7IMMU6QSv9Fi7Ty465Ajuv7S0ZaJ06nmAp2iCO2lYjCDmY06itUYOtKPMJg
-	Mo0FXJFJBm84rbkPs2aBm6GtzbMnKiteLrrK14fwl0fYkEnc4gluWW32oqe9dfP/19eXfMvhjXl
-	GGeISAbYBKJbw=
-X-Received: by 2002:a05:600c:604a:b0:495:3aac:1098 with SMTP id 5b1f17b1804b1-4953c28ef1amr1040425e9.32.1784056551104;
-        Tue, 14 Jul 2026 12:15:51 -0700 (PDT)
-Received: from localhost ([5.83.201.220])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49508725c0bsm96157365e9.2.2026.07.14.12.15.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 12:15:50 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="c9g3O8TR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=+y8MbrUOrzwB05+hHMbLFGSdunFxbfYSCzTa31t31qc=; b=c9
+	g3O8TRCslL3lW1qZP1ksCUCKFY5X82A4RYEmMwTOUJhPKWkUpfjOx6kepQ2xUqlVQCZ2ztsJB8ME3
+	J5RGFOtOZNWfib/JmLP4W3ktVlf8D02ttxx3bCALLP81bta5YGGaoWwHTcQXp0xv7whEsC0BhTMRM
+	+JqLgA1U13qyFGM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wjlUG-00CGAy-Q1; Wed, 15 Jul 2026 00:20:24 +0200
+Date: Wed, 15 Jul 2026 00:20:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: dsa: microchip: make read-only const array ts_reg static
-Date: Tue, 14 Jul 2026 20:14:05 +0100
-Message-ID: <20260714191406.195375-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	MD Danish Anwar <danishanwar@ti.com>,
+	Michael Grzeschik <mgr@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Yibo Dong <dong100@mucse.com>, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: rnpgbe: Pass an expression directly in
+ rnpgbe_rm_adapter()
+Message-ID: <dd0bb5df-22eb-481a-9274-7feb725172d0@lunn.ch>
+References: <7958e26e-a4f9-48ee-8d79-3797016944c5@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7958e26e-a4f9-48ee-8d79-3797016944c5@web.de>
 
-Don't populate the read-only const array ts_reg on the stack
-at run time, instead make it static
+On Sun, Jul 12, 2026 at 08:35:21PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 12 Jul 2026 20:25:10 +0200
+> 
+> The address of a data structure member was determined before
+> a corresponding null pointer check in the implementation of
+> the function “rnpgbe_rm_adapter”.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Please can you show the path taken that mucse is actually NULL.
+
+I tend to agree, that the correct change is to remove the NULL pointer
+test.
+
+    Andrew
+
 ---
- drivers/net/dsa/microchip/ksz_ptp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/dsa/microchip/ksz_ptp.c b/drivers/net/dsa/microchip/ksz_ptp.c
-index 8b98039320ad..5bdf829a6e38 100644
---- a/drivers/net/dsa/microchip/ksz_ptp.c
-+++ b/drivers/net/dsa/microchip/ksz_ptp.c
-@@ -1101,8 +1101,10 @@ static void ksz_ptp_msg_irq_free(struct ksz_port *port, u8 n)
- 
- static int ksz_ptp_msg_irq_setup(struct ksz_port *port, u8 n)
- {
--	u16 ts_reg[] = {REG_PTP_PORT_PDRESP_TS, REG_PTP_PORT_XDELAY_TS,
--			REG_PTP_PORT_SYNC_TS};
-+	static const u16 ts_reg[] = {
-+		REG_PTP_PORT_PDRESP_TS, REG_PTP_PORT_XDELAY_TS,
-+		REG_PTP_PORT_SYNC_TS
-+	};
- 	static const char * const name[] = {"pdresp-msg", "xdreq-msg",
- 					    "sync-msg"};
- 	const struct ksz_dev_ops *ops = port->ksz_dev->dev_ops;
--- 
-2.53.0
-
+pw-bot: cr
