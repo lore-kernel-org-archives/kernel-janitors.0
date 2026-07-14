@@ -1,47 +1,50 @@
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+Received: from smtp.smtpout.orange.fr (smtp-79.smtpout.orange.fr [80.12.242.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8D6426425;
-	Tue, 14 Jul 2026 08:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6455247DD43;
+	Tue, 14 Jul 2026 14:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784018862; cv=none; b=Z4QIEh7DxOBjY7MwGrHpqvZ5SZVlF+e/eJeY5dksIy4jGwlwVrhbWknZ6vSCi9M7JKGDMfMgPk6Q00afqYPirBj91vb8GBpWbSP2pHTzTL3bvvEqlyqyDOjQNoVaZGxpH5NpS1DJHtJL7hnIg8b4fwLV8lgZVIp495s/i6ApA+A=
+	t=1784038014; cv=none; b=B/BsQs1KzWouy2ylyFP0Fn/XbynvTos5ZihhiFb5FLrnJPlgg6EW/lblAoYGArN7zAcg29+3a7bXXnQSO0g9ywIiYlXlNOX69o/2+QlOQJTo1uBFGpnl/BNtimJ1C754WlT9I1kbVkZjWpn/UWcdZAEcoKo5AGFFe36/Eo2El00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784018862; c=relaxed/simple;
-	bh=6qaZdfYOy+9iyb+71Ve4dKx081yx6vTtXmIYF8XxotA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I2DmNRX2cndEHh6mEWHXJthn7ZTDRQbbjR2EYgCwJMt/TjFru5xHxz2l80h6WkDfvNKQh6w9qyAqXkK0KD8qok8J0VXPUW5aLMvGwy3lueFGk0avh1B7auen+udkWh7D18+V8CjN+loT343Tb+Y8ga84ovRryDBO8/hsDvx6WZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZPpVjFe6; arc=none smtp.client-ip=80.12.242.81
+	s=arc-20240116; t=1784038014; c=relaxed/simple;
+	bh=+mW9FRGGIksX8xUvoSHIsB58F6Y1gNJ1lpvBBlRsUxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZQeEmkvGTOQ2zF+oAT7cWVqxb9wmULSqCGzpL58ngBcYHvlD4yoG/V7JDz7B25V73+UJ39vTfbwpIWdQA/xDpKUj2kJ8sidEL0uxXW8F8wicNUYZXYFvuCyBT0WSOQAFHvNmxi1uQ1ANE2O8FDes9RZQkfAeiCp05JyXktyE7tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gA3VVSNa; arc=none smtp.client-ip=80.12.242.79
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZPpVjFe6"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gA3VVSNa"
 Received: from device-97.home ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
 	by smtp.orange.fr with ESMTPSA
-	id jYnhw0xqQOMpTjYnhwjvqt; Tue, 14 Jul 2026 10:47:38 +0200
+	id jdmYwryGUIOrpjdmYwdCwZ; Tue, 14 Jul 2026 16:06:48 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1784018858;
-	bh=SvCIfrvXBlB6yNdOsBs+WA8UQUHd2lG/ogZfMLbGJf8=;
+	s=t20230301; t=1784038008;
+	bh=+ERcgrOegSKuLIPL4or4RWuj4zLEeGH2UYWhln8zi2E=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ZPpVjFe6V6RXmOwCcRYUaOgpqai/gPommBlgyqtCsPABvqm7cAQcR+p4qZDUydi7N
-	 530K8RGGPma2c0WpUh/xIM6ZpDPWM+1of6k+nRJX7jt699G+HbP0k8CMImSq6+tIpu
-	 dR9DK+ySUQqd+rOxu5U1c/+jnOnrwJv+WSZSfDPB4i4o4U/PGKBkr1UvV6o5oeKPti
-	 3eg5lgH+6s+6t/pdNbeUOnyQQjQMeDsKABHV2Ca1kQ6Y0RA2GxtHkBA5PQ6KaUI/Rh
-	 Uo7Wd5Lsk4cRb/BnpYaRJ6T4qEoA48UoTquqNVlBTHxmtAV+/+bWyPIiiEC2o5jKKA
-	 W+2mY1szg1SFQ==
+	b=gA3VVSNa2X5AkRN3xmG98f4kHiSorJR+Za2t0Yqu4+ZWLU+867rOUd6a8n6MUZduk
+	 +DYq95qvhFJV1wv/ho094bN436exEbGLcWj7ZhsqbSnVU7Y2TRI4GJ53Z64tYlESqp
+	 NKMM9d7IEEPxzyVEnEygy9AV+6bTCWhs5Xc3m8Y4LafYACIsC23k6/KH/f+X9JMOBW
+	 gMMyaK0VDTEdbDa/9OlYQhUiEz3PzC+g1OgLQhNqwflXfatlHj3ejvKzwcOoIYlKqh
+	 7ZOCgxXhFVWF44s2VR71CmpgoMgZoRIHgjK+r7VSorskTemc0GX+s3gTzbkXWHSn9o
+	 jIOSI5KUX+T2g==
 X-ME-Helo: device-97.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 Jul 2026 10:47:38 +0200
+X-ME-Date: Tue, 14 Jul 2026 16:06:48 +0200
 X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
+To: Vignesh Raghavendra <vigneshr@ti.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>,
+	Michal Simek <michal.simek@amd.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/umem: Constify struct dma_buf_attach_ops
-Date: Tue, 14 Jul 2026 10:47:32 +0200
-Message-ID: <3ca4ace543a02ccfdcce1ba568895c994aad7abb.1784018825.git.christophe.jaillet@wanadoo.fr>
+	dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dmaengine: Constify struct dma_descriptor_metadata_ops
+Date: Tue, 14 Jul 2026 16:06:33 +0200
+Message-ID: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,7 +54,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct dma_buf_attach_ops' are not modified in this driver.
+'struct dma_descriptor_metadata_ops' in not modified in these drivers.
 
 Constifying these structures moves some data to a read-only section, so
 increases overall security, especially when the structure holds some
@@ -61,42 +64,61 @@ On a x86_64, with allmodconfig, as an example:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  10300	   1216	      0	  11516	   2cfc	drivers/infiniband/core/umem_dmabuf.o
+ 120635	  21584	     64	 142283	  22bcb	drivers/dma/xilinx/xilinx_dma.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  10428	   1088	      0	  11516	   2cfc	drivers/infiniband/core/umem_dmabuf.o
+ 120699	  21520	     64	 142283	  22bcb	drivers/dma/xilinx/xilinx_dma.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 ---
- drivers/infiniband/core/umem_dmabuf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/ti/k3-udma.c        | 2 +-
+ drivers/dma/xilinx/xilinx_dma.c | 2 +-
+ include/linux/dmaengine.h       | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem_dmabuf.c b/drivers/infiniband/core/umem_dmabuf.c
-index ad023c2d84d8..39b5564a4c35 100644
---- a/drivers/infiniband/core/umem_dmabuf.c
-+++ b/drivers/infiniband/core/umem_dmabuf.c
-@@ -181,7 +181,7 @@ struct ib_umem_dmabuf *ib_umem_dmabuf_get(struct ib_device *device,
- }
- EXPORT_SYMBOL(ib_umem_dmabuf_get);
- 
--static struct dma_buf_attach_ops ib_umem_dmabuf_attach_pinned_ops = {
-+static const struct dma_buf_attach_ops ib_umem_dmabuf_attach_pinned_ops = {
- 	.allow_peer2peer = true,
- };
- 
-@@ -205,7 +205,7 @@ static void ib_umem_dmabuf_revoke_locked(struct dma_buf_attachment *attach)
- 	umem_dmabuf->revoked = 1;
+diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+index 1cf158eb7bdb..fb21e0df5ab7 100644
+--- a/drivers/dma/ti/k3-udma.c
++++ b/drivers/dma/ti/k3-udma.c
+@@ -3408,7 +3408,7 @@ static int udma_set_metadata_len(struct dma_async_tx_descriptor *desc,
+ 	return 0;
  }
  
--static struct dma_buf_attach_ops ib_umem_dmabuf_attach_pinned_revocable_ops = {
-+static const struct dma_buf_attach_ops ib_umem_dmabuf_attach_pinned_revocable_ops = {
- 	.allow_peer2peer = true,
- 	.invalidate_mappings = ib_umem_dmabuf_revoke_locked,
+-static struct dma_descriptor_metadata_ops metadata_ops = {
++static const struct dma_descriptor_metadata_ops metadata_ops = {
+ 	.attach = udma_attach_metadata,
+ 	.get_ptr = udma_get_metadata_ptr,
+ 	.set_len = udma_set_metadata_len,
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 98b41b8f8915..bef2b031dba1 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -655,7 +655,7 @@ static void *xilinx_dma_get_metadata_ptr(struct dma_async_tx_descriptor *tx,
+ 	return seg->hw.app;
+ }
+ 
+-static struct dma_descriptor_metadata_ops xilinx_dma_metadata_ops = {
++static const struct dma_descriptor_metadata_ops xilinx_dma_metadata_ops = {
+ 	.get_ptr = xilinx_dma_get_metadata_ptr,
  };
+ 
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 6fe46c0c9452..fe33a20abc61 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -631,7 +631,7 @@ struct dma_async_tx_descriptor {
+ 	void *callback_param;
+ 	struct dmaengine_unmap_data *unmap;
+ 	enum dma_desc_metadata_mode desc_metadata_mode;
+-	struct dma_descriptor_metadata_ops *metadata_ops;
++	const struct dma_descriptor_metadata_ops *metadata_ops;
+ #ifdef CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH
+ 	struct dma_async_tx_descriptor *next;
+ 	struct dma_async_tx_descriptor *parent;
 -- 
 2.55.0
 
