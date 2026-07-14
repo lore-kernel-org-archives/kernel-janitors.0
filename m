@@ -1,125 +1,103 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013066.outbound.protection.outlook.com [40.107.162.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634F847D928;
-	Tue, 14 Jul 2026 14:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8673B3603D5
+	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 14:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784039023; cv=fail; b=JCEEV2uXSClI1jZ0+w3xYdKhVMRWvPWLSYRQGI1Vpw3rdYj/WoZWP5XSC4r7d0wZk94Cm4c45N9p5fTwuab5R8wb9YZyK330d6YEAPx60+n3ZaWkDVXVAF5zLj0M6gYIyRcqW7DsOBPGk1Imk9T+GYKmvRrk0qWFLW7z1FrAFcQ=
+	t=1784039603; cv=pass; b=o69tA9RwMCxSNCVCxb96Rn4sC7j7oL0DLVlHb1+ikuXguHq60cO/YkLS52+9OPmqoLED8sBpuX9W0TB/nhTG03v07FoOzm0pn8jWFnERWKCTFa3k3WuFHthct+AbnXP09pn/dMeHZFapperPk0mrJv1Rc6w7fsYxmQwKB1q0GsQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784039023; c=relaxed/simple;
-	bh=RhoMloSHZg1CJLhQJvE6MukkO7wKCm20AuksLBj3Zm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=p5v6AiJMIe6gcdw1HUBj1XmWWahIh4AhoAcWdfNHQAftzPj5WYp4x8jvs+LsNwZZ5T8cvS7/eyPmsuHhDVaLhuurwN+gEpFP4JyoczYC/kTySqUjpylxf4WVyCB1eT4GfrXT+6dmjbwWUehr4QpVzROtvesr+YkEFqkUjfSZu4Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=YTxAutcj; arc=fail smtp.client-ip=40.107.162.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1784039603; c=relaxed/simple;
+	bh=gXFrmG6jEHln72CF693YGMzKjCQZLOAxrQG4Tt+4Pxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HnmJzKRv9yORkcW5Hv6SW6fA+qhuhkt3C+hxFJWYTb8VvDVhANAI0Qcu/hVnTgrIN8W4nAGOpvlRom/qrY5/BhZxkKJNVnj4W3WvFlQ3wy21Dw3G1saBmaTL0WLNgQqxaj/ZOdNrA+wV0jw7riFW1o3AlMzC78o3Ze87/2F4lBg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBfUezJ4; arc=pass smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="YTxAutcj"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EMuGTJ/obR5geAXZ6JTjRi9qjU7DjwtaJ0LgRlCamxFXb7uxLJS8v++iuB4tdxbnYFmLo0HmlJVOUm53Fv8/9KHj1xHxJJkMKYvmkbwc8IrOF/vzYXxTo0C27bkSLnqqjKgR6KEpfUeYXaTHuf47VShafRleeNXZG6+pFpWIB+UXPNzMgNU/QG2WoBOnOzZHui0ZbEKWl8pfnRkb3d21r6q0QwnKqOswr5WgC6xpCgy5pYbkmIRVFpdL91X0fq26HfwMstpZJIKZXH289GYTDPp+h9tv4hV6QoMwj4AksSARtC2sBgu06iHzFsnUGz7PY+vp1GfrOi5Ls3CIa/m7nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NbTGL2W1tbRJgS5J/I9QgPZVjgYoekQGw3zKXQRSGW0=;
- b=b/biZ1zXYr83Q9n+zvnvd2RTuzrj7BmKFsa7BwCof/tD73jMxn6aACj8NW2sNyHcwpiRL/AtzTx3s4mTKMlBqu8BMbtGnjOrzw+C3G/a2N5K2MRlcjGow78vAxVhlcA7AHL+NgexQtwhkXI070IMmBPv7cZel3EIeP+KKYwFuawUmvO490OjunUQPOVdlWRb+ovOr96IqHb2XFGz2DI0jZrNcN9BbUfe8GCrjpWqAfYFdxMbfkE7b7R65VT5wxyZzg7AC7bgb5QvE098rHikHTDQ1dWT5hU47+Hhn4CRWQMA+dxV+tl+7h7njICXv54RG0vFreUte7ByWedAgCDgvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NbTGL2W1tbRJgS5J/I9QgPZVjgYoekQGw3zKXQRSGW0=;
- b=YTxAutcjk8yeVrbKsShI+uQ8yoVx7Blkci/lE+Yk3lewVtHP13nmG/TSAViqGwb5abDtQyhUjub0YnzgXc3Y4CuLR25cX4cYcXQLbdoSvucWTYvsEE1uLkyZfK/htnYWq96fVyN7sLQhuWziD9nWa6GGSBT6eDS9YnsyeQVoIzPY/kRCX/efFhumfuxwxGZ+POuNKzA9XVifq4URPLKSpZ30XO6YTqk5jJStrCjG+lkeJ2EY2mDrECM+eue1vtQftXgQsAEygO5EGmijPzeZGTpo9J9ry5hmydKh4Aquhdbi963sobgBiNnAFebhnrIMx5RKew0M9e8FcTbOp9AzpA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by VI2PR04MB10739.eurprd04.prod.outlook.com (2603:10a6:800:273::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.19; Tue, 14 Jul
- 2026 14:23:39 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0202.018; Tue, 14 Jul 2026
- 14:23:38 +0000
-Date: Tue, 14 Jul 2026 09:23:26 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Michal Simek <michal.simek@amd.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] dmaengine: Constify struct dma_descriptor_metadata_ops
-Message-ID: <alZGXqV_bvldvS-5@SMW015318>
-References: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: PH7P220CA0090.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:32c::13) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBfUezJ4"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-698562f10e7so6228066a12.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 07:33:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784039599; cv=none;
+        d=google.com; s=arc-20260327;
+        b=hyB4pwNm79Tg9E+vUr4lfts2yh5sXIEbLpNgr5Ai8F0XUAJcSr1T/5Yr7w0OSge6HO
+         iesIO1yI5N5qhK+VAxpCMD7Rz1/mYm9xIvd0nZAhyCDX7BF3jObl2SrS44CbsbFiuCAI
+         55lBZnRqc23NZ5tSuN5ZY7TUBLFW7eSLpNZDaBvAmHJA9R5eJysix9mlsR0rK2Znt8sJ
+         LeOYS5NdMuqdOmhigWs95Mka2DJiJSZ0Oxjahm0l0M57ihxsU2IKbJoB7tSzmc+LTEOy
+         0SCfAjE+81k2HVY+wDuX57QrpvP8zPoGfM6SO+CSeppSjxqb8YPTWzitCD7l7ULnXiNL
+         yT0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=myhkGa3cSq7N/yY58culCXKcRn2P9s26LCZA9dzv22M=;
+        fh=Ny6sp0+ZqNm/zT8E7HILSAFFVx+knfzuErfhLkEdMsk=;
+        b=KWX3tojGKMDLRreiLI3dT8xavbe1k2X67Op3vl1FMOgEK6u00XpbHUZF6ZQWwi/WfE
+         I5gbGuiN7Qy7BSzJOEedVSvyoQwgbVjxQKkexX9SPlZ80O0Z5sPSYFXNcDd1lOWTRvrD
+         lezi0A0bs8Bmz5E6rZdAGeMrD5rqvrLYbbS9vmlXTKp5FVj8pZ3HLllCK1I60iMKbs5R
+         0jNDLsN+6UtYJ1EABbJCH0ouXfwfSuDgpvUAo1UPFyFBwNDc5zokTRzwTzYLtoZ0DNC/
+         +xJx4/NgxIFMvZl+pBTMpt8Qj7+ygP/p27wiNNc0coa2c9q6Nia5mD75ujMALEIZ1DNc
+         RWUQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784039599; x=1784644399; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=myhkGa3cSq7N/yY58culCXKcRn2P9s26LCZA9dzv22M=;
+        b=dBfUezJ47ekK7SmRkxPAn7qKA/64f8Nu42+m/AQQsYBbpgK8GoYVeMBc2qy/3F59RJ
+         nQt8K7UV5U2e/PmahuiJs7JRjrgcYBEMajOO0fv2C72vpch51Ps2e0Za74rr4tTxal0w
+         vcXXO4jz9p27zeGrTaPBMWNoUZKj9a/xUmnEmzb2fT7UQ4fMPuib5P35elAk3u1UpBLg
+         5NLRLKsQII2P9UyOfbD9zR2YW9cESLyFhMWrAFIPFGmDJeSlHsOg9nx4x2Iaor/eO7Hi
+         e55PST+tcvp7XNXZIQp+/7dEPdhqO9R5oNI5osvTBdotRmIxSYYuT2clQF1L9kkRGHyh
+         R+eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784039599; x=1784644399;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=myhkGa3cSq7N/yY58culCXKcRn2P9s26LCZA9dzv22M=;
+        b=k+4h78tJKjeYygJ++vdZY3hFLGAM86+J2i4Oakdsx73m5k1JNWSI9O2+lPsgsd4sPF
+         uuDPIIWA05HiUQHFFN9RqH+iiSnrbnf17vCbCjlneRkCSXYPoqz5XfKzt404e0HCAJbR
+         CBs2Uj6bdix0cvO9Ve31GrYjTmFzO9WU3k6VgI5QWLhLJff5wK9SECPJny6V4lKPwW4s
+         rQNkOiQ32Kn1wJL/j1n1i9WuaUx56UFHR/CLpkihpVd+qHqwc5nPLhGRIjhI73sHN3FA
+         ZHoVB+AklLAgICjsTVfdNyqoXaDxI9vMQjwu+gstFUwCT8/x2uoQvy0nrC6eVMYCtUAo
+         Uryg==
+X-Forwarded-Encrypted: i=1; AHgh+RqBl/BAOl013AUo8mty725S/J05DYyygzGc+rJB88p1aAiD2pPV5Pd5iY9eyvilFzFtfK5yZ3Z/1v1jMO1hQiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgRze5wKUM7ZJUjWpTbTBQiBVbIOp1MWfvMvtJj1B4K7348TZB
+	de/GC3TPhTY+ZsyBuvyeySM/81BqpfMHGDZmABwBL+sq2xq4GKo9x9FQ1l3wk0Kr85hiBDzBsJi
+	6ugi+udEfAsL6unZlXdCVtnxN1ze4oGo=
+X-Gm-Gg: AfdE7cnG5VpM1EfoC7VSV2c6F98l6OvEf+T9i40fORqz+Tj0CXr5bVZTTjXjOAhqo/9
+	SQBPToKHohmOB2i+5/xH2Z4/ZQtWiW6VGHmtDF3emEcOZJkK6kuCl50jDMU6leNUfzbYWN2PCFg
+	OBF78EidCGGerWN0gbrql58Z1dOZRYT1mj+ZWVs9Zl5GtJSIva286YpEmO9C+NQExlMHy9z/vWe
+	/2yd+Mmc9qqlJuFcT2PLB8xOsZKIjTX+CkFrXStCRWmJeecsbI5P3gIRWmtFpb1kGU6FQSq4D/Z
+	Hk1px0oBe/SfWd1N61ELbn0G9/waQ8j2kBg2LaKlRBLHDjcLmsrtSzU3JxJqTA==
+X-Received: by 2002:a17:906:4791:b0:c16:71:d9ce with SMTP id
+ a640c23a62f3a-c1667996520mr142371366b.8.1784039599064; Tue, 14 Jul 2026
+ 07:33:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|VI2PR04MB10739:EE_
-X-MS-Office365-Filtering-Correlation-Id: d0605213-b3fe-4ce2-880b-08dee1b37f43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|1800799024|19092799006|376014|11063799006|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	EyToHlgddIXil/JVR/2sVQToUidHqBq2wxEJc4ySCwHKAYN0lYfc/zVOUWrK96LTqrtxZpzryOuyk8+f1pTrY5kKb3ZHoQqAv292Pjac4CVWVCTGxT+CoMpAords1sA2bApTibQzBwInGUSQB5nKH+RUqjJQWuP0WnaMCjljkJrmk1x60/HehZ6f0GHrhVg6Kxndy6KJ1V6ZCz5/nGw/nPcDzIsPkDmb/5bZ6UYrvK8M20K7/73mX5y25ugubx+Wo1vcHmMyEFTDR6wZWoA83PV5yPE1fKasGtLVP5tsvaCf8CBkyw0KziO7MYLl2aoLc1B9LQ8uvYUksDz70Z3eq/G0tayBNbDAsHpirIMY0S+RUTy2MLbYx2F2Xom2ZEqOJZtqbxSt3mfvlnK/E0+fTZKZjVhUmSdk/RnmbZnEHHtxXb7oYR1s7JbPxkFaQhQ0K7XBWPm6OwnXgMxM9L6aEx/Z+ttxhoZdXbayuNJ8kqWOU30QnNGlHl9MmB8orNuCuJJ6rSEcX2KuNhQzpB/bgQqrwM5+WsJjkV2O0L+KARkcWTt1xs8mm7APgln367urk5n6A7+DPLH3VGzoLtKHoYqBWal5XZt5vh6tmQpENsJZyX7jbIzkMJKGNtXiGQ3+4PTpWmv9KKxlBIOu1FRNEwobRi9LoEcHIZYSMSaZ5D4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(19092799006)(376014)(11063799006)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?G4Mobyjg6vdQaqqiQhm3fYJNkRheHNop+MzFa9b8CLEop7xY446lbd7dFqHm?=
- =?us-ascii?Q?dWfMYqeGbCtn/081wgCy+fHt96F5Ml9N6CkbKUYONN/lXVMcjJI/XFcKGq+P?=
- =?us-ascii?Q?CfAq+7uKxupYiwT4ue0UfUgPzGem+SC7bhgZxjlbb1fvdQ9mCxTatgep6YO4?=
- =?us-ascii?Q?XqGSPQcR0xebFFmZRwecyVqLIwNN9v1EqqkaXzmxW+wMNk2hFg4xJ3Dg+8xJ?=
- =?us-ascii?Q?JllIDchay1OYv5o5hcPb6t1qmhQVJ0opQ++ZIE7UkObjSAApGj1hfslXhUkk?=
- =?us-ascii?Q?R0E7iZzRejPZFiFcHfrrOY6j0ca1E2Tt+o/hFMkqA6q4Sw45p9bmqqhdaVcE?=
- =?us-ascii?Q?l/g4wb8HoUGWqMsj1EFTEx8a6ulRuJgg9fERyeKqt/N9BYAh+H4QmOeeaGaY?=
- =?us-ascii?Q?2eGheNn0yYFKE9brYs7CoREYz9lA2Jimpu9UTklJsDhsCDJgNy5UZt/XZQ+j?=
- =?us-ascii?Q?eLr3dwBkejO2KIWsBqHhOZNKUONotisQ9lJIoAPyqYVdVyxkYuafZpKD+9Fa?=
- =?us-ascii?Q?H1CdIPkabttGEfK9VjA84ZWScF/+dqnZQKF/snqKi3TAtlbxSFov7KqL0PQd?=
- =?us-ascii?Q?F3HTMBU8Gbw1Qe8EfXbvpLK/cYtYPfgV9SRsdVvWE8QAfnpAzR/NY4/mD+YM?=
- =?us-ascii?Q?rHBu6CaECv4ixeEx5BLx3y9p9dO4OlwuqByNG1XC2zIxZV2Ar26z+CnX+S36?=
- =?us-ascii?Q?oPuVdKBDHx1vF18dh5aI+vKCpdmIlN2kG2VeejcqhqY3SbjR5IsDpPlnVx1O?=
- =?us-ascii?Q?Uj7wRXQT4CFSi+iXkswAYQieahdYLPRGpKbgLKYAqX1o1z+qwKMsL4Sl9p8x?=
- =?us-ascii?Q?4tbOpcsclcDOv0+gsZWSCa86p6RoEaKdRDqC5U6IGfk5IkXPwqDLpMRUHx4/?=
- =?us-ascii?Q?8Tfx4LA6lFQNB6VZPiwIpX9A1qNQfIvV7cZ25DkOUbLYPG26JtMQSVP1I4Rf?=
- =?us-ascii?Q?3fdko2MrMChE8mCjkPEvN6LhgyjRoIj0Wv5enTYi8+rzVrXYZmBp7pi5JXXX?=
- =?us-ascii?Q?f8cNJNARXU4TOTp6eqG+P6iwCo/BbQTaMTSNQ1lq5V4z9UMu1iUdq8PnCIGx?=
- =?us-ascii?Q?irFl5qvr2gd5qAg04uiEFdlxE3wAfsIZ6SbZpByVtncRBecIW447QdVPOPBp?=
- =?us-ascii?Q?ByGOOkNi6C7+Zatph1S+m9A/ztnW2dPqzhqV/hXjUCsZFrwFx6LiKQ2AOPIG?=
- =?us-ascii?Q?DPwHOR0/vTTkVy/LashBTYoS9AdloBO4rb7OGF43RbHDhWy+/SMxS0YWOlR0?=
- =?us-ascii?Q?xbJZve9Wxx+aPsO1bICafNI/218BHcuGqI+1Rp8pZ46wzKjgjiHznbfJ4pds?=
- =?us-ascii?Q?qMIAjhqnotIrwzndYaiZ9mlTssss0a9XsMOresB/Zu3QY8n5GQZNAbIYhUx7?=
- =?us-ascii?Q?dyqhMtocA1hQVJq9d7TcrDjo7JUR0ow/pLSeZHit3y6HKkpvEspkA3KStOVa?=
- =?us-ascii?Q?zuKQkK75zYF0N1ScYEixFx1PURhb3vVR1U+M3/BlqWtF+9otYjqDGdJh5GFP?=
- =?us-ascii?Q?OdFFwI64Au1VpQ6X/fyl0+qQaQAhBDV53Q63FISrJTHUYK+ZHhly8KOlfG+8?=
- =?us-ascii?Q?l9R/An09Y9zEVPwfBUWLMTwQGTIs8HUsg+D0VCpuwEPk/Ly3ilklYKHdC/BR?=
- =?us-ascii?Q?S77XFlLKJfi8P2qkKL/ciKftRp+xRzC9FRZUnov17Y7NGvbgAk5QniWW7hDZ?=
- =?us-ascii?Q?Yf1W9zsp45BlxraPFUHUORFuPjDfHTTu8p/rptV71JuDL6V/dLMlfNCo2yaf?=
- =?us-ascii?Q?Jszt2a7wm6RMwjQ2iua5+Ekd2Be53I4G2828HyBaiYcXFJEwfJbu?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0605213-b3fe-4ce2-880b-08dee1b37f43
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2026 14:23:38.6857
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8CcG8tHCxbjt4QO8souESTBzA6QOX0myUEiZ1haBa/UtYAc7kYBm6IMR+9vlhapY3yaMaCmTsPFG/m+Ku3EFZk9Zz3/Ynq0J7Gzsc3dXmKAKZQcSSKUgGtXElUhk8fYe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10739
+References: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
+From: Sai Sree Kartheek Adivi <sskartheekadivi@gmail.com>
+Date: Tue, 14 Jul 2026 19:59:36 +0530
+X-Gm-Features: AUfX_mxwZgJqJ1IU2yY6JoQF_Xog1NgxPfEe0ScKaP2Rhn8fgDalvg7vZYXv3JM
+Message-ID: <CA+LZ_WZXo2Dv_xTXT+raGCg=HMfcJ1O=8W6wJ2MAy9-iEYM4Vw@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: Constify struct dma_descriptor_metadata_ops
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 14, 2026 at 04:06:33PM +0200, Christophe JAILLET wrote:
+On Tue, 14 Jul 2026 at 19:45, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
 > 'struct dma_descriptor_metadata_ops' in not modified in these drivers.
 >
 > Constifying these structures moves some data to a read-only section, so
@@ -129,18 +107,16 @@ On Tue, Jul 14, 2026 at 04:06:33PM +0200, Christophe JAILLET wrote:
 > On a x86_64, with allmodconfig, as an example:
 > Before:
 > ======
->    text	   data	    bss	    dec	    hex	filename
->  120635	  21584	     64	 142283	  22bcb	drivers/dma/xilinx/xilinx_dma.o
+>    text    data     bss     dec     hex filename
+>  120635   21584      64  142283   22bcb drivers/dma/xilinx/xilinx_dma.o
 >
 > After:
 > =====
->    text	   data	    bss	    dec	    hex	filename
->  120699	  21520	     64	 142283	  22bcb	drivers/dma/xilinx/xilinx_dma.o
+>    text    data     bss     dec     hex filename
+>  120699   21520      64  142283   22bcb drivers/dma/xilinx/xilinx_dma.o
 >
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+Reviewed-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
 > ---
 > Compile tested only.
 > ---
@@ -154,25 +130,25 @@ Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > --- a/drivers/dma/ti/k3-udma.c
 > +++ b/drivers/dma/ti/k3-udma.c
 > @@ -3408,7 +3408,7 @@ static int udma_set_metadata_len(struct dma_async_tx_descriptor *desc,
->  	return 0;
+>         return 0;
 >  }
 >
 > -static struct dma_descriptor_metadata_ops metadata_ops = {
 > +static const struct dma_descriptor_metadata_ops metadata_ops = {
->  	.attach = udma_attach_metadata,
->  	.get_ptr = udma_get_metadata_ptr,
->  	.set_len = udma_set_metadata_len,
+>         .attach = udma_attach_metadata,
+>         .get_ptr = udma_get_metadata_ptr,
+>         .set_len = udma_set_metadata_len,
 > diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
 > index 98b41b8f8915..bef2b031dba1 100644
 > --- a/drivers/dma/xilinx/xilinx_dma.c
 > +++ b/drivers/dma/xilinx/xilinx_dma.c
 > @@ -655,7 +655,7 @@ static void *xilinx_dma_get_metadata_ptr(struct dma_async_tx_descriptor *tx,
->  	return seg->hw.app;
+>         return seg->hw.app;
 >  }
 >
 > -static struct dma_descriptor_metadata_ops xilinx_dma_metadata_ops = {
 > +static const struct dma_descriptor_metadata_ops xilinx_dma_metadata_ops = {
->  	.get_ptr = xilinx_dma_get_metadata_ptr,
+>         .get_ptr = xilinx_dma_get_metadata_ptr,
 >  };
 >
 > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
@@ -180,14 +156,15 @@ Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > --- a/include/linux/dmaengine.h
 > +++ b/include/linux/dmaengine.h
 > @@ -631,7 +631,7 @@ struct dma_async_tx_descriptor {
->  	void *callback_param;
->  	struct dmaengine_unmap_data *unmap;
->  	enum dma_desc_metadata_mode desc_metadata_mode;
-> -	struct dma_descriptor_metadata_ops *metadata_ops;
-> +	const struct dma_descriptor_metadata_ops *metadata_ops;
+>         void *callback_param;
+>         struct dmaengine_unmap_data *unmap;
+>         enum dma_desc_metadata_mode desc_metadata_mode;
+> -       struct dma_descriptor_metadata_ops *metadata_ops;
+> +       const struct dma_descriptor_metadata_ops *metadata_ops;
 >  #ifdef CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH
->  	struct dma_async_tx_descriptor *next;
->  	struct dma_async_tx_descriptor *parent;
+>         struct dma_async_tx_descriptor *next;
+>         struct dma_async_tx_descriptor *parent;
 > --
 > 2.55.0
+>
 >
