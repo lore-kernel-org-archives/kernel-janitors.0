@@ -1,73 +1,71 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580D4E3780
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 16:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD4639CCE9
+	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 17:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784048368; cv=none; b=EGupvoAMOQ+8eI0WLU0chUNfunOpwhg9Qf4GJ+0UKxPxbBSZZOOb+VqVNxFpXbgOuB1u64aGAxvWf7sB+x+AHFFGNfVjaGDCx22oWOr3P+8GvZkhDTJE65zUSqtG76KmIJodXOh0N9KFPDrsWXCfDO0E07u5FZWNn20/1cqOIyI=
+	t=1784048686; cv=none; b=MFFtD7lKgr/bq1ylnmX4KnP65tvLSQgAg+bKnuJSY9ML0JrjsT4CxHp4oRhXkpZeW3I+wvQqwJiqs3crbFVd2g7LqrwvK6QXzptmqN7VixFqYSlqmd6EBM+2V9AEQaqzXxYdLC1XphLhce/vCVh/A5ktUDm48R1IdjSNKDBeXFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784048368; c=relaxed/simple;
-	bh=xG9Kwn5y5gCw9fBzRJfdS4XROO2aFj5m8mD+l2ArHdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=huGUB2t+EZVkkQvEzdNsD2MzPwf1LXmExnlm94FFDIZO7gMoL+kj8NjK3NDsTS3Yp6140wte3kM4r07SpPWsH7SYVP/ySm9Z4ezh0u2EOV8Xnkmszu+QKRan7uqOLOGfXo786fqgNyj4iGjkd75pxyCXc14K7/FFLn3Nuhp4WJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwY9Gky1; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1784048686; c=relaxed/simple;
+	bh=AefdgQSpXV3ssbjNUmYM0AzKNLGHbhpbCMLs3U8ZwXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Avzq5QSP4GilsK9nfS4CKpZgnhCpYt1E9WKx0r1KunWS54KfjBfO4r0uVMGEIbOxGXiKIyKvNbBTwvva+gKxAi567W3t+Fsg7eKKiMKymFOwYKYQ+d6JPn+Pk1xmbHG+i4EkegRe8I0gyf1eRqkMMpSTUWTWSHEnSSZ1SXjgW5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOo7+4Xh; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwY9Gky1"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-475cb71a4ebso4325966f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 09:59:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOo7+4Xh"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-493b27c7451so14525525e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 10:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784048365; x=1784653165; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784048684; x=1784653484; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0UrX+2PReJBw6XIph6Tw/hL8PSQO9wuRuPP9B9P45GQ=;
-        b=KwY9Gky12AVvGx4Q9fve3xARwxMr6oah3KLujBA1u3aia+hvRJ50SVDfpO4xk0ssQr
-         LAFriu/R2zGy2qmNwvQlBxYy5+DhNRdwlfj6ODfsdUcFniHod/aCCJYTjUzZQKgdaUO0
-         hYD9D8d7+TeeTm+hNJNP6+82+cv6WkZdbMNHONg4s4etPDQUErqgGTYWEvHrDPH3uS4r
-         i4S0YHWYiwav0qCP9XochcGNpYgQytmdsOeYQ+GxiRVTJotBnsPOzpjESoH13Uv2ZHEs
-         wVMGcAVc4i6uSmulYE1Cg7WanRdgF0nT/WeoLuXQufExSnzJFfQ7ef8LjQLdgF6jwF0H
-         q5wA==
+        bh=5uxmDEh/NMeO7bStSuaxaeVMeCVKpnJ6+/yPoC+CqNQ=;
+        b=MOo7+4Xh73HIvSEkRIbmQzunOulrLASHmhd1HrTG5itb0EgbgHYCMA5Owdgmh0DVFc
+         P0lLAVAl9dMxDVvAyEfT1iqJGrZJ+Hq1TSnti10oKTyzsjS9GjcYq6qnCX5J6urS9DBC
+         SAUCC/vdKZ0+bmyyzYpi581mRTeXgIPGKrDh2qWFdTSEFGWJ0H5hHP5DLFh1NCTb2kus
+         Etk3Lf6osezLIBZMENqCT2KNmN6D0HfeMfE6ATQEBh8DxSv5+ktCzgjkv+rwbZXSAuxL
+         TFckmK8I1vNvlfY21HPKLIA+mPkGq5OR7O/oHetHp4Zi+RYN4NQgdSIkhqxWCp1hwJQE
+         94bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784048365; x=1784653165;
+        d=1e100.net; s=20251104; t=1784048684; x=1784653484;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=0UrX+2PReJBw6XIph6Tw/hL8PSQO9wuRuPP9B9P45GQ=;
-        b=c7jLhin36/mDL9aZJ6Hd57+vKOnuCsYgsHg088t8RPBNH3hZ1s2XMzmP3hirUZAG/E
-         83ziMGsosF8gmiyv4ai9JvlfQI/T271LKJgFkhY+EuEx5ZuHqrFS8ygOUPxWwwQ+e2jE
-         frVDqY10VhuxNkzU/dFgo/wSeMEA3asil+HqQ8LNyXXDEIPXasxuYsYFJY6nGi8cqx09
-         +o7Y49izC44Sw6UtpdHrcvkJcsMJcIF/N7eMwxH0SiP0Voks/jzA4M7CcinARGg+A1Uy
-         A/scd/RMxAdMJG5pjNgdRKkyfcQJdjYY5CCjqGBEMf8PybBZBKgx+4G0vJtVyL649TOr
-         STuA==
-X-Gm-Message-State: AOJu0YyiRHDz5plq5NzJLMOmHGixYIjOkiueAeFGvcvvo8TKZMtaq8Zu
-	dQxIDfc2GZNhXCF8eL13bgWdo7GZ2zfbzZlZfs5sldS+XuG+uzAATh0j
-X-Gm-Gg: AfdE7claVWioPeuERMKn6EVP59Y/9b+7vrqNh21hFEaqGPpYpx4JBowAnYLg8AZt2SD
-	CY1R3LTx1scnHD5IF+r6sDDeRQViP/X0WTFqrrn/EcCu+ak2lwaIjE5bTG/fI6SL38dTzdMg9I4
-	8YFeVsPU4xn/C83ZYpHB148Ziy2zmkn/4qWiUfYrTWl8LesrSGKzoqJK2Ix8TkSsdUb3wxAlEo9
-	yB3BDO7kGlqj/a5yD6l/PKO9p/ii7bH1DUvjQ8BtBfuepFD6qQKTNgEZQvnEsePfontMXJPJd10
-	H5rnPkiTqNPW7DS0V8jiHDYU0ZYuvAY7lG6qMDnmbunfCWZuvaA7SyvW2UYXZTbFOj2I1VL+huw
-	VCNVZchrOJ2Cbs9Z0kvfCc41SUF376JFh40BV2fyAtNLqmpl/+XdSzB03Ch3lN6HO4iem8V5FSU
-	d7C2JO9F0uuwEGICGvRUjzKA==
-X-Received: by 2002:a05:6000:2481:b0:475:c946:36c5 with SMTP id ffacd0b85a97d-47f2dca7f13mr16783953f8f.9.1784048364994;
-        Tue, 14 Jul 2026 09:59:24 -0700 (PDT)
+        bh=5uxmDEh/NMeO7bStSuaxaeVMeCVKpnJ6+/yPoC+CqNQ=;
+        b=d7UbxZ7//jqTc+ceZ1vopLo9C+jQ8HuG/ZgjqP6hoVqujnIK+4YHBnJO6biqU0IQ/z
+         cEIF0RwAcYMaRjgoZ7S9m+xMxarVgegwL+J5ai4l0jpD3UbHw672fMa2P6rqN3wtKjMT
+         SwOsRNvaV7jbSzSklbrt7m8UlJ6TF8iaIj6X0mdkjWjeHc5jAbZdv37mjQ4JsqdLRmo3
+         zn5Inzi+1OO+uUa15jjjTpz2coqZC6Ts/pYOEx2ZePtpamRqGFefFeabzSCjrpBcVWMC
+         pOMbDy0aryOzMofobiwZ3qP+PNVB0oZGc64WnrlZBCEcFJ9U6lkRAFyYIcif4JY2grmM
+         5MmA==
+X-Gm-Message-State: AOJu0Ywut+m3dI3YOjRdTiB4LBfVqenFXTPwmeo3coXpzzvGf4pHO8Ol
+	SU2BpQHmMUsz81Bp1EUlMKyAu3/gI5br0s4hKG1HP56zNgpqEnYQAIYT
+X-Gm-Gg: AfdE7clKMB2CiYGJYy/rS5W2a5gdbNxE019+US2yxbljG4A4mBfT2+yDgU1x+p+Yx3d
+	m2f+jGTbIXapDBO9FJRctspIyO+lAgAKcCUW8M054Aq3FFCJUK35ZXVmGTtAJBPgTKl8h7hbB3L
+	Dzmg5WnsKATx1sBDIl622ImMU5NyZLleIvzHi9N1KwSXctPODQK4DUh78BUmWcs5yyCAvzb9mL9
+	gkpzLhJ+kM2WAjaAQhyxhbnDSZ0lzruBw/BhOIEX2OP9Nj2lyF9xP5sVq++VZ9yL/w1m+h6Y+bH
+	YARjTgm1CZ2Rm/DGpx3h4p3hZq4AE7p3WUSME9ix2p9KprA/wkNbfAtfPJJ+0yBqREG99rcn+z1
+	OK37C2AaN6KMmAJIsKBUOWBynnuU4wHXHi5VQl56DNATh433duYRfW8a69OAqvHIcRBE0ehGzjd
+	E/l0nAIbahiwc=
+X-Received: by 2002:a05:600c:8b53:b0:493:f13c:9c03 with SMTP id 5b1f17b1804b1-493f88dc201mr134008955e9.19.1784048683759;
+        Tue, 14 Jul 2026 10:04:43 -0700 (PDT)
 Received: from localhost ([5.83.201.220])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4635aa34sm8858744f8f.15.2026.07.14.09.59.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4953b8d4352sm1710775e9.0.2026.07.14.10.04.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 09:59:24 -0700 (PDT)
+        Tue, 14 Jul 2026 10:04:43 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Erikas Bitovtas <xerikasxx@gmail.com>,
-	linux-iio@vger.kernel.org
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-gpio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: light: vcnl4000: make read-only const array regulator_names static
-Date: Tue, 14 Jul 2026 17:57:39 +0100
-Message-ID: <20260714165740.186119-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] gpio: bd72720: make read-only const arrays regs static
+Date: Tue, 14 Jul 2026 18:02:58 +0100
+Message-ID: <20260714170258.186766-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -78,27 +76,63 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only const array regulator_names on the stack
-at run time, instead make it static const char * const
+Don't populate the read-only const arrays regs on the stack at run
+time, instead make them static.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/iio/light/vcnl4000.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-bd72720.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iio/light/vcnl4000.c b/drivers/iio/light/vcnl4000.c
-index 128ae3f94074..b8ac156ad5c9 100644
---- a/drivers/iio/light/vcnl4000.c
-+++ b/drivers/iio/light/vcnl4000.c
-@@ -1922,7 +1922,7 @@ static void vcnl4000_cleanup(void *data)
- 
- static int vcnl4000_probe(struct i2c_client *client)
+diff --git a/drivers/gpio/gpio-bd72720.c b/drivers/gpio/gpio-bd72720.c
+index 306e23411209..c124d964e4cf 100644
+--- a/drivers/gpio/gpio-bd72720.c
++++ b/drivers/gpio/gpio-bd72720.c
+@@ -85,9 +85,11 @@ static int bd72720gpi_get(struct bd72720_gpio *bdgpio, unsigned int reg_offset)
+ static int bd72720gpo_get(struct bd72720_gpio *bdgpio,
+ 			  unsigned int offset)
  {
--	const char * const regulator_names[] = { "vdd", "vio", "vled" };
-+	static const char * const regulator_names[] = { "vdd", "vio", "vled" };
- 	struct device *dev = &client->dev;
- 	struct vcnl4000_data *data;
- 	struct iio_dev *indio_dev;
+-	const int regs[] = { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
+-			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
+-			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
++	static const int regs[] = {
++		BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
++		BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
++		BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL
++	};
+ 	int ret, val;
+ 
+ 	ret = regmap_read(bdgpio->regmap, regs[offset], &val);
+@@ -111,9 +113,11 @@ static int bd72720gpo_set(struct gpio_chip *chip, unsigned int offset,
+ 			  int value)
+ {
+ 	struct bd72720_gpio *bdgpio = gpiochip_get_data(chip);
+-	const int regs[] = { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
+-			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
+-			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
++	static const int regs[] = {
++		BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
++		BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
++		BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL
++	};
+ 
+ 	if (BIT(offset) & bdgpio->gpio_is_input) {
+ 		dev_dbg(bdgpio->dev, "pin %d not output.\n", offset);
+@@ -132,9 +136,11 @@ static int bd72720_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ 				   unsigned long config)
+ {
+ 	struct bd72720_gpio *bdgpio = gpiochip_get_data(chip);
+-	const int regs[] = { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
+-			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
+-			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
++	static const int regs[] = {
++		BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
++		BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
++		BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL
++	};
+ 
+ 	/*
+ 	 * We can only set the output mode, which makes sense only when output
 -- 
 2.53.0
 
