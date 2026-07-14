@@ -1,82 +1,112 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88433FA5CB
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 08:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B893F39DB;
+	Tue, 14 Jul 2026 08:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784017345; cv=none; b=R7yj2MQR4NSySOYeTv364qzCB52Sh+yWDmP4IKrgboshNE13li9qAlubPdbPBMbDL1/LAzRtNh/wpJXX6uAJ3jPWwKmtXYodc1EPtiX4hpCne3YN3rb8e1NEkV+nekUHdwVspxHFPJ3nxnox3tc7rvl/HxDFJvMOIo2jKJO6pp4=
+	t=1784018378; cv=none; b=t8J1D+Ua9M+0bSqngTY5Y7SvAtXnVSiiVB48EI8ZyyQvj+wO166XoF2j+7sSdz5XIrUMgMvc39WPn2qoGwNS6mycgpCqr/L2hUgzcJgy/MaBh+QHoUBGb0SUJU20EHfCZqz4UAdrA8+tx552W2DL0nWnUPmVSZL7CEg1KhaT2PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784017345; c=relaxed/simple;
-	bh=/aAao8KbeMGjrRsPvmBfJ7JE4JAtEfFcaMI2EW93LWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rU9Af8X1RAWUYv6FY/Mpkn8yqjKAf9s4DgvFjcSY2QkH0tWZfX4CNn/dFDSqva/yBvacb7PFHJr6CM666H/ycx6LmFxjGTxuiE1TtRP7+i9C1+XmWz3xuniIg0e8A+9l82rGYKNCReJQNv6nu2ZcFC1T+Yc2sYJccCKSFSwjQe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hH4NZUNP; arc=none smtp.client-ip=80.12.242.17
+	s=arc-20240116; t=1784018378; c=relaxed/simple;
+	bh=TcCXI5sFVNdiP4Aa9Hwri0N4gaCFblrR8MfWjNjDi9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ejpp8axpMMxSZ8XyyBrdctH9p1lIvetTDPV8QDpOF9wlH2Y98r8iDn1QZehqa6m98t2T/VKd0re/oUCp+CVdKdvtZ8/4/ZbThG7B70gTr3Iza31mOe4N5pxUrQpbCB457bKZKkJwEVCF5SIHpYzlgKoSRUg0MApZyjSbFZIBDIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gRpPUzyV; arc=none smtp.client-ip=80.12.242.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hH4NZUNP"
-Received: from [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e] ([10.64.95.99])
-	by smtp.orange.fr with ESMTP
-	id jYO2wyCTId4ZljYO2wcJMY; Tue, 14 Jul 2026 10:21:06 +0200
-Received: from [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e]
- ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gRpPUzyV"
+Received: from device-97.home ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
 	by smtp.orange.fr with ESMTPSA
-	id jYNswQfQaajQCjYNtwI5ec; Tue, 14 Jul 2026 10:20:59 +0200
+	id jYfgwv96VDc2NjYfgwPCKB; Tue, 14 Jul 2026 10:39:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1784017259;
-	bh=R/ZP/NLJuU34Qnz9im12DTJ/ZIfKJhQvmYHzhR/bf+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=hH4NZUNPqlzQYA6nExHZ7RByXB997hb5lmB2rrI71E8Xwy/poMLdtFEwS/QATlJcV
-	 3Dr//lU7SDtCyRkZLJzaR3K9A1YLTvPbfb1SQJmJMLoxpNxWS5fEv92/uMe0SL9dF8
-	 +wezz9o8g9npusxGIERR2JhXpwsuMPfRCrdzb0hZn/AjYlnOIAkaI1FdF/Yz7PqNas
-	 kBRQ7RoeyOBVB8fnoLVuvcu9PhcbN51G5HTfTSgVv2vWoiHVt7qnyFh9BlIWezkmeI
-	 6LB71eU6nVkBaH/sJjgbKpueJt8yuQDIRX1tDYPzLRJEb+HMpAkFnuevC6TeGVnjjj
-	 tQxvrdMaf2TvA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e]
+	s=t20230301; t=1784018361;
+	bh=QgPtgLnsf8qvRaDX9lHTjdZhI5SOrPpagXLEfKGMxTM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=gRpPUzyVFJ7IN1ZMiIuiUrY4DxYS+BmXLoy+qESTd3mhCKxiBX62etJWlTQsaFFhH
+	 +hlJuYlmV8LbWRbHV5zatiSSl46bkRdY1QWp71diR+/6M7TIamrLZdFZvlxqsNPU/4
+	 KBESBNgoa8kWk/q0LKT75K/C6SkvUD8UGOMGiYQ89FLUfnTRS1ParEWn/7qOyVCVhG
+	 +DVi92IX087ztsVo8PzQtMcLy8rWNkGWZW5zO+AH7SNs5rznJevS8kHx9IGP9C7MHt
+	 +cF6N3S+ARexkpAxO+4CH+BrNP4zzKPIm+9uDENf0lhVu4mbdcTdBE6h6dxtP+O8GF
+	 Vrh4lKmhoUDOg==
+X-ME-Helo: device-97.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 Jul 2026 10:20:59 +0200
+X-ME-Date: Tue, 14 Jul 2026 10:39:21 +0200
 X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
-Message-ID: <04521906-da94-466c-b7c1-7d119eca9508@wanadoo.fr>
-Date: Tue, 14 Jul 2026 10:20:56 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org
+Subject: [PATCH v2] wifi: ath12k: Constify struct ath12k_dp_arch_ops
+Date: Tue, 14 Jul 2026 10:39:14 +0200
+Message-ID: <969d732e2c6f169e1aa5e89c7e01743a1adb55df.1784010931.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath12k: Constify struct ath12k_dp_arch_ops
-To: Ping-Ke Shih <pkshih@realtek.com>, Jeff Johnson <jjohnson@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "ath12k@lists.infradead.org" <ath12k@lists.infradead.org>
-References: <469d732e2c6f159e1a05e89c7e417c3a10db5fdf.1784010931.git.christophe.jaillet@wanadoo.fr>
- <2efa694140ce418c8d83a62d3f7b5309@realtek.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <2efa694140ce418c8d83a62d3f7b5309@realtek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 14/07/2026 à 08:57, Ping-Ke Shih a écrit :
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->> --- a/drivers/net/wireless/ath/ath12k/wifi7/dp.c
->> +++ b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
->> @@ -139,7 +139,7 @@ static int ath12k_wifi7_dp_service_srng(struct ath12k_dp *dp,
->>          return tot_work_done;
->>   }
->>
->> -static struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
->> +static  struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
-> 
-> Did you miss 'const' here?
-> 
-> My bad!
+'struct ath12k_dp_arch_ops' is not modified in this driver.
 
-I reverted the change to compute the size before/after and forgot to add 
-it back before posting.
-Sorry, I'll send a v2.
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-CJ
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   6318	   3384	      0	   9702	   25e6	drivers/net/wireless/ath/ath12k/wifi7/dp.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   6478	   3224	      0	   9702	   25e6	drivers/net/wireless/ath/ath12k/wifi7/dp.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+Changes in v2:
+  - Add the missing const!   [Ping-Ke Shih]
+
+v1: https://lore.kernel.org/all/469d732e2c6f159e1a05e89c7e417c3a10db5fdf.1784010931.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/net/wireless/ath/ath12k/dp.h       | 2 +-
+ drivers/net/wireless/ath/ath12k/wifi7/dp.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath12k/dp.h b/drivers/net/wireless/ath/ath12k/dp.h
+index 64f79e43341e..a94bbc337df4 100644
+--- a/drivers/net/wireless/ath/ath12k/dp.h
++++ b/drivers/net/wireless/ath/ath12k/dp.h
+@@ -538,7 +538,7 @@ struct ath12k_dp {
+ 	/* Lock for protection of peers and rhead_peer_addr */
+ 	spinlock_t dp_lock;
+ 
+-	struct ath12k_dp_arch_ops *ops;
++	const struct ath12k_dp_arch_ops *ops;
+ 
+ 	/* Linked list of struct ath12k_dp_link_peer */
+ 	struct list_head peers;
+diff --git a/drivers/net/wireless/ath/ath12k/wifi7/dp.c b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
+index c72f604661ce..01a45f428990 100644
+--- a/drivers/net/wireless/ath/ath12k/wifi7/dp.c
++++ b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
+@@ -139,7 +139,7 @@ static int ath12k_wifi7_dp_service_srng(struct ath12k_dp *dp,
+ 	return tot_work_done;
+ }
+ 
+-static struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
++static const struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
+ 	.service_srng = ath12k_wifi7_dp_service_srng,
+ 	.tx_get_vdev_bank_config = ath12k_wifi7_dp_tx_get_vdev_bank_config,
+ 	.reo_cmd_send = ath12k_wifi7_dp_reo_cmd_send,
+-- 
+2.55.0
+
