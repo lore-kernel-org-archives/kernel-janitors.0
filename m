@@ -1,93 +1,99 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882C3412C0A
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 17:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7E6362133
+	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 18:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784050811; cv=none; b=TXZq+Iln3tBKmqiQa8z6MUpnsVbX+cQ9cbYpHdHBMNOywtCeVPkKmeCF+0I/+oVxF3To7uME5AAX0iVq/prrX6KSC8UtXIfx4mf/qwPI55UBAjv04weXsCV2zxl57zahwd3zoLmC51ir0+4/m0yTZ2Ux98OCIyJBCjvDRQa2Z6o=
+	t=1784055493; cv=none; b=oKwqURs+EfoE1AJ9po7MWEI4UfpctkaF+G4qyLALwOTun1Tkw8DFNJbMKd9Xr5IeaG3/1WIXRYo2xi7Zocr7OlkFvW5V4DmmYRaXYFcLERvuXQ4LOMTLknJxExGeW3vYdsdQ80zk2raFp8DjcBweIDuaQrJh7o7cCp7Up2VW7P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784050811; c=relaxed/simple;
-	bh=ntE5gUyeHfvczYgBZlJCp5YQfZPMH3wMiXFtAFptok8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7hOOozjHcb2iVUUNOPxwL8YroKt85qTjyKftzlWn6he35i4A7WQnAcwNrHoQVPae5DqGTIW1DIlyhHgWivT/S22BNwb4Lt0Erc8fl6pOya1ajC1eplRm9UzppHpOV/KADU1/LWX5VXtK4XZwSo3EBB/qM1JExJyl4m3QmSGutA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=jJaUarn+; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784055493; c=relaxed/simple;
+	bh=r7vO+6D+doHDQBycv6NEraWTa4C1zJkdxOJZtuZheBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F/bbNC3n3Y9PPTN7Q/FryjTDuD6O7ibbHRACjPV33/E+GuNEWs8WXcm5Xjc1aZb7Sb1CW4VdLiiTtwnUkwNO2QKxZGqCFJrgyzkEcq5U08CBKXLitsa0JPuk45mUloEKhxIIDKegfe5r73ZxPPKUcU1xOzR4p1kghN9brhbal/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZ9MCTo/; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="jJaUarn+"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6a1888969ddso2629337eaf.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 10:40:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZ9MCTo/"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-493c2c0b9a8so9239015e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 11:58:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784050805; x=1784655605; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1784055490; x=1784660290; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=nJbEasVmJvkTSljHdln3El2Qwe5hfdOfzDuw4LFkn68=;
-        b=jJaUarn+1Emy2OVh6Cz9V0eNyxlDKCgyNcjqQ5rZLU1uiQeBokwJ0EhCIGM6/MeRnj
-         Quyf6rtUfaCvI09ODZV/sNUZBVqz/UMnfeh/FfJ87C61hWvNwa7A5hGiQoqHZKyQOQmt
-         GguC//2BkOpYgYE0uNUtnbtyEQ2yVwHro37PMayp4XLhqFIgzcIpZrD6X9g8gK+VDHhP
-         /SivnoxQbqlG/IrC308qZ685FQv73OnpDjSv/gkClJcKKy+0rHl6rvJakFQ4n/+7jdNz
-         5w9J7l2xgYGSrl4aq282fve/3/Pn7HMo5OxOGzK7kt7mSB6PzL8Ax8ckSaSCs/A+PXAw
-         7dog==
+        bh=eGTEeSm5cUoly09bJoH7FY37/5lDoT4kE6vjdJNNP+g=;
+        b=NZ9MCTo/IueBjGG70aJtlzBtiX/MGG6EftIzaTdx1aXIP3Kes48WU+JzAoOaT/ubAo
+         Vwe6Zab1jzmoGcNzwemjVtIP0vARQl/MsxAbc/cqb9593/+ivxKYnIHzSwpKLo6XHQFq
+         qSejhjupAwiTJ8+fU2lJgLqVEw4KwKahyQO8nsWYeKWWmQu7mGskgYhoygy9tL14euML
+         ZM7FkH5OJjUGQhBdEKtpZA2yUx2Vaj2aTTEg41kz6DumEpyBVVYNjI4WTyjaX5bgdrnQ
+         RrbiI3DPWZgoiZ7l0+Hmll4STWvNRvzzPA0UQy51HxXF9HnLtPar66I5QVpv1FAiz4sO
+         NQ6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784050805; x=1784655605;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=nJbEasVmJvkTSljHdln3El2Qwe5hfdOfzDuw4LFkn68=;
-        b=poNso3bsVt2PfYajSRswFjt9rbn33CP6qvMVc0TOsKUkdYImxpooLiPWbrie/L51FO
-         NbvG3enREWAItjlT/E+Dl8fBZcfpshI5eUxpFHfLRYA9F9qL+atb51nJ74H3tE/zHHhG
-         IPVp8hF+gNaueL2AFdN3kiyy2ApnvSbvJB/uD1J5sVArP8j4tQGrEjDCeqpBsOTNZV4E
-         xd5xbV1V4MRGKMxpa+NkXxJvyf3kmWF4MT4fF7XtGv09kzXhu6jnA6Gs01M47PLCuQ0m
-         D5HNxgF70pakgcIstioJ43k4n8XqqYfQ8fFtQ+Kjx1+yQcMt3M0/K+eYMZByp3xkN0rT
-         8FWw==
-X-Gm-Message-State: AOJu0YzlczzssfJgQ6MOCEoKA40fASY8dU1z2pdu2U1J0seKsmYiWc3r
-	AZGMiiNFJr6nV9ewZXDb6LHgN7iVfAoYCyV3c0DZRYHVLZdAUWIqFwxUVi/8U2sJ8vU=
-X-Gm-Gg: AfdE7cntsXqDY2GzfdHLr0qr+FBxxJNxPvOoeENbEkls9f0pHrG1UXEJMX38xWpp1+t
-	aKZ7l8LT5XGH0vd1HuG1CImThKXZHgN9ipopkgRuGME7BMsKPvAEanYHLRgQ0Qr5QwcIS8HiwRG
-	OSPlmIntNLuP7QjMKsZEgw1Htpv7riAWu6YD1P92ydcbwKuFNxsXiTPoVL+Rh+P6OMHtT+yQP2w
-	p9AOJqvnN1oHGkgVZdyTiZ5F/062YLaRye1P6HG55QWU5PU5NakeiTPsL0y29VnPixBMAbK+VLg
-	UPBu9mQ3R25WlOplJtKX4ZCDrwbsTj5KK2jtlxw9ZUPqztXOzNpjLcjaluQMmdPauNdCmaWwpPP
-	CgMj2f+E7lTh44VK7BV52HENUg2zK8x+e7yVuyjN3KNjgDdrNCo/e2z9/cRkk5y85OugOhXMv92
-	9rKfVLjr2uJv9x/ItfaSQA7QAsXdgE71KfRyi3SPFLdjGpVno+D5KLKEVSu21tBRE=
-X-Received: by 2002:a05:6820:4c06:b0:6a3:94bc:bdb9 with SMTP id 006d021491bc7-6a3cbae1787mr1784927eaf.25.1784050805328;
-        Tue, 14 Jul 2026 10:40:05 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:280e:69fd:7612:d5a9? ([2600:8803:e7e4:500:280e:69fd:7612:d5a9])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a37b58f98csm11584189eaf.13.2026.07.14.10.40.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jul 2026 10:40:04 -0700 (PDT)
-Message-ID: <ded514f8-63d7-4cc2-9d40-a2f11a6a231d@baylibre.com>
-Date: Tue, 14 Jul 2026 12:40:04 -0500
+        d=1e100.net; s=20251104; t=1784055490; x=1784660290;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=eGTEeSm5cUoly09bJoH7FY37/5lDoT4kE6vjdJNNP+g=;
+        b=dk2HywNPtKHKG7aDPlJuAgfwJbgem1ixXYdnoxk1fFQswYilM5erqKe3f2eQj5goLY
+         2jC+J+lD54qYFWL2bzxJWZiuS8MLXlMM6WzIYWuSq4UJXpQmYQnpH6G+nmj8VFdCRwbZ
+         BojljEKpjkZYZZqo/ljXIb7wruAdyOrPf/X9mCWciGTiswZL8+YvGdegIw3DCu++6SZo
+         JtP6cjK6TLCdRgKp9ATttljYgfoE5tq8P9ezToewUm+MjjEZKW+gpD+lrjEJJdg+03k1
+         +tanIcW81lyS5rKTRdqtVpSgf7iBRhDA+XJ1GI5V6p9238sFQHcEl463tIlmLGO49m3x
+         YBkQ==
+X-Gm-Message-State: AOJu0YzeeEFPk+EbgoRysw+3Lt9fRlqZjk7EkOMF2Vb6hXfWL7TN+cZs
+	fF+GqkJau7BfXY721toqzPwGYy2NhVsTZbgS0sGE5IO6yEH/4+AMUQp8
+X-Gm-Gg: AfdE7cl0KGJwRfaw+KuNSNC9mUUIGAwkCBFJuhP5C9Ng6e1680zHEZ5p47T1o6SBbVJ
+	slgbd2S58ARZCgGR/dyPExdDU+1zh7NLQ0VoH1TNUHIj+/PJLxAtjDOlAlB/ZR1P3iz9m/KwIK8
+	vT9f3eZzoukzt1NfT/kODRwHdHXp9E4vFpIs2w1PYn7egH4avpJXGcx35pxBb6MRvu6pXOX9asY
+	V+kuuVhduPsqNeeCMJGhpULxQMRT2XemqiBbYQawNwna0Vkf2PqPQ7LwalJrBSbtBh5QFopRZhg
+	/1CSR7mJCYQSrhoM+7XwWoK6gPZX6+yBXyMGVRwA+vmcdudaF/zGuPToF9CjXbYGNPrQoZH7fz4
+	oOQRmxAdK9z/xZXMDWs/4+72BlF+xPl3RO+9l0pMGf0PbhUi7CptCE8xooylc8f9rgIXHbLUimP
+	TKkVannY/dKtQ8++g88j7TMQ==
+X-Received: by 2002:a05:600c:8b52:b0:493:fa66:4839 with SMTP id 5b1f17b1804b1-493fa6649e4mr136950415e9.3.1784055490258;
+        Tue, 14 Jul 2026 11:58:10 -0700 (PDT)
+Received: from localhost ([5.83.201.220])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4953c1780a3sm977215e9.1.2026.07.14.11.58.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jul 2026 11:58:09 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] uio: make read-only const array porttypes static
+Date: Tue, 14 Jul 2026 19:56:24 +0100
+Message-ID: <20260714185624.192829-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] iio: adc: make read-only const array config static
-To: Colin Ian King <colin.i.king@gmail.com>,
- =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260714165012.184651-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20260714165012.184651-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 7/14/26 11:50 AM, Colin Ian King wrote:
-> Don't populate the read-only const array config on the stack at run
-> time, instead make it static.
-> 
-Subject line should have `88pm886-gpadc` in it. Can leave out
-`config` to keep it shorter.
+Don't populate the read-only const array porttypes on the stack
+at run time, instead make it static const char * const
 
-iio: adc: 88pm886-gpadc: make read-only const array static
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/uio/uio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index 1e4ade78ed84..981f8d21daad 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -150,7 +150,7 @@ static ssize_t portio_size_show(struct uio_port *port, char *buf)
+ 
+ static ssize_t portio_porttype_show(struct uio_port *port, char *buf)
+ {
+-	const char *porttypes[] = {"none", "x86", "gpio", "other"};
++	static const char * const porttypes[] = {"none", "x86", "gpio", "other"};
+ 
+ 	if ((port->porttype < 0) || (port->porttype > UIO_PORT_OTHER))
+ 		return -EINVAL;
+-- 
+2.53.0
 
