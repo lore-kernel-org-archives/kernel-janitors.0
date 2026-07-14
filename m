@@ -1,112 +1,82 @@
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743443FAE1A;
-	Tue, 14 Jul 2026 08:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88433FA5CB
+	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 08:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784017245; cv=none; b=FxtfzgSlXQRqJgnyf9QgjzNp7mCm8EQd1mRrZCmxATX9wzllPw5mIiF/bU8VhNBVIuVI92FtV/i/lwzUIaZliP49D2tiJJH7WTZsVxFbZf9PF/FpZN00Xs2BOHnIPK8tksi3VLQjuiXyqnIaxiXDI6pn9duJjfXcvDpaVyC6WWU=
+	t=1784017345; cv=none; b=R7yj2MQR4NSySOYeTv364qzCB52Sh+yWDmP4IKrgboshNE13li9qAlubPdbPBMbDL1/LAzRtNh/wpJXX6uAJ3jPWwKmtXYodc1EPtiX4hpCne3YN3rb8e1NEkV+nekUHdwVspxHFPJ3nxnox3tc7rvl/HxDFJvMOIo2jKJO6pp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784017245; c=relaxed/simple;
-	bh=XpGwfVzGTr8hfVpHkoISJqYbxLSDQRxHKBbcsKa0Ac4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C/LAtwjiT3vHXECF6M9VjaCRXTKMmKeo3xDc0kHI9ci8pDQpCWxXtAZKNxw6aTHKqc5v1R1V514ZCC7XSMRIJl8K7D51sxQi/K0qOM5XS/X9yoYsEKvih8lVWDr9kxV0lxpZFB7OFSHGNGjMR4iE+CUy7j1tOIHVIMxa08/B9/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=DpSq/w7p; arc=none smtp.client-ip=80.12.242.65
+	s=arc-20240116; t=1784017345; c=relaxed/simple;
+	bh=/aAao8KbeMGjrRsPvmBfJ7JE4JAtEfFcaMI2EW93LWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rU9Af8X1RAWUYv6FY/Mpkn8yqjKAf9s4DgvFjcSY2QkH0tWZfX4CNn/dFDSqva/yBvacb7PFHJr6CM666H/ycx6LmFxjGTxuiE1TtRP7+i9C1+XmWz3xuniIg0e8A+9l82rGYKNCReJQNv6nu2ZcFC1T+Yc2sYJccCKSFSwjQe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hH4NZUNP; arc=none smtp.client-ip=80.12.242.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="DpSq/w7p"
-Received: from device-97.home ([10.65.86.67])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hH4NZUNP"
+Received: from [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e] ([10.64.95.99])
 	by smtp.orange.fr with ESMTP
-	id jYMJwPZcFrxb3jYMJwue9c; Tue, 14 Jul 2026 10:19:19 +0200
-Received: from device-97.home ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
+	id jYO2wyCTId4ZljYO2wcJMY; Tue, 14 Jul 2026 10:21:06 +0200
+Received: from [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e]
+ ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
 	by smtp.orange.fr with ESMTPSA
-	id jYMAw5vkXDzLkjYMAw0U3a; Tue, 14 Jul 2026 10:19:11 +0200
+	id jYNswQfQaajQCjYNtwI5ec; Tue, 14 Jul 2026 10:20:59 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1784017151;
-	bh=GMJi+gTFGDUXh/gZorteniOi+++0sQzYcGVvcoNPxrQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=DpSq/w7pH9YcOc3VZZLFDFh3xoK1JRH0w3xjJ7n5f+RCO61LD7abrFq0xJKkieIsf
-	 9F+hgS3Pvs2PBdRKHDQbIiavUQQh9mH+SA/0ep10vuL6Qhxurq/zUVgU6OvnODGx+R
-	 qwXJnwfPgEW87sIU8cKHabV0R01tB97MThIDjr9qlYHdG2HUAR5EkNxuk0RmcuBano
-	 ivGyJlPcmhIRrCZQO0QEgU/q/GuLeF2DWl3VbCwoRqN8sWfJQLILQx2UpjlURZl9Gs
-	 TQNv/1KT6hzlqy7ZGx887PyIZfIUadWw/5BQclHJoE3HIljH49mcG2isPFQifKvD2+
-	 5jHSDGLn9mkYQ==
-X-ME-Helo: device-97.home
+	s=t20230301; t=1784017259;
+	bh=R/ZP/NLJuU34Qnz9im12DTJ/ZIfKJhQvmYHzhR/bf+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=hH4NZUNPqlzQYA6nExHZ7RByXB997hb5lmB2rrI71E8Xwy/poMLdtFEwS/QATlJcV
+	 3Dr//lU7SDtCyRkZLJzaR3K9A1YLTvPbfb1SQJmJMLoxpNxWS5fEv92/uMe0SL9dF8
+	 +wezz9o8g9npusxGIERR2JhXpwsuMPfRCrdzb0hZn/AjYlnOIAkaI1FdF/Yz7PqNas
+	 kBRQ7RoeyOBVB8fnoLVuvcu9PhcbN51G5HTfTSgVv2vWoiHVt7qnyFh9BlIWezkmeI
+	 6LB71eU6nVkBaH/sJjgbKpueJt8yuQDIRX1tDYPzLRJEb+HMpAkFnuevC6TeGVnjjj
+	 tQxvrdMaf2TvA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 Jul 2026 10:19:11 +0200
+X-ME-Date: Tue, 14 Jul 2026 10:20:59 +0200
 X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/mlx5: Constify struct ib_frmr_pool_ops and dma_buf_attach_ops
-Date: Tue, 14 Jul 2026 10:19:06 +0200
-Message-ID: <22f2263c04cc94e242cee712e6e6d82b86ac353d.1784017128.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.55.0
+Message-ID: <04521906-da94-466c-b7c1-7d119eca9508@wanadoo.fr>
+Date: Tue, 14 Jul 2026 10:20:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath12k: Constify struct ath12k_dp_arch_ops
+To: Ping-Ke Shih <pkshih@realtek.com>, Jeff Johnson <jjohnson@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "ath12k@lists.infradead.org" <ath12k@lists.infradead.org>
+References: <469d732e2c6f159e1a05e89c7e417c3a10db5fdf.1784010931.git.christophe.jaillet@wanadoo.fr>
+ <2efa694140ce418c8d83a62d3f7b5309@realtek.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2efa694140ce418c8d83a62d3f7b5309@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-'struct ib_frmr_pool_ops' and 'struct dma_buf_attach_ops' are not modified
-in this driver.
+Le 14/07/2026 à 08:57, Ping-Ke Shih a écrit :
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>> --- a/drivers/net/wireless/ath/ath12k/wifi7/dp.c
+>> +++ b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
+>> @@ -139,7 +139,7 @@ static int ath12k_wifi7_dp_service_srng(struct ath12k_dp *dp,
+>>          return tot_work_done;
+>>   }
+>>
+>> -static struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
+>> +static  struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
+> 
+> Did you miss 'const' here?
+> 
+> My bad!
 
-Constifying these structures moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+I reverted the change to compute the size before/after and forgot to add 
+it back before posting.
+Sorry, I'll send a v2.
 
-While at it, change a '1' into a 'true' into the mlx5_ib_dmabuf_attach_ops
-structure. The 'allow_peer2peer' field is a bool and other usages of
-'struct dma_buf_attach_ops' prefer using true/false.
-
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  77631	  10392	    320	  88343	  15917	drivers/infiniband/hw/mlx5/mr.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  77759	  10264	    320	  88343	  15917	drivers/infiniband/hw/mlx5/mr.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/infiniband/hw/mlx5/mr.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
-index e6b74955d95d..00e13028762a 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -339,7 +339,7 @@ static int mlx5r_build_frmr_key(struct ib_device *device,
- 	return 0;
- }
- 
--static struct ib_frmr_pool_ops mlx5r_frmr_pool_ops = {
-+static const struct ib_frmr_pool_ops mlx5r_frmr_pool_ops = {
- 	.create_frmrs = mlx5r_create_mkeys,
- 	.destroy_frmrs = mlx5r_destroy_mkeys,
- 	.build_key = mlx5r_build_frmr_key,
-@@ -898,8 +898,8 @@ static void mlx5_ib_dmabuf_invalidate_cb(struct dma_buf_attachment *attach)
- 	ib_umem_dmabuf_unmap_pages(umem_dmabuf);
- }
- 
--static struct dma_buf_attach_ops mlx5_ib_dmabuf_attach_ops = {
--	.allow_peer2peer = 1,
-+static const struct dma_buf_attach_ops mlx5_ib_dmabuf_attach_ops = {
-+	.allow_peer2peer = true,
- 	.invalidate_mappings = mlx5_ib_dmabuf_invalidate_cb,
- };
- 
--- 
-2.55.0
-
+CJ
