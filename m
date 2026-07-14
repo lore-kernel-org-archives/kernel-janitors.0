@@ -1,110 +1,83 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8682DCBE3;
-	Tue, 14 Jul 2026 06:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031022F8E94;
+	Tue, 14 Jul 2026 06:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784011049; cv=none; b=X+oDaOp1snfu4CtRbITxHZzhjPznVctzmEVRefhYiaGbZBk2CNviW4XO9zgTUFU1QaM+E/L0iIngjChl+PqY1WIf3vO7k8ohqjdm43sKzdPkqTvh7ZBYw3Z6f74oW3kKmP6GepvRtVmob+It8R9ZLSgBX9O3hNUJwc2L6tlvVOQ=
+	t=1784012306; cv=none; b=sYPGqXoZZNp+glvunpLJIBcfYAuu0Cft5YPFmhcmFsHX6rGRfZXexwhp0RWXDm8UjNlMKOPsn5rCQwT5pRO6fxlKAnbVwoFun6Py1SBNcT0CrvrZq8HdgeugIa7e7EEAumG0xmk+iLR8a11LVMDruzH1r88pAdfbE2bYf9vSO10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784011049; c=relaxed/simple;
-	bh=GkGwn376F7BE5RVGZppjjfouvV1bsKEXfbRQpIrL1tk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CcBGhAi5GhfY/Zt2tIKI0VVYrwoBDTpijvBYvRqdFS/xHqxEuBxI83A1pw0if3ocQm8H1eFlN1tQmLak5An47kfjztgZVFT+y0jFlBAf+B9x6za6Io1Lxur20OdGXCYerR+tbxMU+ZzUBbweUvbha57pJn1mv0OOgGKKNmVmK58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Mshau6pM; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1784012306; c=relaxed/simple;
+	bh=fuQ2RRXqFek06eApOhqhlpG77IQplSqVaqzdgmRdqhw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CTNQ4mV2Xok/GTHuSqkeV1y45PtAaJjkxNrX9INTpjPwbUaqrQ5ljo2c05yUY6BNQ04QnL4OsuJsPX+Et51sdkm38600L7fw7uZJUcygZInwgM0hsYlpEm1pq4OwbCeKmHemnmkt4ABlmWZ+PHdYMBIU/7XnklOuGYHdOaJM1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=mI76qIyr; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Mshau6pM"
-Received: from device-97.home ([10.64.95.101])
-	by smtp.orange.fr with ESMTP
-	id jWkYwgEf6fzaIjWkYwrYuv; Tue, 14 Jul 2026 08:36:14 +0200
-Received: from device-97.home ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
-	by smtp.orange.fr with ESMTPSA
-	id jWkPwSgdjLgO9jWkQwhwg5; Tue, 14 Jul 2026 08:36:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1784010967;
-	bh=s7dq0hK5vSS4LjpG7VM2pGMjoaS2RCGYKJDzNBOXpDc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Mshau6pMTQgZcvDkQ7CxS77/E5zwAMEQjfMF1vuWNtuVylovOSJaAHBN73A0O3ulU
-	 ideZXz63XUnNFMhZqBtLnQe1Z3lxThYWf1CXSLLrYVd7P+WxuYDHCYKmhzIsWU20He
-	 DIW03Smj5SM4BQPduJjDQW0R44XV0NcSVrKA0j+FZXde9JrZy9w+tZXG7QbAHS/vGC
-	 EtCu4Yc90kgo9GH7Ot92H3Ccrdo0AXcZV83W03MuHjqaOxNwkDW8w4hWUCq1GJq+Rz
-	 yXSNI1lEu7wWsct0HBXW3vghmfKnIFHrQkLN4W7bFBhWGXUGNldY/QRacsCEWKEjLM
-	 SDa3MeCHTnbEw==
-X-ME-Helo: device-97.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 Jul 2026 08:36:07 +0200
-X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org
-Subject: [PATCH] wifi: ath12k: Constify struct ath12k_dp_arch_ops
-Date: Tue, 14 Jul 2026 08:35:56 +0200
-Message-ID: <469d732e2c6f159e1a05e89c7e417c3a10db5fdf.1784010931.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="mI76qIyr"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66E6vmvsF1943012, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1784012268; bh=iGj48yemdWauySdVEsdnGgJJ0oT9G63LD8JsctGOIY8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=mI76qIyrAvl+Y0uGC+dY+9eJWZZJ88t5FcDyCv2Lk4AnrJmGW7LQ2/z11uKF0FmWn
+	 wai2Xkkh87mUdQm6q1MH8SJG6swP+nNuShcb1b8486SiUkB/wBU+RNaGB/ZfqYOI+x
+	 7CgEJqQvbiaRgGND++eke8Ks1QQtS9QQjaa9s9I6ficw1bEdwbIt5+BzssFwSIErYN
+	 a1XcnF7X4BqTSWlswpxmw3F2Mb8KvoOMrtnTzSGmxd08eeWsbixlCi6oRHrE+cexKU
+	 lVVDCKFVaP0mmqbVWLqwE1VrZMBKI4bSi5PgDYFS1mT3NzNgeLPJksHvYXZBAKR3DS
+	 6SCofsn5kUhkg==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66E6vmvsF1943012
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 Jul 2026 14:57:48 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 14 Jul 2026 14:57:44 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 14 Jul 2026 14:57:43 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::e6fd:5a3f:8946:92c4%10]) with mapi id
+ 15.02.2562.017; Tue, 14 Jul 2026 14:57:43 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Jeff Johnson
+	<jjohnson@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"ath12k@lists.infradead.org" <ath12k@lists.infradead.org>
+Subject: RE: [PATCH] wifi: ath12k: Constify struct ath12k_dp_arch_ops
+Thread-Topic: [PATCH] wifi: ath12k: Constify struct ath12k_dp_arch_ops
+Thread-Index: AQHdE1uKB+sp9zTsUkKJ8dFek3N2uLZslSiQ
+Date: Tue, 14 Jul 2026 06:57:42 +0000
+Message-ID: <2efa694140ce418c8d83a62d3f7b5309@realtek.com>
+References: <469d732e2c6f159e1a05e89c7e417c3a10db5fdf.1784010931.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <469d732e2c6f159e1a05e89c7e417c3a10db5fdf.1784010931.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-'struct ath12k_dp_arch_ops' is not modified in this driver.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> --- a/drivers/net/wireless/ath/ath12k/wifi7/dp.c
+> +++ b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
+> @@ -139,7 +139,7 @@ static int ath12k_wifi7_dp_service_srng(struct ath12k=
+_dp *dp,
+>         return tot_work_done;
+>  }
+>=20
+> -static struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops =3D {
+> +static  struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops =3D {
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+Did you miss 'const' here?
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   6318	   3384	      0	   9702	   25e6	drivers/net/wireless/ath/ath12k/wifi7/dp.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6478	   3224	      0	   9702	   25e6	drivers/net/wireless/ath/ath12k/wifi7/dp.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/net/wireless/ath/ath12k/dp.h       | 2 +-
- drivers/net/wireless/ath/ath12k/wifi7/dp.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/dp.h b/drivers/net/wireless/ath/ath12k/dp.h
-index 64f79e43341e..a94bbc337df4 100644
---- a/drivers/net/wireless/ath/ath12k/dp.h
-+++ b/drivers/net/wireless/ath/ath12k/dp.h
-@@ -538,7 +538,7 @@ struct ath12k_dp {
- 	/* Lock for protection of peers and rhead_peer_addr */
- 	spinlock_t dp_lock;
- 
--	struct ath12k_dp_arch_ops *ops;
-+	const struct ath12k_dp_arch_ops *ops;
- 
- 	/* Linked list of struct ath12k_dp_link_peer */
- 	struct list_head peers;
-diff --git a/drivers/net/wireless/ath/ath12k/wifi7/dp.c b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
-index c72f604661ce..01a45f428990 100644
---- a/drivers/net/wireless/ath/ath12k/wifi7/dp.c
-+++ b/drivers/net/wireless/ath/ath12k/wifi7/dp.c
-@@ -139,7 +139,7 @@ static int ath12k_wifi7_dp_service_srng(struct ath12k_dp *dp,
- 	return tot_work_done;
- }
- 
--static struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
-+static  struct ath12k_dp_arch_ops ath12k_wifi7_dp_arch_ops = {
- 	.service_srng = ath12k_wifi7_dp_service_srng,
- 	.tx_get_vdev_bank_config = ath12k_wifi7_dp_tx_get_vdev_bank_config,
- 	.reo_cmd_send = ath12k_wifi7_dp_reo_cmd_send,
--- 
-2.55.0
 
