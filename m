@@ -1,165 +1,98 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D78381B1F;
-	Wed, 15 Jul 2026 05:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF52F8E9C
+	for <kernel-janitors@vger.kernel.org>; Wed, 15 Jul 2026 05:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784093318; cv=none; b=LGHeJH0LhmxW79460cSWhzdEa2y/7qtLHy5BA/JOx38MnX3PylXX01FdHRKzflu31yPpWf0ArDmP31ph1fEVA8tZY5I6wXO1E5xHSOCoIhNRDOpAGw2F+JLFfraq/sFfANIhPoN5vmiVKDvTCV7tWqef+mQ6AOnH8bRVbxPqneE=
+	t=1784094347; cv=none; b=ln8TOfIsn+fS24WqG+ddcDbBLLvHoNWoKtIl4UDCpO4fy9njLEhOX5pJO+RJayjLcl3XU7QJeiB2G7yuDQDkssqSGNTNhrxDEP6wS0pDBkhwfXIlMnh++IQgfKn//UGDRxLGHypG3RyQ14jkaQx9FPRWJrkrC9huda4gyw7FVpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784093318; c=relaxed/simple;
-	bh=t+MFqbIS7aPa095ttTtlnUWjL9Jf/yk6MV51ukISM94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GKTqtUA0V1/bLmeROZutyyw5ZwrVUw3SkblE7y1wPyT+0oVA7h3fLoze47fb+sZPtf4zkAX1GTr6gdHeeGBt6VCTI4/o5gjlpsDDPyyG1AM6eFv7LQoMRu+p9gz1LFG9aNOknM2PNEf71HxC358LEVcQ5l5sQy+W2Gs/ONgP53U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GziIJdyU; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1784094347; c=relaxed/simple;
+	bh=VeiS/HQ0/A//WgU8Q9019LQBqEPCs8FiGuXfWIXsHrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUvCmhd1pcB6gHcWUNG+UOSzk8hR4r4vL/lpUM2GxYl0V3TQnGoDrCmKH+x7zN/X53EZfgdi7B39MevtSLPj3cEbIssJItyp8HrFpVDcpENq4hgzpIdTAk+1dJ28jc3aJTlxkGfkmGrqUD0IY68UrYzi43Is0lwZ2YIPYL53lx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mN8uYx40; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GziIJdyU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1784093314; x=1784698114; i=markus.elfring@web.de;
-	bh=t+MFqbIS7aPa095ttTtlnUWjL9Jf/yk6MV51ukISM94=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=GziIJdyUvZY56e5lQBE/mLSeEp1/c5aGdACxYdTHHhU4kbsBVzag9usbrR9b5TDQ
-	 2yj4LaOqH8xMXIN7VX2WZKbLyvuPXWb9mAtFc0SvybNiziXUVLxLGxC/Liym3/oS2
-	 DVg/yr78g8Rk059JpvqBuHr5RG8WtwsmIPHNBJAXsEzSCkn1UCm8kmTkWW3T6tF18
-	 XSJI6J5wIQVYvi/0AvPFAp/6DLCWqzv5Z7W+mXae5rmaukXRhwfDNNWvo3YWQR+80
-	 gTw4m53pwt0nyEOccdSY+iPy8nsqUFA4RXgsJuj8TzhWdHbXk6Ekn64xqHYZOz9oK
-	 ItvouYVnKvp3jNtf2Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnX17-1xQfYR3AVJ-00prRu; Wed, 15
- Jul 2026 07:22:38 +0200
-Message-ID: <10a32f39-2a5f-4e52-973d-d9a71b9b956e@web.de>
-Date: Wed, 15 Jul 2026 07:22:22 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mN8uYx40"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-38de840f2f0so1911338a91.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 22:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1784094345; x=1784699145; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=d7JQLilasvtiBi3KqJRPfjtcOsV3KOV9/MjPpoDKsyw=;
+        b=mN8uYx40nB/KtBAJBjXVm/VLX863WeNtfzqg+4ZdGA5xVHb0BoTNplarvZlkt6f9aY
+         I1E6bQKqbrPpNcHCRF1aKixJWGkI9phhlTd+0hSrJCf9KXCea5n35KH4GwWkyn8PMnhl
+         1658vLg32+Me+Bpvn74X6hA0nxYENDP6I+aQzOufXi0EIkPWC2G/zypqE09yziCSoAEN
+         1xjKU/IgUh4gQPKSIYJsJ8EC62MxJ0wMbi5leQR4cCcOuuqtLCtGL3ls1iY1+5O19NoE
+         hstX2RjUZtfdS0gI4PxmDRWXixMjAl04EGQS0moHTs/EbRpGo3z5yWfnnms54sJp26Nc
+         eYrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784094345; x=1784699145;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=d7JQLilasvtiBi3KqJRPfjtcOsV3KOV9/MjPpoDKsyw=;
+        b=EThIqW8q8hmV7IzXL0lTFKksHSmTNURv1CCrd6XC6Al9Tg9hHysqRtzUiCrVsac0HV
+         /xHdKapj3ho2F8q8XlvXGhTA8Ej6DwPoE/scvVMH2GejaGiDCGW9Ooyv4/ss3wz7OShn
+         rDb4YvjfFJ9U0ZWYMD9OES0te/B4xYqX7iAGGb+CoEd9Gy20m61AbTw+shz9pAPaVZoc
+         093AcN+RzUVFTfOZX8eCrLfWPo1zhiYBNHAnb1VHnof+Eki1FnfMWgz1jXUXUnkuq6dm
+         BtIifRhwDOW5O1pEa1+o/HYsKXkPd4yNno2Y/QuqDDFDwZ9ffikKFhYU6l9+ZCy0iSFJ
+         Zvdg==
+X-Forwarded-Encrypted: i=1; AHgh+RpmMyuhsUqJ+rK4T2l5hGonBLBcs8TQS9ecRvOEno9DENAUamYtkWTbDFPZbjaLUZjNX/pEGvz1Klg6H7bSWRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJMf9ruwIECJRlGVyNsY+rSHz37HkWscP8jr8g+o0FKRp1/I9M
+	MDNleSjiM3J+nIP5r6hyR+AeO5qB/1BOHolWF8MXD443NpbjQL5cU7oMm0tUMnToAOg=
+X-Gm-Gg: AfdE7clUj0S8aH0uGyox4CKDf6OcszyurrBjG/SfNVnnrNGagrUm7AJe+sT9iOiSvr4
+	urEUGyWBOfQI2qkesoQXlRqFi9sMJSU6dVg0WkDx0rgVRZiMutHaP5KI9zz9/NrMk2xrfCcKWju
+	OATAJt8IDeSWSfvLHqH2xi64X9YEOiRaxQLrwKH5V1v2ERxh0msP44bePx1G+jp5dbc4FndRTQK
+	g5NbBKRrXN/JS4nJmfYmmP1NXwTYFlMQlmq9pw6junQbaRqOzArXDykoXw/nNheu1sluPWMACDu
+	daDNUzl74McLBEYrlNphK+Fd42QdGZz1Ah4dZs20ekYbfvRadL66UbxSgKS7kufzj4NOQHDtoMk
+	WSCPyC21DYJMxdTAJLWfqqWSZY6EMymTXI/vZh2rHBEBMAfIYukALNojh8Aec//KlbIIy1ZeQ0i
+	c+8qGJIcrdXLWR
+X-Received: by 2002:a17:90b:3a81:b0:37f:e1b6:4c7d with SMTP id 98e67ed59e1d1-38dc782ab92mr15243246a91.6.1784094345259;
+        Tue, 14 Jul 2026 22:45:45 -0700 (PDT)
+Received: from localhost ([122.172.82.94])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm88482627eec.18.2026.07.14.22.45.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jul 2026 22:45:44 -0700 (PDT)
+Date: Wed, 15 Jul 2026 11:15:41 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: Dan Carpenter <error27@gmail.com>, Deepak Sikri <deepak.sikri@st.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] cpufreq: spear: Fix an IS_ERR() vs NULL bug in
+ spear1340_set_cpu_rate()
+Message-ID: <mfnihs23xwn6l5r626p7aunrxw34bizbaoka3zwromilg2znpl@jvjj3uxtwovt>
+References: <alZZzlY9rfdAvWac@stanley.mountain>
+ <a32691c8-e48d-472a-91bc-a3f4e9edb00a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: net: rnpgbe: Pass an expression directly in rnpgbe_rm_adapter()
-To: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
- Michael Grzeschik <mgr@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, Yibo Dong <dong100@mucse.com>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <7958e26e-a4f9-48ee-8d79-3797016944c5@web.de>
- <dd0bb5df-22eb-481a-9274-7feb725172d0@lunn.ch>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <dd0bb5df-22eb-481a-9274-7feb725172d0@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tnYofw33Wv8/DzgTwSCgS4ev6+OuA/8hyLpcxsWRzooJfHG4q+R
- fqdVMFkIn8ealB9YnmjRtwOnAE2W+MrF23l140CwWweAmCjwss3rIqg6p9GSavalrg4o6cm
- lYwjX1tdTdFq+pjyKB5NlyT3YUzn3RY20nPd8W34KDVEqc8q4e3QBkyPVI9G/qX9e9LuJ79
- jI2TSQpDjKt/c49QrgL3w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VPOFs+2aRk8=;+5iuowrTzYk5qHAawBY4sX9ClMt
- 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
- fz+vc1hUM/dd88EQUI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a32691c8-e48d-472a-91bc-a3f4e9edb00a@oss.qualcomm.com>
 
->> The address of a data structure member was determined before
->> a corresponding null pointer check in the implementation of
->> the function =E2=80=9Crnpgbe_rm_adapter=E2=80=9D.
->=20
-> Please can you show the path taken that mucse is actually NULL.
+On 15-07-26, 08:10, Zhongqiu Han wrote:
+> On 7/14/2026 11:46 PM, Dan Carpenter wrote:
+> > The clk_get_parent() function doesn't return error pointers, it returns
+> > NULL on error.  Update the error checking to match.
+> > 
+> > Fixes: 420993221175 ("cpufreq: SPEAr: Add CPUFreq driver")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> > v2: fix subsystem prefix in subject
+> 
+> Reviewed-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
 
-The applied sanity check indicates a corresponding possibility.
+Applied. Thanks.
 
-Which result representations would you find helpful for the requested
-data flow analysis?
-
-
-> I tend to agree, that the correct change is to remove the NULL pointer
-> test.
-Will the omission of such a check gain wider acceptance?
-
-Regards,
-Markus
+-- 
+viresh
