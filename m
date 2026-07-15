@@ -1,75 +1,54 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF52F8E9C
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Jul 2026 05:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58492324716;
+	Wed, 15 Jul 2026 06:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784094347; cv=none; b=ln8TOfIsn+fS24WqG+ddcDbBLLvHoNWoKtIl4UDCpO4fy9njLEhOX5pJO+RJayjLcl3XU7QJeiB2G7yuDQDkssqSGNTNhrxDEP6wS0pDBkhwfXIlMnh++IQgfKn//UGDRxLGHypG3RyQ14jkaQx9FPRWJrkrC9huda4gyw7FVpE=
+	t=1784097782; cv=none; b=aGxVb7x6xziSYKJalFGMfKUoOI9xHP/hLacTq+Jlxkq8SmjGVwMUpH0WLpGV8Rxdwcam8fKIrE+33/WzI+hbhTl9mfI6y7k9xvz8O8EQUlVX8ZQxFmb7qgc9E9h9f9BkuLBboushFxfz5amJ+1Rzth5xg8pr4dBzSrrgnwDbxeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784094347; c=relaxed/simple;
-	bh=VeiS/HQ0/A//WgU8Q9019LQBqEPCs8FiGuXfWIXsHrY=;
+	s=arc-20240116; t=1784097782; c=relaxed/simple;
+	bh=fPlOoy82JUDfb88nu0F2Y4uREMOtOV3M/Svtbg9aWWs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUvCmhd1pcB6gHcWUNG+UOSzk8hR4r4vL/lpUM2GxYl0V3TQnGoDrCmKH+x7zN/X53EZfgdi7B39MevtSLPj3cEbIssJItyp8HrFpVDcpENq4hgzpIdTAk+1dJ28jc3aJTlxkGfkmGrqUD0IY68UrYzi43Is0lwZ2YIPYL53lx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mN8uYx40; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=jayzQ/ifWdwiJhNeF9qZs+dT5VOzpp9FRQ1OnAwI0XeIUjK8uNCQ5cGMnyA+nSxJqtYNAojTpTIOVmvT9/T9gNJPSp5WQ8TzE5bgLY25gkbbn7CpEVM8vesip89bQVtLoEE+4OVRULoBxQvSIAMbjIFHorlFSsw4TzjoMIHYJfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=lJ04fou+; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mN8uYx40"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-38de840f2f0so1911338a91.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jul 2026 22:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784094345; x=1784699145; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=d7JQLilasvtiBi3KqJRPfjtcOsV3KOV9/MjPpoDKsyw=;
-        b=mN8uYx40nB/KtBAJBjXVm/VLX863WeNtfzqg+4ZdGA5xVHb0BoTNplarvZlkt6f9aY
-         I1E6bQKqbrPpNcHCRF1aKixJWGkI9phhlTd+0hSrJCf9KXCea5n35KH4GwWkyn8PMnhl
-         1658vLg32+Me+Bpvn74X6hA0nxYENDP6I+aQzOufXi0EIkPWC2G/zypqE09yziCSoAEN
-         1xjKU/IgUh4gQPKSIYJsJ8EC62MxJ0wMbi5leQR4cCcOuuqtLCtGL3ls1iY1+5O19NoE
-         hstX2RjUZtfdS0gI4PxmDRWXixMjAl04EGQS0moHTs/EbRpGo3z5yWfnnms54sJp26Nc
-         eYrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784094345; x=1784699145;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=d7JQLilasvtiBi3KqJRPfjtcOsV3KOV9/MjPpoDKsyw=;
-        b=EThIqW8q8hmV7IzXL0lTFKksHSmTNURv1CCrd6XC6Al9Tg9hHysqRtzUiCrVsac0HV
-         /xHdKapj3ho2F8q8XlvXGhTA8Ej6DwPoE/scvVMH2GejaGiDCGW9Ooyv4/ss3wz7OShn
-         rDb4YvjfFJ9U0ZWYMD9OES0te/B4xYqX7iAGGb+CoEd9Gy20m61AbTw+shz9pAPaVZoc
-         093AcN+RzUVFTfOZX8eCrLfWPo1zhiYBNHAnb1VHnof+Eki1FnfMWgz1jXUXUnkuq6dm
-         BtIifRhwDOW5O1pEa1+o/HYsKXkPd4yNno2Y/QuqDDFDwZ9ffikKFhYU6l9+ZCy0iSFJ
-         Zvdg==
-X-Forwarded-Encrypted: i=1; AHgh+RpmMyuhsUqJ+rK4T2l5hGonBLBcs8TQS9ecRvOEno9DENAUamYtkWTbDFPZbjaLUZjNX/pEGvz1Klg6H7bSWRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJMf9ruwIECJRlGVyNsY+rSHz37HkWscP8jr8g+o0FKRp1/I9M
-	MDNleSjiM3J+nIP5r6hyR+AeO5qB/1BOHolWF8MXD443NpbjQL5cU7oMm0tUMnToAOg=
-X-Gm-Gg: AfdE7clUj0S8aH0uGyox4CKDf6OcszyurrBjG/SfNVnnrNGagrUm7AJe+sT9iOiSvr4
-	urEUGyWBOfQI2qkesoQXlRqFi9sMJSU6dVg0WkDx0rgVRZiMutHaP5KI9zz9/NrMk2xrfCcKWju
-	OATAJt8IDeSWSfvLHqH2xi64X9YEOiRaxQLrwKH5V1v2ERxh0msP44bePx1G+jp5dbc4FndRTQK
-	g5NbBKRrXN/JS4nJmfYmmP1NXwTYFlMQlmq9pw6junQbaRqOzArXDykoXw/nNheu1sluPWMACDu
-	daDNUzl74McLBEYrlNphK+Fd42QdGZz1Ah4dZs20ekYbfvRadL66UbxSgKS7kufzj4NOQHDtoMk
-	WSCPyC21DYJMxdTAJLWfqqWSZY6EMymTXI/vZh2rHBEBMAfIYukALNojh8Aec//KlbIIy1ZeQ0i
-	c+8qGJIcrdXLWR
-X-Received: by 2002:a17:90b:3a81:b0:37f:e1b6:4c7d with SMTP id 98e67ed59e1d1-38dc782ab92mr15243246a91.6.1784094345259;
-        Tue, 14 Jul 2026 22:45:45 -0700 (PDT)
-Received: from localhost ([122.172.82.94])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm88482627eec.18.2026.07.14.22.45.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 22:45:44 -0700 (PDT)
-Date: Wed, 15 Jul 2026 11:15:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-Cc: Dan Carpenter <error27@gmail.com>, Deepak Sikri <deepak.sikri@st.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: spear: Fix an IS_ERR() vs NULL bug in
- spear1340_set_cpu_rate()
-Message-ID: <mfnihs23xwn6l5r626p7aunrxw34bizbaoka3zwromilg2znpl@jvjj3uxtwovt>
-References: <alZZzlY9rfdAvWac@stanley.mountain>
- <a32691c8-e48d-472a-91bc-a3f4e9edb00a@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="lJ04fou+"
+Received: from francesco-nb (xcpe-178-82-120-96.dyn.res.sunrise.net [178.82.120.96])
+	by mail11.truemail.it (Postfix) with ESMTPA id 9CE091F8DA;
+	Wed, 15 Jul 2026 08:42:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1784097777;
+	bh=VhX27eVj94wZ4TbZOZmAuCcKPqJuNV5Qaj379iRya4w=; h=From:To:Subject;
+	b=lJ04fou+1i84Pq+5wBTGnkKE/X1Ope/n2XS+7mkCpy4DNnun6qaKWw2taEXi8gc1Z
+	 lemFntMKwk0+I5RDNDO0Z58ge+VfTWND2NRG0Nppczt35SiKjdHPP94flzvVQNb0Ut
+	 TrWwY+rraEFGqIyVkmXj85eIOhsm0mUXopISmKCJGwTe5bXKbGcd3mXAs2A39pDW9j
+	 LD59esS7nJ4R8fFdZYx4v78Zp+Xo8IQRGWQPSZEHu6GLwLR5DvPSCQY22g/L8o0yM8
+	 A9a5Xd91lAhQvv8buhnDS8dCoWADwHtRaunSV9WIyQC78jGwbzfenZIpNBa/KlenE5
+	 GeeNsy+1YlS+A==
+Date: Wed, 15 Jul 2026 08:42:52 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/bridge: lontium-lt8912b: make read-only const
+ array supply_names static
+Message-ID: <20260715064252.GA40623@francesco-nb>
+References: <20260714190400.194605-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,21 +57,12 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a32691c8-e48d-472a-91bc-a3f4e9edb00a@oss.qualcomm.com>
+In-Reply-To: <20260714190400.194605-1-colin.i.king@gmail.com>
 
-On 15-07-26, 08:10, Zhongqiu Han wrote:
-> On 7/14/2026 11:46 PM, Dan Carpenter wrote:
-> > The clk_get_parent() function doesn't return error pointers, it returns
-> > NULL on error.  Update the error checking to match.
-> > 
-> > Fixes: 420993221175 ("cpufreq: SPEAr: Add CPUFreq driver")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> > v2: fix subsystem prefix in subject
+On Tue, Jul 14, 2026 at 08:03:59PM +0100, Colin Ian King wrote:
+> Don't populate the read-only const array supply_names on the stack
+> at run time, instead make it static
 > 
-> Reviewed-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied. Thanks.
-
--- 
-viresh
+Acked-by: Francesco Dolcini <francesco.dolcini@toradex.com>
