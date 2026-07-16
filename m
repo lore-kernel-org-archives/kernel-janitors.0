@@ -1,131 +1,117 @@
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7807841F5F3
-	for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 13:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73436424661
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 13:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784208635; cv=none; b=lnpq4iXDPccUlnWbXhkVVEv4x85EkrTq+j7F06cjGjytq3naNtUo3DkqDyfME/i/D/jPLxEWVgaP6cbJixbgr3bJo/CWVJ5fg/XZ7DSq6+iMW150OF45TxqYrAZdFA3GgISCxVlrVbNxsEgEtjSpYu+yge+vq95GzHn8H7HbBDY=
+	t=1784208858; cv=none; b=gSFfRXqs6PvfXs6iESPJud24UcgCfbi4KzpfIJbGNhjhRNtts+WBFbN0GqHNsn7lTCv9yjqds4Di2a+2F0Kg0U12fGCmCp6OcC1a86l27f8FnxoNBF9uZPg40hAEptO1ubtWfUI8CwkrExdL/xjnbygzARqLJ+Srl9ksKlbkSZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784208635; c=relaxed/simple;
-	bh=WB6mu1i3NewQ+i2LFqeE0E/NcGweHadEcPFk8ntwrEc=;
+	s=arc-20240116; t=1784208858; c=relaxed/simple;
+	bh=512q+FuN1hjr7tRKT5qTs7tS31ElK66Wl/lwjJg+hKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A/gGbOPs2fN9ALykcO6m87NMGSWaiVBK0N5WL/Sg3i7W/1xznB0rRVES2T6o3YeZjN0qDcmwlzSFpKxMfI5Y40r8yTTDuK/k+hJEyjPoTTRmyMng5h7WAPw2MkOXDyUpmXbWr0iTbdT5pxGMizjIPnZ2Wjnb9uKz/MU1WT1+q6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oizErKJs; arc=none smtp.client-ip=209.85.210.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=n9eaBi3oOW6m74DCz87/b297q2OM/l2M5jH0T7oSXYNN39tQUS10wWyMdvvY3jwM0+bAYAIwG336Uhq4qrDKCBAcv+YxA8pD3y5SXEvIKiRuQ68YVsi778bFfZaAHtfZ6sJ0AFOAsIH/Qu3i2qALDNegMQlGAugmXmXJD3R3Lu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C31gzjPe; arc=none smtp.client-ip=209.85.167.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oizErKJs"
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7e9f829d75aso2029863a34.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 06:30:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C31gzjPe"
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-4877a7b451dso3905881b6e.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 06:34:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784208633; x=1784813433; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=f7TYuXzoNqDH2nR/xpl074QpxuDI0hlYBZ5yt21l508=;
-        b=oizErKJsj4adiBXTxWdWxGvJBWd7U6JVhwAKQtsC4fiHw3XSyc84Pv8fnIXjju3gW0
-         LFY1b7NUjo4aAfUr9Gzge24YquM8EJYwge+0VG5H6mpolijVV+dgcc1qnlSekni33j76
-         1/pkb0s7oPsHJFiVOp/wot+ewVF/OjWL0q8/C23tPa5qAKc1i2kecqkTP1ecJffpRnWn
-         VwHhLSc3JuZ4D3ZuTQGHoMavbwELFF3450Gk8W5qskMA38qXTd6nVBpyRC3M6wQLavTC
-         qv1wPWn93CK8lZmZMeyGy4KBOqWR6d6XTs5a78nUoK0chcgQy2yP58A3yUCfkp7r6HJw
-         m/QQ==
+        d=gmail.com; s=20251104; t=1784208853; x=1784813653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=paGXn2CXcdZsSsOEnSXii4F6dQRW7fZtzSuMwBvtGAs=;
+        b=C31gzjPez+kNcFatrK5gw1xFV2Zc9zZwRS00DMnmH19feSru+BW5S/AnfYD1Aq/wA1
+         Ltb0CYCXaVF/r7NGgo0Agq93OSvdHgXoSxRn8DFivoMEe8HVQ+YOjDmU5klMr9OxL1ti
+         SQWp2iOQQzOyPrYpYabBkYW5MvJwp2n63wTzGmDfj8cex33vPyDevO8P0ohfBf5CV26w
+         tGCvk2iVIOg+BId6UGtiJmN0Ka2ec67sLa8I/tL9Uhnfu9uH46SYhPtiQoy7NPS/2Jfu
+         eQ1Lob/M0wFG1k3ocM125vkmKm7r/0++y1nyXmGsG0tzuy6rXoJEOqzxjPhZdIODjTOD
+         OaZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784208633; x=1784813433;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=f7TYuXzoNqDH2nR/xpl074QpxuDI0hlYBZ5yt21l508=;
-        b=ZMYmrIvtAItSUNlHqxaEnequqLxsBqIJjHW8qqmWn4qM99BLhQv7LEUL/YBNMvOVnx
-         ui9oJbFXFv/Rp0e9PiTmgy5vrev8Fm4iCchtcVzBcFRlSeqHx0qMVz2R4abohaj6mM2c
-         0bqoMrmWDm8hXmAi9oQSgdGNcFRCBK/dS4kFlEflmryVce6OtT9Wwlyorvo1omp42VZ8
-         Jmu5Hc1i+F3SlGa9KCgEBR7Gut0JUbCgbDRtfT+iOt/gaOK/jBNzMac+GWz5/jieA79B
-         frBbnjM6FwWtBIM3kWIJoYckgTwJdIQv4ZVozps06WXNMFWh9J1te2K1EcKi+2F2lIDD
-         KyQg==
-X-Forwarded-Encrypted: i=1; AHgh+Rq3UrXpNpQH9/1ntdmFIah2AxtQJ6ZxCsODukkrDsSHizOLx+3LVYQGnneG2R+lPWWapJlfgfUKWI8uw65AGm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK1zlz/dxC/aCpwiNkoxHD1QhaW8LgmcxofvH7ZZgt6DVLE2NI
-	9G67GKD51eDZof3lc+E+8KyAZ4429S+zBDYf2mT8DAYZtCHhDwiuOP43
-X-Gm-Gg: AfdE7ckbLsofNqikIdKS6SjOE1brHNfFJMVqQLK0raGKilwU8Cj8nzxYLSG3T780phR
-	A7d9oKKF90/4Y4zt5upcI2+/rEOmRGdgEKApWT+olVYt9iLsxLxyxpi8YLf4K3cLDV1UMLzde/o
-	38IdfSppMBbYzMTEv4fl/7fl2CqK71ec5p95c8pUZX/ZmH2OnJOzfLIOjltuxpUk9/HK2aqcCK8
-	6OJkSeVII14Tmqx1ODsgP1P/K9Vr7qMmWena45Od8sTjbsbDE4zOXaLNWxw76OdKSl5KVckKPp6
-	c1RS4Vs+oChjV8TD4e5NfeaBqEbpXbxjtxTJ08pjiayYP3F7nJRBzgK1Ng92LHkm+NPeznMcJbp
-	nAMqRgv6REki6E3Kg0T6CegXuDsqIMF9YXRFtirYRdkHUxF2h/3Pd4vOd99XKB2o+sVW8FuQ+b5
-	pMTeOc
-X-Received: by 2002:a05:6820:1508:b0:6a2:e7df:c4ea with SMTP id 006d021491bc7-6a39a85a39cmr12923260eaf.65.1784208633146;
-        Thu, 16 Jul 2026 06:30:33 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784208853; x=1784813653;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=paGXn2CXcdZsSsOEnSXii4F6dQRW7fZtzSuMwBvtGAs=;
+        b=JbNANFCeIAHicGOUCXIn//uM3e5JyD2ByZA+GeoCTKJ4hgzg1juwNSJNVFXub8MSvF
+         wgoOXnCUrtpMQj6JyhCAAqkyzJ1A+nX02lzmSg6ZvDQJkQQI6a7XOwCcmxYMTeZ9CiUC
+         QCnrBqfkh5F7CurpPp1rziAeitiQJRJ6SLOi8RHIZrAFp9oXarBf26pfB1pfx+Dv7ziZ
+         R6eTbKbbSFGT31wyslmsPnklO56fyKcun0WxR5sDN1MIwJji8eLbsCsxL5sBgnKXwTXL
+         jHtxZHZd1tEBZlbYfWYPG6rkyuLB5emwCQ5BlE4gn4omNwkDvHL68rGLFh1r/vzRSpLJ
+         i8GQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrKrkpZi8GGVCE7SOtmk9u/lrRo8Cfv6KCOQ13UMZ+PIOHkaknlxOgV1eH67pDmlkPqXMu+pVAoZTx18c4Up3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXJ61vptaaWKA7hIt2u12+5gft3jyNg0a0W89gnoeNIYrMmVhg
+	8DY68QPhu5vUT4zb5KTZGaJq9vb59Lx2QCvlXWvdCeI1zQieh42cBiNo
+X-Gm-Gg: AfdE7cnL3XxmZA9S2RT0RnWYYHZebu3PXFtKR34EhsoJQBkjhj4R9QN9JySjtqtmB3o
+	PK70AN9B/iSsjc5nyms6YCQFr2qB7wcv0VWszykryDmfuW6g/QQLtLV1sATt60T7G4Jh2fctX6K
+	dGYphvwCdHV5WDR6HFfhGdlYvRj8x00YI1VQvZwsb0LWvq85eNgde11H+eMxCPwc1nEh5/HgN1d
+	tuolDk7OA+txJfE88JMeWiie4UDXhbLj6FkA/67hpyi9Xy8tlAoJYzbQR3744wpb4fdSiCZS6rI
+	ZR2ros0BUGzNkVGvAM704RIaMNGaYQTq0BDbg3I8ipdVbcRYbX5WTutOVkcYo0pr9+lDmulCU0N
+	m+uuL/Dg3rIJrZWD0kAgTn9IYgBEaWqcUbc0QLZ+kvbLM97C2cCxdGoA7DNGvEfdf5KewbAIPhX
+	hgObMV
+X-Received: by 2002:a05:6808:30a9:b0:497:e7e2:757a with SMTP id 5614622812f47-4a496072bdbmr5807209b6e.31.1784208852841;
+        Thu, 16 Jul 2026 06:34:12 -0700 (PDT)
 Received: from localhost ([74.80.182.90])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a36a83ecc4sm16678950eaf.11.2026.07.16.06.30.30
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4a1adca6bedsm18285572b6e.8.2026.07.16.06.34.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2026 06:30:32 -0700 (PDT)
-Date: Thu, 16 Jul 2026 16:30:25 +0300
+        Thu, 16 Jul 2026 06:34:11 -0700 (PDT)
+Date: Thu, 16 Jul 2026 16:34:05 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	MD Danish Anwar <danishanwar@ti.com>,
 	Michael Grzeschik <mgr@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
 	Yibo Dong <dong100@mucse.com>, LKML <linux-kernel@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Subject: Re: net: rnpgbe: Pass an expression directly in rnpgbe_rm_adapter()
-Message-ID: <aljc8RRt8OuYz90H@stanley.mountain>
+Message-ID: <aljdzTZ_f5v6ckVg@stanley.mountain>
 References: <7958e26e-a4f9-48ee-8d79-3797016944c5@web.de>
  <alScHkiC3EmGzOlI@stanley.mountain>
  <8110bb3f-70d9-4f0f-82f2-ffe1262b2962@web.de>
- <aliA1EIIrX82jGR-@stanley.mountain>
- <320cb00c-28f8-4871-9ec5-d9b86cca8bc9@web.de>
+ <aleFN4Z2XT3NP3od@monoceros>
+ <85ad473e-b2f5-4458-8973-a643f90eda5e@web.de>
+ <alikx3W3NX7r9o99@stanley.mountain>
+ <95abcefe-2211-4abb-9af2-7e8d7f4a9b76@web.de>
+ <062f9181-e494-4576-bedb-36de488c11ca@lunn.ch>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <320cb00c-28f8-4871-9ec5-d9b86cca8bc9@web.de>
+In-Reply-To: <062f9181-e494-4576-bedb-36de488c11ca@lunn.ch>
 
-On Thu, Jul 16, 2026 at 10:20:42AM +0200, Markus Elfring wrote:
-> >>>> The address of a data structure member was determined before
-> >>>> a corresponding null pointer check in the implementation of
-> >>>> the function “rnpgbe_rm_adapter”.
-> >>>>
-> >>>> Thus avoid the risk for undefined behaviour by omitting the variable “hw”.
-> >>>> Pass the required address directly to a function call.
-> >>>>
-> >>>> This issue was detected by using the Coccinelle software.
-> >>>>
-> >>>> Fixes: 2ee95ec17e97c58b65e978a08b75fa8cb6424e4e ("net: rnpgbe: Add register_netdev")
-> >>>
-> >>> There is no NULL dereference here.  It's just pointer math.
-> >>> No need for a Fixes tag.
-> >>
-> >> How does your view fit to information in an article like “Fun with NULL pointers, part 1”
-> >> (by Jonathan Corbet from 2009-07-20)?>> https://lwn.net/Articles/342330/
-> >>
-> > 
-> > Of course you can't have NULL pointer dereferences but this is not a
-> > dereference, it's just pointer math.
-> Does your understanding of programming language details differ from the view
-> by Jonathan Corbet?
+On Thu, Jul 16, 2026 at 03:24:22PM +0200, Andrew Lunn wrote:
+> On Thu, Jul 16, 2026 at 11:48:43AM +0200, Markus Elfring wrote:
+> > > In C writing if (!p) and if (p == NULL) are always equivalent but weirdly
+> > > the NULL doesn't have to zero.  It's part of the C FAQ.
+> > > https://c-faq.com/null/machexamp.html It's just a bit of fun trivia that
+> > > doesn't really matter unless you have a time machine.  Even if you invented
+> > > a time machine, the code here would still be fine because we have a NULL
+> > > test before dereferencing the results of our pointer math.
+> > Which expression evaluations would you interpret as pointer dereferences finally?
+> > https://c-faq.com/sx1/
+> 
+> This is all interesting, but nobody has yet explain how this function
+> can be called such that we have a NULL pointer.
 
-Jonathan Corbet's article talks about dereferences.
+mucse cannot be NULL.
 
-	p = tun->sk;
-            ^^^^^^^
-This is a dereference.
-
-	p = &tun->sk;
-            ^
-This is pointer math.  It's not a dereference.
+We call pci_set_drvdata() during probe() and it is still valid when
+we call the remove() function.
 
 regards,
 dan carpenter
-
-
