@@ -1,91 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB75B43F083;
-	Thu, 16 Jul 2026 07:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11633B4E9F
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784187960; cv=none; b=K2gjBlqtweVi2LIk2goKczJjqsY7QeNFIpkOIK+chsyuNsTpgJ6ZYvf1ugSc0m0wPi1PwGzvV6Y6i738+FT3HTkzHlPmFtvR3/mcRi1QA1qtCP2ElQKK1LHZLd9qRnrH7mw2T81rxOKCrFCVTd/0wgUdNELA+2HJ45cl1GVmkK4=
+	t=1784188730; cv=none; b=fST/bvmMiZzJ4gLGuebDY0t1PROvWt8TeTOvPlvWJoZauBSOCEWU+q4Ka6UHGPE3+yNfeSpPctebWa7Q9r4Wu4m6b8OmdaS5Y56UCENU6yXEitMOYUjfZygPJR+zx+wRVP4LRzmD5HIsQTuJYeIXFAsITdc6z+lCudMQATbjxi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784187960; c=relaxed/simple;
-	bh=/AqOgNXNza8/XmAmZZAWo1E+dk6FfEye0NlEPCg0GpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGqJaVp0ZLJaUFjl1t8IwuWmjjcmrMHs+Nig9J+ep5KM/sMZ+zGEYC93rpYughFB0LkTHxixchGTX4e4SaDcHSnQnIJ9c0QnZPZIfxYHuK6iXoEOT2UIYfMj4RJymPnQCwUNd7hjTV0JFt2nH6aTETG5L8gYdpM/b9sH2RU1eWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bb70/WIv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784188730; c=relaxed/simple;
+	bh=xkj3CbNtpsQQELF6vqywDuYoJlhxgXl2aCyhWd1IOiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BlYWrjsfvij4jmdKy4WKHe+qvU4nqLcJL+OUSkJn2tc2lbhDfhT3klyIpPYuEF9hOXHHhiJRqNtG2AjrnT9yrj1C7x7PfbH5/Cd5Up6Rt0X7c+jkIoLuC12G9JOAx26gh6HqQkRr/AKURv4LDMf168iZABYll6kGXhNV9W1y1wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hQcy2Nur; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SoNPppXc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bb70/WIv"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2BF151F000E9;
-	Thu, 16 Jul 2026 07:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784187959;
-	bh=v5I9vyHgDl9lu88KkLOptS5YYWx8iQBQzUDlM1kZ8gM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bb70/WIvnIVqOeCbx8t7DdvU0sIQKc6bEBrF7/fZSj7XGAV7uvt/2/xFVEEBXE/P7
-	 n66etQFY4lAdtsg+lBrlJNinMLp5+h2VYc9YWxz/ss0K5OM6mBhrrspY+8nnwhytGT
-	 r+sCMYaEqxCum7qFKpD/T6bpmvqAqBiHwn6xBoM2Ef1C7Kz4QOAbPL76Zmm2XUyZCf
-	 ip4w0rSYST/I/SvYjYJ0aB0HHgVfsm/z3wUQftdzvcVOfn++3RorswMW6e/vgVFLg1
-	 zlEvVb/5MpQXj8b4ZAmM5rTGRUi45xShI22SJukEYNB5oRXcpzJFtln0T1UIV9u0we
-	 rEaHGg3qHU1Zw==
-Date: Thu, 16 Jul 2026 09:45:57 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-pwm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/2] pwm: More efficient data output in pwm_dbg_show()
-Message-ID: <aliLpfmKkkwlZhzF@monoceros>
-References: <3e9f9238-a0e4-4a29-8a5b-27e4a5a0e1e2@web.de>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hQcy2Nur";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SoNPppXc"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66G7DvbT2115242
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 07:58:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RAdwQyzglCbMhJebgMRFMHDqAC+jZDAVHlge28Q8bBI=; b=hQcy2Nurynypdna2
+	+WeKTTBMeDvhyILnrDiGCJBejeLVrFwiBMz+tmywAEIXfPbp8OyLnpI5ZPFfbi0A
+	IoPb5rfz8s469uYTO2d22fRv+jhTTNLVnbBMUmcM/JbilNMEtjnaF+8KqzqrV7jg
+	3K1xs/tMyJAN2zJ6JoSJxQyLTTw9Q3DW/C1RB6CJUNKJEdMDxZ8rwQY3PcWvdvvZ
+	PWdNHePYQATjpNj+T4LHIiE9esoYjHBjZukdjsm1VNh89x60i8LMvfViuesShPsA
+	JVB8ttyhrMNC6gmqzf23kBXET1/ivyU239FQbYzfXukNaDXeylTP2RK7EJmEsioo
+	HCzN0w==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4feeg1jpxq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 07:58:47 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51c12e43b98so115121341cf.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 00:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1784188727; x=1784793527; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=RAdwQyzglCbMhJebgMRFMHDqAC+jZDAVHlge28Q8bBI=;
+        b=SoNPppXctUx8N74oRu5FybQfri+nkVThBaMv6OVeIaPs6Shk/g8qz4u2AA+HZ+DGx5
+         b607AHBBrPmn92UdJvf1c7tIFrBMSZriXc3LT113MFYrBhXRGElX1kYTJ0ehBRSv18/X
+         Fo00oNTulGuwIgdNFqJPXOkdvzizbGbr3wCKtvpVjrJLEwL93zUEfkmkJOJ2MdZafNn9
+         uXRWp5j007areQAbe4OFkiIEydCh8M91WQnCisHqO59niRlH5RRj8Rs8OFlnJN4S396N
+         4dj26uSKrlnMehn3UqMjnQg4VVRCWK2Hh99jY1jjoeRkO0gHZq4ca6sP/Dd+3Xg6mpTd
+         HpxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784188727; x=1784793527;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RAdwQyzglCbMhJebgMRFMHDqAC+jZDAVHlge28Q8bBI=;
+        b=eor+RWD5KD7E340vKHAS9yx+grT3EpQiOVfv0AMZLvhpUKFUZP9CAnbsLOc4TDzPT9
+         MyYmAMz8OzYa7C9J1wY2B82IbQG/2KwWU0j+anpHaEM70sGx8DORcx6SPmH8CZWzczuT
+         qYpQApxbNxZhbn0s/MZsXkI+Wc5qdy3PNUhdh5D78J8sei9d0UzGBAsZbrLQXepZs+79
+         +Li4OunAUiZe9AoZyCcPUTxF0aC/8vJHMUHcMWzjKfVjS7ZZHt+AL4rCuPWqrasxV/SS
+         FBA/cQJd5++ghX+LjqZDq2Io2deSvL39tgh1n0/qpsEPT8yZNNOyth9qaIxGYJUBGxV4
+         knTA==
+X-Forwarded-Encrypted: i=1; AHgh+RowlT4YEvdbhiZQcLcSOlyw4cIe72vbiWqoOsMnfCZZRr3Qc8WUvbWJ1WkBgOMX6v1UGPSliyuMWdK6QHmcFjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD0Uh19Q8UxsAV7PVpKMPRelldCNC5MiZyTaUuPHtNP7zo+Ia7
+	xmHgTEHpwCuqI+nCNPzDuTPLs3WMw5ZBln7D7pL+F/A/LRecSrWRykx3NS3RIwS/GpizuhgR7cb
+	aFbFPwLuNuBTEqebICBOD0KYUKhMGqQfTkyea6ijp9hMn0bX/0P5vlOyc74k7UdTIE6T9rFzmS/
+	fPTpM=
+X-Gm-Gg: AfdE7cmfYYeX0O5eKL+4DrkVZsQIb0imB8E1r7z376Z8IEJJtwdEGTtOo755MZrsNKJ
+	b9b9T/ejthshg/6tPZ5Emr068ZNc66RMa6N6UetzzKBFuFQC+uG8QbOmNA0BjuO8l4Ee3vG5C8d
+	nEzmGpyLf2AV6IjyF6k67QxT69Xtp0GSlD7+j01mOMKF9pUxveU+byU3JA1txUDoadb2KCbP6r5
+	d2kerO5Ci0sdE7sOYaCuneWTrupJeCIGMT0hLBk+n5KWfBGRMnnI+nw6tDCoaKBgwq3YCHoO40r
+	jh+SC2uUOZ/d3QrGqX4Pr/7jfqzdqWvttQ1Osh0bdHaQSCocWb/DR+aI5sRUa2S9+k/2SpFtOH7
+	dY53zGwV28syDu7m4ijG7cJa8Tw==
+X-Received: by 2002:a05:622a:1aa5:b0:51c:504:2ef7 with SMTP id d75a77b69052e-51e3c33baeamr114404211cf.67.1784188727255;
+        Thu, 16 Jul 2026 00:58:47 -0700 (PDT)
+X-Received: by 2002:a05:622a:1aa5:b0:51c:504:2ef7 with SMTP id d75a77b69052e-51e3c33baeamr114404021cf.67.1784188726809;
+        Thu, 16 Jul 2026 00:58:46 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:76f:d108:485:5b34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4635a63esm22876616f8f.9.2026.07.16.00.58.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2026 00:58:45 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] gpio: bd72720: make read-only const arrays regs static
+Date: Thu, 16 Jul 2026 09:58:41 +0200
+Message-ID: <178418869934.4524.16365988098606564304.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260714170258.186766-1-colin.i.king@gmail.com>
+References: <20260714170258.186766-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xvhehlg3kc7idy5u"
-Content-Disposition: inline
-In-Reply-To: <3e9f9238-a0e4-4a29-8a5b-27e4a5a0e1e2@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE2MDA4MSBTYWx0ZWRfXzz2A1sN1XlLH
+ NhRnCarmsMxZ55DKf/cFwUlhICYedvFgxRuZP5iMV90mprgvuhX+CGjBeMewaI2HqezlsUIs/U8
+ jNmLKlR8AoOhcCk9FsDOlPCleK857VLz7/WNw8DMl9p2RK4+iB5TbZDJFo2hosBNftylgFS+JiP
+ DpP0Oq4IPF9dKG4ps0Ar+QhCZIi66zgnpfgLk4IQ0eXdi8zVTpg678uSXrHZdon4RuiHRz2JC4V
+ Ubhm+4S+SbiZb4OtQjtrzbG4wPjDeHNTzWSKPAyuj7ksHx4isHc88D++cxWh4f8Cr2mMAHokCYB
+ zDYSlm27ZgTYfgqzUHTjo6NJFhzkkC5wOGnaRzeiYquPvj464QVEVxEtwU+AnPLej+HzX1HWfod
+ D/6JijwNtPH5sF64RB6PUNj8AZKMwKoz4x6TdmFntz3hUHhgqGF0qlcHXubZuhDbXzuvm+TFEuo
+ ZH3/v1XRVn7kDZKQUdg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE2MDA4MSBTYWx0ZWRfXwcMXJy2/xxjY
+ yugRKF7o9e5PEDqr2L5yjlnl9bnWi+QQTGvym7HLxSYHCH0y92FjSh4NwQaru/bTEcUfiAdJMzZ
+ XtHHs4SICexwYZmCkKbFORfjPJ+raEY=
+X-Proofpoint-GUID: GwG258gcel8l7IdEJZt6PJ7OZQjhAb9B
+X-Proofpoint-ORIG-GUID: GwG258gcel8l7IdEJZt6PJ7OZQjhAb9B
+X-Authority-Analysis: v=2.4 cv=SsOgLvO0 c=1 sm=1 tr=0 ts=6a588f37 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=5Y_hXDp08lPRMBJS8ZsA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-16_03,2026-07-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607160081
 
 
---xvhehlg3kc7idy5u
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/2] pwm: More efficient data output in pwm_dbg_show()
-MIME-Version: 1.0
+On Tue, 14 Jul 2026 18:02:58 +0100, Colin Ian King wrote:
+> Don't populate the read-only const arrays regs on the stack at run
+> time, instead make them static.
+> 
+> 
 
-Hello,
+Applied, thanks!
 
-On Fri, Jun 05, 2026 at 04:22:39PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 5 Jun 2026 16:18:19 +0200
->=20
-> A few update suggestions were taken into account
-> from static source code analysis.
->=20
-> Markus Elfring (2):
->   Simplify data output
->   Use seq_putc() calls
+[1/1] gpio: bd72720: make read-only const arrays regs static
+      https://git.kernel.org/brgl/c/a8e59e3ac9f7f7154e0e80f45933799da8b4dc89
 
-I applied the 2nd patch. I don't consider the first an improvement as
-the output isn't on a fast path and having the end-of-line separated
-=66rom the next is logically sound.
-
-Best regards
-Uwe
-
---xvhehlg3kc7idy5u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpYjDEACgkQj4D7WH0S
-/k4ohwgAqthCEmsDIQJJAExDDhA7dfycWH+z4APfUgmjsEVthcbFTg7UDSffFFa+
-rgElAb+XeA9jrHZENJ6fiRUj3TewV/4OYbCcLLRf04GNLDel+fLUXzonocvKRvnR
-0A7UxdXdG9TJai8tuvKeQArKXxJ3q0vm6LQfhAp4YlnhDnvhrqYOM3La9RJuBp0O
-tUUU/iNPtqZXx7BooG2/dmSSxN9EapKabUmRTtLQ/qKu6GFbUssfgNuVGDaikVi0
-PUKXOObblPtB80cfNarM4qqrUmpsf0RR3BDBxI22qEFvaErqBubIiB80MMQ+jzms
-coDp9adZonUSmgeSCZnG0Mx7diznkA==
-=7An9
------END PGP SIGNATURE-----
-
---xvhehlg3kc7idy5u--
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
