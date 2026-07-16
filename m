@@ -1,182 +1,134 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0943BED2D;
-	Thu, 16 Jul 2026 08:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CCE3DA7F9
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 09:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784190091; cv=none; b=MuyUH2qkEZFqlA73YEGOAYz1cdK8kbd/NFIa8Fjjrc9CZeF5ynYBLPMWohF1omagKNyDOGFO7cuP+X7NxMYe04k6IJ/qevw3mTRUov+KS3XyFWdHq2v0jSQPyeObECi3hgwIYO+JtUas+tXHhz8pcHHw6aIJP9D/IXqB9+O3GBA=
+	t=1784194258; cv=none; b=o3BZDQclBvRMWdoX1z2xs11XOwiL2RnGKo2STzwxfiovNKmyHcFo6laEQ9wBgW7EaHAPFlpfM3Ti9hlxNVO5Dm9KvLU7XykGexbFvqyVHYfNjLQVpvaZbJ0I5Bk/s5MKHiFv7nAa0nfUlbXnRukBSf0BUY/1h5bMt6icgwShjJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784190091; c=relaxed/simple;
-	bh=CHTclf9JowuT9d6FYNBV/Q5Paz+RyCSjuM6w57vCqjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GblIjby3HXVXCeviomLdd3eZJ/UuYzpMGDSDG3pkOeAj+8tOcd0TwSr5vYag2mRSEZnXX+zd89WjgyDsLd6tSiAgIB2YI0bwmxCPb5wLK06MvfemdQa8Kf0Eh0pOkAf2Dr2IJ1Wn8AC2hqFNtX0SVU0cvyBPc99JvG19j1LArJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SDRbpH7c; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1784194258; c=relaxed/simple;
+	bh=pfuyWgnWckbEnoDkJJeEl5ch2vupcxskEvCrGOFWUBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OybCJhelLjDVmL66kvpyWWJtAFaZTFT50xfxAu3Bl7tpN4CGmMTyC1v4IrpTkI8AbbmQe1JtDuAVuOK8WbnJh2ha9L+HRul7pMSwm91UHMfEnXu3tBexF5ezEj/kaJeUFR3CkDVQhls3FSsGpeBX21lvSJOLuByAqCHED8A6fEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXlEJz+6; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SDRbpH7c"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1784190053; x=1784794853; i=markus.elfring@web.de;
-	bh=hffN6M1K3qALQBuFPMQS+Lb8FU/3/ajJ1t4JrMDVYkg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=SDRbpH7czClfpjV1xBRaKIT6HN2+dp+tuYFIKuvzo7mOGXkiau+l/slyp1vxHp8T
-	 UCGVujGDv4uDtjs7jwKm0vhuqsVj8n3ntlc2nCrPQtH5SiphgV/r6gGPQp07wT52I
-	 1cMx7r85kjBz5BL7rdANuV35vAwIXSviUlyi4HVfUJNX8OEMrcGK52I3W3NZtnX8U
-	 eHLjie7qBeUmpZJcBxm5/bViAnewUA7MfDQ7T57elxxhx5vld5R/0ILlpFqCQPqmM
-	 UmF9EcAzvgEdLQwXqTKxp+IHZaYQ7Sc76ThNYaN7SPaB3l+ee6rOTsKJ88Sw057+V
-	 FyVanOBXIg2dY/sfRQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M6pYS-1wfJnP39XK-00EVb5; Thu, 16
- Jul 2026 10:20:53 +0200
-Message-ID: <320cb00c-28f8-4871-9ec5-d9b86cca8bc9@web.de>
-Date: Thu, 16 Jul 2026 10:20:42 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXlEJz+6"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7e9ecb1e13bso2492299a34.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Jul 2026 02:30:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784194255; x=1784799055; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=1EKuk/C1yP1k420D+fM+wL8Aaex9k+TpkPoGeES0JJs=;
+        b=gXlEJz+6Ma4xEZ8XamayC77e0LBD7ZW7WmkovfIuPVp4IZPzP1NuIAkXvNCgU6fxd6
+         id4oBw12Z7+PGy1XHBuWrMbvY4/vO1ceb1BS7rQfA64zmd45kldaMIDE3xoyon0tq1Ja
+         xeVEUmPh2yd3AQb2qkFm5OypvWKIvgQjlRepxBZNZuR44SadXyxKN6DsC3SIc/iReGMa
+         ajsmF9VR/PUQPZpxTZ9LZbaVX5ApNkoLzIWTcFB++2sycPBY6HyppaDnNnZFad94uI8V
+         gJTgb/M2E8rx2Sbmdova82q3bhJxEsipAJGksCgNWmQn8qX2J11HfPvENGfuVeW7IXxu
+         AIOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784194255; x=1784799055;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=1EKuk/C1yP1k420D+fM+wL8Aaex9k+TpkPoGeES0JJs=;
+        b=n2661IxLGBl+COOM2O6aYdq2mjT4yerwKATDBHV0LAhOkkeQgpfRs3YCQHUWMNF6IM
+         +oDY+pQrqM12aolAOl6hn/kWDTJkpEz0TpUCgTvbxaIrI/q06k65dZa/CfKdoLwFVZ6t
+         lkDfMdqkUjted9vNyb0Cy6DaCDKvxCMgSAif+s9TK39CvDnurXeTcrwWeq/s7vaVlVRa
+         sKTKsc3MtJ69/dc1uRITk3YDM0U5b5v3awELgw2qxFDB/79im3QEET3LwZL1bX3K5nxc
+         NSVTScRI/LLGdNlgzV6joF7DBrtCWyC962ieey1l2kUwJdJ8TRaI/hz50ikqkjQP+PcZ
+         vQHA==
+X-Forwarded-Encrypted: i=1; AHgh+RpccorYCLCVIKJ6KeoKsUkDvHJOelabQHwaE3TCEDZznCXahBG2ehMExukvJRRNvEvko9JeN8oNLJitMVB6z+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLh4TzrFecyjUUxLy8hkzYDO8zVZYcY9tCWFKSFKH8vXPnX1pM
+	zFH+DFWcE/h3+x4b72K+gpu2IcjcHe3T+wlmmGfdv0XPKBVsZ244qRP0
+X-Gm-Gg: AfdE7cnM1/MZbIat9ejolEEbsAV8KzOaf0qVF8258DXCqMh/NJvByzNmRC7SBTucC+r
+	ulfglq9fLslZ6WXJpcQI008Xu8WrzUZxHxDrZcTC8M0C7ZKeKc4PZmkL6PQ1NfwdnwFPnmH0Gno
+	F9SWDOSG+4lXMZ20QxePL30m9NsrFEOdtva6/r0JWpZo4FvdS4B+zPAnMuEpVSPxtnjtd9Ne9Zx
+	piYpthSFRdBGMlIUezSmPdiuyNsBU7lPf0a9n5bX+Z0rRL6z+wuE43Nt3/ZPt+GcghRDoLZ4QHS
+	Jr18dRorj8gM3NbuBPBAHkIuCMeGsoZOtvd/AhHduUlHYD03rHCVfmiHcompmFghbgXloSOX6An
+	N0RqrZzHPIh/TTujSdMpglpBBtu/mIgFrJKNrVJTVNMbY5qhnqdCEgQu1hKHOzeUkV3k1NQ==
+X-Received: by 2002:a05:6830:6d11:b0:7e9:cad9:4bd0 with SMTP id 46e09a7af769-7ec59b01b92mr4444987a34.3.1784194255207;
+        Thu, 16 Jul 2026 02:30:55 -0700 (PDT)
+Received: from localhost ([74.80.182.90])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ebcb3f27besm18605443a34.25.2026.07.16.02.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2026 02:30:54 -0700 (PDT)
+Date: Thu, 16 Jul 2026 12:30:47 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Michael Grzeschik <mgr@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Yibo Dong <dong100@mucse.com>, LKML <linux-kernel@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: net: rnpgbe: Pass an expression directly in rnpgbe_rm_adapter()
+Message-ID: <alikx3W3NX7r9o99@stanley.mountain>
+References: <7958e26e-a4f9-48ee-8d79-3797016944c5@web.de>
+ <alScHkiC3EmGzOlI@stanley.mountain>
+ <8110bb3f-70d9-4f0f-82f2-ffe1262b2962@web.de>
+ <aleFN4Z2XT3NP3od@monoceros>
+ <85ad473e-b2f5-4458-8973-a643f90eda5e@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: net: rnpgbe: Pass an expression directly in rnpgbe_rm_adapter()
-To: Dan Carpenter <error27@gmail.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
- Michael Grzeschik <mgr@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, Yibo Dong <dong100@mucse.com>,
- LKML <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>
-References: <7958e26e-a4f9-48ee-8d79-3797016944c5@web.de>
- <alScHkiC3EmGzOlI@stanley.mountain>
- <8110bb3f-70d9-4f0f-82f2-ffe1262b2962@web.de>
- <aliA1EIIrX82jGR-@stanley.mountain>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aliA1EIIrX82jGR-@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/5EIPkzE58Jck8nLXptLBnwJ5ogBTF/PsWKJEQ4NrsGPM90+5HF
- MlCE4c9AjZfZr+GL8OIFfW+YLCwFMVeALDVI+jFQt+jO03OvnZOtDV9SwTMNA3Cm+sqsWd+
- /gRjSLZxvZZge9RPhS5oGzYiXBwDR/KSwQN/UvNOv7APN31bgD6F+UmWtYPN+QsScM0lNx+
- cxx+iuSG4LRRHKEtxwipg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LkP9ZRJ4QtE=;pdTcBz/CdlFoP/z7HRdbBP91f+3
- QrtZoPRds5leJXY5gc8KLbXwBHWdT3Fmp98Wfo4FAFMxhlb/9NI/mjAUDZ+gK50T1tIEbRdSZ
- FdtMGJ4o6kVIsUhPJPxzM3PUP0UV4Pd6yesxgplYVDmrnsM9mhXYZgyj4eANsehCyVgEiOYvQ
- Gy49V8FB8j5+I1ARz+GeK59MEKuhlFudB6vhxlCbP524tKtjT3SI+qiZsUDxwc2rLUKxuPRi6
- y7xmgoBC5XALF/jRSZSB2xVLhMTPdJwmc7wsOrMv3i6SCW/2bKfAZxMO72oxNbsVNag/KA8VR
- yPb3UNVHTWYn7BOG4KaOzKuu+Wa4vuz9dHHIzUXcUVryGKLOXMIrYN6S+vy5ox+nkAcGHfv2Q
- BHR9TZJDA4uc3FELTEwwgNdMY3VsJ2qVUTqwm0wiuYWnn4hmKbyvdb93zsLIubSMvQHuakIsh
- cK4EqUio1q9FSCK/gsgzJZpLyM7NIsc7Fm/+vEvsOuKuFus9gyvq+yIrJqee/IUc7MeQDH535
- nAoxiHEukX63eVVOIpCpga34j9ZMWs/v/Y1v55vjStWenvWHOa2/zinx+5b8L0xJR0cG+4e3Q
- eCqa4AZJnWwUoCvzN+X41p5hkzqNLEpYaAYRRkgZzTj/gUczwbfMzWNqv98I8N8XEpk9IAj6N
- Vt7nPmaEx/NMvYAXsvHOtKQo9cVivSccRc+i+xr5aape4cOofzi4Wqvj3MV5mMCTsTcV6Jlhf
- fuprZHeodqU/ewLcOvX+wQD9jz4T9+qFLyxlQgNeqMjDbJaHTOSkxzAVFb9mYOJmA5DhS30k/
- 4OGG9kbmAoFju/3VFV1qdxdidsGygxJ15hVjANUORcdZxeFjD7JNz7vfam2ROTzzPTV2IB7Mk
- KBIXr05No05hzgUQFSuFWSrCpieRTAUPkWvypTiRIO9jObmD0o2QbCycjR5b6uNYKzTWCWf6q
- agKXAQQaZ1i+klB0w5C0Sz1gutGFdAqcVBFnKaumO2TzUVrDUFErzKHTscJD4z3FAQqLFdvp/
- 5J9CLaKAh2zmLj+tLV2c5FQ0osMuhR/yLj03LdJfcsGvFRzF96JFycgfPvOMOZ87FaMxYQEwp
- MXHhFgLkTnW9eOwSJdBHWx+dcGYWXH6P3NX1KKZW9PVta2XnUrRVoJJrTgmd+xqFqb92kDjBE
- xUDoGrSX6VzGSsn5PnjuyJBhPhELcprfgWg6HU9GbEc82ePC76Q0bTc1R1/kMSQ5aVI/FkzTz
- nqGN+drOPVktu+3GV5RiaGB3o/U/QxHISKDyYMivF1hNsNSAbDSI9ZbJph90fH2uJ/iYUC7Vc
- y+nFNYZEt+SVu9YGz62rLTVg0ANqEM8G3T9DWRpqMN75n6PTfqYl7zNLeml5f6DMnkzlLgrTL
- NMt/nIL14ee4krZMkwBaOJMSyS+UpC9RgGUb3j4lGZuR3yfvcoWKPGGEEEFanbFM1iixSn+u9
- on6ZqNWjfzpBaNP06oZmoGjOKPA6PBxirR37Td4ZizJ5UU/emKI4Gdjlqrfd+e1UlwpQ0wZvB
- nHhhBDByfJVEWC62vm+JEsxz5Qd4ci8fAb8WZylyVShP1ER0Wiz1kStgl3apdmPtvUp3lEc+N
- sDTihJI0ZHR3sFRd28V1CX8fXchMw8d7moLyY+YZGPE3I86U1dNcKlA8MN99idAK44QA/qQrI
- oHYSQweY0yLXLaCfa37wfIFB3oMK+KBDXPFmRiozWJKyBsaUDROcZG5G1GtHo3syijln4cLnZ
- i4hCrcPHwZXuh2j6fQzAcTTdOWuDhI635Ud1NLwVJxAxnu9PU4cgVzXMXB33NMIpBg5PFOD24
- 7PGCGjNBm/RSkUcLS+es3DVp7eIlBbX5GmtMBW7dS9OZMRNf+dCM9e9ctSRwQLJeKMTKdbthQ
- /yppzMyl7b2WkkOpDdXOz2rnZRUVTaC2ukviZuo+mVyPc63ygSDBNYKEkXVBFSqb5QsxK3KaF
- /lXw6N+hhodnfQF8DdRrNsv0bDDnzglECIhE7oanHQ7tZc5SzfIiKHwfIhN67vmTloWf02EdP
- +dcP34OkdEVQG/6jCHYkj/1NMPFyfWUuRk4rJlLcVmqdQsGobeWOClpgwn+cMYCbADAgTN1po
- FRfKwSYy4+G27sBSFDBpXQG2i5Y2g0uYTJqJfxptqZmTEvEYd9k4Q9XIpE8Bw3gvB9mfZ01oU
- EvLtMCsWStEj06UC0r6fFEPU2vZ+nHOEkxAXEb+VbsCeuawHejsXH24ZmntKc1c1qo45Qnol5
- SBKE2N70tEd7iM4IApcC1eQoLh632cl26xJd5zTG2ce7jy0DURrJ/B1k1MYs+rFRfWd6IbK0f
- r+cuL5z5HCzoj1amMJ97e4Ia2xnY9c5+rU8o4A4x3b5Mw2jNWSWWANG7KIQIDjQtaQUrH/Ryq
- kTadMpYOrGlBIu2nrj4fRy3WPTv/+3HfR0HCAssbx3PST7wUW474XfG8ZHiAR6xojnT0lSXIx
- +G1NVMNrBVmjmsBghqXUKmYb6BlAuqtVXQI0iiqL13DiCs3fWexNARK4jQhLFP0KRjy2uocHu
- DUNAOm1L7J6258Fr6yb1MMfxIWOBg97sRlrt0GG7IzFTTlaIF2XOcfAWc28/XqPzFp1OamEt0
- W/EHAjRW2+Oe8gonrO2vR65q4YMdkANCHDTuk72udighu/+LF6pcyy+li3gzwCg551+Mma/7y
- bObVv2HFsxJaXcsZ+dqvmxFZMf/JVJLr32jnBB2zOg3kk3lc5ksVlgmc8g7dOxpYMwVknLJA9
- MU4BETBILk1NlPur+P7f3nAYJ+hIAgodODqlkPrl89c2dnoMtJp9ED1yPI0+qUDDLXAHYlvcp
- U/QazJEatZ1DR6DPPPcOLxl3/Yks81xZ7Baa78ta9kQoOAEqwmin9EJYJwvEC5jc2075TfWPf
- /k+gbJPznJKDSsRf70LSG9cKaI70XSf2StyZqJaD1Jm0gfOYJYhAVZSGHdsEd/qqeQe5Qh9Vx
- 6cKD+WjUw4K/iCR6D7oBZ6SoRdcWh/lfiJ3iNbc4QM5kG5Ud6rHOpeqNIe2jicrTKWlUeXaCT
- DV74Wmxx4pKXHI2b/p5tYB6JC91X1E/JD6kRvXz0PkA7GvDrJvuUbvihYv2rU17wS77oDQj1r
- /UZso6AwGR0vtowcU6Sw1a62vp2+7I+0QdL1VGARUcKuGBdQuZ7tRnL8ceKADmp5ng+Y2XJOx
- 8noDPYVTpMuvf6cvt9dHk5Q+cbI+sauOIANRMfZCeI8o4Tnk8hEoLiYG5fPAHJKOjz2vKRS7q
- LS2++oNnjgrb+CELgyEkvAgS2iRvQhBWaC/AbNHfZmdku3TENBVWFZmjWh2N26unnHcPGIelQ
- 19hiOhU7fyi9OMk01mH2JRtBwlQJqSgb7X1HyXghKHLeyUHEIiCDRoqQXelsu8RaVKXnWZsP0
- WJ+kFy6HyKS5mUID8bLfItDzvTPWsGc3PRLdz/avxCfmtliQoc8S6nLQsJFNNkZ8yzeefse/e
- I1g3WJOGEaVaZdgcGE0TiP+8dk+8icyvubM1+A8+q47502s4Ze3TAt4qtr0we1RNpPEGcdR0+
- ru3xJaho9/B61wGSHTNoOe085aGO/PTGH36weGmGUqIOjyHmtgS22OHk/pu89ZEgydtgtFGaR
- wOUFv+ZBN9LZhrbzC7egXbr05PGJ0Nd/dkd3Vpyz4PX2WH6anXXObuITNOPR5Vh+pRxq+hLHL
- fU2zEoTqzEU+IGx4a6XGjxczIulXOBUITtzEaFIsxugAbMCkxfiAV5B1XnVzv63Xj/Jic+pTN
- 71i0SoaEDKdGPBLlSkIxrrqp+bpwVgwCkHaHIiu1q61C8VdiYKkmcV7pDN/h4WrvqZ0rw6jzw
- UVhgmihFCx5EFRqKRu7JNQa2nNJNWYq6G/hRxCtfcCup3VEJnH2TjtuFhJ5ReQ9ZEWJSCmCTu
- xQNS1XbK5+oNlNBUOqyR3OZaOEcHQpn589IwESP0WgOGVSUdH8PH+pL0gdNs7umWB6QkABuUQ
- MJWq0HHGxXfU9UjXunlZNGC6/NRUCZ1Zi7p33rrfrbzYjawzjAuStJRI+HSYfTYtHhJuFa/SG
- EVEYwrDJ4/VUvB3R0Vt99fyU3Ww+6PnJbgZ0XDGPx49fwo7RWvQ/ihIRR9+rsT5uX3zdc3ZHO
- vIjAy7XcEdL2OOccUhRgSO2dE6tD5uWV6Ppa/raD93rH0yfuFIMaZG3ET+RLOoEEV92+EJUiT
- lOntUif7GaF7xJ/ekfqBxAjhBqkg8ItK2kKCRF3XUFB4CpEc1CFUsg561/WBLKntxtRQYFAK9
- 5fTt+QoWGopoJdBdvRzVjtu/en5rWUwMnGnWIyoRO4JKng/TgfQQMvGx1XhEGC4HmcMCFRpuf
- wHP0f2s6es54CKAWeoohWG6ZZeo3a7vhmdzxm1WEFdbLfLDurHdvs3H2n9T0vhHtm9t1qajyu
- 28SMw4H7dAf7Qj4v1NF4FLC8T9ErXJXjM0Wh9MCkp5DYYcvOoVdspzW765ybcYrCAjohyBUcA
- mjK3waaABrwh9jQlVt3DX7TVR8wdXTH06PGvgnUrtOyV8vwbJf8tec7vepuE93/9bHlkAxF1c
- JA9SoJrYEVwO6TezT3DhEO25Qwc72NufmkbEZG3Yms5RvqQUC6yFuw72ZMbeVc8s+plY8atPI
- v14Y+yQ93A3ZiMIfIfyqU/4QvpfN2BTB2nZjO9B3cqhSO46RdktVy0mQe3qF0O+2vTnR4846V
- +e/mDozkBZYehjvARSmgRVzY1G4TM5Ldq0++wkWCmhO2J3MPi061vOWoNgDIZeu8HsTll87/j
- rMwWmgFXKGr6WpnEf+U0NEx7mLop3kkK9Q6eJJ6Qcgoji/p2r8a6KZWgXpqwXCOQTqHQcy1dK
- V4i8IZjtIEpQ8dViJthqjQEXMVv4kw1fAy2kxwwufCRwaSBOQR5olOMqnvUpsnxkIqlAlhWA3
- 4O5lKxXwLcskVShfSR9S4lDCTBuzsuX+6SqRnTCyLQqReyKMKtq30EhRkbNmI9JkaQGCA7HQ9
- WgPav+iUqvoTyENJ3KzoNqZbVHhwr4b3P0DQpO2Atru3ujRj6GucLpNP7A58VQSztbDUBi0GU
- sHU6JEhwP7UE9Z3aN5wDTxt/0BCh8lsvUR5EWee6hW3frigMFSIFz1nkwXeGyJTu4PcEAvf/E
- U5ATcPkVmMocuhX2qcG0KEVW3WBZa22FEMxJofmS6zqzIbGR1bfHG141FpoQZ/B13LMPeeaq9
- KYGNH8XJ2DkQ64CyG/nW5wfbq1pfpPZ0FEXRZlsn+p0ayvoC15QRxIz4OYo8iCFmD5yBn9og8
- Gkwhpy0MGCTxuFEagfls6BrgW67Q6AKhRaG0PMxCpvnf9OTbrw40LNqVAGXM0CFQ3C/Mki2Er
- n2SNd58vWs6jRS7+D9s9jzzWppZxgiMQansIVXYeRL0akL0liqNB/q7ZZSjmt0NGNz+ZLqnem
- y/6nt84UryHYa0UHHKNd9HpjK/CZbTYRGC0gclQbWDF7M3kkvi1qe5JUfl0o0vPj+jEJQiE3G
- /+GS+mS5Pvg8OBMGRbsB43jaZkJOvw/WSwnRmx0CV1OhfFjle1u99Q0BlRs33Qdtzao7c+be2
- YuV+miwn7fYB2KtGiIxT6tBlIq2jT1DOzlLUq/l8wHc0/L6P82QnYEEa3SWq7r/lSWfhxI43q
- bZURGtscJgUWUY8pUkpIWHUnFJH9iRdkpyARpk3hxPOe+WRX8X/v6HrwzGBaMa6rnikmLqyIe
- GqJYst/1+0HpTYt94jMzkuP9BJY7H3/Y78I8naQ8w/NTpfN1v28RhJgSt9ngi+x/tJJD39kp7
- 7zzKrF9nA93OzyFXpduCveA3QOGMmfjliVw918lqW+A==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85ad473e-b2f5-4458-8973-a643f90eda5e@web.de>
 
->>>> The address of a data structure member was determined before
->>>> a corresponding null pointer check in the implementation of
->>>> the function =E2=80=9Crnpgbe_rm_adapter=E2=80=9D.
->>>>
->>>> Thus avoid the risk for undefined behaviour by omitting the variable =
-=E2=80=9Chw=E2=80=9D.
->>>> Pass the required address directly to a function call.
->>>>
->>>> This issue was detected by using the Coccinelle software.
->>>>
->>>> Fixes: 2ee95ec17e97c58b65e978a08b75fa8cb6424e4e ("net: rnpgbe: Add re=
-gister_netdev")
->>>
->>> There is no NULL dereference here.  It's just pointer math.
->>> No need for a Fixes tag.
->>
->> How does your view fit to information in an article like =E2=80=9CFun w=
-ith NULL pointers, part 1=E2=80=9D
->> (by Jonathan Corbet from 2009-07-20)?>> https://lwn.net/Articles/342330=
-/
->>
->=20
-> Of course you can't have NULL pointer dereferences but this is not a
-> dereference, it's just pointer math.
-Does your understanding of programming language details differ from the vi=
-ew
-by Jonathan Corbet?
+On Wed, Jul 15, 2026 at 08:45:48PM +0200, Markus Elfring wrote:
+> 
+> Jonathan Corbet provided the following information.
+> 
+> “…
+> But Herbert's patch added a line which dereferences the pointer prior to the check. That, of course, is a bug.
+> …”
+> 
 
-Regards,
-Markus
+Notice that it says "dereferences" not "does pointer math".
+
+> 
+> >                                                       Note, I didn't
+> > study the C standard
+> 
+> I hope that clarification approaches can evolve further according to this information source.
+> 
+> 
+> >                      if the compiler is free to optimize out
+> > do_something() also in the 2nd case, but at least today gcc doesn't.
+> 
+> Can development interests grow also according to another clarification approach?
+> 
+> Does &((struct name *)NULL -> b) cause undefined behaviour in C11?
+> https://stackoverflow.com/questions/26906621/does-struct-name-null-b-cause-undefined-behaviour-in-c11
+> 
+> 
+> 
+> Would you prefer to omit a “sanity check” in the discussed function implementation?
+> 
+
+This is irrelevant.
+
+In C writing if (!p) and if (p == NULL) are always equivalent but weirdly
+the NULL doesn't have to zero.  It's part of the C FAQ.
+https://c-faq.com/null/machexamp.html It's just a bit of fun trivia that
+doesn't really matter unless you have a time machine.  Even if you invented
+a time machine, the code here would still be fine because we have a NULL
+test before dereferencing the results of our pointer math.
+
+regards,
+dan carpenter
