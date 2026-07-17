@@ -1,172 +1,141 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F7030C163
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 17:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0616B394792
+	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 21:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784308120; cv=none; b=lK0MnDhqThAK4dw8SCU/0ecvALgCe1PnnohPfRvxOQYEdcHA8JTL9otnRqktCdFtJKyk0l0MMpVp8NY/CvHwa/TKzUyLxogxIjaD3Y035xsGMPf0rPGSwVWJb1hcOuZAhiDOY0TwIm0IEh7P5wVbcRtVUkUWiMw5Bo5KX4qtNTY=
+	t=1784322852; cv=none; b=oI9eVlP///TMS8FH8+vL2c7nWN9PgxRLvqnvSxJmrNTtN5F3mSoF8td2+x+vHI8MAfPhjrt5+zRhws8VOMyGlPJPDiEPS93p/RZDizapx3l2r4H4vsIlGZ47hCBQ9D42dZ5lJU+EdSTimpHiY42HWsmotW2bMoVuMP7GHObR7/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784308120; c=relaxed/simple;
-	bh=v9rwAemXOjJTrviJF/bhq++m8F7SpFsDGXfJ0ogZaz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4KOrkGM2WGvgH2ISZ+nUva09kqvGLoYEJdUQ4hlmHqudL4DUMqEdCNOxi9kwHhEOehU02QTBlkgcl7gR7PQz7H7FqgRTZmsSk75hNFCe+Cd3C+gXxl9vxBXBkFekzr1sAHnOCoJDK9fxlGNqzeD4ALSzmc7G+AaAnU4mvc+p58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WedKg/rm; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MN8MP1r7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784322852; c=relaxed/simple;
+	bh=XM9neNInhG6hGapxARO8DnRxo5Je6MmvjK4WGCKF2Bk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VbTRPBV73l1jY/wfW7B7c2neGG/e2j2BwrREVhb8TrQb2sPp+xHlYyxQA/5J1rdHP5G+2WqWuNRvPArwA171lrNeCBUK4+fjE+qvrGWzwIjmXSHv74hIMQpQWlWGYWsrL/JkqcjJ8lo3jNU6z7nW5y6C5gt6IVw5snq/DGWncfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I7HG6mQ2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CFi5kTn0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WedKg/rm";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MN8MP1r7"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66HGoOnr2478457
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 17:08:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	as3BzJOlBKPvMbzvYeL9WCvkFBQI6sOqi8ZlzCtZ3cw=; b=WedKg/rmLwpUri+Q
-	XUEOxKQJXB8qmqreY5FSdEKcVqF8suGCye0K9URodZHGqEmgFxf1gKPjFzGlEoJa
-	RBpMVn/DvaA/UTGXOLunm+alkCGlAcda1CjE9lGrcrNLxyRuuJNsjDbEBq5Cjv94
-	xcy/cNnmNwNKVTmAJntJiOrj41l5wd9OaSZ9NfBS90SR1h3G37nHo80hQ+q10WQx
-	fn0RUBlyoCxVi2pW4RMr0amBMlo8w2Auf3YR1bENULUIgof1KwkPrm6OQrkyYDHd
-	A02oN8Wdfd1DVZ8nGTundh8jOhYD8RUpETTMIv44i85smz7Dl7C5uyWbSuTtQvwm
-	RVcUyg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ffhpfhtur-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 17:08:37 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3811279d51aso8485396a91.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 10:08:37 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I7HG6mQ2";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CFi5kTn0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784322849;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3n8ovVroS/g0E1kqDzhNKBMWW9UR5F3sPuTt8jUlpU4=;
+	b=I7HG6mQ2cqbWiOnpbpX541XZbBtmXN6UuUS8h+XMRzvLqWqw0UNqNXSwHiqvpBAMG0soI6
+	SvYooxAebtMpCRiz8r+cWbrSciWrpbTErYcqCTi7XrKX5zwybPaox0wvIZ3yqyICxWAbuc
+	xyp+hs5Mlu3ol/I96utlGyEDgz4vZFM=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-378-iOuFHXdTP0GlUdQPdTgUBA-1; Fri, 17 Jul 2026 17:14:08 -0400
+X-MC-Unique: iOuFHXdTP0GlUdQPdTgUBA-1
+X-Mimecast-MFC-AGG-ID: iOuFHXdTP0GlUdQPdTgUBA_1784322848
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e8004d60eso1077591585a.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 14:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784308117; x=1784912917; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=as3BzJOlBKPvMbzvYeL9WCvkFBQI6sOqi8ZlzCtZ3cw=;
-        b=MN8MP1r7kv3FZCYs+DEgQfl39OVgRfujazrcfw2Tcse2pkgVfReSr+c/E5RTUaUqwX
-         VZgifGklWeEV8IFThDQL4F1KIUDhT3wIajXPpC/nW4lDhVMjCtnMwjvpTVJyjzapTJkp
-         AFJ6YiSuv4VFOPQ88fc0Za+lEAGTuTGL4hAO/wKkDUlBk5zMcIWEldqQ4pAD0kjdSqKi
-         iCVUti3cNuOvQW2R3PrLkkqfrTw+dkoguwKoFAcPcjRCL01FjHHjaX/OhX6dFF5cn3QR
-         DkVGswv0AkGJ+8suTJ64xzKlvLDJuWOWS/oc8Xx8OWz0w4nNVD9gnH3E45w4ExbBhSyz
-         miUA==
+        d=redhat.com; s=google; t=1784322848; x=1784927648; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:content-type
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=3n8ovVroS/g0E1kqDzhNKBMWW9UR5F3sPuTt8jUlpU4=;
+        b=CFi5kTn0Teju53tZjHA6RxND9rpMOSf0tC2eyPaFWMSCIipF2+RLkrhTBpsxAQopQW
+         XE3v7YZ1l59c87VmmP9ErfMPO9YNOxTGqNtNDnb5MDpBhVndz6RhVZ1T64BK6R71B0xq
+         Mn5FQYjCsQurLHBhjV0ouH73M0kVBccRYKGCGG9iJRtMGMS7q8tbe8ulXLiXmv5kYTZL
+         WhPEUR7D9focSGyWWA8/4CdxG2PkkifaKTljnQbKjH57dhPk00JFKV3/leJDMs4+x03o
+         R7Fw5oYUixcngtnDAwEHJ3IXczEL3iJgH6QdEsKZX119mGRhKJRf+tby4Nq3mrpbGvVl
+         sOYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784308117; x=1784912917;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=as3BzJOlBKPvMbzvYeL9WCvkFBQI6sOqi8ZlzCtZ3cw=;
-        b=kyuB1QvDlKv7aA8bxx8m/hg2Krgm6kZMm8S6Nv6ADosYiaTH7u/VqPBTeoqRDKyPE3
-         VMuaWZw4e1NGgEGtj5cyFBmi16sh5dXj/qdGYZv5RCAxNngrvX4RSSlhh1vE9ZYw8/qY
-         ZKz8WhgzBHx/vDnsWWX9fw/O/Nak5uT33ln5td+XyPT7F31eP8pfDHluwCUrVFI2/fkT
-         HJRTDqsUbjG1wQ7VGSSnAFfO8+bJ6uF3a9lZpTTJl49RcyS/38Czj6n6zO5pfvvvDfCG
-         SkJprzYB+NpwS3snkdpuHh0ZOcUQjyt+Tewgr0nSSwuFp1+/qtzuR5t3yTRXZBiJwd36
-         j3dQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpzo/RSt6djsjEqjq3kLdLw3ArLT3eNyFJFRziZN4FQwt7AO6L/W0Do/hgTZ0i7dKcnC9oGgovVHs1LiTFYc3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy82RjiBPpBo+iKCZjtHex4/+9iDNnbFmhSdZvvbbJ6QdXqoNQK
-	oGe+SI5TBd3s4OfX7sKVBoTPpWMMugosOxO45qAwepnjf+qW9YWvBSHtYLwbZUXDx/3SEewDd56
-	0/bCHUeBOmFpibp0/lqrzApl9ULGWxvbic5p4Ap+vZaicdjn3w1XxcyVSbnbrnIIZypgw0mJYk0
-	PDU/w=
-X-Gm-Gg: AfdE7cnpm3B6Wwe0fFM7w8rno4crX8ThS83uyJ5j5ImxLJ0/R3yfXypzwgihkp+JCEn
-	Ep0U4eqTF3sNdCxCIk+zlaGIoiJveTHwKC1QnI+MEXxlmVIonKw6/xnteC3sTO+nOe8Hha3Xi05
-	nK/wwY+2d/lP5XBzIc+UfgojIIrcF7oakl1txNWXiCjUHoWQ8TmLcCxeKsuiDAK0voI980JvGQi
-	0dFF25zcwmLsZOgUH/G6ifkMmcM9BOTra78p3gBF09Rgxgf+k2s7Emp+iryjBZeQvJDtD+TPxPQ
-	n95c35/YtzmLDauACOaMVfhuTGIAZVjPGdwny+fGmZHaRSDzesGmMhuHXuFL5JTwvPv21YsrwNZ
-	rBRUFrz/YmIEudk6uFaPP8EaW5VdA6witPXcm/f/zhaJUa7TcneC1n8N/EQ==
-X-Received: by 2002:a17:90b:3942:b0:37f:9ce1:cda8 with SMTP id 98e67ed59e1d1-38e4b59469cmr3604171a91.30.1784308116605;
-        Fri, 17 Jul 2026 10:08:36 -0700 (PDT)
-X-Received: by 2002:a17:90b:3942:b0:37f:9ce1:cda8 with SMTP id 98e67ed59e1d1-38e4b59469cmr3604119a91.30.1784308115921;
-        Fri, 17 Jul 2026 10:08:35 -0700 (PDT)
-Received: from [192.168.1.11] (15.sub-75-218-246.myvzw.com. [75.218.246.15])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a210571sm8941834eec.31.2026.07.17.10.08.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jul 2026 10:08:35 -0700 (PDT)
-Message-ID: <9d7093ab-dd98-441b-9ccc-ee0b7fad7923@oss.qualcomm.com>
-Date: Fri, 17 Jul 2026 10:08:34 -0700
+        d=1e100.net; s=20251104; t=1784322848; x=1784927648;
+        h=mime-version:user-agent:content-transfer-encoding:content-type
+         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3n8ovVroS/g0E1kqDzhNKBMWW9UR5F3sPuTt8jUlpU4=;
+        b=gSY2W6w84kvBh9nqQpJZ+pZ/F499ce5eRBGkpIP6Sgg+50fiAByiqbfM5c3631UTNV
+         4SFwm56iT2O1TOH4BjfZUK45cb5UWaUL7G6SWT9JA941my0eJJasahS9ua3o24A3qU4B
+         37GAtesQZVpBj6vCryzv26A8krQeFNIX9Hlr1KJS2Dm+rjbXP/ghHXbiNringcU6OwjP
+         g6mlnnTe0eYdZgUnnpg1okirf25+H70QrXBo0PP39r8ZTSsX3TgEM+YTMOKn9fbqJKAT
+         KUQ3TP91pdyw8i254Ot2/6v+LYqM5mDSglGrK5PS3ru2eMgJOmSVBDjT2Q8Pe7ACzSvU
+         F3QQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoJDJWP3eJBRSVG6mmQF6UKoAPnfQpbaLe12Vkb8crtreBaLD5mO9oPfuo6EICRicS8+JMObXUo1GAPxafqv84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlRu1LgWTwHgWrXG3ut+PcmGfvNpk95ynOVp31abEPnrR/wiqS
+	+eA9snofyAXA8JfeWga5k/tO2ETDJo7o5qccNePnUjv4Ip0famnjMxmUm3w5LfLKDm11AN2d9Bk
+	8SdjrsKe9DFgVQnIU047OSm0bTAgGsp8z2cFb9r7abJnP/JJKirjx9KU+mdowL7Y7mhyTxA==
+X-Gm-Gg: AfdE7cnn0XByCmVw2rCJROQiYAmG2jKT7VtktMm24sWjfaHQA58TZ5FOsY0pcprnj1i
+	EWxWLsdqd/2MzNL5BTfotO+OvREJ4bb+DXomjYzfC4EXjwW+KQB3JGGmuglj22nIs+cZyuD0QQr
+	dHAS/h3hILis5+fxcLtIUNf7NNw4MjlAvv3DJOQZRpfCmh5SV1ZM2HqpLNGFhMlP5napFFXebYA
+	CvAiub5klw20hYTv/psf6Hm7JkPW0/Yx6fgf8oGcVw8W/GRYHduUNm8wG/TbisQTfr9+B0hh1sn
+	FLkC1NXJT7Enj5LIrq3IMjs13Fs69VpdR3R0AiBB4IquaMIWLvmzLECwJHDllnznZhEcFROv
+X-Received: by 2002:a05:620a:390e:b0:930:b12c:158d with SMTP id af79cd13be357-930b3eea06cmr491923585a.38.1784322848228;
+        Fri, 17 Jul 2026 14:14:08 -0700 (PDT)
+X-Received: by 2002:a05:620a:390e:b0:930:b12c:158d with SMTP id af79cd13be357-930b3eea06cmr491919185a.38.1784322847719;
+        Fri, 17 Jul 2026 14:14:07 -0700 (PDT)
+Received: from [192.168.8.4] ([100.0.180.93])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-930b5461a16sm247735785a.33.2026.07.17.14.14.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2026 14:14:06 -0700 (PDT)
+Message-ID: <2aba63b4d22a329259f335b1a69a4642ad1ddb89.camel@redhat.com>
+Subject: Re: [PATCH] drm/nouveau: Omit a redundant
+ pm_runtime_mark_last_busy() call in nouveau_pmops_runtime_idle()
+From: lyude@redhat.com
+To: Markus Elfring <Markus.Elfring@web.de>, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, Danilo Krummrich <dakr@kernel.org>, David
+ Airlie <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann	 <tzimmermann@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, "Rafael J. Wysocki"
+ <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Fri, 17 Jul 2026 17:14:05 -0400
+In-Reply-To: <e3631a8e-b4a4-4e14-822d-2199f1576cc9@web.de>
+References: <e3631a8e-b4a4-4e14-822d-2199f1576cc9@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: cfg80211: Constify struct cfg80211_ops
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-References: <5aace954b6ef5c42017b83a1bffb859618e9498a.1784013180.git.christophe.jaillet@wanadoo.fr>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <5aace954b6ef5c42017b83a1bffb859618e9498a.1784013180.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE3MDE3NSBTYWx0ZWRfXwC0LG3vpHaLy
- vtGQ5i304AJJ6YV1hne+uLmcDGBh7+V8NuiDSXNO6gbbJ+qh88+fJhIxfSPY6aL9Wy9ognqdwrZ
- Ea4UQW38/LCsR4DRWcz0wSG4WxTJ8OvGxFM6dGs01JbvWQSgEWAkc2HBycieicDg9EiCO47hphF
- JpcghQSQL/T/bvB863HKxdacGQkLf2tgGOwEJrjT7T3Y/cqKlt0qn5hRI+17NqEGy6pl7fntaXs
- 9lZ/irtuSqWL/J8BaBKKQidS8D7n105NQYr1acAZERhF8dkcElVy9JFMQbnwhP/z/up3Y6/eITd
- pl0VCZ4NYvPds74MPwexafXC613acAtzwpXxDKFMk6CxH8exLWzenHoM/SUZvNJqkS42H9xS3jL
- L+gJ02E9Yd9dM3FhSqaPM29mIg/AXJZtmxlQDjO+OL6Z2KVJTic6QSvdIn429gK6+IV78eQAslQ
- UFpPMGWUim9OOJa6HNg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE3MDE3NSBTYWx0ZWRfX1jpmTdlPv7lb
- 8S/U/DzFm1LyjmTn3QnmlainVA94+68t0uLyscLVwqsa+H1QCJ6RXTOekb+d/5UvhYdjHO7c5/r
- IP2fe6eCH1CUznZPbTzoaI16ZvPP30U=
-X-Authority-Analysis: v=2.4 cv=YeWNIQRf c=1 sm=1 tr=0 ts=6a5a6195 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=6VQYfvmiyQ8t40WkS/mQdw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=NKF_ESviEq-D5M3B6qQA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: 0jASbeAQgx84vUvu1ZY1yvTJE3GNCCHA
-X-Proofpoint-ORIG-GUID: 0jASbeAQgx84vUvu1ZY1yvTJE3GNCCHA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-17_05,2026-07-17_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607170175
 
-On 7/14/2026 12:14 AM, Christophe JAILLET wrote:
+Reviewed-by: Lyude Paul <lyude@redhat.com>
 
-subject tags should be wifi: ath6kl:
+Will push to drm-misc-next in just a moment
 
-I can fix this when I take the patch if there are no other comments
-
-> 'struct cfg80211_ops' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->  143726	  34579	    192	 178497	  2b941	drivers/net/wireless/ath/ath6kl/cfg80211.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->  144814	  33491	    192	 178497	  2b941	drivers/net/wireless/ath/ath6kl/cfg80211.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, 2026-03-25 at 15:05 +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 25 Mar 2026 14:55:01 +0100
+>=20
+> The device's last busy timestamp was set in a wrapper function since
+> the commit 08071e64cb642ae19ebd6ffeb13b4f3d130b5860 ("PM: runtime:
+> Mark last busy stamp in pm_runtime_autosuspend()").
+> Thus delete a pm_runtime_mark_last_busy() call before
+> a pm_runtime_autosuspend() call.
+>=20
+> The source code was transformed by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
-> Compile tested only.
-> ---
->  drivers/net/wireless/ath/ath6kl/cfg80211.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-> index cc0f2c45fc3a..ecde91159b54 100644
-> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-> @@ -3437,7 +3437,7 @@ ath6kl_mgmt_stypes[NUM_NL80211_IFTYPES] = {
->  	},
->  };
->  
-> -static struct cfg80211_ops ath6kl_cfg80211_ops = {
-> +static const struct cfg80211_ops ath6kl_cfg80211_ops = {
->  	.add_virtual_intf = ath6kl_cfg80211_add_iface,
->  	.del_virtual_intf = ath6kl_cfg80211_del_iface,
->  	.change_virtual_intf = ath6kl_cfg80211_change_iface,
+> =C2=A0drivers/gpu/drm/nouveau/nouveau_drm.c | 1 -
+> =C2=A01 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> index 5d8475e4895e..62ac9593230f 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> @@ -1209,7 +1209,6 @@ nouveau_pmops_runtime_idle(struct device *dev)
+> =C2=A0		return -EBUSY;
+> =C2=A0	}
+> =C2=A0
+> -	pm_runtime_mark_last_busy(dev);
+> =C2=A0	pm_runtime_autosuspend(dev);
+> =C2=A0	/* we don't want the main rpm_idle to call suspend - we want
+> to autosuspend */
+> =C2=A0	return 1;
 
