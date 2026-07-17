@@ -1,88 +1,75 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED6A3EAC8F;
-	Fri, 17 Jul 2026 11:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BC73FADEE;
+	Fri, 17 Jul 2026 12:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784286316; cv=none; b=gU/k5vAFOa/4eKOb4IUbUcXfn5ruKP9gi76v5Khqcw/ZugHpZelFhIHidjxDFt6ytT/8xw/ZQ/DqxPPGeluenJ4IlE7vzRnz5E7ARaFTqs1pEEF8orFlzPDo1UvCBvQ4AC7R7/0BAjHZFBgUSm0lLN18X94F6mZYoa4tKb+U5JM=
+	t=1784291755; cv=none; b=MQK2zy3KSJnVZSVuvNnV0xO1kPtPnY8eP5uLY09A1P8QLI0WMpKj0qrS8YRzGrnwLeM0JpzjDQ2yKI/VLvMxKfAjgW5rNgS9nMcvFExjgbBSFaqlFq/Mjkn0BrRN8lWg+E4LSzjRc7ave/6JA/hmBHuw+uZPKVDJrW8vF0wL7iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784286316; c=relaxed/simple;
-	bh=RtIeB384TuPOlmJr4gr9STMS6UcFSUJiIgvscd+djw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFkxR6ps3CY2DYyyz7xo6zSHFIZVcKQ04rbDDgDdJQtTXuLEYXQEmnlopl0Fl3E+DedbPfPGznyflqDSI3AJJKKFeeELox3fXCPItGjUUKHSCZkP6/Q5tmQhAXFEpaBNyn0fS/NwE5D7Kow0PmKCnDY7LrvNNHobm3wR689O3uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1wkgNH-0007DX-00; Fri, 17 Jul 2026 13:04:59 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 2B475C013E; Fri, 17 Jul 2026 13:02:33 +0200 (CEST)
-Date: Fri, 17 Jul 2026 13:02:33 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-mips@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>
-Subject: Re: [PATCH] MIPS: kernel: proc: Use two seq_putc() calls in
- show_cpuinfo()
-Message-ID: <aloLyYPIV39N_tQb@alpha.franken.de>
-References: <e9e46083-c250-4e12-8620-f590e9501a25@web.de>
- <39fa676a-e761-4a33-9660-f366c692d4f1@web.de>
- <ajEs2UcAj-YmT1og@alpha.franken.de>
- <736e312c-1356-4d8f-8ae5-bcc695f555dc@web.de>
+	s=arc-20240116; t=1784291755; c=relaxed/simple;
+	bh=ccosWI9X4jHK+0JHg85OjbycEMIiBdKsnp3Ff38uIp8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ULj6DzWdvhtIOYGVWvZ81J86TrPa9L6cDn6o0vKlITZDTvBpjHdkGECWoARXNV1cbi72NR/mxS/BfAS4ousYrL7DYCnDkEYqokNoKhcRWGPVs1Ig5JcS2LaDsvgJVT2rCX9B68YyteVXEk3R3ZuA3KVGY325YpMVaQvAsOWpaak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCJAeN3u; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCJAeN3u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 995F31F00A3F;
+	Fri, 17 Jul 2026 12:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784291751;
+	bh=vW8pWm8rsdK9m5Q0HotqdfGr5xc15Rx6xUUgGdCCdJQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=GCJAeN3usxOsQR1vVrty384kmMqGCBnPsuNew07uH5FHKnERjy4JwrlUR2XVV4ZO5
+	 QbtidVqVs0OVOgQEz0hUZdC0A/mc/1Do6N+jDt+nzq5k/LarE3d7SaBp/k6XTxNEix
+	 W1jdXKT51c1n1BY1qjjhk250vIRPi4zg3iQBNY5hNVXeemWigzwAQPi7zB52OyB4Va
+	 y6Laq7Vddnmb9FvLOtVuIKkPT/uNjl+L0WKqRfjGjeMPQCxOTr6MyCVGnBIiG7KMYx
+	 iUZZ94hpnRpNUksVVTJpMjaqY7wGfjf94l3NMDoUzj9SMPOlgH0jGKhqcoAJCxxzMa
+	 /sHZ4FOzm99CQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: Vignesh Raghavendra <vigneshr@ti.com>, Frank Li <Frank.Li@kernel.org>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
+References: <b0a22171f3ed68e156a2fa84383e99c23ec6b2ff.1784037977.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] dmaengine: Constify struct dma_descriptor_metadata_ops
+Message-Id: <178429174814.1176696.13776361509358729486.b4-ty@kernel.org>
+Date: Fri, 17 Jul 2026 18:05:48 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <736e312c-1356-4d8f-8ae5-bcc695f555dc@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, Jun 22, 2026 at 05:57:34PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 Jun 2026 17:50:13 +0200
-> 
-> Single line breaks should occasionally be put into a sequence.
-> Thus use the corresponding function “seq_putc”.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/mips/kernel/proc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
-> index 5401c679813a..5f49fd4653a7 100644
-> --- a/arch/mips/kernel/proc.c
-> +++ b/arch/mips/kernel/proc.c
-> @@ -109,7 +109,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
->  		seq_puts(m, " mips64r5");
->  	if (cpu_has_mips64r6)
->  		seq_puts(m, " mips64r6");
-> -	seq_puts(m, "\n");
-> +	seq_putc(m, '\n');
->  
->  	seq_puts(m, "ASEs implemented\t:");
->  	if (cpu_has_mips16)
-> @@ -273,7 +273,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
->  		seq_puts(m, " mm_sysad");
->  	if (cpu_has_mm_full)
->  		seq_puts(m, " mm_full");
-> -	seq_puts(m, "\n");
-> +	seq_putc(m, '\n');
->  
->  	seq_printf(m, "shadow register sets\t: %d\n",
->  		      cpu_data[n].srsets);
-> -- 
-> 2.54.0
 
-applied to mips-next
+On Tue, 14 Jul 2026 16:06:33 +0200, Christophe JAILLET wrote:
+> 'struct dma_descriptor_metadata_ops' in not modified in these drivers.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>  120635	  21584	     64	 142283	  22bcb	drivers/dma/xilinx/xilinx_dma.o
+> 
+> [...]
 
-Thomas.
+Applied, thanks!
 
+[1/1] dmaengine: Constify struct dma_descriptor_metadata_ops
+      commit: 338c853b7c3b422fefda195b9b8010e40611c96f
+
+Best regards,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+~Vinod
+
+
