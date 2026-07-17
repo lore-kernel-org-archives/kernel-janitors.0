@@ -1,153 +1,81 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977D742BE80
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 15:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784381F7569;
+	Fri, 17 Jul 2026 16:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784300772; cv=none; b=N3stSgJVhrPLLwJkVn6aLz4C8pM92VzeiRx2JoT0ksy3OZrklvoQ0nsZouzrJyKwrv1+NLe4+4S7bYKSVoR+8rTwrGMO7ngPcVWw21jccdz24dWhVyckBWtSZIujmK4imdg53drDSKbjF5qFqQ/19mFUots5lY3Ln14crMizvOc=
+	t=1784304489; cv=none; b=JDF1UzmzMlqr//nb4HDbP8N/Yow419ASAzoYSAg0q1rj/S8vkLL+Kbz1zRdiKfpv8BZr0Js8btzY+iHPh8hhRehmzPnxEJHSDbm8mG3CwMPzn5QXn4l9K/bboy3mBsj2PueNId9WMfA4rT14BYBjvnmx9iG1W8GqK//8KnX98Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784300772; c=relaxed/simple;
-	bh=9VkWsm4QRs9dUSd6/6dOYCgQXmhzoHK39y/6eyAkwfE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E3YkkDzi0WWiKgJFDLvDa5sIyz1e81Irqwb4TezJxfA8595Gtp0Os7aeK96+wlpitF7r0jSaTkeZsfRtCKzgZ6Xh3bWMQ9W1mfghsYyXrhwhntSgN8AGCvr5DVHthAFNGDCOHjHrEe3Cg3X4IxOc1lqWpCw3nHfQyLDUPt9quA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nA3Hz/z8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=A2ogfWs1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784304489; c=relaxed/simple;
+	bh=F3xkE8kkq+yNUu4fgR7NiTQRD5ek/6NB3jD1dyHs1MI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVjOMEUg6RACQNy/z4D0KzthHpuQyqoZ9dMHpzW+u2hHlFvMfcwCIPjBy9bANA8CJmUYNlsP7l1D9kLuHl/1Lt+NytHkggPrLdsmB8OGWWRNDmok8U6Fym4OFuFYvyrL0uWDwU4sDooFJHlfpuPd9O1LNFy92js21pcCminKAio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LWqZTpTY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nA3Hz/z8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="A2ogfWs1"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66HE7gsW3123290
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 15:06:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	l4p3TEGAo50xViMa0mLxtrvMyupxCIU52JinKAJuBPQ=; b=nA3Hz/z8glHnVomw
-	/n2fAZX85ZjXPngXvYzPTv4qtmvLPj5Tr7Dtr7Mh/J5HqOQacM/ZxWHS6Z6TeC+5
-	Hp4bXR6Fmx/+YJupAAIxFmSKOaKm5KIDDIObD7aZ2ojuULLsg4QocGZrniM5uRCb
-	vy5XpmBjXxzujYOqV3tm1AqG39J7IAHMAx/iMgEPgmxdGD4OieKKIKACwYsCvwdw
-	Kg69ELGMmKqC1XLImEMLHqEgLJGjoES7Itf7sX9Tm7nQGnkm5uhMbml6C4S75axN
-	CPXcmpNl0wzFw4imPUP5TXTf9XR2KBxO2rnVssUfqvosM4GtlJpLmsHxRUfmg4qT
-	UWXPwA==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ff3u6mahk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 15:06:10 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-37fca5f21b1so1383514a91.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 08:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784300770; x=1784905570; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=l4p3TEGAo50xViMa0mLxtrvMyupxCIU52JinKAJuBPQ=;
-        b=A2ogfWs1wcPxeDsDa8haOqo2lGr4ps2lpJVDhncuk8uGCzBhP6O3AIyOFnxxq9dEnB
-         e55xkJsWjHXiREP5SnMDXyeykIT/1EqfKGlUMny6LsW2DCHHQQEGU2vffM77pzN60xWu
-         H5/DlMJFU9u2spRFkXlotq4HM0ej/v7M9/e5KvQ44h1vpdNNSGSr3cEiSWM5yJl0DJzC
-         3DCLzvKN9EzCrC5fUQkpLhwp1kRuQDOuKZZ2WsxPfKkTDzalxhLfP245MgEv2MI83gwt
-         kP72Gkgia3WQ+wLlTzgAEw9GHVcnuiXZfFbLlPGX0BQcdOf2lkFW1o2GNqn89d8olY2r
-         yidA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784300770; x=1784905570;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=l4p3TEGAo50xViMa0mLxtrvMyupxCIU52JinKAJuBPQ=;
-        b=chrA9h67Kws9GMrKpa9RTUjxyZVbkoa7nLQK720oOxSCByXbsGAK7w+vUqPE6Ex9L6
-         XIVjPmn9D+qAG+DQ42snBzs/3ZIPPf24Xo7UGHL0fLOgULN1Kkt9UPcecTSy/3aLaDhC
-         jiv39EYwDUogme0eSgFj1ETxQAP/mogqZ6Nzne+SkolMJ3RbHxgk9So1i6xZNg/9zMXA
-         8XzvvNs1WEg9FSZhPZTYO138h16Z3wc5lGS7PigA3gk9friTzmfr0SjoDVmk/6Gdc1QD
-         UMs7nREpklBuWf+sou9Iex4wwOgZVeaGz5YFj/hQmfW4b3JBwVqDKqNdjZyWTUFVhxy6
-         +Pww==
-X-Forwarded-Encrypted: i=1; AHgh+RorNiQrQGsRwqK2IrWaTpZsHa08P038Bmx0+lr1+VQTVg6bMmvwRZzBHjf9bKrQoBcVjUP7iL5wadOoU1nwwbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIi+8TtoqHUhZBmOfZydv0qk1169zB9gRyHiuGRAUgQMzX1nkI
-	UaY2W2qKtgPKokjKqyKfJKbrDZNefM5d/5gVJLunLtGZ7rauoFDb9WvJgkDCrxtH9c1EBV5jUYy
-	X2Am3oE4pHDaV5f9kw6omF0NFm7fZltReqA1ggqMEZ6LxdUjYaOZFst6Sdp+B8hYw9Gj77nI=
-X-Gm-Gg: AfdE7cl1Q3vKBrL0oeG0oR1bJJPemhGzNRjVGUV6JZOvu3MfJMPEyTwKh3MpbQ8haCx
-	bkKP8GQ2FfP5OoihTXYrV2lzEqdnCkZ7QDms+Fx5GSggjHhHU1vL4jQxnMSYleSaf/rAKAVBfKD
-	lFpug+sMwSa4p3IhIMjVWk3JrpohLoY7+xWAUvkqIBofV50+lcvJL4Jy9xN0DfkrjWulPIMSn5N
-	TTqrcILsRuXqvwv33ySOAjyAV5j0uBdcnAZA+/S8IZlTpqIoK5sx1/4qS7KjqbrbfQ6GSnJ1FeV
-	vf/qX2NbQBV/QusohblDmMKb+kuPLAjJBlMgZCaPA9M8XAx3295jtBb4/Jj1PPPW40kmSpxg2qi
-	WW6wUohUqe4BXetrMbhMSslB8YTQ15NC+/VvhlFM/ntvzvn5kS741Sa0=
-X-Received: by 2002:a17:90a:da86:b0:36b:4d63:4a93 with SMTP id 98e67ed59e1d1-38e3d21fc15mr7255025a91.13.1784300770160;
-        Fri, 17 Jul 2026 08:06:10 -0700 (PDT)
-X-Received: by 2002:a17:90a:da86:b0:36b:4d63:4a93 with SMTP id 98e67ed59e1d1-38e3d21fc15mr7254971a91.13.1784300769630;
-        Fri, 17 Jul 2026 08:06:09 -0700 (PDT)
-Received: from hu-jjohnson-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1dde81sm15681190eec.21.2026.07.17.08.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 08:06:08 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Jeff Johnson <jjohnson@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org
-In-Reply-To: <969d732e2c6f169e1aa5e89c7e01743a1adb55df.1784010931.git.christophe.jaillet@wanadoo.fr>
-References: <969d732e2c6f169e1aa5e89c7e01743a1adb55df.1784010931.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2] wifi: ath12k: Constify struct ath12k_dp_arch_ops
-Message-Id: <178430076786.128359.10643101937455909473.b4-ty@oss.qualcomm.com>
-Date: Fri, 17 Jul 2026 08:06:07 -0700
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LWqZTpTY"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=eTDlUb/mBnl/NzixsKML9EwqiRxHef51x4lkiALNwH4=; b=LW
+	qZTpTYTf38dOL8qxDD5rMn2MERuhtT5KKKCSQdbgsG2mNg61PIYAepHeSpn7tZWOpDxUshcZ7epni
+	YDclVg2p/uh3ZGDcb80HXZSzHoTQCQFd0buFpF0U4EnD4W9aI1QFeuyzJTzL5DQXeZ0cYaF44mv3R
+	21vubMLtAqlSiv4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wkl6N-00CpuW-0K; Fri, 17 Jul 2026 18:07:51 +0200
+Date: Fri, 17 Jul 2026 18:07:50 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Michael Grzeschik <mgr@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Yibo Dong <dong100@mucse.com>, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>
+Subject: Re: [PATCH v3 net-next] net: rnpgbe: Delete a null pointer check in
+ rnpgbe_rm_adapter()
+Message-ID: <a07b229f-a258-4b1b-a411-7c815f9f1cb9@lunn.ch>
+References: <7a9ea765-2c75-4a16-aaf9-510f2450beb3@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE3MDE1NCBTYWx0ZWRfXyGt+CoQr/yPp
- WEo3VrkjnPSuM9n5AplKZzVirh0RycV+nRdJ8RA1MjjRJlwSvFI6/eiZtoJhHbu4Kj9P9ubbGQS
- dICjaKHj+IZksNHtEi2UKVwKuy3Ma/ckGbXGYCGQ88404M3UAwzfkX84Blp0A9Im7efZSNakXQo
- 5DRvazBngFbwpsitsiSPzz1z07Qb9rZGtg2f20o4Le9eat4+kLJTu/ZhxS+PG+VyGFd1/FvLjLU
- Z9vLb08vN6d3Phe6Q9y1VZO/B7MOSdwS3lDjlWpDZCw6srVGY3ZnfvwtotzhWbvW7ZdXYaHGgto
- WYqOZLMRj0OjUcA1hMfdg+o09B8zsqtw+tACHSIgdKcZGg59XlnV02XtpAgK3VTXHU27rvuzRAQ
- 7ceOD5Wzu8AXk1uk6dix65qng53ieZRkgZZC/Y2XnixpTmGNHHBr3oIVR7G3NWKIAtcaxnk6MBP
- y61sqL8Had0IBZdLqLA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE3MDE1NCBTYWx0ZWRfX5I87wCeEANmG
- 8oeL5qAJ0SRouBbfKRl+9XUmZgs0u471Nbj3kP7vfU6XPNDZDRXTh2cOqlfl37l9oT/bzGnpFLD
- 1rsLLyPP7SANrqfWiDkg4EWVGJw/VYs=
-X-Authority-Analysis: v=2.4 cv=DYMnbPtW c=1 sm=1 tr=0 ts=6a5a44e2 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=riUHQTvyFV0r_oIck2EA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-GUID: UN6AValKRc0URFfD6eonbWDmKb1kAM-M
-X-Proofpoint-ORIG-GUID: UN6AValKRc0URFfD6eonbWDmKb1kAM-M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-17_04,2026-07-17_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
- adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607170154
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a9ea765-2c75-4a16-aaf9-510f2450beb3@web.de>
 
-
-On Tue, 14 Jul 2026 10:39:14 +0200, Christophe JAILLET wrote:
-> 'struct ath12k_dp_arch_ops' is not modified in this driver.
+On Fri, Jul 17, 2026 at 10:38:32AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 17 Jul 2026 10:20:15 +0200
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
+> The check for the pointer “mucse” was identified as redundant because
+> the relevant address information was preserved according to calls of
+> the functions “pci_set_drvdata” and “pci_get_drvdata”.
+> Thus remove it.
 > 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    6318	   3384	      0	   9702	   25e6	drivers/net/wireless/ath/ath12k/wifi7/dp.o
+> This issue was detected by using the Coccinelle software.
 > 
-> [...]
+> See also:
+> Reconsidering pointer dereferences before null pointer checks (with SmPL)
+> 2023-04-09
+> https://lore.kernel.org/cocci/1a11455f-ab57-dce0-1677-6beb8492a257@web.de/
+> https://sympa.inria.fr/sympa/arc/cocci/2023-04/msg00021.html
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Applied, thanks!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-[1/1] wifi: ath12k: Constify struct ath12k_dp_arch_ops
-      commit: ca435fd0650ac512ab6c5bdfeb90ed130b8f7574
-
-Best regards,
--- 
-Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-
+    Andrew
