@@ -1,141 +1,162 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0616B394792
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 21:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2EA15B998;
+	Sat, 18 Jul 2026 06:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784322852; cv=none; b=oI9eVlP///TMS8FH8+vL2c7nWN9PgxRLvqnvSxJmrNTtN5F3mSoF8td2+x+vHI8MAfPhjrt5+zRhws8VOMyGlPJPDiEPS93p/RZDizapx3l2r4H4vsIlGZ47hCBQ9D42dZ5lJU+EdSTimpHiY42HWsmotW2bMoVuMP7GHObR7/k=
+	t=1784357156; cv=none; b=fuOFAWkTnt8ntZliGpHn7Ol1FXlezTZM92UQYYDbZWCn50GbIrmHnzEDaClLdJNpKn0yAn+ICPpnP0hSXb9Ry/i2ZXggnzxC8Aw5iRSgh6pvbLBULI5lXLj0oN6zVdcIbdurYNuz1pW0jgTC8Fe4IyR39np5j6P2AG5Qj4McR2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784322852; c=relaxed/simple;
-	bh=XM9neNInhG6hGapxARO8DnRxo5Je6MmvjK4WGCKF2Bk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VbTRPBV73l1jY/wfW7B7c2neGG/e2j2BwrREVhb8TrQb2sPp+xHlYyxQA/5J1rdHP5G+2WqWuNRvPArwA171lrNeCBUK4+fjE+qvrGWzwIjmXSHv74hIMQpQWlWGYWsrL/JkqcjJ8lo3jNU6z7nW5y6C5gt6IVw5snq/DGWncfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I7HG6mQ2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CFi5kTn0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1784357156; c=relaxed/simple;
+	bh=leIU3My4pvQ6/4Uvy48/kmuwCw0NNDrix0x3rLW3rCU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QGwJotgm5CwddC7VjPGokXoUU8lSBLgQcaQ9yocFoDxoF27XNE4bpW9QnM65bCdXMTMMzBg4rwIWzQ1i2Fqn+cE3B340PtsSjyVhnfmr9oM52bPW2wwWteAFxuTz/xAsGlzITFMECwW3cnESIyYPhx7zt6c9pPtkC5wl3byG6iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pp77hnxN; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I7HG6mQ2";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CFi5kTn0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784322849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3n8ovVroS/g0E1kqDzhNKBMWW9UR5F3sPuTt8jUlpU4=;
-	b=I7HG6mQ2cqbWiOnpbpX541XZbBtmXN6UuUS8h+XMRzvLqWqw0UNqNXSwHiqvpBAMG0soI6
-	SvYooxAebtMpCRiz8r+cWbrSciWrpbTErYcqCTi7XrKX5zwybPaox0wvIZ3yqyICxWAbuc
-	xyp+hs5Mlu3ol/I96utlGyEDgz4vZFM=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-378-iOuFHXdTP0GlUdQPdTgUBA-1; Fri, 17 Jul 2026 17:14:08 -0400
-X-MC-Unique: iOuFHXdTP0GlUdQPdTgUBA-1
-X-Mimecast-MFC-AGG-ID: iOuFHXdTP0GlUdQPdTgUBA_1784322848
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e8004d60eso1077591585a.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Jul 2026 14:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1784322848; x=1784927648; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=3n8ovVroS/g0E1kqDzhNKBMWW9UR5F3sPuTt8jUlpU4=;
-        b=CFi5kTn0Teju53tZjHA6RxND9rpMOSf0tC2eyPaFWMSCIipF2+RLkrhTBpsxAQopQW
-         XE3v7YZ1l59c87VmmP9ErfMPO9YNOxTGqNtNDnb5MDpBhVndz6RhVZ1T64BK6R71B0xq
-         Mn5FQYjCsQurLHBhjV0ouH73M0kVBccRYKGCGG9iJRtMGMS7q8tbe8ulXLiXmv5kYTZL
-         WhPEUR7D9focSGyWWA8/4CdxG2PkkifaKTljnQbKjH57dhPk00JFKV3/leJDMs4+x03o
-         R7Fw5oYUixcngtnDAwEHJ3IXczEL3iJgH6QdEsKZX119mGRhKJRf+tby4Nq3mrpbGvVl
-         sOYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784322848; x=1784927648;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3n8ovVroS/g0E1kqDzhNKBMWW9UR5F3sPuTt8jUlpU4=;
-        b=gSY2W6w84kvBh9nqQpJZ+pZ/F499ce5eRBGkpIP6Sgg+50fiAByiqbfM5c3631UTNV
-         4SFwm56iT2O1TOH4BjfZUK45cb5UWaUL7G6SWT9JA941my0eJJasahS9ua3o24A3qU4B
-         37GAtesQZVpBj6vCryzv26A8krQeFNIX9Hlr1KJS2Dm+rjbXP/ghHXbiNringcU6OwjP
-         g6mlnnTe0eYdZgUnnpg1okirf25+H70QrXBo0PP39r8ZTSsX3TgEM+YTMOKn9fbqJKAT
-         KUQ3TP91pdyw8i254Ot2/6v+LYqM5mDSglGrK5PS3ru2eMgJOmSVBDjT2Q8Pe7ACzSvU
-         F3QQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoJDJWP3eJBRSVG6mmQF6UKoAPnfQpbaLe12Vkb8crtreBaLD5mO9oPfuo6EICRicS8+JMObXUo1GAPxafqv84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlRu1LgWTwHgWrXG3ut+PcmGfvNpk95ynOVp31abEPnrR/wiqS
-	+eA9snofyAXA8JfeWga5k/tO2ETDJo7o5qccNePnUjv4Ip0famnjMxmUm3w5LfLKDm11AN2d9Bk
-	8SdjrsKe9DFgVQnIU047OSm0bTAgGsp8z2cFb9r7abJnP/JJKirjx9KU+mdowL7Y7mhyTxA==
-X-Gm-Gg: AfdE7cnn0XByCmVw2rCJROQiYAmG2jKT7VtktMm24sWjfaHQA58TZ5FOsY0pcprnj1i
-	EWxWLsdqd/2MzNL5BTfotO+OvREJ4bb+DXomjYzfC4EXjwW+KQB3JGGmuglj22nIs+cZyuD0QQr
-	dHAS/h3hILis5+fxcLtIUNf7NNw4MjlAvv3DJOQZRpfCmh5SV1ZM2HqpLNGFhMlP5napFFXebYA
-	CvAiub5klw20hYTv/psf6Hm7JkPW0/Yx6fgf8oGcVw8W/GRYHduUNm8wG/TbisQTfr9+B0hh1sn
-	FLkC1NXJT7Enj5LIrq3IMjs13Fs69VpdR3R0AiBB4IquaMIWLvmzLECwJHDllnznZhEcFROv
-X-Received: by 2002:a05:620a:390e:b0:930:b12c:158d with SMTP id af79cd13be357-930b3eea06cmr491923585a.38.1784322848228;
-        Fri, 17 Jul 2026 14:14:08 -0700 (PDT)
-X-Received: by 2002:a05:620a:390e:b0:930:b12c:158d with SMTP id af79cd13be357-930b3eea06cmr491919185a.38.1784322847719;
-        Fri, 17 Jul 2026 14:14:07 -0700 (PDT)
-Received: from [192.168.8.4] ([100.0.180.93])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-930b5461a16sm247735785a.33.2026.07.17.14.14.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 14:14:06 -0700 (PDT)
-Message-ID: <2aba63b4d22a329259f335b1a69a4642ad1ddb89.camel@redhat.com>
-Subject: Re: [PATCH] drm/nouveau: Omit a redundant
- pm_runtime_mark_last_busy() call in nouveau_pmops_runtime_idle()
-From: lyude@redhat.com
-To: Markus Elfring <Markus.Elfring@web.de>, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, Danilo Krummrich <dakr@kernel.org>, David
- Airlie <airlied@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann	 <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
- Felix Gu <ustc.gu@gmail.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Fri, 17 Jul 2026 17:14:05 -0400
-In-Reply-To: <e3631a8e-b4a4-4e14-822d-2199f1576cc9@web.de>
-References: <e3631a8e-b4a4-4e14-822d-2199f1576cc9@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pp77hnxN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1784357144; x=1784961944; i=markus.elfring@web.de;
+	bh=CvV4xlGhOqSK4/kjTKShjUinFTECAwiAG/28OgJQ26E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pp77hnxN01vA5b+cCQHLqQ/tstRW7ewrNPqyhoglP5HrVXMGdHNckHZj5a5xzuox
+	 G3XsmI4Efpmriom+IthVYvMz/lq6S38cBMf0EHp3UF69uwU06nVsWkKyMFgN5m8I3
+	 D205PlPUoM0pjvTJ4ASoe4cDJg1QmP71YWKJul0upz9vXkznBza6URnkg7Lt5wo/I
+	 WyKPXHUn0GIbpvJTGFcie5g5pBkaM73c8SvEmJnky3/WqKv7UkeWlKTfwk9YK4IX1
+	 0CDDsp3p+z0ZiVHj6VMBoPCte0GXR9X2TY0uSEEbtgF8I+1S/fqS84b1fJQFJ+o/d
+	 PGDW4AC4uCFJcbIqSA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1McIga-1xJEE01ieq-00ZN6c; Sat, 18
+ Jul 2026 08:45:44 +0200
+Message-ID: <b1613a9c-b24c-4445-831f-e0ced640a80f@web.de>
+Date: Sat, 18 Jul 2026 08:45:23 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nfsd: Use seq_putc() in seq_quote_mem()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Chuck Lever <chuck.lever@oracle.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <ab25204c-5a53-42e1-ab3a-c4f704ebc929@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <ab25204c-5a53-42e1-ab3a-c4f704ebc929@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5ahyQyExN0Yfbf6h0jR97t5ulHAZKQXNTNOd7mBCibQkc/eFJZJ
+ 6VGTj7F/gEH989nIK+ipdqFQc6lfHYqRAEt9+2BrjWm61Y/Iq+SRBl46/OPSqwDOOSIfg17
+ q3cwAEm1J9TPPEYWZLJwPrlClnqtW+bH+Vwa6uYEcyV/T13IYMpDiAGWb2K6TRR6wUjUo3D
+ i4XIL++dXL3veRJNKfZRA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sDuhRTJj1CQ=;XOL8bYJFu/MzNvleV4EOfnbx967
+ 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
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Date: Sat, 13 Jul 2024 21:07:09 +0200
+>=20
+> Double quotation characters should be put into a sequence
+> around other data.
+> Thus use the function =E2=80=9Cseq_putc=E2=80=9D accordingly.
+>=20
+> This issue was transformed by using the Coccinelle software.
+Why is the information =E2=80=9CState 	Rejected=E2=80=9D presented by a kn=
+own communication interface
+for such a development idea?
+https://patchwork.kernel.org/project/linux-nfs/patch/ab25204c-5a53-42e1-ab=
+3a-c4f704ebc929@web.de/
 
-Will push to drm-misc-next in just a moment
+Remaining update candidate:
+https://elixir.bootlin.com/linux/v7.2-rc3/source/fs/nfsd/nfs4state.c#L2886=
+-L2891
 
-On Wed, 2026-03-25 at 15:05 +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Mar 2026 14:55:01 +0100
->=20
-> The device's last busy timestamp was set in a wrapper function since
-> the commit 08071e64cb642ae19ebd6ffeb13b4f3d130b5860 ("PM: runtime:
-> Mark last busy stamp in pm_runtime_autosuspend()").
-> Thus delete a pm_runtime_mark_last_busy() call before
-> a pm_runtime_autosuspend() call.
->=20
-> The source code was transformed by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_drm.c | 1 -
-> =C2=A01 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c
-> b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> index 5d8475e4895e..62ac9593230f 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> @@ -1209,7 +1209,6 @@ nouveau_pmops_runtime_idle(struct device *dev)
-> =C2=A0		return -EBUSY;
-> =C2=A0	}
-> =C2=A0
-> -	pm_runtime_mark_last_busy(dev);
-> =C2=A0	pm_runtime_autosuspend(dev);
-> =C2=A0	/* we don't want the main rpm_idle to call suspend - we want
-> to autosuspend */
-> =C2=A0	return 1;
-
+Regards,
+Markus
