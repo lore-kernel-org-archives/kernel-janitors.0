@@ -1,138 +1,178 @@
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2976930CD95
-	for <kernel-janitors@vger.kernel.org>; Sat, 18 Jul 2026 21:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451AA2E738C;
+	Sun, 19 Jul 2026 06:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784411278; cv=none; b=MtlaHQB2QSLTVPtoimJ9pE9NDJBHwHXegRgM973sEZV8GsXMwPxmkviGsMeFYOFgYayUVB3N1b0tV0hWftLIg8I5E9Rgr94osxuFRcwyVAqTHAFDNIQJFqxG87ttQMmmYvMyRUGxJtluJHyvsi6/rBt/7zgMN2BWHpTKL7zo9r8=
+	t=1784443899; cv=none; b=oIpHKebiZfh2d0se0w2t23FURmuZNVdkq/uxwRXdr2OR1rfOU3F+IkkcRQAjajMT//4Us8lyZzWO8HqQUjD+hDQfHQy4v/xnwOPnfapA5A1Pn8glwT6Zbi20tosIiiB7Foj67pl1RWxD5zeO4ZkF76uikYhvI6JZKEhdHSM5zHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784411278; c=relaxed/simple;
-	bh=LSej48dHmbtGy45nBhv0MbNaCCnVPoeB1r++WlGI0W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPJtapph5G7aG9KPONSUEYqWsrhS+iFAvQQbWcwbnn69uFoXPn/C94KsTDQYhAZ+tjH9t4NPBAS0KzmA6KFN15vOTkK+BoE+RidBkFhpRi6hV9lfJopjYVYQ0ezJXxMITTQzRECAPckzxeqRCyEdJg+R2iEzLl+3GdOZxhPHL2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gr4yElkQ; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784443899; c=relaxed/simple;
+	bh=x0bRRoQ2JTr0tcWgIGPMZT4Q3r0pcv3jRdhW/blErhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r5bEhx2nzBOlQfXAMkTnSxTPuQSasVnV1TgNo/EXiGYhqtrToJiHOSdWCmaKrtKP8C5SD7pulXOdFAdjR98X9nL10hc1xTo9siJuk+1VkcZsvIEixhdjhKfowkhPFQ1DHVH+dCFoDlDLJRt4bYhnBrkaTFkAJ4tnHu+9HBHqhOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k2Vgcppk; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gr4yElkQ"
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-47de008b020so1986399f8f.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 18 Jul 2026 14:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784411275; x=1785016075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LSej48dHmbtGy45nBhv0MbNaCCnVPoeB1r++WlGI0W4=;
-        b=gr4yElkQxRKMTEdSowsfeHiVMXyt4TCAUj0tJpuJUvTNiyYqcJpk5Tyl5u9wQmCnc8
-         t2IfJvCN7sKJQkWyKQ9V4N25a5LqmMQ2sRH4J14ZQwqGhwYmWbiK1jCZWOiRY4cewihO
-         BQo7QnLibH8NTPmotrVIhY2+ymzAqAaExI4TeYlV7QT2/rqBkwWHZIFIjmLxj6jkWCeq
-         dIxZjEVMfnJ+BTl1Kr+wUwQRjLGagexb1z8LPU3jvddArJT9vGbb25RxasDJnKLBICzm
-         Jeu67852MtoSjC7xiWdVkwBn9cxiclALfmViEITrkq1Bgc6HF59XeFViM0oHOWlEE5LO
-         t/0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784411275; x=1785016075;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LSej48dHmbtGy45nBhv0MbNaCCnVPoeB1r++WlGI0W4=;
-        b=onJnUbveLzqPSgQzmkAYD6pPx9ogyPlTLsxXzH9L2ugcKcDIC42mm+mXMrn0zVeeRK
-         m2vyumaSPJTgkyfb1ijRs8nl5paKDPmf+aaiuF5lNYq6ff/AyPxNgHSjPETrZlYKON2g
-         j+34elWifRm2S8fY9PuwAEn8C6oc2Fz2aFMe7BqImH/3iOonOVKtnxnyqmBQT1Ye50/B
-         esq3APW8MSfQNpxgd+MtzSUeFlnW3tF1VTCkP0FI3UC9UKuu1ipr3r9yP27fUVI7gJAS
-         5sSZGHImZWlKUcJiPiQXwO0enjB+UXj0gk8JtYs0iA11f1ESFbr568CysGrOOmYmrq21
-         n1HA==
-X-Forwarded-Encrypted: i=1; AHgh+RoiJIX2RA43qi4aIt/OcRwFKTKpsp6/PGMlzdzW1iNemoXVwB+Ij4ktwKsM/UIYM9gD6xmN1n3L7dtqvS/JN64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSyZgjhFs1sc5n+J4kLTWXh3oBfCzVnb75cJoJOlCKbhniUJLz
-	EwsIpbz4cZyoGNIZRlqaEKxpEWHzioXD7py/43cvboV/RnJx//xD4MgNdJ36e63v9qI=
-X-Gm-Gg: AfdE7cncStwnYMcpZ11GDxyMpRbO4pSeJ4Sw6rr7Axlil8orCin5ThtbgVcBR1UM1ln
-	dGOOm52bIk4tmir1pNde1Gbrp46vEiKVOPm9CtcV3oh1fKNVTLRi+NPoXEiUUat+YSGn0IkgIKG
-	DUTpSXy7jCdIuXdidl/lQLqGFPdIQXPlzo1ZJ7tFj4EiTyTYa6xGc+3MXQvXLvh39GHRWjhJ5Jt
-	BzDTPN52y+1kWgN7tz/f4b+gb6oEXCEtqfCOoJRdoEgC9HhGyD3geZodvg000ymEtRt2IEoWTiD
-	b98DwLMZmcuQAfgD5XflMHTDuXA9WrOppuDDdD4nHpoFfG8apkkLyk64t5uzgabn+wnY0WER3nY
-	CT2j+Mu4YP2989vMJ0P26MDCbTAOTLeTt1VSdsH+rJJdAdYud3jv03wRJJdGAFK2+4Gs9Biy2Xp
-	xCqzwkuqs=
-X-Received: by 2002:a05:6000:2509:b0:46f:1b89:999 with SMTP id ffacd0b85a97d-47f5a676c8emr16623315f8f.30.1784411274957;
-        Sat, 18 Jul 2026 14:47:54 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f63eeb360sm16216646f8f.34.2026.07.18.14.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jul 2026 14:47:54 -0700 (PDT)
-Date: Sat, 18 Jul 2026 23:47:47 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Kees Cook <kees@kernel.org>, kernel-janitors@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: fbdev: arkfb: Move a variable assignment behind a condition
- check in ics5342_init()
-Message-ID: <alvzxjwBr1gxu3Eb@monoceros>
-References: <36d0eba7-e78d-4a06-95bc-c97d9b91f8f0@web.de>
- <40d5e392-3f99-44c9-b30a-3481f60143ba@gmx.de>
- <550584cc-863d-48c3-813b-3a0cb45d9084@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k2Vgcppk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1784443879; x=1785048679; i=markus.elfring@web.de;
+	bh=lIps0HOHENxVGVif295u+dbj3hNezSiqmWuWj399Zoo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=k2Vgcppk99pMmyoHRgavYV1+a8QbT7/xkDXx7gMuGNScxUBqlnFixTvJ9pV4U5Jh
+	 sdtMZteU7nZo7yggEBF9Ir7NRDM0ev1cHIoH8ejFV0AjI5u81/deMjAwPM/D+yGAs
+	 6zEVyLme9056LPuhlwATAc5phbmb9TSYOFL30ESwdKU84K1/myfWB6P2icA1ptYhw
+	 qaDMeD+d+dVkM7tDnX1fkBaT8G+hlxrWoUHvgF1kSfBIuXZsDgAlIrHcZh7vVcioy
+	 MyVN/0GtApLVX9bwlCyBsFpiaeDJ4VAj0LtRuNnEUcOrDwW5tZil1iEIYgK+D0CDD
+	 Aq/5OdnvFk+GCC6jow==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1d7i-1x9aHP2q4m-00rOwp; Sun, 19
+ Jul 2026 08:51:19 +0200
+Message-ID: <7a146cd8-76db-4e5a-ac34-43b19176e509@web.de>
+Date: Sun, 19 Jul 2026 08:50:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f3fkxfadp6qkpugc"
-Content-Disposition: inline
-In-Reply-To: <550584cc-863d-48c3-813b-3a0cb45d9084@web.de>
-
-
---f3fkxfadp6qkpugc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: fbdev: arkfb: Move a variable assignment behind a condition check
+ in ics5342_init()
+To: Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Kees Cook <kees@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <36d0eba7-e78d-4a06-95bc-c97d9b91f8f0@web.de>
+ <40d5e392-3f99-44c9-b30a-3481f60143ba@gmx.de>
+ <550584cc-863d-48c3-813b-3a0cb45d9084@web.de>
+ <5a13f19d-4ba0-40d4-b061-0d17156b1686@gmx.de>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <5a13f19d-4ba0-40d4-b061-0d17156b1686@gmx.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: fbdev: arkfb: Move a variable assignment behind a condition
- check in ics5342_init()
-MIME-Version: 1.0
+X-Provags-ID: V03:K1:+RcRAEho/4XvAHHZdIFvYgCaFoICprnQhkqJYny1wNfoR0QJ79G
+ 3bw6WEQXdCSOL7CtESywXqtVzRe1arC/XpWKCjBwzZFQV135Het8j/rmtFWpsSzf/NLtJbJ
+ ga1Wti1aRjdOGqwPVidvCEFIntI05s/PKcA9Jeqh/Wye8vJ09wqBHyPXOWL2qgpcM8sbtON
+ JZLCyg+phiC1usUif+f4w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hn8EbyhDKjU=;fReC3GefOwhHejyCp/3U35jH7VO
+ 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
 
-Hallo Markus,
+>> Does your understanding of programming language details differ from the=
+ view of
+>> SEI CERT C Coding Standard (from the Carnegie Mellon University)?
+>> https://cmu-sei.github.io/secure-coding-standards/sei-cert-c-coding-sta=
+ndard/rules/expressions-exp/exp34-c/
+> My statement still stands.
+> Try to find the difference between the code and the examples on that web=
+site yourself.
+> Tip: The relevant part is the "&"
 
-On Sat, Jul 18, 2026 at 10:34:33PM +0200, Markus Elfring wrote:
-> >> The address of a data structure member was determined before
-> >> a corresponding null pointer check in the implementation of
-> >> the function =E2=80=9Cics5342_init=E2=80=9D.
-> >>
-> >> Thus avoid the risk for undefined behaviour by moving the assignment
-> >> for the variable =E2=80=9Cinfo=E2=80=9D behind a condition check.
-> >>
-> >> This issue was detected by using the Coccinelle software.
-> >=20
-> > There is no "risk" here.
-> > It just adds an offset to a potential NULL value (which isn't then used=
- afterwards).
-> Does your understanding of programming language details differ from the v=
-iew of
-> SEI CERT C Coding Standard (from the Carnegie Mellon University)?
-> https://cmu-sei.github.io/secure-coding-standards/sei-cert-c-coding-stand=
-ard/rules/expressions-exp/exp34-c/
+Which functionality would you expect for the operator =E2=80=9Caddress of=
+=E2=80=9D?
 
-We recently discussed a similar case where several people told you that
-the "problem" you fixed wasn't actually a problem. This patch is in the
-same category and your reference doesn't match the code touched here.
+Is it applied only after a pointer dereference attempt in this case?
+https://en.cppreference.com/c/language/operator_member_access
 
-Please stop to absorb maintainer attention with useless stuff.
 
-Uwe
+>                                   and in doubt look at the generated ass=
+embly code.
 
---f3fkxfadp6qkpugc
-Content-Type: application/pgp-signature; name="signature.asc"
+Can development interests grow also according to another clarification app=
+roach?
 
------BEGIN PGP SIGNATURE-----
+Does &((struct name *)NULL -> b) cause undefined behaviour in C11?
+https://stackoverflow.com/questions/26906621/does-struct-name-null-b-cause=
+-undefined-behaviour-in-c11
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpb9IAACgkQj4D7WH0S
-/k4yugf/X7EoA2Tt7mChQ8eG4wWf3eTDK6E37TtKWLPT3R1witunWCOP7nOhxZc3
-D139hRqc3qXlbwDBHpZTY0c+y7G2EE/7aBrnnhF73GmWLJaSb+CQ2WVCbUuMJ4kC
-qPGNY/7HaxPwlylhjJSxmeBt1JtxWDy6qAOgR78JEDzCVSN9+aWL5fFL3SFQOJhR
-OjLghlkWaKckJbm//CWA3NLVNHAgFZq58ozqVfTKmXKmKqvYH+iARxU8+V8jfPyV
-nFaA9mHT7NuhT+oLzm6orz0tQTgvszXI6SpaGBxiXoe1gbvexg+4MArqV19Gb11W
-7j6X45B9ImkYY6zrD6JK3heICJiHbA==
-=5CWK
------END PGP SIGNATURE-----
-
---f3fkxfadp6qkpugc--
+Regards,
+Markus
