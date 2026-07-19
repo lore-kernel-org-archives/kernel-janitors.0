@@ -1,179 +1,153 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A3D1F936;
-	Sun, 19 Jul 2026 07:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBEA3A2E2E
+	for <kernel-janitors@vger.kernel.org>; Sun, 19 Jul 2026 15:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784445860; cv=none; b=T5nJ4nRMU6K11sip03WLIKD13OzO+tHtgmFFTJrQ6vrQZXLl/M/APCaVRYjHnSYRqYSMCleWqmu1IA1DgG4JvDPZ2wVTESMBQAhHJWGt5WY4M24Mpsc1a19WFreSkjE4/C1SKWQK1YC4taJXdpLO+vSpaZStFaJxa7pnF1WiIV0=
+	t=1784473381; cv=none; b=q6U5vt5U3c/hloQTkkgu8WOyq793CJn8G6sRCqXgRN1+83yOFUA4K4+I94m/1GueVAknhAZptuZrOZtwUxSipyr+ZumMK7NIKbFy7Qg09fDwODyvMJhCbA+/z8gRQVNf+bV8IS6VTTG/9P5Cj5tXgEz1ZGaGSzLgKmFHf1SP3G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784445860; c=relaxed/simple;
-	bh=8bRip5MeAGzUaU9xGz/SeSDc6p8buIvtjjZOVRv5uQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+JVQa9isZKgl2zZPSlMEusgyVIgE1yDfieKWFLvIgvdOhramUsguQN0Gb8HM1yu3kEGLK7285bfz+WLkIzsjFM29vXw/aRiwbLElkrTza3m6IyQi8sKMZs1RzBmDGNXI8sVDrBjPftpHpvgm9Yx0MqBXXgJ39qv8//ua/alSzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Bxru4u/B; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1784473381; c=relaxed/simple;
+	bh=nhs0cTRgQM2TX5BYnOhc4RVoOOZO0UckyHq9RgxyHX4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GkELhg8p2+UAs/w+Z1zsz8eHVKTqd1rPNz/dhjNrF5nF/iDrRIKLkX5a3QET36lqXaVSME9KlGUukD/vm+4ke1toUxDrSksHYN2eW4UMnpSaHKOJfj/XItN1zuD5PqvmnQ5vyXMov3zZSp7rIRqv8591xJQyHlCf+g4jC2JnKLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i8+WBJJX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aKfFI9uc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Bxru4u/B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1784445852; x=1785050652; i=markus.elfring@web.de;
-	bh=onGitjB9bFK7FtExgujzZ/tghhiAs8wVM+pp7Eyk0rs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Bxru4u/BuVKOBAy5xfaX65swBWSbCsER57NszYsNvd4Vars+eCyc2DHIXbuPkY4p
-	 ptfT2roi9Ac3wPOSUITa+hao6aF1JYjJUem6WGqEEmlmrKspcF6ygbUodGNVR/t2a
-	 pOzYclYBtR/g6xVIkIXU8tdJ5JxaUKQ5qNWaM81LzyvSjcINvdR6T4E2+2UGfwhj5
-	 dgyLg6lKPCLjHFV0Vq02SKV9dhExSxpqBPeUgFn9oWw1rywIkS06Voc98CAX0ptPP
-	 G3JPoqtDg/cKwZUcW1ohAGUqc+dLyiujPUi0/2SbGOMhaEe0IbjjSrIIBGRIyO2Pi
-	 0iCGdQur3cG0Bmwqhg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnX5T-1xSd7x33qP-00d4W0; Sun, 19
- Jul 2026 09:24:12 +0200
-Message-ID: <b04526a3-41b4-4eb6-9f1c-3b0858ae3257@web.de>
-Date: Sun, 19 Jul 2026 09:24:10 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i8+WBJJX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aKfFI9uc"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66JDvnUq3770097
+	for <kernel-janitors@vger.kernel.org>; Sun, 19 Jul 2026 15:02:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Fq9QnMonyLkUiObCO4jyCIbIMkb+aIpQ+1EkpngSiEY=; b=i8+WBJJXgOzBuTij
+	gqMXaC+7RFv2NzgsdUIMeng8eae0brVZy5MBkO8J6pnlZjtQtTqOFBiSBDGbq/Rw
+	ZXUrd8Ib7QNwO6JyslCyT0zIny9xI/xVLx+F9HA+HPGQ9ac/jgPrsWKMMAJ1JsCm
+	zjOQfflnwahKg8dQLcSKQ9IgXSzgknXlALKZLiqguf+Eo6ZsiSeBnxGYRAavI/Fm
+	PmUmIipbqqGQ7jkRWQLONUMvAr/m9HI7dloWPfTy6A3aqK7zLx0q5jSm8oYFuryD
+	vYEwuekCah+FChsbmtjNEt974eU2Wx7VncU2AtapZaTDhm7f2zHfPWJ/Sq0wfT0N
+	n0+05A==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fgd04sw0h-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Sun, 19 Jul 2026 15:02:58 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38e2237bc43so9556750a91.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 19 Jul 2026 08:02:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1784473378; x=1785078178; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Fq9QnMonyLkUiObCO4jyCIbIMkb+aIpQ+1EkpngSiEY=;
+        b=aKfFI9ucAx6yGIMfjBJ6VdzoWoNj9htNtBqUhZl0t4P3fpczxYq4ErNSdpcq9f+ntL
+         2efBXVP/B8XeO/xmBc3fCI84IWiiAFt5RHVEiZ2L53MXAStYqrDKAWGDgIqCXOXZIDIr
+         YE+LoN3vd0O6HuMYf4aQf+MKyTAsb5lMZhRu9JR8LCKJwH0rQS/t8MMP1Cf00ZAO/GxO
+         zqTSmiPIfU/iMrgu3eIM8oH5gRaAvMWaa0Wmz0h6qOo1PU2ckDuc79YmMt6yUZThgPIq
+         fPH3IE1eoZwFa4TZ9pRWx3wHJkjd5x6XNFUkqzCYbBQQALWn0GV/sI2hp/c/rGV8Neh7
+         UXjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784473378; x=1785078178;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Fq9QnMonyLkUiObCO4jyCIbIMkb+aIpQ+1EkpngSiEY=;
+        b=WrvJQRH2tID5u2+tj6LnlpiaiVWcMtKMRjAZNbfomWdWW1FAkxgzNUTIMvSFnQvNBT
+         0Z4LKpLc/p7EiHobwuoiLj3AQwQzR4rq2Vwn29oHbZenbX3+QNWxOe7Q4YHclAaNPdlQ
+         EXoFkGHSGhRczmrNmjKECsQ6H3Mc920ohFnbxCekOs0DDshUcuC3DdHAZTLfkDm8V1rx
+         A3xWC41KgjBgguHQy2bxJPAs2Q8dzV8zrewG5EqXCk6oR4ZoEl0mZxLFi78KyePljGN4
+         CskAltK5OFXsr+VIx7yir7GZObLulAkRsBEL2IoY+ix3evWFc1aWojINrsD/oo2OPh19
+         6Eyw==
+X-Forwarded-Encrypted: i=1; AHgh+RrGfvOAge4/RboLFznrBbtH0ZVPq8aGumVayrWVLOuSihnORzRf8kjmOrWigxdVspXpCz1AtJL0Go+thgG67S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoRVg8ENt6lQD/4R22vMLiK793+c3A5bPQ8gsck4YL5b+gOz8s
+	Eq9LCe7mYKYnKoI8vi4yH5Kp1jDX6/DOXfoO99xBY51KP1lMSmBpjp08c3uaUgW8zvUS4jFytky
+	7tXok/dDDOxgHymCUJ/qJlOjoFfn4WV1bQyD5wwxDN9rUNFquGfoQ+qLLAdG3AaYlDimxHQfP5n
+	oE1hU=
+X-Gm-Gg: AfdE7clDCvoB5KFCgDAP8HIM0NH7E8LS2zEBPqJlTqyFm12uG+cOIscNsYd6Ua6AyZz
+	WF5h1OQj7obVHbhFV5JZuOGqjHT6S724Y+jeoJkpD5ZR1XdLqLBd41jINt58AIt3va7KuzviDs0
+	UNsf5J8N54/HBk6xTGmjEQK9ZbR3mfkLdCe8ozRy3Wb9PgppL91hORjDTkXAKSn/jX53cl5jeoL
+	oilVIH36TSWh47G71F3Woh+A8oHETWEGc7IdbDHpxkXdh2u098DESFUJkrsyWdKLCzXmTv6zQfM
+	pBP7Cjg8b57Zz6RoUsavANp1LTyH/agIK26xmSq5TXjMUfOOYvNm44t7RikBz8pBRL/WVf8iNEf
+	T7kNG9F34XZfCB5LK0a8rmW7OPEcTrI9eRQfvTowCa1rr61UWzXeElig=
+X-Received: by 2002:a17:90b:58ee:b0:38d:56aa:6f32 with SMTP id 98e67ed59e1d1-38e4b588b44mr9985530a91.38.1784473377705;
+        Sun, 19 Jul 2026 08:02:57 -0700 (PDT)
+X-Received: by 2002:a17:90b:58ee:b0:38d:56aa:6f32 with SMTP id 98e67ed59e1d1-38e4b588b44mr9985475a91.38.1784473376951;
+        Sun, 19 Jul 2026 08:02:56 -0700 (PDT)
+Received: from hu-jjohnson-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31429fe4677sm24638707eec.11.2026.07.19.08.02.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jul 2026 08:02:55 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-wireless@vger.kernel.org
+In-Reply-To: <5aace954b6ef5c42017b83a1bffb859618e9498a.1784013180.git.christophe.jaillet@wanadoo.fr>
+References: <5aace954b6ef5c42017b83a1bffb859618e9498a.1784013180.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] wifi: cfg80211: Constify struct cfg80211_ops
+Message-Id: <178447337569.3680261.4077948974065934846.b4-ty@oss.qualcomm.com>
+Date: Sun, 19 Jul 2026 08:02:55 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fbdev: arkfb: Move a variable assignment behind a condition check
- in ics5342_init()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Kees Cook <kees@kernel.org>,
- kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <36d0eba7-e78d-4a06-95bc-c97d9b91f8f0@web.de>
- <40d5e392-3f99-44c9-b30a-3481f60143ba@gmx.de>
- <550584cc-863d-48c3-813b-3a0cb45d9084@web.de> <alvzxjwBr1gxu3Eb@monoceros>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <alvzxjwBr1gxu3Eb@monoceros>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fE2R2L13o/pJg7zpEQYmGTif8wF3FkDoenvhwOqcOtNreUMt1Zo
- 8iNI9e54ia/kQ1JfvhgFpEmBfQmmVSi1P5ptSxKPgUW/vq4kkaFzS6RWjpcLObSHVZOfwT5
- 1gpd0fk9GXPmbBen4KvHwA8+ptT4Bx4c9VWzZ0yaCOb+z/JhCjgsjL0ZA7by69WLRjU0F6S
- BP5wfQVouwCDnqC4s8Rqw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PYo/cC2y05k=;xScmbihYUoLNoVXvA8rimrh4m8K
- 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
-
->> Does your understanding of programming language details differ from the=
- view of
->> SEI CERT C Coding Standard (from the Carnegie Mellon University)?
->> https://cmu-sei.github.io/secure-coding-standards/sei-cert-c-coding-sta=
-ndard/rules/expressions-exp/exp34-c/
->=20
-> We recently discussed a similar case where several people told you that
-> the "problem" you fixed wasn't actually a problem.
-
-We came along possible adjustments according to an application of another
-questionable sanity check.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Authority-Analysis: v=2.4 cv=POs/P/qC c=1 sm=1 tr=0 ts=6a5ce722 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=EUspDBNiAAAA:8 a=9dWoPoYX7bWxMb2dZPYA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE5MDE2NiBTYWx0ZWRfX0vGgx1+IR3wz
+ WSP8+hp33S3dB7X/msgOqFhtdbgIVZWWJHBNo6un9ODu16HbwpVLCScUbE+c3xLoL4lGF5bbczL
+ QAw3y3sUQ/I/iO1eSZnc7XcqjUXFh/s2PprFljxGuGxH7W/rUtOLEJvAKzz29s18yX0W/QLauYc
+ Weg/Vz6cORtD3X0kfuQXiPznFjNWfu5SqhFl5h80sQyqR9GbZ2z/8bcJwSwvDYn7otqua0Y1jr6
+ FcioDULSM6n+JSiGNdzTOoRL10GpsBgBe1d0O/P+wGpjCH1NQ3zYBU/FIHtcFMimn2vfp6nVU37
+ Z6wwX1VMxrwNVEQEXG5yPBPBoY5dgUSfQHbFarwQVUupysGnxuWyTnZNaTf5qnnHcg6qQFXi65f
+ oCc14NqnBs9VMnfUKiTOsp7kb9OgY0Nb3ZqcOJyQKXlffXg8yGzbyk2ATaBBv2uzh8/L5FGGCDH
+ XZ4d2on07IYXGsXaEgg==
+X-Proofpoint-ORIG-GUID: 1-80yha4ntDsY8FAKfuoFirvLORfdadn
+X-Proofpoint-GUID: 1-80yha4ntDsY8FAKfuoFirvLORfdadn
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE5MDE2NiBTYWx0ZWRfX8jiZZLv6Dc2q
+ qpHXUWACYb2mW1hmD9Ouj0n+PUpbAcWb1jl5wBFcjglcYVT9PiGqem1C8j+HoC8yYKc6YzJbA/v
+ +3Q/RTqfG6uAySqIMnx0iYh/hD+linM=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-19_05,2026-07-17_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 clxscore=1015 suspectscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607190166
 
 
->                                                    This patch is in the
-> same category and your reference doesn't match the code touched here.
+On Tue, 14 Jul 2026 09:14:00 +0200, Christophe JAILLET wrote:
+> 'struct cfg80211_ops' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>  143726	  34579	    192	 178497	  2b941	drivers/net/wireless/ath/ath6kl/cfg80211.o
+> 
+> [...]
 
-Will development interests grow if bug reports will follow by further know=
-n
-source code analysis tools?
-https://cmu-sei.github.io/secure-coding-standards/sei-cert-c-coding-standa=
-rd/rules/expressions-exp/exp34-c/#automated-detection
+Applied, thanks!
 
+[1/1] wifi: cfg80211: Constify struct cfg80211_ops
+      commit: 612701854b588759c0df3094197d415869ada159
 
-> Please stop to absorb maintainer attention with useless stuff.
-Do we need to start negotiations for allocation of a corresponding CVE ID
-(as something happened for similar control flows before)?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/cve.rst?h=3Dv7.2-rc3#n16
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-Regards,
-Markus
