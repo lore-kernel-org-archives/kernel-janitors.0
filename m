@@ -1,82 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938CE424661;
-	Mon, 20 Jul 2026 13:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0EF43B4BC
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Jul 2026 16:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784552532; cv=none; b=OmpXZ5ohGpRtF6WajiYTehmSmQjiGaHz7FDYfULTB+URARGEUnUH/U9jqhFYVJNM/IuNzW2i82ybQrA9Ixs9aIPNM515epl4OEM5+wmp0wpSgh0exn4euWpnZ/iduXDRnn3saX/nrPUu5vddoV9nXDoIhfXaO+bnIS5YifK0FHI=
+	t=1784564301; cv=none; b=PBQd5jomAeSlEhjyfTu0mWi5DC2n1e6pZTTRj/Gi4VIDQpC9YpmsfyfjBKMUS5+qgmT3ukDITlwyEw8c4ZjcOxEfhFMJsz5tVwBoAc/Z8xnoGS7m3UaU6HV4fPsehsiPGIJtPc3NF2cU+pG1AsqjtjUV0hVRyVhbrbn10zUBtVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784552532; c=relaxed/simple;
-	bh=yTFfzMxTYmlMARn+mVjJmwJKhkszOsE5KYzfbPaQt9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjhZNkSzd8cVduxQIpSMUm3maq8YT+kxtIRWJHZWG5pzol9S1GZ0PNY5PeusCmWKIFmgUJzGBJNW1wt3LsWZmzNh1XLIEt/Wy/weuAJVmg16Wqx/1kh/OHUVTxTLFrDCzmMNwfMhr+igvC0eadGaLyv3JZhOC351bQeSsjl82Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgyQAPe1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784564301; c=relaxed/simple;
+	bh=Kq4wffCgczmxpkvQ+z21Uur2QovylqnOMd7I7Oy+mJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fQf4fsyhxtVz6ij8tinNJ/JiGsdB4X18cWrRZeAKyphrsvNMNINLz06j/2cRtTFR+nnzHBwa/a53B+zO52kjdGgHaTXsH8ifGhoBoCBoLcSdHQ8F3TvTKBrlWLNp1VjqGCe+mA4VtmXIzpGk3SbyssJMRTXvOnu0QVrlQnDAJIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/ug9Mn2; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgyQAPe1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402DD1F00A3A;
-	Mon, 20 Jul 2026 13:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784552524;
-	bh=bXeSjo7031KQonRaAjWYtxb6FfEUGZRus8Cl97dsp3c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UgyQAPe1+oHCj4U93jAQO/4pppblUIZmjj9IbLWZEJQGkX/Hf98oBdwz44HtOYswM
-	 COzamfP9FBSVhFbtlukf+VTOM1FqJMk5aX4/Te9zQhdUnm1yiTlBzbdHwFFc6zLjgc
-	 V0ml4rXeNRU1kCT1kps4e2Ct1i5EpcLM9zGsKUUG71AqdGTw49hupqotwjZ167C+hv
-	 o4JgmNn8E+L5hiskO8f8NSKTjz2+3OMD73+AVCtcu7r2IrkejvUKW82NtmF+Cf0G3T
-	 DAFalvLUwEAWyv3raWdbrP6he5lxnEs0M9HdaBEHLM5SjEIRWPLj8NaxuqGvWet7LC
-	 ug1igEFhT+cXw==
-Date: Mon, 20 Jul 2026 16:01:58 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] RDMA/umem: Fix the ib_umem_dmabuf_get() prototype
-Message-ID: <20260720130158.GF110966@unreal>
-References: <f450b272eff7c0f0d3c1a5f08d27ebc042704f76.1784495762.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/ug9Mn2"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4954df200ddso17466205e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Jul 2026 09:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784564298; x=1785169098; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qGVMU58DedF0lFl2nbNJfL9G9Ib4nLG39lz05m1JVHI=;
+        b=Y/ug9Mn2fx8tc9jDla9fRTKznHsHY2ugJBwZ6Xv/KPf/7mL4XxdMmdAQ55zbgaWgXb
+         R+Qzye0zW8wOJe52wuGqAaFldoIeYeL2IgSVnex76zGYbwfLFaZeugC5FsJ2Y4b5Ov34
+         ph/BZCEh9U4gjDwmJqvhQgpATU1bq2YTOJucJiB94/PB3Ch9jDT2g5Im2pJI5jg/qGyp
+         DIW++fixHfpV1oTMk7fQpO8O29JUrJCdH81mAJXmrLnv1u9qrJEVe+4eh8pHVg19SqSM
+         GZQe2EDEJXjO4310Tr9rzsIhY1BWHJI+OV8/TZMh00f3Cby/EE0Es61aYOTwHnJwbgR9
+         9tiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784564298; x=1785169098;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=qGVMU58DedF0lFl2nbNJfL9G9Ib4nLG39lz05m1JVHI=;
+        b=lzxc396OPjNVXh5Th9WpCSCWE23Ebudn0ueTsdXi4ZAmCOuTlYW1WUuDa0mJiLLd55
+         rv3hQXREd78VUNeLKd7oULnl2U9EgCbNy58rTOJQeBpv9iVrI8g/pBAnvhKWF1dT9YcC
+         Yg3NtsxcjYnS4TCxSa6bcoxhtfeE+2yoJuTHwSyMKenlKxSchAOQ33+isdAE0ZuWL5Rh
+         dQLlVyGvvg2B+ogycGIyYpaZfYpDbjJZ8g0fFJFvaTPkw/C1lrE8VyBuWGXC5zVToCiN
+         EThkEUJ60DgpAzRIH6cGhpZsg2kifaoexFJk1R0WT/6bkm/HW+cxBGUogshD3vppW6M6
+         T+WA==
+X-Gm-Message-State: AOJu0YwTvWInA4VWRSrrSq9qSyLhsM+VdwiODkANcuG3tV6cguY7hQoK
+	Pb3qLUiq4GxLsGZEdXehdpmasyT9FzTDj8dph85gVnzld0pRhNhrAaY1
+X-Gm-Gg: AfdE7cnzbctNHaKIy60ZvnjrnIgUlaMrQdYK0MSXzhDo0gG0h9UGDRU94L3+c/EJRhi
+	6KJmsphK69kREZ3anJY62qZKA5YFTZT74BRHyuur0VPI7NGsXWYyrXcfOlI2RTrZe8u8DpX0Ujy
+	tErv9TRk3W31eiK6/WBweCkeSfJfZ/6qzcujiZUcvmgxrT/JtsISPQ/2tXWJCrpWhSPcBWKevt7
+	jv/Z5sOwx4Db8TfOrYoa/Kq2QhM4NvGWGndNAj+8h/aPfCzubtNDdJkt3onCId/K06ERpT62CeJ
+	qplmvDxqZRXkT9jPSa7fO3ptP+GyOxX93WQ3zbDRwsTJcUcwz4LaV856vqyHO7NOVZTuzaIyrEf
+	ODbkByr0iMiFLCd9VE4MjE6/0QiVrITZeNuncp4XZRKfrti+nRJG5ZhvwB2PXOhYl5cxDG3Uat9
+	3h
+X-Received: by 2002:a05:600c:4fc2:b0:495:5b02:23b0 with SMTP id 5b1f17b1804b1-4955b0224c7mr82155365e9.26.1784564298066;
+        Mon, 20 Jul 2026 09:18:18 -0700 (PDT)
+Received: from localhost ([5.83.201.220])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63ed2313sm30862995f8f.23.2026.07.20.09.18.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2026 09:18:17 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915/bw: Fix spelling mistake "threshod" -> "threshold"
+Date: Mon, 20 Jul 2026 17:16:30 +0100
+Message-ID: <20260720161630.326016-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f450b272eff7c0f0d3c1a5f08d27ebc042704f76.1784495762.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 19, 2026 at 11:16:17PM +0200, Christophe JAILLET wrote:
-> If CONFIG_INFINIBAND_USER_MEM is not defined, then the last parameter of
-> ib_umem_dmabuf_get() is missing a const qualifier in order to match its
-> prototype.
-> 
-> This is an issue since commit dcae56cfecc6 ("RDMA/mlx5: Constify struct
-> ib_frmr_pool_ops and dma_buf_attach_ops") because now a "const struct
-> dma_buf_attach_ops *o" can really be passed to the function.
-> 
-> Fixes: dcae56cfecc6 ("RDMA/mlx5: Constify struct ib_frmr_pool_ops and dma_buf_attach_ops")
+There is a spelling mistake in a drm_dbg_kms message. Fix it.
 
-I squashed that fix to the problematic commit.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/display/intel_bw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
+diff --git a/drivers/gpu/drm/i915/display/intel_bw.c b/drivers/gpu/drm/i915/display/intel_bw.c
+index 546d5ccbe052..c71082852cfa 100644
+--- a/drivers/gpu/drm/i915/display/intel_bw.c
++++ b/drivers/gpu/drm/i915/display/intel_bw.c
+@@ -625,7 +625,7 @@ static void xe3_add_peakbw_threshold(struct intel_display *display)
+ 	for (int i = 0; i < ARRAY_SIZE(display->bw.max); i++)
+ 		display->bw.max[i].deratedbw[qgv_points] = PEAK_BW_THRESHOLD;
+ 
+-	drm_dbg_kms(display->drm, "An extra QGV point %d added for Peak bw threshod of %d\n",
++	drm_dbg_kms(display->drm, "An extra QGV point %d added for Peak bw threshold of %d\n",
+ 		    qgv_points, PEAK_BW_THRESHOLD);
+ }
+ 
+-- 
+2.53.0
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  include/rdma/ib_umem.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
-> index 31b3a86fe73a..1fe87fd1d769 100644
-> --- a/include/rdma/ib_umem.h
-> +++ b/include/rdma/ib_umem.h
-> @@ -250,7 +250,7 @@ struct ib_umem_dmabuf *ib_umem_dmabuf_get(struct ib_device *device,
->  					  unsigned long offset,
->  					  size_t size, int fd,
->  					  int access,
-> -					  struct dma_buf_attach_ops *ops)
-> +					  const struct dma_buf_attach_ops *ops)
->  {
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
-> -- 
-> 2.55.0
-> 
