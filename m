@@ -1,64 +1,65 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E496C3EB0F0
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 Jul 2026 11:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7483E5A2A
+	for <kernel-janitors@vger.kernel.org>; Mon, 27 Jul 2026 11:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785151921; cv=none; b=Kgm0Zdb9ucpGvIcOcbjWC/nfGkFoRaQaa84l596p8sDD183r2wMuburXuq/m0jzdb0Sr9CXG7WgBOGfg811p+QCHAyk4vAVaIyrZgpwPycZ/CDwNRqOQVFtaF3J6CB7MVxCLzqSi/xtoHrD7rVeqzMEYhIZaE5pAbe7vwtTzthg=
+	t=1785151968; cv=none; b=stTQLPbzoStmKPFccy5MT8ykkvZpID3BOW0IwxABGiFtoDdD8/Bjiv0dxGjlDURX3Os6x0gx4bIT4FkWsKFgT9e85x2oLAAaugz+IwqjWI6iQ9brePYNIXPr/mQu+yygW8wsyzHKcDvtF7TCQffwmrWPPIT1b3b7p+Ycu/qFjW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785151921; c=relaxed/simple;
-	bh=PPHCGLHp8F6a/S3R/g30TrZ7BdMamp29pClwl3bGMQI=;
+	s=arc-20240116; t=1785151968; c=relaxed/simple;
+	bh=U+dkbR7/dqwY+nTWh/oI8knR7yS6an6E3JNdGT0FQcw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwIjXWiXglsRaHq7wMY0ealCOi4H00lZYwk7ALW27gePiSbSH/sbSn3UqBp2/yga4/YaWUasfqmuToCKEPCR74vDWR8yS7Lor9Al0z5cB2U0IZSK3mDY3eqXP6eFwSs/SDyY3y02Z9lhVuNLARe65Nfs4GjgXbpRsecNyF1Rq98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=q2ojDNAQ; arc=none smtp.client-ip=209.85.216.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=DswyFlX2o3wdpV0SJzy0Wt8gBiDzIn1Co98xCDEe8YUXiWzYeRNaX6bOtBxRwZ7el8n3OzH/b5k+hHQ1oeG7B9flunoHfh4bBYKhYkfIFbJyPMAnB41qXrtGIEokszKxgw3d17CnWzGNdLXvazKYgePVt3vYr7f4Zsg/3snquqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s1Qtf1Fx; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q2ojDNAQ"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-38dd55ad76cso2397529a91.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Jul 2026 04:31:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1Qtf1Fx"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-84a4d8fd6ecso2526939b3a.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Jul 2026 04:32:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785151919; x=1785756719; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785151966; x=1785756766; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=QyC9mdpjeVMS9mEWtOssGaeZCvP0zDJ8dCOHi6clafA=;
-        b=q2ojDNAQEYvAESznIPcpkVkzsjF+CR595Cu9kaWFHNCp3MmxaP7/LE9kYP989HhOGI
-         Rgt8KiKsnCQgQ4uuz/Rv+rMGdWO64GKETKT2/RvjSQgqaBmDxjzboeIPbajrJfK8VLG2
-         soraIOYXXl9m+IGqqz7ciLcpHIroR1jOunUabk3kXt5cLpU/a+x89NFMbEmgRxrX24qe
-         aXW4vInSg3rqQBrobv1Xd1U9sqXNqhO4uLn90r1QU9KkUKjLb3lSsBgc/xEjDQ/8epIy
-         kdwYwLXYJ4mxg5ounr8MnWs9W6qZFFtmXq9w0T5TwdcY9i5FhA4cg9ZsWJ0Z6h58m2Sf
-         iD2A==
+        bh=zEenGUm5RioXWNnfd2RzwGu/SqP7QkoWXITZGeqYw+o=;
+        b=s1Qtf1FxxNtIeGzM8irC3K1mBFITPGI1F7K4PWiCCs3GB6/dVLapNFfhPUfxTKekVP
+         Ay+zZD9o3n4YvSBSJnApmHXTrIbSo+iW1q8fbOTsjtdfZq9ur3HSzPKF0ruwRYGWSgaq
+         DLEupOJPih9jz2ySkC0s4K5S15oz9a+AL8DZ5AYqdm0iSJoswG9eeKn6jxxUFraqn7MR
+         In7bwx62k4a09MOHwhK03svDdzRSwv9Lza4pbxOy8KcZD5OVycWhri8EpSX3sNZjCZ2t
+         eTfG8eXn/ZIMvjMRJodpsMBCtnS7/ezaQhWqQmuNasp1Sv1bC8iAh4LNZUi9/IyqbwuS
+         L8wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785151919; x=1785756719;
+        d=1e100.net; s=20251104; t=1785151966; x=1785756766;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=QyC9mdpjeVMS9mEWtOssGaeZCvP0zDJ8dCOHi6clafA=;
-        b=oGJ+b7yHxmhwo9e+BMdx4U19iLLupwWLb3/wi0NzfY0QWv+lUebwUWxFbxABEJXPqV
-         J6psYUBrFjpzl57RaF7tf8V9rY3KBpAT1bmDSGz4nqCP0Cdd9McJwsNPhLsf0P/EO5oH
-         siiXBTsqlhz0R8QwRoc1m2nWHSSZAi+nViDLuk+rRqXPHYtGN//JxHoits+CqHm9LiDA
-         /KHMFSJgnVALkZHa1JTAgpz2g0MwezdvUCIn3vvpV/HKxq7nJibvFCYwqs/Nli9ctVL/
-         wIoxR4Ybn5AgCP8sShPQR3l9fB+vNRsKOSa0XPYhzXdWN+3z2V+s3FdnnqxMoLgDzQXE
-         TJZg==
-X-Forwarded-Encrypted: i=1; AHgh+Rp+qaEA8ngfgI3/Rj31ME0sWpjD1ttX/fAL92gsNG6x83gwHvY1GXZCvvhZf1LN1N7wjCSfWstB6C0dlJtkVco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYkteRi6e5ZTVXkV1LOMru9vOn+UhwqV2A+c8VSLEqxd4GqElR
-	4w5J3vUlkaWk43YxIp63YEnG9eRyBRCFwbGoEAmmfZ+zhVlNo0agsbRD
-X-Gm-Gg: AR+sD11keQlJHdqpDnu7dJ4z6mHvGkdSPUYM2r1MUiV3zhK89nidKeuK7vb9+7dVxpE
-	nehOlmnEaTmSLgaSas9Zgsvq+me76P7N6hIqumhztgh12C/YfOsknQm8X1yQFpLDYTI5wohgyLa
-	cw6iFrG9iy6Ij+6oJygSC8GNalaWeUyhFhkjvQJCTYKnJkoWAhL/+kHB0IdLDRsD/Hs608meHy6
-	2XmWgLFaM3JvK+SL4y5I0t1u96QI1QqeBBX8lGKWo7/e1FWMmHBtuoC23EM++lWG/GeqF5VPW9j
-	i8NqXeeLxy7xN1Zlgtq5ttZKSkYAGvW+m5byXFtyNO/gEn+ii9DZ8g1leWoZh005TCVk9iCFOYP
-	DcrJ3HshAlfdCLPG39hkhcHDwPxvHpqeC60E3qdXQ10tM/QG68ub+pGCqUv0wK3+h8zlMVWgw
-X-Received: by 2002:a17:90b:5710:b0:38e:b3fd:d584 with SMTP id 98e67ed59e1d1-38f2aa99deemr5981029a91.15.1785151919217;
-        Mon, 27 Jul 2026 04:31:59 -0700 (PDT)
+        bh=zEenGUm5RioXWNnfd2RzwGu/SqP7QkoWXITZGeqYw+o=;
+        b=cMKx3aLA07iOL/bs2h3pIn0pWe4kq8x8Z418tRe+3uwcJTTXdybPA8jJtOf6MslAP7
+         m/dWIkmlNjRtZowxPa/mIiGILil8QHkbr42ycrD/KYIR822+pod/mqDhHe0AP1mYiTyR
+         t24meL1CIHp4saZEl5TfoPr/U5nlYJeaUIMWvVAIL8xPnYoHaVaoc4L4Dnx5ljOes0tO
+         J03KTtDLA/HgZARja5t7ny50gm5gEVJ1O5s0kDHZsF0xZbtpMcIyPTr2lyyXdWb3HtWE
+         hNbTyLpDyOk1HU+SSp4mAfnYsUf4SpIUiDkRw2VVqI6BsWfZzrXgKpFtL6hWdFgV8FVd
+         Ue6g==
+X-Forwarded-Encrypted: i=1; AHgh+RpF96An2ZptWjHkx/L0SFSB1E93SSf48UX+QTZ+cs+aGv0KwdVvzDoHeNRlTjgQmrbvXUHp1M1sq7SKrixAdbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWaafvOtbAfEGBerqVwp4rBEAf0wUnghM8fb8w9sJNYPc0e2HR
+	7hSNSGmuk6R7W90ChICDQV9sQvqnvpQIMcLOfJ3Q1mvJ14w9YAAvi1PA
+X-Gm-Gg: AR+sD13Pbr0wzz8OdZVlBVnjcHnyCpLTyv7wkm0OkvK+EwNQqJXNsfDzR/hj8aA0boh
+	oZhHiJM1eELFNnEieIH9VRyLSvlEiw+eek1/aIWHAvUa3vaoKkfTO9hCA7gfEYjAioEHGjeRRwe
+	/t9rbsiNMikW9W55ONr0v9N4BJF07yR4JW5G9N7742k9lFOrhvFxqJ/3cuxaWao72HIvQRPA5Cv
+	X4x4KOmZWcTtaxKtgBuNui3q310lKAcsNq96WcbCGRlfi/gViWkUaet7ij+JuRb83xm0gOQuyG8
+	L2UJaIaUHYHoN/03BPSmpTTjccnByACt7c0ik7qUnLfzb+iVC9eyHVdJxjJt8h1tabMCLlUm3Gq
+	vwB8SPShjB9jqIWph4OAOoP/Q47GmBesh0OiTAmWCXPyf5ea9+vE9o1a1TuedQ2PyLzK2O/ac6U
+	qpHpIq1Ak=
+X-Received: by 2002:a05:6a00:f03:b0:848:469b:3d19 with SMTP id d2e1a72fcca58-84e59462fcemr6582221b3a.29.1785151966109;
+        Mon, 27 Jul 2026 04:32:46 -0700 (PDT)
 Received: from localhost ([172.216.252.11])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38f04175c1asm4880106a91.12.2026.07.27.04.31.57
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e53253d70sm2900157b3a.2.2026.07.27.04.32.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 04:31:58 -0700 (PDT)
-Date: Mon, 27 Jul 2026 14:31:53 +0300
+        Mon, 27 Jul 2026 04:32:45 -0700 (PDT)
+Date: Mon, 27 Jul 2026 14:32:40 +0300
 From: Dan Carpenter <error27@gmail.com>
 To: Markus Elfring <Markus.Elfring@web.de>
 Cc: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
@@ -66,13 +67,13 @@ Cc: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
 	Roy Pledge <Roy.Pledge@nxp.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] soc: fsl: dpio: Use scope-based resource
- management in dpaa2_io_store_create()
-Message-ID: <amdBqQfIsAjxMsqX@stanley.mountain>
+Subject: Re: [PATCH v2 2/2] soc: fsl: dpio: Use scope-based resource
+ management in dpaa2_io_create()
+Message-ID: <amdB2K43gRBDhBPI@stanley.mountain>
 References: <690827f2-e746-4378-bb7c-9948cd69dc15@web.de>
  <d95d2f4c-f3cf-44eb-b61b-79ba7891674d@kernel.org>
  <d2e5df25-c8b7-4ee6-8ebf-1725542baabd@web.de>
- <6607bb4e-a747-4791-b93f-f82f26e4a334@web.de>
+ <f47abd6e-9337-404c-a24f-39a9dd7454d2@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,11 +83,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6607bb4e-a747-4791-b93f-f82f26e4a334@web.de>
+In-Reply-To: <f47abd6e-9337-404c-a24f-39a9dd7454d2@web.de>
 
-On Mon, Jul 06, 2026 at 12:38:08PM +0200, Markus Elfring wrote:
+On Mon, Jul 06, 2026 at 12:40:09PM +0200, Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 6 Jul 2026 10:34:43 +0200
+> Date: Mon, 6 Jul 2026 11:18:39 +0200
 > 
 > Scope-based resource management became supported for some
 > programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
@@ -95,78 +96,14 @@ On Mon, Jul 06, 2026 at 12:38:08PM +0200, Markus Elfring wrote:
 > 
 > * Thus use the attribute “__free(kfree)”.
 > 
-> * Reduce the scope for the local variable “ret”.
-> 
 > * Omit two kfree() calls accordingly.
 > 
-> * Omit the local variable “size” (for another memory allocation).
+> * Reduce the scopes for the local variables “obj”
+>   and “qman_256_cycles_per_ns”.
 
-Why?  This seems unrelated...
-
-> 
-> * Use the macro call “return_ptr(ret)” at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/soc/fsl/dpio/dpio-service.c | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/soc/fsl/dpio/dpio-service.c b/drivers/soc/fsl/dpio/dpio-service.c
-> index 317ca50b0c2b..b252c3c7fa65 100644
-> --- a/drivers/soc/fsl/dpio/dpio-service.c
-> +++ b/drivers/soc/fsl/dpio/dpio-service.c
-> @@ -652,23 +652,17 @@ EXPORT_SYMBOL_GPL(dpaa2_io_service_acquire);
-
-Missing #include <linux/cleanup.h>
-
->  struct dpaa2_io_store *dpaa2_io_store_create(unsigned int max_frames,
->  					     struct device *dev)
->  {
-> -	struct dpaa2_io_store *ret;
-> -	size_t size;
-> -
->  	if (!max_frames || (max_frames > 32))
->  		return NULL;
->  
-> -	ret = kmalloc_obj(*ret);
-> +	struct dpaa2_io_store *ret __free(kfree) = kmalloc_obj(*ret);
->  	if (!ret)
->  		return NULL;
->  
->  	ret->max = max_frames;
-> -	size = max_frames * sizeof(struct dpaa2_dq) + 64;
-> -	ret->alloced_addr = kzalloc(size, GFP_KERNEL);
-> -	if (!ret->alloced_addr) {
-> -		kfree(ret);
-> +	ret->alloced_addr = kzalloc(max_frames * sizeof(struct dpaa2_dq) + 64, GFP_KERNEL);
-> +	if (!ret->alloced_addr)
->  		return NULL;
-
-Why convert the ret allocation but not the ret->alloced_addr allocation?
+Why?  No one does this except bcachefs and that was removed.
 
 regards,
 dan carpenter
 
-> -	}
->  
->  	ret->vaddr = PTR_ALIGN(ret->alloced_addr, 64);
->  	ret->paddr = dma_map_single(dev, ret->vaddr,
-> @@ -676,14 +670,13 @@ struct dpaa2_io_store *dpaa2_io_store_create(unsigned int max_frames,
->  				    DMA_FROM_DEVICE);
->  	if (dma_mapping_error(dev, ret->paddr)) {
->  		kfree(ret->alloced_addr);
-> -		kfree(ret);
->  		return NULL;
->  	}
->  
->  	ret->idx = 0;
->  	ret->dev = dev;
->  
-> -	return ret;
-> +	return_ptr(ret);
->  }
->  EXPORT_SYMBOL_GPL(dpaa2_io_store_create);
->  
-> -- 
-> 2.54.0
-> 
+
