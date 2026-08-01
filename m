@@ -1,85 +1,82 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262A03C3F58;
-	Sat,  1 Aug 2026 19:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542C29D291;
+	Sat,  1 Aug 2026 19:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785611453; cv=none; b=pLHvbmKw1RzM6idQuxD1wGN7rxPIvWInW/0rqsi+oNbdTBuxFsqOK1YWiW+O11c3E3i7mI1lBtj9+f7PMnRrPRJVdLUmABrgBGlNbUHsKpuQOdLcdaiyfFWPjT+UltGtuL5FjTPIGrc6Ev4gS5bJcNi7l8x834cD14YxLP3y/ik=
+	t=1785613499; cv=none; b=QqeKgOP9dLM/LIwc/15jCCJ5vIAdXIqincmyZdUuLSbY9+9bLCQubT9/82CPDItR8drob2sb/cbiw8LdU5dRSO5Usqxy/vVY60M7GxAVU6eBoNmwyCR9YR91IOpyNTB8anUE8Kwy03Lp9dy0lWOdcJiMzluN9qBRP5iPNMtaFtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785611453; c=relaxed/simple;
-	bh=Qar4yd4+FV93X1KYsOTID/6NaMk8WhMUKjfzOj0wGDc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uyKavyBu2gQn6VPQloQVv8l8CLGRi6RMZ5aVxrrwzSVESZQqZJPfjZ/ymzyz+dF5GskigrZdRGGgjOSZiAVF5Pr42UTuGTyF4aXQe2YQNRrD1MAlht1+RtwOm9sVEW155PsimvFXyN1uqtL2JNe7ZVioKygZRcoLRi3DZ/+aZCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=jLqCuady; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1785613499; c=relaxed/simple;
+	bh=MI5cmv+xw6xhCrOdsemZfa40yg0eBzYxV8uJU1Vh9W0=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=YsA2/U0DN2Qu/ioYpsv4PRxf5OQGQwk9YXCJ+ENoJSneR3wt2sYvlG45+MXRfbEzQFITXvdL9e3GiyFGwDcBZdf2lf5qVM+PYDzC8DymsiQShyKkP+rY23Nc3GB7TkwhtL+6VUmS0iakdn8gh5+V8NTdzgjWejlFgp/EZaCEGVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiUBA1jX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="jLqCuady"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5ookk7ltIJmfsbWLAf3r1+WwNm8oHQmar1Kj2emteLQ=;
-  b=jLqCuadyVGvjgpJal0twCucZhEvWjfm73U9kzL4jfJPDHFnA5wyIA2vr
-   Z90pRGIGrYkGXzF/2y8kItxt0jggQB2e2s7hz1Jnsxje6v4CfhE94sdhw
-   /6KzNPl2vEovMWhQETHlxNv5Zq5hAqQchdF5p45NPFv88uBBSS6yMjtRa
-   8=;
-X-CSE-ConnectionGUID: NhNQH1BORJGp0g9TxUVSQA==
-X-CSE-MsgGUID: O7Lqcbg7QP2oUF8oYeGD1g==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.25,198,1779141600"; 
-   d="scan'208";a="288769018"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2026 21:10:09 +0200
-From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: kernel-janitors@vger.kernel.org,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: BCM47XX: drop unneeded semicolon
-Date: Sat,  1 Aug 2026 21:10:02 +0200
-Message-Id: <20260801191002.1383835-16-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiUBA1jX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BAEA1F00AC4;
+	Sat,  1 Aug 2026 19:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785613497;
+	bh=94vY6Y9FNFnjRzpmeE+IeX/dP3jar8aRF6KuNxVGOWY=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=GiUBA1jXCIUNx8SI7BPAJgFObQyYhZHKr6nCsbZtWSS5cRC47FwcjEo1/HrBKZMTn
+	 92I/P262mueUg+Lj/km1ma+CjUbc46C8ayIDZh1k1Vqb1YvdOVn9MTzL/DduPL6/3+
+	 n8dMdmFedrv7zJquEhZR3iA1zxfpDtrEdZnvr5b9OyI81hYFZmpSgCxdJkShWGnVqb
+	 nnbhFwSNHJ+dfwnPbCNAaLny7+SMkWpsbKXki+kvvdhrtxBcJ5nbNPww31155sCx6Y
+	 IwWwIn2bUkmHk0GU/q9z+DrfIl5tNYVWbDjDJ9yo6OhUVhObXJpBYnSFE9+WylgpZw
+	 1Rngv9Lc+4K+Q==
+Content-Type: multipart/mixed; boundary="===============7729938306852420091=="
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <bf0ce87a4c9b050b1e438612e78517d5c321624fd09303341cc07bd172d2c627@mail.kernel.org>
+In-Reply-To: <20260801191002.1383835-13-Julia.Lawall@inria.fr>
+References: <20260801191002.1383835-13-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH] net/bpf_jit: SPARC: drop unneeded semicolon
+From: bot+bpf-ci@kernel.org
+To: Julia.Lawall@inria.fr,ast@kernel.org
+Cc: kernel-janitors@vger.kernel.org,daniel@iogearbox.net,andrii@kernel.org,martin.lau@linux.dev,eddyz87@gmail.com,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,davem@davemloft.net,andreas@gaisler.com,bpf@vger.kernel.org,sparclinux@vger.kernel.org,linux-kernel@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Sat,  1 Aug 2026 19:44:56 +0000 (UTC)
 
-When a function-like macro expands to an expression, that expression
-doesn't need a semicolon after it.  All uses have been verified to
-have their own semicolons.
+--===============7729938306852420091==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-This was found using the following Coccinelle semantic patch:
+> net/bpf_jit: SPARC: drop unneeded semicolon
+>
+>     When a function-like macro expands to an expression, that expression
+>     doesn't need a semicolon after it.  All uses have been verified to
+>     have their own semicolons.
+>
+>     This was found using the following Coccinelle semantic patch:
+>
+>     @r@
+>     identifier i : script:ocaml() { String.lowercase_ascii i = i };
+>     expression e;
+>     @@
+>
+>     *#define i(...) e;
+>
+>     Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-@r@
-identifier i : script:ocaml() { String.lowercase_ascii i = i };
-expression e;
-@@
+The change itself looks right.  Both emit_cmpi() and emit_btsti() are
+only used from bpf_jit_compile(), and every one of those six call sites
+already ends in its own semicolon, so the expansions stay well formed.
 
-*#define i(...) e;
+This isn't a bug, but would a prefix like "bpf, sparc:" fit better here?
+The changed file is arch/sparc/net/bpf_jit_comp_32.c rather than anything
+under net/, and earlier patches touching this file used prefixes along
+the lines of "bpf, sparc:", "bpf, sparc64:" or "sparc: bpf:".
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- arch/mips/bcm47xx/buttons.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
 
-diff --git a/arch/mips/bcm47xx/buttons.c b/arch/mips/bcm47xx/buttons.c
-index 46994f9bb..e76ca34c8 100644
---- a/arch/mips/bcm47xx/buttons.c
-+++ b/arch/mips/bcm47xx/buttons.c
-@@ -512,7 +512,7 @@ static int __init bcm47xx_buttons_copy(const struct gpio_keys_button *buttons,
- }
- 
- #define bcm47xx_copy_bdata(dev_buttons)					\
--	bcm47xx_buttons_copy(dev_buttons, ARRAY_SIZE(dev_buttons));
-+	bcm47xx_buttons_copy(dev_buttons, ARRAY_SIZE(dev_buttons))
- 
- int __init bcm47xx_buttons_register(void)
- {
-
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/30714427730
+--===============7729938306852420091==--
