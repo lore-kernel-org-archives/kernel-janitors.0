@@ -1,51 +1,48 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DCE3C2762;
-	Sat,  1 Aug 2026 19:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DD63C3C16;
+	Sat,  1 Aug 2026 19:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785611439; cv=none; b=gRNYEsaB3sPJLw+cBagQnLTn5n6hM1PqMiwQcaPjK4yJUsoojIXqx/rkmWsvqTs6C8vDpriVYMA/DEpCE9Uq8IvAbptc9GCt92BCYYD/7HJSSm23HNMRcLSvOBmrChTSzfQSjUhpp9ivmUr7HwmWrgipZKGYGMCQ+8IP76zPJuY=
+	t=1785611445; cv=none; b=rCY/mtILT7MnPw/bZRQYBBu4Gsib2RqrYp42nbHQsawxuSwuAvqusYUuQp39vjsHos/FpgNGiH6jyLCnHYtjZ+oI11MJpYyQLb+abq57Q658OQe3c/uKND5ga0YUZTETgRU7ObYkcjr6HbeAUH9MPNLdp2EeZ4vAG89Azl0LBgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785611439; c=relaxed/simple;
-	bh=kyOzMz7YOKH6vNzfCY32ALEWj9AYpoC1w1b5LlerG7o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QZYYCfjUNFijtI/Vda9vnwMD4ppXwhGFWlcKMOVvvtOhGnpiM+urLJv/QziaopiA1xHvLl+cIHwcMxU8xyk5Q7HKNkElOD5EY4F4RSxOjtq9EgZ3wvfXfCnJaggdncP7FRncIvWQXJ0cVUeBEFowBh+lmgNMCzQimXcKtl/ejJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=QM0r4+rW; arc=none smtp.client-ip=192.134.164.83
+	s=arc-20240116; t=1785611445; c=relaxed/simple;
+	bh=pz4kmCHSIV6it6xE4nrJz3JTrDpRXjjDr1ZHavlVwjY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D1jEkYGkuTBnL4vxXxMCdgVqslATBRBcFtc3TrNF6h4CknkBfmP4ja2Qf6W4HHD5Vkgj0w2VpVRIdQjEWo+yXLrIe42k7DsNlsf9wG/xU4uetpnBwMjC2oDT590okiUOrPg6iiKq+uD6pejM2Te7I2Q+QHlTN0nwGiaUMzglqPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=e2vHcGMN; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="QM0r4+rW"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="e2vHcGMN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=eGNzqQoF4RSNQLvpJf4olM07e0yunhY4ZG6n3gv0Pbg=;
-  b=QM0r4+rWXtHFIynievF2F36tTDpXJJvjv8QAnmZ7jiVtuoGatIQlIEBm
-   p2YlTSKM4oY/5WVNY/Cgre9K7+yNZ2e70oeNLleKJTJsjqgx/PzylTWV8
-   gix3DdaR2VdZn6ghmp6Uol1gVH823uhhEosB3mrPxXbJa/UsCydBPvMP8
-   g=;
-X-CSE-ConnectionGUID: 0W+Bu0iYTbyt4Z338D48tA==
-X-CSE-MsgGUID: eaIW/iH/Tm6zTtu7JyXogA==
+  bh=hwqKHN86kUjxnhAhuYevx8dXWkRDkbo98+BmPVh1exA=;
+  b=e2vHcGMNJFg0p4v5lUV+p+NIi4aRRKqszzbQL1mAvav0ZrY1A29Z+I7E
+   83AOMKywsv28SXHZKLGERvCupzEg+3iDru/lEUae0WOxdpfn4ayqtfeEt
+   XLnzfAVxvAFUGw7e0h7sZgnGVz/tHOhHpUi2La/vfH0m1q7hWgiD2iTcD
+   o=;
+X-CSE-ConnectionGUID: V0V+VGPUS+2oDIqhWM7zog==
+X-CSE-MsgGUID: ERS4RZ+NTgKt8Vi9oBrmbA==
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.25,198,1779141600"; 
-   d="scan'208";a="288769010"
+   d="scan'208";a="288769013"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2026 21:10:08 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Lyude Paul <lyude@redhat.com>
+To: Liam Girdwood <lgirdwood@gmail.com>
 Cc: kernel-janitors@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau/bios/init: drop unneeded semicolon
-Date: Sat,  1 Aug 2026 21:09:54 +0200
-Message-Id: <20260801191002.1383835-8-Julia.Lawall@inria.fr>
+Subject: [PATCH] ASoC: wm8940: drop unneeded semicolon
+Date: Sat,  1 Aug 2026 21:09:57 +0200
+Message-Id: <20260801191002.1383835-11-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -71,20 +68,20 @@ expression e;
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c |    2 +-
+ sound/soc/codecs/wm8940.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-index b54f044c4..3f888fb97 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-@@ -403,7 +403,7 @@ init_table_(struct nvbios_init *init, u16 offset, const char *name)
- #define init_io_condition_table(b) init_table_((b), 0x08, "io condition table")
- #define init_io_flag_condition_table(b) init_table_((b), 0x0a, "io flag condition table")
- #define init_function_table(b) init_table_((b), 0x0c, "function table")
--#define init_xlat_table(b) init_table_((b), 0x10, "xlat table");
-+#define init_xlat_table(b) init_table_((b), 0x10, "xlat table")
+diff --git a/sound/soc/codecs/wm8940.c b/sound/soc/codecs/wm8940.c
+index e631ec072..229252363 100644
+--- a/sound/soc/codecs/wm8940.c
++++ b/sound/soc/codecs/wm8940.c
+@@ -333,7 +333,7 @@ static const struct snd_soc_dapm_route wm8940_dapm_routes[] = {
+ 	{"ADC", NULL, "Boost Mixer"},
+ };
  
- static u16
- init_script(struct nvkm_bios *bios, int index)
+-#define wm8940_reset(c) snd_soc_component_write(c, WM8940_SOFTRESET, 0);
++#define wm8940_reset(c) snd_soc_component_write(c, WM8940_SOFTRESET, 0)
+ 
+ static int wm8940_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ 			      unsigned int fmt)
 
