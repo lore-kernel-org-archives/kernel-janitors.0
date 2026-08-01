@@ -1,48 +1,46 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DD63C3C16;
-	Sat,  1 Aug 2026 19:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB153C1F3A;
+	Sat,  1 Aug 2026 19:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785611445; cv=none; b=rCY/mtILT7MnPw/bZRQYBBu4Gsib2RqrYp42nbHQsawxuSwuAvqusYUuQp39vjsHos/FpgNGiH6jyLCnHYtjZ+oI11MJpYyQLb+abq57Q658OQe3c/uKND5ga0YUZTETgRU7ObYkcjr6HbeAUH9MPNLdp2EeZ4vAG89Azl0LBgA=
+	t=1785611445; cv=none; b=TvymPukG41RtVOOIWYD92iJYjMroa78D95XJTp8o/ndCt0+LwgzIdabJQmStzpHbCEW6skETsMr3XWTm2acB2Ymf/vB9IVdko2wxetxEhHs+27tn7uTwSwXcw7rKhCNM3S1qPbGk6CGYYBONrTdRzQN00dOuuWtQVq9OG+sO9ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785611445; c=relaxed/simple;
-	bh=pz4kmCHSIV6it6xE4nrJz3JTrDpRXjjDr1ZHavlVwjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D1jEkYGkuTBnL4vxXxMCdgVqslATBRBcFtc3TrNF6h4CknkBfmP4ja2Qf6W4HHD5Vkgj0w2VpVRIdQjEWo+yXLrIe42k7DsNlsf9wG/xU4uetpnBwMjC2oDT590okiUOrPg6iiKq+uD6pejM2Te7I2Q+QHlTN0nwGiaUMzglqPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=e2vHcGMN; arc=none smtp.client-ip=192.134.164.83
+	bh=P3tZ6N4jfvIjmreQ/C1Nm8WD8ULfJ+rus7cOhDSIgr8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SVbq827mC9Pibq5sylSq8GpKBSuz3Yz3ruB6xvyopRtj7ARJQz1nqPlNaTOrIqCfmhbNY9rpN9PeCFZeCxvD0Gy8FpJpPC1DJdq/E7EMKWbRnBVx25ofqCow+7QIULGiaWdOo+mT3PO0L/RVUMv8eZ2VN+XMqdn7ShTm8jYCmfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=f1OPetO9; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="e2vHcGMN"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="f1OPetO9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=hwqKHN86kUjxnhAhuYevx8dXWkRDkbo98+BmPVh1exA=;
-  b=e2vHcGMNJFg0p4v5lUV+p+NIi4aRRKqszzbQL1mAvav0ZrY1A29Z+I7E
-   83AOMKywsv28SXHZKLGERvCupzEg+3iDru/lEUae0WOxdpfn4ayqtfeEt
-   XLnzfAVxvAFUGw7e0h7sZgnGVz/tHOhHpUi2La/vfH0m1q7hWgiD2iTcD
-   o=;
-X-CSE-ConnectionGUID: V0V+VGPUS+2oDIqhWM7zog==
-X-CSE-MsgGUID: ERS4RZ+NTgKt8Vi9oBrmbA==
+  bh=Fg5ZBoBgQD/Kd4IP5851d3w/Ypie/cGCCmYEWrWBmJg=;
+  b=f1OPetO9CY/vFBhKFK9eps3SYYmfGe+Fbe2Gqh2KM2dyrHv7/2ta+CuP
+   ueI7sHE4VYiRnjvDS/ZmsDuKWY/hexGUaocw73qF0lSpJ5JTF7RMemPOl
+   eJ+TEY0hcASRlJ4Li69NHSRM2Hcsz4ErQL17T820a5yolQZIN0h356FLM
+   c=;
+X-CSE-ConnectionGUID: NeZmu1LFT52lR8/Z6HTLYg==
+X-CSE-MsgGUID: xE/8NFJxRr+H0rotXr+obg==
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.25,198,1779141600"; 
-   d="scan'208";a="288769013"
+   d="scan'208";a="288769011"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2026 21:10:08 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>
+To: Tejun Heo <tj@kernel.org>
 Cc: kernel-janitors@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: wm8940: drop unneeded semicolon
-Date: Sat,  1 Aug 2026 21:09:57 +0200
-Message-Id: <20260801191002.1383835-11-Julia.Lawall@inria.fr>
+Subject: [PATCH] cgroup: drop unneeded semicolon
+Date: Sat,  1 Aug 2026 21:09:55 +0200
+Message-Id: <20260801191002.1383835-9-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -68,20 +66,20 @@ expression e;
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- sound/soc/codecs/wm8940.c |    2 +-
+ kernel/cgroup/cgroup.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm8940.c b/sound/soc/codecs/wm8940.c
-index e631ec072..229252363 100644
---- a/sound/soc/codecs/wm8940.c
-+++ b/sound/soc/codecs/wm8940.c
-@@ -333,7 +333,7 @@ static const struct snd_soc_dapm_route wm8940_dapm_routes[] = {
- 	{"ADC", NULL, "Boost Mixer"},
- };
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 38f8d9df8..f87fc4550 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -104,7 +104,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
+ #define cgroup_assert_mutex_or_rcu_locked()				\
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
+ 			   !lockdep_is_held(&cgroup_mutex),		\
+-			   "cgroup_mutex or RCU read lock required");
++			   "cgroup_mutex or RCU read lock required")
  
--#define wm8940_reset(c) snd_soc_component_write(c, WM8940_SOFTRESET, 0);
-+#define wm8940_reset(c) snd_soc_component_write(c, WM8940_SOFTRESET, 0)
- 
- static int wm8940_set_dai_fmt(struct snd_soc_dai *codec_dai,
- 			      unsigned int fmt)
+ /*
+  * cgroup destruction makes heavy use of work items and there can be a lot
 
