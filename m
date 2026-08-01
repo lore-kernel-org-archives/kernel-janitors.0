@@ -1,46 +1,44 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EA83C10A7;
-	Sat,  1 Aug 2026 19:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91623C197C;
+	Sat,  1 Aug 2026 19:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785611438; cv=none; b=meCFRndxi2EwYcYbZUegWu0u5uPJUqIoJjNvHlZ+uLbpIj5oGwRsanDl+0vl4u55Q+ZU0LxBgRluJ0J9Srwk0Qc1QiJt6vZc5DaK666p3uQq7XuiON3s0V8NlACuskDzlNzR6V3gSkB59on6gxchU1o+Cwc4P6d4RoYevb8yyjI=
+	t=1785611438; cv=none; b=GyAAT86ocDGSUCdAmgHgMPG0dEFVtpBLJRnPw7s6pFIbsStIgdAeWpn1EiNRezQ9au9NJEipFZcSN/Ba9JicazKwELWNgkdiTUaCeiu8rtl3JQ+KZhjZ4JVBa+xou0uI2igoPqw36hS76gcWmsvDFRNhfpqJ1L80qBUGAtigIZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785611438; c=relaxed/simple;
-	bh=lOXjJnwV11xLmT/x56QLC/Z5yyRXKkYl21jBWh3zSOc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ss4A2sGtJPeaGbWh+th1MfYofkhOs0vG9kBd9x+3LEIoypMi8o80Z705JWInDbI10nDp1Px08UrI5L7JWannYzrzUUIK95BgrhS45Er/xGolCvZrUms3+svaRZgi1tmuGZV98zUztwzLk0XSNKWCqcyCLsljYo+oG1Qr5/wqiOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=NblRaDNW; arc=none smtp.client-ip=192.134.164.83
+	bh=4EQlNqYxYgD5x8ZAXCCNyxz20Go/n+sxp09BXOkcZ+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b7ZpsHY5FhJRscz9/4YSmHmaUqfyDwOBMgv3yNj9Zgtr9q0z5GI5PZJl67OgNV0/uUQY4SAGmZ/Wrt7Rymbxb2iCi9IiYD5mWzeAZIwhcTCFThAVCmyEnIJjHU9LcAh3x8PVwFyW/rB+TEBr2H5QGqI79ISXQzij7OGyChAJp+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=czINYRMX; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="NblRaDNW"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="czINYRMX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=lN1m/I8PieEZoPbV23xzJKbm0GD3D6HSBwK8WEQ2XOc=;
-  b=NblRaDNWVwfRxN2UJibLOZYisnwuo4b446gks4S/kqVRwPlUsCAfKd2P
-   g0eaRdWSelZUfvv1x8SuNFyr7avQWgYSUe4ujACQfD4FZG7Q5Oxy3RQ0R
-   8Nwe2ahvLVKkWbrcOdNztWHUGWuGMiKK/n0p6NKcIPrcR31INj4oTtbnv
-   g=;
-X-CSE-ConnectionGUID: xTvK1QbrQ/+00+J9a/QkYw==
-X-CSE-MsgGUID: SOwu3bYZTPGjPCDjEI04gA==
+  bh=HdVgqiInRqLMNOERRNZocsy0PaE4d6gwvU6kZNk9p50=;
+  b=czINYRMXixaConSiuJweyGE0XD94RDSxzTLBGz7uai1HH3nwB5BCA71u
+   A5Kct70qZZIxox2cLF4xYoS/KoczNDhIKxvK3eT0aXlI4yBubbw1gi/TC
+   +EkCwgJ9VhpfVcplMOZZQaSWFgTmYYiv6obmvQzidy/mZQKAWPftre0hf
+   0=;
+X-CSE-ConnectionGUID: xMBn0egZTdWQudcP5jJskw==
+X-CSE-MsgGUID: Lj0lJnYzRtyPkrHEUjovnw==
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.25,198,1779141600"; 
-   d="scan'208";a="288769008"
+   d="scan'208";a="288769009"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2026 21:10:08 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Steven Rostedt <rostedt@goodmis.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: kernel-janitors@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] ring-buffer: drop unneeded semicolon
-Date: Sat,  1 Aug 2026 21:09:52 +0200
-Message-Id: <20260801191002.1383835-6-Julia.Lawall@inria.fr>
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: marvell: cafe: drop unneeded semicolon
+Date: Sat,  1 Aug 2026 21:09:53 +0200
+Message-Id: <20260801191002.1383835-7-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -66,25 +64,40 @@ expression e;
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- kernel/trace/ring_buffer.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/marvell/cafe-driver.c |    2 +-
+ drivers/media/platform/marvell/mcam-core.c   |    6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 8e2485bb3..7749dd2ac 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -405,11 +405,11 @@ static void free_buffer_page(struct buffer_page *bpage)
+diff --git a/drivers/media/platform/marvell/cafe-driver.c b/drivers/media/platform/marvell/cafe-driver.c
+index 22034df6c..13d8faaab 100644
+--- a/drivers/media/platform/marvell/cafe-driver.c
++++ b/drivers/media/platform/marvell/cafe-driver.c
+@@ -127,7 +127,7 @@ struct cafe_camera {
+  * Debugging and related.
   */
- #define alloc_cpu_buffer(cpu) (struct ring_buffer_per_cpu *)		\
- 	kzalloc_node(ALIGN(sizeof(struct ring_buffer_per_cpu),		\
--			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu));
-+			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu))
+ #define cam_err(cam, fmt, arg...) \
+-	dev_err(&(cam)->pdev->dev, fmt, ##arg);
++	dev_err(&(cam)->pdev->dev, fmt, ##arg)
+ #define cam_warn(cam, fmt, arg...) \
+ 	dev_warn(&(cam)->pdev->dev, fmt, ##arg);
  
- #define alloc_cpu_page(cpu) (struct buffer_page *)			\
- 	kzalloc_node(ALIGN(sizeof(struct buffer_page),			\
--			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu));
-+			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu))
+diff --git a/drivers/media/platform/marvell/mcam-core.c b/drivers/media/platform/marvell/mcam-core.c
+index b8360d370..c1e8a2a30 100644
+--- a/drivers/media/platform/marvell/mcam-core.c
++++ b/drivers/media/platform/marvell/mcam-core.c
+@@ -224,11 +224,11 @@ static void mcam_buffer_done(struct mcam_camera *cam, int frame,
+  * Debugging and related.
+  */
+ #define cam_err(cam, fmt, arg...) \
+-	dev_err((cam)->dev, fmt, ##arg);
++	dev_err((cam)->dev, fmt, ##arg)
+ #define cam_warn(cam, fmt, arg...) \
+-	dev_warn((cam)->dev, fmt, ##arg);
++	dev_warn((cam)->dev, fmt, ##arg)
+ #define cam_dbg(cam, fmt, arg...) \
+-	dev_dbg((cam)->dev, fmt, ##arg);
++	dev_dbg((cam)->dev, fmt, ##arg)
  
- static struct buffer_data_page *alloc_cpu_data(int cpu, int order)
- {
+ 
+ /*
 
