@@ -1,43 +1,45 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B57D3C0A01;
-	Sat,  1 Aug 2026 19:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACEF3A254D;
+	Sat,  1 Aug 2026 19:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785611426; cv=none; b=fCSMx7gBlAQKh0eQE0xCE9b7whx2odxc9/d6rkG/RBWiqF4zLQDSsxfUu5E0ugnxOz8BtlhhEf5liVzLNr3Jw0L7NRUi0rZIh6hwLxzsAVP0sE0XuxRY6WO/aAdn8oKV30u2V84BRuQccTFPHFTgPfCysOVhnjLpAQ0pZvwJ95U=
+	t=1785611430; cv=none; b=G10YHJdlLfZEkFakCPzgQW8HMzRfCcs7Ga7gBK+IPPLjY1IYZ4JodRuD6qvqh5kK1Dj0gQnWKmGg/+Zr1sA9pDq6xjhp1LR+8wdn6lLaoJD2k9igcNcu5CmDKi2VeoPVaKuMeWDUbot1xXcnMQK0HrxYlHe7+j20NkdhnA/0FPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785611426; c=relaxed/simple;
-	bh=mKcrJmFzoXkCweAj363aSn/924DEr3tCAssfq1PdgSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ElqQDU/OHaOsutuUxOtsMS2lYw8X8wvFzHsb6sW0xF2SCI3A2QX0qjNVdIe9YaBVFg2Crfo1+iB5+rADeVfQN0ti2WzRM58Xykjc/Y5RxGOHy4qWHnZGpB3ijwJPBCHZKVaiWMEqYL74qvWwJyEHoAqaTl59CR/XO51goxeoN+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=uQ/jeTFq; arc=none smtp.client-ip=192.134.164.83
+	s=arc-20240116; t=1785611430; c=relaxed/simple;
+	bh=nLxkyXOVH77n4UIw8DlmeUNyLMAGobPDCY21NNsP5+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kqMxHUrX7id3nZHLFXqBamN5hCaLRYEpFB4PoNr0yqG4HoB6JeZm1GDB6wvTw3zaoU4+xFPACvq19wp5mgYF28IQb+huVDkrvGS7rCcStt790UGuBCt1+wjtMcDsjvKQ8W/ycs3yMBbGdukaj3YgFprCwXfT4iyElIz7kNUFOZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=PvW93Bdv; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="uQ/jeTFq"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="PvW93Bdv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=yF601NjEGFWfrAvUr4oOGdQWQoFukPqbdgEm/oEss2Q=;
-  b=uQ/jeTFq42HJ15dBh9GE+PeoyUPJV893teMGoMU+tFqmcVLotZHYPNh6
-   aKkuaKduKTN4vBRa5RyKRonKtC/AeZORWYdn+MTc6tyhzy6enWGoT6ynv
-   vlNH8u8bKhVeKkE/bvKxXs3PrObyUk6OgNb0nxB2cpGZ5R/FjshL842+R
-   Y=;
-X-CSE-ConnectionGUID: KXZwmDrlRvW4mPIyIg5elw==
-X-CSE-MsgGUID: +4xIFoETQmmV4CeP/cPfxQ==
+  bh=Obf+OAwdCbGTMg5s8OMIUCRXXMLFg7TjgwLzcmwd1Hk=;
+  b=PvW93Bdv2aVz7I9Ur0XKzFex8YvgHW7R30T5j8keacmHsr5vdbh5Y00W
+   bVET7D0PbHpLZCN1h5CsOsrnACHouyovfMsQOZJIfWM6tn+LLowD1nyL7
+   5LC+NofowRfjUCE+BwKn9SQmAJSNGz9tAt7jv6D5L/si4k6h+f3yXLyHW
+   U=;
+X-CSE-ConnectionGUID: 8JUcfgo3QPuyUUTvvQfNYA==
+X-CSE-MsgGUID: OlJOKjkRQ/exrGUcgFwTEg==
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.25,198,1779141600"; 
-   d="scan'208";a="288769003"
+   d="scan'208";a="288769004"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2026 21:10:08 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Michal Simek <monstr@monstr.eu>
+To: Helge Deller <deller@gmx.de>
 Cc: kernel-janitors@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] microblaze: drop unneeded semicolon
-Date: Sat,  1 Aug 2026 21:09:48 +0200
-Message-Id: <20260801191002.1383835-2-Julia.Lawall@inria.fr>
+Subject: [PATCH] fbdev: au1100fb: drop unneeded semicolon
+Date: Sat,  1 Aug 2026 21:09:49 +0200
+Message-Id: <20260801191002.1383835-3-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -63,34 +65,20 @@ expression e;
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c |    2 +-
- arch/microblaze/kernel/cpu/cpuinfo-static.c   |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/au1100fb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c b/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
-index c7ee51b09..1cc3fd984 100644
---- a/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
-+++ b/arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c
-@@ -23,7 +23,7 @@
- #define CI(c, p) { ci->c = PVR_##p(pvr); }
+diff --git a/drivers/video/fbdev/au1100fb.c b/drivers/video/fbdev/au1100fb.c
+index c54cfcd83..39f86ffb1 100644
+--- a/drivers/video/fbdev/au1100fb.c
++++ b/drivers/video/fbdev/au1100fb.c
+@@ -393,7 +393,7 @@ static struct au1100fb_panel known_lcd_panels[] =
+ #define DRIVER_DESC "LCD controller driver for AU1100 processors"
  
- #define err_printk(x) \
--	pr_err("ERROR: Microblaze " x "-different for PVR and DTS\n");
-+	pr_err("ERROR: Microblaze " x "-different for PVR and DTS\n")
+ #define to_au1100fb_device(_info) \
+-	  (_info ? container_of(_info, struct au1100fb_device, info) : NULL);
++	  (_info ? container_of(_info, struct au1100fb_device, info) : NULL)
  
- void set_cpuinfo_pvr_full(struct cpuinfo *ci, struct device_node *cpu)
- {
-diff --git a/arch/microblaze/kernel/cpu/cpuinfo-static.c b/arch/microblaze/kernel/cpu/cpuinfo-static.c
-index 03da36dc6..1e4d30b6c 100644
---- a/arch/microblaze/kernel/cpu/cpuinfo-static.c
-+++ b/arch/microblaze/kernel/cpu/cpuinfo-static.c
-@@ -18,7 +18,7 @@ static const char family_string[] = CONFIG_XILINX_MICROBLAZE0_FAMILY;
- static const char cpu_ver_string[] = CONFIG_XILINX_MICROBLAZE0_HW_VER;
- 
- #define err_printk(x) \
--	pr_err("ERROR: Microblaze " x "-different for kernel and DTS\n");
-+	pr_err("ERROR: Microblaze " x "-different for kernel and DTS\n")
- 
- void __init set_cpuinfo_static(struct cpuinfo *ci, struct device_node *cpu)
- {
+ /* Bitfields format supported by the controller. Note that the order of formats
+  * SHOULD be the same as in the LCD_CONTROL_SBPPF field, so we can retrieve the
 
