@@ -1,46 +1,48 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB153C1F3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9733C1F31;
 	Sat,  1 Aug 2026 19:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785611445; cv=none; b=TvymPukG41RtVOOIWYD92iJYjMroa78D95XJTp8o/ndCt0+LwgzIdabJQmStzpHbCEW6skETsMr3XWTm2acB2Ymf/vB9IVdko2wxetxEhHs+27tn7uTwSwXcw7rKhCNM3S1qPbGk6CGYYBONrTdRzQN00dOuuWtQVq9OG+sO9ZU=
+	t=1785611446; cv=none; b=Uqw2PLp7r+HxED0XxsqQj0P/qQvWgRK53uqAIwCzYl6PQsurxBTuPikXOZYuOZnHk+rzOZAxHlz3vNdXthAHmJruOATXeHnOMMFUuC4EGE2iSLUz5tq+6/09lFWFIT0LMwWnZ0+z+EAZLrUNVarm7s5z7gP+EpzrWVxoFsAMyIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785611445; c=relaxed/simple;
-	bh=P3tZ6N4jfvIjmreQ/C1Nm8WD8ULfJ+rus7cOhDSIgr8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SVbq827mC9Pibq5sylSq8GpKBSuz3Yz3ruB6xvyopRtj7ARJQz1nqPlNaTOrIqCfmhbNY9rpN9PeCFZeCxvD0Gy8FpJpPC1DJdq/E7EMKWbRnBVx25ofqCow+7QIULGiaWdOo+mT3PO0L/RVUMv8eZ2VN+XMqdn7ShTm8jYCmfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=f1OPetO9; arc=none smtp.client-ip=192.134.164.83
+	s=arc-20240116; t=1785611446; c=relaxed/simple;
+	bh=VK6SBqsnE5YIi1o0351TiI8AJ0uk9p0IdG9KkiMYDLg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gb1XFxrJNWNYh0OyT7KAf7HlCHgQf5l9sRZEhYgE8ZFPf43c8ZM/AFn06tBHICd2Zipc5mtyPvxZE8KV6AWuMvLvuTRo+nG9SHAMQXQSHNmjcw+RyTlHok8gmQwBGKs3gIPLtMk7n9mJsBL+Jl7coIbFh6yLAo/6F/Hj/F2weto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=UUGAzCB8; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="f1OPetO9"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="UUGAzCB8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=Fg5ZBoBgQD/Kd4IP5851d3w/Ypie/cGCCmYEWrWBmJg=;
-  b=f1OPetO9CY/vFBhKFK9eps3SYYmfGe+Fbe2Gqh2KM2dyrHv7/2ta+CuP
-   ueI7sHE4VYiRnjvDS/ZmsDuKWY/hexGUaocw73qF0lSpJ5JTF7RMemPOl
-   eJ+TEY0hcASRlJ4Li69NHSRM2Hcsz4ErQL17T820a5yolQZIN0h356FLM
-   c=;
-X-CSE-ConnectionGUID: NeZmu1LFT52lR8/Z6HTLYg==
-X-CSE-MsgGUID: xE/8NFJxRr+H0rotXr+obg==
+  bh=pXMYke0VesPuOIDp/f0NqiHMD8i+P4XXtxBqjZdWrUc=;
+  b=UUGAzCB86++ExaE/JgkmmpJzFJqGdVYYXUfz6ZowkbrlVUJV8sCK7j1k
+   6rB2mrW7C3omFLYGtaA46w4MgaLpRuL7HtMBgIjD0rjKr6BHKhzeQIrUL
+   Rx+iMvDK2BUGfZWCnhqpvPpB/3ceCeDATghN4EzzCkIe6y4rkSWVWOROD
+   U=;
+X-CSE-ConnectionGUID: WjfIcm84QLmTRANylv5/9w==
+X-CSE-MsgGUID: KhKwzyw6SaCnw54Obp4flQ==
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.25,198,1779141600"; 
-   d="scan'208";a="288769011"
+   d="scan'208";a="288769012"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2026 21:10:08 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Tejun Heo <tj@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
 Cc: kernel-janitors@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] cgroup: drop unneeded semicolon
-Date: Sat,  1 Aug 2026 21:09:55 +0200
-Message-Id: <20260801191002.1383835-9-Julia.Lawall@inria.fr>
+Subject: [PATCH] netlink: drop unneeded semicolon
+Date: Sat,  1 Aug 2026 21:09:56 +0200
+Message-Id: <20260801191002.1383835-10-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -66,20 +68,20 @@ expression e;
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- kernel/cgroup/cgroup.c |    2 +-
+ net/netlink/af_netlink.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 38f8d9df8..f87fc4550 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -104,7 +104,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
- #define cgroup_assert_mutex_or_rcu_locked()				\
- 	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
- 			   !lockdep_is_held(&cgroup_mutex),		\
--			   "cgroup_mutex or RCU read lock required");
-+			   "cgroup_mutex or RCU read lock required")
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 5202fe0b0..e6b1d9758 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -145,7 +145,7 @@ DEFINE_RWLOCK(nl_table_lock);
+ EXPORT_SYMBOL_GPL(nl_table_lock);
+ static atomic_t nl_table_users = ATOMIC_INIT(0);
  
- /*
-  * cgroup destruction makes heavy use of work items and there can be a lot
+-#define nl_deref_protected(X) rcu_dereference_protected(X, lockdep_is_held(&nl_table_lock));
++#define nl_deref_protected(X) rcu_dereference_protected(X, lockdep_is_held(&nl_table_lock))
+ 
+ static BLOCKING_NOTIFIER_HEAD(netlink_chain);
+ 
 
