@@ -1,41 +1,85 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C0B275B1A;
-	Sun,  2 Aug 2026 10:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BBC3C0A02
+	for <kernel-janitors@vger.kernel.org>; Sun,  2 Aug 2026 15:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785665235; cv=none; b=YQhaKD3yF6on2bNsRNN9Gtk0heY0c6N4A2sNkzDtNjsLzbpyPjVJdkgVdpQCh0GEw1ve+50hSt5F9TcUShsiLCR6RI4ORvFa1LVtxlxPRUXv6ZnVwRukFDDHUC9q52KdE2tALIv0wX2fCjowq5PWTchI51GnP06SaKtX3GjhT4s=
+	t=1785683852; cv=none; b=CHPihCj634Nxyp4kXkMthu82wSn9yyBrOL0myBFfeVdrNLJHCnCf2agBctp3jB1BmmjCE735u+e7YIWGDdEw4Zsp6EdlcqtUOo8gDLV2F1Qz4SqV8sKDfVmvCfzk9TKwEaLolRSpqn3jAreoLTtDT1LhnVxdEAw/Rw9xWvWw4Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785665235; c=relaxed/simple;
-	bh=QUojRzoarcedS30GW4krky/2dS41CmTjGQkPIE707oI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=o+KHN2/Yc/MJgqHtiUcDNTifzXyTPdchOOtMkzlziimAZY3IUQaNSN/6mojGIYSk/QCJi1PcOa1Oh5jS+0MdctKUj72uTgBlsvCj01LvfCnM59XupSqNe1I26eNHtD7zCoD8VMI+OTYoPw7SphZemlWcuGJr+NcvWalzNK6fWAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hKnMI/49; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1785683852; c=relaxed/simple;
+	bh=kwKtCzHqVNLmvmbRWDtZ4qdaXhq1tzQF5H9RXZO09l8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KqmrMhz9MrU1sRMBPKZw7xLZDSFIB0Y98MBh8+sWRJJkuaxHNAl/UwXIbWOjWRS+mHeQg+WH8NDgA94ocu4JBwSyuYSne56Wk3R1wYZWfTOqVVkOk5isDKsy9j5WNMJ45hCcztnH/FqyPS1Z/XYuQOWf36bePmN0LSou7hxWisY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mD/ZIuNU; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Xkvq583R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hKnMI/49"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1785665228; x=1786270028; i=markus.elfring@web.de;
-	bh=ZedcYkFJAAYIFAuz/Ch1/yB9b4PGkhKgYVoKK31PvhM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hKnMI/49FoMnC3XU3WHok7nH+CKTe1AyD95g9xXEdrFF3EM4uSrCugoRyI3uKNSB
-	 6yIXxvhqTsWUF/B9Y0E7S4Ka8kdIedzH8QeKz1SvH4Ah64twvAbjOLxbUVAzyW8XN
-	 8r8kwd0a95qAKML4xsjXmD2lqqEk/6jxyehRbcSpt0UhAVlpQgofxsIrXXWRs8xsO
-	 PjCs1LNLs+78iqvOF/05dz9ES4SXgy/RJordu4uk/6Pg9jkOyLcsIduxvJbmsVgl/
-	 Oxb6ng8n98R5LlqCIqha2FleNVXnl1mSGFwaJCoxl/8XHA3PtPvLpFZcsziaVVx+S
-	 0nQSGVMpA/yzINxYRQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M7usw-1wuIaU1iYk-000w6W; Sun, 02
- Aug 2026 12:07:08 +0200
-Message-ID: <2babf3d0-8765-4c3d-b5e4-eaf14caca610@web.de>
-Date: Sun, 2 Aug 2026 12:06:51 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mD/ZIuNU";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Xkvq583R"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 672Ebx1t2097483
+	for <kernel-janitors@vger.kernel.org>; Sun, 2 Aug 2026 15:17:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4fKT3525c6PBfh1O3lI3Q8DpJjSKVVm/d7bmUxqPxLQ=; b=mD/ZIuNUTxXPOT20
+	THiAYaenjRmX+viLFqYfjkQPJ1BwJb85Ale1ksqnpFcHjLTht4W0XcLWidSuSTQ1
+	v/kwOxG/i2CyLge/P6Bevil6EWEFKRdKLEys65XnTjhNsxvSYd/gNnP0R/XP1q5G
+	i7UpTeW+G1edK4Pc211M8g4RMYhh9Zr/7/NCmJED1FhiRohGjxudfdtAfWq3hc3H
+	QgjbyIMH9K0R4Vr97nTPNeIATnAlvOb/S5iVUlJ38CNZ5hoNmaQiL7wTS2E+j5nK
+	c8inK69HPDGXm+H0hEqNAfuUl4pWws5ylFo/J24QWUQWj79bB/2E3aRiKcC5br2p
+	0as3sQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs911b1qx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Sun, 02 Aug 2026 15:17:27 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-930a098ea19so245432385a.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 02 Aug 2026 08:17:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785683841; x=1786288641; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4fKT3525c6PBfh1O3lI3Q8DpJjSKVVm/d7bmUxqPxLQ=;
+        b=Xkvq583RGkkN+g16Vv9YA8ekSPL3Gon1sIrd3V8ncQ1eFEqTGq2hjRLFmPBDQ3Wz8/
+         ZUiMCQZgyjTziLEdPZnCAdhuBs9zV/85PUgOKVLBDP62worjFoadFnbR2NOiFsv6YE0c
+         A96euPghZenXbkxJTaDeFj/G4jcGmtSYQApYMpUKbwEVLIyhcA6a9By5qaIOyr1uAPpi
+         paDOEhrpZL+V8+O2W3eC2YHaDDxIa0jssjHWbI5hgemrrszetG/F2ehT45eK9mUuRFiW
+         PbjjggDjP7cDHV+ic41frJJDUilDm9P0HlMaeRY+iUMApy/S1Si9e8zJShmeO56pNB3H
+         cMKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785683841; x=1786288641;
+        h=content-transfer-encoding:content-type:in-reply-to:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4fKT3525c6PBfh1O3lI3Q8DpJjSKVVm/d7bmUxqPxLQ=;
+        b=jVH1fqWj9jKKyfQ8nRaFlCItroonPmEKvOQbxD4JRugkbnLH4Fv+YLr+rIeLmMzF3q
+         MWhzXDZNSsy/u+OPkJbP1CXvcp6z1P9yNlOHCk46UZDlvSn+NXUYwKZhGjnAjgA1WvAu
+         k1IAA6PwLR0hZQN54XQC3ebP1VMP+2SdFJnzQP9vO4VFQUEZSSBliqrqdz4KXEPy7q2V
+         Ocwx+WwslT1uLbVOqrbk89ljJGzPC4TwJCiGQI/AspwNOQUdY/1d3LdGlSDVRSsges8a
+         nikih7kCS+ywTV057q29DrtE+AaajsuUElOdRX2JsEc8t2F5/7LHUD8XKQgSZ0TGjGYN
+         wHnQ==
+X-Gm-Message-State: AOJu0YxxV4dpUAFvqosv0JGQ82dflPohwpIRVnqN5CcOdn9rq9BshiJO
+	tl2yqxOqPddSylTF11/dy16hHXJlBck9ha5MLSipTyVvjQrY0ilxU2TRbmELh+71nkThN+86j3d
+	d/hhbC9ixR+mjRI/rrJvoWAm5US9hiD8n8l3rxO6XetssIq3qPjx9O6g3qGnmv0bLSytH+4M=
+X-Gm-Gg: AR+sD12Ndo/Oom6plnhRqrcVJrvYBN5xgQc9oyASGauudGPBNdeD9uDsiDlQMA+ypjk
+	/Uu2clHL3qKS5dmQj4cRggosX2LA9QhVomaSFt/oCqO/gHAJF2Ao8HoTttWTu2wnfbiNfodBLMu
+	Fet4WhOCmUq2MwbsCRnZTXOhQR05gY1KAuGcQjQR3ZBnT+nEquZwXZv/StyyVU2oSTxN+fGbous
+	1xaKBSCQw5fYV6PEifpoC70hNJqF2eURnqjnMolqZmGP5r8T6LVCRWNXk/xBuSe6KGbep8JKLMs
+	AAThebnWMFsX2c9pzzAH7GrwPL281Rjfzo95YPU2orjdoBjrrqsTrwaV/l1volMiXDGDNa7uCU0
+	M5I/rVt14kFQMisurgX/rQ/SLw7EXzhl6y5vIXoEUVjt/p82k0t4=
+X-Received: by 2002:a05:622a:5916:b0:51c:15c5:2bf7 with SMTP id d75a77b69052e-52b56695898mr155597341cf.12.1785683841324;
+        Sun, 02 Aug 2026 08:17:21 -0700 (PDT)
+X-Received: by 2002:a05:622a:5916:b0:51c:15c5:2bf7 with SMTP id d75a77b69052e-52b56695898mr155596841cf.12.1785683840851;
+        Sun, 02 Aug 2026 08:17:20 -0700 (PDT)
+Received: from [192.168.69.212] (88-187-86-199.subs.proxad.net. [88.187.86.199])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b4bdc7sm88966865e9.0.2026.08.02.08.17.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Aug 2026 08:17:20 -0700 (PDT)
+Message-ID: <7f0c699e-a530-490e-bfed-21840ec07861@oss.qualcomm.com>
+Date: Sun, 2 Aug 2026 17:17:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,123 +87,66 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] Improving output for single characters (with SmPL)?
-To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr
-References: <202dfb21-f5a2-4550-8a1f-aa07d84db345@web.de>
- <be2727e1-907e-487f-8522-e5aa694b1c38@web.de>
- <9f8ce18d-67bc-4c01-b3fa-8605c9856b82@web.de>
- <9e187875-e472-911-c280-59dff6b7c80@inria.fr>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9e187875-e472-911-c280-59dff6b7c80@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:G8QLRAClcsjnESUoubTUXmTC7HGxm4Yd7gr7H9I0CVROezHUsI1
- nM9j1cUHJpY8nwOT11botvXfcR7t6XSqRyPN55bqIP0g1XacR+obSlekEXR5Ma7D87az6No
- rdDyKltyYUB+bGXJLGpm0l5f3L6OmZIZ5Ku1PFynO7iXqnmijtMglQGHIsMl/LKLINhTaSX
- b9UWH+l98PQqsXu2eaO7g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FFEbDe0T8ng=;J+2bagisKbD2HZKnV45Wets1SjF
- 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
+Subject: Re: [PATCH] MIPS: BCM47XX: drop unneeded semicolon
+Content-Language: en-US
+To: Julia Lawall <Julia.Lawall@inria.fr>, Hauke Mehrtens <hauke@hauke-m.de>
+Cc: kernel-janitors@vger.kernel.org,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260801191002.1383835-16-Julia.Lawall@inria.fr>
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@oss.qualcomm.com>
+In-Reply-To: <20260801191002.1383835-16-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODAyMDEzNyBTYWx0ZWRfX3yF43oJOGLfO
+ YiDUznxdZxvpyIj6eiw40GETGU+xnkI2LB9Au8VPgSFWTnWpji35w+uGiofLv0tl3y5oqs41zvj
+ rLLJoY6X78s76UBExBXBDzN6WSaSPfg=
+X-Authority-Analysis: v=2.4 cv=PvGjqQM3 c=1 sm=1 tr=0 ts=6a6f5f87 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=4s3hRJSeHn4rkQlkrse1kQ==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=M51BFTxLslgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=EUspDBNiAAAA:8 a=1tSEMpTH9XP_W59IOagA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: jl7ze4wIOUVbGjB-TOu77Dj28GZkW9IB
+X-Proofpoint-ORIG-GUID: jl7ze4wIOUVbGjB-TOu77Dj28GZkW9IB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAyMDEzNyBTYWx0ZWRfXzcaKh1IwAlfk
+ xflJwyEFRmpzuDuW0SKLDbJKqd/5F0DJj58QlOdEziK0R+JnNGJDa2HheBiMNFoowgvfUjmcY6J
+ bgzHa49/PprhiKja+xDc8plIs9qNYst1R/YseRrhy+R9OxKvikMM+I0WSq1gCyCuLuULFD4Icp5
+ mahPeqzARIv6HfUMmPswQ2+p1sVJqaStWEIggVx7W/2bya04uj/F983jXmC/IONrFvejatfC1Dm
+ /FBp1q/tn6BTub1p59gb4EAXs4Z0E0PONWxQ6Kj9+3xP8Lns9S8/vZuti6tIwbPYP5IKs8khhLk
+ 7cdcOo239c/nd7/60hc/VoH1HdMh1P5FcMWOaYKaZSjh5BLsUbIrFYrI9HS5C459mBvT1sZJdCe
+ GtJaOKxxgl4g9UrdLzcCNY7W8j//S/UCT+/gZNhlfBtXiD0iLD5noyIoCdDZrtIJr2i8/xar3mn
+ jGs4TshMeXHfNQwUSVQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-02_05,2026-07-30_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 phishscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608020137
 
->> How can the generation of duplicate difference output be avoided here
->> for other SmPL script variations?
->=20
->                                             =E2=80=A6, but if you have d=
-uplicated
-> output about herder files, it would be because the header file is includ=
-ed
-> in other files.  =E2=80=A6
-I would appreciate further clarifications for corresponding case distincti=
-ons.
-Is it usual that header files would be included multiple times by other fi=
-les?
+On 1/8/26 21:10, Julia Lawall wrote:
+> When a function-like macro expands to an expression, that expression
+> doesn't need a semicolon after it.  All uses have been verified to
+> have their own semicolons.
+> 
+> This was found using the following Coccinelle semantic patch:
+> 
+> @r@
+> identifier i : script:ocaml() { String.lowercase_ascii i = i };
+> expression e;
+> @@
+> 
+> *#define i(...) e;
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>   arch/mips/bcm47xx/buttons.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Do additional developers care any more for working file inclusion
-also according to mentioned source code transformation approaches?
-
-How will development interests and resources grow?
-
-Regards,
-Markus
+Reviewed-by: Philippe Mathieu-Daudé <philmd@oss.qualcomm.com>
