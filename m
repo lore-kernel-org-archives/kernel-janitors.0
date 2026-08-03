@@ -1,54 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E152D8DA8;
-	Sun,  2 Aug 2026 19:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740FB126C17;
+	Mon,  3 Aug 2026 05:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785697328; cv=none; b=siVoqC05whZKRlyASf4OW7Lfw3XZF+AlV+/sz3vm0yL7kymwhDa7sEWHLT+/bkuBkhhYr2k3GpN2JZAoYhFeXaI4Wup6+p1qk2EdvRs5vEBfilycNczUh4X4SUYdsaJ+KvQO0izRWFKBMLMerM5lbZdCSQbfeMBK7b0xXA1ra5M=
+	t=1785733969; cv=none; b=QS2RIyYNJF8TUw1t9QuIJ1cI2zVmbbFAfc6fmBrv2qyKWHwPrAB609EZKjToerwdITzM7eJLNcCPGOiNWp8A81Kv4ivhSgsRLbhkdU2AdWQninckTAruGSJ8tGGgGwlr3yyNOV3rJbARyr2AAULkRz2X+unt2TkKQJ+XvYG694U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785697328; c=relaxed/simple;
-	bh=j81PfHVe3b9Xv/5l4yjSOJWV/a6C8p+zEU1hbw7X7hU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References; b=GVeUtpTd7VvYBZo1JLOQlC460eBzf+2nE6tvGCo73b018g726TMBpqI8Rkz36yuJKQgJDbTIFoUkc9AWj7Sc0A3Oly1w/jh1QXoTxZqH7UKjm309MuWBsVOKxq23yd2ze5VhaWxC7LjAVpEJw1x0wEgdo6Z1PoRhx5GW8sbT3hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCPbWJl9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785733969; c=relaxed/simple;
+	bh=U50cXcdFuF39Z4ZCHe1T+gw7F2DWBx1+dW/YRpu+Sqc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=MlUbI95mHyeKYbo2cx/WmQMZlYfYl7J51y53OHJPdxaub9bTv5GgJbIzuZ949JsIGvpC3Xi6X8t9XwKaKLTTmfX6W11rb9XQmCuWbwdxJ2HqNIsXe/7KpEJw7jrqXsQLQG/MFCNhplDUGSCA/j17JMvNl28L3iZX5KY1haEEm4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QecewONo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCPbWJl9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00A891F000E9;
-	Sun,  2 Aug 2026 19:02:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QecewONo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3439E1F00A3A;
+	Mon,  3 Aug 2026 05:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785697327;
-	bh=9LjIL49lJ8GTcSWX4hsT0es2Kgu8LgkuvjJCEEcVoDc=;
+	s=k20260515; t=1785733968;
+	bh=YcXLau01/GxQVKV99V9hUJQODNODcrjR2nX17z9N6Rk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=RCPbWJl92C/UZ6jd5hlgRofS4KjdP6PawjPlJ2FkMzUqoMcnEJW2DefUrZ11X82bb
-	 ifw7LM8rOs+YB8Gz/0Thg4OQfT/UPNxnxP8ZSF7GTsJ9+1GgQRmDGj9bk7QdVAFbjM
-	 nxZov1dBSdnMtWvyfLFqSUU95qpW781d/Htm2nXbsDXb+2R4wKCUGHo9BmFaikroGx
-	 e9EtY+Hsi3OlxN+AXQZE5d0C+Em/FoO8SrI1Bk90eCTjbMH+I/h49xKKpxh8jmtuLl
-	 2Z/t0neqQ+syoycfn8q+ElgQDzbrcsd2U2HGugOARqT7aVHPQd4hmj7lIHH7muwIs1
-	 UnOChRCvoe7gg==
-Date: Sun, 02 Aug 2026 09:02:06 -1000
-Message-ID: <0b2b6806a23aa30ddec65253764bb014@kernel.org>
-From: Tejun Heo <tj@kernel.org>
+	b=QecewONopJldKm+bs2zPCARR+17DsQ2rDSGrVRIsMNGWU/lZ7OAnXMEfuEv1Gldf+
+	 K6EXRGttv1k6YChMpbP/IzhWb9Uiz2NHHnKYAeoa82ph1waTj+i6cxMQ4eb7V0qqY4
+	 U+sVFTGbkKGi4ZziGIe3LZAEXxrjcxDxhpbd8ecCtmPSylUBSw8Vhk+yaNezW6bH+g
+	 kkS2Sdg4+H8CF8+8pae6voY6Oy4RgWhsk6Mr1WoA4gEcIYAGYU7RvPpVxv5TYki0pd
+	 dI33NWxrWTjrkdkerDHTOiRl0LrR+TptG3o1pcnSOeVqO1wYclo9F7gysPCXOcXEud
+	 7H/kdyDaMQWPw==
+Date: Mon, 3 Aug 2026 14:12:43 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Waiman Long <longman@redhat.com>, kernel-janitors@vger.kernel.org,
- Johannes Weiner <hannes@cmpxchg.org>,
- =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: drop unneeded semicolon
-In-Reply-To: <20260801191002.1383835-9-Julia.Lawall@inria.fr>
-References: <20260801191002.1383835-9-Julia.Lawall@inria.fr>
+Cc: Steven Rostedt <rostedt@goodmis.org>, kernel-janitors@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ring-buffer: drop unneeded semicolon
+Message-Id: <20260803141243.26f277cde804b03f37f2f126@kernel.org>
+In-Reply-To: <20260801191002.1383835-6-Julia.Lawall@inria.fr>
+References: <20260801191002.1383835-6-Julia.Lawall@inria.fr>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Applied to cgroup/for-7.3 with the first paragraph of the description
-updated to:
+On Sat,  1 Aug 2026 21:09:52 +0200
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
 
-    The trailing semicolon belongs at the point of use, not in the macro
-    definition. All uses have been verified to have their own semicolons.
+> When a function-like macro expands to an expression, that expression
+> doesn't need a semicolon after it.  All uses have been verified to
+> have their own semicolons.
+> 
+> This was found using the following Coccinelle semantic patch:
+> 
+> @r@
+> identifier i : script:ocaml() { String.lowercase_ascii i = i };
+> expression e;
+> @@
+> 
+> *#define i(...) e;
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
 
-Thanks.
+Looks good to me.
 
---
-tejun
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+> ---
+>  kernel/trace/ring_buffer.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index 8e2485bb3..7749dd2ac 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -405,11 +405,11 @@ static void free_buffer_page(struct buffer_page *bpage)
+>   */
+>  #define alloc_cpu_buffer(cpu) (struct ring_buffer_per_cpu *)		\
+>  	kzalloc_node(ALIGN(sizeof(struct ring_buffer_per_cpu),		\
+> -			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu));
+> +			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu))
+>  
+>  #define alloc_cpu_page(cpu) (struct buffer_page *)			\
+>  	kzalloc_node(ALIGN(sizeof(struct buffer_page),			\
+> -			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu));
+> +			   cache_line_size()), GFP_KERNEL, cpu_to_node(cpu))
+>  
+>  static struct buffer_data_page *alloc_cpu_data(int cpu, int order)
+>  {
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
