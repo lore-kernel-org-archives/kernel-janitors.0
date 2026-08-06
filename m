@@ -1,80 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC7B3DAAA6;
-	Wed,  5 Aug 2026 10:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB96379ECD;
+	Thu,  6 Aug 2026 00:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785925422; cv=none; b=OJ9u6LZOrxBDaGWnmP47XbDVqYAC9a/rme3bKM17hfh1JkUcfbszwVnkepBDgZ79y7TkBXM4m2E5TDJK09sKnVsmdjsfM319Loqqlv00x6x6095a8e5Mtvmp8ORT5lnYbuOkLnWIXvsl8tIGPwNdpSuuOiLvohyKvgnAnBZU1HY=
+	t=1785976868; cv=none; b=newnBfpyA3xP7zQkDKG4kn8scR1bCes33DBG6LzQuoRkWZ9yg3RqwAe7D5QoJ48uympaY2u6dsOYvmW7ijNOjFscjfxlQ2Kpims42AG/+FjxWjNJHMHNBFrAhtxzhOB/xR+YimBNc5hM3WX3VGKJyJh+8V2ItB9tEkvK8P54ciY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785925422; c=relaxed/simple;
-	bh=d+6t34ZTncpH31KtRJcj0eq81Ll26mjzFlGAOyY5dtg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ONamqoxnBz+6IeybLUhIcqBdEHOG+N6+n5aEbxJRtvQQ/k+5Qd/vF+UonUmCvL+ABna4ToSr2w4VAjKh4/u8La16pXfTgYOY4b7r0ByiaFU3tv9AnKysgQ7Mt69Nbe/Iky9b4VuiEkrvXI+HJx+0r3oHNQXE04qvH++wIWd+Zhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMxI7OpR; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785976868; c=relaxed/simple;
+	bh=ju173BdDbT+Ev/PMKbF6iQnsHv3B8IEIyIQVRjTYHNE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ND2n6U23GHy5NSjZlIiDa1RWwtdu7by8sQgl08QWxGX1idIrol3YTtgzM6PUtNwsQZObMJE8dApq3epE87W5IWUEnnmeyp/zOk/SVs+XHWVXXM6txA17RFTLPczjxdVVxhucBwSbakxTw7Ldyryt09Vtqm0665OCKzTNvyGcPQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBjW0dtL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMxI7OpR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D20111F000E9;
-	Wed,  5 Aug 2026 10:23:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBjW0dtL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CA11F00A3A;
+	Thu,  6 Aug 2026 00:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785925421;
-	bh=R+ZFMtIuzPeZEUZ4JcJ/ougwoDdYyFPiQkSgNBVZWTE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=IMxI7OpRaYKQcW8F9CveMDT4Br8+u87MkcCVjSR7dx8X1S7ivELRnB414XKeONRHu
-	 ZFoecaUeX1Q/jG6r4S8RDu380rhaYoIMFwEDlbMjbbR8Tvaa1V6GMdYGMcMt/xlWKb
-	 7IHTKMGPnH4PsjVKTFH/+nI7K364noXytsaybOLQjgSEruw3rZ2oAoLls2j/E4dHug
-	 1bKEZaR2Z4KhQ125U0C98YoUFbAENyZ7wgFEYn2/yWfpDSuxJWHaukCLEFCjSW+tqG
-	 +5dVaAnBuzgILxT5ghtwYqZpe3ZScAtsqnYlwCmeqpftamstA/g5yONJ43zvEH2knx
-	 BkbL9M+mE9ZJQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260801191002.1383835-11-Julia.Lawall@inria.fr>
-References: <20260801191002.1383835-11-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH] ASoC: wm8940: drop unneeded semicolon
-Message-Id: <178587630281.111355.10169472897616343402.b4-ty@b4>
-Date: Tue, 04 Aug 2026 21:45:02 +0100
+	s=k20260515; t=1785976866;
+	bh=exKj1ib4rr8spf+qr2+slTw/eEVsvhgpswVeOyEQtr4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=EBjW0dtLQ9MSANlhVzfAqQPP5GFJbMKXYLeZwxpusnhyf+ma5yVE2hECA/+GIC88c
+	 6qaA6fY7aR2wlLmhRlbguOSWRVAuMRlr2PGB1alFB2XXBvjr/0CjhYhcNWgjq+Jzkx
+	 HO3G02y4CrJWk5YUq8/Y3CevBDe3SZlYMyUiUvxnSJX3OVjQWm/cHLa7Q1qRgCujoa
+	 MAQv84xlPYUKWHu9EyKZgvHtlLSO0P8bKEMFuJ6ucV4VrZLPINSI9zlaqnHjc1fgZQ
+	 d4nhpEavS/XHLCYJDKsBCfAOv7ZdMmwa+VCUYTj+/NFZT9/xvjsz388fF0JMfhA8tO
+	 leNTcRJHb3LfQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93AC3392FFD8;
+	Thu,  6 Aug 2026 00:40:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] qlcnic: drop unneeded semicolon
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <178597682613.580024.14297387249853061360.git-patchwork-notify@kernel.org>
+Date: Thu, 06 Aug 2026 00:40:26 +0000
+References: <20260801191002.1383835-5-Julia.Lawall@inria.fr>
+In-Reply-To: <20260801191002.1383835-5-Julia.Lawall@inria.fr>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: shshaikh@marvell.com, kernel-janitors@vger.kernel.org,
+ manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 01 Aug 2026 21:09:57 +0200, Julia Lawall wrote:
-> ASoC: wm8940: drop unneeded semicolon
+Hello:
 
-Applied to
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
+On Sat,  1 Aug 2026 21:09:51 +0200 you wrote:
+> When a function-like macro expands to an expression, that expression
+> doesn't need a semicolon after it.  All uses have been verified to
+> have their own semicolons.
+> 
+> This was found using the following Coccinelle semantic patch:
+> 
+> @r@
+> identifier i : script:ocaml() { String.lowercase_ascii i = i };
+> expression e;
+> @@
+> 
+> [...]
 
-Thanks!
+Here is the summary with links:
+  - qlcnic: drop unneeded semicolon
+    https://git.kernel.org/netdev/net-next/c/376608d9210a
 
-[1/1] ASoC: wm8940: drop unneeded semicolon
-      https://git.kernel.org/broonie/sound/c/222e8029a7b0
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
