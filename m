@@ -1,58 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+Received: from smtp.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E390F37D12E;
-	Sat,  8 Aug 2026 20:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29902264C0;
+	Sat,  8 Aug 2026 20:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786220704; cv=none; b=t3imrG9oKwsP8AXG7rTokMWohUgW4ZrIqYzNO48N0smkr7Tg6EMdYMX29T6FCSOIbkp0UREzYyTjKq3j66UjyiUWX+tSUYCW8rWoDMfU565mFyJuFn56OXZ5Dp/e3iwJ89Tyr2WXaTbQRQNmc44OdItZl2v539/6xiA1JiFUb54=
+	t=1786221175; cv=none; b=llILlqyIbGPE/3tktEhIu9qm3nHhqlMakQAGV6bCPFgY+j2tq7uzlKSFGeBCF0Iifm/A1uOkTdDiXSJKvYmwPELHruOzRfFhbhm7OEESDxj+2jt6uUAG+6nFwRU3KwwDU0ZT36zu1fkk3ml+sr3W7dCJ/g58lGKIbGpg6hHwJpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786220704; c=relaxed/simple;
-	bh=akIElZ664VnThhT/O583ioHadFcoj3UoY4fB8Adz9ys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ru4TqvYABdtMiqjPnFd6gpAqQZpjU8Czb9dIlk7sX6FpyRjXJ2jbnd2xbbmAFdnvdN/6se5llj0UYQJNmryQkj53sPLrj+9+4TLrUfpAtYtXouoMkieO1d+etVkJYD4GDsj0HLoM1t0Jpa981Hi+0PbTIzzMkieFAkqmDkoZyNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Zk3RD5K5; arc=none smtp.client-ip=80.12.242.26
+	s=arc-20240116; t=1786221175; c=relaxed/simple;
+	bh=LYWcp6Pq+RIbyaNzk+cvWEn1TE/RKKoUPiE7s5NIUz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FALWmT1Th3z8fFv1Lzgh9nb2uF77N49zdbsh2OqCVOz05QUPLs6/rR37IWDVCOfbnc99pSkKcD25J+4L0wmylE0meNImDpkC3izNNAqZMvZiERbDXe8GGpr+GuLMGZ+dC1IowWGbVJqsAiSA4EcFfrldcm2sZ1litV64ZpBcE/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EX375Ovk; arc=none smtp.client-ip=80.12.242.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Zk3RD5K5"
-Received: from device-101.home ([10.64.95.115])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EX375Ovk"
+Received: from device-101.home ([10.65.86.54])
 	by smtp.orange.fr with ESMTP
-	id sna6wGeV0xVuJsna6wvBy1; Sat, 08 Aug 2026 22:23:46 +0200
+	id snhlwNvG5Y2ExsnhlwnbqV; Sat, 08 Aug 2026 22:31:41 +0200
 Received: from device-101.home ([IPv6:2a01:cb10:785:b00:6128:9b8c:c203:905])
 	by smtp.orange.fr with ESMTPSA
-	id snZww80X0VmS1snZwwkz1T; Sat, 08 Aug 2026 22:23:39 +0200
+	id snhbwzg2ky7BTsnhbw6zVF; Sat, 08 Aug 2026 22:31:32 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1786220619;
-	bh=Ll+F6nXFSqpVhu4IsFAP7UVPO/qt/IPQf17t5zCa43c=;
+	s=t20230301; t=1786221093;
+	bh=zg3VPxHZ2neCZ31eTjCUidWOS2M1FLzevXo8PiJKU8k=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Zk3RD5K55BZ+T/D1ZOwUQvj5+2diY/4gCOhQ+FoOAgQ8Y3bVrLwYB9qldsbSVqSHe
-	 prxaEo1Y0kJYxP6yq/lS7tfMbS6r6UcxM2oufRHpBHpZqQSSaOd97onbJyBX2UzJcI
-	 YreeOTlxvlC6hCbT/u5Npm+ifZGQpdf4/WbDN5lSxf40sb2a49ze9bleflMDhSlw9S
-	 ORqumwfWEE9XyVoSracsePste0lrlBlj9rifV0uZNMqn1A2WvtTy78/CZC8UTSFlN3
-	 lPQg5x/r0MOY0e5ftefHf1BQUHDTXLK4+YC4BDpIDDCIxFq3LTd0tsuCFSZpUu/II2
-	 poi7Xo7OI2BhA==
+	b=EX375OvkUMZCDnaFa5pDqHz5q5IeQM3F7u8zoeKV6Nl2PPukihMXK8mlMiRGJKRqC
+	 NB/bvIC9sFlhbGlZd+fP1xOT//xZ6RBfPIQucJBCtOCF0/QDDASuCu5OTkEpmGqjd4
+	 Mo5CL/lf8M93jNXlGYYAQYvQzIRxIsSC8VZFp1Z2/a4cFcA1jnElFpihB0WKENOuEd
+	 gymOJpUnxt++GfFGq6IvI9+tPrXGyxQPEB0t7Pyd9u8SnTp14ZKn4Rhvpx+yFDSF24
+	 DPbEi/hS+tIopFjCsBZAcCUTyN2smBF5Gt5O7ZhZFDTwxy3elpKa1+7OzjHRMbFVCV
+	 du1im85MzfB+w==
 X-ME-Helo: device-101.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Aug 2026 22:23:39 +0200
+X-ME-Date: Sat, 08 Aug 2026 22:31:32 +0200
 X-ME-IP: 2a01:cb10:785:b00:6128:9b8c:c203:905
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] thermal/drivers/imx9: Constify struct thermal_zone_device_ops
-Date: Sat,  8 Aug 2026 22:23:33 +0200
-Message-ID: <5cce9ea713edcf2aa3c0efd5d31e9d9fd9f40a88.1786220585.git.christophe.jaillet@wanadoo.fr>
+	linux-wireless@vger.kernel.org
+Subject: [PATCH] wifi: iwlwifi: Constify struct thermal_zone_device_ops
+Date: Sat,  8 Aug 2026 22:31:29 +0200
+Message-ID: <a8e9ce13554fdc9d3630e550280209e7e9fed9f0.1786221064.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,7 +53,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct thermal_zone_device_ops' is not modified in this driver.
+'struct thermal_zone_device_ops' is not modified in these drivers.
 
 Constifying this structure moves some data to a read-only section, so
 increases overall security, especially when the structure holds some
@@ -72,33 +63,49 @@ On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-   8567	   2144	      0	  10711	   29d7	drivers/thermal/imx91_thermal.o
+  32535	   8657	    192	  41384	   a1a8	drivers/net/wireless/intel/iwlwifi/mvm/tt.o
+  15212	   2872	    128	  18212	   4724	drivers/net/wireless/intel/iwlwifi/mld/thermal.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-   8695	   2016	      0	  10711	   29d7	drivers/thermal/imx91_thermal.o
+  32663	   8529	    192	  41384	   a1a8	drivers/net/wireless/intel/iwlwifi/mvm/tt.o
+  15340	   2744	    128	  18212	   4724	drivers/net/wireless/intel/iwlwifi/mld/thermal.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 ---
- drivers/thermal/imx91_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mld/thermal.c | 2 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/imx91_thermal.c b/drivers/thermal/imx91_thermal.c
-index 25915bb702be..892a25440e06 100644
---- a/drivers/thermal/imx91_thermal.c
-+++ b/drivers/thermal/imx91_thermal.c
-@@ -225,7 +225,7 @@ static int imx91_tmu_change_mode(struct thermal_zone_device *tz, enum thermal_de
- 	return 0;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/thermal.c b/drivers/net/wireless/intel/iwlwifi/mld/thermal.c
+index e445b1d7d4b0..25c99899c8a7 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/thermal.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/thermal.c
+@@ -234,7 +234,7 @@ static int iwl_mld_tzone_set_trip_temp(struct thermal_zone_device *device,
+ 	return ret;
  }
  
--static struct thermal_zone_device_ops tmu_tz_ops = {
-+static const struct thermal_zone_device_ops tmu_tz_ops = {
- 	.get_temp = imx91_tmu_get_temp,
- 	.change_mode = imx91_tmu_change_mode,
- 	.set_trips = imx91_tmu_set_trips,
+-static  struct thermal_zone_device_ops tzone_ops = {
++static const struct thermal_zone_device_ops tzone_ops = {
+ 	.get_temp = iwl_mld_tzone_get_temp,
+ 	.set_trip_temp = iwl_mld_tzone_set_trip_temp,
+ };
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 53bab21ebae2..6db141c2cd45 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -643,7 +643,7 @@ static int iwl_mvm_tzone_set_trip_temp(struct thermal_zone_device *device,
+ 	return iwl_mvm_send_temp_report_ths_cmd(mvm);
+ }
+ 
+-static  struct thermal_zone_device_ops tzone_ops = {
++static const struct thermal_zone_device_ops tzone_ops = {
+ 	.get_temp = iwl_mvm_tzone_get_temp,
+ 	.set_trip_temp = iwl_mvm_tzone_set_trip_temp,
+ };
 -- 
 2.55.0
 
