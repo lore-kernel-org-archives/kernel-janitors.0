@@ -1,49 +1,50 @@
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2274C2C8
-	for <kernel-janitors@vger.kernel.org>; Sun,  9 Aug 2026 12:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6AE21FF2E
+	for <kernel-janitors@vger.kernel.org>; Sun,  9 Aug 2026 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786279010; cv=none; b=XunW6ocwfPsAntQ7ue8m7WsapX0kAQ3AG/EKWyPEvKijztK9tel1AqU8ZZcKksdBLpaNSZWVP6oFiKjhC8PPUSpVgVUDCGonqShpSk0whN2dspFe5kLdvDPPjcUJAoL786f7TUlFriDQoqiF7KGVfnapU50Ky/w/lEuBKa6/tBk=
+	t=1786280488; cv=none; b=QokZkFTWqj4KKiBw/+KH3HcX4yDkTefvymxkXqlel/ruqymSqbPmauccOv23kqvqYzvv3UVHgcY/HO8rTBIweS5UQ2sqlo5V2FA9ftDsQS/6sXLTLsin0v1uSrbhVulyzDmmj+Om/Dm30LAL0qzQbez0hzF9VgTA/fqDCZEovk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786279010; c=relaxed/simple;
-	bh=dUdn8Ht5DM9KrCx9Q10ogq+sjtq9EosqRAoZJ1qAdl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P6181gfAwrmsmXnrlc8LL3lc21Q0uptHgrWBV73lnvc9F+UhUhVi1QGZmU2Hs6wjGvlndY1j6TZEzi1tRe8D+3ZHdThRPO8a5htjSRCEDdBiCSRWNsmbMsnAHaHvFLxWUGtjF5ofe/dVFu3m5Ydcy4bdS0eVFt9WB25nT9LjWT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s9Buy3PB; arc=none smtp.client-ip=80.12.242.21
+	s=arc-20240116; t=1786280488; c=relaxed/simple;
+	bh=8JxPF2wVFEsqGB4GhHJNW//qUV8h15k0uLWlBkJTV+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mFuZ1RGXAQhgcHCyUDcQRGIHSCC4ZYZlaiXIwrp+sNsid4gSNw/ucw9Fg54bFQheMJqivPnNBS4SC0F9gndUX41i8i5dxykq3NDgjVttyxrSQADS/nCp7x4qzLyhgW1vbmx/YSzdFDlTx4Qmer52hCKT4XUWCiTXy+9ez6IEGd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CeR1oguz; arc=none smtp.client-ip=80.12.242.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s9Buy3PB"
-Received: from device-101.home ([10.64.95.113])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CeR1oguz"
+Received: from device-101.home ([10.65.86.62])
 	by smtp.orange.fr with ESMTP
-	id t2kdwrv7z4aoQt2kdwrnzi; Sun, 09 Aug 2026 14:35:39 +0200
+	id t38MwuRNFK3UAt38MwZjAV; Sun, 09 Aug 2026 15:00:10 +0200
 Received: from device-101.home ([IPv6:2a01:cb10:785:b00:6128:9b8c:c203:905])
 	by smtp.orange.fr with ESMTPSA
-	id t2kUwDJU2YUEJt2kVwP9WI; Sun, 09 Aug 2026 14:35:32 +0200
+	id t38EwyWsFw9Fct38Ew8OlJ; Sun, 09 Aug 2026 15:00:02 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1786278932;
-	bh=Jg1FTfakvxQChjWFmfjj9AY9yITZ6OKAndXT39v66a8=;
+	s=t20230301; t=1786280402;
+	bh=iZkCY5PHbl/Gm2au6WQ1GHf7TeI3Ibsat+covrHw/nk=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=s9Buy3PBDs2V0xzzy4iU5WR1zEFzXFQW8m1EZTx5KjcUvQCmDEy62nItTuZaDJ8+x
-	 fy6FZfo/ikavO6kRe5R/A8mflmbljYJmjlSpDnpcGR8oD9wQbbOdgVlIqXSAq5xC4E
-	 4HQnEtVcBS17ApqyPjQwGThJuXiUdAZVvt4gqFkTs+kXQu5vvuz7RcSw/QroQCX7qM
-	 q+QhEaUMeZqBaU1WZEwXTomTJ5lovxh/9M6U1rFyckSIab97/+VyysK/W4XRCZwlpl
-	 RJR/99Pq7+MVFX9f1F+FMqlWspTugjxfFoki3ImK0vAq8YxHoguBOwFbq9XUxZD9gL
-	 REgoVmD3QuNFQ==
+	b=CeR1oguzmj11cc/x1UFAo1Va2CfB7ZwnLlu8tHxTKml2o2hU02vNsNXq9xLONL5u9
+	 Y6Sx4u08uO6RYbNjngDBkHDkfvSuqpTHfR64xfY3qalB9HcRTvHM23IVHDB/g2vfiE
+	 ctqmWLYH0LtAWLg/Cs3hbXz0MOddKoFw0MvBNLLRka0dpKgqLk2t7wcR3FrEanXu/u
+	 M75mHTWCBjawDBKLE5XxtrJAeVtcAdh8vwI/fRjYxe2ikjEkfo12JuwH1PuEkmqoJd
+	 4mFZ8phYyzx/57/xJit5G9J7VIhHX2O9dU814n4/FGzJwxHXGIKqfHx6y6aO/mfy2b
+	 kFWhO9ypFUmOA==
 X-ME-Helo: device-101.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 09 Aug 2026 14:35:32 +0200
+X-ME-Date: Sun, 09 Aug 2026 15:00:02 +0200
 X-ME-IP: 2a01:cb10:785:b00:6128:9b8c:c203:905
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] extcon: usbc-tusb320: Constify struct tusb320_ops
-Date: Sun,  9 Aug 2026 14:35:28 +0200
-Message-ID: <f0d7dbdc9794f13b424d3f6e21685d778ef31e5f.1786278909.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-bluetooth@vger.kernel.org
+Subject: [PATCH] Bluetooth: btmrvl: Slightly simplify btmrvl_process_event()
+Date: Sun,  9 Aug 2026 14:59:59 +0200
+Message-ID: <9fc342cc7dd726868216174cd83d196d1ca18f94.1786280385.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,48 +54,42 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct tusb320_ops' is not modified in these drivers.
+In btmrvl_process_event(), all error handling paths except one do a direct
+return. Update the only one that makes a goto to be consistent.
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+This does not change the behavior because ret is known to be != 0 when
+'exit' is reached.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  19942	   6128	     64	  26134	   6616	drivers/extcon/extcon-usbc-tusb320.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  19949	   6000	     64	  26013	   659d	drivers/extcon/extcon-usbc-tusb320.o
+This simplifies the code, saves 2 LoC and pleases one of my coccinelle
+script that tries to spot erroneously mixed goto and return statements.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only.
----
- drivers/extcon/extcon-usbc-tusb320.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bluetooth/btmrvl_main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/extcon/extcon-usbc-tusb320.c b/drivers/extcon/extcon-usbc-tusb320.c
-index 920b03421850..49176b166565 100644
---- a/drivers/extcon/extcon-usbc-tusb320.c
-+++ b/drivers/extcon/extcon-usbc-tusb320.c
-@@ -203,11 +203,11 @@ static int tusb320l_get_revision(struct tusb320_priv *priv, unsigned int *revisi
- 	return regmap_read(priv->regmap, TUSB320L_REGA0_REVISION, revision);
- }
+diff --git a/drivers/bluetooth/btmrvl_main.c b/drivers/bluetooth/btmrvl_main.c
+index e25930351f64..d449fbdde464 100644
+--- a/drivers/bluetooth/btmrvl_main.c
++++ b/drivers/bluetooth/btmrvl_main.c
+@@ -87,8 +87,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
+ 	event = (struct btmrvl_event *) skb->data;
+ 	if (event->ec != 0xff) {
+ 		BT_DBG("Not Marvell Event=%x", event->ec);
+-		ret = -EINVAL;
+-		goto exit;
++		return -EINVAL;
+ 	}
  
--static struct tusb320_ops tusb320_ops = {
-+static const struct tusb320_ops tusb320_ops = {
- 	.set_mode = tusb320_set_mode,
- };
+ 	switch (event->data[0]) {
+@@ -165,7 +164,6 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
+ 		break;
+ 	}
  
--static struct tusb320_ops tusb320l_ops = {
-+static const struct tusb320_ops tusb320l_ops = {
- 	.set_mode = tusb320l_set_mode,
- 	.get_revision = tusb320l_get_revision,
- };
+-exit:
+ 	if (!ret)
+ 		kfree_skb(skb);
+ 
 -- 
 2.55.0
 
