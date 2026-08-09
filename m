@@ -1,50 +1,55 @@
-Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+Received: from smtp.smtpout.orange.fr (smtp-67.smtpout.orange.fr [80.12.242.67])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6AE21FF2E
-	for <kernel-janitors@vger.kernel.org>; Sun,  9 Aug 2026 13:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F437AA9F;
+	Sun,  9 Aug 2026 13:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786280488; cv=none; b=QokZkFTWqj4KKiBw/+KH3HcX4yDkTefvymxkXqlel/ruqymSqbPmauccOv23kqvqYzvv3UVHgcY/HO8rTBIweS5UQ2sqlo5V2FA9ftDsQS/6sXLTLsin0v1uSrbhVulyzDmmj+Om/Dm30LAL0qzQbez0hzF9VgTA/fqDCZEovk4=
+	t=1786283442; cv=none; b=TcsLlSJ4AP1A/20rTlgidr6u98WLNPJ70iT2KFSFYKjXa1Fy4U6L0aS4gBgiwz8Ef5dpQ5XhBreMB4fnznos4GFxlhkvx1l9BOnex6Y2qWpakN5OL5TSB/2ImESDMs1DUbQe2yxQIfq00rn77c7mAdQ0fobjxJmYeKRyquBsnOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786280488; c=relaxed/simple;
-	bh=8JxPF2wVFEsqGB4GhHJNW//qUV8h15k0uLWlBkJTV+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mFuZ1RGXAQhgcHCyUDcQRGIHSCC4ZYZlaiXIwrp+sNsid4gSNw/ucw9Fg54bFQheMJqivPnNBS4SC0F9gndUX41i8i5dxykq3NDgjVttyxrSQADS/nCp7x4qzLyhgW1vbmx/YSzdFDlTx4Qmer52hCKT4XUWCiTXy+9ez6IEGd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CeR1oguz; arc=none smtp.client-ip=80.12.242.78
+	s=arc-20240116; t=1786283442; c=relaxed/simple;
+	bh=UN5qYfceQ3ckH2R4oH1JEa46tWKVcyoKp44kz6TD2nA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MoEbz4moyRbcdWBq6dECrAARxeZiG6Iv7ddTUG3AV36c3G+52f2KdMEYv45UTpp9Q6o39+BD22XTBBWiEFL8XjskhOhjOk5cH4mbesJkf7cx8nGyCW6omzvBemJjka6atYsXly36PH9VQbHU7NfAYWpwfkYwmOb3NwirGWJ3nMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YC2cf7QG; arc=none smtp.client-ip=80.12.242.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CeR1oguz"
-Received: from device-101.home ([10.65.86.62])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YC2cf7QG"
+Received: from device-101.home ([10.65.86.57])
 	by smtp.orange.fr with ESMTP
-	id t38MwuRNFK3UAt38MwZjAV; Sun, 09 Aug 2026 15:00:10 +0200
+	id t3u0wWOVbr6ujt3u0wcwoY; Sun, 09 Aug 2026 15:49:24 +0200
 Received: from device-101.home ([IPv6:2a01:cb10:785:b00:6128:9b8c:c203:905])
 	by smtp.orange.fr with ESMTPSA
-	id t38EwyWsFw9Fct38Ew8OlJ; Sun, 09 Aug 2026 15:00:02 +0200
+	id t3tnw3cg2k6xLt3towWMXk; Sun, 09 Aug 2026 15:49:16 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1786280402;
-	bh=iZkCY5PHbl/Gm2au6WQ1GHf7TeI3Ibsat+covrHw/nk=;
+	s=t20230301; t=1786283356;
+	bh=Ti0lq77YCohFOsswk+8chbqQ3hHI0aVo1aBVQ+5rD4g=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=CeR1oguzmj11cc/x1UFAo1Va2CfB7ZwnLlu8tHxTKml2o2hU02vNsNXq9xLONL5u9
-	 Y6Sx4u08uO6RYbNjngDBkHDkfvSuqpTHfR64xfY3qalB9HcRTvHM23IVHDB/g2vfiE
-	 ctqmWLYH0LtAWLg/Cs3hbXz0MOddKoFw0MvBNLLRka0dpKgqLk2t7wcR3FrEanXu/u
-	 M75mHTWCBjawDBKLE5XxtrJAeVtcAdh8vwI/fRjYxe2ikjEkfo12JuwH1PuEkmqoJd
-	 4mFZ8phYyzx/57/xJit5G9J7VIhHX2O9dU814n4/FGzJwxHXGIKqfHx6y6aO/mfy2b
-	 kFWhO9ypFUmOA==
+	b=YC2cf7QGJq+3QVFiUplisQRBrKIdQqwENIlZon9xvxdAtupuci/Eo++/UnyNgETMk
+	 WtnSRImatXz1TyNjUFVkmVZmGPAhZK5mZe/6BfX4iXWsj/q3Lbqo7GnjLKGGOGP6/l
+	 DQBdWOiV8N+UVNzIDgvpiTMzj/Qau1lWDrauMlkq9iMw0oQYp12JetM9J3Mcw0Z9TE
+	 UaZMQrK1Yd258CBFJB7QfhuWmcQAdIeUFUN0AIr0mO25116LNUZv3DvJpCArkMX6y+
+	 61rAaYFD0FdssPss2AOBeK48AH20F5JTWBRq/RlEIoy5VZTukU0Mi5z+rKyW4YPR0y
+	 R63hEvOJ2iLbg==
 X-ME-Helo: device-101.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 09 Aug 2026 15:00:02 +0200
+X-ME-Date: Sun, 09 Aug 2026 15:49:16 +0200
 X-ME-IP: 2a01:cb10:785:b00:6128:9b8c:c203:905
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+To: Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH] Bluetooth: btmrvl: Slightly simplify btmrvl_process_event()
-Date: Sun,  9 Aug 2026 14:59:59 +0200
-Message-ID: <9fc342cc7dd726868216174cd83d196d1ca18f94.1786280385.git.christophe.jaillet@wanadoo.fr>
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH] watchdog: apple: Constify some structures
+Date: Sun,  9 Aug 2026 15:49:10 +0200
+Message-ID: <99019b7e560c2d9c087be340e68f9cce4db1988e.1786283336.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,42 +59,53 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In btmrvl_process_event(), all error handling paths except one do a direct
-return. Update the only one that makes a goto to be consistent.
+'struct watchdog_ops' and 'struct watchdog_info' are not modified in this
+driver.
 
-This does not change the behavior because ret is known to be != 0 when
-'exit' is reached.
+Constifying these structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-This simplifies the code, saves 2 LoC and pleases one of my coccinelle
-script that tries to spot erroneously mixed goto and return statements.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   7319	   1768	      0	   9087	   237f	drivers/watchdog/apple_wdt.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   7543	   1544	      0	   9087	   237f	drivers/watchdog/apple_wdt.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/bluetooth/btmrvl_main.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Compile tested only.
+---
+ drivers/watchdog/apple_wdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bluetooth/btmrvl_main.c b/drivers/bluetooth/btmrvl_main.c
-index e25930351f64..d449fbdde464 100644
---- a/drivers/bluetooth/btmrvl_main.c
-+++ b/drivers/bluetooth/btmrvl_main.c
-@@ -87,8 +87,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 	event = (struct btmrvl_event *) skb->data;
- 	if (event->ec != 0xff) {
- 		BT_DBG("Not Marvell Event=%x", event->ec);
--		ret = -EINVAL;
--		goto exit;
-+		return -EINVAL;
- 	}
+diff --git a/drivers/watchdog/apple_wdt.c b/drivers/watchdog/apple_wdt.c
+index 6b9b0f9b05ce..f533953294f6 100644
+--- a/drivers/watchdog/apple_wdt.c
++++ b/drivers/watchdog/apple_wdt.c
+@@ -139,7 +139,7 @@ static int apple_wdt_restart(struct watchdog_device *wdd, unsigned long mode,
+ 	return 0;
+ }
  
- 	switch (event->data[0]) {
-@@ -165,7 +164,6 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 		break;
- 	}
+-static struct watchdog_ops apple_wdt_ops = {
++static const struct watchdog_ops apple_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = apple_wdt_start,
+ 	.stop = apple_wdt_stop,
+@@ -149,7 +149,7 @@ static struct watchdog_ops apple_wdt_ops = {
+ 	.restart = apple_wdt_restart,
+ };
  
--exit:
- 	if (!ret)
- 		kfree_skb(skb);
- 
+-static struct watchdog_info apple_wdt_info = {
++static const struct watchdog_info apple_wdt_info = {
+ 	.identity = "Apple SoC Watchdog",
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+ };
 -- 
 2.55.0
 
