@@ -1,167 +1,171 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013012.outbound.protection.outlook.com [52.101.83.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47384052CD
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Aug 2026 15:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F86043B3C5;
+	Mon, 10 Aug 2026 19:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786375161; cv=pass; b=kzP0pA4HMep8nKGxSYw7pzSifft6L9Vo7mbLP9zsRXCRaOLCeYhLBlGh2rawg+fY0IMSPzwjH22m5jd0/lJp/3vYGMZtheYmkDzI7wMoMLCmrwpCvhGd9K61vCZF9PY93Q1GF/lXYC/qzrjxGQ/y2fIajK/T7unQdjYOwDTszUU=
+	t=1786388997; cv=fail; b=t7RP2KI84bhnc/rJ+7X7rpKk4NzO8dzwoe81kAyOZRc7ShbVxjdpUU6t9PzvLl71Q3Y9MI+5RITa8MD4jg52hssLl7vn8VpzuZkJKqlni7wQWz559mJmHgfB1SaEfPagWd04CoH+7vb+/dsJnh3yDAeyJyL22x7m04H1GWhO7A0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786375161; c=relaxed/simple;
-	bh=8y51j4PXeB+stRSloP+bhIX8c1KSNmSBxwd7NUjH8l0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c7MoBv3z7g008GJgvdJrYUMIFHsXXwgE1KNr+v5GtZHwyie4FuWe9ArBiNfnKIiiGCpShHcB+YCav321lyzodzYcE7EOPSjaovVp4lqnDdRh5RIBEvviGvUVYXQdr1/M4KWH1PqIDyg3EfO5VN/7AR5rSjWo5icue2anMwW1W68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pqs/wd97; arc=pass smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786388997; c=relaxed/simple;
+	bh=29blRmyJTctHX+9d3Qmgp4U7gA4RpVkEdhgfogppDqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JiG+VSePjCwX1taAt6szMtTe05hBS3H7BAjrrFNvyQ13HOzqAo0RBOpM3nURjKs6WdSdKUiT9OdVOccpORaUHEbo9U7jJ25pWGGnQ6aRqX5e6g7QqrsoV7ulTrqPnURIhIFTGhAnlcRWjeFS1sSEeTF47sb7bEUmncx7RYwqkRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=mdrJ+KnJ; arc=fail smtp.client-ip=52.101.83.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pqs/wd97"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-384422b05b5so197712a91.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Aug 2026 08:19:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786375159; cv=none;
-        d=google.com; s=arc-20260327;
-        b=LAaqYHhbQspMy2JjQS/cSy5THsbBzNgv52UY5iY4h0G0cj2RhMDYv4Dp54XmJAwd7U
-         N919r5HLzyGkN2YKu9e1qBFl6/6iqwNkn4KUwUhFAN6OS4N8D6uRquWTQAoHlwjN0rIW
-         unSkXe7MQaVlSrqz13buuYIbMNKBxs8gk8YJIYMCUOXDJLvfYuqoGikEcOQyrpwTjG2J
-         5/wHsa47bjiOszob7ZFUzXlq0AueFZIfXu5ntFJY/QSTcAxKhiX3u7qzm/pnpJNlo1rM
-         NRpL3J9MrSLQhaLDUIOyhippjofpA4Ev5SmqOQEmAvhooBfz/mEExOyn4175ji2gvHyQ
-         k72g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=B1rzR26ClzMaYFuUSq8Lzwl7sxG7gX5jiXeOHc3Ewd4=;
-        fh=g9ogdjXkcHhgeIVcaFTMY7pKosm5dgnVvpAR/qnwW4c=;
-        b=AyfxQrouUZNlmj+2e0igpXblVas3AwlcnSzUf65+5cC1oWpMJQ4okLLRVpXxVUO7uN
-         pMXq02vcF6TK7ioQo+G5Xm+oC20K00X7F8erwLnsy36L45mGBlFwvVztY54VYH+HDtWn
-         Fug26UfKgw34Kr/WrSA6MKhqDHiRtpPwn73/rLYB7BfLWEfxP/M0k3grLaq1mAY6AHkk
-         +eq2mJedkepO1+TWSiJt2Y8xsmbapjsNh68HXdQdpSR43fCeOrnM6p51oMUGyo+Snn72
-         qS94yJohQspC7W+0XaH6nLdvVTmqDq2rsZh279ioORvorxLENOV3xFmh6NEPE30NLqgM
-         468w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786375159; x=1786979959; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=B1rzR26ClzMaYFuUSq8Lzwl7sxG7gX5jiXeOHc3Ewd4=;
-        b=Pqs/wd97Lq+WyWeyX4v3SemoQE2jbYPXGOSedZfyGYTokP7PHWmMSV1h8hI45wcxeC
-         INoE3Shyx+BV/KHP44XD3R8k4uzQRDgyPYAkDJKk3vecH8/rE0GaBNmWov6jbtkRUwJr
-         iU/ZdOSinJEWylZFEatwCMorI5v/tDksl2PNiA3d3zYOtd6ttMdQu/H1LqfhHxJp79e3
-         idUk+pYI8EB9+4uKp/K74gdWbPsuWBCzdIGAfyBELXEAqMY8rkt5Ys3U23aRS8j8emQr
-         Lc0by8ASelGeYAHghwindzcPzXeB2Fc6aVBJ+m7J6BREFQN+TIcRG5ZAd/2qQPHqCJX+
-         IODA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786375159; x=1786979959;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=B1rzR26ClzMaYFuUSq8Lzwl7sxG7gX5jiXeOHc3Ewd4=;
-        b=JoNY1NbyONZnArs1avwpBVhGagIrk4AMnW7MVEYLj19NZlct9umFgI9ydIfB6rh9R6
-         SCHnG6fp2Qww3kX85//Nc3gSIsid8tclQwgAx16WHnyQKWFncjL5TE/HIlt0+zDTpHmt
-         oa3+kFu81s7GFTTa5F1ZXx6iopXylh8naoZN1FDbQ49lJ+ZhZyS0vXu1Lzwo96O7Jhbe
-         oeoNTHdleNWsm76NWcpcOHdcwXTIiUVKOEtFTxOVl3ApFCtonY+TiqoJrwuRZIYWiWUo
-         AxC7zaE+8+MHgyJZNUSLekAMY3K/fXSBZ41wCv/3n2yjEm8iZcMzMgQ8HCYhZU6WCGi1
-         wTCA==
-X-Forwarded-Encrypted: i=1; AHgh+Rq91XoovbPJOPjVThD6eHmisGGc3kHBPFtPtFjLVcrYE4w9v9PTp0N/wwAgW1hNsV1bbOC2ZHLwJq5blceSoDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCbUgxUXfNr2/1HRS4RFHgkZOyoZA4YJqosmB3UFwKojdTE5f3
-	OD/bC9m6rFasqNn4P5t+mb8giFmSb5/u/DmSchTO+WrDDgujEGZczSHrRuUdw+uX0sDHMTu3Tot
-	kG7zvKpQm7RIB7ObNni7pUJ11+ljTAFI=
-X-Gm-Gg: AR+sD10361dREx1xfH3ai9PJBaslB6LrKsS5o81E9AqfJhqmjZhwh8PNrFbeRLTpiIy
-	otG/kmrnZFA4qaljnkF+nJP2xOKtglvdIJiX+6I8JXZdZMGi5AqVUj3GkjEvj0VLoDAtlV0gghM
-	6atjB27GeYgx6CwudRwl8ClTonHFInlOc7G1V39t+19YMYL5x2tKyc88sIXG7O6pZtC7xnqZFdG
-	fi+dBjksdignTbD+4DyUoxw6M9EhjRsyGMepcOdGfedqTlUXgyBkw2SSJuiMgyKPHHyhxgNOgFC
-	0aNK6hudnquH2Ptm0aeaktDWw2f9U6xxLU6+yK9T16vcW0i8YIQAaok8iz4caKf0Z1tRJlqDoq1
-	EL47cWijmnipwLprfocTW696cyHwZ/UyPaCpbbvzvCGE=
-X-Received: by 2002:a17:90b:1651:b0:38e:6a7c:abbc with SMTP id
- 98e67ed59e1d1-3903c7278f5mr30731971a91.3.1786375159041; Mon, 10 Aug 2026
- 08:19:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="mdrJ+KnJ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yYmWZaimcaB4B3s+w3koQIdlSGLq+eEP2F3DzISn9XWLjZ52Ff6ukKw0v4AOgDMRMOVZwxl5gxl48GbsFHuOwxkZ63Bw5qRTAkIy/Rx0cqLHREzeDEO4bY0hUM2qtob8RSRNMC2JEWj/pp0oaOLc7aZRx1N+WZuZvW3g+enT3knyqd12Wu5/YpEnyLdHWHs7uD0Go5v3ZDpGI83bgo9AbuJsivrr/0sn563lSFySBK6fkFYsTAor/3/WfBtr/6cVGeqEBC2kJPXufj6VJ6pzaJJgt6ez/02zp00srsIsp+9mlDROXtNG60JwI53V5Ad6z0qLlMOxdqLtAZY6g1eQ/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RiaUOwpA/oii5hbppLKigwy3gfUsFrped7pqyuMw6s0=;
+ b=KHrb5Xz1xTe1iugvS/OT+h+RLWB2QRBnOLgIBBosaLcIqK7q9KqoEoclKTdTriyJ/QlZOMhNLAnmz8fNq8ogjz3/HEudxqk4VLCQCOz63oGFqrI2bbVzsOnvMA9iitgKD0ZQ/9EgL/3fXBxPc5yn64FHlnGaGWGgpzIB//oyTErJ3cLLxPAZRWQU46x1HaxVkZLpP6uYrZOOaIECyd831/+hznKS2fBlRXG7MSe8flG4qpZDBr8swdL9hOjFxRHBUzj+yWUf6XiA07mB9FouhrB+C6yyYa3j4pitqvtyT7xgrlPaeX9E8ctZPOxRzDbn15VGPpwb6NggfroYEL5h1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RiaUOwpA/oii5hbppLKigwy3gfUsFrped7pqyuMw6s0=;
+ b=mdrJ+KnJRSRkrV8/t6MESEQOtY+sEbPgglwlDy5FOUSHl5BJjQmJXpuyiQPGj4s0GsYKvJgOnpvC/c59Snw4lGYOlUqH0d/i0e6UE608c6OLiVdy3h9PGObdA3TLwFkN9r9kmB53rmUFdrxistrCcdsJKI3LHEu2UhdtNlFsduMqpOKstEEbTnseTqVuuGGt8s3MowUWyiMXfzHbbtQZLsXszODVR1JYCT1cZUNGtWAxg/92FG0C8E6x2AWZ/aGY6NJHolVXZRCAgSX470JFvOtY5MVhzQrUit287cm57j1A0tmRDfOY/I9ZPELxcgS6thLDu/3JiIl7SCx3SPn4wQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by AS4PR04MB9508.eurprd04.prod.outlook.com (2603:10a6:20b:4cb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
+ 2026 19:09:52 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
+ 19:09:52 +0000
+Date: Mon, 10 Aug 2026 14:09:42 -0500
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] thermal/drivers/imx9: Constify struct
+ thermal_zone_device_ops
+Message-ID: <anoh9t4oqR7XhS74@SMW015318>
+References: <5cce9ea713edcf2aa3c0efd5d31e9d9fd9f40a88.1786220585.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cce9ea713edcf2aa3c0efd5d31e9d9fd9f40a88.1786220585.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: SN7PR18CA0007.namprd18.prod.outlook.com
+ (2603:10b6:806:f3::27) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aneGaKJUl_Jyu05n@stanley.mountain> <77e1ef2b-24ab-4492-bc91-08c01f012a46@amd.com>
-In-Reply-To: <77e1ef2b-24ab-4492-bc91-08c01f012a46@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 10 Aug 2026 11:19:07 -0400
-X-Gm-Features: AUfX_my-fKt5c9y2JIhF4-1Z_U26HVMXLUvLd5Y3sRxip_FQzAlVj9Rt96mRi6A
-Message-ID: <CADnq5_Mc89DZGYwXrCQ+WLYVE8RBj9vdV5TBbZbwgcuV==HeEA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/pm: silence uninitialized variable warnings
-To: "Lazar, Lijo" <lijo.lazar@amd.com>
-Cc: Dan Carpenter <error27@gmail.com>, Asad Kamal <asad.kamal@amd.com>, 
-	Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Yang Wang <kevinyang.wang@amd.com>, 
-	Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS4PR04MB9508:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54b3b593-8348-44d4-4fe5-08def712f484
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|23010399003|366016|1800799024|376014|7416014|11063799006|56012099006|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	C4Idyw6SzJk2SruzYuAsv5geVOIPaEuwsgFW5rzEnK01298uCYlY26iIsY6+pdm17H23EkbzuHhsOuCnFtH+0Nzv3ZxXpaePwwwIIFtQv05O46YGx1XgUJ54q8NMilL7OB8bGHafQlwLmxeuCBotV1b8ppEdsE19lU8dcQf7CH5k7kdFp7Jxx2is1ViH1b6V9EusMkNeZusht4NQy+AZDfIxq/8XzTkPDYqLGB1k+a59L4HL/m4gLoFw5Tyb0EtQs9MDyfFSDMlXhtx2GCcXqp5JV2gBSna3NslImNXRn9qJfFm1w6U9wws0w2C9Njw+EZSgGwJLzyo3kfNScSYpTANwWA2SwKLPL1QXhYb7FjkccTVj/3Z5iu87fbVBNrlcHLyqcViSp4m1UgKEy6lwi3iw9/2NvL8n3vrwOWvZI/ddkuH22lC4S73/LHUs3lGnaGOZBuTu9E5KGotZjaeW9TfFuxr+eX/ZLPdPrnMQmX3FOeM0TMLKZ8zxbjHGp8Dp85+8AUStKV8kYm8jXJlrWgIRMCwDVRYHyxRPM6uOgcBvG3+mzmVEch6S/zg+RSan5ufXfwDc8jeNuSyfGF50j0ctOYSwPVsXVhi5XKnn22jUIe6N3y38zL5HoA0hnNvbgwrxDkbUZsYZZzHA8UXO63llPIdoKVM2loj13kDMj5Y=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(366016)(1800799024)(376014)(7416014)(11063799006)(56012099006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YF3HCMLFpgoTMce8NTuOey7sZCa8aNE9NR/KCpyAQ0/D3fBT6wcKmM5TCaT/?=
+ =?us-ascii?Q?B3RDHL8+2FbiQuNMHT9dA9KFd+/XQu2xDw2F/YktmGriOtBmULXNZPh3gDdG?=
+ =?us-ascii?Q?QVkw3968cSS1RBCAqUv+gq+17Eua+OiwSlGEbozrvysmW4fuap2IZpn7f9if?=
+ =?us-ascii?Q?70RdClkA2fiTpX+5xBcqXWFAFjGz+m6n5wjbpiy3hsN15Vo/sHStSC/1Te3z?=
+ =?us-ascii?Q?J6+hUuxhGYQ+OH+DdHPwEX979hJIfO0xvUveJyPr89Hxjg10OmcHUCJIYOMX?=
+ =?us-ascii?Q?HG+HOhpNGmzQL7S8z5FF+x7OGk9dWR6Bhaee9p7cVseSe4gvKEZlxW1TGV7W?=
+ =?us-ascii?Q?4U67z67bXWcHMYOal34x0XWz8GRIe8oUFn4WgK5DOI/jaO+Y18t0VsxGqYug?=
+ =?us-ascii?Q?7MdL2ivnEa7MItrkMx4xDfiziQdyr/qFPe7kNYib/ymTq1Z9tk4f8SZT3JVi?=
+ =?us-ascii?Q?Dsz86ZAHs2LwL2plIVPnEJLdPruUipFMTMdI6OW0j5NXP2x+8z5XTiVuwvVB?=
+ =?us-ascii?Q?3f5+H9eKdwUsNDm3Z4cA4oNPCQlSqv+jkS1yDrIP2aFjncTD5qq45dM7D4hd?=
+ =?us-ascii?Q?ukVwV1rQSV3N5ArlIlNrOuIcvfU40uPKAM36ey10bXYEoN3D8yY65E4wTzfT?=
+ =?us-ascii?Q?H9d0E04gz8lxGZV/Hx+rxEmxUphcPxqRG2nrBEAINPsmWrwaCnXzxqSFp2vS?=
+ =?us-ascii?Q?a0t/iZyKVU/vOJxPy7mXJ7ago63apsJJpFepK/KBuwzEFQGKkjxw93qbMY9A?=
+ =?us-ascii?Q?a/0EzTFC/6Y1KPyjCi+aIeug6B9NZrLOCp+NpTCqH+5GDsb2mumwCZZM5+Fy?=
+ =?us-ascii?Q?6gIazEW/fMd6RMUiqxL5yYFvN+qWSlA7Gq5/0rDbUNUkJUaCbFoRwrhTEq6E?=
+ =?us-ascii?Q?h6cxuGqiPGUP1iyc6DqO9jAqE57T3IsJmqFIxkhV6b6zz1J255JrbeCwFWxR?=
+ =?us-ascii?Q?7rKMRiIvcXPItGIJhkGwIpGO3B8OIRXRnB8p0gDBz02P34mMO640nZYdNTdU?=
+ =?us-ascii?Q?lxLg33nIsuwgsmpWw70Ho1hvlVphiTbV4/lsQi5cfCJqsZtYe+uIgMdCNdpa?=
+ =?us-ascii?Q?WUJjZzRLQJJeTTBrB8Ez9J7QUj+0N8vKAQCrAvbL1J3F1q926KNL3MZkWkzJ?=
+ =?us-ascii?Q?T5NqCNNwRE+re+QqXjk2KqACGzHlhGI6z211PNn9PNULz1qH90twc0Z8qAR+?=
+ =?us-ascii?Q?SWFG1flTBSqfCGwJheUhvogACkxS/OlCP075x9mSHU7gUYZlrL54WVXucLYQ?=
+ =?us-ascii?Q?goj095t5L9Lj+VUCDmA2gkV8dj3XrqlHJEJooa2FUMD3bWMf8S8CROFYDsPI?=
+ =?us-ascii?Q?902qS0epwkxx4uLYfVHT/rqX/m02WsFxUiNfcNRaFcaV7QdRW5HRffoD5WW3?=
+ =?us-ascii?Q?5ArWHbft5P0RQ+dAfzTEJWbr0anLfDASFkXJFwOwncFLx9iuupSGPOP6n0y9?=
+ =?us-ascii?Q?XIczZK47nE/RvaOsY0ugXEHRU51aLp1JRby1okX23V+QC3Q2G03bQeIkaz7Z?=
+ =?us-ascii?Q?gSGfR7A5BgVpBA5klO+eAtV0UgiVdktMzBx01YLEWLanPyqeduh9roVieEtk?=
+ =?us-ascii?Q?FEJJv43lPzYajbMU3IyYxaSIsbGEoUA/fVPAZwM8NGT6AxfwFBgAyRvq80ub?=
+ =?us-ascii?Q?wXvooT/bwBi+Cn1pSURwTfgEdKkagXpoMd5d9hllj3As0uV1uQcPW3TOzp9X?=
+ =?us-ascii?Q?W3vu+1h9jj5Ot4FIbQLENSyAUpAxAR3pv8iXtG7wyqT1oOs8pa3PSlEAE1gW?=
+ =?us-ascii?Q?V69BEQTd2uTITeMGIkQxvnTElVRE5AgZQa6B2/apnjRKksfEs7pj?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54b3b593-8348-44d4-4fe5-08def712f484
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 19:09:51.9809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tEMy07HyODPJUW8IH5pgAdDTLXi+jE2isf0WQtmCeqved730ugbuWaNbi+FFMaz/4bar/t9hLHnvQI/G5jvXskS+zNPKamN9rzOYEwODdam4lkS9qLXKsXmMBXmGL4oB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9508
 
-Applied.  Thanks!
+On Sat, Aug 08, 2026 at 10:23:33PM +0200, Christophe JAILLET wrote:
+> 'struct thermal_zone_device_ops' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    8567	   2144	      0	  10711	   29d7	drivers/thermal/imx91_thermal.o
+>
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    8695	   2016	      0	  10711	   29d7	drivers/thermal/imx91_thermal.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Alex
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-On Mon, Aug 10, 2026 at 12:50=E2=80=AFAM Lazar, Lijo <lijo.lazar@amd.com> w=
-rote:
+> Compile tested only.
+> ---
+>  drivers/thermal/imx91_thermal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
+> diff --git a/drivers/thermal/imx91_thermal.c b/drivers/thermal/imx91_thermal.c
+> index 25915bb702be..892a25440e06 100644
+> --- a/drivers/thermal/imx91_thermal.c
+> +++ b/drivers/thermal/imx91_thermal.c
+> @@ -225,7 +225,7 @@ static int imx91_tmu_change_mode(struct thermal_zone_device *tz, enum thermal_de
+>  	return 0;
+>  }
 >
+> -static struct thermal_zone_device_ops tmu_tz_ops = {
+> +static const struct thermal_zone_device_ops tmu_tz_ops = {
+>  	.get_temp = imx91_tmu_get_temp,
+>  	.change_mode = imx91_tmu_change_mode,
+>  	.set_trips = imx91_tmu_set_trips,
+> --
+> 2.55.0
 >
-> On 09-Aug-26 1:11 AM, Dan Carpenter wrote:
-> > Smatch complains that:
-> >
-> >      drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu15/smu_v15_0_8_ppt.c:196=
-4
-> >      smu_v15_0_8_set_performance_level() error: uninitialized symbol 'r=
-et'.
-> >
-> > In this line there is an "if (ret)" condition where "ret" is either
-> > zero or uninitialized.  Initialize "ret" at the start of the function t=
-o
-> > avoid a potential uninitialized variable bug.  But also delete the
-> > condition since it is never true.
-> >
-> > Fixes: 422b399b09c7 ("drm/amd/pm: Add od_edit_dpm_table support")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
->
-> Thanks,
-> Lijo
->
-> > ---
-> >   drivers/gpu/drm/amd/pm/swsmu/smu15/smu_v15_0_8_ppt.c | 5 +----
-> >   1 file changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu15/smu_v15_0_8_ppt.c b/dri=
-vers/gpu/drm/amd/pm/swsmu/smu15/smu_v15_0_8_ppt.c
-> > index 59fdd2319b66..c78e611d2a25 100644
-> > --- a/drivers/gpu/drm/amd/pm/swsmu/smu15/smu_v15_0_8_ppt.c
-> > +++ b/drivers/gpu/drm/amd/pm/swsmu/smu15/smu_v15_0_8_ppt.c
-> > @@ -1920,7 +1920,7 @@ static int smu_v15_0_8_set_performance_level(stru=
-ct smu_context *smu,
-> >       struct smu_dpm_table *gfx_table =3D &dpm_context->dpm_tables.gfx_=
-table;
-> >       struct smu_dpm_table *uclk_table =3D &dpm_context->dpm_tables.ucl=
-k_table;
-> >       struct smu_umd_pstate_table *pstate_table =3D &smu->pstate_table;
-> > -     int ret;
-> > +     int ret =3D 0;
-> >
-> >       switch (level) {
-> >       case AMD_DPM_FORCED_LEVEL_PERF_DETERMINISM:
-> > @@ -1961,9 +1961,6 @@ static int smu_v15_0_8_set_performance_level(stru=
-ct smu_context *smu,
-> >                               SMU_DPM_TABLE_MAX(uclk_table);
-> >               }
-> >
-> > -             if (ret)
-> > -                     goto out;
-> > -
-> >               smu_cmn_reset_custom_level(smu);
-> >
-> >               break;
 >
