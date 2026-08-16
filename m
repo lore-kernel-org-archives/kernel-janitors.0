@@ -1,216 +1,167 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F74C3A7D73
-	for <kernel-janitors@vger.kernel.org>; Sun, 16 Aug 2026 14:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758B133936A;
+	Sun, 16 Aug 2026 14:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786891129; cv=none; b=erj1tLGEB98mC6QiiwjkzLCDgotNvtZfNG/6isTN59dSJKi3s2OiJL1/nx/8GKvouht5xnpsMgh3C/SYoIPy0NOiDCbexUJFyahvGhaeGhPIBrfYkAJcpSYofnAkdJB/WAQxh9zDzaXgo7sDfFzG18/U1aC8lazjjV2hxL54mE0=
+	t=1786891736; cv=none; b=L2kwgpyXRH/xXwbF/C5R6IiV9u89N6bHbbWQo9S6l6s7h1wbrP5/KWt9as7lRbn7qnCuyGzJw2+UZAhJKR8re1hOO2Ea3kDp+bqwhj4A7vgxyr9GXLoBrCk7cIo3qtHLx5NPG2Nw2bXMiIXBd8n0iPFj7hg7Jvmz+L/ZPoGpBxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786891129; c=relaxed/simple;
-	bh=OSGF5aF4lCng+3oyBXwszL6XCTX6OlO5azK2Q+r7+rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aTexTZI4HdkFz7bOcoCwxGZeNYWpaFTB7RWXkP4j47Av4vfWRBTZZMnWKnX7STT3ZQsFIELFVyzte1uBwhSX+t9qemwwDrPPrXLvgX1yI1UrC2yMGPsMC6QwVneOLdS3DL6q/MhVmhAPy1UhY6ILRetuh7UQFlcpdM0c1m0WjK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nzHNBH+A; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786891736; c=relaxed/simple;
+	bh=qMudL2xYFtIFZ7kucdSPQjBSLIO2/zaKr5HkBMnbf4Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FBnpCOoqsBDTMn3nh32eYB5Pjn4/8kXKUy6O9EJ9o/64OPUT2XI/U716MxlY71uhZDzO/MgpKGQ2NHuX4i6mluQgZlOOcMDqKKjWRb3cUTvZkPPFnvw7g5AKStzlKnpXrtwWg/eqf8RyrUcsv3Hk7dL4AUOkeYR5hr4iid/CmjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hw7xC4ht; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nzHNBH+A"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-495757ccbc1so22927025e9.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Aug 2026 07:38:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786891126; x=1787495926; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=slKPyCDrN2MNA+O23XO0ScfIg+YQ5ZR+PoLwJeEJvyE=;
-        b=nzHNBH+Aua6mL48yxg1hBsv34JEJXS7C87HO/GNe3bGlU7SUg8FjwEOBITq6eMRT3J
-         Ss+B6kq/1iqIwWlU+KUqBwuawpzoMQC82nS6laf+8LHescmimHIr2mXiZGUVlGCNOjig
-         0fHv6oGyvRvfIJHMeyZYGW55t25Az+LectpI+lKGHqhsPATarnXP6Ws/OQrMgiGfmNTP
-         0eXNI2lN+R4bAY7DY9RtGEZMQjm/9ydnOmQ1Ybkz6GW/SLv2s6Qz5zNhN0DCKlO7WwEe
-         ogbtpU/lVXgKEroARzzSrdg73SjusqbC6QG+wEkNVxtiQ0YZI+uJip3KISSO2VJuXIS2
-         NyoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786891126; x=1787495926;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=slKPyCDrN2MNA+O23XO0ScfIg+YQ5ZR+PoLwJeEJvyE=;
-        b=UDNjJFt98aJmvluiFAsxo0lLyLgvVL7rBD1/Qmp3vnWzlQvuqnQ1aeS0siolkHBp6B
-         hR1K72GbR0uupJHko5AnENO20S6cH71PU75s9aSjnLnOwLYyCNVFHFD7QttKvj+55NBW
-         3aq8iRpfb/IcIlTeJIC3IkUIqiBE0t6T+Luxd6omaE9a5nSJXUOjR3m5qw4bsozLh9qg
-         yd71pPUrykxQk7V3yzBsCritqPpVNcjRVZVYj2aEbLJjXNFPyIuj7qDDc+E/QlgGOsxO
-         XRzIC+D38CqGYbx+07oMQqQ//w7IvOWl9zncKRod6Gi8EmlmU9Fn9Jn7S6v9Ct+yyhQD
-         t4Zw==
-X-Forwarded-Encrypted: i=1; AHgh+RquxJc6O0Vp8vFX5vDKuVYJsAXNjlPNs2KTw15X9lM9xTUjR2pBsNidAN/lHhqL8RewdgyR7+Z56HEj6QjfOAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1iu8xo3NfWe1kIQQsFHMMGCajEQX+z8G4v2D7q6qE3dM3B8ZB
-	x8RRQGNxK7u95AgJt0CyApGl0KD4hsRpptrPXwK3S6zzdvNb+WuoWJPj
-X-Gm-Gg: AR+sD13Wy5GPOH0wA58bkItN3gJCV+2eomfmKTtDoaZjfy1pYcE0wiD8usOL4gH2CdH
-	+eENarBFfj99916W9HotwiiMNKrpJh608N+sAB/SP7NL2JOnmaDGrImMF/GCalDLilnvlgOY67h
-	TDg2V+ScISOrSvVnyEuQhSeL0IN2wKVCZ2RSL9F/qdCA1eycE0HRoSVD/CwFxdPIgyoy5oLmPuS
-	Jrguki32hISZBtmJ2mNtkQ//DEl+qn/vIUqok0V13t79YI1bKSxjLKreerk4hqXtl1m90tdKGGx
-	dEMeIYN5pLT41ZvVwKaLN/TRMGfh7jJbArcn235eJd3AcvAzGjmmQLz8+Uhqm9kf6pmYvQj0utd
-	clma/mFBmTW/2zKLFjgYxfazj7B2DUJXC/OcOBz9FZPAOG3FxhkEIVxkrCN2mcn7WSM0A//ee+E
-	MBWyq/XvzPWyKV98zewI/s+2X/b18u+skxSrdSYNiqu6RLojbYWuuxJqc855bHPd80QnVaIU6s+
-	A3X4ZHR9f5a/fJ6hHjtgZH+IiKtY/Lz6xNoxeQgEycQtmPEToTu
-X-Received: by 2002:a05:600c:6290:b0:495:4689:1e98 with SMTP id 5b1f17b1804b1-4998e074297mr203471005e9.10.1786891126238;
-        Sun, 16 Aug 2026 07:38:46 -0700 (PDT)
-Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4999611b043sm72992295e9.12.2026.08.16.07.38.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Aug 2026 07:38:45 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-From: Julian Braha <julianbraha@gmail.com>
-To: richard.henderson@linaro.org,
-	linmag7@gmail.com
-Cc: qi.zheng@linux.dev,
-	akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	geert@linux-m68k.org,
-	catalin.marinas@arm.com,
-	rppt@kernel.org,
-	joao@joaoff.com,
-	linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH] alpha: cleanup dead ALPHA_LARGE_VMALLOC
-Date: Sun, 16 Aug 2026 15:38:35 +0100
-Message-ID: <20260816143835.1068971-1-julianbraha@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hw7xC4ht"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1786891707; x=1787496507; i=markus.elfring@web.de;
+	bh=qMudL2xYFtIFZ7kucdSPQjBSLIO2/zaKr5HkBMnbf4Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hw7xC4htYypQLg5sG8oNIv1zHS7Xr1lJUkM5FCkPjPy3KzUyiabvWm/FpBQzbmP5
+	 k8QpmRY9Qq+zQm79sykSJ2gftDCHjA1gsnwXrYwJ80+T6tHil+pe01ZAbBy8nPqm2
+	 um1ig1X/pUSvqfTDyBxOwtQ9MPjVLLBEOBJvako6idVTnY2xlUOsAOSxNzq3Rlc/D
+	 vTKKiUDE010ZXIhVlPju8LcoYulJUpmIwkl4COisOfBohqu/userORz5fJBMnYKhM
+	 7Lc39FQax1VE0gmbSPWiabhf2P9GJ4FRPYO7AfbSwXBrf8ufElUEySAkzw8lpSIdV
+	 apaACJRjXTmg2xG7Sw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFaui-1xChi03mAg-0098DI; Sun, 16
+ Aug 2026 16:48:26 +0200
+Message-ID: <eb7b71c6-bc93-4807-9d63-bebf804d3e3e@web.de>
+Date: Sun, 16 Aug 2026 16:48:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Ruoyu Wang <ruoyuw560@gmail.com>, iommu@lists.linux.dev,
+ Jason Gunthorpe <jgg@ziepe.ca>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Wei Huang <wei.huang2@amd.com>,
+ Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20260814133938.1385879-1-ruoyuw560@gmail.com>
+Subject: Re: [PATCH] iommu/amd: Fix PCI device reference leak in PPR handling
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260814133938.1385879-1-ruoyuw560@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6OmokLa6R9eaxnFRriTRBDI+bkLDqYRVM34BZTuhnEM85iEhESr
+ u0UoiKjjHGeh/PiZ4sdgyYG19DTqdawpkFey7td9XicDER+p/HUw3ZUwMwYItQSxp9shZik
+ VIx3dcq6VBKtj4pZ+/FsSpJp8S5SyJ9Jz7vXg3ecoXfZozZF7zD3uVECl5dJSAmrhKSCVR0
+ x7hOodNB/2EMA6UjfoCDw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:k/rJ81dbVq4=;sS6W7HNFsSyyzyJ+I1yJ+vEVWOq
+ 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
+ NV7+DbA==
 
-Currently, the ALPHA_LARGE_VMALLOC config option can never be enabled,
-meaning that all references to it are dead code.
+=E2=80=A6
+> Call pci_dev_put() after the final use of the lookup reference on both
+> paths.
+=E2=80=A6
 
-Let's remove this dead option and its associated code.
+How do you think about to apply the attribute =E2=80=9C__free(pci_dev_put)=
+=E2=80=9D
+also in the implementation of the function =E2=80=9Ciommu_call_iopf_notifi=
+er=E2=80=9D?
+https://elixir.bootlin.com/linux/v7.2-rc7/source/include/linux/pci.h#L1269
 
-This dead code was found by kconfirm, a static analysis tool for Kconfig.
+https://elixir.bootlin.com/linux/v7.2-rc7/source/drivers/iommu/amd/ppr.c#L=
+107-L162
 
-Signed-off-by: Julian Braha <julianbraha@gmail.com>
----
- arch/alpha/Kconfig               | 15 ---------------
- arch/alpha/include/asm/pgtable.h |  4 ----
- arch/alpha/mm/fault.c            | 24 ------------------------
- arch/alpha/mm/init.c             | 10 ++--------
- 4 files changed, 2 insertions(+), 51 deletions(-)
-
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index 7b7dafe7d9df..fdffcea749ac 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -413,21 +413,6 @@ config ALPHA_WTINT
- 
- 	  If unsure, say N.
- 
--# LARGE_VMALLOC is racy, if you *really* need it then fix it first
--config ALPHA_LARGE_VMALLOC
--	bool
--	help
--	  Process creation and other aspects of virtual memory management can
--	  be streamlined if we restrict the kernel to one PGD for all vmalloc
--	  allocations.  This equates to about 8GB.
--
--	  Under normal circumstances, this is so far and above what is needed
--	  as to be laughable.  However, there are certain applications (such
--	  as benchmark-grade in-kernel web serving) that can make use of as
--	  much vmalloc space as is available.
--
--	  Say N unless you know you need gobs and gobs of vmalloc space.
--
- config VERBOSE_MCHECK
- 	bool "Verbose Machine Checks"
- 
-diff --git a/arch/alpha/include/asm/pgtable.h b/arch/alpha/include/asm/pgtable.h
-index 8e00cf9dc39d..3d7c1bab4154 100644
---- a/arch/alpha/include/asm/pgtable.h
-+++ b/arch/alpha/include/asm/pgtable.h
-@@ -50,11 +50,7 @@ struct vm_area_struct;
- /* Number of pointers that fit on a page:  this will go away. */
- #define PTRS_PER_PAGE	(1UL << (PAGE_SHIFT-3))
- 
--#ifdef CONFIG_ALPHA_LARGE_VMALLOC
--#define VMALLOC_START		0xfffffe0000000000
--#else
- #define VMALLOC_START		(-2*PGDIR_SIZE)
--#endif
- #define VMALLOC_END		(-PGDIR_SIZE)
- 
- /*
-diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
-index a9816bbc9f34..0bc5fc4d510e 100644
---- a/arch/alpha/mm/fault.c
-+++ b/arch/alpha/mm/fault.c
-@@ -111,10 +111,6 @@ do_page_fault(unsigned long address, unsigned long mmcsr,
- 	if (!mm || faulthandler_disabled())
- 		goto no_context;
- 
--#ifdef CONFIG_ALPHA_LARGE_VMALLOC
--	if (address >= TASK_SIZE)
--		goto vmalloc_fault;
--#endif
- 	if (user_mode(regs))
- 		flags |= FAULT_FLAG_USER;
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-@@ -225,24 +221,4 @@ do_page_fault(unsigned long address, unsigned long mmcsr,
-  do_sigsegv:
- 	force_sig_fault(SIGSEGV, si_code, (void __user *) address);
- 	return;
--
--#ifdef CONFIG_ALPHA_LARGE_VMALLOC
-- vmalloc_fault:
--	if (user_mode(regs))
--		goto do_sigsegv;
--	else {
--		/* Synchronize this task's top level page-table
--		   with the "reference" page table from init.  */
--		long index = pgd_index(address);
--		pgd_t *pgd, *pgd_k;
--
--		pgd = current->active_mm->pgd + index;
--		pgd_k = swapper_pg_dir + index;
--		if (!pgd_present(*pgd) && pgd_present(*pgd_k)) {
--			pgd_val(*pgd) = pgd_val(*pgd_k);
--			return;
--		}
--		goto no_context;
--	}
--#endif
- }
-diff --git a/arch/alpha/mm/init.c b/arch/alpha/mm/init.c
-index 9531cbc761c0..a2b4d001cbf2 100644
---- a/arch/alpha/mm/init.c
-+++ b/arch/alpha/mm/init.c
-@@ -45,12 +45,7 @@ pgd_alloc(struct mm_struct *mm)
- 	ret = __pgd_alloc(mm, 0);
- 	init = pgd_offset(&init_mm, 0UL);
- 	if (ret) {
--#ifdef CONFIG_ALPHA_LARGE_VMALLOC
--		memcpy (ret + USER_PTRS_PER_PGD, init + USER_PTRS_PER_PGD,
--			(PTRS_PER_PGD - USER_PTRS_PER_PGD - 1)*sizeof(pgd_t));
--#else
- 		pgd_val(ret[PTRS_PER_PGD-2]) = pgd_val(init[PTRS_PER_PGD-2]);
--#endif
- 
- 		/* The last PGD entry is the VPTB self-map.  */
- 		pgd_val(ret[PTRS_PER_PGD-1])
-@@ -148,9 +143,8 @@ callback_init(void * kernel_end)
- 	   On systems with larger consoles, additional pages will be
- 	   allocated as needed during the mapping process.
- 
--	   In the case of not SRM, but not CONFIG_ALPHA_LARGE_VMALLOC,
--	   we need to allocate the PGD we use for vmalloc before we start
--	   forking other tasks.  */
-+	   In the case of not SRM, we need to allocate the PGD we use for vmalloc
-+	   before we start forking other tasks.  */
- 
- 	two_pages = (void *)
- 	  (((unsigned long)kernel_end + ~PAGE_MASK) & PAGE_MASK);
--- 
-2.55.0
+Regards,
+Markus
 
