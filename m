@@ -1,89 +1,74 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342E41E8826
-	for <kernel-janitors@vger.kernel.org>; Sun, 16 Aug 2026 12:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0D230C16F
+	for <kernel-janitors@vger.kernel.org>; Sun, 16 Aug 2026 14:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786884982; cv=none; b=nuPMUO50T9PDYBC9c3Y6RUgLpfFVtGAKMGOxibwrinwm2dHFvqle0YmQW8DpNONVsKWfAoKaljAUyrcYmfZWt4ZK86TBTFpWDatpErUdreP2emT3jyp6dYXjX94f7RiZYorvrYnC4VFZt3sOMALfKskZrrbz8DKAQEgospgJgaY=
+	t=1786890133; cv=none; b=nirgjuIlngfSEL3XLeIwnMb2t3VJgkn41rItW5STnzthrXWQ+tmM6nnDcLnHqn7qCKSD4195ZJtVTc6ZS76unjq3vuDiAgx8gs6sqzbM6l9pfL+WKWAvi77S6X7uBd4TfScVwnu9cG0PdphviGzkESy+RkZtw7dTmymfhJhaHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786884982; c=relaxed/simple;
-	bh=XmbiCSUSDiVAiNmSRbJ2PxwSgZsTdKwWMDpotU+cRFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LBsvlUlkTAyMBaqAYwuw4VRZ35VdJg9fU2c/AV/EQ4L7fE2rFXPu1GAJAYYfIQYeIXH3ZYJjUWVHMHpj8UcM/gAJvV3cWpU0dXtwiMeoDR+SjdeWNS/qkxYvzdBYLK1UaUJhTIolYk5TOCr9+9WqwGmOJR1OlRhVh86NJnIbX0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4EX4hnG; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1786890133; c=relaxed/simple;
+	bh=1Ph5XERqjFKzXkoQR6r6KNSKv6cQd5RDKP+6XgufBcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JdUoE0MfG8LKbw+TOBaWNDJJirvfTSc6Sj0ZpDL3NcfgqaX/DsWHy/1v60aXapQqTbduKfeUIaNdAIDD7P8t1Sdd1nCFF1jQBWIVy+UoqUsmkPCkx73GbaJKAd1jJ7EHPkPwkqqQOXK5/x6ExWOvbcSrpDCfGsWipurdbvBbrbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYeljua+; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4EX4hnG"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-476a130c138so2638688f8f.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Aug 2026 05:56:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYeljua+"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so20417135e9.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Aug 2026 07:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786884979; x=1787489779; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1786890130; x=1787494930; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:sender:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Vrd+QFouPQzWgEI6eWzCwSjjj2vAhx5C8gTbTzA/yUI=;
-        b=F4EX4hnGSTuLpEoNJxspMedlkC/ntvu9Cd1HWdksL5UUcLMvjyCC/76DNTYFDWfM4M
-         qh2MYUPf1bQeBqEwDtk207PUE+1binTNFXYkvfthRYOHOAnjWyeRiZ7WoBGZB+31KidT
-         bx+JvN72AvZf+j/D87jJAJssKXWWBjARAUmN44BPo6WGkUFRp7joW+LzEmG+05DBRm2l
-         GhBvl+9hQtUXWP171jofz5yNKMmyAHqCihs44dLS1hA1dGUNwdc1QkV0VsuosB8P9qZw
-         /XMfXUWACuCQuiAb36J40breuV5m4yT6+PWCg/nXAvA8PFcMHitq5Z7c+EKaw+DCayxt
-         cRqQ==
+        bh=4KMlwaAd8I5gc71MX6N5TV2im3iyNimd7J8XIlb6Aas=;
+        b=XYeljua+YqAmxMUqu7NV+jHaYaekk7rLC1iDIhL17HbO6dkhx4dzYUm8cVVVX2Qb/D
+         LSYIhBsXknXRr7UtMQc8tTDfMdtZ2gn0Jv9Ifk8YjtKGHf2dqSLZrFMEa9kwS8wfoUEw
+         eLlFmb5N+WxZRN58QcEuHTcbIK1bg2jeAkXiooyR6TCQvqCPZxOVVgPqzjPybsbUr9a8
+         SSWSo3G+xuALJsuRLAjR2AbgEcQA7KfqH5rLtKZuKlmcZkcchxC5DZEYRoG4g46RiVl8
+         EQbM9qDK0GkkYmZFTVDEIdRPHTHUw/M6f6Lrt+7a2K450Nmo8ziSlUEvCN1m+BH8/KgH
+         u2cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786884979; x=1787489779;
+        d=1e100.net; s=20251104; t=1786890130; x=1787494930;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Vrd+QFouPQzWgEI6eWzCwSjjj2vAhx5C8gTbTzA/yUI=;
-        b=Qao4htZNAM8P38BIu55dMr2ohgmH/lPvafMlHKtQtlnSTlqyVHlIuI9CeUJL0z0dus
-         LEOD8oVZT+Njmwfug9FYqI27V85ztqZsRWWbvV5L+Iew8EEpX51WMBx/reuK+KWn1M74
-         i8DdmXgFnt9ZyXcmH7i4fRooncu1dXQBQKUYGxARJW8vWTZ7NLBWxAie20eCBEgqLZud
-         nRh1DjnndbeysTToxusER2S+EEOBC/2rO4MD6asXrD1OGqvJgERxP+FYDTyZRCCbOMVH
-         LvQ82JRhQEFfeFbVnBQaNJGbNJAGlPi6j06FqptC69mA+G9e12bfaCDUng6Vfo+dWUNL
-         O8OA==
-X-Forwarded-Encrypted: i=1; AHgh+RoHCp39qFZQ1XwMJkjGM17NIhlj09UbFp0J3B7xIClPYVEvEPedJmJG31NQ02uzPzXLMgRxB2U8xbU4xkVBAsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylMhN0Hiv0qaVIao1uauOVyNT+j0DZ+VPPNTmzgx2fn9JnOXBl
-	MHPnnKNa2DZMNbmekaGcU/FJgHQvZpcwwoNiTjEWJ98KC0EK6oGHL5iG
-X-Gm-Gg: AR+sD10wipjtvpLAi/BBBsgcGs0qH+jGoHZ8nIdD1NrcyFt58SngJaKlWVedP08z/z9
-	ZTRp1h4Wl2Opk943qauPX3ieKXH7UCmisG2yJuAz0nEz0NLfdfW/m1SaG8okr+rU5pwbZIgb+ss
-	Yr+IWFttuHKqtZCZ2y/KG9Voi4qZTbcLEnADFQJjugJNdZSeipkLYSLCduP/RaVPQHgd+TzF6k1
-	RJGKsI6d9eDHhd5Dy8LwR3ZvtrII3b7Q1Mm9ZwrHQrfh8VV+08mzfcWdSTcgixUHLN37OwpVEQR
-	PhsPSaeLP/ugWfdRIQB3pvCy59fc+JecjfyAiYAUueMpcTpb6kAzLHFlEL8/H9nNUFmoNWykco+
-	O1Lekm7RzGKbQZmwP1aFqeNxAxnMJI43Yl581+OtkFIfNIGD3Wy6E7xggUziQmHlR+gb7ySGQc7
-	X91jonlTWqIAdhPbLrz1Hz8s/jtXYxFIUXjfrQD5v0R5ojcTCGVN1NUXEMY163+tIW42JMTGAYE
-	+6lQ3JlTHl+9YFX0dd5xsXftF1rSYxY58MK/Vy0xMddVW6c64C6
-X-Received: by 2002:a05:600c:17d1:b0:495:7a04:b006 with SMTP id 5b1f17b1804b1-49987948adamr180850505e9.8.1786884979064;
-        Sun, 16 Aug 2026 05:56:19 -0700 (PDT)
+        bh=4KMlwaAd8I5gc71MX6N5TV2im3iyNimd7J8XIlb6Aas=;
+        b=C72LwaP4YR+e4mWuU30jbvrlETiDoPGDz5KC/Uhsd7+UxD0lRR+CTUueWJdfOTs1ZS
+         AoSg1mY/NndjYTQezXgKXrTj3Ln43SdNalSaBGDxqjElpe0Gr+DmdEw8cAJJdzAx9lI4
+         Nc/dI+MLJpyKeSdmCQ4FsmV3qM32k3f49n+Wm+/s72Aj2YiqEYbBMcnvRfAoeQJj/sdJ
+         AGby3TCDYKnEeNQyG4yx+Dm8QL9NI68rpI/pSBiL+KuHMjAMD3J9b7VRkHVfqAu2d6V6
+         VML3J/+pI/+vuujuQ8pESo2MugLjAp1okvhT0MfpraRnOHTvB0Wcj3FtbzB6gk2eV1Zu
+         MPZw==
+X-Forwarded-Encrypted: i=1; AHgh+RqW3uwkTcuc5Tu6/2bZzMNZdQtQkDntISLwc4sFavixPNMKsfkhgI50tGzfeX2Q6etdBJu4OtcdBgIsZQGg5Ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMgRDGJAhDLlYeFvdJvCl5bxF2P30+grgQdGm2iHJh2Df2+00U
+	YHyzty6wUUICtTmHAoq2Jddt5jRbMugmw/BR0zp/JjmJomIZM60RmxbJ
+X-Gm-Gg: AR+sD12rRZZq2fEE1rWGZhB1Ck3ZfRxjmLUrUfXCFecf0TgKDvyFcLiIOCQdjDH6Gpa
+	KxOedwZFXw7WBniAeN/y5s+7YSZ4S6dXxKMnzmURJO3VWVzr7Zpt6+LOckVMI0Swskh+BlLmnub
+	HRFEgXck8SoMAk59s5G30cpwi6Mzj+xSZjZWvwoujVbYZAqBbuXPwrQC1g5H/0NHXyfcwAULyqV
+	lczSBL76uTv4LmKGNNSHb1SZt4k04i1DpZESEse0LBUiBzwRYyppKvSr1BHDXeCYhuJFyQqdkFQ
+	bWVOPvazdSMDYnex5E+I7X+WZINXBSrf035ouo9MbvGX6/uCG9H+XnvcTDaA/d8aLSh8brgk86D
+	dUbJPIHPk0/0bz3ZoVX+0Z/I5ZrBBWLH8sM6TBZA41IgBlDhn2b92RQQAeObIBhQQPD62jQZ/sa
+	HVfM2QlwkI/gD0Il0DpYt30cdoRsRI5fJgr2sBJd0RAUQDvKsXBriFLcI3BG6zauMO/kW/Y0ti7
+	hvJB3imZT/AeXg4D1RzFLJsRpXmNuGr8fwYWZzHnPoAgfZB7vxCQkNEfDb9XDo=
+X-Received: by 2002:a05:600c:3145:b0:493:f783:c46a with SMTP id 5b1f17b1804b1-49987ab45famr258199375e9.6.1786890129769;
+        Sun, 16 Aug 2026 07:22:09 -0700 (PDT)
 Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4999610e381sm63085105e9.9.2026.08.16.05.56.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49996176b95sm39575365e9.10.2026.08.16.07.22.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Aug 2026 05:56:18 -0700 (PDT)
+        Sun, 16 Aug 2026 07:22:09 -0700 (PDT)
 Sender: Julian Braha <julian.braha@gmail.com>
 From: Julian Braha <julianbraha@gmail.com>
-To: maddy@linux.ibm.com,
-	mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	chleroy@kernel.org,
-	Frank.Li@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: linusw@kernel.org,
-	kees@kernel.org,
-	colin.i.king@gmail.com,
-	rosenp@gmail.com,
-	joao@joaoff.com,
-	linuxppc-dev@lists.ozlabs.org,
+To: vgupta@kernel.org
+Cc: joao@joaoff.com,
+	linux-snps-arc@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	netdev@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH] powerpc: remove dead 440SP code
-Date: Sun, 16 Aug 2026 13:56:15 +0100
-Message-ID: <20260816125615.985387-1-julianbraha@gmail.com>
+Subject: [PATCH] ARC: cleanup dead ARC_CANT_LLSC option in Kconfig
+Date: Sun, 16 Aug 2026 15:22:07 +0100
+Message-ID: <20260816142207.1034329-1-julianbraha@gmail.com>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -93,224 +78,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 440SP config option can never be enabled, making all references to it
-dead code.
+Currently, the ARC_CANT_LLSC config option can never be enabled.
+It is also not referenced anywhere else. So let's remove this dead code.
 
-Let's remove support for 440SP, since nobody can be using it anyway.
+Note that I have only compile-tested these changes, because I do not have
+the hardware to runtime test.
 
 This dead code was found by kconfirm, a static analysis tool for Kconfig.
 
 Signed-off-by: Julian Braha <julianbraha@gmail.com>
 ---
- arch/powerpc/boot/cuboot-katmai.c   |  2 +-
- arch/powerpc/include/asm/async_tx.h |  2 +-
- arch/powerpc/include/asm/dcr-regs.h | 10 +++++-----
- arch/powerpc/kernel/cpu_specs_44x.h | 12 ------------
- arch/powerpc/platforms/44x/Kconfig  |  3 ---
- drivers/dma/Kconfig                 |  2 +-
- drivers/dma/ppc4xx/adma.c           |  9 ---------
- drivers/dma/ppc4xx/adma.h           |  2 +-
- drivers/dma/ppc4xx/dma.h            |  9 ---------
- drivers/net/ethernet/ibm/emac/mal.h |  2 +-
- 10 files changed, 10 insertions(+), 43 deletions(-)
+ arch/arc/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/powerpc/boot/cuboot-katmai.c b/arch/powerpc/boot/cuboot-katmai.c
-index 034a748fde24..fcd71e76309f 100644
---- a/arch/powerpc/boot/cuboot-katmai.c
-+++ b/arch/powerpc/boot/cuboot-katmai.c
-@@ -31,7 +31,7 @@ static void katmai_fixups(void)
- {
- 	unsigned long sysclk = 33333000;
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 2ed7186c81c5..80e61175bf52 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -331,13 +331,9 @@ config ARC_FPU_SAVE_RESTORE
+ 	  for floating point exceptions and rounding modes. These are
+ 	  preserved across task context switch when enabled.
  
--	/* 440SP Clock logic is all but identical to 440GX
-+	/* 440SPe Clock logic is all but identical to 440GX
- 	 * so we just use that code for now at least
- 	 */
- 	ibm440spe_fixup_clocks(sysclk, 6 * 1843200, 0);
-diff --git a/arch/powerpc/include/asm/async_tx.h b/arch/powerpc/include/asm/async_tx.h
-index a14758426dd5..1ff5b2ca3ed1 100644
---- a/arch/powerpc/include/asm/async_tx.h
-+++ b/arch/powerpc/include/asm/async_tx.h
-@@ -7,7 +7,7 @@
- #ifndef _ASM_POWERPC_ASYNC_TX_H_
- #define _ASM_POWERPC_ASYNC_TX_H_
- 
--#if defined(CONFIG_440SPe) || defined(CONFIG_440SP)
-+#if defined(CONFIG_440SPe)
- extern struct dma_chan *
- ppc440spe_async_tx_find_best_channel(enum dma_transaction_type cap,
- 	struct page **dst_lst, int dst_cnt, struct page **src_lst,
-diff --git a/arch/powerpc/include/asm/dcr-regs.h b/arch/powerpc/include/asm/dcr-regs.h
-index 5c1a4973f46a..e39a55e527da 100644
---- a/arch/powerpc/include/asm/dcr-regs.h
-+++ b/arch/powerpc/include/asm/dcr-regs.h
-@@ -25,11 +25,11 @@
-  * of the driver main register set
-  */
- 
--/* CPRs (440GX and 440SP/440SPe) */
-+/* CPRs (440GX and 440SPe) */
- #define DCRN_CPR0_CONFIG_ADDR	0xc
- #define DCRN_CPR0_CONFIG_DATA	0xd
- 
--/* SDRs (440GX and 440SP/440SPe) */
-+/* SDRs (440GX and 440SPe) */
- #define DCRN_SDR0_CONFIG_ADDR 	0xe
- #define DCRN_SDR0_CONFIG_DATA	0xf
- 
-@@ -159,18 +159,18 @@
- #define  L2C_SNP_ESR		0x00000800
- 
- /*
-- * DCR register offsets for 440SP/440SPe I2O/DMA controller.
-+ * DCR register offsets for 440SPe I2O/DMA controller.
-  * The base address is configured in the device tree.
-  */
- #define DCRN_I2O0_IBAL		0x006
- #define DCRN_I2O0_IBAH		0x007
- #define I2O_REG_ENABLE		0x00000001	/* Enable I2O/DMA access */
- 
--/* 440SP/440SPe Software Reset DCR */
-+/* 440SPe Software Reset DCR */
- #define DCRN_SDR0_SRST		0x0200
- #define DCRN_SDR0_SRST_I2ODMA	(0x80000000 >> 15)	/* Reset I2O/DMA */
- 
--/* 440SP/440SPe Memory Queue DCR offsets */
-+/* 440SPe Memory Queue DCR offsets */
- #define DCRN_MQ0_XORBA		0x04
- #define DCRN_MQ0_CF2H		0x06
- #define DCRN_MQ0_CFBHL		0x0f
-diff --git a/arch/powerpc/kernel/cpu_specs_44x.h b/arch/powerpc/kernel/cpu_specs_44x.h
-index 69c4cdc0cdee..41ed2c16d8cc 100644
---- a/arch/powerpc/kernel/cpu_specs_44x.h
-+++ b/arch/powerpc/kernel/cpu_specs_44x.h
-@@ -172,18 +172,6 @@ static struct cpu_spec cpu_specs[] __initdata = {
- 		.machine_check		= machine_check_440A,
- 		.platform		= "ppc440",
- 	},
--	{ /* 440SP Rev. A */
--		.pvr_mask		= 0xfff00fff,
--		.pvr_value		= 0x53200891,
--		.cpu_name		= "440SP Rev. A",
--		.cpu_features		= CPU_FTRS_44X,
--		.cpu_user_features	= COMMON_USER_BOOKE,
--		.mmu_features		= MMU_FTR_TYPE_44x,
--		.icache_bsize		= 32,
--		.dcache_bsize		= 32,
--		.machine_check		= machine_check_4xx,
--		.platform		= "ppc440",
--	},
- 	{ /* 440SPe Rev. A */
- 		.pvr_mask               = 0xfff00fff,
- 		.pvr_value              = 0x53400890,
-diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
-index 150813cea945..b481ef2b0f4c 100644
---- a/arch/powerpc/platforms/44x/Kconfig
-+++ b/arch/powerpc/platforms/44x/Kconfig
-@@ -260,9 +260,6 @@ config 440GX
- 	select IBM_EMAC_ZMII if IBM_EMAC #test only
- 	select IBM_EMAC_TAH if IBM_EMAC  #test only
- 
--config 440SP
--	bool
+-config ARC_CANT_LLSC
+-	def_bool n
 -
- config 440SPe
- 	bool
- 	select IBM_EMAC_EMAC4 if IBM_EMAC
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index ae6a682c9f76..f0f61b4932f5 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -77,7 +77,7 @@ config AMBA_PL08X
+ config ARC_HAS_LLSC
+ 	bool "Insn: LLOCK/SCOND (efficient atomic ops)"
+ 	default y
+-	depends on !ARC_CANT_LLSC
  
- config AMCC_PPC440SPE_ADMA
- 	tristate "AMCC PPC440SPe ADMA support"
--	depends on 440SPe || 440SP
-+	depends on 440SPe
- 	select DMA_ENGINE
- 	select DMA_ENGINE_RAID
- 	select ARCH_HAS_ASYNC_TX_FIND_CHANNEL
-diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-index 279a431ccae3..ecbf4c84a318 100644
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -4349,14 +4349,9 @@ static ssize_t poly_show(struct device_driver *dev, char *buf)
- 	ssize_t size = 0;
- 	u32 reg;
+ if ISA_ARCV2
  
--#ifdef CONFIG_440SP
--	/* 440SP has fixed polynomial */
--	reg = 0x4d;
--#else
- 	reg = dcr_read(ppc440spe_mq_dcr_host, DCRN_MQ0_CFBHL);
- 	reg >>= MQ0_CFBHL_POLY;
- 	reg &= 0xFF;
--#endif
- 
- 	size = sysfs_emit(buf, "PPC440SP(e) RAID-6 driver "
- 			"uses 0x1%02x polynomial.\n", reg);
-@@ -4368,10 +4363,6 @@ static ssize_t poly_store(struct device_driver *dev, const char *buf,
- {
- 	unsigned long reg, val;
- 	int err;
--#ifdef CONFIG_440SP
--	/* 440SP uses default 0x14D polynomial only */
--	return -EINVAL;
--#endif
- 
- 	if (!count || count > 6)
- 		return -EINVAL;
-diff --git a/drivers/dma/ppc4xx/adma.h b/drivers/dma/ppc4xx/adma.h
-index f8a5d7c1fb40..0ec35382d274 100644
---- a/drivers/dma/ppc4xx/adma.h
-+++ b/drivers/dma/ppc4xx/adma.h
-@@ -19,7 +19,7 @@
- #define tx_to_ppc440spe_adma_slot(tx) \
- 		container_of(tx, struct ppc440spe_adma_desc_slot, async_tx)
- 
--/* Default polynomial (for 440SP is only available) */
-+/* Default polynomial */
- #define PPC440SPE_DEFAULT_POLY	0x4d
- 
- #define PPC440SPE_ADMA_ENGINES_NUM	(XOR_ENGINES_NUM + DMA_ENGINES_NUM)
-diff --git a/drivers/dma/ppc4xx/dma.h b/drivers/dma/ppc4xx/dma.h
-index b5725481bfa6..17cbb2d1ee1c 100644
---- a/drivers/dma/ppc4xx/dma.h
-+++ b/drivers/dma/ppc4xx/dma.h
-@@ -70,20 +70,11 @@
- 
- #define DMA_CUED_XOR_BASE	(0x10000000)
- #define DMA_CUED_XOR_HB		(0x00000008)
--
--#ifdef CONFIG_440SP
--#define DMA_CUED_MULT1_OFF	0
--#define DMA_CUED_MULT2_OFF	8
--#define DMA_CUED_MULT3_OFF	16
--#define DMA_CUED_REGION_OFF	24
--#define DMA_CUED_XOR_WIN_MSK	(0xFC000000)
--#else
- #define DMA_CUED_MULT1_OFF	2
- #define DMA_CUED_MULT2_OFF	10
- #define DMA_CUED_MULT3_OFF	18
- #define DMA_CUED_REGION_OFF	26
- #define DMA_CUED_XOR_WIN_MSK	(0xF0000000)
--#endif
- 
- #define DMA_CUED_REGION_MSK	0x3
- #define DMA_RXOR123		0x0
-diff --git a/drivers/net/ethernet/ibm/emac/mal.h b/drivers/net/ethernet/ibm/emac/mal.h
-index e0ddc41186a2..6cdd40bca2cd 100644
---- a/drivers/net/ethernet/ibm/emac/mal.h
-+++ b/drivers/net/ethernet/ibm/emac/mal.h
-@@ -26,7 +26,7 @@
-  * We call MAL 1 the version in 405GP, 405GPR, 405EP, 440EP, 440GR and
-  * NP405H.
-  *
-- * We call MAL 2 the version in 440GP, 440GX, 440SP, 440SPE and Axon
-+ * We call MAL 2 the version in 440GP, 440GX, 440SPE and Axon
-  *
-  * The driver expects a "version" property in the emac node containing
-  * a number 1 or 2. New device-trees for EMAC capable platforms are thus
 -- 
 2.55.0
 
