@@ -1,63 +1,87 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBF0318EF4;
-	Sun, 16 Aug 2026 17:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AE54B04B6;
+	Sun, 16 Aug 2026 19:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786902101; cv=none; b=ILqhLp9ooqQTrq1hHPFZbEBuOwzN3uW715HuFTnOL7fpFEySD0ZlEHH2GhN5xTPuZkp1Ypc7ZredtJgTTsOxDthTlTyq4rK8pVrj7V++vpkubsesrhppqt705ApYaZt6RnV+8fgptA6ksVJCW/kpO1V5ROt7ueBOzXSNj6z4ACU=
+	t=1786908006; cv=none; b=TnbohM4VmER/biXO02YaB+xNdwFABg6upbgTb/4vlv8ndK8FN5M01YQzSj24r2/Po+IGxbT3wjfu+f/rjQ/xZb/xOQwY+q0xDXVhh//zUUmDHaV/5kYY89nT3x9TuQlKdJDPNPj+bzkFPxvy0cZpnqIeXFHBXn1H5+3I22r2ZRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786902101; c=relaxed/simple;
-	bh=ImVkDC+Cz7m9YLv8RA70eoorQ2LMC1IYDMuyYo3Oh2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQ1HheMpMSunzOEtIHVHa8atFanWKJgRcjmKcMdONPj15+rnU4qGMum562LLqUoaSs4opfnDbjdIQkFkGnUYavyNX/Dkaq74Rntxjabt7Ghw6MDrnP/wNOsVPmDjADxnJRFsT9/rFaMuPwhImIeGIItoGx3hjBTEDnEGuifPOR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vAtabzjm; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1786908006; c=relaxed/simple;
+	bh=lXiTqXKqC0QomCxEJd3hjqOsVpBnr9UK5Dwh6wV3R8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cQJ+cuV/qhG3Ia0RIIam4sqCSL9LJL3peJvZBt5o2LPECqEIUmbAhooUNEXeMzwmjYkryLc4HuzfxUFH3srC3w5KkehcAwWvlrLsWSXWIOQPmzzoQ5R4sQbs2Wd21L3O9nFm++qDR+wfJuA6Ua1PCu+QKUfjMMs5EyVhkbVrkNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdcXRJY8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vAtabzjm"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pv8HnO0neC3QXg07WGvX4zl0tgMmJi6+7pa3VI0iQZ0=; b=vAtabzjmGDLUZEiXB4qGC8alH5
-	I5jSwhzhCxoADzpQvXL+IoS9jHDHyIXhUAKWJM/NSC8df5VJf3K510gBjXNy4frmB8pMt8pmAYy5Y
-	6tW9hP/UBK6b9fTJEqOMM4s2LBC9LOvqnwaM1qb3mbKOEwUcqyClcOzgiwq47UL1EcqK6BP1QR4L9
-	7BMD+e5MQVHIHeFkgRxrFrhv8V4JdsmdgMV5HxF1B1M0lRMRrJ7cqz1hC2iivbrdBfvcnLoDbEtad
-	s+M/Tdjlp2P1tfEusprOl6bzmOYxGJF9eQKDwOQAKtJUlUxFRpJLUBQyzoGz9q+2V+WP4FwYB4c3r
-	5m9XnuGg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.4 #2 (Red Hat Linux))
-	id 1wverS-00000005BMR-1U34;
-	Sun, 16 Aug 2026 17:41:30 +0000
-Date: Sun, 16 Aug 2026 18:41:29 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Julian Braha <julianbraha@gmail.com>
-Cc: richard.henderson@linaro.org, linmag7@gmail.com, qi.zheng@linux.dev,
-	akpm@linux-foundation.org, geert@linux-m68k.org,
-	catalin.marinas@arm.com, rppt@kernel.org, joao@joaoff.com,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] alpha: cleanup dead ALPHA_LARGE_VMALLOC
-Message-ID: <20260816174129.GU2636677@ZenIV>
-References: <20260816143835.1068971-1-julianbraha@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdcXRJY8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A47251F000E9;
+	Sun, 16 Aug 2026 19:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786908004;
+	bh=ePqlfN7J/QMmtiy/pjAlZMY3V2slosZlFTfi6QegtJk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=WdcXRJY8PSD94VUEJ67dL/jTjV/WwprH4DLneT0NhAH+bV8QL6sJL7LMsg075Ltrb
+	 G2SxXlnoHQhW057yWbGMAp2rvxbtSI8yTJLSowV3h8bKbfOL+iaMWT4YUcHZ1tKxs0
+	 Ys2lA9puKa3vUYQDIpygvMp+kD691lcYudiS+W6kRRSXMv4dLjJ1LprVmlXKN6F/iL
+	 +bf3OILDK75PDrhdEVb8rSGHbj83r5DlZksUW3Nfe7ANwG477Bn4ZYezf4Cv7oBSVB
+	 eD9xOVjM0bAS3m6gKuSL3n8SmTnAjcr7I0ouQdEUNlmgA5wZhh1e2eQh9Uhqv/akhA
+	 8vPAFEsC+nL8A==
+Message-ID: <193a2ce6-4c4e-4291-a542-e112d5a87742@kernel.org>
+Date: Sun, 16 Aug 2026 12:20:03 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260816143835.1068971-1-julianbraha@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARC: cleanup dead ARC_CANT_LLSC option in Kconfig
+To: Julian Braha <julianbraha@gmail.com>, vgupta@kernel.org
+Cc: joao@joaoff.com, linux-snps-arc@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20260816142207.1034329-1-julianbraha@gmail.com>
+Content-Language: en-US
+From: Vineet Gupta <vgupta@kernel.org>
+In-Reply-To: <20260816142207.1034329-1-julianbraha@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 16, 2026 at 03:38:35PM +0100, Julian Braha wrote:
-> Currently, the ALPHA_LARGE_VMALLOC config option can never be enabled,
-
-> meaning that all references to it are dead code.
-> 
-> Let's remove this dead option and its associated code.
-> 
+On 8/16/26 07:22, Julian Braha wrote:
+> Currently, the ARC_CANT_LLSC config option can never be enabled.
+> It is also not referenced anywhere else. So let's remove this dead code.
+>
+> Note that I have only compile-tested these changes, because I do not have
+> the hardware to runtime test.
+>
 > This dead code was found by kconfirm, a static analysis tool for Kconfig.
+>
+> Signed-off-by: Julian Braha <julianbraha@gmail.com>
 
-See https://lore.kernel.org/all/20251130030146.GN3538@ZenIV/
+Acked-by: Vineet Gupta <vgupta@kernel.org>
+
+Thx,
+-Vineet
+
+> ---
+>   arch/arc/Kconfig | 4 ----
+>   1 file changed, 4 deletions(-)
+>
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index 2ed7186c81c5..80e61175bf52 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -331,13 +331,9 @@ config ARC_FPU_SAVE_RESTORE
+>   	  for floating point exceptions and rounding modes. These are
+>   	  preserved across task context switch when enabled.
+>   
+> -config ARC_CANT_LLSC
+> -	def_bool n
+> -
+>   config ARC_HAS_LLSC
+>   	bool "Insn: LLOCK/SCOND (efficient atomic ops)"
+>   	default y
+> -	depends on !ARC_CANT_LLSC
+>   
+>   if ISA_ARCV2
+>   
+
