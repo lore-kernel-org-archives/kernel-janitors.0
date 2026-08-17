@@ -1,144 +1,89 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C63AAF5B
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 10:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FF823ED5B
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 11:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786961610; cv=none; b=EMZzZ3g1tX6jixTZ+KXF3e7prICUi5/Oe5T42+JydwsdC/lIfzTzat/gJHavELloPF8QAyB+KZRi2xKISObhmtjz2y1N2kUQCXbq2If+Mcj7spGDu/suehGzxydVEwI/ytV8GpSXCLIfhJjfOEctc4BK8E/sZueDBmN6ysF6+lQ=
+	t=1786965784; cv=none; b=cQ+enOi8hPzZ4A8lLa7zihy3LMcZ4e0zfjTbeHJyZk3ahUCIoj0Ba9M7E0XdTg3/pZik2GMj3ZxZyzwXHpENnm3/e+Yx0IqbtASQvFQVww/dJdAk5T3xlY5OWvng6Qxb7dvYaV/wfU9OssphUzgalwoxaYkrQmb2gcKgkfPvKQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786961610; c=relaxed/simple;
-	bh=izXpRg5NB+9nlyNont/cYCyinl/3i4bKia3T2r4PYl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eroOP0vWKrYzc4nVoKeWUMXdF5Q6pk3txWnup3d/USX9aGcWGjx2SKlo6QrDpNoPLx6T6bUEmELxOh7bdBq1ueA2mJnSyhZ3etOXNIEQ7ELkWO3QjyncEctO3m3DDUAttvy8dfhadLgMk2qk02vlL0vIreb+xmegHoBcqaf+rPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mu35dJcK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZJ02qbed; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1786965784; c=relaxed/simple;
+	bh=P5TTthgk+Rg78pTtJpD/DUUy985t633wbAtev7NEJS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jyKiBnbjU+16gP0XcNyoSDPSJQp2CXCTFz6iKhjm+5ulsMbcTNmv6ID9mls9xGcxors9gSfK3HB69C6PqezUjL8zk1Hv6wwciICSQ0gwPCHuY/XbOkmc84k+aAGYlqWAolUyhrroXUJGboociAvaOpNtA0wqufAPLmd1CxeG4uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwRb9heE; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mu35dJcK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZJ02qbed"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67H9deWF1533518
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 10:13:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MpiPSSQW23w1jI70p7EhI/WPcr9sgeEzKZuyi79EAz0=; b=mu35dJcKtB1/VU1l
-	MMyv3sHHPWLjNL23DTp/jjhRxV3f8VToHaqzybk10i4Qay64g2OdrZeNdv7t8MtV
-	tssrNcsX5C/hBGFVc7Dd1A2xe51luuHhxynBSvhTg02tOs0gzxrpOTshBfvAS/Bd
-	7C/wX7fugHVTVOcp6X53314gpLhBEnTq6uzqB2E4AK38wIp1CWxt0O95UEEBd0Fb
-	UFDeGRhno9cuCiqnnTEDXFZlO+TgJ84WPBFQbPVELLZ4LYFnNVihaunIFn5H3JY3
-	KBVSUUsuiWYd5ox41h/J5d0DFtVXepnIG8e3QfrgFfyCpw2N/RRyJZpRgvNcglOt
-	cGoRPw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g3xb1ggt7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 10:13:28 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-90786218dd0so7076836d6.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 03:13:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwRb9heE"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3900e39d935so2952727a91.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 04:23:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1786961607; x=1787566407; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MpiPSSQW23w1jI70p7EhI/WPcr9sgeEzKZuyi79EAz0=;
-        b=ZJ02qbedXD5JnGAiaHtNkqFyzxLlyCQhJS7AJQxDlEueyMpPbmzIYXfwuJfZnSm7qi
-         jgPmnDfTv+38KO3oyXfD7qBaH5tW5K4REv5LNbRaJzc9UnnQ397yoLtDxfRPlzZradbV
-         MSeoZ7V5okFwrULCz2ruYPwFFgUTkNUY5Gy5Wltq91i8uZ0N9Gu87tIvlLNC8O/sDr0f
-         6pilB649yvIhS/TNSDMzH91Wjf2R8jD4Hujyh7GsUg9qxJJjku2xZTYy3KBARbOhp2ln
-         Eam9LVto6R60azKDclOJzIid1AGFStkhuadIvTWHcfzagOlPCNdpkLrp0CsWAQs4eW9m
-         Hl8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786961607; x=1787566407;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1786965782; x=1787570582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=MpiPSSQW23w1jI70p7EhI/WPcr9sgeEzKZuyi79EAz0=;
-        b=B/iLax6YfQVJMoYciR9irZevbYlseXCzCVeH5uQfFdelWyozAOmNqEf8Yb4ADL9+SW
-         +C6rnjb9qfRggEddLb6jOaWsIcDq4hwOixpbtN6dzx5PtgXrmzSX+CSYt15OmYuQlMcO
-         c8OzJJh4yBOX4FkEVo6TfsSLSdARFn68yqBHvqwyGn6R5JNLzJIhoBNz6JY7pimCyYIO
-         ulh1BNNao9JCX5w2W4G9eQjWSeXdqj/sPqRKumhEcamR0BSQzg8uIFVv+YSWoIvyOErR
-         8konWIuF5Z1FNtNEFCCIHx1txTdvBBTJVPPlOoCoHh31Ht1KN8gBsA9TDxvgFVUHnihV
-         Nuuw==
-X-Forwarded-Encrypted: i=1; AHgh+Ro5KDKJqUqmr2D8fx5xRA/HifhSysJDUViCiRHrWHXBq43SwHi1dumwzl/cXfKHnOYzZs+XfVsmLJwMegvMM6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGMTPokM1oMaYkP6DZcmxkKKBM/rggGhkYG4Q28Bnn7rkiWOOs
-	YyE4bheZzE8WgBFUG53gEgxevXdY8/baGVNhiTRmTisq/0Yy7S5SlTHlT5rZLZOPufqmTBFTh6t
-	4iuBEQ2IEAgNpWuRCGC4r/7PMegfM8edPv+mhstZqhHr0IX1UapEQkfxntVj72QGFDhdGqpg=
-X-Gm-Gg: AR+sD10nDkW9KgUvKi5AnKOZJaaKF+SEkknglCaNHVVKNrJh47LC8EM/lp0jVqfoQpT
-	lZ7dfeHPnze2Cmoh2vPv3FAFFEEBhBOCYIIwYPE4IiFNpJTnfIWQdYgDoqWDi941hkkV3o9swJY
-	cRj7TwcoV0vok5sMf1HPu/RsYcDJlSlngjeyPfgSTmsIKA5JQz6sNU1LgBYbL9vToOSX8H+5Rx4
-	BS/UGZKyt/K2YRlFIXz2YWtqYpSN2HUTrf24wthSVOgsTC59wiN3xn730cYzhjVc6PSDOmYI1hg
-	F4vDXdLX/sALRM2fFMJY32gexnSAWslRfpi82raOWJQkU3kCJpPzCHm9QxXRv6Mtlpzt1clMw4t
-	4Eq15tI4jpXXdUq2lj7+OWvrF
-X-Received: by 2002:ac8:5d06:0:b0:51a:8945:312d with SMTP id d75a77b69052e-52d8514128cmr168763971cf.0.1786961607364;
-        Mon, 17 Aug 2026 03:13:27 -0700 (PDT)
-X-Received: by 2002:ac8:5d06:0:b0:51a:8945:312d with SMTP id d75a77b69052e-52d8514128cmr168763741cf.0.1786961606991;
-        Mon, 17 Aug 2026 03:13:26 -0700 (PDT)
-Received: from [192.168.120.193] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a3d8531625sm444479a12.12.2026.08.17.03.13.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2026 03:13:26 -0700 (PDT)
-Message-ID: <841cb92e-f156-448a-89a7-b04f5b3591c4@oss.qualcomm.com>
-Date: Mon, 17 Aug 2026 12:13:24 +0200
+        bh=P5TTthgk+Rg78pTtJpD/DUUy985t633wbAtev7NEJS0=;
+        b=HwRb9heE8oBF/e4N8qPwhNqv3e+A1hJ70dgHVrp74rjUC7JQwF7AsEt2EmvxKecggA
+         d/VAyqGmsVZOnKqdDHAQxaehV5fJC1VSoS+1XMsW1rs2XezFgIx7uE+Z6uKofZsldk7C
+         UWauaDrsruu3+8HT6v8UNhWzSiDJ7iPn/DOaDQvLJME0GuJydwm2Yv9Dj5xpk+Nn++xZ
+         qUuU58ee3uY4tlV0gMk0TlGM5zib2H+8T7VQifRhuoCjGQqeIGwxl4XhQCJhukR8EcsF
+         it4WSN9wWEHPuTgioMW4jMCqgrsCHTbNzZCZwCxFMm3E9ysMihO8/ZXjT4rSCv32xK80
+         qsOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786965782; x=1787570582;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=P5TTthgk+Rg78pTtJpD/DUUy985t633wbAtev7NEJS0=;
+        b=OseyEy244+/xR4g5oTh0uyOsmtcrTdHKQXxk8USyYWHeB0uOI8581wFw1+zLbCN6ae
+         0WLPtg6+WNk60wMKU4kU97EKmXYhBjv0SXvZhuHJta9BUJBg/r6XaAdkPBEqWaFjJUl0
+         wr34jr2nCxS/AP+HeMLNJ0QM/jToY1BBDUdQDvnBlEuVogM87Y2jHykbrDDvW3cfg80a
+         evZpTS+fqDMGkL2NVVMNZtI5MiXqCDbLKt/TuXlj3G3Yudm8wP0CZlDLZaLeKpSQVBMN
+         0Z+o+1vLMYKfGohLhQUFvKbMGDkl9eUOgO2cDjnFi6rFiqMVGLC8HUF9vaI5ALhuVeEx
+         QqxA==
+X-Forwarded-Encrypted: i=1; AHgh+RrteY58gqguTXo+V//wLV+B7/xELV/9CxRG+IVtwYRAU3CJSrNYq7l2hivEPPXtzndGq/L+ZlbVi46Qnj3DJTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDPPUwmZQ+VRz0tGDovMDvUPkWKBJMQ/102VEoZ9D0XxNwwqDe
+	h6xJYSMXVl06XpVYlb9wrCyuDSkzaQIuUJsFdjkctmzwd/jm8g4xNivSThHvDtatzdcu
+X-Gm-Gg: AR+sD13tl9o6uywd5NOuV8YnfYSU5ULdEjg8D6h56ytswc5FI2ELeH+CMmtY0xN9px5
+	BCUhdY3GlindeLlXetHo0TcQO6Z11neDWgIbJsvhpyg5MYi8fvslpZKHj+Z/J2VFvgV5DtHSwQB
+	PGAUwFyNA99LRjP1dLWLQphSr+5SPB34B/AhYpsQQ2MBxq9TbWj6XOBD2F83rY5/FK9IZ1L5bJr
+	F0RBzm4zjxIzXMnuWrFKA2vWJ4uBhxC4bEOhOB5III737sOLeb7YEWSXp/WbH5zbXqL9/3hkZxe
+	b7nreqiPx956B4iTfF9fBoxs26Bx7+bUliBHLq1dYVcXDUDjbo8wQ1nrGTtKYmhlPUr8S6UJURT
+	nb81l+QFMXum14jCKdrnBBZLg5/IAXIoHfSTVpVOkeGKp4ANT/o9fsv8n1aFv/4igAaAQ/5sqHg
+	VOnMF8QsCzoqDnF6Lw9r2CBhj/72ggaJ5OR2wUs87Xk4mmct004RB6//9XT/KR/wF+QO+pdJi1g
+	sS4+JIcHB3ldBBE5A8YasXWv80krD/FZarwiFfmmNHsI+Cym0qnj+X1G0WvPqYZ
+X-Received: by 2002:a17:90b:5291:b0:36a:5d1f:7b6 with SMTP id 98e67ed59e1d1-3933bd18849mr25980349a91.2.1786965782511;
+        Mon, 17 Aug 2026 04:23:02 -0700 (PDT)
+Received: from codespaces-a1fa80.ktkhmpmw22vebpok31ngjx2qsb.ix.internal.cloudapp.net ([23.97.62.112])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3954d2e64dbsm1953571a91.8.2026.08.17.04.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2026 04:23:02 -0700 (PDT)
+From: Triet Hoang <triet.hoang.dev@gmail.com>
+To: Markus.Elfring@web.de
+Cc: dri-devel@lists.freedesktop.org,
+	ogabbay@kernel.org,
+	tomeu@tomeuvizoso.net,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	royalnet026@gmail.com
+Subject: [PATCH v3] drm/rocket: Check allocations before use
+Date: Mon, 17 Aug 2026 11:22:53 +0000
+Message-ID: <20260817112253.26086-1-triet.hoang.dev@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <eb5a74fd-8db4-4ea6-8fb0-96ade2f3566d@web.de>
+References: <eb5a74fd-8db4-4ea6-8fb0-96ade2f3566d@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] soc: qcom: smem: Fix signedness bug in
- smem_dram_parse()
-To: Dan Carpenter <error27@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <an1toQ-acGR0kOWj@stanley.mountain>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <an1toQ-acGR0kOWj@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Ua9hjqSN c=1 sm=1 tr=0 ts=6a82dec8 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=3q-kQouqzLBrfUuUvD8A:9 a=QEXdDO2ut3YA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: -rmXMpxZ3kvOeJWUUp02VhxBTKnqGiwn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDA3NSBTYWx0ZWRfX6pLkOV9i4x/f
- pPY6iNyCbi/IVXD53cJPE7FICw2KDxScTHxTsObgqfXyYH89FR9junMIRd7x1WBcqrauelChlD7
- tLvjZkTilEQXRj0+Zqhfot1OpL6IECtekGNcOlSjq1HQAgFR7CoYSbNrXb4tLMLcfXdwqKc99ph
- Wyx1PBWPLnvP+qzKNBRFddnG3gzdpeDmhWGtrGhlTDDlFyqXODTVZ8Ynhd0m+bD6PIpOxd5Hckn
- FnI2oQtfqIpdfj9KocCPbWkG2v6ibhSFzZfhtw04tvAURAubeG0zEcoaUG8ozcefykYaZ8ssEXq
- ANQf1/3ho5JqcC/7LH3qJnXP5qD6eKynmrTAovZz2OHapK+NzjeVgNGYNLASJO85dtLz8f3CeMZ
- p7oJCYv6Iq0pQ9r5Wlt+qs3T4EwgcUz8XQtYTmIBxPnUs9ttXlcC4+M7s3ZmW9Mbz+z7aBe6r3a
- DXKRM7T/9kMOk24bQeA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDA3NSBTYWx0ZWRfX1Frr3JfGQEvD
- //OgYAZDi6IaE1hQWXsPUw077ENUWiyS0xfQXWfzhgft+ONUObmN5Eks0io/EMHxLsI8+01kMdW
- 6PFJigfnwDLjh3vBtuSrWwrXkmk/jJs=
-X-Proofpoint-ORIG-GUID: -rmXMpxZ3kvOeJWUUp02VhxBTKnqGiwn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-16_06,2026-08-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- impostorscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608170075
+Content-Transfer-Encoding: 8bit
 
-On 8/13/26 9:09 AM, Dan Carpenter wrote:
-> The "ver" variable is type "enum ddr_info_version".  Enum types are
-> dependent on the compiler but in practical terms here, "ver" is
-> basically an unsigned int.  It needs to be signed for the -EINVAL
-> to be handled correctly.
-> 
-> Fixes: 1d234eeafc56 ("soc: qcom: smem: Expose DDR data from SMEM")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
+Hi Markus,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Thanks for the review. I'll update the patch accordingly in the next version.
 
-Konrad
+Regards,
+Triet
