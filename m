@@ -1,166 +1,102 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C59020125F;
-	Tue, 18 Aug 2026 05:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43074B048C
+	for <kernel-janitors@vger.kernel.org>; Tue, 18 Aug 2026 06:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787032144; cv=none; b=PsE7qNXO8PBX/XRJkV5sSZmkuA6tgL2BFbJU9748YjwBpWARAWagZTRXTQ143pFmLgi8fBmG+kZr4rFMKLezBM+H0p9K5PCp6QVyYVrD2MUFf9qIFquUP1OD7ewmZPiMJsPuGdRqFGg2egf7/9o801kkPXe4nadEiloTqcM1Qsk=
+	t=1787034105; cv=none; b=K3s71Waf8VyLlT2yys9Fl7qpqTTVFmob8+F5IryscrkgHY660FHGelu51xL6YcBAQH4EGO9ZScxSxf7CIgqkFEFz/Wm0dV9TpkbBC/oKSeMIdjem3e6BuzeNR4jlVCeyl4RAb4uOTfgCMddHZT0ALBjdkdA07yn0febNfIJ5F4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787032144; c=relaxed/simple;
-	bh=pCBCtAiE+vvWZ1cnuOPDOCGP7CSKJvkCAtS/Lp6tFbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJtrUA6vikRQSr9yG+Zz1HnRxwOo9bdZNW5PooweohcVXIWw+zPD4oNNxlacwS+wA067IyzQVP6WWYw8qbt1Uk9XqrXiU7CQIlCSAsWV1Z6mjWGy4YdQg4ca+dMdM5v9ec31txEkjyqTwIGDrBGgCVyan/JcNQoPtUg0MXwYMNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZNU/HA32; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1787034105; c=relaxed/simple;
+	bh=de5t7izor8kRFwQYsOGL0q6swA5nwWxLfgCAJ7exkv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=THKO78xYvgsboMEg2eQJ2wtmqUt8kiCOCvf98Gh07pZMdO1OVyyPYx6NQfrqxHlZj4GR4nBaoQdh5RuMxLdGw/ROrcyLZHk4txm4mK4U59GjbcKI8EK4nvgwomYVx8goHPnU5vG5Sef8M6bEs3THmmJhPS+grv4mNRJFP8q3X4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QlrqySPM; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZNU/HA32"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1787032135; x=1787636935; i=markus.elfring@web.de;
-	bh=pCBCtAiE+vvWZ1cnuOPDOCGP7CSKJvkCAtS/Lp6tFbE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZNU/HA32UkLKutPIRif/hEYYFeiqbwQ7OeaDDRnSBE0bpt0rBB5Corf09vmBKCZZ
-	 tfLwW2dVAd7oeWXwflzXmlBaGayf5Xw3tG+8pLlgEwHdpg6/KUnl8qlaucRu24VPc
-	 Kd5MqWKuYsa4I2t8pc9fMaI2R1tH4GEjUUhf6nGy54aqwelDby8buZI3TYOqhbZPs
-	 940piOMoZAKHxQKQNGjinjWQz3m4np1qgT/gs7keYH6eyrd7OThEfyMfV2irD4xcJ
-	 UYKiHVNz1hOMbdWzUXbT9+seFecK5JL+sjms3Z3udXSp7uG8EjjSoG7OgAo4NhIxj
-	 hWMk9bQorp5gzWnjtQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mq1CC-1wZSs83vWc-00l8vO; Tue, 18
- Aug 2026 07:48:54 +0200
-Message-ID: <67dc50c5-19ab-4612-857b-59d6a850f76b@web.de>
-Date: Tue, 18 Aug 2026 07:48:30 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlrqySPM"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-ca88130e09aso2586817a12.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Aug 2026 23:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787034103; x=1787638903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yLs/RlrXlKm3gliodn6KiIGRLWy/mBk6EHfck2hwzM0=;
+        b=QlrqySPM248+wU2idl3YTftgTkYyKHHIeja36MQwtyA/rMtIUx7mAXInxnJC38ncv+
+         FBy81ELZQQ0S9TyzJ1+FcswdsRvB6F2A3oLASFhRtdtex2DQZ7vryRdt4P3ngTlBG0tZ
+         mZrXoQ4wMc3LS7hvIKICIDvzN2ic9992cwa8gech6bULLraHacbDW9AwvnlFWm2etO1S
+         elrPTzWZ0EXkg8CQhODCZl0m0lXNIstr35J0YxBJiJtyTAW0Jj0Qip1CndndhvRakTb9
+         yO14o8kbf/Kd2N14sFEqUFALuK6RYbDNLS4w9gjFQzqTiRMf5OmkV9vIFjJqcK0dSGmj
+         LRPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787034103; x=1787638903;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=yLs/RlrXlKm3gliodn6KiIGRLWy/mBk6EHfck2hwzM0=;
+        b=egadsHsRdKBYtbCE33CTWJH6xN7WdBv2wY9CBKbXnwnjIJzK516hYBpbyBZGDMiOxD
+         1BEn53xfFH9K2u4v4/kvWTjt4JxEcvvxjaqprUZ+ogr8dp3LpJmsI01PwsLqxBjvtylf
+         zCP5qvJXCfsEvovU+kR6ONuwVohIkARaoNHgR0YrhFr/KQGIHPl914mREWKflr/AINeR
+         psM55PAYt/4AqClruFLkoi8dwbRVp8gS1aLj/6swIUE/NtBdyQIPd4IhdtkBoZ4IwGyx
+         1tP4twoFil0Gxr5VwYhqdTk+vIiG88h+upSUtS79ARl7LJmFjaEW0hp2FOXGJBmQnTtX
+         5UsQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpLKTbgwownOybCF2F4zUT4HumLLXEKFujPmsjeUrSR4LyjZyKYTEl1J+yywtTtD+TTzVLFPXvNGz2edMakIq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyT+3mS1jLdHAxabOnS+XHFWow8lMow6NmhtmaqhPhXIX/BVmw
+	eQ2LjyLbesyKvgz0qTYsjapeEaVp+jAlTBScD2T3V98DTi49pjFPKZM=
+X-Gm-Gg: AR+sD1258cZATfCxXxkiAfixwLsB1Mjx7u0jPxxbWEav5GrtS7xXmieLCAoG2ocU24J
+	yyosq07XQmjwvQpS1DlDTNWbvpULEgNHAxYQrPmdmlwZEWjR2ly3YfZHv4UFvsMXohgQU81m4Fg
+	ca4Us9vFqUx/u+453wILpN3C4/C1nJjroKD+wfPz6p+3cxDRDixgd+Gx4cfThME4qwv1MvP5z9Z
+	J/sNTordTq/9jA/op2a28W2hmsKNSC2I9VM+O+boUtP4JMyc3dbKI8najOd4YFIyc9m2ldiWDBu
+	pfLvVa4D0KckRwafWRK0ziJNsZPY5P+fBjAnuahqnI/i0UE+kFKl8/XV6O8YuWxGoabPcN844ek
+	56gqdeDTGF6SDybEY9KyHDdPJxAtg3p+W3Flprqq2x907kGIfMqXuJn/p+MbJwQro4bHEyy7ogX
+	sMr2f0FK4iFPdo2ufirnrIECxSdrZylDqHLYV5cgkaU7l/Oqf3a8unKV1n0mClULDQInOg7aiHb
+	+0Ws4ErCA8l
+X-Received: by 2002:a17:90b:3b84:b0:37f:e326:6557 with SMTP id 98e67ed59e1d1-3955a3dae07mr4907995a91.4.1787034098391;
+        Mon, 17 Aug 2026 23:21:38 -0700 (PDT)
+Received: from DL2XHKPB4.dl.net ([103.63.104.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3954d2b85b1sm4859020a91.2.2026.08.17.23.21.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2026 23:21:38 -0700 (PDT)
+From: Triet Hoang <triet.hoang.dev@gmail.com>
+To: markus.elfring@web.de
+Cc: dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ogabbay@kernel.org,
+	royalnet026@gmail.com,
+	tomeu@tomeuvizoso.net,
+	triet.hoang.dev@gmail.com
+Subject: Re: [PATCH] drm/rocket: Check allocations before use
+Date: Tue, 18 Aug 2026 13:21:34 +0700
+Message-ID: <20260818062134.1634572-1-triet.hoang.dev@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <67dc50c5-19ab-4612-857b-59d6a850f76b@web.de>
+References: <67dc50c5-19ab-4612-857b-59d6a850f76b@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4 1/2] drm/rocket: Check allocations before use
-To: Triet Hoang <triet.hoang.dev@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Igor Paunovic <royalnet026@gmail.com>, Oded Gabbay <ogabbay@kernel.org>,
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-References: <d593bdeb-e6f8-44d2-a444-e9197a8ed1a3@web.de>
- <20260818013130.1482249-1-triet.hoang@datalogic.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260818013130.1482249-1-triet.hoang@datalogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KP7rrl5ZsiWitVg0Pnq5fRsQI0+k6pnD/OFD/IY1tDzFnkrOR7P
- TtRfMS3qEdtgk91jYe5ptAHU2PjNu4dKTelw9cZ2ekbTmh8T3KF/uJosWTJWkPKUZmur+d1
- YR5YNz/+cqpW27JIU6//DLM24TvLvBend0lZqCOJAj1pw7BRl3awxmSW06pMI6K7lNDLIU3
- SykL1v6yGQcAnYoI+U9Jw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+JrPqNxy5pc=;rMP7XkfAQr3xAtX/85CF9RcEnZM
- 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
- mNGl6mg==
+Content-Transfer-Encoding: 8bit
 
->> I see opportunities for corresponding collateral evolution.
->> How do you think about to apply the attribute =E2=80=9C__free(kvfree)=
-=E2=80=9D also in such
->> a function implementation by another update step?
->=20
-> I am not sure I understand your idea.
-> Could you explain more? This attribute is a new thing to media
-There are programming interfaces supported to some degree
-for the application of scope-based resource management.
-https://elixir.bootlin.com/linux/v7.2-rc7/source/include/linux/cleanup.h#L=
-10
+> > There are programming interfaces supported to some degree
+> for the application of scope-based resource management.
+> https://elixir.bootlin.com/linux/v7.2-rc7/source/include/linux/cleanup.h#L10
+> 
+> Would you like to take any adjustment possibilities better into account accordingly?
 
-Would you like to take any adjustment possibilities better into account ac=
-cordingly?
+Thanks for explaining. I am happy to continue working on this, but I think
+this would be more of a refactoring to use the new API than a bug fix.
+Furthermore, I don't have much experience with the new cleanup API yet, so
+I think it would be better to consider this as a separate change in the
+future, after these patches have been reviewed and I have gained more
+experience with the new API.
+
+Anyway, thanks for suggesting this. I'll take a look at it and keep it in
+mind for future changes.
 
 Regards,
-Markus
+Triet
