@@ -1,85 +1,83 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F6E407597;
-	Thu, 20 Aug 2026 09:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C01C40B102;
+	Thu, 20 Aug 2026 10:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787219340; cv=none; b=F9FbSdPahRbELSPjQLXzknoBjxN4l1BCKR6eM08IOd6kRinnWG+ufnS0dLEebIa7VsWyNP5LD5eLFRjP+55lZetfvmPIWo/aS5j2gjRDxeMa69w+3xzl8cV5FiZtxIiyz73f2/YFNzgRtV6K8nloMKMOKiBEHsza6c1HyKQIA7c=
+	t=1787220238; cv=none; b=cD6xBSvfYPsW8d+utVCBHhHeOAmQs2eDyISCxqxXEr6jigW57ffPVWt25t+Wt0MdYr9uchOi1tf1V+xHJXdXBCByqgCsG//zLY209SWL/ifYCT2pRrD678pAWVmoy7oyIkPFsM4JPo8HBsZGyBysxi12SfyGELemTwFHXfYX5Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787219340; c=relaxed/simple;
-	bh=qFyEa3K61Qwi+/Yk0CzGX6o5bMIVBmj5U3cBu6gEre8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kGtuVSDqEJbHmn2ROmIM9e9226YGeys7Hcq8YodPw+9Be6XeI0SBGVTDjBzASoSNKcIYacGYEvmWwFnmAeJnA2orbzPCivX+Nz7c5JvoMo+1Ou0aKn+u3nFr1crqURUg50bwlKqiud182HUo72iObZBje8IFTI2HP5YkJtP4wS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=UU6s6Bjc; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1787220238; c=relaxed/simple;
+	bh=YfWkLiaz9ZHV2GrHzLsP9+QGQNner8OTb18Wa83n6NE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=INVlXDx08PytJ2iJZbII5QiRhGSEOo+XIjacNOGuon1fQ5ch3HcPbBlchD8miqFleDVdQ0xSVYf4cRQFnHn99a/cqFHXss7yGzWWe8+5KOSYIb0dIotZhiVwYuYOwOvVmN0QVc08kNYIoSXCJozPbqTf1FjLttvu12F2d16Knl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=YDONABm+; arc=none smtp.client-ip=199.212.143.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="UU6s6Bjc"
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="YDONABm+"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=qFyEa3K61Qwi+/Yk0CzGX6o5bMIVBmj5U3cBu6gEre8=; t=1787219337; x=1788428937; 
-	b=UU6s6Bjco7pq6SqWhDWqk7wm17l7gtCO5gj5TP3ayouJRc7172ZOa8yKuSE9ECeNzWn0J5vyEOu
-	ojFIJIWQ27WX8/Qi5lwL5xnPKe/g8YCCmuTaaoE4VCrFVK5TdfXx3s7KpKSuCa+WF0wBuvZOYQnWp
-	VKmZd1s6HNOOsqwZFHQj1EcabyRS11/d5SFNi7PftlSciQgWxRLbBcssF1kZ9P6hVjXEgJl30TDbN
-	/PXr9aSOto0JOH8LNN6PFZ3UrjZetA2B8LLz7yco3b9/DnRo7+laHFxL1Suaynn4ts9YqcuIEuB1S
-	kHxEqnP7KlHdmT89rnIxKr24HE4To36SwSWQ==;
-Date: Thu, 20 Aug 2026 11:48:43 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
+	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wvqozRFiykwItQSaDE5EmngGOaM91IggubIq/e4GQB8=; b=YDONABm+c3b0mfHeWroEfYN5ho
+	NLo0kQK/UfPlEZr7Xsq+1lb0ToSJ5DkoUyTipG1blzXI1ZTskhXLGw+soBodsCPvuHC16DqtmabiX
+	VqUF8xzIfRLplSGrhF+UWFut2t4fsm9rr+mYKNTzFAimjZGEO8WOedUz17OoRwdYGi3jYIZZb3uAo
+	ILS0IwlMffO2U0oVSrscaKV83qXgdgDkvpLmB9ahTN/M/w838xoU9BnrbzePDSbd1sGMOdb/vYdQM
+	cOP8k56Pw9fjLGdEFq9oItrp0/mpqZngoUGnnCseHjYUSJLUgX4Kwxt+J0eFXp5IXx9FfVNKe7Cji
+	ygxc8Tbw==;
+Received: from pool-174-114-114-5.cpe.net.cable.rogers.com ([174.114.114.5]:57000 helo=sheena)
+	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.5)
+	(envelope-from <rpjday@crashcourse.ca>)
+	id 1wwzGo-0000000GkRY-3uE3;
+	Thu, 20 Aug 2026 05:41:11 -0400
+Date: Thu, 20 Aug 2026 05:39:29 -0400 (EDT)
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: 1298662399@qq.com, linux-gpio@vger.kernel.org,
- linux-omap@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, Grygorii
- Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
-Message-ID: <20260820114843.1b50783f@kemnade.info>
-In-Reply-To: <b610718b-3c9d-4417-b1b7-69f0ac15dae1@web.de>
-References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
-	<b610718b-3c9d-4417-b1b7-69f0ac15dae1@web.de>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+cc: 1298662399@qq.com, linux-rtc@vger.kernel.org, 
+    Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: rtc-pic32: handle clock enable failure
+In-Reply-To: <1f67f9ed-3e84-426e-a671-4baa3c0d6173@web.de>
+Message-ID: <66852c50-85fc-f5ff-46a4-5bd65e087c9d@crashcourse.ca>
+References: <tencent_7FCEEF77654C7D6B110DE49D2E98531A2006@qq.com> <1f67f9ed-3e84-426e-a671-4baa3c0d6173@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323329-1731101118-1787218794=:3239356"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - crashcourse.ca
+X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1731101118-1787218794=:3239356
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 
-On Thu, 20 Aug 2026 11:19:00 +0200
-Markus Elfring <Markus.Elfring@web.de> wrote:
+On Thu, 20 Aug 2026, Markus Elfring wrote:
 
-> =E2=80=A6
-> > Check the return value of clk_prepare in omap_gpio_probe. On failure,
-> > clear dbck_flag and return the error, preventing unbalanced
-> > clk_unprepare in remove or error paths. =20
->=20
-> How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
->=20
-About adding this to stable:
-does it bother anyone?
-Is this actually being used with clocks having prepare() ops?
-I do not see anything there. SoC-internal clocks are typically not
-so easy being rewired.
-To be clear, this should be fixed in -next to be prepared if something
-more fundamental in clock handling changes.
+> …
+> > Check early clk_prepare_enable(pdata->clk) return in pic32_rtc_probe.
+>
+> I find such a wording approach improvable.
+> How do you think about to add any tags (like “Fixes” and “Cc”) accordingly?
 
-Regards,
-Andreas
+  How many times are you going to ask this same question?
 
-> See also once more:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/stable-kernel-rules.rst?h=3Dv7.2#n34
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv7.2#n145
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv7.2#n792
->=20
-> Regards,
-> Markus
->=20
->=20
-
+rday
+--8323329-1731101118-1787218794=:3239356--
