@@ -1,174 +1,125 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EB941A91E;
-	Mon, 24 Aug 2026 12:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787572826; cv=none; b=t12O82/+w1AYPfhNFGidSQOd7svsKwHsd5f2TulMZFSknL4PfNQXqPBkV4K+zlkonSYqw6AKPXk+nxTQCEo820m85T+OPJ8y6sDuUP9QczkWpzOAaf+aHqM50Zs+D2xij3RkfnCAOxT7OTVYLn8OdEJjBPWqlQc+c06aJ6Tt0tQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787572826; c=relaxed/simple;
-	bh=62+RwwvwBs9flF4NhLotZyvHsTVuGBmcx8T5gxkggCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nlk3c2CJenOUDcT10JmMSIjYBJisB1o1xD+Fha0ae6ZQ0Lnm/pFfOF3oqOc7BxAmdlGPxgbqVTzFES1MkL9ElQwJq0ls8axSO71t68y9z7Vg2nvLFYwj+5tAk1BXDKtEPfNAIvphJAtSSjsazNrbdmSx87jgv1+Fp859sffWOCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nRCEMk+1; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4F638643B
+	for <kernel-janitors@vger.kernel.org>; Mon, 24 Aug 2026 20:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787603008; cv=pass; b=FkcZNli0yoTzwqPqUPuhUJcIwX9YSTuqvdJ2QYlxBbKJ1sOuQJGGr7GJQ3pwbT9nPrXZFpmzO99bvdDQBB7MOecp8aQ5jC8uptBgSPz98lU1qc8GQ2D1sXAHoKqMAiM8m6oA1dlfW0emJNyDfvuvTrRQeHQ52qp4a8xx4mtRCDs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787603008; c=relaxed/simple;
+	bh=5qs3LmMlxBH938LicuDB2dABIFNbxNYpIEl6WUqmYhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ioOu1JrSSr/gL8khuG2O9DAip7g2iGXRHrUo8b3QL1YtRayLAqPVSEoaSWxxVAreZuD/ombKAr9Uv4ZROAM5RsRUmNr6BV8ozTEhaiO2VJ12NYUhNQsea3eBLUTLM6lnsdf/WBaoUE5BMtDY5ze3d6GmNVNcQo9ME2vZmzGmQ0o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kypXOMdg; arc=pass smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nRCEMk+1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1787572821; x=1788177621; i=markus.elfring@web.de;
-	bh=62+RwwvwBs9flF4NhLotZyvHsTVuGBmcx8T5gxkggCM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=nRCEMk+19YYoSnrn4/FSd5GyIGXTcKB0v+NJpXj79tR8/cyI92jLgMqNHc7z8Klj
-	 wex/0Gwhy2w4ngXyZUbCweIna1sodJUQtzmd4G3LyalYaxxeX5B6mQzXbXaZEjuif
-	 wLw+sz9G3vsnwWnG+klui/PaGDBXf8hOpo3br8Wpy0Bk/YKDaDRpa7aajizg6dDFG
-	 TUUQgwBUIa7wJC7Chy/6xANQ1UZjbEYUYrLMPDfgSI1zSYPQs1qZQjGLbKg2GSOE8
-	 2LBu5C57hLw19JxZsv9I6RYLuS6qVzSznpIL1NJ6QKlbdMtL6m0r4BOX77eIT8rGY
-	 pV6fu/OBn2ANZpAhfA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MHVaf-1xBtcS258z-006g5B; Mon, 24
- Aug 2026 14:00:21 +0200
-Message-ID: <4e6642f2-c42a-4ccc-9e6a-51b7c9e05e4d@web.de>
-Date: Mon, 24 Aug 2026 14:00:20 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kypXOMdg"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-69fab5a852cso6696883a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Aug 2026 13:23:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787603006; cv=none;
+        d=google.com; s=arc-20260327;
+        b=sh0uHnq886uVepQBly0PhCx0gcPbPmx9HceIzw21iE9xNmkipDnrff9AsvpXadYpgx
+         N3TiTmmAmWQPQIT/0+w9z5OOC/ZVf6++Yc/b9/84MdrF6YorgjYCfftmYZYUo4DG9M8I
+         P0uXCQJlpURjIj3CmUZBpWZGQJDVj+TN0GEAv0Hcai/dJ5x11FEvtpQ1PIEdOCz1fnyh
+         h5XW6pDd2kx7C2J2T/XfRUj9mw+MqCGXnAq0R/bmfaN6nweZ8J8MggumN3o/d+8x4z/r
+         2MwA+42pOcJf6hUHyX8jizSFy9xQlmRjfOFPiWbfXof/MmWpuJIK8rGu+XUF60rL74FY
+         bd7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=KpQrKPvXFKOaF0Tr+8jrYooYDbrbtiMXAGBA3TVJxiA=;
+        fh=qH69xUoRoLfzLxsgGdXc+ZzP2PP82hy6sNFuboQDE68=;
+        b=dJiCCjEHPWoJDc0yRUDSgMbPSyLqla1pnSkTgnTWl5o9xgaLra0411nTpNDaKeBUSu
+         SHY/uix6t8YYpE4kgB/jdKb4qj+mHlxAB/UiWac50PfOMtUBU45fwVMrpnxLjyBhS+qi
+         /VJC/7IUS09Vr+owz5eDTDxNak4EWR4IZbCp/r/r2jdpTYtTT6VRMBhbgGc7lW5Mcwu7
+         aoqaA+tBb8UkCBwGvSxWxhaqlLtJp1fx/xcSA/i74zE5NiYuy17jl88uUR4WCS2WJbta
+         4h4pfXCE6DOZhgTv1iY2TPCgejX/fVfAeq6l95gS5sWjshCsxPYur4fqs75XLosnv+10
+         eJxg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787603006; x=1788207806; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=KpQrKPvXFKOaF0Tr+8jrYooYDbrbtiMXAGBA3TVJxiA=;
+        b=kypXOMdgOxl9dUQxPYu+/od972hZGuF4KAPE/Mj3RWSoX416qMLiUliPfUgBaCUb5P
+         wAAz05ePDrNYXIyNhQIRm/Vv35ShgAXbLji0gVnqXmSPomLoFIL9wOB2D+3ruso3DIUw
+         MBUJfd0pPsrVqW53oQPD2l/Nr+iuKKEQc/XO4ijUfOMnQmZvXyzhI3nvrZ5DwQUULft2
+         U3NqGur+W6H2ggdM9RDeyKYCmLfzec/PLy5Wqx9uWzIMAThBqhlYnPvQEVhg0p7/45RP
+         pRAc43PBC6wr/mlh4uR0dDWCPZJHr00FOasIIDKaPxMyA+nB6pPSCAsKKJd6rZSaKKPn
+         KHKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787603006; x=1788207806;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=KpQrKPvXFKOaF0Tr+8jrYooYDbrbtiMXAGBA3TVJxiA=;
+        b=C+7dCdFYlB7+ixiYTXFI9gtgGe+AOYxN65NsdwVHg5Yu5yLeEVq+3uhzc8eQg/CMtg
+         XjWuFx6RD0/Huyyxhy3CMq/8oAZp9mKskow3383qzFFURFK3srTDcfnlfIVmEdmEuLXZ
+         gU8PQ0xNkUJRTJuwOeJUitrglQ7B7+IO2Y5PeTcOYICTHOAQjWiKqT75JL0RhwWEA0No
+         TLzLNn1GuRSbO9eod4eHidSwmj5Iu/oYqT6I34JD3xr1WFR7Gr9d8oWrarFxdvG5GTjA
+         LuPvqqH4k+Gfv5LvWNol+cLY7doG4KVE6jI88zz95qp2V8fAo3FNjM4iFSSPCo7hEYq0
+         MZaQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoX/tAdoN0Jd69Xuj8xnLQz5dd/Q+/BEF9gEJ9Y9l9ikw+bu+CN3W53bO6DS0H+HDp9hnWbQEHqVV4qJlor7Z0=@vger.kernel.org
+X-Gm-Message-State: AFuF++ksYT8vNT4+DvXVLOFsnseM2ckI3tixstfTg/fSlt+omP9SrcVu
+	3hXrvf2DwJ7LHV1XDBEHo5PyN27a9MLOyFpTh4Ab2FCRyZc3xpt5o2bDDrknpfa+9lDpB2cWyaM
+	VdGmLNWPeVQogIC16hdqqm/D39BzCKBMfJg==
+X-Gm-Gg: AR+sD13cX7b8v013I9cH91MHNX5EmQh7Ods2ur5M+JVY7Anev0dKiLEiiRPBXIuGrgZ
+	xviQDSQr9BzNEiKD8HdQn7HZFyAjXla5Qwss8XpkdGTswF2lqQlS6BVlbhT8/++LMk7pb+deja2
+	lrB8aHFEqKuYgCM12v7w2JD7oPzH2KkNtGPv2w8jy6eTWRCuoUlFe1t07aGIwoLP24N3rYB/eCa
+	CYmjH74dmF/Vnoye3jPeZAK9ASB+Ee9KzEMzlRjQC0H1rVhfr8D2VCX8kJZq4/u05kQKl+TuN0v
+	fTJNYtjzpGHmXcPdv6R4KQc9jPshT3CsHMpEd4D3EPFdRkQ7EFRCmJjyTUZ82a1pgObQ+45fCze
+	Vm5YWPLtVMuxNRPxnumB9HTyD1MgNlsCf/R1vwt9vERt6mxvOxqjQzBjIeuq+Ds06XO0OuSXIxm
+	SZwNoBySAy4+nNKP29ZjLn4986t79sSkcjjYcCwUc0u4QBo7EGolw7r7I=
+X-Received: by 2002:a05:6402:52c5:b0:6a1:29ca:681e with SMTP id
+ 4fb4d7f45d1cf-6a5c41023e9mr1167670a12.7.1787603005383; Mon, 24 Aug 2026
+ 13:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: arm-cci: fix device_node refcount leak in
- cci_probe_ports()
-To: Robin Murphy <robin.murphy@arm.com>,
- Manush Prajwal <manushprajwal555@gmail.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <6a887550.f7f62383.10ed1b.5875@mx.google.com>
- <5bd32eba-881a-4395-841d-909536262dcb@web.de>
- <566ce354-88f0-4e68-86a4-a8d68bb65254@arm.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <566ce354-88f0-4e68-86a4-a8d68bb65254@arm.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20260823044900.11466-1-rosenp@gmail.com> <8735371d-b466-4262-818b-f854c83e23af@web.de>
+In-Reply-To: <8735371d-b466-4262-818b-f854c83e23af@web.de>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 24 Aug 2026 13:23:13 -0700
+X-Gm-Features: AcwNN1UsgemHpYLmLNmLi-9SyskohQPDLhvFFG24vc582B61NUGfhIv6kTo3RAE
+Message-ID: <CAKxU2N_f+spFKbvvPDkh1VLLqrmSzBCZ9kvbsFDc2SRibRTGnA@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: bestcomm: ioremap early
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org, Frank Li <Frank.Li@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0V8cm89j+8+JIvAVff8UlBokp1Une7vqwO5JSFvU1FFDn/RsAap
- h+dnlg+X5oWn7mI6+OZ6r7HA/KlljaRkZPyTbux8FTdp+uHor6CK2mueeSAWeoXKTuUrhui
- T6kCBPHpYJfYeX1rQNQ0F0/D/NAIteDSbPDSAC0zsooqkN2waGCIz15ll+DOWCeF/U1u+7Q
- 7hGzRjZEFQhArv/Qc9xgA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FYML/a6VJwI=;06Vq2be0Kw2lMipAMwq3I6cd51e
- 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
 
->>> cci_probe_ports() has two device_node refcount bugs in its
->>> for_each_available_child_of_node() loop over "cp":
->> =E2=80=A6
->>
->> How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D an=
-d =E2=80=9CCc=E2=80=9D) accordingly?
->=20
-> No.
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/stable-kernel-rules.rst?h=3Dv7.2-rc5#n15
-Have you got special imaginations for the bug severity?
-
-Regards,
-Markus
+On Sun, Aug 23, 2026 at 1:00=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> =E2=80=A6
+> > This also fixes a resource size mismatch between allocating and freeing=
+.
+> > From sashiko:
+> >
+> > >     release_mem_region(res_bcom.start, sizeof(struct mpc52xx_sdma));
+> >
+> > This is a pre-existing issue, but does this mismatch in size during rel=
+ease
+> > cause a permanent resource leak?
+> =E2=80=A6
+> > ---
+> >  drivers/dma/bestcomm/bestcomm.c | 45 ++++++++-------------------------
+> =E2=80=A6
+>
+> I would prefer a clearer separation between manual descriptions
+> and tool-generated data.
+> Can quoting styles be improved accordingly?
+what do you have in mind?
+>
+> Regards,
+> Markus
