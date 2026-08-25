@@ -1,125 +1,167 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4F638643B
-	for <kernel-janitors@vger.kernel.org>; Mon, 24 Aug 2026 20:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787603008; cv=pass; b=FkcZNli0yoTzwqPqUPuhUJcIwX9YSTuqvdJ2QYlxBbKJ1sOuQJGGr7GJQ3pwbT9nPrXZFpmzO99bvdDQBB7MOecp8aQ5jC8uptBgSPz98lU1qc8GQ2D1sXAHoKqMAiM8m6oA1dlfW0emJNyDfvuvTrRQeHQ52qp4a8xx4mtRCDs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787603008; c=relaxed/simple;
-	bh=5qs3LmMlxBH938LicuDB2dABIFNbxNYpIEl6WUqmYhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioOu1JrSSr/gL8khuG2O9DAip7g2iGXRHrUo8b3QL1YtRayLAqPVSEoaSWxxVAreZuD/ombKAr9Uv4ZROAM5RsRUmNr6BV8ozTEhaiO2VJ12NYUhNQsea3eBLUTLM6lnsdf/WBaoUE5BMtDY5ze3d6GmNVNcQo9ME2vZmzGmQ0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kypXOMdg; arc=pass smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8B23016FB;
+	Tue, 25 Aug 2026 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787644607; cv=none; b=E2CK/h5gI89CrnIFUICv25EVXyFB3Mc+cjpRxarSycnuV/HFKvUGeh3dHz3fNjIsxIO22ureI8L3I5xEF1ZAgG6AwzSU3O/UrFieewMNRkmugvnodsft3pmQGzhnkde9gOmHLpbr3ZpWHpGYPAHRSfMcrJM2xOs1Ntji9lY1sZQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787644607; c=relaxed/simple;
+	bh=6lK1jAthmvNfKpxkkGalDbp6FwxklR+Ej33YeJTUSh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HKjnlyRzJgsFhmC+f7upZUhGcJ46eD1biLZLUPyXd5JqCv/M/6Q2HkUPEMYLkbiC8o1dWWVauezPAlgeveUZUMEgd804g9Qcg3XiiBp+e/P/XVWvWU33mi1eeBkW59OcUAi+2t0FKT6eCQaU3GtG9i7bXlcokKwEIx11vnTjbEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k2lNj4/O; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kypXOMdg"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-69fab5a852cso6696883a12.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Aug 2026 13:23:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787603006; cv=none;
-        d=google.com; s=arc-20260327;
-        b=sh0uHnq886uVepQBly0PhCx0gcPbPmx9HceIzw21iE9xNmkipDnrff9AsvpXadYpgx
-         N3TiTmmAmWQPQIT/0+w9z5OOC/ZVf6++Yc/b9/84MdrF6YorgjYCfftmYZYUo4DG9M8I
-         P0uXCQJlpURjIj3CmUZBpWZGQJDVj+TN0GEAv0Hcai/dJ5x11FEvtpQ1PIEdOCz1fnyh
-         h5XW6pDd2kx7C2J2T/XfRUj9mw+MqCGXnAq0R/bmfaN6nweZ8J8MggumN3o/d+8x4z/r
-         2MwA+42pOcJf6hUHyX8jizSFy9xQlmRjfOFPiWbfXof/MmWpuJIK8rGu+XUF60rL74FY
-         bd7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=KpQrKPvXFKOaF0Tr+8jrYooYDbrbtiMXAGBA3TVJxiA=;
-        fh=qH69xUoRoLfzLxsgGdXc+ZzP2PP82hy6sNFuboQDE68=;
-        b=dJiCCjEHPWoJDc0yRUDSgMbPSyLqla1pnSkTgnTWl5o9xgaLra0411nTpNDaKeBUSu
-         SHY/uix6t8YYpE4kgB/jdKb4qj+mHlxAB/UiWac50PfOMtUBU45fwVMrpnxLjyBhS+qi
-         /VJC/7IUS09Vr+owz5eDTDxNak4EWR4IZbCp/r/r2jdpTYtTT6VRMBhbgGc7lW5Mcwu7
-         aoqaA+tBb8UkCBwGvSxWxhaqlLtJp1fx/xcSA/i74zE5NiYuy17jl88uUR4WCS2WJbta
-         4h4pfXCE6DOZhgTv1iY2TPCgejX/fVfAeq6l95gS5sWjshCsxPYur4fqs75XLosnv+10
-         eJxg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787603006; x=1788207806; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=KpQrKPvXFKOaF0Tr+8jrYooYDbrbtiMXAGBA3TVJxiA=;
-        b=kypXOMdgOxl9dUQxPYu+/od972hZGuF4KAPE/Mj3RWSoX416qMLiUliPfUgBaCUb5P
-         wAAz05ePDrNYXIyNhQIRm/Vv35ShgAXbLji0gVnqXmSPomLoFIL9wOB2D+3ruso3DIUw
-         MBUJfd0pPsrVqW53oQPD2l/Nr+iuKKEQc/XO4ijUfOMnQmZvXyzhI3nvrZ5DwQUULft2
-         U3NqGur+W6H2ggdM9RDeyKYCmLfzec/PLy5Wqx9uWzIMAThBqhlYnPvQEVhg0p7/45RP
-         pRAc43PBC6wr/mlh4uR0dDWCPZJHr00FOasIIDKaPxMyA+nB6pPSCAsKKJd6rZSaKKPn
-         KHKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787603006; x=1788207806;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=KpQrKPvXFKOaF0Tr+8jrYooYDbrbtiMXAGBA3TVJxiA=;
-        b=C+7dCdFYlB7+ixiYTXFI9gtgGe+AOYxN65NsdwVHg5Yu5yLeEVq+3uhzc8eQg/CMtg
-         XjWuFx6RD0/Huyyxhy3CMq/8oAZp9mKskow3383qzFFURFK3srTDcfnlfIVmEdmEuLXZ
-         gU8PQ0xNkUJRTJuwOeJUitrglQ7B7+IO2Y5PeTcOYICTHOAQjWiKqT75JL0RhwWEA0No
-         TLzLNn1GuRSbO9eod4eHidSwmj5Iu/oYqT6I34JD3xr1WFR7Gr9d8oWrarFxdvG5GTjA
-         LuPvqqH4k+Gfv5LvWNol+cLY7doG4KVE6jI88zz95qp2V8fAo3FNjM4iFSSPCo7hEYq0
-         MZaQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoX/tAdoN0Jd69Xuj8xnLQz5dd/Q+/BEF9gEJ9Y9l9ikw+bu+CN3W53bO6DS0H+HDp9hnWbQEHqVV4qJlor7Z0=@vger.kernel.org
-X-Gm-Message-State: AFuF++ksYT8vNT4+DvXVLOFsnseM2ckI3tixstfTg/fSlt+omP9SrcVu
-	3hXrvf2DwJ7LHV1XDBEHo5PyN27a9MLOyFpTh4Ab2FCRyZc3xpt5o2bDDrknpfa+9lDpB2cWyaM
-	VdGmLNWPeVQogIC16hdqqm/D39BzCKBMfJg==
-X-Gm-Gg: AR+sD13cX7b8v013I9cH91MHNX5EmQh7Ods2ur5M+JVY7Anev0dKiLEiiRPBXIuGrgZ
-	xviQDSQr9BzNEiKD8HdQn7HZFyAjXla5Qwss8XpkdGTswF2lqQlS6BVlbhT8/++LMk7pb+deja2
-	lrB8aHFEqKuYgCM12v7w2JD7oPzH2KkNtGPv2w8jy6eTWRCuoUlFe1t07aGIwoLP24N3rYB/eCa
-	CYmjH74dmF/Vnoye3jPeZAK9ASB+Ee9KzEMzlRjQC0H1rVhfr8D2VCX8kJZq4/u05kQKl+TuN0v
-	fTJNYtjzpGHmXcPdv6R4KQc9jPshT3CsHMpEd4D3EPFdRkQ7EFRCmJjyTUZ82a1pgObQ+45fCze
-	Vm5YWPLtVMuxNRPxnumB9HTyD1MgNlsCf/R1vwt9vERt6mxvOxqjQzBjIeuq+Ds06XO0OuSXIxm
-	SZwNoBySAy4+nNKP29ZjLn4986t79sSkcjjYcCwUc0u4QBo7EGolw7r7I=
-X-Received: by 2002:a05:6402:52c5:b0:6a1:29ca:681e with SMTP id
- 4fb4d7f45d1cf-6a5c41023e9mr1167670a12.7.1787603005383; Mon, 24 Aug 2026
- 13:23:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k2lNj4/O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1787644597; x=1788249397; i=markus.elfring@web.de;
+	bh=6lK1jAthmvNfKpxkkGalDbp6FwxklR+Ej33YeJTUSh8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=k2lNj4/OE6uMbCEG0kPGMH5tLIBDEdXcK2maL4c4U5Qam8BRFLxcBKOx/z2APXZr
+	 kXLcPZTY05fqPd1MfOg+ttE2sYBV9mr37TC6usRt9az+u7ESNZc493K7JmsjBh1M8
+	 sQgrokAotOTv4mJlnZXTtOts8YcvfJttsjMRULRgrf/+QH0lAPHuHkG3+ar4+7JMk
+	 tlM4kTeI2I7GPKmgtf/3bXhRIbGlgmaXex/mP+//vQRU5QWVSDUuFuCWHykVj0tVQ
+	 hFqB6bJhWqxjI3xCRtRtneXwhA89GFI00Y7PYGTKDiKZ88VETtHlD3hWdJeAN6kMR
+	 bIXRK6231Hwa39APAg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUU6E-1xP8aq3gO0-00O5TR; Tue, 25
+ Aug 2026 09:56:37 +0200
+Message-ID: <abb67a8f-6bbc-4855-8928-be42ba9a9538@web.de>
+Date: Tue, 25 Aug 2026 09:56:35 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260823044900.11466-1-rosenp@gmail.com> <8735371d-b466-4262-818b-f854c83e23af@web.de>
-In-Reply-To: <8735371d-b466-4262-818b-f854c83e23af@web.de>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 24 Aug 2026 13:23:13 -0700
-X-Gm-Features: AcwNN1UsgemHpYLmLNmLi-9SyskohQPDLhvFFG24vc582B61NUGfhIv6kTo3RAE
-Message-ID: <CAKxU2N_f+spFKbvvPDkh1VLLqrmSzBCZ9kvbsFDc2SRibRTGnA@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: bestcomm: ioremap early
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org, Frank Li <Frank.Li@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: dmaengine: bestcomm: ioremap early
+To: Rosen Penev <rosenp@gmail.com>, dmaengine@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Frank Li <Frank.Li@kernel.org>, Vinod Koul <vkoul@kernel.org>
+References: <20260823044900.11466-1-rosenp@gmail.com>
+ <8735371d-b466-4262-818b-f854c83e23af@web.de>
+ <CAKxU2N_f+spFKbvvPDkh1VLLqrmSzBCZ9kvbsFDc2SRibRTGnA@mail.gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAKxU2N_f+spFKbvvPDkh1VLLqrmSzBCZ9kvbsFDc2SRibRTGnA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:HGxB14I4eocJCyc9LjdsXayWQeGcBRBtXGhlRIKJrP5uGyby7r6
+ PeZV1ULS79FP6MkuS7G8e8dE8RbjdIJ5+Xtyd417V7lIiTkOHqCaqHVpO4iphHnowV2Oh3R
+ gjSp6JkwNy/H3WU+nesuetUPJTEJvS/WnLE+msUL0s+PKLZrn5za6GsrKv7C64CycXgzwzm
+ d11uQO7BwI5KQlY7eOIMA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BZ3b8MclRVQ=;io/0QmmB3C4n24ShMEnk1/uz9+o
+ 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
 
-On Sun, Aug 23, 2026 at 1:00=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> =E2=80=A6
-> > This also fixes a resource size mismatch between allocating and freeing=
-.
-> > From sashiko:
-> >
-> > >     release_mem_region(res_bcom.start, sizeof(struct mpc52xx_sdma));
-> >
-> > This is a pre-existing issue, but does this mismatch in size during rel=
-ease
-> > cause a permanent resource leak?
-> =E2=80=A6
-> > ---
-> >  drivers/dma/bestcomm/bestcomm.c | 45 ++++++++-------------------------
-> =E2=80=A6
->
-> I would prefer a clearer separation between manual descriptions
-> and tool-generated data.
-> Can quoting styles be improved accordingly?
-what do you have in mind?
->
-> Regards,
-> Markus
+>> I would prefer a clearer separation between manual descriptions
+>> and tool-generated data.
+>> Can quoting styles be improved accordingly?
+> what do you have in mind?
+Some possibilities are known already for this purpose.
+https://en.wikipedia.org/wiki/Quotation
+https://en.wikipedia.org/wiki/Nested_quotation
+
+Will markings be added to selected text parts?
+
+Regards,
+Markus
