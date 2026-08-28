@@ -1,108 +1,71 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE043769E8
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Aug 2026 16:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E387239281F;
+	Fri, 28 Aug 2026 17:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787933383; cv=none; b=A7f+7ZOjRWnV1EDPstSdYid5W9G6OOCNH4C46DgADOgGwYeui7iy79fIFWSD/bS4v6jT9wG5vy7y9MAuoje5aQIR1oh/6kv9LZxPD7i761KTk+5Ub5s66wjS59LppNnqTnU72AKAsXAf+fbElctUkL6iMAUPYusjg1zvf7RTXaA=
+	t=1787936995; cv=none; b=BU8brh6A5MQYYG696Teik3usr7/nJD2frWFKZrW1XYHzma9t4xT30S+K3z9qy+yaXmQfN+6os4qIOekKAMqjB/teFbbWrlZ6Y9Uqy5i4CWgINXlquECrHwTKS+xJHZeLZraEh2HnEPAWh00wlDoB0RZkea8LEpEIyawr10Pvm5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787933383; c=relaxed/simple;
-	bh=htt0EsCgKGEOGwB4NXwVuw4GDD6NZdPqsmXB/Uz+4WU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=q7lyMpKmMMPB5NU63XRojvp6F05IHoLqR5k8SCyBM/tCeY3gKk0TqmUg96giSeKvoUNTfcqYWFSU0U0EkQP50WMX4ygXu0UlEsu8uCxAbD5fQ5v8n07FOnxD31XxDPai3zn09eIf1yv3Bzwb6xvx0koT8iGJ/f9pE8sfMuR5wx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=VhGhyoPX; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1787936995; c=relaxed/simple;
+	bh=pVPQSnQG9PjzlkGq7RWlB7oabPvWWZJVJ6yWCDm04Uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMKyLnvCduAsxXhH5Qv8S30802xPc4nbR2wKtzglfDtGszPm8CZR6eavFMRUBC7LJ75r6kdaz2kKmK8bO9p26x/7u2VHzJD5YW1h+V29kHUA8+rmlOG8ejw3auNx2z6la3lMg5/Jc7XsqgS21vVCJMLDoMkLiZgBECOT6+ogSY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVHF+8c3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="VhGhyoPX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=VTHvxHk58Hy9yWVXIJFZsnvlgi5O/jd00ePVFdBnr0M=;
-  b=VhGhyoPX9L+7CzXTXGHbOFrxpBH6SVq10MGUobgSMwe/lDAaevk46boq
-   CJZggOTS3XeSBiWeFqL0jGWfwDN6QPfd4BILk2UB9geO5Y0ns0/FemOxs
-   CqBXIBYlPYRdoD0KUERCQRQ9LAqOfFJ05gz5ZQpvVq3Nu0YVcZsLckdKA
-   U=;
-X-CSE-ConnectionGUID: FDz94qMtSJ6RQ0L/wZIqaA==
-X-CSE-MsgGUID: AXz4ZtmBQbOUCGb7Eb4Mnw==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.25,248,1779141600"; 
-   d="scan'208";a="292056086"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2026 18:09:37 +0200
-Date: Fri, 28 Aug 2026 18:09:37 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: Improving support for replacing expression parts by SmPL
-In-Reply-To: <3e20eaeb-797e-47e9-8dee-a6c97f360a46@web.de>
-Message-ID: <1adbaba0-d3be-a8f7-54ef-933a4fe02250@inria.fr>
-References: <9e729258-a720-4b8f-b0f0-e84f3a984aef@web.de> <a0b9259-987b-1c92-2e86-3409ecf87e@inria.fr> <b2fd77fe-fc97-412e-a5d1-69b88e27f61b@web.de> <47b6b35-2cfc-b5e-f96-8ec6548cd9@inria.fr> <3e20eaeb-797e-47e9-8dee-a6c97f360a46@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVHF+8c3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE7A1F000E9;
+	Fri, 28 Aug 2026 17:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787936993;
+	bh=6Aw0cBMrpNirPI3cH25b5UaKv4Edjd11Y8c0yDuaRsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=gVHF+8c3sWofXUjXDg3Swg2NrNtF5kSqtIsRtWc3pI9AcXqoTmi7FjG3iPymd/Jse
+	 3/TpdKG151zc6NmyQKolVZWhQmNxJwN7UjA9idO9M2eoea6udOACKc7VnXYw+cRS1R
+	 zYCvtti28Ojgoh/yfpSRhZcaSyPrbRCuo+EUEQ3MJ1G1Q+N9bPkOpHizcnIkDKpja7
+	 N2laplViVLeKPIoFoJ43N9PpgeGbyq8E0jHLBeE2RnuYcPKesBt5i7a+119JKZ/ypP
+	 +bClyg4c8rQIc7+APpp+GTgoQ+1tjzq4D7yOk3H8ljCAc/u3X2GbMIXAUXy2lGUzSs
+	 6oatHF3ioFwxw==
+Date: Fri, 28 Aug 2026 19:09:50 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Bence =?utf-8?B?Q3PDs2vDoXM=?= <bence98@sch.bme.hu>
+Cc: Triet Hoang <triet.hoang.dev@gmail.com>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Markus Elfring <Markus.Elfring@web.de>, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: cp2615: handle allocation failure
+Message-ID: <apHAu8HnMD14c_Au@zenone.zhora.eu>
+References: <20260816161751.24840-1-triet.hoang.dev@gmail.com>
+ <20260818111703.19604-1-triet.hoang.dev@gmail.com>
+ <05df77ed-855c-4897-857e-0bc2439666d4@sch.bme.hu>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1769865536-1787933377=:104528"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <05df77ed-855c-4897-857e-0bc2439666d4@sch.bme.hu>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Aug 28, 2026 at 02:08:19PM +0200, Bence Cs�k�s wrote:
+> On 8/18/26 13:17, Triet Hoang wrote:
+> > Check the result of kzalloc_obj() and return -ENOMEM
+> > when the allocation fails instead of passing a NULL pointer
+> > to the message initialization helpers, which would return -EINVAL.
+> > 
+> > Signed-off-by: Triet Hoang <triet.hoang.dev@gmail.com>
+> Just change the -EINVAL to -ENOMEM. This is something which has been
+> discussed before [1] as a potential to-do.
+> 
+> [1] https://lore.kernel.org/lkml/CACCVKEFXOKhXmF3rcmKQ8-aMFZJLZOf+imsuBYKAQsWptrJG6Q@mail.gmail.com/
+> 
+> On 8/19/26 08:28, Markus Elfring wrote:
+> > * How do you think about to increase the application of scope-based
+> resource management?
+> 
+> I second this, this old code could use some RAII modernization.
 
---8323329-1769865536-1787933377=:104528
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+is there a managed version for kzalloc_obj()?
 
-
-
-On Fri, 28 Aug 2026, Markus Elfring wrote:
-
-> >> I got the impression that some expression parts would be replaceable.
-> > If you expected it to be replaced, you have to specify with what.
->
-> I would like to achieve something also for another more detailed SmPL script.
->
-> See also:
-> https://elixir.bootlin.com/linux/v7.2/source/include/net/pkt_sched.h#L128-L134
->
->
-> SmPL code sketch:
-> @replacements@
-> expression …, dev, …;
-> @@
-> (
-> -container_of ( link , struct tcx_link , link )
-> +tcx_link(link)
-> |
-> - READ_ONCE ( dev -> mtu ) + dev -> hard_header_len
-> +psched_mtu(dev)
-> |
-> …
-> |
-> -refcount_inc_not_zero ( & r -> refcount )
-> +p9_req_try_get(r)
-> )
->
->
-> Markus_Elfring@Sonne:~> spatch --parse-cocci /home/altes_Heim2/elfring/Projekte/Bau/Linux/scripts/Coccinelle/list_inline_non-void_functions5-net-20251114-adjusted.cocci
-> …
-> minus: parse error:
->   File "/home/altes_Heim2/elfring/Projekte/Bau/Linux/scripts/Coccinelle/list_inline_non-void_functions5-net-20251114-adjusted.cocci", line 8, column 21, charpos = 2685
->   around = 'mtu',
->   whole content = - READ_ONCE ( dev -> mtu ) + dev -> hard_header_len
-
-Well, it seems that you have not provided a complete semantic patch, since
-there are ...s in the list of metavariables, so I can't answer the
-question.
-
-julia
-
->
->
-> Regards,
-> Markus
->
---8323329-1769865536-1787933377=:104528--
+Andi
