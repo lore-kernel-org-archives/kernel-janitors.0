@@ -1,105 +1,115 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920572E7370
-	for <kernel-janitors@vger.kernel.org>; Mon, 31 Aug 2026 06:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566583CAA2E
+	for <kernel-janitors@vger.kernel.org>; Mon, 31 Aug 2026 07:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788156295; cv=none; b=N7Szuib3l0P+BGjAvzc2OJ6jY+xaDMdYW1KxYYUJpgHzEaN9+Gm+XRo5FoSJyBHy5WW3j2NnvAKP9vG0veLkKJH2g6UI7o042QEZuAGYsW1Sf/SuT8ZQHqrlPwQlBQgeF2+jUYQgNo0MzQlSicoE3kc+ZEodeV/nmcU6CEPEj08=
+	t=1788161906; cv=none; b=LeP0GjTJ4XidtQbPpVITzRkig2cTS2ycZHW9IXRn1Sm1B0QTU7/IjGGhulr2+FRA3wVLKNe/wVQXJN7qosTC8eOCae7M0SXzkg0/FZcxwa6FegQ3qEcbpoS/yu3j3/3TOHUdPznFjDfwmGUs0d0dHsHKNm0r6++x9z1m0f1lAGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788156295; c=relaxed/simple;
-	bh=5cyvu/196NUJ+2V0psX9wZ9QOGyNYgCM/yD+0cVP05U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvGP7uTpQBjBjhdCV2riUZwght51U6TtOo0Nbmn6XG+/qJSlw5AswL3RKgTFtKMfPFSruMFGljAPQeNzo+sEXlkK91fIwefD68fhQndsHq/RjW6miS1Ry3L8jdrD9rZqNQX5rDlspyprxWJYxSeuH3mO3yHNvQS8a7a4ikA6WOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LXsqiBii; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1788161906; c=relaxed/simple;
+	bh=5GrRjcaI03gjaXtG0ojiV5JyfTxjAwxYCZIcBdozizs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pZ38iygFxDXkzhBYMA8VeVxYsYlDJqfrjqvYcIQnCqZ+TMIlfZVFDl0j44Vqb9vzfekYzpFmexows3Nizihj5KFzWUKR5QFaQMIHWUsCvEbHaOVwYc2peU0Uu2r3WsREyce6QAtCcrrSz/SQw6zVAbeB4Cqjr6sIBhiOHm16Nko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20251104.gappssmtp.com header.i=@monstr-eu.20251104.gappssmtp.com header.b=RgzrKENU; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXsqiBii"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-398b3d66515so1546642a91.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 30 Aug 2026 23:04:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=monstr-eu.20251104.gappssmtp.com header.i=@monstr-eu.20251104.gappssmtp.com header.b="RgzrKENU"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-c207cb16cf5so503011566b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Aug 2026 00:38:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1788156294; x=1788761094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0PJ2y/FfJS/eSstN+8fj99mvu+UkmdEPeEPTUdQQoxo=;
-        b=LXsqiBiisdP49HQeTm2gbM6aguyg860Y1iH+4pxr1vNtsYgocw+MTOZbinR7Fq9wxg
-         hcuSsCwFTpNaVk+iXobSpUlwPi96FMpqrd8BLTmJ/kWfH47XK6O4rASIjcFdnkkO/xww
-         UzQO7jU3TC6c2fw7TPKIFbx5PqJ1ZQxc96uWpSBYSz6E4JV6kxtk2Rynms/AUpR99Xa7
-         NRa5wTcFef2me4bIUG/pa9QZKvqqHi4b7Xsbz1hwV2Jyrmh3QTLYPBo2IQuT2BKuHlQN
-         2ac93bs+66AjNkRHsJg6ozEaajNlib6QZ58+g65XbnXFKOdapZOeLm85RI4Ntf+QVSMo
-         ui5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788156294; x=1788761094;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=monstr-eu.20251104.gappssmtp.com; s=20251104; t=1788161902; x=1788766702; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0PJ2y/FfJS/eSstN+8fj99mvu+UkmdEPeEPTUdQQoxo=;
-        b=H3rc8jC8o6KXwYRhn3ScXaoAQCd2NM6naDJqthT7HqBvR8WfRjzLHPHQw/HXwf5A0k
-         jT2LxVkXSvpyEAUB42efnxieMBfp9MC9O51opOs1YlCTVuxKl5ZKNrkXia3EC8jJz0iF
-         /D5dFZpes7MpRRgB2l0NjMsd4Ovze5jSn8iGzI8FyZRYQQvv8I6e9YMEXyFmYtOa67zW
-         tfVN7yGmWJaBP/UQJ1jS091WZkT0i6YFn00FoPPdFK8xzeP8HzDcMgG5ttF85B3KOBnP
-         BwJzFCOGMENJ0a2rLdOqIdCF22wRDVkAPNwWwx1zzMOEqY1Ih+l5W4wV11Xw/ew+UfEu
-         flTA==
-X-Forwarded-Encrypted: i=1; AKwUvBzynF6Q9mdXcaKQiLf9a1RsD2hiDFfXt+f1CyzRL20HfR7gejWrhihOM6trrt65xlVBIq0LE6nwSVl8NTjHKUs=@vger.kernel.org
-X-Gm-Message-State: AFuF++mKNjc5/WfneELkkfAYeYqticUbU0R3rdHwT+LFMGTGEo0Gn8cC
-	D3S8/Z54eusbMNlCnMLKqkUoZPVzytSa0le25f4+PNO2gPBm5ujOthp2yIGtXPsjPLo=
-X-Gm-Gg: AYBFou2apcaAHEZ7+uPNgGUdQEZuDo8uzgocDGXbclrtF6jDX4vGz08bDF/miqYMmPW
-	Jt2d64wv/mdezNl54rBfd3Q2uUGVt+kIy1YfCpgfBDNzt4jCgOWxNyT34zXrGW7GQEonf/7ENo7
-	bpbLNETWmUGNKYkGiLoueJH3T/ofUdFyTDTgGl9Wg1lP3ucX7+JUfc2XowoYKiwXNQ7bFF3r1tb
-	bk7E6An2y3FBQ4lj/M4PrZ1O9ZDddIWEhtRNJvDBD60D7huDBtJNc3iEpk6AT7lPMUlOdTxqbop
-	hG07amLdq7DplN4GeTHn91WH2cV6o1MU8lc4iCSW4d+ychrcr2NnM0usE32l/8PNYkJAILCYd0M
-	bOq8gcFY/oNeyhnjbaP8dw0HxfWLxXxvH1zlxUk1K2r5S4ADME/KpiNOgirJqR6+ofKWII8BBUI
-	i1D8KZfuoV4Z+W97yy89fz287FpHvz7xa8PypOCgGXqW2SwJxS45NmKBuQVnttXQg=
-X-Received: by 2002:a17:90b:1d05:b0:396:65dd:4093 with SMTP id 98e67ed59e1d1-396d0ff519cmr37395830a91.14.1788156293562;
-        Sun, 30 Aug 2026 23:04:53 -0700 (PDT)
-Received: from localhost ([122.172.87.224])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-142e41837c6sm22805738c88.11.2026.08.30.23.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2026 23:04:52 -0700 (PDT)
-Date: Mon, 31 Aug 2026 11:34:50 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <rob.herring@calxeda.com>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Eli Gurvitz <egurvitz@nvidia.com>
-Subject: Re: [PATCH] OPP: of: Fix potential multiplication overflow when
- calculating freq
-Message-ID: <apUZgrCjLxN-T031@vireshk-B250M-D3H>
-References: <20260826131957.1063765-1-colin.i.king@gmail.com>
+        bh=YwC1H5E6QITqrCXuXOQp3c3SXNsKMl+a0m0u7ImLlsA=;
+        b=RgzrKENUwvrnjjexpy+WBcsj29+rT7OtZGpgxcj4ZJlPZ9KeXDw6khod1VjOH3lYJH
+         84Iv67PLlQwGrr/Liq5obNplSuoSOG/YxzwgrnpVNHl/dT+jffBNhPZ10djbw/9aAMhF
+         gX74psnY4Q7sT2S3TcGNlJX0srfgCYWojFnzc1Vu7s2k7E5CdO+nZGp+mVx2oiD0Inxb
+         buzAZ2Ag1EjbXAsoYfJhrd9+ttRRTs74+i0+ngIQpU6TbskwW3HcsNJYMi+Oef9IMwK5
+         4OgpxGOAStSZxcVwhf9o0CjftxD64hbuyrL5K7V7N/0O7FUzPum5fyJI2AA6GqZTm9ys
+         SS/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788161902; x=1788766702;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=YwC1H5E6QITqrCXuXOQp3c3SXNsKMl+a0m0u7ImLlsA=;
+        b=VjhilKyg5xf4FUz948BvN7UUjiUMt8aa+urPHbkftwzvkPJvJwVLcdgTj5Kwz36D9H
+         uHY6xzlCWQqUdhwU2uBe0chycfU4EM79l9BA3Fa9vZ6KGkQq+nR8cvGls1NI4TqTzZRe
+         Vv++IY2/G9VTUrP51gsINFZ2QNyL9iI0Yo6auqMxn/ghBjYF11xbn2sVM3mI2G1wzjTE
+         g3OlS/2xoLAnaVZjlQXXtGyntb4orh5Puzv6+u48BjztuZ9t0dbriGAwgKTv16ymlrCC
+         izAzN1pNO6Tpz+iNXFyRljS7TzLN1yfMTZZrDI/eiXNlqo21wKCi8vTEBEYxyiyCxedo
+         dK4A==
+X-Gm-Message-State: AFuF++lRSPuEPYKBk5GFjD/t1OTumK3/rRJDTjPmGhjgbdmnmryjROZo
+	00SNNsq0xwSqUxSheAt1YQrc0VrMlSrEbnbZytC/yk+M+DqRn1nxgt1ApF1Xu7odEQ==
+X-Gm-Gg: AR+sD12z/ratLvRw4xuML5Jejf4lQSTdemBRrGnqfKG/HLJ/ZsKnzSEwhKvMsgP+y0w
+	XWFRNsJqfWzZEaZBt5uweNMgDtLr/aySI4GlexBzds9z7Pk/v1+kN+az/ZiWgGsH0pg85XIJQ/x
+	cYpySr3Em9p/+SWCCS38xYqZ7twKd69vcNz/0ZbArD+jNrUY8UeLpnpoT/MVYcGzYLInljXo34v
+	QG4X+XiE18tngvZXf2MKiphNEIy7K3j2Hxe+SQW34VRz2ApU7Pcv9PYolLTgJ7CgdUjzNscl30S
+	Sj9G2gm36fMOP5dJ5OgioxlD4CqYItbGyNnbiQWHXQJ2JDuh2XSeZxcoGddJC2/aWmxGCoUT3t4
+	5a6AFVw5T5CipDLllXgyGaJOyDWkiUyjgz74mZ3kYlrXuUrgBqceHBA/E3snorL/Otci88eO2ll
+	Z/s6+Lrd5JcnztvBLQ4UzlOHjf8chUARpjo6wIqqI+GuD56yMJ5IXu7UtwRKmI59FGw5WXopzN3
+	c9wEwktjqA6w6dKIOj1rzB4YR2fUY59A86uTw==
+X-Received: by 2002:a17:907:1b07:b0:c12:5a0e:3e0 with SMTP id a640c23a62f3a-c25571a8fb4mr1559731766b.19.1788161902399;
+        Mon, 31 Aug 2026 00:38:22 -0700 (PDT)
+Received: from [192.168.0.105] (nat-108f.starnet.cz. [109.164.53.108])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c255f1b28f6sm368630966b.39.2026.08.31.00.38.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Aug 2026 00:38:21 -0700 (PDT)
+Message-ID: <4b70d099-b8f6-4e96-a946-6333b1d64bd4@monstr.eu>
+Date: Mon, 31 Aug 2026 09:38:21 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260826131957.1063765-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] microblaze: drop unneeded semicolon
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260801191002.1383835-2-Julia.Lawall@inria.fr>
+Content-Language: en-US
+From: Michal Simek <monstr@monstr.eu>
+In-Reply-To: <20260801191002.1383835-2-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 26-08-26, 14:19, Colin Ian King wrote:
-> The multiplication be32_to_cpup(val++) * 1000 is performed using 32 bit
-> unsigned integers and hence uses a 32 bit multiplication; this will
-> overflow if be32_to_cpup(val++) is greater than 4294967 (which is
-> very unlikely at present). The result is assigned to an unsigned long
-> (which is a 64 bit value on 64 bit systems), so fix this potential
-> overflow by casting the first operand of the multiplication to
-> an unsigned int.
+
+
+On 8/1/26 21:09, Julia Lawall wrote:
+> When a function-like macro expands to an expression, that expression
+> doesn't need a semicolon after it.  All uses have been verified to
+> have their own semicolons.
 > 
-> Fixes: b496dfbc94ab ("PM / OPP: Initialize OPP table from device tree")
+> This was found using the following Coccinelle semantic patch:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> @r@
+> identifier i : script:ocaml() { String.lowercase_ascii i = i };
+> expression e;
+> @@
+> 
+> *#define i(...) e;
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
 > ---
->  drivers/opp/of.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   arch/microblaze/kernel/cpu/cpuinfo-pvr-full.c |    2 +-
+>   arch/microblaze/kernel/cpu/cpuinfo-static.c   |    2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 
-Applied. Thanks.
+Applied.
+M
 
 -- 
-viresh
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP/Versal ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal/Versal NET SoCs
+TF-A maintainer - Xilinx ZynqMP/Versal/Versal NET SoCs
+
