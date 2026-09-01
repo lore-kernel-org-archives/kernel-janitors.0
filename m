@@ -1,62 +1,62 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451E142CB1C
-	for <kernel-janitors@vger.kernel.org>; Tue,  1 Sep 2026 15:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866942E40E
+	for <kernel-janitors@vger.kernel.org>; Tue,  1 Sep 2026 15:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788275217; cv=none; b=GAKb0GhZMbVJGiy4mIPrBoJVhU86eG0v8rLBtOXM3+Z1Jsp2QaZeoD44ij0XSjjt0Cio2/z3G1leVXMu9Wyfi4mWgnlngku027y4gPQiLv7FywDid7GEfYld6qOcQAZuPXBseu3EQ93PrN3W2Xi9FCoM/naCJHdaboa7dIcWhoI=
+	t=1788276229; cv=none; b=hCMd3SQXHUGYiXAbXEAerOiIv3A2pXMu5ctDJ2xMsJhd0NU3P0V26xPTjyfgkEH1+VdJZorXZ7oQbALlTIa5JkPHWKBwwrTUKUZQ5+FLhqOjbMM5c4fNFnFy9EbcHsshTI6mhsEguKMwsdz6Sof89pBGrml+/A9SeR/g41kxIec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788275217; c=relaxed/simple;
-	bh=ixWA62zuTBRe8aIMP6azGm614OYOMuCWdpAVuIjhaf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SrUZ7jPwPgkwctNMDsPGyALjjrC3Wd4twAwr69Dc5K37fxVB0ZUiN2a0GHgxK5ij4siLqI/v/z8zeqnAf8PIvss88TJdN9BEMkUeE42okSfXLpB0gZ2R6ocJqLZhtAmYhSbfNDQEuDxpFTm4ynO8jZMV7LVeJU0vAMG4QPImYJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUkvw6JS; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1788276229; c=relaxed/simple;
+	bh=cGU6lyNoVJA0l3zK+w3g2OV6gZSCjdm/6KuHK0XdBjU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LFy5BxmoOlhzLacOtyRX2b9OGr2waQHHNbqaVhZyhcnxdAfvZs5vlf/sN7ekSdy2WIQu5+Z52afXbOXU7NrSoZvps+kNjQgib44tV6ibC3X31ImsT02YUkQvMVF34Z6qMaANkn+XtIEjA4dHMTfHQq3j7HlKzyRyH1h8N6CJEp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FoQnTqWM; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUkvw6JS"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4995b0343c1so48745555e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Sep 2026 08:06:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoQnTqWM"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-495590dde14so49652935e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 01 Sep 2026 08:23:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788275213; x=1788880013; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788276226; x=1788881026; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:sender:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=PIhxiLKzSpy+3m2603jhfgBC54nQi3N4mrjaoTx15Vk=;
-        b=ZUkvw6JST+56/W1F46p0dDTm4/Tskz7n8aVRms9qBLJQToHHmcC6kQOTVM/Mn4g4Jn
-         Q23luGF3rPByA2LR5gvs2JYgcmjW3S1usXfqC/D42y0sBrERdD5NMqHUYucdKyW3p1um
-         wQ7X6bfqqXNQLse/3r4vrlEmAAu4DH4RMt4kxRUgrWnd+dq2txjrho6gyehs/KJBxwyw
-         4ewfoWbssUGlEMTRiZ16Cp0NviSx4gMe6SxnrH9Mzl7/KVwY293sRGKYxIQc/L/ZIKQO
-         dHnSnmgY9BVSsuZg7RLUzU2hED8ERGVOKyJg2hg4yaUTs+/TlcSjdtbPuYYsUVE2AMj6
-         z3rg==
+        bh=K92Yl4E57wBJs/vOzI7nSASvxNXveg4UnerIhBKPiZw=;
+        b=FoQnTqWMlcmR+/MGDSwdAhXlCoVi9vHz8NqDPhJ2FB59Ipnaxa7LKqKI4Iki53XyLE
+         bTRleqLEjAmTB3TCILzfimQz0/2Q4iN0dJnoig+NdAO3UDukqs7Up9+gqnCWx0KUur8N
+         v9lfLxP+ZlvGLMaIkOdX3x70hwNN18NQV5OT7Fcul+4rBiytTCpaNEpK9lG6CLyV19ZU
+         uddH9ALxv2TGu7t+ArQ4KGjYS9fdCRpseKFctGYQNS+8uAizpcBPhB8pcKbp4G7+1M8r
+         rCxGdBh65A7tD+Qj6kw3UOO84+KC88aMuTY27SIkouM857DlI6JD7MrRli9yjzjjG+Pp
+         mGsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788275213; x=1788880013;
+        d=1e100.net; s=20251104; t=1788276226; x=1788881026;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=PIhxiLKzSpy+3m2603jhfgBC54nQi3N4mrjaoTx15Vk=;
-        b=MXLADJxrCRJA7qUQehM+2ALyF0SgRYYLt0alI/rcPK29atXuB8IZcCW4MVKgrYx4Uq
-         YR8SPNpFAvZSKVI4xQiBvE1nB+8RjCKIuF4P6nzu4Z/xUllNTgmSafmz+LEgqUAmWtFX
-         N6L9DRJDbDZ0CpfzIrhD9kTQSOiOIZywgi+tuEKLrXnfzWVsDu/Rs1SZXxHtIR5JwZaJ
-         b0wbhi/IAfDQW8vT59k4rWixF8Pyp9geMXRJoXA4n5nwGEIlypu9KjM7U7JcPI7x3Uwo
-         TqV4YA6tAUZjfWEMmRIPR2cAOzXjbTS8HSGtTZxaBNfnaEx4fXggWlpKkQTnhSrlzJqD
-         gMqg==
-X-Gm-Message-State: AFuF++mD3mp/A9KVSUFZ/w0aobFzTfRdLfH4/pnGXkzlDq5p8FdJImG9
-	JgEi4PWib5PlYWpAvxH+kRdFiAbyIhAIl8ctrwCyYDXuhsHvFOjTQJLX
-X-Gm-Gg: AR+sD11ZsstPtdiDvmmGDOWvuEVEZQr4CkzTJeXSaJwUFRGjKjAK446H4k8e8DhQKvS
-	FdB9Q7jBvRSEJqJ8BKaMS7Z8liljlUswG/aXKRKsxhhavuSWjp/K9ZLODsxvB7p5J2ctUUwmzIm
-	pCQ2MckbmpQG7TFLu9WbuOFEDuZDJByeE5KTtNyaOGfS2+luCiFBdr/tPDlzzMirTWwvy9pFjNC
-	swGn6/OK9We49rGCwwsJxfrrFXM3qHFlfx9WBMx4IvtAPUuj0OMpkxw77Xgd4vMS8XOBKLIb/eA
-	dy0ya8ZGdMTIbPWdARCghC7ruEVz6EFQV+yJDDrVfA8vhzcBtHuUiJRPlLPZrIgysHP7oqx4Yj7
-	h9KemnpOHZ++EQl9gEgrmpYCi6u+lC7Ln6B9J7RZl/Na61e9WW99AY0eq5T4kwbtNqn/lfUdwPf
-	U2rOeG/ZB312todN/OqYNz6gvmi8iH8YffAmUyExBFcKbJjt+S6GnHpkY3VAHenpS8mp93QbeV4
-	Zrzp9CPGQLgnJYlhQCbImgPycTbkbGfIhLhTx49kRVlgRZjwvXS
-X-Received: by 2002:a05:600c:45d4:b0:499:7219:122f with SMTP id 5b1f17b1804b1-49b91c1ebd7mr491856785e9.4.1788275210457;
-        Tue, 01 Sep 2026 08:06:50 -0700 (PDT)
+        bh=K92Yl4E57wBJs/vOzI7nSASvxNXveg4UnerIhBKPiZw=;
+        b=gtqxwaxXRUbGciuymuyaj+7noWXC4NZ+349QOmELyIV7E15tRhgSxwzAwbpcEw6Lm0
+         KaGSewkhxyx30hYUi0nIszo3rSIVHeUxfMRSvTGVX86yrKnzI1uycIlKCS01OqNPpo+K
+         ApQ0+hdyP+irLB6k+MEbI1CzSCkeWYKMFHDQbFkF+IYYDRPGtF1KlMCBRTPEUwHoUE5+
+         EhxEATNgttC7f0k5GL133nDozLgd8qdNq+Bv4QhJtBM49xDcu5R5wGRLgVyAW7BhdzsE
+         XVcbZ6g68vCqw718eFGGRTpmHhl/+gxUt0b+KH0Crc44w1XOu21ppyATk/L3r/6e1sTU
+         Gwkg==
+X-Gm-Message-State: AFuF++nXipxEjb00EOEymm10EFp9lXzfj6fzvKAC+qUE4wiMDAZ3irRC
+	slOywTgPVEm6APPGuV62n54Nf20BqLbS1OFTsZvUpgRLms8C6MDBHCef
+X-Gm-Gg: AR+sD12EdixliZpxT3TSO134O+IDZAyVOX+zfp2pQ7cN+JlxhdUL4n8rtH1xusr/XQu
+	2fxKqI/Zsh/mmxG63oj2XSu1avdTalAZYbW1mcUP/Yb+gj4mI5fl38O4Nv5ord6m2c1IYA5dWEn
+	H1WOV8y7YS3F32qM7eRIQS9gk0w2jQt33Xg4NLeB4dsykYqp8EYzJ8z0fPohYG6Il1pJ9bazuyF
+	Pk9InuB6aYZGtlz/HtUpUpwrvpFVIDlaK8wJ0AmD5tixzjHsCoDBtNZ+GwIQV6bdijNkrX17QGQ
+	FbNxYuyaNtTyGc6YNrWMT3PS7PIAfGmmPoY13VU03qDFMY+aJjxQzDi6+CSzMq0ng/v1n08nJ3V
+	CSLKoR95p3BHLgo5o5Gwul2yPB04NBTUvPbTOT46upMiHvWOCDcRg9z7+0D7g07/TtC+EQClTjy
+	7cYVAx68iFkayakiySCBwyVI0l7XzMsFZtkWZ00KT64y8xLCcDCW7aEnETwAJfHSw88KZKxoR1L
+	sMGh/88y1JRjrPlchYZhncyvSk1wpve+oUrgekPSb+AmsM71MfB
+X-Received: by 2002:a05:600c:524c:b0:49b:9161:db26 with SMTP id 5b1f17b1804b1-49cdc55a9e5mr137399155e9.14.1788276226146;
+        Tue, 01 Sep 2026 08:23:46 -0700 (PDT)
 Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b955e7906sm303172635e9.1.2026.09.01.08.06.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdce3e04csm67182305e9.10.2026.09.01.08.23.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2026 08:06:49 -0700 (PDT)
+        Tue, 01 Sep 2026 08:23:45 -0700 (PDT)
 Sender: Julian Braha <julian.braha@gmail.com>
 From: Julian Braha <julianbraha@gmail.com>
 To: maddy@linux.ibm.com,
@@ -79,9 +79,9 @@ Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	dmaengine@vger.kernel.org,
 	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH v2] powerpc: remove dead 440SP code
-Date: Tue,  1 Sep 2026 16:06:45 +0100
-Message-ID: <20260901150645.1199097-1-julianbraha@gmail.com>
+Subject: [PATCH v3] powerpc: remove dead 440SP code
+Date: Tue,  1 Sep 2026 16:23:41 +0100
+Message-ID: <20260901152341.1219343-1-julianbraha@gmail.com>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -105,8 +105,13 @@ This dead code was found by kconfirm, a static analysis tool for Kconfig.
 
 Signed-off-by: Julian Braha <julianbraha@gmail.com>
 ---
-Changes since v1:
+Changes since v2:
 - cleaned up preprocessor condition
+
+Link to v2:
+https://lore.kernel.org/all/20260901150645.1199097-1-julianbraha@gmail.com/
+
+Changes since v1:
 - added historic details to description 
 
 Link to v1:
@@ -146,7 +151,7 @@ index a14758426dd5..1ff5b2ca3ed1 100644
  #define _ASM_POWERPC_ASYNC_TX_H_
  
 -#if defined(CONFIG_440SPe) || defined(CONFIG_440SP)
-+#if defined(CONFIG_440SPe)
++#ifdef CONFIG_440SPe
  extern struct dma_chan *
  ppc440spe_async_tx_find_best_channel(enum dma_transaction_type cap,
  	struct page **dst_lst, int dst_cnt, struct page **src_lst,
