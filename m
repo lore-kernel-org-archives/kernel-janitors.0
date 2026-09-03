@@ -1,85 +1,67 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953D03E0749
-	for <kernel-janitors@vger.kernel.org>; Thu,  3 Sep 2026 19:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10264F6467
+	for <kernel-janitors@vger.kernel.org>; Thu,  3 Sep 2026 19:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788462406; cv=none; b=teHwD9rrR3fk51RarYkkW1UGIWF/W8Pl4ytnqWVJ11PKST+uA55R5zfRxfOcV7xE0JM6TBR+uQisUUEihemCbGn7nqMBa82o1W/ZAPgwQ2+q8ze7Kb9DNuKhNzfUc6nrYk+ys6mAZkdAXkJMVCq+mBXDgMT4fIBtfPYZMOt1d/I=
+	t=1788463896; cv=none; b=jVH1yeNPv8bpwjiwFgXWBqnuRtQ5HJPUoy7xKYzvbDFiqAxTPU+fcF4qD/63+yetxTaQRbpiXpVce6VVVIIy/+xgdyC385NGyXLcLeQe9+n1JS9CNvB2AVgP+ugTm0qlQNIKrVf5YJ9eT4JTmHg/4RxjSEgjxGAq+z9ffOhf+ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788462406; c=relaxed/simple;
-	bh=fY7oQw8c3LKHlU69NMdT27cOAg14tbfxLSzOFE9RJ1A=;
+	s=arc-20240116; t=1788463896; c=relaxed/simple;
+	bh=Ih9leD956J6d4ZrWAgzKX6hjO9je2M/Bu0DEpbOSkck=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1MxEz/ejAFlj5D7EJpaP78qZMQqaztxTSL1L4IINXPxRF9ADypVHohjYNScG74Tht0gG9wsRPm2edlJNxuuBP0EgtyYKNo7djDK7PSQDMIibNsoYbWX4b9kurO2qROGaqPXFrHWajsakF277MSDiq6O5c+oE3maUSUXysC+FsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=huxNDWXr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CYflEeef; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 In-Reply-To:Content-Type; b=CV85xzCX57m7piM2UK6zgv2Sxyrqqp+VpEETZ53An7Ym0znIjjIKHadyMFeTI1Su5Sz3R/UUrx1Q2W3WnFb0FaI/5PU2GuUumnVn29hJWA5r43DO7w5s9bWPUBj1VQOA1WnZ/8xOhFF/sXYQnN/PFLtFq907fz/gVjuJbdiy6ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDuFVGIR; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="huxNDWXr";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CYflEeef"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788462393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JyoPKwWPVR6am9+jaZNykBIgFNjq3alkuLbTD4euEoU=;
-	b=huxNDWXrwXzOKKjpRuYa9Vif07x5hJtxPLuT3/wScjsKKx6RpfBSrgkVmoFnrg3vWM5mKA
-	kuSoeMrGsN0QsKV4eZTxDkZM09eS/B2dpUNB2ndq6URdYI9exFsloqHmyniH0TjcL93uie
-	T6wESOJrC5S3Bxw0FC/YgJNfJ/P3pwI=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-244-ECaVepfrNY2aQsKMize2ig-1; Thu, 03 Sep 2026 15:06:29 -0400
-X-MC-Unique: ECaVepfrNY2aQsKMize2ig-1
-X-Mimecast-MFC-AGG-ID: ECaVepfrNY2aQsKMize2ig_1788462389
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93771aa0379so38640985a.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Sep 2026 12:06:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDuFVGIR"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48444ec4fe2so180449f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Sep 2026 12:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788462389; x=1789067189; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=JyoPKwWPVR6am9+jaZNykBIgFNjq3alkuLbTD4euEoU=;
-        b=CYflEeefHpR8aTsSQhh6/Xn4TGyxEvPbYE8HJZQIVIlU+cVOvkHj2/bSZt/Y/lGohN
-         Q+UvZO6XmJ7OkjxFNaoQhtJaey0XRlf7XLysLCmFplppAHJBKNYjSuNRDOYIiTyNFqXx
-         IojmTa6VRR/PyZpKhcvRm99NTUSmlF3NXfH1Vfg0iIyUPYVFymg1FeFfyIZQf3gwdZTg
-         ejkofHbQiWK/ScOgLPeDKxMyaALosHA0STUrPC2TSJscqVa9eZsLBAvRmmQKaa/66F6e
-         /h4NLHZP2lbtoplf9tR0WvcBfzdBpv5neXfpq0Ig4qumMli1YPeYaorkswCTUsXdTCoU
-         198Q==
+        d=gmail.com; s=20251104; t=1788463886; x=1789068686; darn=vger.kernel.org;
+        h=content-type:in-reply-to:autocrypt:content-language:from:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Ih9leD956J6d4ZrWAgzKX6hjO9je2M/Bu0DEpbOSkck=;
+        b=dDuFVGIRfiIzEPdSdJMK7uKVcsuV8Xu4HbBDm44zcGO2Yyv/97fIjKRLSBmcRc+J7s
+         LbmMTmzcb/EPkMvjajZG7VTWuy0c/02CIK/diIUjTsG0uzP7xf8Q012t4BYDM66k/Rz9
+         BbdpdiS0Wg1L0XRBbBGJd3QCnJ4hTejoIL2IAjkOfRa3nJOicy2paEBR0buS6mZGAkD2
+         G9PBiBFlij7U40f5F3F+eYoo9xHqCBNqge3UXYH5CkMfLUN68vBEGaxaMTLsUZvlp2sK
+         ZB8de+1TQczp8Na/vGSAXoefFxHbkdmD2JgoscNdYwIXrN85Uui3Pp5TGih7rE1URGmE
+         ikOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788462389; x=1789067189;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=JyoPKwWPVR6am9+jaZNykBIgFNjq3alkuLbTD4euEoU=;
-        b=L9ObEUDNyIAK82/DZk7mQyKEAxBxv5pCtXl8G3xp5+6Vbc4vf6FmmWpEO/q3U2EpiV
-         n1gTuS18HrAswFCRvjz7d/P2N+6NdeQ9TmA98CidIxGoBkQq/Ui2yMrGkAhNvPGcSHi8
-         omujgxwcRm2Is7orcpjIvHfRV+TSixCGkv4XqWMum/qsMax4/v9Jlow2cJtB9QB90v6K
-         fvcynNtcSAH+q8rBJjjoEOM7TAhfa3fhRBYF/PWW8+224QBqk86e6tugimyODGDQq+WM
-         TN9dpuXlP0GgvUuvsW4NDz73K95EP6w9yIjevIcxraPCGr1f0uLgVFMwz9Q0YPQBzj3Z
-         9ssQ==
-X-Gm-Message-State: AFuF++mNxLVuvYFq3CYwxvk+KzoERPf4zA4ewARNf1B09PYvDk0amYpz
-	1doXj86AxXhNJsMMZrXPDjzOoajNmhfUr6kbIFMZv8wpsAvw8GtraOHQU366z+lH+32zNEVv47G
-	td6XKV29XQvpB1nEkBqcSqjNHxlspMegARWr05XA0PYBpiNHdyr4dxz9pCrh75xXBVomlZp4Qgj
-	RqAgt1
-X-Gm-Gg: AYBFou0tlXb9Zrxb8zEX2xsUx52xKRsMLA2prqKeIgUBYpTvnySvOX43ZYiWA02t8rz
-	zkLq1uVAeDfx+wTqzRGlPuVoLK8ojS7LlQ4jTjc7RZdE5S+ksF5MHn4xXVkJyaZVvczftvHPKrY
-	wz+oavn7349St6iDozQJCtcBppMB3W3uzFdY/Ls45e5LAuPGt4SyCnuWctzMYnZmhoBek/mm/kl
-	x80j6I2a1EdUns8WFKZet1jhfhRhd2T7ctvfpZoWdMCSTwcCKXt6IZy1DB4Dns0fopd79bBqkMv
-	TlY9ocpBGWjwRFhJSmoVhBj4L3B0euze3LkfX2Xz907kpTA4BRvbfvPgI6eKF8dCeeFpdFLWnSP
-	kEfjghm6ytX/UXqJUcMXlUnz6sy6yWibBfNVRcOpz//l+F0rO
-X-Received: by 2002:a05:620a:394b:b0:939:1459:efb2 with SMTP id af79cd13be357-939804008ffmr68369985a.24.1788462388848;
-        Thu, 03 Sep 2026 12:06:28 -0700 (PDT)
-X-Received: by 2002:a05:620a:394b:b0:939:1459:efb2 with SMTP id af79cd13be357-939804008ffmr68360185a.24.1788462388230;
-        Thu, 03 Sep 2026 12:06:28 -0700 (PDT)
-Received: from ?IPV6:2600:4040:530f:b400:d348:ae32:97a6:8a0d? ([2600:4040:530f:b400:d348:ae32:97a6:8a0d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-910406496e5sm1340806d6.11.2026.09.03.12.06.27
+        d=1e100.net; s=20251104; t=1788463886; x=1789068686;
+        h=content-type:in-reply-to:autocrypt:content-language:from:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Ih9leD956J6d4ZrWAgzKX6hjO9je2M/Bu0DEpbOSkck=;
+        b=JtxNwRkGi2lGrzSsvp9MVCnwoSA5n9Lnmlw70pTJPlLbhKpcMV0PPxRWSWoybB6B42
+         cr6a19Y5CicoGprhzsov1IZCxbahHrEC1OE+K5EQCLHpGqjTLlIX/T1VLPdC8S2CQ1Ip
+         lbz5L1Bc43s+boT6fKPZX6LlovrcqNKkZlU00sJJYe4vnvx0PBewSZyyR1t8WfASxyHE
+         fe0BOf0RRa6jaai03H0T4cOOXYzlwQJb4TUwr2RS7Tyx1EfmpSM1A/gsMFPpeuvqA9az
+         TGDXpJXC6gK8mFkNjHymRvxIQN/JC93iURpkPf2mMDZPhKoG7XVMa3q7E49QgldAQQoV
+         aI0w==
+X-Forwarded-Encrypted: i=1; AKwUvBy48eCaPoGdBdgxpFUdLViZMkmw4dcmQwSig9PjQDgJcsp2qP2UtLG/NJPsO8PxhfQmX9eIRcCPGdEVyUll7j0=@vger.kernel.org
+X-Gm-Message-State: AFuF++ncHDy9R83UVRXfDWNboLERj1b0qZY35yUpVTap4O0BeCIUqmy/
+	tSo+G3BuYKKmD0xn+9smZ+U0FDTxUf1+tgf0it4ZQA0rCt4JvQt5A5Gs
+X-Gm-Gg: AYBFou0IpEa9h9f6xUCg4eBTk0g0t7yPEKdU0TxBHIITBAuCy0rEpyRY7ojo44AW82r
+	2SHk33ZzbAcLfZAcCU5NovB13uRhECt2JKnLkVKsDWa9w7AIUOKgFk8T5q4WHWB6Tw1HK0jEDM+
+	t/TJpxAwhIKPQjPb838lrjWMtj0EnDM+cfmKrqWb7SiDaS9uxWU0r01w5uCg+cTG4POuh4OcjW3
+	6VcfrD5dPLn4TX5G72WnKMopBWxWGVvfA0iTbu8Zea2TS+3oMYWu69dYamb1Sijla/HdezcHpZm
+	eRzz5/w0jjz3cB9YnsapvKZaYVEkkAb6pFYox0KUiNXaQglJ5YtliFjHsfmw7grpX5XhgYk1pMa
+	+5o/hIYOtqKDF0A3coO0jQqV2RLqfNG3ZmbN5mS4yrPjpMaJT2vmJQAZ5382GxVziZReJdA0Amp
+	faSUpXs/F5SeRJnAiAZK/CyT3pbgFmILqz6E1d+z8H3wDu/fuKNvLVG7F4VrGX8cX+hm9WkSMub
+	AB6FoAn
+X-Received: by 2002:a05:6000:4819:b0:482:fc30:a1b4 with SMTP id ffacd0b85a97d-4858704686dmr2758738f8f.5.1788463885810;
+        Thu, 03 Sep 2026 12:31:25 -0700 (PDT)
+Received: from [192.168.1.201] ([5.83.201.220])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-485885b7bfasm700636f8f.29.2026.09.03.12.31.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 12:06:27 -0700 (PDT)
-Message-ID: <1d2cd544-97a6-4ddd-8758-048bbd104eb5@redhat.com>
-Date: Thu, 3 Sep 2026 15:06:27 -0400
+        Thu, 03 Sep 2026 12:31:24 -0700 (PDT)
+Message-ID: <d12c133f-2caf-4c9d-928b-b8372dd1c7dc@gmail.com>
+Date: Thu, 3 Sep 2026 20:29:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -89,41 +71,182 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH][next] dm vdo: Fix spelling mistake "postive" ->
  "positive"
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>, dm-devel@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>,
+ Matthew Sakai <msakai@redhat.com>
+Cc: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 References: <20260903152325.16304-1-colin.i.king@gmail.com>
-From: Matthew Sakai <msakai@redhat.com>
-In-Reply-To: <20260903152325.16304-1-colin.i.king@gmail.com>
+ <1d2cd544-97a6-4ddd-8758-048bbd104eb5@redhat.com>
+ <ae8b93d1-2967-d4bf-4c2d-2b110b9d2fc4@crashcourse.ca>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=colin.i.king@gmail.com; keydata=
+ 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
+ FVPMkxl2UyaayDvhrO9kNXvl1SKCpdzCMQ==
+In-Reply-To: <ae8b93d1-2967-d4bf-4c2d-2b110b9d2fc4@crashcourse.ca>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------i5HxVvt0i5kRiqT0Y2vUpJac"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------i5HxVvt0i5kRiqT0Y2vUpJac
+Content-Type: multipart/mixed; boundary="------------slTGuE0NC8aJ16V6JfFbnZz1";
+ protected-headers="v1"; hp="clear"
+Message-ID: <d12c133f-2caf-4c9d-928b-b8372dd1c7dc@gmail.com>
+Date: Thu, 3 Sep 2026 20:29:19 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] dm vdo: Fix spelling mistake "postive" ->
+ "positive"
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>,
+ Matthew Sakai <msakai@redhat.com>
+Cc: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260903152325.16304-1-colin.i.king@gmail.com>
+ <1d2cd544-97a6-4ddd-8758-048bbd104eb5@redhat.com>
+ <ae8b93d1-2967-d4bf-4c2d-2b110b9d2fc4@crashcourse.ca>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=colin.i.king@gmail.com; keydata=
+ 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
+ FVPMkxl2UyaayDvhrO9kNXvl1SKCpdzCMQ==
+In-Reply-To: <ae8b93d1-2967-d4bf-4c2d-2b110b9d2fc4@crashcourse.ca>
+
+--------------slTGuE0NC8aJ16V6JfFbnZz1
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 
-I had to look at this for quite a while to figure out what was going on.
-We made the same spelling error twice in the same function and somehow 
-only noticed the first one previously? Anyway,
+T24gMDMvMDkvMjAyNiAyMDoyNSwgUm9iZXJ0IFAuIEouIERheSB3cm90ZToNCj4gT24gVGh1
+LCAzIFNlcCAyMDI2LCBNYXR0aGV3IFNha2FpIHdyb3RlOg0KPiANCj4+IEkgaGFkIHRvIGxv
+b2sgYXQgdGhpcyBmb3IgcXVpdGUgYSB3aGlsZSB0byBmaWd1cmUgb3V0IHdoYXQgd2FzIGdv
+aW5nIG9uLg0KPj4gV2UgbWFkZSB0aGUgc2FtZSBzcGVsbGluZyBlcnJvciB0d2ljZSBpbiB0
+aGUgc2FtZSBmdW5jdGlvbiBhbmQgc29tZWhvdyBvbmx5DQo+PiBub3RpY2VkIHRoZSBmaXJz
+dCBvbmUgcHJldmlvdXNseT8gQW55d2F5LA0KPj4NCj4+IFJldmlld2VkLWJ5OiBNYXR0aGV3
+IFNha2FpIDxtc2FrYWlAcmVkaGF0LmNvbT4NCj4+DQo+PiBPbiA5LzMvMjYgMTE6MjMgQU0s
+IENvbGluIElhbiBLaW5nIHdyb3RlOg0KPj4+IFRoZXJlIGlzIGFub3RoZXIgc3BlbGxpbmcg
+bWlzdGFrZSBpbiBhIHZkb19sb2dfZXJyb3IgbWVzc2FnZSB0aGF0DQo+Pj4gSSBzb21laG93
+IG92ZXJsb29rZWQgbGFzdCB0aW1lLiBGaXggaXQuDQo+Pj4NCj4+PiBTaWduZWQtb2ZmLWJ5
+OiBDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT4NCj4+PiAtLS0NCj4+
+PiAgICBkcml2ZXJzL21kL2RtLXZkby9kbS12ZG8tdGFyZ2V0LmMgfCAyICstDQo+Pj4gICAg
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+Pj4NCj4+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZC9kbS12ZG8vZG0tdmRvLXRhcmdldC5jDQo+Pj4g
+Yi9kcml2ZXJzL21kL2RtLXZkby9kbS12ZG8tdGFyZ2V0LmMNCj4+PiBpbmRleCAxZDgzNzVj
+YzNjM2UuLjA0MzU0OWIxZmMyZSAxMDA2NDQNCj4+PiAtLS0gYS9kcml2ZXJzL21kL2RtLXZk
+by9kbS12ZG8tdGFyZ2V0LmMNCj4+PiArKysgYi9kcml2ZXJzL21kL2RtLXZkby9kbS12ZG8t
+dGFyZ2V0LmMNCj4+PiBAQCAtNDQzLDcgKzQ0Myw3IEBAIHN0YXRpYyBpbnQgX19tdXN0X2No
+ZWNrIHBhcnNlX3NsYWJfc2l6ZShjb25zdCBjaGFyDQo+Pj4gKnNsYWJfc3RyLCBibG9ja19j
+b3VudF90ICpzbGENCj4+PiAgICAgIAlyZXN1bHQgPSBrc3RydG91bGwoc2xhYl9zdHIsIDEw
+LCAmdmFsdWUpOw0KPj4+ICAgIAlpZiAocmVzdWx0KSB7DQo+Pj4gLQkJdmRvX2xvZ19lcnJv
+cigib3B0aW9uYWwgcGFyYW1ldGVyIGVycm9yOiBpbnZhbGlkIHNsYWIgc2l6ZSwNCj4+PiBt
+dXN0IGJlIGEgcG9zdGl2ZSBpbnRlZ2VyIik7DQo+Pj4gKwkJdmRvX2xvZ19lcnJvcigib3B0
+aW9uYWwgcGFyYW1ldGVyIGVycm9yOiBpbnZhbGlkIHNsYWIgc2l6ZSwNCj4+PiBtdXN0IGJl
+IGEgcG9zaXRpdmUgaW50ZWdlciIpOw0KPj4+ICAgIAkJcmV0dXJuIC1FSU5WQUw7DQo+Pj4g
+ICAgCX0NCj4gDQo+ICAgIE15IHJ1bGUgZnJvbSB5ZWFycyBiYWNrIHdhcyAuLi4geW91IGZp
+bmQgb25lIHR5cG8sIHlvdSAiZ3JlcCAtcnciDQo+IHRoZSBlbnRpcmUga2VybmVsIHRyZWUu
+DQoNCll1cCwgbm9ybWFsbHkgZG8sIHNvbWVob3cgdGhpcyBzbGlwcGVkIHRocm91Z2ggOi0o
+DQoNCj4gDQo+IHJkYXkNCg0K
 
-Reviewed-by: Matthew Sakai <msakai@redhat.com>
+--------------slTGuE0NC8aJ16V6JfFbnZz1--
 
-On 9/3/26 11:23 AM, Colin Ian King wrote:
-> There is another spelling mistake in a vdo_log_error message that
-> I somehow overlooked last time. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/md/dm-vdo/dm-vdo-target.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/dm-vdo/dm-vdo-target.c b/drivers/md/dm-vdo/dm-vdo-target.c
-> index 1d8375cc3c3e..043549b1fc2e 100644
-> --- a/drivers/md/dm-vdo/dm-vdo-target.c
-> +++ b/drivers/md/dm-vdo/dm-vdo-target.c
-> @@ -443,7 +443,7 @@ static int __must_check parse_slab_size(const char *slab_str, block_count_t *sla
->   
->   	result = kstrtoull(slab_str, 10, &value);
->   	if (result) {
-> -		vdo_log_error("optional parameter error: invalid slab size, must be a postive integer");
-> +		vdo_log_error("optional parameter error: invalid slab size, must be a positive integer");
->   		return -EINVAL;
->   	}
->   
+--------------i5HxVvt0i5kRiqT0Y2vUpJac
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEEcGLapPABucZhZwDPaMKH38aoAiYFAmqZyo8FAwAAAAAACgkQaMKH38aoAiZP
+bw//TO5nXKrr20hpQzk0ssXF4eCNH33cehKEE8/6MwxP/WIFGaX89WPrkyIAZL7AUxUIt7MDGjvx
+oP5osscmfcmYLr2M1gLfKkyBekScGnn7ZRsx1DmD+f7dhmn9HAYm056PmhI1/lqUiukPO2I5Ldg9
+5e/+lfdqvVvmByko2zxz33CYfMKSgtMcol08YrA3gdoTHC4GY0fkKPJGtjFOu2i1L9CgdbEx+z7N
+Hr7ZTgEBtg4irX4OI66ihk2k1Rc/rCXXqLOQTzVUBV0KKSgFqlpy0JTQn9oEtd1yFx7Hi83B+cUf
+Orvuk63XRlupdYWDHa84/PkRkbFqEriAevSDliXz1bQhMdrKCe5Qm+8EcK9J29QIvE/YcEJWLNrc
+tzeMOXL4GZiRWrVgDKGkB2szAZwbjmX4JNHb8Y6PcVrMUoWAnqxjT/iNh8C4j2nbn2RasFjsGZHf
++KquYF5RNIiYmZsLkqWbwUur7BC/b8JIePWod59kTubAoT3xltDd0jgVIfrBofsjJtvL5GN4Yagq
+TImb5tBcIYOB4kTO8TO1qnaIObGhRNNPopfHt092FLCmvGou2iIWR/x2JNZTeIKRxnv3gWjQEc0n
+eGeiR32C33PY2lCK0EhIbK9i4RUnqS8SIA9kzO40ZrBER9ieQyThn5yjH5Kzd9HPsZse/heiNUWv
+YG8=
+=9lh5
+-----END PGP SIGNATURE-----
+
+--------------i5HxVvt0i5kRiqT0Y2vUpJac--
