@@ -1,82 +1,77 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B9E4C9006
-	for <kernel-janitors@vger.kernel.org>; Thu,  3 Sep 2026 15:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C964CA286
+	for <kernel-janitors@vger.kernel.org>; Thu,  3 Sep 2026 15:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788447959; cv=none; b=lyjHv9QjG5fDyChiJl8404LECVB+pft3vKF56AhpSVC8nafF3fsbXdctIUmGlPNS33a/q32EIP7QBnP77z3/eIcunxCtmldVN3cOnC1AExK+fG/CV+6EtAbvizcyJH+2Tx5z1E3QZwue9MeCcvlMRJM8OiY2thA7cpgXqUXpQkA=
+	t=1788448334; cv=none; b=gNiFBCaEBmijSttbPkterTwPscEcPxSx889k4dycu/WSrJ1RUq0eo/cPZqbg09vcJWxFB1tF5sJevyZsrlicYqIVSUkaMtb7KVS4j/NZn6sSVw9TZrtxNUzI+WQXQVxxMkGB4E4opiN3Da/1k7Mr0TW8f2W8kETj5r0v9rI3IyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788447959; c=relaxed/simple;
-	bh=w92MawKkkHyqj+j4V9THNwhrPMydRPMGaLtM9WLIOwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fAdB7/Imb09Ps6LStfgDXymTFBZruq9sTZ3tK1zOz4VGxtUR7k4aS20FhNvSGbIcHkSqvFoIgHN8slWhvt85nBRI8PXVWLPifkwoLQM8e1NI0p+bXC5dPCrgyFy7wL7bCKwLRvEya1Vhh6VuHHB7gSW8GDZR6lqn9lxUyK+Ac2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mpt/RDc2; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1788448334; c=relaxed/simple;
+	bh=AypfK/aOKqjDcv6x3JX0uwcWctZz8kqyktBW3Ip54EI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fav9B6IyzhvXYrPm76HedaMz4X3fzzwVlyfaHSZIo6i41uIDpDLTHnJM1LMMYza3VZq9nWhu7e0ujbdZ0pbb/Ns79iV04Y6CWf9ltiRLKKn/LRWjjXgCIrQOtUIUAdihHI8kXo/LGQqz5W7i2EfAQ0zM9VrBCcmrIJxg61G29e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzOUIIHR; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mpt/RDc2"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49cca4ffdcfso19172995e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Sep 2026 08:05:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzOUIIHR"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-482e067e908so2197634f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Sep 2026 08:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788447956; x=1789052756; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788448331; x=1789053131; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=3jJG+BikQhyyhKOerozrYKC8uiImTn5ykntBkDa6aSc=;
-        b=Mpt/RDc2EGK7IZHG7V2yXpIlibUlc8G2twPQedcB+p25HDMYpWCYwstgLHM/XsCkRY
-         IHgIIQmNO+7Z5rCjyyLpGwA4KC3UtcV0zOyVFAZEK7mncrvIUPm0UpSB80BjE3C05ZuZ
-         TGIuWxe0L8GA1lGx/SScaznL+dlGTiXBcu9DR6qUHsXPts0PbP+7cIUhaGaw1XUQQsNR
-         8WewNcfpPBrAVGfyYc/JMU7E3hQm46gtmmmDK5GfBxXMBx9mv4Aw6a770FbsOOFnGjhS
-         i1eoFYQaQ/yY86+cDIOgGy1+mB5k6rgYE4BdN85kAnVoFocbY/4oP8v7brufw5JEGUsj
-         UJfw==
+        bh=pjlizrWboIfwnZS2oWukdlINpTQI4dn8vHdtaiT7QzA=;
+        b=jzOUIIHR9sRjKRgnKc63T7QLTdWlKVM+F10nvxX+yoxmvPdpyJCVEuA8J3iOXwFxfE
+         9qb7TBbXYnuSsfOyy4sCbtKFCWA56T924WUv8xM27urbD4Mse+e+gN9CpFsNRvDLdGO5
+         tzs1B3cMvEfs+++r2T+4YOJQXSD6t5eWlgbvJCsyUplV24NyNDuAvbmiljrxk0SbjRpN
+         2+rwThmPekNC3NgHcIJwE/DbHO+ZUcUeQgujDFd8WhBIgmFRXSd1FvXoAgyz3JwIT2Kr
+         jjzLIGJ0QXCJfhYa6D9t2AmMDNjlT60zonbEQIMLd6Flio1RQdHnY+3PkJ8iom8W2xfr
+         Muxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788447956; x=1789052756;
+        d=1e100.net; s=20251104; t=1788448331; x=1789053131;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=3jJG+BikQhyyhKOerozrYKC8uiImTn5ykntBkDa6aSc=;
-        b=hJqMdyppe3zWsoXsG8qZ8KJh37O9VNi7J/X9lmUDWBwmt9Sj93FF+0wtij0pI2h8aL
-         thmQPg0dSnr7AAh/2ZWIrLn7UgLBaBziTxz7DcTOpVq+QeLwXWWUonWAbfcFvZNPjN8E
-         VVlhn5Ia5RR94ZugWfPYdjR0xEuBWlEkCG/9bsinCPujdhsNN6xJizhQEnTS4yE/qUg8
-         2/JX12YDiLpDdRbBnBrGT1EUjisTITb24W3UgU8oBnHsNS0eH+uYFWUcrPofnuU3KXnF
-         OJmkhu263TAm+hKEMt0QiMYLANwmAufKyVIb6IkBOdCEzMkT/jeKmWNeEO2HP3Xlygqm
-         Jsuw==
-X-Gm-Message-State: AFuF++nB+O11jnsTnPQ6wBN4RU4fd0iB7kHBoC33IaxcodN9errV7eJf
-	bBzm/4ZjteqHMhy9n4g6XaUUliR9lXtLwdIUxmVU/EdCXBcpOgXFqFqn
-X-Gm-Gg: AYBFou2rmQRF2xaVfa6B9IOhfip1epZbjTKh1h8VEawZXuQl0OviVy+ua4KcWQR13GJ
-	UzNufEXsMx9WnwyLfRiJ+4yR409HZsborwoRwTcprb/9otlUIuFLFiqUJP6xdX3N4HlaebTbtrK
-	K7QI8HGkzADgUFwaAdgT6PJpJ0jxOykGVwh4jezopMElFqTg/rLJWH7wA54KZ7GNPY4GMhyZxdN
-	maQaD0jO5SBASCYLUtS0nfX3yIbg3qwexNaKzdVaBlxG7idKliwb+9J0O1PkfsxbtosN8IadbSO
-	mrRbab46/U34GsK8zrPViUacq92hj9Vdcn4r+PbPawCjhdjfy3nqgQ/+97rEmxO16jJAaUu1Akf
-	9oUWLj+w1qJMN0RpaCoYSmAd5IPJHPwcBlKpelIvrXXvr2yqSLpLOY/MXy1ySqLrUK+E+4l+EEq
-	0bhmvBCSIl94FHfQ5HHtcvGmqpxOgoWhA1ejc8IpMH4W1q8gS2R+XBW1BVog==
-X-Received: by 2002:a05:600c:1f84:b0:496:c9cd:e7ab with SMTP id 5b1f17b1804b1-49cf5bc7986mr8421325e9.5.1788447955968;
-        Thu, 03 Sep 2026 08:05:55 -0700 (PDT)
+        bh=pjlizrWboIfwnZS2oWukdlINpTQI4dn8vHdtaiT7QzA=;
+        b=BFdPb1N/LvnMSv1oh5BqaACv2+VvXPbhHInzyvhvvkyEhIm6QTvgc0uBXJxCY8G80l
+         ZFrrMGKu1jeE54qlUohVM5pjPmZozmsIf4x0QVJy7kvGy0kQvAVPEdYYzvk7eCsJJHBW
+         WwDxeSqRfS2/46+JZwVJ8iQV1wQvtbPfK8wOj8pNoEAL9Q/ysyqrQmU2TemTU5WgmKcs
+         jw046MNkw+gXR3wQEhx4w0IPUqjIkZIPVuYwKD0615/QqZHdxL2/+ZGkY1b2ONGIAFGr
+         Rs44z2gSozJgDiU74GwTW19gMndgTujN6HAOqiMRWyuJu4c2rxXu4C6AzOiVJ5MdlW7U
+         MAkA==
+X-Gm-Message-State: AFuF++nhm2CPwGE+uHCTFX9Y8UBqUYvaXLhqh7m9LYdivF7M190+t9vf
+	kcO5kqR/9E0yVru3BHaMYNxte4vBydhfITspPY2VnmsvQTVo14ezH3ug
+X-Gm-Gg: AYBFou2qtyiUJbydQHpvLrfrytNN3/0A2bRRbtN62vvOT5hpFsTTmjbWRPTkUe2IUzE
+	MnpXtjy9eyV7fZHDEfu0tKb/EgKgTlsCu6inryQreoICtyi8vi0IA7QHIWxMOtot7Cv/XJYyPSO
+	MYTlh+mwnhWxzzRqghkoeKa5uVodVtt+/+YQsPfbHrbL9KZdjDdXwPzeR1jSFJG11xnpADUsyZI
+	2Hsdwe2BYOFX6NzXxlZrI0QqIdMvWac6mHbzG6lFfgmMfKPbm7slWXjjsHyj+gPQNhmdwynJxp7
+	jbXGoOBz3zWU6jkMByisAUa7WFU3EbDnhkFlE9yfXFe90ASrC+7l/KyTFpeidexAPrMwLtZibnS
+	pigIOW3eLxyK95N4IHFNcnuXgLHpxUphqr7wvE2P+InZZofwBu/4N0YO19M9lsp1S8W6SagLBzJ
+	oRh3MAtw2inodNBcP+oJ2v0p3jDZoqi3ZMO7ozAB3q96mf40rvPRFYuEOZnh0=
+X-Received: by 2002:a05:6000:2f8a:b0:482:e64d:a1f7 with SMTP id ffacd0b85a97d-48488e0371cmr21537891f8f.11.1788448331284;
+        Thu, 03 Sep 2026 08:12:11 -0700 (PDT)
 Received: from localhost ([5.83.201.220])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e6f604sm14353038f8f.2.2026.09.03.08.05.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e6f604sm14396587f8f.2.2026.09.03.08.12.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 08:05:55 -0700 (PDT)
+        Thu, 03 Sep 2026 08:12:10 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	Shuah Khan <shuah@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-wireless@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/bpf: test_xsk: Fix spelling mistake "conigure" -> "configure"
-Date: Thu,  3 Sep 2026 16:03:51 +0100
-Message-ID: <20260903150351.12725-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] wifi: mt76: Fix spelling mistake "dowload" -> "download"
+Date: Thu,  3 Sep 2026 16:10:07 +0100
+Message-ID: <20260903151007.14832-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -87,26 +82,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in an assert message. Fix it.
+There is a spelling mistake in a dev_err message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/testing/selftests/bpf/prog_tests/xsk.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/xsk.c b/tools/testing/selftests/bpf/prog_tests/xsk.c
-index 6e2f63ee2a6c..772f3dd7ce64 100644
---- a/tools/testing/selftests/bpf/prog_tests/xsk.c
-+++ b/tools/testing/selftests/bpf/prog_tests/xsk.c
-@@ -75,7 +75,7 @@ static void test_xsk(const struct test_spec *test_to_run, enum test_mode mode)
- 	if (!ASSERT_OK_PTR(ifobj_rx, "create ifobj_rx"))
- 		goto delete_tx;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
+index 2f925d22b9aa..9552fadbc17b 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
+@@ -3130,7 +3130,7 @@ mt76_connac_mcu_send_phy_ram_firmware(struct mt76_dev *dev,
+ 		err = mt76_connac_mcu_init_download(dev, addr, len, mode);
+ 		if (err) {
+ 			dev_err(dev->dev,
+-				"The request to dowload PHY firmware failed.\n");
++				"The request to download PHY firmware failed.\n");
+ 			return err;
+ 		}
  
--	if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "conigure ifobj"))
-+	if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "configure ifobj"))
- 		goto delete_rx;
- 
- 	ret = get_hw_ring_size(ifobj_tx->ifname, &ifobj_tx->ring);
 -- 
 2.55.0
 
