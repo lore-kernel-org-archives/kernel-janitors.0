@@ -1,101 +1,83 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F8F3911CF;
-	Thu,  3 Sep 2026 20:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1505C3DE44E;
+	Fri,  4 Sep 2026 08:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788465760; cv=none; b=gSMg2iafEoQbg1Ld1bkHdw23o53E+IUqiL8L4+v94TbDPDcWU5Vk3ME22EUeYbHyrjsdI08zbJXi26nXwgxF1zpRshFisV2foSyejkW+tS0KCcHLlBR2NgPZnkWofRuPC1ahkU864ILwBBnxXKmdlreTfAB0iTayM0G0s8aSRVg=
+	t=1788509665; cv=none; b=GMa8ZTJjVLflmGrs8kiMhC/q+XoiztQmIeO+bsXttMfMsA7pzQgyL7JYdLev34M3daQYZavbWs3OyRiS2mG+BrUrUrmWsVEJKwVY1L6s7xdtuO7/wp6XoK3exsJ1k720JOFDoLqVeIl+tGBl+KaBTJDvnfhDK92nDynXgeyaJtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788465760; c=relaxed/simple;
-	bh=0aJm78f2DfYBg8zJZI2YzJEG+FK+qVmsZ8yi+KU4yIc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ISBzZvULbdi5764BdySVmRasXcSMv8ex0qArTVQiOjfoE0Xzw2og+r/5tJ0O+fm8hZAZHLAK2fuqPSrVXa2A5MtmoXxL0MxnPsfZySpQJAW1h629FnygJCKc7QvlbV8HFRuqiaagN9NPLLw+jKY/bBCb+Up+3wjvp0jZMX1FI9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=lD7t4CTf; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1788509665; c=relaxed/simple;
+	bh=Pei3AQKbV/8mZPIhqlEsfH56hZdpkbaH3xKuasIlxdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pBOqCI0DhmT/9Kc3G0S+OcXJnGD2D2+BWmFlD1749T6pIoC2ZNj5Qsb92oz6OLxpeBfGp1/jMrXUb+0iudPfPPgaqUzyt1uoAilh2oj2cJDVR6Db7A3VpFBUzXuyFxLWxL7tDnioxM2gXEvTcBG2yFV7E+FjXkrVdDatRWndoLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EXddcMwH; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="lD7t4CTf"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
-	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TQFBKb0arpU3xnnfHdea/D1cO6St0WXDwcH5iaCLRrg=; b=lD7t4CTf7jFvg7PAc/uK12OrvO
-	Wdibl4AjrEO60zFhJEiJY+eTIPLuo+NNJHNAd/ujOugbRUYq702aP3bhcghbhgu5gBobbED2DHID2
-	zlnmyK8UxRd4S2pglq3oupZv1IK1OmWIMBC8SymV1/trXF53vtnwoJuHcfxLeNJbPSjl/nJdAsMrv
-	4LxQsFs1CF+uANqoUasI5Juvg9AkmDX6YlamWOhpCmE6fLNOl9SwOm9dFxxlm0swofYJX9ZdTsOSt
-	0KgDW6KO4UjjKwWupVY/flCsp2qyzja0F+sEBC/1RvumTKmt8+D1lpwCgAEu0EhEMUw0m2F4GofI3
-	WLVPxY/g==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:56356 helo=sheena)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.99.5)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1x2D6G-00000000riq-35wQ;
-	Thu, 03 Sep 2026 15:27:53 -0400
-Date: Thu, 3 Sep 2026 15:25:59 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Matthew Sakai <msakai@redhat.com>
-cc: Colin Ian King <colin.i.king@gmail.com>, dm-devel@lists.linux.dev, 
-    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] dm vdo: Fix spelling mistake "postive" ->
- "positive"
-In-Reply-To: <1d2cd544-97a6-4ddd-8758-048bbd104eb5@redhat.com>
-Message-ID: <ae8b93d1-2967-d4bf-4c2d-2b110b9d2fc4@crashcourse.ca>
-References: <20260903152325.16304-1-colin.i.king@gmail.com> <1d2cd544-97a6-4ddd-8758-048bbd104eb5@redhat.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EXddcMwH"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 18D7C1A1997;
+	Fri,  4 Sep 2026 08:14:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DD78A6057F;
+	Fri,  4 Sep 2026 08:14:20 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DC1411C7A463;
+	Fri,  4 Sep 2026 10:14:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1788509659; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=A/YUapB0XqTHWiFgZm2Y5luuW3ulfbFhmj5mkJkslv0=;
+	b=EXddcMwHej/eVzgfd6wa7/YXUsgWwktnpwOdzEdlUayRgZcOua1NyTFXUdNOw+x3+NGbfW
+	KQ4AynvTEzCFuIQVFb/DjgU/5Yr6poms+XC1N+sto0A5GEZgx5n6aXTIh8yFIw7O5cp/us
+	HCiXEHaDhtSKRN7dvREaC6U8jvCdoaYt9r2B2IX1f5zJ2OuKsRrMor546t2bYzLQecYhwa
+	xLt0u9pou+N6uaK0pZanHpFiyWIgOHR01aWjRgV/eufe0zggc+odZY0AEYvuVFdeV2C4Xe
+	pjIZLp4/R5PLbhULxbQrscI0l+DgIkr+pzYZ64B2BrMfsd+uOZmetlA8lvo/lw==
+Message-ID: <249f530e-fb9d-42ae-98d8-1f6190f650b6@bootlin.com>
+Date: Fri, 4 Sep 2026 10:14:15 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] selftests/bpf: test_xsk: Fix spelling mistake
+ "conigure" -> "configure"
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ Emil Tsalapatis <emil@etsalapatis.com>,
+ Ihor Solodrai <ihor.solodrai@linux.dev>, Shuah Khan <shuah@kernel.org>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260903150351.12725-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <20260903150351.12725-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 3 Sep 2026, Matthew Sakai wrote:
+Hi,
 
-> I had to look at this for quite a while to figure out what was going on.
-> We made the same spelling error twice in the same function and somehow only
-> noticed the first one previously? Anyway,
->
-> Reviewed-by: Matthew Sakai <msakai@redhat.com>
->
-> On 9/3/26 11:23 AM, Colin Ian King wrote:
-> > There is another spelling mistake in a vdo_log_error message that
-> > I somehow overlooked last time. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >   drivers/md/dm-vdo/dm-vdo-target.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/md/dm-vdo/dm-vdo-target.c
-> > b/drivers/md/dm-vdo/dm-vdo-target.c
-> > index 1d8375cc3c3e..043549b1fc2e 100644
-> > --- a/drivers/md/dm-vdo/dm-vdo-target.c
-> > +++ b/drivers/md/dm-vdo/dm-vdo-target.c
-> > @@ -443,7 +443,7 @@ static int __must_check parse_slab_size(const char
-> > *slab_str, block_count_t *sla
-> >     	result = kstrtoull(slab_str, 10, &value);
-> >   	if (result) {
-> > -		vdo_log_error("optional parameter error: invalid slab size,
-> > must be a postive integer");
-> > +		vdo_log_error("optional parameter error: invalid slab size,
-> > must be a positive integer");
-> >   		return -EINVAL;
-> >   	}
+I think your mail subject should have started with [PATCH bpf-next] (cf
+https://elixir.bootlin.com/linux/v7.2.2/source/Documentation/bpf/bpf_devel_QA.rst#L157-L166)
 
-  My rule from years back was ... you find one typo, you "grep -rw"
-the entire kernel tree.
+Also other commits to this file start with selftests/xsk, but that's a 
+nit pick.
 
-rday
+
+On 9/3/26 5:03 PM, Colin Ian King wrote:
+> There is a spelling mistake in an assert message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Reviewed-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+
+
+Regards,
+Bastien
