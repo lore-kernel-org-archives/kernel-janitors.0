@@ -1,111 +1,136 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886694252BE;
-	Mon,  7 Sep 2026 08:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788768035; cv=none; b=mDiloaABpdWIvEarQw3K8pRnDzfgFsalGxamOPw9AiT8q2a0H4ZFmAuYEMomJu3d+FiIx71EkvGUHvEl00xFgyaLFos8K6fEwOKM9q86m6qBuRu3+A9QsUzIqKCbCH3pBKZW125Wcwk8OiSO+wLEdQO15jmQGLKZ+q68zs4KdEg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788768035; c=relaxed/simple;
-	bh=Tss0J1lzaawDO9UqsRhpXcAR6VYcF9+3RJb88LLnMxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3rzptVmruRz83PhaNa+6spWipy2so0b6AL6oejnQhWer2oWgPZJas++dWu/BUuK+T7PDW2xuZd3PAtc+TmBaWfvn8hOFKzQVNqvLHCau1g2eZN+WU379y6GpEF3XWCOy7kgwbsa+tqYNR6OXTd7oErTEsgBEm8aC/sEvZth83o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Sw+OK71A; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E59305677
+	for <kernel-janitors@vger.kernel.org>; Wed,  9 Sep 2026 04:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788928706; cv=pass; b=YBJdL3YK0T68ct1Pb/hHq5XbJBAVMrBpRegPtJ9Jw/EjyhYDYIWWgU0DIRtwUCJcot/83FHYqmfhZvqbWG1xCxLC9jiOErwQX3wZpD/z/5RgXAPAlbZiYve5FdlfOTZYOvwnmYgjZ+89BB3VkLoKWl+yMfV3XlKiwMWbwk0CFBg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788928706; c=relaxed/simple;
+	bh=/+3eKYYz03dUBjHcHqHQIQKyut0iHUO9Sr1nrn4fiWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qORGfZch3ZRYLdGuHVPa93py/KSaBqbgmxMNX9hoKLdupbKHc+slfMMxZmEU7CF0ZyGyUsRHsgijzCneAPKzquQpjloty6YEeV2M+XvMGb708rcJ7zsrLyV/mCEf2eZW7svG64A2d5EUgGXgt9/ehBKPffoqmpkyC0MaKkIeUH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20251104.gappssmtp.com header.i=@etsalapatis-com.20251104.gappssmtp.com header.b=G+slYNMJ; arc=pass smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Sw+OK71A"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 854951477;
-	Mon,  7 Sep 2026 01:00:28 -0700 (PDT)
-Received: from [10.57.7.146] (unknown [10.57.7.146])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBFB43F7D8;
-	Mon,  7 Sep 2026 01:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1788768032; bh=Tss0J1lzaawDO9UqsRhpXcAR6VYcF9+3RJb88LLnMxo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sw+OK71AgW5+S/Uutbdw8ClQGjpTmQilmHgCX4W+nxWqS4hzGmXbWP+UBmQR+7oMD
-	 QzUm2Mjmfz9LdFB9dOnVC9CO9I8lyLBfpodwzgaY3H1uFNeB8ohO8rfU7WA0eBYtx/
-	 muNkM+ZNgkgwUSSbXK3GYvr7nuJbg6EIxkm0XGdU=
-Message-ID: <e8be7505-52a4-4c7f-9194-6e9124df6f2e@arm.com>
-Date: Mon, 7 Sep 2026 09:00:46 +0100
+	dkim=pass (2048-bit key) header.d=etsalapatis-com.20251104.gappssmtp.com header.i=@etsalapatis-com.20251104.gappssmtp.com header.b="G+slYNMJ"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-857ff9fef54so50561147b3.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Sep 2026 21:38:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788928703; cv=none;
+        d=google.com; s=arc-20260327;
+        b=a2smL60kAmDf2eBNljKAdSUAJtCDeoAgrVA2xVPTfrARrj1m8IAgw974WWK8qi8Oyf
+         k2OML9zIIm6mCuzxv0O21PTL0O3kyK8EV//qMLjnHBtxxwPhJBe9AFCV5BNWglSqoBmW
+         pu+XwDHMlYLU8XBaa5X69y0SkZFMMbn3CN8diCZSWCvOHUg1mXZLJUJWEGxtPAR7W46d
+         y1jE47TdOvYcsE98iEbty+iNk4e2sDniSD4VpzzrhZmjQ8Zd+1PstFujL5WJsjMtCJ5d
+         4x0vGsMY8vu3YIjoEJ3dEsbNpHgumSscIK4mBBbclMTbkOWUjRK+/LlNmXioZXRS0eOd
+         eTyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Teu6cC+d3LHtdtN3ePnM4eTc17lML+xatDJgJtdz0Ns=;
+        fh=dqsLJgFz8GllUh9UWDdPKstryXYQ46VICGxLvDRvueI=;
+        b=komm7m1F/L5b8fEs3G+uOOJW61JEGGsnmNqkVY1zb1ahEVI6qayewos7KodCyfKnIH
+         pWORmWxiyVDhTtdEBFd/VXFnPW+ZcfGCIgjxko5t7znVVEyhXFC5iXgV24oHL9F/chjH
+         ZMX874hio1lJZw+CNzfi9dD1yYVA8evUTbmQ75FO4a+APnj0ggqqGbFq6dhDePgUwdYx
+         k/IfSyzxdKHr+lo31/zELa5LNHvq7TCav+xqnqQbxlz6nlRZjEgm8bGBt/Ok8b8M/qYt
+         Z+0WETbDbjeplrQbCDs9GIG1+tlmX2WR973yLYHTA1OKwCkIr492884t0TGfQ/cCFt1X
+         PdSQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=etsalapatis-com.20251104.gappssmtp.com; s=20251104; t=1788928703; x=1789533503; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Teu6cC+d3LHtdtN3ePnM4eTc17lML+xatDJgJtdz0Ns=;
+        b=G+slYNMJ4NeYNov1rDcn3MJkqULMh4eAK7gcukOQB6HThKx6bB05QZKrqxMyyNZDg6
+         qQ7nlvJQp27dtcDujIxhQMxrNeKZLOKfUDGMeyKDpOoKLk+ad9bSIcI6ezlT7yHqihsk
+         h0Z9SjcyRDJfbVk7Jgx28PATGsWAs51SmRg95r0crWFucxkJW8J1+uEaU+5sr50mvVGO
+         BJnLvXTi9B1YqaxczK7sUZF1nJGRAh8x7jTDRAi4DLB9+sOju+Vx8XMcD7aVlcEZE98h
+         u+qKtDkafzy077tmVLUxRqtWLbgCF/FbzhwTCAH6OaWKd9dYs3x7OqEmuwpwC+Df3YPo
+         UjGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788928703; x=1789533503;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Teu6cC+d3LHtdtN3ePnM4eTc17lML+xatDJgJtdz0Ns=;
+        b=eSHK5baNv+UyFFjzmFx/JNoAKyvnS5pFm1u/i/u86zBg0lk2B0a0cL5ivQrmQ3nQJD
+         j7cId9ZDcJEEYUJGR7N1/el33SO6Ro6D1Vx104b3hM0EnEa3+ATOqmxV0DHBCald9JTq
+         RyV3vTulWMDWy1rHOrG0/1QYiqEUJJojy0TadX2qWt/NL/NcaOLQ9KOTWTlgIUplyeHo
+         T/BfNIFuBOE04Go4DminKJjIVeCXbCnRpSrsXdGbX/TIpzn7Z6/q9la64qM3Q0pcXupe
+         CZQwcIDuFphSeHyuo+IQjLQJXaLyzw75C25P1JPV8IvPFle2QalIE9M/WcKe8ZY3LiP+
+         0KUw==
+X-Forwarded-Encrypted: i=1; AKwUvBwMfhqwJy5/hGcbeND0snFp6duV9pzEeJXXUUbVKMoHXJuVRQs6ibx0Q8Tl7blvJVNk4F/1vDtq/MOJGx6kwp4=@vger.kernel.org
+X-Gm-Message-State: AFuF++nYYgG69kVu50iGJVj8QTy/icYZWbMwcyTjGEiEtsUA0iOs1Ijo
+	+6IPr+mqmCy5gag3z+2YKgQY+eHogVP6OdQwL/0JytEBugNBvGPkBdr/aOvv5lcf74ZQDIggOvy
+	5e5oIGdLP8emP2ZdXoiQmroF95AdndRFcBL67kDCazw==
+X-Gm-Gg: AYBFou1RNTpkyssLgkY8MlqDK7PKAa6ZgAEMWWBSc1209KYevZrsVPMOTgBItiw+SQO
+	RwOe1Fj8WqKTt7mYytZKfAQt0d56XCh9RCUiOhnXYORjIz+mXjAJ8EOrce0nGJSATzJWtDB+/pg
+	cIC9etIAsKr/i/atgU3YKcV70pTyz/SYCHjeAWUqdoyhybRhkY4w0NZm4AMA0fQXn8XlNvkKoly
+	kwgTqGcCIs0ZXuHEvo7c5ds1Bx8tQ/aqeXTF/gEXIEe5yOAGQQVLxyCsSyCjbHp5GIslOrnT+m0
+	JDpI+ToI99gl/omSbkATrwxQGdVPrjYUtTfluT8dDse3WmZL3MzUiCo=
+X-Received: by 2002:a05:690c:e3e9:b0:870:820e:da66 with SMTP id
+ 00721157ae682-87127d2ca36mr124113977b3.23.1788928703258; Tue, 08 Sep 2026
+ 21:38:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: gov_power_allocator: Use common error handling
- code in power_allocator_bind()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
- "Rafael J. Wysocki" <rafael@kernel.org>, kernel-janitors@vger.kernel.org,
- Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@kernel.org>
-References: <a3dc82f0-7333-465d-85b4-8034b1591442@web.de>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <a3dc82f0-7333-465d-85b4-8034b1591442@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260903150351.12725-1-colin.i.king@gmail.com>
+In-Reply-To: <20260903150351.12725-1-colin.i.king@gmail.com>
+From: Emil Tsalapatis <emil@etsalapatis.com>
+Date: Wed, 9 Sep 2026 00:38:11 -0400
+X-Gm-Features: AcwNN1WAFyR_AVCv1IXGTjGY0PGid8q5kgFayEO3Y82fm5jIlHk6g71DHjJvDXg
+Message-ID: <CABFh=a7YTi2U2-cx4b5zejWv6MXE-VG-u7K410pPbtJiw6qbWQ@mail.gmail.com>
+Subject: Re: [PATCH][next] selftests/bpf: test_xsk: Fix spelling mistake
+ "conigure" -> "configure"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Ihor Solodrai <ihor.solodrai@linux.dev>, 
+	Shuah Khan <shuah@kernel.org>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 3, 2026 at 11:05=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in an assert message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-
-On 6/10/26 10:30, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 10 Jun 2026 11:20:37 +0200
-> 
-> Adjust labels so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
 > ---
->   drivers/thermal/gov_power_allocator.c | 11 +++++------
->   1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
-> index 37f2e22a999e..6b9450ffd5de 100644
-> --- a/drivers/thermal/gov_power_allocator.c
-> +++ b/drivers/thermal/gov_power_allocator.c
-> @@ -707,22 +707,20 @@ static int power_allocator_bind(struct thermal_zone_device *tz)
->   	ret = check_power_actors(tz, params);
->   	if (ret < 0) {
->   		dev_warn(&tz->device, "power_allocator: binding failed\n");
-> -		kfree(params);
-> -		return ret;
-> +		goto free_params;
->   	}
->   
->   	ret = allocate_actors_buffer(params, ret);
->   	if (ret) {
->   		dev_warn(&tz->device, "power_allocator: allocation failed\n");
-> -		kfree(params);
-> -		return ret;
-> +		goto free_params;
->   	}
->   
->   	if (!tz->tzp) {
->   		tz->tzp = kzalloc_obj(*tz->tzp);
->   		if (!tz->tzp) {
->   			ret = -ENOMEM;
-> -			goto free_params;
-> +			goto free_power;
->   		}
->   
->   		params->allocated_tzp = true;
-> @@ -746,8 +744,9 @@ static int power_allocator_bind(struct thermal_zone_device *tz)
->   
->   	return 0;
->   
-> -free_params:
-> +free_power:
->   	kfree(params->power);
-> +free_params:
->   	kfree(params);
->   
->   	return ret;
-
-LGTM. BTW, I like the 'free_power' label ;)
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+>  tools/testing/selftests/bpf/prog_tests/xsk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/xsk.c b/tools/testing=
+/selftests/bpf/prog_tests/xsk.c
+> index 6e2f63ee2a6c..772f3dd7ce64 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/xsk.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/xsk.c
+> @@ -75,7 +75,7 @@ static void test_xsk(const struct test_spec *test_to_ru=
+n, enum test_mode mode)
+>         if (!ASSERT_OK_PTR(ifobj_rx, "create ifobj_rx"))
+>                 goto delete_tx;
+>
+> -       if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "conigure ifo=
+bj"))
+> +       if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "configure if=
+obj"))
+>                 goto delete_rx;
+>
+>         ret =3D get_hw_ring_size(ifobj_tx->ifname, &ifobj_tx->ring);
+> --
+> 2.55.0
+>
