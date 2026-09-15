@@ -1,73 +1,85 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF54A99D5
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 16:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E86B3B994A;
+	Tue, 15 Sep 2026 20:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789490280; cv=none; b=Em4tzD2bVV6ZcgoFQdd3w8MTPnqxCsChUVG5zPi7UFRCzWOQvZ1Ze67hgjjHTWLm87NDI4BGQHzXdE61HcEuEd0cihTbnVeIacAFxhSG0ElYFUWMj6EqU8qPv9UkNf2V6ecxm/EVVFTj82rJKTw82L9nztcvq+FjuFdb9qrbAHs=
+	t=1789504815; cv=none; b=IEfCk4K/hLy9qQGV5GLpOm1zrqh9J//w99uiy1H6oQ/E3OPWMSrbCar+ON3DnKKB3NhqDwnw4mRoE+sQm6TKhiHUlFuExUoAjNAEbJ4qIgxhtOf5XYzRsLxF2tKJRTFwt1QWP68Y90S+6QbM9UHC8XNGcKSTXdB9lUG5Qhv/7CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789490280; c=relaxed/simple;
-	bh=KPKPGF5qsUQqYvKCR/MMxXPy5D1ntqEEj0Sa7swQ5r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E2LGkBRexNytTiUK5yjyuDiT5qU32nGY8y6l+vmZRpqf0Riru42wYeDJRIr9DUfAzZgIK0XfiPArbtddVP+feWVadcKBmNmx6c0FGqa/7OyWY5Z2sEID7t89y5FI0v4378ZfAyxz3oAT+mq6qRN0MA0cmS3/6lZEjw3xzjcaMqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClksJwj9; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789504815; c=relaxed/simple;
+	bh=H7sqdoHpd2FSG6L//bvppNmxpX0j0UX5TBTUv3u03t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/aR4nJZbdl3QFm2AitjaiIA3Y5Bt0NLd1THG8f5TBK7avNTPzl3HeZY7We3ff3MStYEqkjJGRA0KE3HlO3WuaZO/rLdydAY54QpEflbUB1dN5iESmlQiDZ8s3od63jJQeBkbviIf0AuPNTAAUMGnaqYKnyQaIaSyiStjz+Egiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d/B1jdDY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LsdBuJU+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FomyFzkd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7Qqhmj89; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClksJwj9"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f62ccdb1so1197899f8f.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 09:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789490277; x=1790095077; darn=vger.kernel.org;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mP3itgi5VQlf+VGvNzurDARzBqpMd7On/zzuIfwN8vA=;
-        b=ClksJwj9NL9O5VrFv1vXx/Av2PseudcXqXs9dmbmj2kCGAaxOnqMZWpwgGBsvU1L/k
-         RjvdfE031DE5SJu2pDR0n4n+Me8LhEZ1L5Vvo5ENieEMDV2BpcTe5AZynDer0iPH7hCE
-         6o1iUd6+NSB1H+VQoS9y+eYPBjWRlpmMMnj8LeTfxFnjlv/uSqp6ZN1F2eLTLRtkGbvR
-         YTb5/QgkIgh3tZiDBzOA1MeT0vYBKrwAB3qTXBz9eYHmMi5o+arN8Jcf5ufHanQpeOdJ
-         OzqForr+4dC/dKkNtGwRPaTvoJnW0vEXWxzgfPD8lsXWVPIPwlOavQtSF+iF03VY2I2N
-         RJCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789490277; x=1790095077;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=mP3itgi5VQlf+VGvNzurDARzBqpMd7On/zzuIfwN8vA=;
-        b=l44qKs0Igcv7/+N0hn30RQdv01862Ey5D6NDXiOXLjyqRxuCkv8w9XNzKPGeWVCEYr
-         uQ93QY2jkVJ4TMKfILynFLq9fw9rXZnL+h0v+McgP890UfJSPQspJoWaio+UKqwdIZJK
-         10Mar5n5sgMzWwrYHHRb3+UB7NppACC701330xjh9PNve770FACg9rj3WQgSzo0GPMyT
-         2yAR5vexWQDIN7mEyxGhfQvZe3rYgobbk1h2tQ3JWfjMtbtkcL4hU5PbpRYUQHCvurvE
-         /BaDFtCbwmiN29KcoaaJKeECaUmQpWztGTlvo0Itwu1YlzgWXoaddrL99rfaDSK8XXi7
-         cf2g==
-X-Forwarded-Encrypted: i=1; AKwUvBxdq6/19n2TOOHTkHG7nprVuBX9Qeq85CJuziu1VfDztIJGxgTkmXpSogLKKum/bZKjwyHTSZxvTKYOk7B0kLM=@vger.kernel.org
-X-Gm-Message-State: AFuF++muwHQkmllenPDptrMVauj7up3djtqxMnlJe/NJ3I6dd6woCCAM
-	btayWhHc7sU3jZer4bMtphT7nkikCAsMmj8F4183p7bmokfrJTwvVEWP
-X-Gm-Gg: AYBFou0Et054g/NtG5Zk0bbtfr5gBgb1/7BnuV8XxNP0lhXB216BGtOeQhKNaJevaBV
-	XRG8ZwElIL46ptVEUMWbZ0BS4Z8CUImU4lUtNXhQCiR1j4w681RBehaNma3/Z3Jk9HQs/WPYGmq
-	YC23uOfBga6x/Aq6JlonTArfXoxumegNAqrs4Wk5GOr+btV+ofgI/X4Zl/MkCarK3ogso3M0W4B
-	ubhDBircslml0fIV1fO2RsI8PaS8Q0muWS9fIH6IcAgSXuAuUAVp6ugShcwEC4CEQn6AhqWCXJz
-	LHNx6Yztq0C9c6yc2Xj4KErKpKrtTy6UBPaudJ83ET92ecoEafUr+gDTyq45o4BacvZ2xZnYbz+
-	ZVPk7Jhy68ezC5hUUKapNtnsBiBBZMXcZXopMGD8M/1udtDcORnoc5fqlG75JgIrxg3c5n/9XoA
-	ROTcumAeVk/TzYgSqVAcB0JYCZR3CiWOjF/hH3OQRQAqEYf0Qgflc8j4m0VhwSjdDnHEyfsTTAb
-	ukptg==
-X-Received: by 2002:a5d:64ee:0:b0:487:342:eb37 with SMTP id ffacd0b85a97d-48705a44316mr6723385f8f.7.1789490277250;
-        Tue, 15 Sep 2026 09:37:57 -0700 (PDT)
-Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bf34440sm233295f8f.25.2026.09.15.09.37.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 09:37:56 -0700 (PDT)
-Date: Tue, 15 Sep 2026 19:37:53 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] vfs: clean up indenting in lookup_open()
-Message-ID: <aql0YTgwtRI0VZyG@stanley.mountain>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d/B1jdDY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LsdBuJU+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FomyFzkd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7Qqhmj89"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EAD911FFBA;
+	Tue, 15 Sep 2026 20:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1789504807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=efWP/Ao7lVqQt3ZG5A3u/jPr1sBU0pFDIR9eFUcnesA=;
+	b=d/B1jdDYPeQ89aeZHQcMAjD5rONhO9jYWhrf7fM2EjyhL5CkoaeVtIEDWyz9LiROc2TKan
+	suwSz4ab9msE1MhJoQJ7wXc4ehjYkT84vw4alPDf8d1JvnGGN27pzKSVbT2VezHVkO3Msr
+	TnGiHcBpPK7NAJvUGNaSI4k8Qd0NumU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1789504807;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=efWP/Ao7lVqQt3ZG5A3u/jPr1sBU0pFDIR9eFUcnesA=;
+	b=LsdBuJU+6lEUc8nySmqukGCKnfzucHOtelMRSJPxKLoyEQAT2eTvsSlo2jLMpJ55Eb9LSH
+	92Q8L7XWGst/s7Bw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1789504802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=efWP/Ao7lVqQt3ZG5A3u/jPr1sBU0pFDIR9eFUcnesA=;
+	b=FomyFzkdV4eQt7COT7Te9sTma/Hop5w7zjTGMaFwJBII3xUzfx5UM0+3MZht7e5sFxxQ8N
+	AbNUyupH8dgsJcAHe+S57MBLv1H6yeE3QKhyWckS8ORYAB8oP4lA/5nsKT5gFGpdLQzE5k
+	BXImaHKgMurWt3/N3vpMoBsNxP2WWTY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1789504802;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=efWP/Ao7lVqQt3ZG5A3u/jPr1sBU0pFDIR9eFUcnesA=;
+	b=7Qqhmj89HqAXXJf47JAvCatNjEUAd4WqDKndZDTEl/qDjhucSTAZra9jrefO5t7z5mSkl3
+	OYB7K9m79EL+jtAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C47C513432;
+	Tue, 15 Sep 2026 20:40:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GmPgJyKtqWokOgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 15 Sep 2026 20:40:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 49542A13D6; Tue, 15 Sep 2026 22:40:02 +0200 (CEST)
+Date: Tue, 15 Sep 2026 22:40:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Jori Koolstra <jkoolstra@xs4all.nl>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vfs: clean up indenting in lookup_open()
+Message-ID: <hftpz62zoc7rjn3xdcaqgnujjnicpgv6betqbqfyvp45tynmep@l7m75b46jxpz>
+References: <aql0YTgwtRI0VZyG@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,32 +88,68 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <aql0YTgwtRI0VZyG@stanley.mountain>
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,xs4all.nl];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[xs4all.nl,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
 
-These lines are indented too far.  Delete a tab.
+On Tue 15-09-26 19:37:53, Dan Carpenter wrote:
+> These lines are indented too far.  Delete a tab.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- fs/namei.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Looks good. Feel free to add:
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 1dd4ec7d0e62..48b28ed44a9e 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4636,9 +4636,9 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	if (create_dir) {
- 		struct dentry *res = vfs_mkdir_no_perm(idmap, dir_inode, dentry,
- 						       mode, &delegated_inode);
--			error = PTR_ERR_OR_ZERO(res);
--			if (!error)
--				dentry = res;
-+		error = PTR_ERR_OR_ZERO(res);
-+		if (!error)
-+			dentry = res;
- 	} else {
- 		error = vfs_create_no_perm(idmap, dentry, mode, &delegated_inode);
- 	}
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/namei.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1dd4ec7d0e62..48b28ed44a9e 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4636,9 +4636,9 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+>  	if (create_dir) {
+>  		struct dentry *res = vfs_mkdir_no_perm(idmap, dir_inode, dentry,
+>  						       mode, &delegated_inode);
+> -			error = PTR_ERR_OR_ZERO(res);
+> -			if (!error)
+> -				dentry = res;
+> +		error = PTR_ERR_OR_ZERO(res);
+> +		if (!error)
+> +			dentry = res;
+>  	} else {
+>  		error = vfs_create_no_perm(idmap, dentry, mode, &delegated_inode);
+>  	}
+> -- 
+> 2.53.0
+> 
 -- 
-2.53.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
