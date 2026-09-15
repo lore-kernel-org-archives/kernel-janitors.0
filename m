@@ -1,77 +1,73 @@
 Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D94D4AE8A4
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 16:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF54A99D5
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 16:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789490272; cv=none; b=OIc49sBDM9FLnizSmqwmftuHJu/Xr0orQQbHhDNWCVC7UNajNRjG9WDPvTHxsjgGrmP8x0tCIp6KGW/IHQu0EeM2aPnFQDxYcbWzgDxx0hVX2XrqtFKEYfbh0Hd/Dh9COYX2qsXsAKiuusbGJo1lXolVYdLD1Y/qEsL7pM3nFOE=
+	t=1789490280; cv=none; b=Em4tzD2bVV6ZcgoFQdd3w8MTPnqxCsChUVG5zPi7UFRCzWOQvZ1Ze67hgjjHTWLm87NDI4BGQHzXdE61HcEuEd0cihTbnVeIacAFxhSG0ElYFUWMj6EqU8qPv9UkNf2V6ecxm/EVVFTj82rJKTw82L9nztcvq+FjuFdb9qrbAHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789490272; c=relaxed/simple;
-	bh=LXL+w18lkOtne/sr3GuHDqvBiI0kfwdWK82QJvZUHxc=;
+	s=arc-20240116; t=1789490280; c=relaxed/simple;
+	bh=KPKPGF5qsUQqYvKCR/MMxXPy5D1ntqEEj0Sa7swQ5r8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E11Nn+ViVnTVUlp/irsog8GRxKxwh4bG90qxiuSlZqkjVfJDLvycaHFZjSJ18S1/e0hsbaV/6wTZHCCIRHfB6inquQrIsF8isOaVTY77HqkxGOpp6Bv5go4SqmUqyBx+S4BnnDib1QfHlnRnUKANOUxMxkdqFZVMmjUDiJrMGcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WV0sS91C; arc=none smtp.client-ip=74.125.225.76
+	 Content-Disposition; b=E2LGkBRexNytTiUK5yjyuDiT5qU32nGY8y6l+vmZRpqf0Riru42wYeDJRIr9DUfAzZgIK0XfiPArbtddVP+feWVadcKBmNmx6c0FGqa/7OyWY5Z2sEID7t89y5FI0v4378ZfAyxz3oAT+mq6qRN0MA0cmS3/6lZEjw3xzjcaMqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClksJwj9; arc=none smtp.client-ip=74.125.225.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WV0sS91C"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f633ece3so403059f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 09:37:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClksJwj9"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f62ccdb1so1197899f8f.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 09:37:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789490269; x=1790095069; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789490277; x=1790095077; darn=vger.kernel.org;
         h=content-disposition:content-type:mime-version:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uyYww1vw22YFRnFO2kz8YhlMFLNE8VmPnf3mijbwEdw=;
-        b=WV0sS91CSUfnJqBy133iH8zinKhen12VFMMkJxBj7NTnyosApypRvMGXEpsdaCe6uk
-         bAvwAUoRPcEfdzIqyC6Hw2V0zfnryTQOtm8qZU1CJAYqxzv9Gj+1o6z/7bizr7Wqul4E
-         eqrVqZJOudpxSCZyisX8Ad/A3RK5KDhdls6/wlwmJsOViatsFh0fB90Z/aX27oRinX/m
-         uReEda+6qVgh+OKMdL/1GM/SOqKDwan9sj6GXOj+1ruRoe8K9rTB53F8pOQgS6wB+5di
-         aH8eAM90rg4Pc3R6o1Tcknq+KGZeqqqQzfEm/nZ2KSJaKgAFjrd60u0H5n9Oz0r/4iOe
-         8UfQ==
+        bh=mP3itgi5VQlf+VGvNzurDARzBqpMd7On/zzuIfwN8vA=;
+        b=ClksJwj9NL9O5VrFv1vXx/Av2PseudcXqXs9dmbmj2kCGAaxOnqMZWpwgGBsvU1L/k
+         RjvdfE031DE5SJu2pDR0n4n+Me8LhEZ1L5Vvo5ENieEMDV2BpcTe5AZynDer0iPH7hCE
+         6o1iUd6+NSB1H+VQoS9y+eYPBjWRlpmMMnj8LeTfxFnjlv/uSqp6ZN1F2eLTLRtkGbvR
+         YTb5/QgkIgh3tZiDBzOA1MeT0vYBKrwAB3qTXBz9eYHmMi5o+arN8Jcf5ufHanQpeOdJ
+         OzqForr+4dC/dKkNtGwRPaTvoJnW0vEXWxzgfPD8lsXWVPIPwlOavQtSF+iF03VY2I2N
+         RJCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789490269; x=1790095069;
+        d=1e100.net; s=20260707; t=1789490277; x=1790095077;
         h=content-disposition:content-type:mime-version:message-id:subject:cc
          :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uyYww1vw22YFRnFO2kz8YhlMFLNE8VmPnf3mijbwEdw=;
-        b=MmYNSe/ju3WMsUiooiXzYdfDYziOWeDRBe5T7/2cCRX6pUc/r9FKaQcUasSfNnP++U
-         /fYPkikEaccsFYtGxA/we0L0ZrDVpSC8201WGV5cuWaN1h+V3LQz/eCOqKx5upI3cbZj
-         4rPRyoxIBDP2h0b1/Em4SH4j4c0UmLjj0x4c+CSEdVzMdsIt46B2I8qjekJqrL2R3lTJ
-         P0mQJkloUT06e2hgE+SCAxz+/+4Qg7OL3X9S0PpnLC8re+NvuiMEKJbVn5naHrxzN2Gh
-         QXk6sg8Z2RTHmq++QUdNICSxVl0GGa4psU9mc/gGuxUmf59a8dNayObG+ulH/vbIL70I
-         3QcA==
-X-Forwarded-Encrypted: i=1; AKwUvBwCf0wV6dsEKE7rZe1I8E//BCKme5MPA0wYEBh5d1Os3nRHlm0mH+tvpDCqe+Ut3MI6BYGWDo7hGE3qwrwjDBw=@vger.kernel.org
-X-Gm-Message-State: AFuF++n3dEf+Go9RcfA364Vwh7y7Gmr2K3ZC0dEmXQ0bxPlik4h9mijL
-	CabTrH5/7EpOl8+HP0/3Ns/+v5GII2T8vuoscmjqTu7MnHwq8GvKd5RP
-X-Gm-Gg: AYBFou1ubW2CSdL7jb6N9YiHvQ+wolnvBVUbbwz024EWzthk8zd0oYme8gPEcwQ6aJy
-	SnozXfPRKaN59lWKGg0fXSNJYjq6RmUdRmBWa49IhvYGyRF9wZNkA2TTgj8czvInBtxv6imn0DV
-	wAsqDKS9NbcPT0xNh6jSatdlhcO/OPcEmgkoyobQLwmArMZGHIeA0835v/fYyTwgfP47tFSEdBJ
-	FYbT/DgO7MKoTpKISs5rA++ZBlOP2hk1ookTvdp/uEcbrucfvCX5PDcltmXTn4wL9O2D0Ykjkau
-	6REguiPvg17YXgkBcOqidBa0O5Se2/wPDUbVT1qgoqwNaI36VJ8nP2bn0O4gA/ogmD5DxXl8JES
-	fbdNJwn62g9kg12nBxncDI9ZMff7aLwGSEjAif7PDalunJgHd1gp2258GmXFiO/Vos2hXF9wSMG
-	j4maUrninr/cOUUYsnO823ZjUsze8yPiVCZWN1QtzM6WNeyTmA1t3rbedPAudXqe02zxlOZ/owl
-	8i3Xw==
-X-Received: by 2002:a05:6000:310f:b0:486:e9b7:cb9 with SMTP id ffacd0b85a97d-4870a9dd928mr2076898f8f.45.1789490268678;
-        Tue, 15 Sep 2026 09:37:48 -0700 (PDT)
+        bh=mP3itgi5VQlf+VGvNzurDARzBqpMd7On/zzuIfwN8vA=;
+        b=l44qKs0Igcv7/+N0hn30RQdv01862Ey5D6NDXiOXLjyqRxuCkv8w9XNzKPGeWVCEYr
+         uQ93QY2jkVJ4TMKfILynFLq9fw9rXZnL+h0v+McgP890UfJSPQspJoWaio+UKqwdIZJK
+         10Mar5n5sgMzWwrYHHRb3+UB7NppACC701330xjh9PNve770FACg9rj3WQgSzo0GPMyT
+         2yAR5vexWQDIN7mEyxGhfQvZe3rYgobbk1h2tQ3JWfjMtbtkcL4hU5PbpRYUQHCvurvE
+         /BaDFtCbwmiN29KcoaaJKeECaUmQpWztGTlvo0Itwu1YlzgWXoaddrL99rfaDSK8XXi7
+         cf2g==
+X-Forwarded-Encrypted: i=1; AKwUvBxdq6/19n2TOOHTkHG7nprVuBX9Qeq85CJuziu1VfDztIJGxgTkmXpSogLKKum/bZKjwyHTSZxvTKYOk7B0kLM=@vger.kernel.org
+X-Gm-Message-State: AFuF++muwHQkmllenPDptrMVauj7up3djtqxMnlJe/NJ3I6dd6woCCAM
+	btayWhHc7sU3jZer4bMtphT7nkikCAsMmj8F4183p7bmokfrJTwvVEWP
+X-Gm-Gg: AYBFou0Et054g/NtG5Zk0bbtfr5gBgb1/7BnuV8XxNP0lhXB216BGtOeQhKNaJevaBV
+	XRG8ZwElIL46ptVEUMWbZ0BS4Z8CUImU4lUtNXhQCiR1j4w681RBehaNma3/Z3Jk9HQs/WPYGmq
+	YC23uOfBga6x/Aq6JlonTArfXoxumegNAqrs4Wk5GOr+btV+ofgI/X4Zl/MkCarK3ogso3M0W4B
+	ubhDBircslml0fIV1fO2RsI8PaS8Q0muWS9fIH6IcAgSXuAuUAVp6ugShcwEC4CEQn6AhqWCXJz
+	LHNx6Yztq0C9c6yc2Xj4KErKpKrtTy6UBPaudJ83ET92ecoEafUr+gDTyq45o4BacvZ2xZnYbz+
+	ZVPk7Jhy68ezC5hUUKapNtnsBiBBZMXcZXopMGD8M/1udtDcORnoc5fqlG75JgIrxg3c5n/9XoA
+	ROTcumAeVk/TzYgSqVAcB0JYCZR3CiWOjF/hH3OQRQAqEYf0Qgflc8j4m0VhwSjdDnHEyfsTTAb
+	ukptg==
+X-Received: by 2002:a5d:64ee:0:b0:487:342:eb37 with SMTP id ffacd0b85a97d-48705a44316mr6723385f8f.7.1789490277250;
+        Tue, 15 Sep 2026 09:37:57 -0700 (PDT)
 Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bf1fa70sm256434f8f.9.2026.09.15.09.37.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bf34440sm233295f8f.25.2026.09.15.09.37.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 09:37:47 -0700 (PDT)
-Date: Tue, 15 Sep 2026 19:37:44 +0300
+        Tue, 15 Sep 2026 09:37:56 -0700 (PDT)
+Date: Tue, 15 Sep 2026 19:37:53 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Yang Wang <kevinyang.wang@amd.com>
-Cc: Kenneth Feng <kenneth.feng@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lijo Lazar <lijo.lazar@amd.com>, Asad Kamal <asad.kamal@amd.com>,
-	Kevin Wang <kevin.wang@amd.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Jori Koolstra <jkoolstra@xs4all.nl>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/pm: delete a stray tab
-Message-ID: <aql0WF8CnlzgS4nz@stanley.mountain>
+Subject: [PATCH] vfs: clean up indenting in lookup_open()
+Message-ID: <aql0YTgwtRI0VZyG@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,27 +78,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This tab was accidentally added in commit 6c9e0328d1de ("drm/amd/pm:
-refactor PPT limits by controller and power source").  Delete it.
+These lines are indented too far.  Delete a tab.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/namei.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-index a29e76b03476..6beafabf1306 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-@@ -3077,7 +3077,7 @@ static int smu_v13_0_0_set_ppt_limit(struct smu_context *smu,
- 				return ret;
- 			}
- 		}
--			return smu_v13_0_set_ppt_limit(smu, limit_type, limit);
-+		return smu_v13_0_set_ppt_limit(smu, limit_type, limit);
- 	} else if (smu->od_enabled) {
- 		ret = smu_v13_0_set_ppt_limit(smu, limit_type, msg_limit);
- 		if (ret)
+diff --git a/fs/namei.c b/fs/namei.c
+index 1dd4ec7d0e62..48b28ed44a9e 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4636,9 +4636,9 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 	if (create_dir) {
+ 		struct dentry *res = vfs_mkdir_no_perm(idmap, dir_inode, dentry,
+ 						       mode, &delegated_inode);
+-			error = PTR_ERR_OR_ZERO(res);
+-			if (!error)
+-				dentry = res;
++		error = PTR_ERR_OR_ZERO(res);
++		if (!error)
++			dentry = res;
+ 	} else {
+ 		error = vfs_create_no_perm(idmap, dentry, mode, &delegated_inode);
+ 	}
 -- 
 2.53.0
 
