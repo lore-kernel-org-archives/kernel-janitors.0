@@ -1,135 +1,123 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04EA48592B
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 21:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789507171; cv=pass; b=hob78R9ti5TvnZjtXiG9avMmMFq7rkVsvTHOlJ1Brm2JycuBB2JbC6YmgRIWs+j3t5x0O87+JsliZ2ilUW+h0wbx/0F6mxnjvFPYsZjc3TR1M5tyeiK76DA5iSD8o9AR109vDYOPc4aS8ga8WFQ0EZ97oDeCI53nEFlSCN4nhXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789507171; c=relaxed/simple;
-	bh=HZyGc4dn7AJ2DuUFYW9V6d2LUkkWR/LMP6HTK3mBe8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gfiq3lM+mL1bfbCoA3zmYKFUs2+XFdRKp9g+qhk51diUvSCOhNSjUPsd+h+TSTyUhKCEiYtmEx8fefsWv60pTBO5lRSIq6dso120RaZALdnpUPWX17RSiKtn4oxxgkaUsuAPQgeyvUYA6o5nM4Hbv6+ZYpti5kQk6EDv/+ta1k8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UVQRyRhI; arc=pass smtp.client-ip=74.125.227.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937CE4AE12C
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 21:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789509451; cv=none; b=XwwbMWMC0sMiv3FTzcn/2PUgLMYhi3ixoh7EeKaEbdHffsClA1nYlb4+Mph0xp9pHxjlqAkfMCLKmgWUigy64Nftau9A/m2KULTtkjvm6H6KCZ1rdufg94hdDVnynKdylId/+e7R+v7mHR00zcYhN6YYHFyzWRm/vJqnRrGX7uw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789509451; c=relaxed/simple;
+	bh=Lt8qyrqJYc7cQtJe32wNNIxLi9HPtu1msWByVRtr87Y=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=KyF/bE4HlYTZAE2Hdveynm/maLygvhis4yxBH/Xxle5U6Qg7d9lf4KVjYN36mcE3IBP8NYdEpSR9ksZ7UO1Ii8PbO2d4NNPkHLRrnwLt7jitNhDy9rmcb5RtIJfjw4vOT97fk11l8LpItpQxw+vv+TYq6iWGGTcPMEJgkJgMK34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=DT2XibuD; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVQRyRhI"
-Received: by mail-pj2-f12.google.com with SMTP id d9443c01a7336-2d6ff2f2c4dso360695ad.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Sep 2026 14:19:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789507169; cv=none;
-        d=google.com; s=arc-20260327;
-        b=mEzTU7DTMinQ+ybR1QmV2IfNDw7+QlWBb4zFJVUVnfEf1Vk4eunEhPIk3yaGQfJga4
-         ak7TnR4KRmb4LvaF1Vm74ADh4ary9t1z374nzPNUnz3jnc1PqVIrP7WGavhUOizAlyJ7
-         WkFKxEB8KIUQpcD8XCM0X/Frf0QdQhwN8AY8pUq8PwWVwRzrrmTCAqIAe4imCZzCSjAx
-         /K0DRFnEYIPBQtcC2DtdNRUOhH3mWTaZNf2E51y05dlb4ELhMvztDqXp4oJpw4oLzX2S
-         IYV6c2x65LnkI1wG0GbywyfInHWf4wEDWGetf1PMOW+Q33o8dYZhDXqmGFxFsxdJbb3f
-         Vn6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=27RlSNmJ/rh6QBvW1joFS9tTEzX+MG2zy1HOT3+SmIQ=;
-        fh=Zc87zhuqlkfq75+Sj4yVB4Htjrd8vBussNy2y3+DB/c=;
-        b=sR9xIyxE8+mQUZPZ/KT8RwBWmt884vkz2klu0lHeHJ6yA0gNJEFLe+3vAz7yPvOfk5
-         4y4EtqhtM0tHm5iLrQn6Ee/45JbNQM5T2EQPNidLwTxm+tYalf4MqqHzEqqGNL68uV7q
-         /QfoOQ9BsvnYOF/cwMYVNEUmWpL+sLW7MqcQp5Xu8waWo/rorIt8yMNrK2WSGSUCaJer
-         n+7wAcaUezQLp50R6WdxYkNVsBslId/5jbARGD9U8il4UPGLkqrCTj+fGq/5Do0zgvIn
-         vSREzhQvC3vzFPNIA3qGg1VWDjL45nYwJoluKFPTWnwRew6MOi48uHeqK4inXrKXtiay
-         Qfpg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="DT2XibuD"
+X-KPN-MessageId: 465c6649-b150-11f1-a5a2-005056994fde
+Received: from mta.kpnmail.nl (unknown [10.31.161.191])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 465c6649-b150-11f1-a5a2-005056994fde;
+	Tue, 15 Sep 2026 23:56:16 +0200 (CEST)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 465bc48e-b150-11f1-9202-00505699891e;
+	Tue, 15 Sep 2026 23:56:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789507169; x=1790111969; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=27RlSNmJ/rh6QBvW1joFS9tTEzX+MG2zy1HOT3+SmIQ=;
-        b=UVQRyRhIsG/W/Q8AHUSGg8+Xk310V3DZB4m8W/AnlTnS5lZcKEGqopHAgrVU+1SaUn
-         G8yDaEL72nPqlqWrKUr4EEgSK5I++upHB1xlHXVPOvSJCPtkbbehcMrzh+wEmvAoTl2G
-         DPOOZBrFFwCVld0uhTARR2Pn8CIFsxu7ny0y9ilxjwrAx/4M0OVNeepJianz+fvE0qJP
-         25w5mq/YWA6ZJKip5Ceir2x9HfSm+twopVs3W0KU0xZgixLDRkPPFV4wrfv/NTsGDrHM
-         fnxa1zkEYcM9IROnXsV0f/HpTrB/A9KxlXLExf0csRwr69ESZ6hgi1SoTfOtg89vJ6GQ
-         ZV+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789507169; x=1790111969;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=27RlSNmJ/rh6QBvW1joFS9tTEzX+MG2zy1HOT3+SmIQ=;
-        b=Ng1ZQtnm9sR4U+rbe3xO6ianRy64OXfYOTQoV3xCKnYXWlgl3XUe50WK8oJak1eyJo
-         x54Y7ZS47a2TTwhoi6mTHfDKf/ClkNFJXZntbHo4ZSRuDBpaDnn/kGsnuYJfM/P/tRgL
-         pGVREeGNc6bTdafj0Oo7b429EdX3zuOHcadftDda/b2cPq68UEq4jGLeon4JwoZourLt
-         UFrPq8cyDRmEH4aFubsRfTZjbUyzWb73GxJihvnKBU1+08PVqQMKzHsbpIXczZ7vP+0i
-         pukSfe05YP7h+nRmqKf/Dd5/IkefotFpDXn3RMuyZa6WiBcxgmPZmqchd9QwBaYWoHnf
-         6V5A==
-X-Forwarded-Encrypted: i=1; AKwUvBxEdXIi6Mprp+ckYMmuC5ojYA+HKfFytGvbssa+Fl/NvFw/loY2a3K4dQPIYTINvOmz6/gw0fRl0SUN01xQSEw=@vger.kernel.org
-X-Gm-Message-State: AFuF++nPXqwfYFwI9dRxLUp+vQs1sLGPndcCsu70iWQI8fo8bvPo3B6V
-	i5CETI/X6Utlu6HtMdJVIBxheMTUcgyix9Q+CysL/xf0hVzTD6eEFso66RoTqRVWfXtzcm7i25b
-	Whby1hJuzKItEUPkz6BPaAvyAkLOeM/I=
-X-Gm-Gg: AYBFou3UtZO4xxRy3sElePrr0+3YwjvPsbtIpJq/BMBVlt3MHNGKKIHqqU5h9whdZkH
-	amhmDSscLrf2X6z/Xzzag2oYoxdSD/SBwTR2fzvweZBIY4fzMajjuqdMdK5Azfq/csNYKXx/RtI
-	2268w7ZRfBd1KFD1cIRqoM0X/orz8ErxOW2uDQJoCqkNef9C7TwrMo2nV0U6pAzCsTgT3P14U/o
-	RjRCGbmEshI8J59ZXw0MqbCIroZEEl8mvR4H1W6ggTPkRIUaKmMiVD2e/Jz0oRbh+vyNYQ5itzE
-	cKK9r6WutYj+zv7MH3v4Q5zL7g5YkHk2+ZoZNMa93pOdyPy63vUSrQnnuvuuhPkZ+lrsR8NDwQB
-	Du2V6cS9EYyPlsrljs21v/wbDJfJ0VIE9xfC8fSoSOw==
-X-Received: by 2002:a17:90b:4d86:b0:39e:fbf:e7b5 with SMTP id
- 98e67ed59e1d1-39e1ed3a90emr151963a91.6.1789507168853; Tue, 15 Sep 2026
- 14:19:28 -0700 (PDT)
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=a0u+GbFOErpHePUx6+BI03U2sMvyd1zwQqxiBlKg7VA=;
+	b=DT2XibuDIiyd7iJ053ua69Jt2ODdzNoOW7NCavtZZ3+oT4tBI6eTUD6wjCcp8sV+if1K2hz8HGidD
+	 +tpYOZf3CzEV+rcknXT2kvxqY+QggKleNqbeVy3HIxIHfEPIPAtmdOn7XtzXK8SgfMvx5L/J51Merh
+	 chtM5w9zQNTOC1vxv0Pb3exj0VGJsL0boaddBo/R+5TxfF0cXJaus3zvUdQzhqV0XDhpdlrbQg5Phx
+	 S2kutYs4hf3ur86WEKeZR8fXe9AEaZyQTkEBJIrEbiDKzTbu4ZIV5Mq5j/phJrn552bm2TxP3eK9Kl
+	 +FSNqKqNv2yGNwVtPwPKBuzeLcxXUow==
+X-KPN-MID: 33|hKTD0EDuwhRhNaWcuXfiGcqODChJZ1fJcoc7DkNAErAfnSKm5IeiJZsNeeYSNDd
+ Gs1JuRStdxTDOcknHmnRjzmyuMOw6z+nHpBKt+K6vYyU=
+X-CMASSUN: 33|C+AJVU/bsno60VidSRcGj9m4Ai0QkFg1pbcKbK8HxySbj5Po4bY7Xssi8hO3ZdB
+ jfln7omMohXrCmcC6E0PBSQ==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh08 (cpxoxapps-mh08.personalcloud.so.kpn.org [10.128.135.214])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 464fb62a-b150-11f1-916a-005056995d6c;
+	Tue, 15 Sep 2026 23:56:16 +0200 (CEST)
+Date: Tue, 15 Sep 2026 23:56:16 +0200 (CEST)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Jan Kara <jack@suse.cz>, Dan Carpenter <error27@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Message-ID: <1913061521.1120051.1789509376030@kpc.webmail.kpnmail.nl>
+In-Reply-To: <hftpz62zoc7rjn3xdcaqgnujjnicpgv6betqbqfyvp45tynmep@l7m75b46jxpz>
+References: <aql0YTgwtRI0VZyG@stanley.mountain>
+ <hftpz62zoc7rjn3xdcaqgnujjnicpgv6betqbqfyvp45tynmep@l7m75b46jxpz>
+Subject: Re: [PATCH] vfs: clean up indenting in lookup_open()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aql0WF8CnlzgS4nz@stanley.mountain>
-In-Reply-To: <aql0WF8CnlzgS4nz@stanley.mountain>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 15 Sep 2026 17:19:17 -0400
-X-Gm-Features: AcwNN1UIlmrWYu-j75aUFWIeZN3UW5lDNCOHYA_6wiqw4odajfx7LULhYdnp4hE
-Message-ID: <CADnq5_OhB4DVhvyGtQ2yCi12xg5yMUtmT0sRGuU-AxZk2ox0LA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/pm: delete a stray tab
-To: Dan Carpenter <error27@gmail.com>
-Cc: Yang Wang <kevinyang.wang@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Lijo Lazar <lijo.lazar@amd.com>, 
-	Asad Kamal <asad.kamal@amd.com>, Kevin Wang <kevin.wang@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
-Applied.  Thanks!
+This is about linux-next, right?
 
-On Tue, Sep 15, 2026 at 12:46=E2=80=AFPM Dan Carpenter <error27@gmail.com> =
-wrote:
->
-> This tab was accidentally added in commit 6c9e0328d1de ("drm/amd/pm:
-> refactor PPT limits by controller and power source").  Delete it.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c b/drive=
-rs/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-> index a29e76b03476..6beafabf1306 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-> @@ -3077,7 +3077,7 @@ static int smu_v13_0_0_set_ppt_limit(struct smu_con=
-text *smu,
->                                 return ret;
->                         }
->                 }
-> -                       return smu_v13_0_set_ppt_limit(smu, limit_type, l=
-imit);
-> +               return smu_v13_0_set_ppt_limit(smu, limit_type, limit);
->         } else if (smu->od_enabled) {
->                 ret =3D smu_v13_0_set_ppt_limit(smu, limit_type, msg_limi=
-t);
->                 if (ret)
-> --
-> 2.53.0
->
+This should not have been pulled into next yet. I rebased this series after
+Neil's vfs_lookup_open() landed in 7.3. There were some rebasing conflicts that
+I fixed, but I left something out, which I fixed later but forgot to format-patch
+again when sending out (including this whitespace). Christian pointed this
+out to me, and I have fixed these things in v6 of O_CREAT|O_DIRECTORY.[1]
+
+Please, pull that into vfs tree and then next. Some of the patches also need an
+explicit review still, although Neil looked through most of it. Maybe you want
+to take a look as well, Jan? :)
+
+[1]: https://lore.kernel.org/linux-fsdevel/20260913185016.523376-1-jkoolstra@xs4all.nl/
+
+> Op 15-09-2026 22:40 CEST schreef Jan Kara <jack@suse.cz>:
+> 
+>  
+> On Tue 15-09-26 19:37:53, Dan Carpenter wrote:
+> > These lines are indented too far.  Delete a tab.
+> > 
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
+> > ---
+> >  fs/namei.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 1dd4ec7d0e62..48b28ed44a9e 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -4636,9 +4636,9 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+> >  	if (create_dir) {
+> >  		struct dentry *res = vfs_mkdir_no_perm(idmap, dir_inode, dentry,
+> >  						       mode, &delegated_inode);
+> > -			error = PTR_ERR_OR_ZERO(res);
+> > -			if (!error)
+> > -				dentry = res;
+> > +		error = PTR_ERR_OR_ZERO(res);
+> > +		if (!error)
+> > +			dentry = res;
+> >  	} else {
+> >  		error = vfs_create_no_perm(idmap, dentry, mode, &delegated_inode);
+> >  	}
+> > -- 
+> > 2.53.0
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
