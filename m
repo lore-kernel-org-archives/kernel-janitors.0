@@ -1,147 +1,116 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CD1430CD8
-	for <kernel-janitors@vger.kernel.org>; Fri, 18 Sep 2026 12:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA075481DD;
+	Fri, 18 Sep 2026 13:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789736387; cv=none; b=MOZEMpZWaDylfxhFFm2BCBEQ3Dinuw4JTTsFfrLBP/stxRfIGl7U/IDVoynzGeVwv+SO3iP21D1Sd0kIe4XFN+PqzlWC+PzQb3giPMaR5q1CfAOzYVnftc/kiw/GHMaR0rdftRyv9Nv2+6fZdKgA573V12yP9dQ+tfmjZzP7GOQ=
+	t=1789736801; cv=none; b=JnWnf01uvCdZ5n7j8XgpK7iHqPJRhPj1i0fLic6CGxKcM98sU8Z3t7ha9PfJj3lWOljmIAkj7izpiVqh6I0B2LWaNBTO9X/D3PclJs76pRdtBB01tVxKGOmWLCzZ+92vN+8NcPZ39hTrWUlzb26x3UnZnS8XgALbyYqrNwfa6FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789736387; c=relaxed/simple;
-	bh=s8+to8b6/VG7HeoYZ/5GPm0QwBM8JYFg2rpjNk6m82E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXJW3dst3qq73E5zWTVLvx06t2hAzHCH45UipFu32BeQi6QgsqtlzuQkiY/y5Bj8rck9pKO2DRwQIbXfM4mZMRAHAmTZnxYFceMZLjLsNkmSLYYbeu0ZyUkQqUeXkb6BSDGb41TXHTgTeUAx4KcK5iq1MDVeJk37hO73nzS97fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j93l1hPV; arc=none smtp.client-ip=74.125.227.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1789736801; c=relaxed/simple;
+	bh=/nakVwmxaeeJTK5KzN//btReFIAOeTh6IiuKR27HZzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ko+nbYv6IPoS7dHbXozlj3jXc4JQf3EzGWXQB0ODkmWUYxW4L5n4aNFAkX71w3lQI135mxI595SW7Y4DWvaQPIpPYP7v+5Wg+2OsFV7BCULCi9tJTPYnBQhdlgIJSf9PpYN10uvTKg3s4wyD1Gfr4u6riuY6yux/JujFpT6U+K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=u9AhtPcn; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=u9AhtPcn; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j93l1hPV"
-Received: by mail-pj2-f12.google.com with SMTP id d9443c01a7336-2d747eb79f7so4618925ad.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Sep 2026 05:59:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1789736385; x=1790341185; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nxzpoScGk5dDKPya4LxeNVRbV4selBUM8DEhCYq8QJg=;
-        b=j93l1hPVM7eYnrT4DudiPGTclmMZQhiE7xtf5CB2uphMYEsQkRxxUNg7MTh3XHiFb1
-         cHfklfs07nDTYl0cIDGgOaGflSyr7hTwyXjUEJj8coPkRmidlbAibceAv63FBcdcHwKB
-         t0mq9Scsqw7GoSdwKOcDa51naH4DBMpfwYjpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789736385; x=1790341185;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=nxzpoScGk5dDKPya4LxeNVRbV4selBUM8DEhCYq8QJg=;
-        b=PVtU5xiVm6sL2NqzDJS89oUOvTfd5j1PpDb2iX1sodfhhNE/kPZ7Kw+btuLShctvw5
-         u45YQR/wPr9K6r/etfn61CpPzXrWuxLzhW91Gv5mRBiUm4SyPlLZm39+20yz6Nu0PsDA
-         2p+IqLG2c8wtkoi0m3pI/M7ylZbMDgX7/k3LyoCj/Wax9vWv7esUh2WnYi5lovosFr/a
-         YfPcgoRZh+mf6aXL0xe0/VIKZ6e9+0sgxilxzP1hjveUnQCzN4InnWxSyzfybpjj7Bub
-         4vXM7GudMjL39EfgUJixVwttuzUYtqX7eNqJbRBcNEDo2qEaerctzlF2QQT6l9v8UeZo
-         0TBg==
-X-Forwarded-Encrypted: i=1; AKwUvByIb1gkm7s10mqAfQYGhEY1AWecr5ZocvjpYXWgrsKGVXoMT/bj6fOHPMrlcj920KbTw3zrCLlRjfp9EptcV8g=@vger.kernel.org
-X-Gm-Message-State: AFuF++mD0RSPvKcfECAX8GuJdsW6BsRbxCu5V4An77f6dUzIN93/OCqG
-	/mBuPe2cILVYcWm6qENY3awgqypomZvV/tCChpWXvtEvVLm/Mcp3FVTRyf2xnpoIi7iQ3gAAMW+
-	dLAZf3A==
-X-Gm-Gg: AYBFou3DiOD35GROb3tnatla0os4M55Oi81AVImI2/oQ2bFeG6cNCqHr5T+iE7jo8JW
-	bHfkcirbJy4iq5i+jK7H9/ld4FDIJIBw/yH7sS4NJTr3+lTNu6Wr0+OSvKTd3aXSeBOjWm/Y9m2
-	XpBQM74H3gtZKevl72YHsvCY/nIqMSXBHAd7MA+TbC8nnxRRMrrsggJLwxAjcoQzzVp49UcqzHV
-	LXEHO9ccj4DFR7rZ0WUPl/5oPr0LcVkSVDG/M69d5CldZR2tLmP4NKmDlZaAf6Mrp+TznXknijw
-	TqRAZmc81htJNDHlNXYfF1Ez7IpNAhieQOPEYWNTgLL6sjQsmXxNYbH4h2GVUF55ApFXv5LkKfP
-	RjFAkrT8l0rgArTh31MuEUx97xWCx6Q5X1qGHgvi503+CPiyUfLiepAg3CXnNbBiw6rn05EPEjQ
-	Oa1jwYvdeDWONIW4jmITlzP5BuaNLA8WwasSbCiHgCi4/p0PDlKBWpzgnBqso8Qv/uYYsHh1525
-	8QQQ5ACh1bO/IqByrxzdDfzTpV/LaN8UlpX
-X-Received: by 2002:a17:902:fda8:b0:2dd:ad73:c988 with SMTP id d9443c01a7336-2ddb1bbf25fmr45916805ad.32.1789736385580;
-        Fri, 18 Sep 2026 05:59:45 -0700 (PDT)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com. [74.125.228.12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ddb73daff7sm7427415ad.8.2026.09.18.05.59.44
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Sep 2026 05:59:44 -0700 (PDT)
-Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc1cea4bfd1so427030a12.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Sep 2026 05:59:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwTDlHaLLE7ZasgILHsL1e8K5Mh9i1Uh0bMOIaBwbQy0vDIMeRmc6G+MqfM8paHC2RB2Uo0j/Qbh9j8OlLxPQg=@vger.kernel.org
-X-Received: by 2002:a05:6a20:6a28:b0:3d3:adbf:7782 with SMTP id
- adf61e73a8af0-3dd8c41a46cmr4668333637.23.1789736383919; Fri, 18 Sep 2026
- 05:59:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="u9AhtPcn";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="u9AhtPcn"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hmXvB5JlbzKp22;
+	Fri, 18 Sep 2026 15:06:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1789736790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+TtMD/N6SgzaMVWEle+qL0jO4JALOAaC+jKdUPI5lys=;
+	b=u9AhtPcnvF9+I6+HfzGgIs8skVxl4znEFMhyXZQcV2/+6IS2t9zquv/iYXC/IVhDgG0chh
+	ZC7rLTgNMIZzGLwd8nm8PdD4cqEBXH6/1/nDwAGTg7FPuchY/EMcKOmMWolwepmrIptica
+	O+BHVRZeh7hgfjcbNYS0L00bSi78f0OLDnErGomHpoRJVCOhM6inGq1szTrIaaWTPaemDF
+	rwF1tD7ZP2MeQdpxcnLJtzEhS//VWelGi2oanYNGqlpZRHcUAFazR3xLHzjAX6Kz1jXsRN
+	N/EI6cMZ5rTXl75Z/i5SfI0NIoSA8tlzpHOaqJ9rjVrHwEFrzhupxMNGdk+8cg==
+From: Manuel Ebner <manuelebnerli@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1789736790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+TtMD/N6SgzaMVWEle+qL0jO4JALOAaC+jKdUPI5lys=;
+	b=u9AhtPcnvF9+I6+HfzGgIs8skVxl4znEFMhyXZQcV2/+6IS2t9zquv/iYXC/IVhDgG0chh
+	ZC7rLTgNMIZzGLwd8nm8PdD4cqEBXH6/1/nDwAGTg7FPuchY/EMcKOmMWolwepmrIptica
+	O+BHVRZeh7hgfjcbNYS0L00bSi78f0OLDnErGomHpoRJVCOhM6inGq1szTrIaaWTPaemDF
+	rwF1tD7ZP2MeQdpxcnLJtzEhS//VWelGi2oanYNGqlpZRHcUAFazR3xLHzjAX6Kz1jXsRN
+	N/EI6cMZ5rTXl75Z/i5SfI0NIoSA8tlzpHOaqJ9rjVrHwEFrzhupxMNGdk+8cg==
+To: Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	linux kernel <linux-kernel@vger.kernel.org>,
+	kernel-janitors <kernel-janitors@vger.kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Yi Xie <xieyi@kylinos.cn>,
+	Manuel Ebner <manuelebnerli@mailbox.org>
+Subject: [PATCH] ipc/sem: Fix kernel-doc notation of perform_atomic_semop_slow()
+Date: Fri, 18 Sep 2026 15:06:03 +0200
+Message-ID: <20260918130604.452053-1-manuelebnerli@mailbox.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aq0siVcghDe6x9cs@stanley.mountain>
-In-Reply-To: <aq0siVcghDe6x9cs@stanley.mountain>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 18 Sep 2026 14:59:29 +0200
-X-Gmail-Original-Message-ID: <CANiDSCtiVU1PJh7=Pb56PNGF0s=cxfe1kVjwW+7O9JOT5CrDAw@mail.gmail.com>
-X-Gm-Features: AcwNN1VZ_6ZbCrR1Mp4y7JmQBXOuD4YG-BKylmDeJzSZ3dkgiXG_e6jgcK3ZpuQ
-Message-ID: <CANiDSCtiVU1PJh7=Pb56PNGF0s=cxfe1kVjwW+7O9JOT5CrDAw@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Fix buffer overflow in uvc_mapping_get_menu_value()
-To: Dan Carpenter <error27@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, Yunke Cao <yunkec@google.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 4417f5af454c730b19d
+X-MBO-RS-META: jqeizzsb3xfmaop5wao5pknayjfwx9z7
 
-Hi Dan
+Adopt strict kernel-doc notation to make doc recognizable, this fixes:
 
-I believe that for all the uses of uvc_mapping_get_menu_value we are
-already doing bound checks:
+$ ./scripts/kernel-doc -none ipc/sem.c
+Warning: ipc/sem.c:629 This comment starts with '/**', but isn't a kernel-doc comment. Refer to Documentation/doc-guide/kernel-doc.rst
+ * perform_atomic_semop[_slow] - Attempt to perform semaphore
 
-index >= BITS_PER_TYPE(mapping->menu_mask) in uvc_query_v4l2_menu()
-value> fls(mapping->menu_mask) -1 in uvc_ctrl_clamp()
-BIT(i) <= mapping->menu_mask in uvc_menu_to_v4l2_menu()
+Signed-off-by: Manuel Ebner <manuelebnerli@mailbox.org>
+---
+ ipc/sem.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-In any case, I think this patch is still worthwhile. It will help us
-avoiding bugs in the future (have you found this with a new test for
-smatch?)
-and if we go that way it is probably a good idea to also "fix"
-uvc_mapping_get_menu_name()
-
-
-On Fri, 18 Sept 2026 at 14:20, Dan Carpenter <error27@gmail.com> wrote:
->
-> The "idx" value is a user controlled u32 so we have to bounds check it
-> before calling test_bit() to avoid reading beyond the end of the bitmap.
-Maybe change the commit message as well to avoid stable cherry picking
-it blindly (sorry seems like I am more picky than usual  :) )
-
->
-> Fixes: 4e15c535659b ("media: uvcvideo: Support any size for mapping get/set")
-I believe this should be:
-Fixes: 40140eda661e ("media: uvcvideo: Implement mask for V4L2_CTRL_TYPE_MENU")
-or no Fixes at all.
-
-
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 3ca108b83f1d..f157ed99be4e 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -538,7 +538,7 @@ static void uvc_mapping_set_s32(struct uvc_control_mapping *mapping,
->  static int uvc_mapping_get_menu_value(const struct uvc_control_mapping *mapping,
->                                       u32 idx)
->  {
-> -       if (!test_bit(idx, &mapping->menu_mask))
-> +       if (idx >= BITS_PER_LONG || !test_bit(idx, &mapping->menu_mask))
->                 return -EINVAL;
-
-What about using BITS_PER_TYPE(mapping->menu_mask) to be consistent?
-
->
->         if (mapping->menu_mapping)
-> --
-> 2.53.0
->
-
-with those changes:
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+diff --git a/ipc/sem.c b/ipc/sem.c
+index 5ec41de7e85b..642be4170065 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -627,8 +627,8 @@ SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
+ }
+ 
+ /**
+- * perform_atomic_semop[_slow] - Attempt to perform semaphore
+- *                               operations on a given array.
++ * perform_atomic_semop_slow - Attempt to perform semaphore
++ *                             operations on a given array.
+  * @sma: semaphore array
+  * @q: struct sem_queue that describes the operation
+  *
+@@ -642,6 +642,8 @@ SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
+  * Returns 0 if the operation was possible.
+  * Returns 1 if the operation is impossible, the caller must sleep.
+  * Returns <0 for error codes.
++ *
++ * This description is also valid for perform_atomic_semop(), the function below
+  */
+ static int perform_atomic_semop_slow(struct sem_array *sma, struct sem_queue *q)
+ {
+@@ -716,6 +718,10 @@ static int perform_atomic_semop_slow(struct sem_array *sma, struct sem_queue *q)
+ 	return result;
+ }
+ 
++/*
++ * The description of this functions is the same as the one for
++ * perform_atomic_semop_slow(), see the kernel-doc above.
++ */
+ static int perform_atomic_semop(struct sem_array *sma, struct sem_queue *q)
+ {
+ 	int result, sem_op, nsops;
 -- 
-Ricardo Ribalda
+2.55.0
+
