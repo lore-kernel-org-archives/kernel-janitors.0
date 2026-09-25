@@ -1,118 +1,79 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745CE46F4BD;
-	Fri, 25 Sep 2026 13:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531D34AD4AE
+	for <kernel-janitors@vger.kernel.org>; Fri, 25 Sep 2026 14:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790341612; cv=none; b=U+bgZknTvwzq4vpYcT1Kg/wBDTVW2l1VHmSkJHDksZkSbNwX8I5IaCU9LrAxJP3b4UNxTqU3doV9bvo0k2BrBiB2hZp5R5HGZtnHd/dhLCDfp8nnPgKkKfFuVF9fSUrKSFVrltIsUnaWDM6kPSsUol4rsfnq5AW7C8ubsq1BvdY=
+	t=1790346569; cv=none; b=MfuMRaqLMpod5aceyWne0P/qN72Gy5c75UmjZqsqa61divktSLWWtAGGTjx3DjrW6sIVCOc3MlXeBWTy2nmQHkheho5N91/dyDMIDTMCyBrr7YkLX7ShJ+P8XUQSIgaOAztc8l4ePJqei7FGEyeIdxDttNOVgqnGorUSkXSUbpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790341612; c=relaxed/simple;
-	bh=5LiU7u1Sd8vqr5RRPtFupIejm8J7rPUf9Xtw/ZZXIiA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tG7mvvV86VFf6DveAPTA/QJ9y//6zQ3fXM1SIgTLzn9iJUirE0sRAnsgA4E6/rtJOEF2JI9XCDENsGKdywTg3sDUH7oz6xFih6FbkIiLKviO6p6lJEDDzuYv+3R2nehiAzZ5d0KGD8ClaW9v/8z0U+qtw4wVr9yra7U6ox8X3vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=P6sPMLxJ; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1790346569; c=relaxed/simple;
+	bh=QVPgqdb1/rRh8OEZEKYmCblwkRb1tPDTx2dPxbP5cgk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=n0aGUvRbY4ncEgS4J6lazjAlU3TS16yjnHfKFcFc0k6IJU4997Vf3sLihZpYkfBIeHBjtYJ+H5yQfXg+cYoZqBjxGYOgFzhuAj9FOjOcNHz4XxYINEcZXnkTig9JdYfQtLioyMW9EiF8eAOU/oT5pktxUk8s3/v9SwHq47f3RhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VKUmlsyK; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="P6sPMLxJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1790341610; x=1821877610;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5LiU7u1Sd8vqr5RRPtFupIejm8J7rPUf9Xtw/ZZXIiA=;
-  b=P6sPMLxJ1iDDQks46WQX4Ee0nsTRGWGW5CN/npI0i+mLG9vvGSu6Kumm
-   WsREuH3tuJFWAm/L2st8YO895mKDWstLp7s3Qm8hPbILuCt4K8THQzaRl
-   LbzOR/TwuOk+/Kr5Oakt2LLOw6BcA1wqiRpdqPeLAbq9MEV8PNsLVcpo/
-   pNSfY7xoQkuOBuQhLYsOxpK/282ZAJ30Vpp4WI0XshsKOtxuYDrmxiJMi
-   y0G99mUp6wb9+w9WYg/5+TeFFXk0BtMl5OLY4sboix1B9UoDZCoxxrguj
-   kLeOPsNZwIuLiwx5GXa1BS5zuvXbE9taJ58egdZICrmlR3MbxdOzpTi9Z
-   w==;
-X-CSE-ConnectionGUID: 0oTG/wW9SWmgreduiR0bWg==
-X-CSE-MsgGUID: U+rPuNpRSV2rV5jNhfO0Yg==
-X-IronPort-AV: E=Sophos;i="6.27,122,1787036400"; 
-   d="scan'208";a="295561569"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 06:06:44 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.49; Fri, 25 Sep 2026 06:06:43 -0700
-Received: from DEN-DL-M70577.microsemi.net (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Fri, 25 Sep 2026 06:06:41 -0700
-Date: Fri, 25 Sep 2026 15:06:41 +0200
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-CC: Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-	<error27@gmail.com>
-Subject: Re: [PATCH] net: microchip: vcap: stop scanning after deleting key
- field
-Message-ID: <20260925130641.awviajhuq6mcb22w@DEN-DL-M70577.microsemi.net>
-References: <20260925063937.963430-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VKUmlsyK"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id CE82F4E41072;
+	Fri, 25 Sep 2026 14:29:26 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A0A586073B;
+	Fri, 25 Sep 2026 14:29:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5793D102F19F8;
+	Fri, 25 Sep 2026 16:29:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790346566; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=5YQghMkQxKVMxZ3HXy4f6WO6qALFgb2czJJHSaPe1cw=;
+	b=VKUmlsyKXhsNGflv+JcrbtODY5kyVbE0oBnq666f8Ek13qonjW71+8EW8rmx26seoqAzUe
+	PXxWdjtZLCNmCrIaJjuDClfEYb1R7LQ5bMVypmYnEUobW+B0D+qjn8BTcrEZ0X+fvugR46
+	M0qFVxPylFXekugeywTaSSIN7TA9UFwPlXgAFDyeUq/7eJkFiojLmUzUtJHgwUmuKjphHU
+	dRoubdI8mNt6/o+yKHc1gCKYvu4TIRU4Bg3WXqbhBKZwIgRqJrteI9lfz12aRoPp5t7Qai
+	AAbpnBhAxeKicDQt314EuVzMCQ0rEDi1OfcEZCUBLoPBQBX/apDf9F2uHaj6ag==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, error27@gmail.com, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+In-Reply-To: <20260924211412.896753-1-harshit.m.mogalapalli@oracle.com>
+References: <20260924211412.896753-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH] mtd: concat: use container_of_const() in CONCAT()
+Message-Id: <179034656384.1166139.12762954308681250790.b4-ty@bootlin.com>
+Date: Fri, 25 Sep 2026 16:29:23 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260925063937.963430-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-> The only call outside the KUnit tests is in
-> sparx5_tc_add_rule_copy(), which passes a fixed key list with no
-> duplicate entries. Therefore, the potential double-free is not
-> currently reachable in tree.
-
-Agree. Not reachable today.
-
+On Thu, 24 Sep 2026 14:14:11 -0700, Harshit Mogalapalli wrote:
+> CONCAT() currently recovers the enclosing struct mtd_concat by casting
+> its embedded struct mtd_info pointer. This assumes mtd remains the first
+> member of the structure.
 > 
-> However, vcap_filter_rule_keys() is exported and does not require its
-> key list entries to be unique. If a future or external caller supplies
-> the same key at another position that the inner loop visits, it calls
-> list_del() and kfree() a second time on the freed field, leading to a
-> potential double-free.
+> Use container_of_const() with the named member to make the relationship
+> explicit and preserve any const qualifier.
 > 
+> [...]
 
-Also agree.
+Applied to mtd/next, thanks!
 
-> Break the inner loop after removing a matching field. The outer safe
-> list traversal continues to process the remaining rule fields.
-> 
-> Fixes: 465a38a269e9 ("net: microchip: sparx5: Support for copying and modifying rules in the API")
-> Reported-by: Dan Carpenter <error27@gmail.com>
-> Closes: https://lore.kernel.org/all/ahs-lCAXXikkaHky@stanley.mountain/
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
->  drivers/net/ethernet/microchip/vcap/vcap_api.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api.c b/drivers/net/ethernet/microchip/vcap/vcap_api.c
-> index 788c0728d763..0f8d98f2094d 100644
-> --- a/drivers/net/ethernet/microchip/vcap/vcap_api.c
-> +++ b/drivers/net/ethernet/microchip/vcap/vcap_api.c
-> @@ -3527,8 +3527,8 @@ int vcap_filter_rule_keys(struct vcap_rule *rule,
->                                 if (key == keylist[idx]) {
->                                         list_del(&ckf->ctrl.list);
->                                         kfree(ckf);
-> -                                       idx++;
->                                         err = 0;
-> +                                       break;
->                                 }
->                 }
->         }
-> --
-> 2.52.0
-> 
+[1/1] mtd: concat: use container_of_const() in CONCAT()
+      commit: 2e566a6830b82d95837c4d669c63a0c1abf766a9
 
-Patch is missing the target tree (net), the fix LGTM.
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
 
-Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
+Kind regards,
+Miquèl
+
