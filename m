@@ -1,129 +1,115 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B551F37757A
-	for <kernel-janitors@vger.kernel.org>; Thu,  1 Oct 2026 23:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790896287; cv=pass; b=A5Ekf3zGKab+pT/EUKqpmjuavVQTfPICZ45hTESyga59MIe5G2p5+vfAmxc6ZK2X3qnPaMIFDQGNy/kKWvFEFSr5mvAltJ0g7IXIsV7XALnLH/fdmth3Ou4dJz+SbNMzQ0AMiixkI9GzLClDUJA+uin0HLfmKU8l92mGaOmbIss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790896287; c=relaxed/simple;
-	bh=4Nb1L9U4YfwNkyfWFRjbEZ8/q2Pq0SGn9d6+3u74spM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h157JecpXDQ63wTgihYDzoVeym540Y3sX/mmH59Dgc2uy4lDNAp/gtspVBuyMdGyhzOUiNWWq9u1/RRjOQ8wPkeq63b8YVlwMP/ej6Mxta4nGXEqgJvyeF8cOyRJ+LT7oSqKnduvt8bvHN2DLBWItawy/XhcQFRrRDrdzctI10Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xt1B567I; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wa2MUxmo; arc=pass smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9732747F2FA
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 Oct 2026 11:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790941325; cv=none; b=EwpYzyZfadqlv0o+Tz4SdxM8VC1/BpQ7wEsfWLgXiV983t4oUbcqmRfnemO8h9e3K+M+UrKUfbKeOSwFHO0RrpW0W508RoJDt79FfsdChe9ZmA2AXkvIG0XKj7cDoFr6pRqg8d7MrsuYneIE5MXjVNqZ2taT84fLPoNJUdoZnIk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790941325; c=relaxed/simple;
+	bh=0HME7YAue9Ez3zFgKD4fOkc86Gr+NWrz+gcBY5iv6ZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=czUnrBCuOvPnrGQAeLyVK+oEvX4GobaTR1TjBSMHeDTG4GKkXCJ0m9iMTcTOp3xlkrv7LJbPraQ7B9uRiiuNYeoYBohiSOKpt6dh5drmy2aHWCivRsej/ypzgceuduQ+wsT58qggvH9viU077buSI4VxAyFh+uHM//bOIYzq/fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vkyv5zxx; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xt1B567I";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wa2MUxmo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790896282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Nb1L9U4YfwNkyfWFRjbEZ8/q2Pq0SGn9d6+3u74spM=;
-	b=Xt1B567Ij8yNv3xYfWogjK+OHHVGH6fIgBx2dISAgzVbyN/lsOEwxS0H8DdlaqfWLJT1Ga
-	V7wChZEM01wjON1FkeXLnY/C6QGkLmi7+sgUOOkYY7rOFU7+pX/LvU+Q7MGsqYyogU2H26
-	k0MGrEmuc3MiePZczGd1cLDi72mfFXc=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-aov31RpNOy6OoQXTeKYUMg-1; Thu, 01 Oct 2026 19:11:21 -0400
-X-MC-Unique: aov31RpNOy6OoQXTeKYUMg-1
-X-Mimecast-MFC-AGG-ID: aov31RpNOy6OoQXTeKYUMg_1790896280
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-3a781d434f0so10907101fa.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 01 Oct 2026 16:11:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790896280; cv=none;
-        d=google.com; s=arc-20260327;
-        b=YIhnlRVq70i5d1UZm4/h1dgNMJUbBdawYx1Eddh2FnqizcMRsZ9Lf+PDtze0+dFvQe
-         D7/a+qdcyDyO3tFdbRm4gboKO1t6RL6yso9k1CdZAfX/mirb38OUoZzC2hxe+FX9TjBJ
-         dJhLUX4qTkN/iZPOslTR+1TXJH6gIzlwp2RNceoy4sLXlLnfhWGcoz8Ugok7ZJ8yZNMz
-         6BL0+cDiYKLDBlCw6Bzuh03Q2Sk9N7qKA5i3xe5u4zW/qEuO6VaiQr5f1IQM3l417zgE
-         ZqJs7JJGVoDmwPbpFNqiRZ8okn+e4ok6U2Z4sEzubaIxEQp3Kku9vEVi6rwQSezKObxA
-         z6Lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=4Nb1L9U4YfwNkyfWFRjbEZ8/q2Pq0SGn9d6+3u74spM=;
-        fh=zj4zzVAu0XazpXdYr9/dnUMqgFGomxvEThvwzTZJ7U4=;
-        b=OgjXcBwXdvovkwT+vdg3b1lo3ZrIlLRv2df039lCMJfvB0OjMhN8Xr6yu4TQlfoCu2
-         jnpjH2W3SP0SdxyQZnMD47OOdcpnGCODB1VeQ8fxOKI7GQbwb3IjlepH1mJgWFfVOJDQ
-         SL6BW4fC1deLTuCrdayyaYH1dEPgcrjt4r5YxWWUnWSpIvBAJG3IuHnPspKHlDo0VO69
-         w8ifPabH/VRXZl4Vwho8SVgCZ6TxPLTAWkzYXnmH0RM+jDSepHljZA5gPxMr2NO0IZZ4
-         vP6Ngt+lMW8orzdo7rp/DtnNjny4R1aJfLM3BDwcb7XT902cpkJJx1PUt/S6rnE7If0u
-         R8eQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vkyv5zxx"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912d391aso57655035e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Oct 2026 04:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790896280; x=1791501080; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4Nb1L9U4YfwNkyfWFRjbEZ8/q2Pq0SGn9d6+3u74spM=;
-        b=Wa2MUxmoHqQeaWkqEaIG76ImK0a0iitDkUWU0gydq36wiDqpkTTFyOwCZRceRrMCz5
-         fEy+h5SnoZ0O4NWU7ipO9KLrc8Fc5gRDuncBQOL1Rl3xP3oz8AZm6ogzO0CosR0lkguJ
-         C6z+JkID/M3jn9KIcwbG44B+gmqdE/pGlsv85IxT7S3ZPip4XibEBtYmrBOuuytUaLqx
-         9/c1MObiTIONuOyvkv7Q5FT8SzgTU3zmdPivAgi5xwwxZ3K7fjFrOwcXRH6lGzbG51ev
-         DmAiJnNxlHGXDPPh9pdu5ma2033IAGOGEvxRfTVgd7Tvo50nPnSScZcbYDNm6oaQLcGt
-         XjlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790896280; x=1791501080;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1790941322; x=1791546122; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4Nb1L9U4YfwNkyfWFRjbEZ8/q2Pq0SGn9d6+3u74spM=;
-        b=GxNPAujv6kuBTjWIGwWLLVv172v/LaN+aVEbYGV8pS6qr8ZyEREeBfBEvAdIaDrNdf
-         lCr5Cylli7y8cQaISCW/ld1zfyQ/b0CjMwuTO+1xIQkCOve5daVzBT/iQBtgCzU1aucD
-         i5LfzVzVMWjUzxZreR77VB438DOWh+A7NMDhCL+HwLtJtU1buIXdng2udV0ONeFKwHQ6
-         8e0NeiStzkyLmeuejBfBcCZylL4RAQG5f6fTM7BIkrrbRytzQVd0go7GklcmOq+xF7vJ
-         2yMQeMZeXB/bCYKHiRt9ZxPMU/KUslx6GRwqDl6/GcnigO8WDIaoshPYrCkNgvZVZDcR
-         DOHQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx21y589RluAe9PoFY2fcX+RXUZRmsOMynRu1vIDygqqcmnn3AGHTCUxi/iHF6Z+qppLynjtIG4kif2uiLWF28=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI8WJ17U8ArpxE6g10LCZhRu3oVbi1B2QeV6Q6ox3nBaDvy3FfE
-	5d/x28yIMcdtdQgs5qsAV9oJOq3BBd/2hTXlkmTogBOJUMFCfKrrMIBbhF7Tm+H2wL4lNJ76Dqs
-	r1kINEaXvW+ko5g9V4a4WycgBE6TtePG0Vgk7AOlfzkwQfFS6vlU93UidiWSJg0DdkBNHA6UsRt
-	wPSDVuwtu8yHTUGA13gW6BijhME8MxOvFf74cujrQB0XZ3
-X-Gm-Gg: AYBFou0phYd3hxCG7C7o+LLuqWZPsKsynNO397E2G0kmUJh/KkAOIuF4bDXly1MKYlL
-	tGGj07gZ3zEhsLh0+cR1n3rLChXOXQce7n6F8EXvfl5KP6bJBBZ0BmLV85HEhEVS9dtFO1X5JfY
-	cJxIwA5uVzfnCwBK+VCbgfqArGTlSZJ7kwuBahpzzoCCGjmwUqxLGSI4h+
-X-Received: by 2002:a2e:8a9c:0:b0:3a7:8294:caac with SMTP id 38308e7fff4ca-3a8828d995fmr1606181fa.3.1790896279769;
-        Thu, 01 Oct 2026 16:11:19 -0700 (PDT)
-X-Received: by 2002:a2e:8a9c:0:b0:3a7:8294:caac with SMTP id
- 38308e7fff4ca-3a8828d995fmr1606171fa.3.1790896279429; Thu, 01 Oct 2026
- 16:11:19 -0700 (PDT)
+        bh=+lGLqvieqnE02h9EB6P28IAqIwdIX6XiTDkEFIeR6SM=;
+        b=Vkyv5zxxtl1e+p+bVQm4a1MSs2YSdRLFeXQysore54jq9070l9bR2RawjAbs3XB7VL
+         ppYl63+SoSif37WmOI6fHB+i1WsJylTXUKh8JQFKaTigVSFg/NYHKGvmlLkLL/+toswr
+         jLhs3i2yCnSbNDN6pH8WzIzkLj3mqFResgxebzrlWvNvCv8dBQVrggSo8oWxchdvJ/7j
+         BtinvUTOLj09p3BiCxHrlRpbFuFjtMyPiJUUE4K/y91nhZsYxrkb7WWSKGo6nItDXMOS
+         JT6jUvIqK6/fvxZkoRJhLCtLXqU8bWYMzDLwPyKmxyg9FEdlGLPYox6/qUfnk1sxqtcz
+         iLrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790941322; x=1791546122;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+lGLqvieqnE02h9EB6P28IAqIwdIX6XiTDkEFIeR6SM=;
+        b=rtVt+qU27o1EruC/gEHb1t/wzOzxJiz4KR2h+kwDPT6uilGVWxeUt/yhmbHQG0m0Rv
+         vJd8Nd3eBAK/mpw0VHEcGJPUWsOdMoDV3vq56yyhr+1ZNfFKQxA9BGe4xfI038R1sqX0
+         Yicx53CRF03NACaVoKC18duPcUHB/48Ay2JiQcmV2iBfmfq42C9SpjkB9wjs8SMA3NtQ
+         ONyhO+w3AyTtXzFAmd6KdtdgSLXLou/iKPsT7Hg4wJKFHGvDRnk+qBMWS8DdicLNB9HE
+         SR2TnwUTfryEvowOb4kPzrPb3m4o7qfI3ZbbLVaEnp7FtNJRhrqaTqyQrk5DVN8ZlkL8
+         X2Mw==
+X-Gm-Message-State: AFuF++m5STnFxgicJZPKGIPj/7sbBqIABsYOgAihxSLXyOvA1+kmTw31
+	FwT24DrEQxBGRPCgggOxztcEiQ6RzE4wdDom7K/UPiqULe1Gyhs6u7ei
+X-Gm-Gg: AYBFou3E+zim7ddnpjIOj3sp1x6JDQxq7Z+Rpl6+Xhe2ROJBmhkM3A2TppgDm6pJqBQ
+	Nb/kXA8UNVZBaCHHY8dZKQQhHJrxquZCbJpYquZS9bk/ZtOSnLiEDaJqNgm7WT0lVI5tjtR5orO
+	BO+rGByvCPPDeVv0v/8Go+JiCKidUxsjkQgfDfbUw4Mws0t3A+gq92xgYIAYxhD6XhgQLOBBNVg
+	KaSDCJ/rySblVpWekl8E12NVP89411n9aIbUaDw85B0H5lfMAjCB5SdNVUjSp1FG5ttMy2JMeGp
+	zeK0Tc1aKpBG55ZIIb7QtCx4Jopb2DsScs0/gX3qtKpIQLSt4aTEgYI3Dal+bBfqTz8XHWKRlD1
+	CJuxmNwtIFHa2xT3nn8BZNZTYykkXKQed+Du76w8r/x2IyKpjq/uVx2Q0rlQZktTXKe9OFsQwUA
+	lPoAUTRUwSYpp+Izob+g6/1nvA6ykCGZxGGa+6nUYOJvh8ULWtgOcp031XHafDAZZF9E5Y
+X-Received: by 2002:a05:600c:154c:b0:49f:fe88:e7d1 with SMTP id 5b1f17b1804b1-4a02769c438mr50006385e9.15.1790941321624;
+        Fri, 02 Oct 2026 04:42:01 -0700 (PDT)
+Received: from localhost ([5.83.201.219])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a027727cecsm77397725e9.9.2026.10.02.04.42.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2026 04:42:01 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Sen Wang <sen@ti.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: tas2781: Fix spelling mistake "config" -> "config"
+Date: Fri,  2 Oct 2026 12:39:52 +0100
+Message-ID: <20261002113953.1782731-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ar4BZ26gjQEjZgIa@stanley.mountain>
-In-Reply-To: <ar4BZ26gjQEjZgIa@stanley.mountain>
-From: Alexander Aring <aahringo@redhat.com>
-Date: Thu, 1 Oct 2026 19:11:08 -0400
-X-Gm-Features: AclHuK_ZIZU9AoOcMzsszikhvoplml_bm1WdOkYBM7Pkh36bT-GWQFKoCy-TOGc
-Message-ID: <CAK-6q+is-tnpfGqiNCj-SyHYAKfe4ZYQH15=c_rqOy7pkgCoTw@mail.gmail.com>
-Subject: Re: [PATCH] dlm: clean up a type in waiters_read()
-To: Dan Carpenter <error27@gmail.com>
-Cc: David Teigland <teigland@redhat.com>, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+There are spelling mistakes in deb_dbg messages. Fix them.
 
-On Thu, Oct 1, 2026 at 2:45=E2=80=AFAM Dan Carpenter <error27@gmail.com> wr=
-ote:
->
-> This doesn't affect runtime but "rv" stores error codes and so
-> declare it as ssize_t instead of size_t.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/tas2781-fmwlib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Alexander Aring <aahringo@redhat.com>
-
-- Alex
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index e8ceeb027e1b..182aa98e29c3 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -648,7 +648,7 @@ static int fw_parse_configuration_data_kernel(
+ 		 */
+ 		if (strnstr(config->name, "calib", 64)) {
+ 			tas_fmw->calibration_config_id = i;
+-			dev_dbg(tas_priv->dev, "%s: calib cofig = %d\n",
++			dev_dbg(tas_priv->dev, "%s: calib config = %d\n",
+ 				__func__, tas_fmw->calibration_config_id);
+ 		}
+ 		/*skip extra 16 bytes*/
+@@ -1438,7 +1438,7 @@ static int fw_parse_configuration_data(
+ 		 */
+ 		if (strnstr(config->name, "calib", 64)) {
+ 			tas_fmw->calibration_config_id = i;
+-			dev_dbg(tas_priv->dev, "%s: calib cofig id = %d\n",
++			dev_dbg(tas_priv->dev, "%s: calib config id = %d\n",
+ 				__func__, tas_fmw->calibration_config_id);
+ 		}
+ 
+-- 
+2.55.0
 
