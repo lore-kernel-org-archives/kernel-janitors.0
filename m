@@ -1,94 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f41.google.com (mail-ej2-f41.google.com [74.125.228.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67C3456E04;
-	Fri,  2 Oct 2026 12:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FF2392811
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 Oct 2026 14:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790945923; cv=none; b=BnDFavfoarZ1pKemLs2bU1EXMkhCkdmeXp9BbO18kFtl7fSydsHpW6KvvB72R8ilzhDf0BFhmjMkWKnyptHaxws0Farp0DNXKoEmycT0vFBMvfscANLnRlIBK9oGES/avvBDfvp53ykaGcW31HNMObsdoiFOcmoMwhJlRjjMze4=
+	t=1790952133; cv=none; b=WzVLDqyXKeuPrFNVMSyz0TnRGWBYkLbcG2ukD1I3VYbdiwJFvOqqX8DnlX0rNrCwdoVD+cla8WKyTOXpRGTLLcMa9jkBn/bWfX6ifgdtgSvyMPwOkl/2zp9kaNduknngF7U63v+OTAWGqQrz6q0oS7cwz70MzT52/SORdEA7gAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790945923; c=relaxed/simple;
-	bh=xNzzvSbc51cCr5Fc4km7Ggs6a26Cs5l2cnWUIKJUQGo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mCzwu9fMrE+7QuFWb37URC8/brjSEH9XIxsd5BQGrtTXVnlbdbjvjmpWrEs5gLZSQ2eeGCO3DjZWQ5vUYL6nS8Ic+nND/1VKEqA523UxxJUxZoARFxi6IudCOAVFRg85eNQuOBEMfPbX6OQewvSFCU9wJV9x+UcdBqUTNfVlGqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcv3L+tB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790952133; c=relaxed/simple;
+	bh=HkLu1z/SbgPFtEWdAtjARd7HcyvxzZ1BbkfT7JyKqUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XPv5OgVN8a6Pu7HDxMXDvhfZCHgGZ1ExDWkLLY7NWRhEjBfjEV2IaLhyFIdvJxEzvPi0za1QUoZk11PlMz5qQwFmOTSNTbU42BUV6dRsZvLVYGsSUR6dELwHpCIOGj097wtiyEpjd7uhASn+qR6ABDgt6atHaPuEynMzmaqg1HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHjS9QG0; arc=none smtp.client-ip=74.125.228.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcv3L+tB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB081F000FF;
-	Fri,  2 Oct 2026 12:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790945922;
-	bh=MxCdHBRqLiCyses9ZXUhEWZjiuwRWjHs0M5h8P8vfYA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=jcv3L+tBH3LimxChE1JsfoALkgjn5vqIPZ7ek8Qstx2qOMDc+KkaCsUx5degoPI6d
-	 ZPFHynWLCrXwk7s15eMcUYvqAg69MYMAXiFQMU81A7wK0u1TarW2E4Sn0EEB6oJZVQ
-	 APf/nmS+KmtZgiRCDnaSjEEeXDn8J9wt98UlCvtqJdIDCgYMEhjol3nn5cfd90JWoJ
-	 3haVYfWnY98vNiB1KO8ioWVznqQeodY6NqUje11Sv7vd/9viWTIj4EPthMJZlPNXAd
-	 sNetjg1SZYZDJAjZFRrzMNFHWErrUmbzQEi14seC/4cIjlmOS8rEx8NdolN/Pj7DgX
-	 /TXB8mc9b6CFQ==
-From: Mark Brown <broonie@kernel.org>
-To: Val Packett <val@packett.cool>, Dan Carpenter <error27@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Luca Weiss <luca.weiss@fairphone.com>, 
- Charles Keepax <ckeepax@opensource.cirrus.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <ar4C-0NIYXiAvxvv@stanley.mountain>
-References: <ar4C-0NIYXiAvxvv@stanley.mountain>
-Subject: Re: [PATCH] ASoC: codecs: aw88261: small cleanup in
- aw88261_set_tdm_slot()
-Message-Id: <179094041583.83544.1416484005770287015.b4-ty@b4>
-Date: Fri, 02 Oct 2026 12:26:55 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHjS9QG0"
+Received: by mail-ej2-f41.google.com with SMTP id a640c23a62f3a-c2e0b486d91so15325966b.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Oct 2026 07:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790952130; x=1791556930; darn=vger.kernel.org;
+        h=content-disposition:content-type:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=k5F3CEI3XgaKuf1OwNaDsn6tE9wpJa5Hz1OIv8VbsSk=;
+        b=EHjS9QG045bwagcPbNQtae7CW+a1yd4F1WcmeFj+tewYCwMgDAfWxj793t5uYE3Qwt
+         J9OVspADSNaSkW6VgNs13WTu5weMKNwhuQpV1KYYrtJdf1woTm5CRBHGkD+U9ySf29ku
+         aZro/2pl62qfLnDsEjreDqesfY//Hrl3pNuwYysg/SS1HXDL5/5qyQAAW89tdAu2+fKe
+         VeTst+Jt9WZyyvX9UvxBjIIzk+iSy5a586PqmTt/m+TAmhUO9TH3v+go/TTijJ4ZQWqH
+         hXwjnxX3/yQwmmS5is8RfNAIQx6h+za1dBj/NgR9pGl982RqpwJr1xMaqPq8abKsb/Ow
+         z1WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790952130; x=1791556930;
+        h=content-disposition:content-type:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=k5F3CEI3XgaKuf1OwNaDsn6tE9wpJa5Hz1OIv8VbsSk=;
+        b=gpBde1peOBcBWoD/afURuwtEi0nuOdwhJnhN17EbZPyazpP0SA2f7uUMfpr6jvc2s8
+         WnVPcd55WGKPPkvV7KvomTHF1RjZ5QLyIQDM6BqPcx3u9zMTwOA/zB85piE5RpLITdet
+         zVuOEwCUbY/OSnszFi9/a+4K0JrtvYck7pErOGJoXntu5MoSF/Cpj+b80Yu8sll7JzE0
+         twuN6YDOJHUAos43WcIu+b5Xog0JU/tRqv9XyDdYX/+6PtcAw/dMVjtykMHcxH/iKbWQ
+         I8i0Sim50elbT1urNaMevh83xpfxnvELGjK0XeJcRDDil/nEs1lVFf/NSLj+p6y0XpZb
+         SRGg==
+X-Forwarded-Encrypted: i=1; AKwUvBzEgpk+SNs67dI1Ur3PAnWCYVyi7qa7nd7fb+8D4rL/SIAArDqMfJhuj5nG3B1/Trvcd7oiwJXp0jzPoN2BrqE=@vger.kernel.org
+X-Gm-Message-State: AFuF++nIA7Oye2vgSwPGOVkhCPJPIevBFsyNokVbZWOCeizalut4IW3l
+	zDWFsipRHiLXCjlDKqZTHH/LckznfNs9Si8NUjMP72Xi8LSPnaN5+UcM
+X-Gm-Gg: AYBFou2YpHbvwWCq9EDOcIBJfBbOtGoOMqNV8WKsLEgKxa39orG6rTfj/GS3ufy0XlV
+	VSduLJ25oBOFV9ghnXJzzJek2g409nK1IKkoF78xyLo4YxasVNgm+rA2t3sEJ/tIO7AlqER3BA9
+	gATFQwWUBisHDalk2h2szQ7xXMfxHF4/iBt95EIYllrE2o9JJDNGuUTwfP5mP9DmppyiyocD2Ur
+	viS5W/MHzORSS5jUegWSohnV3k31z0gCpuImyxnnCHs7lPbN181jvsCGXNUZeeqpLjDiXfb3si6
+	i+AxNVn6sfr01rRt7Sa7kB3COXpYY6bA6tHy79ZVSItf5NUbzc0m4r9CtAsRBiNHDiZjyFcw4rP
+	SMkAe7vy50utMrLfvTBrECuKgjoT/ABI2HrO5/lfuSkfQdaaodgYmmqv5O+8sKk/3HTsmJomi4d
+	YMHfFDUjQEBYNp++la3h3HfBzsR0EjarJQvzrLHb8uFvtCTmZqG59eG1EBNPeSQSv5LlQ=
+X-Received: by 2002:a17:906:c109:b0:c2e:378c:8ce3 with SMTP id a640c23a62f3a-c2e4ad81a66mr241243566b.32.1790952130085;
+        Fri, 02 Oct 2026 07:42:10 -0700 (PDT)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2e4cf7c341sm93304466b.55.2026.10.02.07.42.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2026 07:42:09 -0700 (PDT)
+Date: Fri, 2 Oct 2026 17:42:04 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] pinctrl: ambarella: fix NULL vs IS_ERR() bug in
+ amb_pinctrl_register()
+Message-ID: <ar_CvNPWBA42BAlx@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1143; i=broonie@kernel.org;
- h=from:subject:message-id; bh=xNzzvSbc51cCr5Fc4km7Ggs6a26Cs5l2cnWUIKJUQGo=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqv6p9iCVzPsQAYRcBZG43XkuEdlepHfR94eKnL
- mH5W2v9g6eJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCar+qfQAKCRAk1otyXVSH
- 0NDEB/0U8ja5Bsi7wfRnXsmzlTAoCXRy2wVGPTCJGZuMySVJ4nlyzQx1Hi54dSD200WwX5g49aL
- FJC5xSlCweDFvdNJZXeSiWVzSNt7uEfc8GMm059HzIVf85ZnpySALGYs2vgSaSfWDq1zH/g+0xd
- +D5zY4z8OOHm/TqgQaTwygy2XEJ6nKdIHmaD5eJFhPpL0jhFqwi03STEXfadqAt3IWP0ITudaiq
- Nk9LqTdywy6M5F+tCbKYVOnARxXOO0YXrQcfQizY7qiTRf5o84Hs+BrdUIFZqs6yP0h1MR6zVG+
- ReseQzfjvYpZgC+RCvSSN/fyuLw7kT+zmdxDwDkRNZ/AMn+Y
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, 01 Oct 2026 09:51:39 +0300, Dan Carpenter wrote:
-> ASoC: codecs: aw88261: small cleanup in aw88261_set_tdm_slot()
+The devm_kasprintf_strarray() function never returns NULL, it returns
+error pointers on error or a valid pointer on success.  Fix the error
+checking to match.
 
-Applied to
+Fixes: b40e9d140c24 ("pinctrl: ambarella: add CV75 pin controller")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/pinctrl/pinctrl-ambarella.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.4
-
-Thanks!
-
-[1/1] ASoC: codecs: aw88261: small cleanup in aw88261_set_tdm_slot()
-      https://git.kernel.org/broonie/sound/c/015f14e42b22
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/pinctrl/pinctrl-ambarella.c b/drivers/pinctrl/pinctrl-ambarella.c
+index 83afef6a123f..5ed1010c5ce5 100644
+--- a/drivers/pinctrl/pinctrl-ambarella.c
++++ b/drivers/pinctrl/pinctrl-ambarella.c
+@@ -426,8 +426,8 @@ static int amb_pinctrl_register(struct amb_pinctrl *ipc)
+ 		return -ENOMEM;
+ 
+ 	names = devm_kasprintf_strarray(ipc->dev, "io", ipc->data->npins);
+-	if (!names)
+-		return -ENOMEM;
++	if (IS_ERR(names))
++		return PTR_ERR(names);
+ 
+ 	for (unsigned int pin = 0; pin < ipc->data->npins; pin++) {
+ 		pindesc[pin].number = pin;
+-- 
+2.53.0
 
