@@ -1,114 +1,71 @@
-Received: from mail-ej2-f43.google.com (mail-ej2-f43.google.com [74.125.228.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3944E01FF
-	for <kernel-janitors@vger.kernel.org>; Fri,  2 Oct 2026 14:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80CB3EB7F4
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 Oct 2026 21:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790952299; cv=none; b=RGFJv5/+usmTrM6V1ykgjqGZmj3IR94yTrmB3IX+Ngu0HcrbP8L8VjClXOtbot7mzaLsiQA/v+pITNO6JL7zxLsKpX00bRlxJHYas5Ad+OmEwZOvMW8NHG5x481ZYOoBjQBu00nTr16Cd+JuP4bpjiQphh1GOctyyNAcbv5QCW8=
+	t=1790977719; cv=none; b=Kxx05wM0ZVIjVHd6oFr/wzJJw4lsxMq7yUWagDFScFQWPcTkxJm1H/O+u4i9EWoJeQYANG3sJmg7cLmV/Iy8L7VQq+24XUjfu3KXa2DptJK0z6UPGmlEgpvo1kaQMnaGk6Dd5fZep9po9uaa1xyiXWZP7FKJpadz5WgoHTZ+QWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790952299; c=relaxed/simple;
-	bh=GWsyH6hBcwla1pNANi7ebFerp2rnqJQcWaAcfk29BGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mY189SDBVHyXOPt4JDywsik4Qka+NbzD7S3e+YmdFggG+uwv4ujgiPgTNk6ySKEi9UtEw88minpJa85KsnVnAr5NoV+s+S6RXPukAWN92m6Qr1PgGgZJgyoWio970oKhoMXx0kHnqBNNuOqhs6gu3ApKrRzWcFjtyjl9TINwZbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=slKklJhJ; arc=none smtp.client-ip=74.125.228.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790977719; c=relaxed/simple;
+	bh=h4tzRSfqBRqXyOAYKXIuoOevRer/dmHlMJ0X0TEMoGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VawmQzM+5Qz5S61Mpi2vt/R7anPoDaqaDC+L2MQRUyg1VFSnwvSe/za17wmxgvt8LhNfcHHKhq5OlJqofd1kCWkWlO/7PHlpl7J+LSspR+lZqDsH7RjdOCxH6xEX82TkLxuxHgs/Ybn7ongYxRfvUyfZhR08kaop0eu2L9xSUHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ic2E88SZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="slKklJhJ"
-Received: by mail-ej2-f43.google.com with SMTP id a640c23a62f3a-c2e1432bc59so443439266b.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 Oct 2026 07:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790952280; x=1791557080; darn=vger.kernel.org;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+uhe1kjp0ioHVkkyq0x9skUJJmlCnM0ROQqvDHAfjDU=;
-        b=slKklJhJ5Mz6JlUDJdZ5fjGNKZmbLzqI74q/KJYfQOjhfdNuN/HwC9mIMI5iDGEmhK
-         O4QG+kNT4EsbKM7LxMbDmhQzoATYtWNxiHOY61sou6d8YfJjX/K9JsfQntKThWp4OpJh
-         4CtbnKNprEHRhDGhquanFs1fb+Ir5CiQEI9Z8cci2oTpX8M/LmucUv6ySnNPzoyW7Tjw
-         aqVi/QktktXF5lgLaZko5Ly/06ucSOvx1TuZ/Ik3u3T1eBj/sx9TLe7RiNTW8p9fJyvB
-         Rv1ZLfXJ1YaZd4eWr3uWGCvaSMK3x9OwLoKs1oLw3S5boEGHTxE0yF2ypl/od8MduYIl
-         wZlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790952280; x=1791557080;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+uhe1kjp0ioHVkkyq0x9skUJJmlCnM0ROQqvDHAfjDU=;
-        b=r6qR95oV8Qm83rmAtT7q6BThJU6JQgG+xHVrRz+m3M4n+rxZyIYT6gNfHvx2fbnW//
-         wTu7s2guJ7nFyZo6KVO4TUsx6IG5Rp/efZ5bl0ztKFLQx9ekDMHdo5lpUYU+eEFe6Vmw
-         YMbZtvekfLsLUvp6XnL1JcUneFjJsJhRAWU4Vbx3737+6szsYkAQpOUhFEIlCMLZL9De
-         NGf2EhgIgYoMN0iYmG/3hdA7RX6zZgYqfEIK1MgbnfJ3SUE0EMqdtPmhll/Nl0A+E0Bn
-         yrQ7kHRfnLeJubpjmnoufw4EDNvjAY7AXZS0j9Jj+2WSR+p2o2Ukj2Kvcj2Nr5XuFf8f
-         qPXA==
-X-Forwarded-Encrypted: i=1; AKwUvByDMCVuf/LSEnq3FmeC3KpSvcdozDsuzQ6mcFt0vTvbK6SJ36YHUXQvr0nudSYlk8q1bz8OQXfh5NEF/+qZOTg=@vger.kernel.org
-X-Gm-Message-State: AFuF++klgl2ko7KSe8S1HJdFaC2u++ZkOxpeTbc+ClMRBdysLo+6yRDY
-	9ObhLh+LSMoUl64VxNBY6oo3fVeyYUmBOBJSLIWxkxTOnsy/PaeCfPte2PLbMadN2gXQKA==
-X-Gm-Gg: AYBFou1btMB9IoHLjzm/BrX0n3tmZr8QfxuLFw8CiRbJTGR0HkD3tuQSr46unWlZvlc
-	vxcpwI9iXEwi4y+RZn7ywROnrw43lQAO8essrxyEogEImGrsVXeghzfnEjjj4WqLGRaiL9BFLAL
-	CpTnR90H9mRkYbUsFOK/s4vMhGC3IW5KIFmNg2Md2VGYOGFVFTMnjmTz5foWxJGsWUD0qJ6VTmL
-	95bIuDTZiOXwhSWpdSF4jGoGPI3bKtt/DxyyTvfCoRzXujhPvYJSNYPramffvpzhCB5CebLk8Ia
-	qHHjUQNFSStn+xG4zSg6+DnqZaR7hpUCpmbAmExX7e5uPF+Vkno1Shv7TY3RvuvxLOUbmg6OKy/
-	Yecd0jaemDLXmsN37aHxkE8t1+/uY1aQI4R5bJpmuSdrWO9bepeqwHL3CGKx8u5IUj5juJc6KiC
-	npltXSg8yV5YmbasxFbg4NoTOp6fUGa+KwBAnoLSEZmw5I5OE/oBO/y05VqRXxV9CIDbA=
-X-Received: by 2002:a17:907:9346:b0:c2e:4627:285c with SMTP id a640c23a62f3a-c2e4ad2cf15mr246398466b.21.1790952280011;
-        Fri, 02 Oct 2026 07:44:40 -0700 (PDT)
-Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2e4cfa6dfcsm92846166b.72.2026.10.02.07.44.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2026 07:44:39 -0700 (PDT)
-Date: Fri, 2 Oct 2026 17:44:34 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] tpm: clean up error checking in setup_ring()
-Message-ID: <ar_DUjuGv-9vPzga@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ic2E88SZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0E71F0089B
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 Oct 2026 21:48:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790977717;
+	bh=ZB7mOpsPUkzF7dalAkbNpndV1E/i3MYqWvc6K2eVWyg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Ic2E88SZb1K+vD1bgcTslxISdxrRDt8UeAfceBjitl4wvFzTVX9ZSpKm3vhoZiU3s
+	 P+r2BzZfL2ORqYimdiM3MQkbNvfeWNB+gkN1wuPgn9gHxnJPz+WTYR1vH7V7ye984o
+	 5ell4C/KU2bESsqoFEKpc9Ik+jmQwrS8G+pFT5om0BVx0XFkxYGEV/KjRZ4RjIsoyl
+	 qwmW3xGlOLZXmpZRhnqvNe0J1NZ313omqD0FM2xiqkKms3VxXIVIIKTAxPYSuisINA
+	 GrMWLqTFSJ/L/KX+DSdECyzZRIfjYIIvpSEU+qSyWFACQDdozbq9h1fu2eTUyVtieX
+	 Cs2NjOMPcDViQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5ba3adf78f5so344139e87.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Oct 2026 14:48:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByCHsMS5PKBWp08x3FEVfY3GB3NNgeXxOXVb4A5kpaTyD17YmyknVJpt+u7Qc2KT1YnpBuBg2zMjd8xaRa5C/E=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI/cLHNKQRxn98bgKfKVW58jbhc1jSpfsNGjHZJMm4zUp2dz1Bo
+	f4naJiSWHJnkWZJ1S1Txa+OR/zboSbdtaIh7+oaWiHEtilb2PlU0WcOsv4wH2yXr2OI7G4Q5HtA
+	C9D71BQYqkpCPQ6x9153HcJQfDggnd9M=
+X-Received: by 2002:a05:6512:10cb:b0:5b8:e99c:cfa1 with SMTP id
+ 2adb3069b0e04-5bcb544447amr267076e87.31.1790977716056; Fri, 02 Oct 2026
+ 14:48:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <ar_CvNPWBA42BAlx@stanley.mountain>
+In-Reply-To: <ar_CvNPWBA42BAlx@stanley.mountain>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 2 Oct 2026 23:48:24 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=FwSNH2Y8_Gz==cn360o8DiFSBCyp65bKJcRR5aO=G2w@mail.gmail.com>
+X-Gm-Features: AclHuK9gOIwCfQRk6B1NpY0k_i_KdwiwJl2gDSLxnU8603oCAaR39Uu5TRPvpYY
+Message-ID: <CAD++jL=FwSNH2Y8_Gz==cn360o8DiFSBCyp65bKJcRR5aO=G2w@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: ambarella: fix NULL vs IS_ERR() bug in amb_pinctrl_register()
+To: Dan Carpenter <error27@gmail.com>
+Cc: Long Zhao <longzhao@ambarella.com>, linux-gpio@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The bind_evtchn_to_irqhandler() function can never return 0.
-Historically, IRQ functions used to return zero on error, but then we
-added an architecture where that was a valid IRQ so it went from being
-an error to being success (but in a limitted way, just enough for that
-arch to boot, I guess).  Eventually we removed it and we will never
-allow zero to be a valid IRQ again.
+On Fri, Oct 2, 2026 at 4:42=E2=80=AFPM Dan Carpenter <error27@gmail.com> wr=
+ote:
 
-The problem here is that if zero were an invalid IRQ then we should
-return a negative error code but the code returns zero/success.
+> The devm_kasprintf_strarray() function never returns NULL, it returns
+> error pointers on error or a valid pointer on success.  Fix the error
+> checking to match.
+>
+> Fixes: b40e9d140c24 ("pinctrl: ambarella: add CV75 pin controller")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Change the code to check for negative error codes so it's not question
-of how the zero should be handled.
+Patch applied!
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-From static analysis.  Untested.
-
- drivers/char/tpm/xen-tpmfront.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index 3c0cce57c4ae..731444eac5f2 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -266,7 +266,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
- 
- 	rv = bind_evtchn_to_irqhandler(priv->evtchn, tpmif_interrupt, 0,
- 				       "tpmif", priv);
--	if (rv <= 0) {
-+	if (rv < 0) {
- 		xenbus_dev_fatal(dev, rv, "allocating TPM irq");
- 		return rv;
- 	}
--- 
-2.53.0
-
+Yours,
+Linus Walleij
