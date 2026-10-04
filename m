@@ -1,88 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4079181334;
-	Fri,  2 Oct 2026 23:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85500330D25;
+	Sun,  4 Oct 2026 19:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790983896; cv=none; b=Qx+QSSSRzM2yKwIE/FCoeD9QTi4GEC7ftonj5YSl0xojpThEQDoHWu25A8ftceesNEeu2+H8Io0+4D9sN3qItjIkKF0cmkWQDgZvLA6AhZZp98DmYw9Kyzt49PLMQm9OfTGMl9ky52sTgdP/n+sz5AmMDxQaoXbZkZN4gjnjbS4=
+	t=1791141437; cv=none; b=mtC2QTNTt7AcP5L8UT+KWULIrRAV3yYAOZCIEag8LtgfcnhYr3Ol+U1qN1+yKJrKGYzuCM+dKOYF7YJKOXa8/dnn1NrYKkVjvwOOSU4cjaY3nsgweVYOAOt+DZu5JfsS/ZL0ipGGRtDkKNcr/Bkk5Vppy7d3QCQdeiG8c2jgtLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790983896; c=relaxed/simple;
-	bh=eAbusuodcyhTP4rVYnOSif1IQzsA7CSgMULjexslPM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+k0WhmkrQeO4oIGohkX92vot43bcWCy0/2Z8sFV420S72rXD102tumFOcY6Csbn33fVmQckvlJeyQwFf5ojkJT0sDvp1AXiYSaISF35CmhPVske0TxmWMEmPbO9YQSOinTUK0emBlCdZXqLv+SiSVBoX+9lsQhEB3mqpYUv2vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXowBgmg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791141437; c=relaxed/simple;
+	bh=3Ar2x8qgMH6kt24ve/xtWcLygI3njOIiKKqeY2EbVaA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WxijkbOXiPjmsGn+J0ggLEbQuuzbInYyF1PdwIXm6+14ksq/uF8mK9vsDgepV3z+UzGnYLKEYQubh3j3QaATh/ooi6PqCrcA4c2WyLh+/xy4qFIOSjxb+M1N3XFStYAVFr/AlJUfssnkDRMx1wOwm5tO15MiOvJfn0s2gDI8HGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjzJgyGw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXowBgmg"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 14BE21F000FF;
-	Fri,  2 Oct 2026 23:31:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjzJgyGw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144A81F000FF;
+	Sun,  4 Oct 2026 19:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790983895;
-	bh=tq68ouErOQEUpBuo9XIbgiAt1DmuxKiHs9qdkr0PMy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lXowBgmgV9dMMxjjhzR/a70qlUP6OT4mIb7/4uxLqCkk1kQ2dLDN2cLhHVbPSpnsN
-	 4gS5qMhPRg0fzSliDwH+QKuaRKIuiaz7HAr00kDvIQOf44+/rVVJFSFw89Wjzapr5o
-	 4Di5b9OWE9v82DLmYZ3YAqTyLkC+nl78hVdGEmuvqPkY9O0nYma/2qBNIKyqbmdy2T
-	 7jyIyETc6X5tnktUFnN+hcf6pXPQvSP8HNe9T2qVOgVdAy+gBymW6gfErsjnZ29fB1
-	 8WwBAioYU8wbNRrBB6OD/bsHPQoL5cfWx8Ujb+Ib7TMUVtjaubObJRWMSefPAqdXKI
-	 8QDa+erutBTTw==
-Date: Sat, 3 Oct 2026 02:31:31 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Dan Carpenter <error27@gmail.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] tpm: clean up error checking in setup_ring()
-Message-ID: <asA-08_MhyYKIvjH@kernel.org>
-References: <ar_DUjuGv-9vPzga@stanley.mountain>
+	s=k20260515; t=1791141435;
+	bh=iyBsmxhBIYjLVuF2+AEHDozSNWnMvFBobkeqCwyHVIE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=KjzJgyGwTtI5vrWvdVaPjKb7TYF93Qu2dKsGKKZb5nAyvEVS/+XnQZKgo8vIdXh0q
+	 8aLyh/BJ0Wp/fb49Y3RcT0FDXF7L0Xc3RTX78Q0BvKvOymqPAG05xWUpO1PMR14yEa
+	 5YwYApPmE/3104pOOv4f+KFzsr/jaJiBh5ntedp2tiPuirLawlq9Z8toohgrOXtUEj
+	 RfjTSvDV9KvX2M43SGfa+3jyokfycIMC7Ym6bBd0xwsFLLa2zbz8dAOEYmVn9JMGsD
+	 l0lqHe9EM9eifBT91+jCeEGB9/Dx15CNBTw/awzf1RkU1bc8jdA+hDPj2Sd2EVOYRm
+	 OUGhyBwFazv/g==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261002113953.1782731-1-colin.i.king@gmail.com>
+References: <20261002113953.1782731-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: tas2781: Fix spelling mistake "config" ->
+ "config"
+Message-Id: <179113127609.150114.13801161604243660987.b4-ty@b4>
+Date: Sun, 04 Oct 2026 18:27:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ar_DUjuGv-9vPzga@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1132; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=3Ar2x8qgMH6kt24ve/xtWcLygI3njOIiKKqeY2EbVaA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqwqY1TpEkaXx0Mmrcj6KdiDRSjQP18mEqPEYT4
+ rU4TogIVweJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCasKmNQAKCRAk1otyXVSH
+ 0GiRB/0RBz9fLBveTKcF4mMP7iU0446SutT6kDXR/cpxsUWG3vO6YhUpfoiUTHOakVDWcbXadqs
+ U282TTYfg8jly4u0C17uiMVPw9QBuarxZlWqeTCvzW94z/S+80fkZa9S9uZ5QRS/BtxwmcwMKK3
+ uorkYnxEjjqmSmECa42LWp731hF3vWqUnzW6lhRwZLpxc01/2n5xwh9jluO3bQVgY6JyLCt2ihd
+ GlwJMbAKaVB9SwTGJ1SIVjq1cfNRRJDMwGeRX+6uXIHnNb80VNVI4MYJiFDM3RSeU7R/B/ELeD6
+ uxH1FlUgsnPETHvCIu7PQnu5IyTpCMH4eanTrlw7CvgiZkGQ
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Fri, Oct 02, 2026 at 05:44:34PM +0300, Dan Carpenter wrote:
-> The bind_evtchn_to_irqhandler() function can never return 0.
-> Historically, IRQ functions used to return zero on error, but then we
-> added an architecture where that was a valid IRQ so it went from being
-> an error to being success (but in a limitted way, just enough for that
-> arch to boot, I guess).  Eventually we removed it and we will never
-> allow zero to be a valid IRQ again.
-> 
-> The problem here is that if zero were an invalid IRQ then we should
-> return a negative error code but the code returns zero/success.
-> 
-> Change the code to check for negative error codes so it's not question
-> of how the zero should be handled.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> From static analysis.  Untested.
-> 
->  drivers/char/tpm/xen-tpmfront.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 3c0cce57c4ae..731444eac5f2 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -266,7 +266,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
->  
->  	rv = bind_evtchn_to_irqhandler(priv->evtchn, tpmif_interrupt, 0,
->  				       "tpmif", priv);
-> -	if (rv <= 0) {
-> +	if (rv < 0) {
->  		xenbus_dev_fatal(dev, rv, "allocating TPM irq");
->  		return rv;
->  	}
-> -- 
-> 2.53.0
-> 
+On Fri, 02 Oct 2026 12:39:52 +0100, Colin Ian King wrote:
+> ASoC: tas2781: Fix spelling mistake "config" -> "config"
 
-Looks good to me. Isn't this a bug by definition? 
+Applied to
 
-Br, Jarkko
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.4
+
+Thanks!
+
+[1/1] ASoC: tas2781: Fix spelling mistake "config" -> "config"
+      https://git.kernel.org/broonie/sound/c/7d6adf283a83
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
