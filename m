@@ -1,93 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85500330D25;
-	Sun,  4 Oct 2026 19:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791141437; cv=none; b=mtC2QTNTt7AcP5L8UT+KWULIrRAV3yYAOZCIEag8LtgfcnhYr3Ol+U1qN1+yKJrKGYzuCM+dKOYF7YJKOXa8/dnn1NrYKkVjvwOOSU4cjaY3nsgweVYOAOt+DZu5JfsS/ZL0ipGGRtDkKNcr/Bkk5Vppy7d3QCQdeiG8c2jgtLU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791141437; c=relaxed/simple;
-	bh=3Ar2x8qgMH6kt24ve/xtWcLygI3njOIiKKqeY2EbVaA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WxijkbOXiPjmsGn+J0ggLEbQuuzbInYyF1PdwIXm6+14ksq/uF8mK9vsDgepV3z+UzGnYLKEYQubh3j3QaATh/ooi6PqCrcA4c2WyLh+/xy4qFIOSjxb+M1N3XFStYAVFr/AlJUfssnkDRMx1wOwm5tO15MiOvJfn0s2gDI8HGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjzJgyGw; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884662D0C94;
+	Mon,  5 Oct 2026 03:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791171839; cv=pass; b=OhKpspen+4l4rh6PIKyyv+uDHAYVo79EuDj5N7aDkRbYAz+IWDR98MeXvZn1JT1Ns97PxwQ2X1738F/IsHw7J5jYN1y7XGRATutgqAj9VgPRcHgRsiUe6g/pbCxNnQ8BsfEKLuKbjEICC40pYIdpSx7UsebdFN2CYQ+H1b9ZkoE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791171839; c=relaxed/simple;
+	bh=k7YvKVJsnBBQEAxVmacVSqqxzq1klOqOwW96xWD9u+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YO/K/jOE7zSCrP/FPtPI3TJbkUo0H/kaAJKFJ/OeycojU+BnHXyesjHqrOFVeeAfvtx0QuG+OFmrYRMcoC0paPN92rnnX8wFGG/OCB2lHJjg7in3t6oKuzup6XrSq2XYDcCCbeSl9BqTEFrsUeXJ6IodJwVbkuBdvWtY0UXiqWQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=dZA8uiEc; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjzJgyGw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144A81F000FF;
-	Sun,  4 Oct 2026 19:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791141435;
-	bh=iyBsmxhBIYjLVuF2+AEHDozSNWnMvFBobkeqCwyHVIE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=KjzJgyGwTtI5vrWvdVaPjKb7TYF93Qu2dKsGKKZb5nAyvEVS/+XnQZKgo8vIdXh0q
-	 8aLyh/BJ0Wp/fb49Y3RcT0FDXF7L0Xc3RTX78Q0BvKvOymqPAG05xWUpO1PMR14yEa
-	 5YwYApPmE/3104pOOv4f+KFzsr/jaJiBh5ntedp2tiPuirLawlq9Z8toohgrOXtUEj
-	 RfjTSvDV9KvX2M43SGfa+3jyokfycIMC7Ym6bBd0xwsFLLa2zbz8dAOEYmVn9JMGsD
-	 l0lqHe9EM9eifBT91+jCeEGB9/Dx15CNBTw/awzf1RkU1bc8jdA+hDPj2Sd2EVOYRm
-	 OUGhyBwFazv/g==
-From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261002113953.1782731-1-colin.i.king@gmail.com>
-References: <20261002113953.1782731-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: tas2781: Fix spelling mistake "config" ->
- "config"
-Message-Id: <179113127609.150114.13801161604243660987.b4-ty@b4>
-Date: Sun, 04 Oct 2026 18:27:56 +0200
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="dZA8uiEc"
+Received: from localhost (n216spl99sn8f5wgjwv-1.v6.elisa-laajakaista.fi [IPv6:2001:99a:1e1:d200::ccf])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by meesny.iki.fi (Postfix) with UTF8SMTPSA id 4hylcC01z7zyTf;
+	Mon, 05 Oct 2026 06:43:54 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1791171835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4OW7c7aek1okA3uNdqyL455/oc736NnOHbUHGLvz1FM=;
+	b=dZA8uiEcKn5Yq65YMe3jcmImPyaDedwEXuWD5IViAtpt/qAv112tXIdhdfMHJNI6ep5Nh2
+	k466QCqLCH8AJwSIUHt5LQs3RjlXlOMckKKy9vQLIAlsjXJZnFCVjUBm4k1XBRI73nxhoX
+	4jQfkEvafnJsJXMWOLkB7E7XeBIIzEk=
+ARC-Seal: i=1; a=rsa-sha256; d=iki.fi; s=meesny; cv=none; t=1791171835;
+	b=BCAGmyFAwkJ+gfsPa0Bqy4TejaCMW8R/QhxVy00cziNtGy810e5DFHvJOWXPoCERmnN0Cs
+	ol4XlOtEMq1+dMVKGA2AH87Mqa+VpIjIUhWFs07lJVd5WhqD0vtQdlqrM5WZAhgQXr3hv4
+	z2rDh3VskrdPFSjfpPWOG0iZv1APly0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1791171835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4OW7c7aek1okA3uNdqyL455/oc736NnOHbUHGLvz1FM=;
+	b=B0acy2kspeZO53rMPy2VatxfntCfJ/jn4QrMpvMeodZpxolQOFXU6s8Cg1BB8dR2qlWPYJ
+	3UdrCdlLbc94IJvjMCXWGPoNSZv/pC8XP4I0eMJkyEe2j0pkB2Q4T4TkFTPH/IzmUUMaTR
+	jnVuHt9tbxbIaJvvQaJxCkxO1d961qk=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+Date: Mon, 5 Oct 2026 06:43:52 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] tpm: clean up error checking in setup_ring()
+Message-ID: <asMc-PweDb2x3nk1@iki.fi>
+References: <ar_DUjuGv-9vPzga@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1132; i=broonie@kernel.org;
- h=from:subject:message-id; bh=3Ar2x8qgMH6kt24ve/xtWcLygI3njOIiKKqeY2EbVaA=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqwqY1TpEkaXx0Mmrcj6KdiDRSjQP18mEqPEYT4
- rU4TogIVweJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCasKmNQAKCRAk1otyXVSH
- 0GiRB/0RBz9fLBveTKcF4mMP7iU0446SutT6kDXR/cpxsUWG3vO6YhUpfoiUTHOakVDWcbXadqs
- U282TTYfg8jly4u0C17uiMVPw9QBuarxZlWqeTCvzW94z/S+80fkZa9S9uZ5QRS/BtxwmcwMKK3
- uorkYnxEjjqmSmECa42LWp731hF3vWqUnzW6lhRwZLpxc01/2n5xwh9jluO3bQVgY6JyLCt2ihd
- GlwJMbAKaVB9SwTGJ1SIVjq1cfNRRJDMwGeRX+6uXIHnNb80VNVI4MYJiFDM3RSeU7R/B/ELeD6
- uxH1FlUgsnPETHvCIu7PQnu5IyTpCMH4eanTrlw7CvgiZkGQ
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ar_DUjuGv-9vPzga@stanley.mountain>
 
-On Fri, 02 Oct 2026 12:39:52 +0100, Colin Ian King wrote:
-> ASoC: tas2781: Fix spelling mistake "config" -> "config"
+On Fri, Oct 02, 2026 at 05:44:34PM +0300, Dan Carpenter wrote:
+> The bind_evtchn_to_irqhandler() function can never return 0.
+> Historically, IRQ functions used to return zero on error, but then we
+> added an architecture where that was a valid IRQ so it went from being
+> an error to being success (but in a limitted way, just enough for that
+> arch to boot, I guess).  Eventually we removed it and we will never
+> allow zero to be a valid IRQ again.
+> 
+> The problem here is that if zero were an invalid IRQ then we should
+> return a negative error code but the code returns zero/success.
+> 
+> Change the code to check for negative error codes so it's not question
+> of how the zero should be handled.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> From static analysis.  Untested.
+> 
+>  drivers/char/tpm/xen-tpmfront.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> index 3c0cce57c4ae..731444eac5f2 100644
+> --- a/drivers/char/tpm/xen-tpmfront.c
+> +++ b/drivers/char/tpm/xen-tpmfront.c
+> @@ -266,7 +266,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
+>  
+>  	rv = bind_evtchn_to_irqhandler(priv->evtchn, tpmif_interrupt, 0,
+>  				       "tpmif", priv);
+> -	if (rv <= 0) {
+> +	if (rv < 0) {
+>  		xenbus_dev_fatal(dev, rv, "allocating TPM irq");
+>  		return rv;
+>  	}
+> -- 
+> 2.53.0
+> 
 
-Applied to
+Sorry if responded to this already. Mutt shows this responded but
+cannot find it from lore.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.4
+Anyway,
 
-Thanks!
 
-[1/1] ASoC: tas2781: Fix spelling mistake "config" -> "config"
-      https://git.kernel.org/broonie/sound/c/7d6adf283a83
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Br, Jarkko
