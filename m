@@ -1,124 +1,132 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA6B4F85D5
-	for <kernel-janitors@vger.kernel.org>; Mon, 12 Oct 2026 21:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791840219; cv=none; b=SOtPoktyoLBXR6toPXGKTtY63U8P1y89KAvuhx8N7HAsbJu2z/gohh91pfCGUUxBUsWdb4dtZt74lrASAqmYoNQTwow+Q1M2n0qjaq/sYJUftgN2hWoBLYgOW/HERiwJ0cioj/Iuw0ja5y94QSiZQe5NdXgclFYibLnxi4FC8ms=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791840219; c=relaxed/simple;
-	bh=LsO1xfPThEa8wC7kBqFr31UhJSOzYIINCkUQJUsyjSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k99nPR4JDSjG6gAQdF+WO2L4KdHVx3mpTHoogGFdTBp3HWCJTvbrh/rJyKrORoY5P2rxN2IEMWD7gZOssIHrfx6EYP5Ulhqtfb10jhRE9h4/uGdKwQ7Fwdl3TVqpCd0QfEl5dpYbfDWAASfJw+GVRvSk0qAYsXV6Ox/5VKfi9ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/sL9mNX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D164FC8F2
+	for <kernel-janitors@vger.kernel.org>; Tue, 13 Oct 2026 13:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791896902; cv=pass; b=KEavUMDt1wXepqqNrlLOojALJqKOmupFOR6vHoYY/+MOnF6UKxyPJg5l1bB23KHlvSN5xBn8xeu01it8rVZ+neiKrppjrfctOnBd4n4zdzHi/p67MzGP9/B8pLR4Nu2ly41PBCsa0MH7MtWpcrKm/RvhEnCe/vOoDXywJpteO6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791896902; c=relaxed/simple;
+	bh=hoU3TOgr/tEZhslHcS2tq2f22QCn7cWixxnhkmlEY30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T19zqwpzKRFGtp+yQx1idOkpuvvVn2zt/Ayw0uDareYbEsFsiQe8ya5w4fBxa8VlhyBT9qFXqYs4ygS553vubqWCUImunh6lAqP2Norcj41EmKm5cbFH9W5a5JNfOiInCsaW/hOcLYOva8Q5q9pxHlsROxnWr5H+xVhvJ/BTtwI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WFVxvwuo; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NY7Rs15G; arc=pass smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/sL9mNX"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a16c1608faso29893955e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Oct 2026 14:23:37 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WFVxvwuo";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NY7Rs15G"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1791896899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hoU3TOgr/tEZhslHcS2tq2f22QCn7cWixxnhkmlEY30=;
+	b=WFVxvwuorcsXkRhN9Q5yRSYoo2l60h/1e0OypH7l+R9ksPh9PCyh+Hf9VHjblBGdmVDMAY
+	3rt+nt71/B+y2YmNsCofrhj+z/lH6OrL0THLfYEDeC2t2bptknVVIc2xrOYmRn3iM/ts1y
+	n/Rtq92D0f76XBwlJgoMYBj2+DahfgQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-WQBht2OCPFmvEwIJAWcraA-1; Tue, 13 Oct 2026 13:08:18 +0000
+X-MC-Unique: WQBht2OCPFmvEwIJAWcraA-1
+X-Mimecast-MFC-AGG-ID: WQBht2OCPFmvEwIJAWcraA_1791896897
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4a16fefb7acso23059245e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Oct 2026 06:08:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791896897; cv=none;
+        d=google.com; s=arc-20260327;
+        b=EBcT+T2xxUpN0u/8dkKYDBNCNVsJc32/+stnx+tvzVfvP44k0/NMWufpLyhgYOLyse
+         kQ0n3Amob/P+f0CG0wG07BJj+74z52cOU1+QVbljfJxKP8xOG7YxJfX43M2BqSD8F6wo
+         vpuuJPrsveowm1uXlGkBk6ccqIAzUxFZ2dwJPdGjBTltH3r4hATxVc5w8EnKueHhuV9i
+         5IzKA1aWBpjXAKSWtU/FbN7uz7QusD6LaJ3VgQ9ItsscYTXaag2Mx9ofiYVTDKrVNDQd
+         UuC3dmHbTmTHFG4EiPt3OFV1GaAPREQinFeofrwrHeLAUWqsXkmBMcbE84YAeuhE7QTJ
+         TnIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=hoU3TOgr/tEZhslHcS2tq2f22QCn7cWixxnhkmlEY30=;
+        fh=vdR3sL6IlcVMhPsUd65woYse32TcCJSQp3U/qaVmkzw=;
+        b=lViq2LXPJuIi+F7b/v5O7ftaXz/6rhq9Jl3LfkdQy83sCsnbRzCk9RkaXT0kkp6oGR
+         yfckBZkj5auS2CCuVJvRr1Cym4yloUZH8aDhjBYOkzeVtqLzN6zMB6rXtucV045srpMY
+         lk6aLdlaLG7ho0aijznevnQvQFKm6F+/QzZup/KRQvSew4ULMCAB5AY1P5mxYuhzW3pd
+         qRX1DUBplFbmOYAgp5nnDa6c84rrUX3H8MT8MDdpN3lkBMeE+LS6lhoTp6uCXJumzO5Y
+         vCcUR7r4gJ8MDuvCfwXjT1jGAoMStp057w5DSZXtzcIjQQW4BWAonyZoHW3EE2WwTLqW
+         jBGQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791840216; x=1792445016; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=rN9kd0u0kwEKQcqtsQgX5NTYJE7KMXdgprM5d1jYEwU=;
-        b=Z/sL9mNXR3e/FMW6PzGARL1hquhNJWRvyliknPCnXAQophEheen0IDvNQfl3WBB0K1
-         0Kgx8fRh6SrrXmvUyZZ9JzPAngnSo/4sNqcIe5IGxwN91m0T3dc/vcFrfahvGlo8MEJe
-         7Trx+lZV0bHNvfoNotCJ8sPOc7/QbOOS08Bg9b4lTPM6LIeIJaHH0fPWMilF6nduKMh9
-         4SKtH00T8kz+RQurKhhNl7s8XWTwgVx8J1EQJ6IirjSS9P235Yjm1+dBqduVzFmAcRJ1
-         8owrkHtGLe1amcrSsrGIsKcKG9g+kIRGvqnKltv460SYeR68fnZWXbcSmBNun4AyXhZy
-         pZ+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791840216; x=1792445016;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=redhat.com; s=google; t=1791896897; x=1792501697; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=rN9kd0u0kwEKQcqtsQgX5NTYJE7KMXdgprM5d1jYEwU=;
-        b=i0hIzcBPXpFX5RmBhvJLJeODHka82dRYutS935RL4pFPf3AuXDdZ1EWbuYvPsOOJyk
-         IPbDt/aiNuT51K61kQChaY+J7cTjEPCydKHNeqxiAMQdrhrJba1ixo3jQJ2klUxPl54m
-         tcalMMAEkfPxiKwEr42KSgoxELvxoJS4zcGidQE+R4G1MePvAgxNopUqpj4hcg/gid9+
-         fjk6BGY8/McIW3M2hX3Xgk2WCteLfJ5OxLmsHhzG4Ri4tD7OjTso7sIS9fEeI7tBqDht
-         KCF08X0IJ1/+LeKTqfWnAwNavOcScBcJUi4poRuoUnKDMPw3SGMcALoQgcolPCXf0ha0
-         jj/A==
-X-Gm-Message-State: AFq9FYJXUACP/ph4QksEHEGJ8q4bnXXpLT19FMKUdA7f1redkRt0+QGk
-	Fra4r/X6ZTitsjff0+ueh4bMt91Rbp209KHGdqb8+xYjrG6ZhXq0NcHM
-X-Gm-Gg: AYBFou1fox4hD9hGbmfhI58pEHYBeuqsbL1OJrlNsqIMJDgX5G7gOgjXsVFW/lJv8Jb
-	SYWYxqODwIPsF5OAy9cMlEPJan8225UcPtm/+xbsZnCKKTk2aqznsfqusQU6a8GMhgxiZnuiLb2
-	r9qamqT8NLSUVNMyA93Xr5I5f5kpQDGOAkaAKWQCRTV61cm2MGCxuoVE1UiOT0mKk9MeeKC5mf0
-	0DHIPz8mVQ/CzMtK0PRUD29AgHGauXOY6uR4ERnVTBjPSviCMgcOUH9QnU2eFJEz69KYdNbhtMK
-	7D5F5NVx0whp/E3frQsXOjaE6YYS2z09KVVfJ1nbA/3BedPjaUhqfBSfRzI9tbZjdkx+2aXTyW1
-	hALViRXtJNYEbmpfyTxEOBvfnjJA5Rqj0lqoGwOVqmeaOUHZjlWg2yvxvCbHBBr97L+c00u5KV+
-	3lPxN0w6tmbELG6Ozr+ZB3fFtokjUjyInvOIW9rguwitJx0D8xTUeTp+UDRViooivKQizwiX5l8
-	KMjyJk=
-X-Received: by 2002:a05:600c:154e:b0:49f:ffa2:1c72 with SMTP id 5b1f17b1804b1-4a18e49ad83mr204341295e9.11.1791840216298;
-        Mon, 12 Oct 2026 14:23:36 -0700 (PDT)
-Received: from localhost ([5.83.201.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19ba624b3sm186925215e9.2.2026.10.12.14.23.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 14:23:35 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	Shuah Khan <shuah@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/bpf: Fix spelling mistakes in descr literal strings
-Date: Mon, 12 Oct 2026 22:23:34 +0100
-Message-ID: <20261012212334.183116-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.55.0
+        bh=hoU3TOgr/tEZhslHcS2tq2f22QCn7cWixxnhkmlEY30=;
+        b=NY7Rs15GuQgNYq2wjhHArYywJw5aYmmDcI5efu55g15ZB4qpbdyL1u66YAIRjHcp6S
+         DGP20YJdP2DsWuL+H4pDnAhLs9WpsVvlNoQSeDne0HtZjKAS9qHjyLz0yhKilfmTgwqX
+         JQ3dgWRMAYJEZXrCpEJtyNQg210D414Tqqq59g0Ei5gB0lt226eIGc+pCkq6B3xPe/SY
+         FtmIU5hm9KvoSVviBbHaiACnxIOFkqB/Ug9zE3T8uTQ4XQszsDO3A4SBoN2tpxWKH4oa
+         EdX9R86CtGbFc/DySHHbjBB47l9Wws1JPR0OvR4MVAVvJXGa6uVvuLvxLUqLfhxDiOXE
+         ckAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791896897; x=1792501697;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hoU3TOgr/tEZhslHcS2tq2f22QCn7cWixxnhkmlEY30=;
+        b=NltX7lCxFfSObL0qhO3DqlgsEAIsmSoC3DkLCl8CYUR17VZqBe/+Rg2uxbs0NDBdtv
+         tcafsz5gsSvIzxxP7PERCszSLEZyZHFgT42TUMzgOwazp6pPqQJJDuDBBNfalKNi/Dxk
+         S7PdKqdCDrCgL1fyWhGAgwNBzkxM1jKUmkwwnrDx1O+hM3b/NQ9sUI4zJj4l/rK5vE+S
+         KFvG3OK26gRbU0pjmR/dnolGdaJT0nqS1056b4F7/mPjqHAswGhcHqhg4I/TPGkYpgaj
+         kRUQ2rCt/U2Fa1jDfLwUF32YkjwKnULX3UFakz2FoyT9h6Ko8xTn8QA2EivsEoqjccoc
+         vqoQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxpBrhh/tsgsST4lohEm4TFD+UYCX/htgCNpx01HNZKrTlym2FPqNMuGGEw63grkhNto8pDfvuZcsKTqEclTEU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLwXZobloUCZV9EFEcSsUjiWcm7u929N40c6vSwHerGSl6vpkcb
+	z4CyjEFrl/4HGkNEozqIy85G9Ry79kz3XY5+scljt6bNjfmvQX8IOKqwdsxOp/w7VqX+ObgYGhZ
+	L7cZ135yuX3l4cE9J77utfxZCqWDzEdygwiGGHWWXlnAdjZ9ra0QqS9Tam2SEbxL6TsJe5HZxOH
+	deehtNhESsqvu6x55QlYzlZtxiqLOZ6uthV2YP8EonLFTV
+X-Gm-Gg: AYBFou3Qt6+0VYTtJxsT/xHQq33yCh029MnMFrQhoeW9tVWEWxzWmJWORv4K4xl6fE9
+	KjSYLbPeZZtYbMBePFVYOva/2MoysY6M6/pWq5d12PE7l2yp/ewRkiJSoTO6TkZIrqLIeZj0JY2
+	HhRSzYxnHTbV5R4CztCLvL+5SPP9dLyj7drVxlgMJps0LIyFUxbQRRlfCg
+X-Received: by 2002:a05:600c:3f0c:b0:4a0:1723:2d8e with SMTP id 5b1f17b1804b1-4a18e44691emr266641495e9.2.1791896896954;
+        Tue, 13 Oct 2026 06:08:16 -0700 (PDT)
+X-Received: by 2002:a05:600c:3f0c:b0:4a0:1723:2d8e with SMTP id
+ 5b1f17b1804b1-4a18e44691emr266635145e9.2.1791896891815; Tue, 13 Oct 2026
+ 06:08:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <ar4BZ26gjQEjZgIa@stanley.mountain> <ffeb3e5b-d9de-4337-b250-e27667024461@web.de>
+In-Reply-To: <ffeb3e5b-d9de-4337-b250-e27667024461@web.de>
+From: Alexander Aring <aahringo@redhat.com>
+Date: Tue, 13 Oct 2026 09:07:59 -0400
+X-Gm-Features: AclHuK8Sj2_Nz53xtduLPLt43HBfIW0FUJKisfBY_Ut16Ue4zEZk3fhpsmezn3s
+Message-ID: <CAK-6q+heOWNY8CY8dgotxzEeFC_-huHnnO2pgH8kJsJSGryOtw@mail.gmail.com>
+Subject: Re: [PATCH] dlm: clean up a type in waiters_read()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Dan Carpenter <error27@gmail.com>, gfs2@lists.linux.dev, 
+	kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	David Teigland <teigland@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are spelling mistakes in the descr literal strings. Fix them.
+Hi,
 
-Fixes: 095ddb501b39 ("selftests/bpf: Add sockopt case to verify prog_type")
+On Sun, Oct 11, 2026 at 8:17=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > This doesn't affect runtime but "rv" stores error codes and so
+> > declare it as ssize_t instead of size_t.
+>
+> Can a similar adjustment matter also for the local variable =E2=80=9Cret=
+=E2=80=9D?
+>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/bpf/prog_tests/sockopt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+What do you mean by 'matter'? It's declared as cleanup.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockopt.c b/tools/testing/selftests/bpf/prog_tests/sockopt.c
-index 6c96f2d9fccf..7dfdc4c12dec 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockopt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockopt.c
-@@ -955,7 +955,7 @@ static struct sockopt_test {
- 	/* ==================== prog_type ====================  */
- 
- 	{
--		.descr = "can attach only BPF_CGROUP_SETSOCKOP",
-+		.descr = "can attach only BPF_CGROUP_SETSOCKOPT",
- 		.insns = {
- 			/* return 1 */
- 			BPF_MOV64_IMM(BPF_REG_0, 1),
-@@ -969,7 +969,7 @@ static struct sockopt_test {
- 	},
- 
- 	{
--		.descr = "can attach only BPF_CGROUP_GETSOCKOP",
-+		.descr = "can attach only BPF_CGROUP_GETSOCKOPT",
- 		.insns = {
- 			/* return 1 */
- 			BPF_MOV64_IMM(BPF_REG_0, 1),
--- 
-2.55.0
+- Alex
 
