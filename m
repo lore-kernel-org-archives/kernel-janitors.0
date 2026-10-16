@@ -1,100 +1,128 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928DF46C821
-	for <kernel-janitors@vger.kernel.org>; Fri, 16 Oct 2026 09:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B970B44C50D
+	for <kernel-janitors@vger.kernel.org>; Fri, 16 Oct 2026 09:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792142083; cv=none; b=UBK1TsnaJjK2yHYD0LZLOdiuIazFourvVjCG2cRG3jwHyX77P9zWcFDWw2XvtN/fXlcsJF+lSfLZfKJaLAcBtU9rl4K7unvlMWd9Qm9TL/96Qu8hJ/HySMpTixh+IklT2HXHIuaGx6pvKZNZ3YWNEbuPsXHM+mj9tUtclmmkI80=
+	t=1792142447; cv=none; b=kHwf31qBk6BdwGYiY6l+Eq6qwwldA9pwxkagbr/n0HcRnGZPJ+Psaz1Jg2pzF/8eCbvNxfCUM7EmRbEvMoDmPLYC/CofhB+CW81iOI+GDJZU9qG1Xbh9yzFLXxbGu2ZTYl1QS13fEBO+j+Pjf7mN5XmXA7SwXsqDe/U9fky+9B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792142083; c=relaxed/simple;
-	bh=RjrTG7dlCmvCQaNfHYqGMEjUUYG2no0tg2xElaQykwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWmJc77hCLoI4wKGLq3ZRz99DA33qnH6xYd1aon75l2SPn5GX3JOT1BsPhAe0WVNpGYhaPtaZ3o2BBcOLYiQ5afXVywrq0tBjHu9pCa7uutnHqo113T7BZFWyHPCU2abF1MkVAjpq3gCUGEAWly+I0RYjA0khfSRjVgZH2OCWtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmK3WKW4; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792142447; c=relaxed/simple;
+	bh=J2Vo1AKcHKkb4R6FLHf/+bygkCDME8e58AbPfZcmVxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dQRqBX1e8n53O2zlExuLpZ8rVqcDmxLpAU6wxE6AfZYFH7FHEvOR99wuMBxqmkLUYVN2ji8bulJBkvNNq6tFfPCP+sQENBdVyCHzmxcGsX0i2M80SbtbzaYYXL1Uw71l0EdmyF478JWwlELhpsUQeXLSZWfXzVJP5u9c8u+q3no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MNoOXhyi; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmK3WKW4"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48b060ec084so4008203f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Oct 2026 02:14:42 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MNoOXhyi"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-89f81643121so298064b3a.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Oct 2026 02:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792142081; x=1792746881; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=g15pUqXB/gZtkjFNMKlMPbbN6ka4f/G72oFikrT6H5k=;
-        b=ZmK3WKW4KungVImkW5V9ijnad5eDZWT9PNhh6IgKdI31jPVtEyccCMHjGJpfI29aSm
-         jaD8iR7qh15Ypt0j5+ZCkagwrECjYPGubSmiAbw3nTWs8vHJ/E6oRnp9fBoOzvHPTR5j
-         gBbRvE0sefikPaO/ZcbOuIwQidLF/fHyShLweLX53nR3S55Kzse/ooe7/WmXt1rx3LJP
-         Uw2Tczfri4MdvC0YyyHiwcRKBLgAOza8Cnc+qp+9eAOc2NK06m1wDHtBYOXGoqSkap6l
-         TxC//pyeVH7hF8FsptrMG+StAfCItSrab6E2ocb/G16hjfbYSL3VpE+sZwrCOlv6j8tq
-         RNxw==
+        d=chromium.org; s=google; t=1792142446; x=1792747246; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cZpdtgEyok+9PJ/Ri7Q+NSThTOVxSs62Fi1zlQZD7xQ=;
+        b=MNoOXhyi9slDrIUJCTp532fTwsPcUietzjxggri57ENxzgxV2wjUiK93nUJYNubJnK
+         g8lXZtKahlWFAQKDvE52f6lvs8VuKSWK4jnJwmhvhd1y0gCf6yMAQtYKT4U4cbdYdzCb
+         V+9CMSCbXwLiKWKesPV+mxkGRUTBf++2R3+wk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792142081; x=1792746881;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=g15pUqXB/gZtkjFNMKlMPbbN6ka4f/G72oFikrT6H5k=;
-        b=jdBnFxto9EDtTWuaCNcvbvftsccuJDuxeF3GPMnTisfiXmlUDdHfhJbqbNf5vyyNe4
-         aPrCtqN9tMVjr+BTOjn5kZ1do+HTLEG6qklXP6VDdaPXdU4FQcO/LX7w8G2Zkvljqut6
-         C625m88O18HqwNNuxrj1bIVtbIoCAbWdmmdO4jzKwv0ccCtljrjMa6TtS/o9J6bh1Xmf
-         BV6LqozdShsQIyI2lbmnlPIaxet7q/U8oelHh9CzhfTNtGxjGWClCrm1nAgG6ihAm288
-         OGLuWBPJfTJhc44+YZ+bE6GnmmFMhm+uSiBxZL6L4kTgfX5E42AWzsgDJ5PoWDFNCwwN
-         /wMA==
-X-Forwarded-Encrypted: i=1; AKwUvBxgz5Uq3hsjomX3uS3b0kF4fjRXAwo3nFnaSdTbMUZS9Gtmn+KY0bYvcUOAAlRua0J96LpgyR+QxXlDjZ9G4wA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIJsJdxXMmKjs6ebGj4o8/1j1z5Dq6C3oazrd7y0DYv5q+txTGM
-	grMmhfczE6Bfb5WXO9o9WKLaq9YHaVRAOyb5zbhq9lltoEF+UW3zRzgT
-X-Gm-Gg: AYBFou05Tzx7Q32A/gMTPNZ0nDubyBKVzSl2hMdfcV7sWAMloBozstQyVVZBs2OxN6F
-	+aNJix8vnje6auoSnceWQU8L8ijPQRTDW9MD70o7xEDLE5UvGpcSKlGMbKFfPqmZ75WgGwbfeYg
-	s373/iLekCYqgFHIHsgwm2Jj1SiE4Gp4asqL2GXg+HJaCG9IVANGUowgqM5nPzOitKneEcXJ+5h
-	4llBIDKrj3t1ApXBDctlNg8LtFZYzfCe4JZohbDISdEELoS3+BaLxAriSx3IDru7QmBsJHlf4f5
-	5qY68tqVWDgeImYc3sd2g6YKTktYJqy38vINDpUECPILOCjUKD/6siUF48b0HzeVWtd7L5NM37i
-	tXIIF+Rkx5Fb8g0cwEQLQ3R8ad2sEYHYTrqSv4T9e1RIgcWk1+mdbOigtUT9mq6/5P+WqM225Uo
-	+PAR30rVnCeLabLxdsjpP9/V6y6pCuh7A1qZg2HKzaI92haRaeXviFymv6JoQVsDmL2B8=
-X-Received: by 2002:a05:6000:4694:b0:48d:e101:5707 with SMTP id ffacd0b85a97d-48de1015749mr17082052f8f.13.1792142080619;
-        Fri, 16 Oct 2026 02:14:40 -0700 (PDT)
-Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd4c4fc4sm3352171f8f.15.2026.10.16.02.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 02:14:40 -0700 (PDT)
-Date: Fri, 16 Oct 2026 12:14:36 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Alexander Aring <aahringo@redhat.com>, gfs2@lists.linux.dev,
-	kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	David Teigland <teigland@redhat.com>
-Subject: Re: dlm: clean up a type in waiters_read()
-Message-ID: <atHq_LLtPx8SXMUt@stanley.mountain>
-References: <ar4BZ26gjQEjZgIa@stanley.mountain>
- <ffeb3e5b-d9de-4337-b250-e27667024461@web.de>
- <CAK-6q+heOWNY8CY8dgotxzEeFC_-huHnnO2pgH8kJsJSGryOtw@mail.gmail.com>
- <c8b6843c-c87a-4330-b6f4-e556117a8026@web.de>
+        d=1e100.net; s=20260707; t=1792142446; x=1792747246;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cZpdtgEyok+9PJ/Ri7Q+NSThTOVxSs62Fi1zlQZD7xQ=;
+        b=cp8/iBBKWhvESm/Z81HC71uTOh3D5TvfJiG09VqvIVClizKTAisheuuyjBrPGqr9sX
+         iSYKC81y8CdvD8TMP6xvDhM88cSXqiavEpng7hYr2RvhlzpPAHeOF2n7Doau4JIdM2j/
+         GnTbekBiZ84P4LJmJLPmchDwsmePSxcLtzcgyb9lbQQEh7rGxYXB6vKe/aj5wS7QeAsG
+         EXD36BpQBSVA0R/h7Z86EeQbMncSXKeP4p0/C9opaewlyuZGrgEigZjLs7EP31zXz/+d
+         tSITz1b4T7isy1a+/+FRD1hN0t85AHK4erTcq7BLrpS8tPmw+SBv/vs5XSyUXF0gHgXo
+         WsPQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy7gxTn1RtalI+YZ/NlzgGJOJze0YbIPDHHNPjU7F1C1akhl4QM9/u6cTKKd8rn6dCtdifFwItD6vyIXyBlnLQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJwQFSUdw+9TNOammf+1APYnxgq8lhwG3CLkyWukT00hpULIHbC
+	Gn/gK5x2DcQ6fLlk9fcJ6UZnZglGJt/0Fp8+n80YGZcqM7j91QJbl7fxrPHzzds8vpvO7gy1LBY
+	WEJpQww==
+X-Gm-Gg: AYBFou1WKmtndhb36oW7uQn14rB6ECYaVb/5spda7Iazf6tvr7n0cDoUiEHxO0/I8lJ
+	bL2SiPJtBYR4KFbrc8y2+wHibRFMVPrppAl1LwJlzTPjI1VNZQ7sjG8dpNM2+awDyOizePltA2c
+	n9lZUHFBWbnmxTA+kBSXLBw2K2tuR+QBoyfHfpZ+M5F1NoKCNwQU8Bf/8IxpWlm5Jb6goIJg97e
+	+nnKXNU4VMw3dANVVp+GfoHPOc78YJgj04cYFUercbbkhpbbPASA9dWCEav0ELaQ5e4JqDFwnvr
+	771GQaVipsXFqPEOcBronOUHAWxu3E5B6f9mQQsJvQBLM7+E1zUy1LbZ66ZcUSTaFeuP1tFql0G
+	zkh3V0kd0vzOJPUNjS6LBv28YDeKaDDMBFwmaWwJJAqWfbRQvhC1WwaGih+uwO52D9HHjZh7m/A
+	ZwT4r2ZN3E/2LIz21WuwqQvaM3SPV/oRsWsx9DN64iZzrJC9/uyZC6AxzWi0sLjARyjFGYuR7WV
+	Uv89vfg7wT7TgObrUovOq4+9r8TnqTaEHU=
+X-Received: by 2002:a05:6a00:2d06:b0:89c:b6a0:9a4d with SMTP id d2e1a72fcca58-89cb6a09de8mr10815170b3a.11.1792142446068;
+        Fri, 16 Oct 2026 02:20:46 -0700 (PDT)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com. [74.125.82.46])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89fd2737d20sm400123b3a.35.2026.10.16.02.20.42
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Oct 2026 02:20:43 -0700 (PDT)
+Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-141395927feso11963078c88.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Oct 2026 02:20:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxp15Z1nDfmEmO16IbtzOKS5hgE4sHBqjEOFhqMv9thIGSFUJ3HoYBHQNPgJDw2iLcgECvKjfbO/gLqoCGM8kg=@vger.kernel.org
+X-Received: by 2002:a05:7023:a47:20b0:169:9f67:a91b with SMTP id
+ a92af1059eb24-16a5dbffce8mr26511358c88.12.1792142441528; Fri, 16 Oct 2026
+ 02:20:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c8b6843c-c87a-4330-b6f4-e556117a8026@web.de>
+References: <atHg6s8VaFxNzuR6@stanley.mountain>
+In-Reply-To: <atHg6s8VaFxNzuR6@stanley.mountain>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 16 Oct 2026 17:20:25 +0800
+X-Gmail-Original-Message-ID: <CANiDSCvT3KC=LYaQPgvxnFfFfKHwtSZkDoSVPjd-_g5R9iiU1w@mail.gmail.com>
+X-Gm-Features: AclHuK9zy0ivptFpxjfRKqq4APH2lotLQJ8S3ABkRzR92mbjRrsQi_YoPtdcV_I
+Message-ID: <CANiDSCvT3KC=LYaQPgvxnFfFfKHwtSZkDoSVPjd-_g5R9iiU1w@mail.gmail.com>
+Subject: Re: [PATCH v2] media: uvcvideo: Add sanity check to uvc_mapping_get_menu_value()
+To: Dan Carpenter <error27@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 13, 2026 at 05:27:10PM +0200, Markus Elfring wrote:
-> >>> This doesn't affect runtime but "rv" stores error codes and so
-> >>> declare it as ssize_t instead of size_t.
-> >>
-> >> Can a similar adjustment matter also for the local variable “ret”?
-> > 
-> > What do you mean by 'matter'? It's declared as cleanup.
-> Can the usage of a data type like “int” become more desirable for “ret”
-> according to the affected function implementation?
+Hi Dan
 
-Either way is a defensible style choice for "ret" so I left it as-is.
+Thanks for v2.
 
-regards,
-dan carpenter
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 
+On Fri, 16 Oct 2026 at 16:31, Dan Carpenter <error27@gmail.com> wrote:
+>
+> Smatch warned that "idx" could be too large, leading to an out of bounds
+> read.  When we reviewed the callers it was a false positive.  However,
+> add a sanity check here anyway, just for future proofing and being
+> consistent with the rest of the code.
+>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> v2: It's not a real bug but Ricardo asked me to add the sanity check
+> anyway.  Use BITS_PER_TYPE() instead of BITS_PER_LONG.
+>
+>  drivers/media/usb/uvc/uvc_ctrl.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index d2f722bc3459..249c68783474 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -538,7 +538,8 @@ static void uvc_mapping_set_s32(struct uvc_control_mapping *mapping,
+>  static int uvc_mapping_get_menu_value(const struct uvc_control_mapping *mapping,
+>                                       u32 idx)
+>  {
+> -       if (!test_bit(idx, &mapping->menu_mask))
+> +       if (idx >= BITS_PER_TYPE(mapping->menu_mask) ||
+> +           !test_bit(idx, &mapping->menu_mask))
+>                 return -EINVAL;
+>
+>         if (mapping->menu_mapping)
+> --
+> 2.53.0
+>
+
+
+-- 
+Ricardo Ribalda
