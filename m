@@ -1,80 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.12.242.16
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792782903;
+	b=OMBAM2v/f07qBvnkJrtY1hkIMGIVDZXzAXO7SSmpm8ep8id64oPOvKuVhBNcm3E9MPpV
+	 E3f2AYqxwS9+9PYA9QTWavNBIBCJpmIqF4QqYPS76pT4D6h3i5sGEzVrq15NyyS3aqD9x
+	 afpdtAp9m7jpOeB8z8pjSxbJAXP4QXLrL6EOWN0DaZU/9s1bT9Fm5aM/Uu6Iq2gtQcL0Q
+	 I1ZCC+3bVqE6nySSkMRwncPmXSSHBbbIamBvgG451H+QK+G5qapKKzdNfk6ctY6BpGYLD
+	 v6M1cj0ylqd3TdDa419OsSCDzjTbssN07WR/9mtD4Go0Xj5f08ZGDS1+JBwvs3gkvUw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792782903;
+	h=DMARC-Filter:Received:DKIM-Signature:X-ME-Helo:X-ME-Auth:X-ME-Date:
+	 X-ME-IP:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=7BrCigeCjVwa7nKZbgZrEsTzrqdNK1TrLNI+3mkpPI8=;
+	b=hpkjsyiPQBHWRmfKo2QHu4SS27WyoNqFLbh6vV+o4bsgViIcSzL+Y+TPxZCCUP57/vSS
+	 PvSSEf5ClIN+vqkYtbEx9uOpk+dnFnmo020WUsC4HyOpaJ1mencdslbf6RP3F7WQ4wnaP
+	 I2lazIpHFMFYvIbOyrdjjx44H5tX91FbpRJsFGbvmxkyubBWmsMPvM222B9IeyrnoUq/+
+	 SvG1e87Cl7+YM2gFWI++CvGJKw3hbrGZbYkwtGuaFEDd/sLldyLw4ekpFj6csG37uT9Ke
+	 bQHIdNLyBF+b2YReD72akEyVoeq3CpkRaxt28bZQt5XOvfu0irvq3q5BO1k5embE9Gw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=wanadoo.fr;
+	spf=pass smtp.mailfrom=wanadoo.fr;
+	dkim=pass header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=lajV+Pi4;
+	arc=none smtp.remote-ip=80.12.242.16
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB154480DE9;
-	Fri, 16 Oct 2026 13:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792158012; cv=none; b=HXYgZICUxGuACyicMIY4COrULPk9cQCjvJSHtTGzsZPrfxnGZHx0rXUKhb9jt2A8jTAmUy3ACPhc2qBidBUsPHkr014pk/SpCw8+qV5HFUdZ3CbHDtTNGRCCpi3o709Df5P+qqdv9BbSp8r1HdFHPHrtJZLzLBNY2qyoy/whSh0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792158012; c=relaxed/simple;
-	bh=WoEJFX5LfScTO/M47xw+wJ9Y3H9ZLYo2vGzWBxrFMBc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oqc6rR0D/axiGGYOIdUr7WTfKh6waizV1y7GGmnYSWA17LS+A/y7AkGmMRCLQzG5WiRLsvTIljaieDWvD9ZeogDJ1zQlBo3+uCerf+m4z4bjr47cYbEsRBfWsuJwENZ9uSIa0ga3H3ljh0ILD8/+tKaMKeAg6lt6WWLKdOzR7ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORVDW+UW; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105A6606A31A;
+	Fri, 23 Oct 2026 19:15:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 105A6606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORVDW+UW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54511F000C4;
-	Fri, 16 Oct 2026 13:40:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792158011;
-	bh=C/IUVK8DHOjit4GMkeRrGajEhcmovgoB82GVqSNM1zI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=ORVDW+UWUiYrsQHp8o44PblSJjepVsFQ//KYSCsLm71lFF6kpmeNsohM4EPpw7jAr
-	 qy2TZH/cxlpjqxnqN+B7yDP9P/8wPAR6607EnqNNA+vu0mOt/ZPO+b+MOSfo+2BXjv
-	 o4XJcwAERRBJmzMvPDaMm6yKxcnWapB+ZEL1m1U9Tq4rq3GFdf20/aq0dxgHuAVwdB
-	 j0vAzAxe07GsaLlbhaq650jVC2kb2Uhc9KwOnzQYRhBI1Z/DCOfOoKPjjw7ls8UEqD
-	 S0yFGoAgSo0fEOPU96sIhQv5kiXkoshlnGRKc2yJ4i7Ll0wFIuKIvivn2twCQUxl++
-	 wxQ5u6lEPh4Xg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B6BCC380A95C;
-	Fri, 16 Oct 2026 13:40:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-Precedence: bulk
+	dkim=pass (2048-bit key, unprotected) header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=lajV+Pi4
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
+	by smtp.orange.fr with ESMTPSA
+	id KKj3xmY0OmYgsKKj4xUYS7; Fri, 23 Oct 2026 21:14:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1792782894;
+	bh=7BrCigeCjVwa7nKZbgZrEsTzrqdNK1TrLNI+3mkpPI8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lajV+Pi4GD9JUUY2BDrdh2GU7M1v0L5cBgXOTTyrVkPvIKESiw3ZzTRH6nYxjPc+w
+	 aGqv81RpjDUqLZwq6Im7MSAFkL/e3bLvvJryIGbP1wZq0xf53fcSKX4Oiehxh4CkaD
+	 bpoI5L2ybcXqcw+LJP2onuQcQt3ZkxS0lcd5sCFqRUwls91tDgW0ow0iAXEdCkzfxO
+	 KySHn0L9IekD4YFxlA8zi8K6zIY2TD/A6miCzuuFLj9MiqH1pcL9jJfP9vC/4YHZ7L
+	 +odjPT6MWLHOl6xDY2S0Z1XtE0NjSaTDs2/XrhpBgD1XzgHapsUDXNqLuo9PszfTLP
+	 sIgLPNCn31u3A==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 23 Oct 2026 21:14:54 +0200
+X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Hadar Gat <hadar.gat@arm.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Martin Kaiser <martin@kaiser.cx>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH] hwrng: cctrng - Fix an error handling path in cctrng_probe
+Date: Fri, 23 Oct 2026 21:14:46 +0200
+Message-ID: <b66b3df3d178a04b35690d0eb36dee409a95aa5d.1792782868.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
+List-Post: <mailto:kernel-janitors@vger.kernel.org>
+List-Help: <mailto:kernel-janitors+help@vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
+Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftests/bpf: Fix spelling mistakes in descr literal
- strings
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <179215801028.300760.16314134678598570739.git-patchwork-notify@kernel.org>
-Date: Fri, 16 Oct 2026 13:40:10 +0000
-References: <20261012212334.183116-1-colin.i.king@gmail.com>
-In-Reply-To: <20261012212334.183116-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, memxor@gmail.com, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, jolsa@kernel.org, emil@etsalapatis.com,
- ihor.solodrai@linux.dev, shuah@kernel.org, sdf@fomichev.me,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+If an error occurs after a successful cc_trng_pm_init() call, it must be
+undone by a corresponding cc_trng_pm_fini() call.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+The commit in Fixes has erroneously updated the error handling path if
+cc_trng_pm_get() fails.
 
-On Mon, 12 Oct 2026 22:23:34 +0100 you wrote:
-> There are spelling mistakes in the descr literal strings. Fix them.
-> 
-> Fixes: 095ddb501b39 ("selftests/bpf: Add sockopt case to verify prog_type")
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/bpf/prog_tests/sockopt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Fixes: 8bcd96893848 ("hwrng: cctrng - let devres enable the clock")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-Here is the summary with links:
-  - selftests/bpf: Fix spelling mistakes in descr literal strings
-    https://git.kernel.org/bpf/bpf-next/c/760c953525ba
+This patch also undo the clean-up done by commit a7ea3d63e897 ("hwrng:
+cctrng - simplify cctrng_probe()"). Keeping an error path makes sense with
+2 users. But if preferred, the missing cc_trng_pm_fini() could also be
+added after the test for errors in cc_trng_pm_get().
+---
+ drivers/char/hw_random/cctrng.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/char/hw_random/cctrng.c b/drivers/char/hw_random/cctrng.c
+index 03401ee59a8e..608b3321c05a 100644
+--- a/drivers/char/hw_random/cctrng.c
++++ b/drivers/char/hw_random/cctrng.c
+@@ -524,8 +524,10 @@ static int cctrng_probe(struct platform_device *pdev)
+ 
+ 	/* increment device's usage counter */
+ 	rc = cc_trng_pm_get(dev);
+-	if (rc)
+-		return dev_err_probe(dev, rc, "cc_trng_pm_get returned %x\n", rc);
++	if (rc) {
++		dev_err_probe(dev, rc, "cc_trng_pm_get returned %x\n", rc);
++		goto post_pm_err;
++	}
+ 
+ 	/* set pending_hw to verify that HW won't be triggered from read */
+ 	atomic_set(&drvdata->pending_hw, 1);
+@@ -534,8 +536,7 @@ static int cctrng_probe(struct platform_device *pdev)
+ 	rc = devm_hwrng_register(dev, &drvdata->rng);
+ 	if (rc) {
+ 		dev_err(dev, "Could not register hwrng device.\n");
+-		cc_trng_pm_fini(drvdata);
+-		return rc;
++		goto post_pm_err;
+ 	}
+ 
+ 	/* trigger HW to start generate data */
+@@ -548,6 +549,11 @@ static int cctrng_probe(struct platform_device *pdev)
+ 	dev_info(dev, "ARM cctrng device initialized\n");
+ 
+ 	return 0;
++
++post_pm_err:
++	cc_trng_pm_fini(drvdata);
++
++	return rc;
+ }
+ 
+ static void cctrng_remove(struct platform_device *pdev)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.56.0
 
