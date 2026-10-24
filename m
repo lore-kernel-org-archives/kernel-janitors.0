@@ -1,72 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792834345;
-	b=NdZBeAjq0aLcCVPzhA60KFQTh4b5YSVvXhOEXFHgR2L3umaKkaD6WJWzb7rDg1PzCy11
-	 MeBOCYOdAGagyOllVfYPf8vw680BiAD4EPhyHZf8w8KBoFmRqYE6vfS4/IxVgZWJOKCas
-	 QNrCHIWtD0XjNiC8cDIgtHMK5nptXbUn0hFLvgj7CklqMo54/ay0nQRaug020C8zb9Bfo
-	 mhjbodVRgo/vkT0stV08bY4+NpFCH/pA4+PZL7zMnOmw1qYA1MN2/ZnGhHToVC8Js3veh
-	 zT2jwfONpWuo/BemoJkMtuiyw+grp/SdY1t6FrJgnj90cG3nmbRQHHHp2gn5jeMpm/g==
+	t=1792853552;
+	b=H4uo3yOeQ3FIrOT9O3zdtIFEI5X6CO1gX8t7rVhfzXnxmCbW+MymX5rpPokONByz9tSU
+	 LLEjBCFLsSN1Ar62oCuNlpUv6djqjEmQyKEi1N75x3yvcg/rOX7nZNe032xTaWcmmD2g3
+	 sWQUwSVK1V0TYBC4QTGkUQ87G8RhjLJpjX2vCWOhwp4VaUMkswmlGLSTG7N1tOSw/HF4c
+	 UCxF2ETzaXc2UY2mtZ/G+LYPzCRYEBwHtdaC6K7w6xda3RiwBnylPqmMYsGUdFWCh/6le
+	 SUKGoZu1EDEdCK1fLA2ztBTpsyRA6dav7MTGk1xv7mUVTekXj9tsGqgb0pBbEZzzCsQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792834345;
-	h=DMARC-Filter:Received:DKIM-Signature:X-ME-Helo:X-ME-Auth:X-ME-Date:
-	 X-ME-IP:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	a=rsa-sha256; c=relaxed/relaxed; t=1792853552;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=RR3yjdaJgIdd4CGVtBbCqKG6w24xVr9FXnig/GJExvw=;
-	b=J8B5Liuve/5BZWafj+GS1HIQNTjwfGvkqz1gBhfszH0lK75E0mrgbNBgn+4tMS0ugwZh
-	 StqciZU2CRd9Ld4OBzn5vEOtozbxjGB3eJlVxdQTm3ckCPDgoiF7gLz7eqrclwtIfUr2p
-	 FsTZCW1RMDciAJimItvI46Yl1a0ZIf1UtU7W3J2uPn+rw9+6EPrJbwBtwbfUCGY6sT4j1
-	 fiY4WizywIEa0fkstlSjKFqfAd0t/91dDKyJ7nvUq/9UbjDbMNKDd0G/hRobYx3PkF31L
-	 UCp9ThBT1Y6VpuinOOLDIt05zlkxeYaXyTWmQJ8oaUUFgBFTyv+0k0KH5oTGr+0frjg==
+	bh=57cgpKzuG8iviQVEnNlM9P5mTIL8ivtwm96zaTpUOVU=;
+	b=obWKAYYsowjRB2Gswp5upa9HWKh892pyFpCvQzmR8aJtbHoq0WTw0lwgCQT1pPccJJqt
+	 kxdQQexunpQ9Xm6NMGSSRR4A75VoKdnzs2hZlrp7og64//IE8T1UoY2Hd4KQ8CuPnkq6P
+	 /RxOmquI0kGAmpkQgBvkI2+2wsN9Rom8mbNb45wtxTn8SO7/N31aw5dZONHzzKuFYiyr/
+	 DJHkwg2XRWpE1UCngyd5pz1qKdh7azqXSpnLKsP79v+79V/7Y709oIQmfD9AZqp+Chy4W
+	 +foSyIRi6HyN7460JaW62KCWkXuurfqDGqXFxZu6ilOaNJ7IKPo9Vr9NppwniynxQwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=wanadoo.fr;
-	spf=pass smtp.mailfrom=wanadoo.fr;
-	dkim=pass header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=q7v5iJLj;
-	arc=none smtp.remote-ip=80.12.242.19
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jgcdehew;
+	arc=none smtp.remote-ip=209.85.221.43
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA43606A31B;
-	Sat, 24 Oct 2026 09:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9EA43606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFED606A31B
+	for <kernel-janitors@vger.kernel.org>; Sat, 24 Oct 2026 14:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CFED606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=q7v5iJLj
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
-	by smtp.orange.fr with ESMTPSA
-	id KY6oxMvXfVN4wKY6oxnW7u; Sat, 24 Oct 2026 11:32:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1792834336;
-	bh=RR3yjdaJgIdd4CGVtBbCqKG6w24xVr9FXnig/GJExvw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=q7v5iJLjDkIWa/05wPUav1ROWVXZjhkg2Z8feFI5F9xZKbTH407mu8tMIGVK+OLC8
-	 jNSvWwTcq/ZI77LubVkYPDs8seAhtfbvOI+Lq3BHGsMTu5Mm5U/0Yk8R5Gn/22mmVj
-	 AYGj2VXPQ4eA5N8QtWZ/oaiE5DIDCpP5f1nXcRfcu2i2Kc0VX+BmkDG/hJvTA3O1Ow
-	 ESLVxLzD29CexgTIYlzKzxh2okuuXZQvfrlr069nipOqtnukwIxRrnFRadnvp6Kr0I
-	 qTNPj13Bwk0qmvE+DRKPWCGSTfelyaPHpA5QMGRN9fEJlGA+thQCPrnDanDPzKJwNB
-	 DYKpMMIx+oLFA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 24 Oct 2026 11:32:16 +0200
-X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v3] ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
-Date: Sat, 24 Oct 2026 11:32:09 +0200
-Message-ID: <68e28df174c8524bef54cb437e568afcb8a82e1e.1792834312.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jgcdehew
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48c4649b35bso1818990f8f.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 24 Oct 2026 07:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792853550; x=1793458350; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=57cgpKzuG8iviQVEnNlM9P5mTIL8ivtwm96zaTpUOVU=;
+        b=jgcdehew+sr/+8V1Btu38dbiwFtLdTNE9TZ3tmU+N44ZSZTi1BxT8br4h6ahD8PhHU
+         /QL/nEdevW0b4FCzIt9oIDWJOwnMg1pya4GMg/Zvx52SJ29vYNZS9RJ+l08+nHypgEVI
+         fZjKxC4zrmhK5N5xwiPTtrMSBoUUYeIBC4ED6UlGypYopXyArmamPNgxZdJ51mylvYio
+         j4LjHdMt5Z6ZDJSFXtZDUhiHXYDzcfzGyablfEdcIUnuAmqjAEjTZlZKSIJWcDdWxNBR
+         VZ7D0JLH4E+vfSJ8ADHXT6EL1yzOZseuRuIwPzXHzFmDjcvwNxzGsXr8xOcNj6QwpLdU
+         fteg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792853550; x=1793458350;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=57cgpKzuG8iviQVEnNlM9P5mTIL8ivtwm96zaTpUOVU=;
+        b=MJ8gDTUAf+vSdleYJznx2dpdBGul3MImSmzt+zfmSgGzuEnzEfW+fDDoSAZ1GpJUKA
+         lG5NCCKmidfk8gfDUPZTcNB8RAC+Ku6QJLznnXf9XbRHIPksO2qV/7sOm9oaQk7yMMEB
+         0qV7n5nq+fLy7V2Sr8bZG5EiTME1DDboC8yeCVnwR3ETl6n0ez/llvJsuwSmssfXOBsX
+         ROwA5Z1iDShqXRssxMIJwWYTCmiwH5vwE9i38soqBKRtaCltwAL7jb65bUVlrVfjn/Bz
+         B5ucYueINFri0J3X62m9PlR28wY80rp9ra1kTqthg63vqZX7ov4cDDKgVApsTP1DLmxa
+         WjhA==
+X-Gm-Message-State: AFq9FYJCoZJZUWQn2GDBarYwv6z2ITjt7+3Nf3jVrViuX43aaUpCDdG1
+	WrzTUqE74GzBsGDumXdiDXKNaf9RckxJVRPph8LPp7Tv1RZbQ0FbYJUl
+X-Gm-Gg: AYBFou1CBlxQGDyjDAeZDriTU9siIKxe6iIOkPtg/4UdBljmlbWiC06QoRXqrB73JbM
+	W9dD3Vjmf3O1kpCJPsJKILfyMjaDUq6DEDkZ3yAQcCMJd6zXRsayPR6He8zr3c9yirMYAE76VNY
+	cwYPdHvHwuaQc/cdt3qnw8xxHDr1xBYdx1/1uUf2jEAoyUaKKzZRG3MZ4J2/xZvHW2ceJUASH2b
+	Qw5SMAhHAMA50aYmcIVhVFhpQFbO66n5bYIQt8c/JZvCrLCv2/FwVdi4tCif7zAwkJ3bqH6fmWw
+	ikjijugpbvVzJrNs00KamTw2TlPcD9NjQIw77CJ/rZExOq/hq7w6GAVdcoynS0CfTluSisiah+e
+	vIpCJF6gIv5YmPX0fAMusvSMH2LRsKrBBfNnOOy1GYXvL69lw5469qtCKinrRAAeIwaAkdVHRXl
+	5msoYgg5+h/IhQNrlmQyfugwM/GYkLisNq0OYCTrfjuUk0CxDtuK8PvnG1aXGTOffGHzfXR1JoU
+	Esdzt8w6tjgzmz94OeyeM075JgueuhaYjgzMdDRnIK0U47jenuXsg==
+X-Received: by 2002:a05:6000:41cd:b0:48d:f36e:ccc0 with SMTP id ffacd0b85a97d-48e3eab5794mr3799228f8f.0.1792853549728;
+        Sat, 24 Oct 2026 07:52:29 -0700 (PDT)
+Received: from localhost ([5.83.201.131])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3eb8f248sm4620940f8f.6.2026.10.24.07.52.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Oct 2026 07:52:29 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/sti: hdmi: make char * const array en_di static const
+Date: Sat, 24 Oct 2026 15:52:27 +0100
+Message-ID: <20261024145227.1193775-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -76,68 +100,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful q6usb_dai_add_aux_device() call,
-some resources should be released as already done in the remove function.
+Don't populate the read-only const array en_di on the stack at run
+time, instead make it static const.
 
-Re-order the code to avoid unnecessarily destruction of devices in the
-probe path and add an error handling path with the missing clean-up.
-
-Fixes: 72b0b8b29980 ("ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Changes in v3:
-  - Reorder code to avoid unnecessarily destroy devices in the probe path
-    [Dmitry Baryshkov]
+ drivers/gpu/drm/sti/sti_hdmi.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Changes in v2:
-  - Propagate the error code returned by snd_soc_usb_allocate_port()
-    instead of an explicit -ENOMEM.   [Dan Carpenter]
-
-v2: https://lore.kernel.org/lkml/1a3bf0ee02f880919190944e581bef2b428ca864.1751703113.git.christophe.jaillet@wanadoo.fr/
-v1: https://lore.kernel.org/lkml/7338875b20cb41693f803c6b9673cf7f3e5f089a.1746781775.git.christophe.jaillet@wanadoo.fr/
----
- sound/soc/qcom/qdsp6/q6usb.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index 6381b289c55c..e226dd126364 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -322,22 +322,26 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 	struct snd_soc_usb *usb;
- 	int ret;
+diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+index 7ba9e0b7ba6c..63418732daaa 100644
+--- a/drivers/gpu/drm/sti/sti_hdmi.c
++++ b/drivers/gpu/drm/sti/sti_hdmi.c
+@@ -647,10 +647,12 @@ static void hdmi_dbg_sta(struct seq_file *s, int val)
+ static void hdmi_dbg_sw_di_cfg(struct seq_file *s, int val)
+ {
+ 	int tmp;
+-	char *const en_di[] = {"no transmission",
+-			       "single transmission",
+-			       "once every field",
+-			       "once every frame"};
++	static const char *const en_di[] = {
++		"no transmission",
++		"single transmission",
++		"once every field",
++		"once every frame"
++	};
  
--	/* Add the QC USB SND aux device */
--	ret = q6usb_dai_add_aux_device(data, &data->uauxdev);
--	if (ret < 0)
--		return ret;
--
- 	usb = snd_soc_usb_allocate_port(component, &data->priv);
- 	if (IS_ERR(usb))
--		return -ENOMEM;
-+		return PTR_ERR(usb);
- 
- 	usb->connection_status_cb = q6usb_alsa_connection_cb;
- 	usb->update_offload_route_info = q6usb_update_offload_route;
- 
-+	/* Add the QC USB SND aux device */
-+	ret = q6usb_dai_add_aux_device(data, &data->uauxdev);
-+	if (ret < 0)
-+		goto free_usb_port;
-+
- 	snd_soc_usb_add_port(usb);
- 	data->usb = usb;
- 
- 	return 0;
-+
-+free_usb_port:
-+	snd_soc_usb_free_port(usb);
-+	return ret;
- }
- 
- static void q6usb_component_remove(struct snd_soc_component *component)
+ 	seq_putc(s, '\t');
+ 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 1));
 -- 
-2.56.0
+2.55.0
 
