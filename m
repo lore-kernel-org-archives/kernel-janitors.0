@@ -1,59 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793135842;
-	b=HIUjELti3YO43ayYVFe5rtOFRgCa3S3Uc3JRG5k9Qs2QnuGEhPta3dj8GTBmS5vlEUzZ
-	 AyGexJ3O3mhNY+5/SM0pESXabajz9x9WFp4Gp5FM2oq6RaIn6FUQC1eBxs8GaQvrT2qHT
-	 DGIteQqV1WIQVh+oR90M/HtIugRRIzkQCO3x4kqo6mGd0C9yc55OVV9Ff9UXcO4D4uYLT
-	 vDLWnzYaL6i4OoIwMNOrFXsIRZ1zXNY5zXR4Cy4vg/f3W38PshIOWgC6B2N48ur7NK/1X
-	 48DlchIZyQnyMgz7/tPBB1I15Qp379Y3vZLL0xalPyR0WmCFNEse6iJScms7ve5xrNw==
+	t=1793212301;
+	b=k5hKf/YGj4lQuKbQdA6TJPJ8I0iGAwMyoS3fPQJRSYTLkd9SQ7zEfCTqqYmTiMbHaz6U
+	 uCCbhbEwP1yn0Y9N482ROS1MRTH/cFooKz1TC3XhlCZB0mgfbks67EoCJwFWuqIaOaMvU
+	 a6m0NENv8evo1mLWgYwf8T8hCI8HfJalURy0vMaBbCw0Jn+vbgF0yUD5VZtNFNkgVF3Dz
+	 XTIzMJeCmTAx7S+XKdO6j6oRtSLe8AjESInVbpMfHCXKfWVgoJ6gGGb0vFHNdr/34yHqS
+	 Dtw49qRdXAHdzHAAaAgk+m92657Yi7iZppLyVidQT2FGFXoWgxESC/zEQeekT58b/WQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793135842;
-	h=DMARC-Filter:Received:DKIM-Signature:X-ME-Helo:X-ME-Auth:X-ME-Date:
-	 X-ME-IP:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 References:From:Content-Language:In-Reply-To:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793212301;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=t7WWjDmCABciWDe9nArkCPlp3bT8ioJksoHBjAnN3e0=;
-	b=5eV4XvRKB1UWHsvLmbFZkSvgLGeHM+ax7usP2F5kqfIy03asi9Oiw0iNX8ahhVFTJ4Ur
-	 h9AeGnBJs4/oLNtUDXBg8SPMiSwiNkF6ZoIVok3kr6Az3S2qHQkckpKpNwcoorUxZEBq/
-	 uNb+FZrC+FWSa0PmFBKoxHweRUf86nmaVTUy+clAGo/imItIUpe5DZYefwpfz3rAMJuC4
-	 htq7/X9w8RQ5B1eydY2p7yQty8PIaHFWBvF7fa79q2kdsiX5SuP4JnnPzAvB5glNwCI8L
-	 klgQScYZqYSJuPBtDq5Sy4gAKGgFJJVQafEkGLKMIE5RTRfbkSRrmWta1v88Lo5LH+w==
+	bh=X+QvVRHeWMxizCTRKzuAHQ+22/m0nu959maLN9qWALg=;
+	b=cx2X5ffHly732Q3V5eca5D3h3xswnDRhDlaGCzqCfwuLhhw6GRUSKtL+Xiar8KGcMRHP
+	 grzpcF/VCA0lnicbwveOOGOzChyv0+vkJgdtvmWTKWcDFIEsfdV0qFKXiqjnsVwijLNt0
+	 3DuOpdcjvDpgLV2NuQRq+h5sYRvh47yk/zm3Lkg+zSj31J9ve2QoxOWhxn04OjqsZ2yP2
+	 nzYZMlU+9QVCDgPpqVKp3UBupo1YeZxFSMTnufdJEIYQabeRhybotAFywpHJfS81xWQns
+	 ezcgeC/9061sXZi6eFWUN83dnmW5E1MMMi4TJ/FNlbpm8NzzNesBWeRb91Vxhmg5rCw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=wanadoo.fr;
-	spf=pass smtp.mailfrom=wanadoo.fr;
-	dkim=pass header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=NuScA407;
-	arc=none smtp.remote-ip=80.12.242.24
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="Q3I/SShW";
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91A606A31A;
-	Tue, 27 Oct 2026 21:17:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A91A606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87B4606A31D
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 Oct 2026 18:31:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C87B4606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=NuScA407
-Received: from [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e]
- ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
-	by smtp.orange.fr with ESMTPSA
-	id LoXcx90ADnRVmLoXcxscA3; Tue, 27 Oct 2026 22:17:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1793135833;
-	bh=t7WWjDmCABciWDe9nArkCPlp3bT8ioJksoHBjAnN3e0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=NuScA407MaytI8sNKey5dKys2nzV031i0kQJskb5kYu7wpvUhmqIKYNBt+ZPpzsd0
-	 DT0DZ9gZetlvID0jrwFNxkm9WFwuPiPxFFd+b1P3xOBrXS2wBkqWHl+Kfo3M9Uypst
-	 h0AdaWLVjKpaeXyYDucWVk8lmqA0p0t8BnaMsQ3l9C5sDXzjAhNUU1fayTw8UM3Zjm
-	 hAlBowVqPXcBcsb6FJbUFLpgTi/NtP6NdvyNOeSixsEybcWVodSh5EznCUkqbQvFST
-	 3iqqggjvUsABV0DnuIar+cOvRf9awJ2zWGrET1NADJbrL8wHsfjqPCDTCLdTtl3Sho
-	 EuNhg/xEDcQDA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 27 Oct 2026 22:17:13 +0100
-X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
-Message-ID: <67844d9d-d4d4-4026-9549-73589afcc1ff@wanadoo.fr>
-Date: Tue, 27 Oct 2026 22:17:07 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q3I/SShW
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so12873665e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Oct 2026 11:31:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793212299; x=1793817099; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=X+QvVRHeWMxizCTRKzuAHQ+22/m0nu959maLN9qWALg=;
+        b=Q3I/SShWWIQLoN2RtHEvS3tWyt5qY8W/OL12MoF4oRRZohECYlsMONQyUzyl3lwFs3
+         dS8/l5SIzHnQV95IUGRfYVivCw80NKIlwiVbB5EfxMB2OSFPl/mQQTgSbC83u9K1E5gB
+         beQYiwuVcn+D1KL+RCmy+NZzb5kgy7hbubOhgQdyADaiKZa3TLTwWRrr05JHXZ6Hrq7L
+         UtyDKdZ7795d7EDIeGC5/E0R5wXO4N0GIBIUC0LTKVMN2Mr+aHlzWFAIZ552k6mDtHby
+         dsLy5FvT5eOaQOEtxMEDuMGr+KSRP+VoW1ehD95Cio/5wcmRqahTaDDG02V3tIwYsa2E
+         8fWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793212299; x=1793817099;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=X+QvVRHeWMxizCTRKzuAHQ+22/m0nu959maLN9qWALg=;
+        b=N1JoZ8s8WXP1GU6f9FXpdBGij6OU5AHO93kmVeOEQXoYlYiBxteZ0+J4wmymCHmZBw
+         4Pn3cddNke358JWjmvTbTfXN4JyX4rJIe/cEXsOYxhZMYnfCpL//+wjGHVIAOMgfyv3u
+         OqB/4m2tS2Svg+stGHSfATJhFicjHwEhajWoBWncOLu8VwQNFZtlxH3V+K2fMGiKYTTd
+         LWPaWDGyqti5NiYK7D+YsO/N87wz58XSN0af3YIyc1uUUYANZOScO9eu6tCih8f15ZzW
+         bnVXB0N2hnwiD914Ck+T1CyQ1l1M8kB8H/mQv4WiSBAJZak5r9ZP4bGwDJwgEQw16kee
+         LKww==
+X-Gm-Message-State: AFq9FYK/RiGEaF4cSPogBq/5IEb1xkRXJ9Q8KApvupcYqqQE3Yq0RqaR
+	9pR11GMP6eOeaFKTN0xy6nrzUjkSRnmH6peIP4hAT28kMZJPggs9r2H0
+X-Gm-Gg: AYBFou34QEEgU31k6rESpUGzAGdImllU+og6Q4MI6Vrxk3sdXgeTtFcmom0zHL01EUw
+	7n4Ta35DEuPEsd3Fn+j6JC2xNL/1X30lsbyKfCw/HITSoecFh0pORCAbfvz5h3RVt7GMNVQ1CGw
+	QEl9elUkwkOJZWNZTDrxGE2vE5FeCaW3sYGPJrfevrHwPgB3+om+vVeKN9GyObjZwTawBHzdVPX
+	vfdyPJK8HGOcHFKpokMc/GPZd3OF1/6fsCVBo1L1Gg3kUO1jKZ/HKdKFvg0SIl5/lq/OZXpgVIu
+	4+njPX2EVSs6LlFzKV2zkc0VaF6MvFdaea7nMSACH0BicsqO4nouynTF3/Jh41WrE6hDqjAe1dT
+	kbRqvTFo1KUnatcvEVgGnaaP7PUYoCWOU0YH82qUiyB+M0VfpFM+TmarEtKel3vjOV9SmAtqXC5
+	Bfe1nONDNv7gV8cx1WGgByC1rO1NZfI+3V2Sl9JpN9g40fpsamA8q8FCHPaLstEaywWiruRhEgX
+	11PujyMrKBVixXf4HNCcWFBX1bFYBLO704aEPQ6bpMHOGsrkT2aXDtoj4OD2ZMkYC6WPbnRYSMU
+	c7R09gbavXxn0xXvJZMUx2GaLiSTE3jl1+gruHqzwHeC9knB
+X-Received: by 2002:a05:600c:4452:b0:4a2:fe3:121b with SMTP id 5b1f17b1804b1-4aa4eb767d1mr29197025e9.28.1793212299033;
+        Wed, 28 Oct 2026 11:31:39 -0700 (PDT)
+Received: from localhost ([5.83.201.131])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3eb8f25fsm29193591f8f.2.2026.10.28.11.31.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2026 11:31:38 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: John Garry <john.garry@linux.dev>,
+	Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@arm.com>,
+	Leo Yan <leo.yan@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org,
+	linux-perf-users@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf cs-etm: Fix spelling mistake "should't" -> "shouldn't"
+Date: Wed, 28 Oct 2026 18:31:37 +0000
+Message-ID: <20261028183137.537812-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -63,99 +111,29 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwrng: cctrng - Fix an error handling path in
- cctrng_probe
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Hadar Gat <hadar.gat@arm.com>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <b66b3df3d178a04b35690d0eb36dee409a95aa5d.1792782868.git.christophe.jaillet@wanadoo.fr>
- <auBfVkwtsMUdgyG9@akranes.kaiser.cx>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <auBfVkwtsMUdgyG9@akranes.kaiser.cx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Le 27/10/2026 à 09:22, Martin Kaiser a écrit :
-> The sashiko review makes sense to me. We should probably call
-> pm_runtime_put_noidle after post_pm_err.
-> 
-> Best regards,
-> Martin
-> 
+There is a spelling mistake in a pr_err error message. Fix it.
 
-I agree that my patch looks broken.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/perf/util/cs-etm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've not followed all sashiko explanation, but usually I try to stay 
-away from pm code, which most of the time looks too tricky for me.
-
-So should something be fixed here, I'll leave it to you.
-
-CJ
-
-> Thus wrote Christophe JAILLET (christophe.jaillet@wanadoo.fr):
-> 
->> If an error occurs after a successful cc_trng_pm_init() call, it must be
->> undone by a corresponding cc_trng_pm_fini() call.
-> 
->> The commit in Fixes has erroneously updated the error handling path if
->> cc_trng_pm_get() fails.
-> 
->> Fixes: 8bcd96893848 ("hwrng: cctrng - let devres enable the clock")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only.
-> 
->> This patch also undo the clean-up done by commit a7ea3d63e897 ("hwrng:
->> cctrng - simplify cctrng_probe()"). Keeping an error path makes sense with
->> 2 users. But if preferred, the missing cc_trng_pm_fini() could also be
->> added after the test for errors in cc_trng_pm_get().
->> ---
->>   drivers/char/hw_random/cctrng.c | 14 ++++++++++----
->>   1 file changed, 10 insertions(+), 4 deletions(-)
-> 
->> diff --git a/drivers/char/hw_random/cctrng.c b/drivers/char/hw_random/cctrng.c
->> index 03401ee59a8e..608b3321c05a 100644
->> --- a/drivers/char/hw_random/cctrng.c
->> +++ b/drivers/char/hw_random/cctrng.c
->> @@ -524,8 +524,10 @@ static int cctrng_probe(struct platform_device *pdev)
-> 
->>   	/* increment device's usage counter */
->>   	rc = cc_trng_pm_get(dev);
->> -	if (rc)
->> -		return dev_err_probe(dev, rc, "cc_trng_pm_get returned %x\n", rc);
->> +	if (rc) {
->> +		dev_err_probe(dev, rc, "cc_trng_pm_get returned %x\n", rc);
->> +		goto post_pm_err;
->> +	}
-> 
->>   	/* set pending_hw to verify that HW won't be triggered from read */
->>   	atomic_set(&drvdata->pending_hw, 1);
->> @@ -534,8 +536,7 @@ static int cctrng_probe(struct platform_device *pdev)
->>   	rc = devm_hwrng_register(dev, &drvdata->rng);
->>   	if (rc) {
->>   		dev_err(dev, "Could not register hwrng device.\n");
->> -		cc_trng_pm_fini(drvdata);
->> -		return rc;
->> +		goto post_pm_err;
->>   	}
-> 
->>   	/* trigger HW to start generate data */
->> @@ -548,6 +549,11 @@ static int cctrng_probe(struct platform_device *pdev)
->>   	dev_info(dev, "ARM cctrng device initialized\n");
-> 
->>   	return 0;
->> +
->> +post_pm_err:
->> +	cc_trng_pm_fini(drvdata);
->> +
->> +	return rc;
->>   }
-> 
->>   static void cctrng_remove(struct platform_device *pdev)
->> -- 
->> 2.56.0
-> 
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index bdcf94813129..65bce2450549 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -434,7 +434,7 @@ static int cs_etm__map_unformatted_trace_ids(struct cs_etm_auxtrace *etm)
+ 			continue;
+ 
+ 		if (!intlist__empty(etmq->traceid_list)) {
+-			pr_err("CS_ETM: Unformatted queue should't have trace ID\n");
++			pr_err("CS_ETM: Unformatted queue shouldn't have trace ID\n");
+ 			return -EINVAL;
+ 		}
+ 
+-- 
+2.55.0
 
