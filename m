@@ -1,64 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793725420;
-	b=Eo0NSHuJT3Mn0hAShbPLikCqAzMCm8S9uNOzPIczu3ktG5nelzyr9YZsBgtnb4K17q5z
-	 9CBguWJZeJL/1dzEMskMSO0IMid/zarU0hsVPTZ2jC2HkTbkUl0Ot2CB9eWwdB+w+MSok
-	 I8pj+HCiW0zSfzTB/roJgbW0ads2bDQMuDfDXxb9OxeXw7AuooOWIRVGcPFwLT2LmBDO0
-	 +LbmGNG0LR9MA9wcaR4LsPUa+Y4vx6rAosnZ+9M3j82ZC7im14/ZcDdawL2O5DqcohhZw
-	 e3xk6JSFwbU/Rm8Z/bu8PCzgiUC70Z0UuJEobgeIgCsaohG3ignNJITJUNxEg3kRNmg==
+	t=1793725660;
+	b=CzI0AMWjlFO386ueaxwbWJN1VuGegqITDwNPgfFD8j3AT4BOiuqDOGbMUr0DZF9gGait
+	 jnmBobNHP2DMAUfkBRSc+0EHYLe78djl+ZusNjJB4SlbdQe1FAZ2ujAiPBxfD4AcLFdxX
+	 zsuoBV1jmUDvdg9l+5ZUi19nWc8rV6wn4jQDR+Z7m9zMl7r0uTz+LnoHNNPaGvPEEVmsL
+	 GeAVmx39wYd3DctXUoEb8gntpEIKa6h6jVwrE1nxMdNiB/r4Ji3T2uRKheM3knIz+qg9D
+	 lOZhhJjfR+AV6t+7tWkuZHtuuDlxrVkltOCPxvpVQTplAz41OAKC8tAsrh2QvaOkasg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793725420;
-	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
-	 Subject:Message-Id:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=JiCDgwVCg16WXZ6ncpwAPeYjziheuaMGPWgI1mJbVCI=;
-	b=MMA5192O8ZkEaqbJyWOFsmulh1x9Si7jdahcCizzpFn64oCmQvnHGNRceZaAnFBpjl87
-	 46NhHosMkicIKLiI6WpWFnuUSRsRVeTEOOPiXTtpjyeAjl7lLaUGE/Cm3b8g42dl066nD
-	 jUriecTa0BG4amsSCHMUdVYf/fN/p6MJq/Txkb6uzQGEBZcNGT7piOST2vOXGvfmP7PsK
-	 er4yHCRY6igBsiQPibSlFhVDcxLsK4jR9GUOkQuLvZ21/PA7sRhR+ndmKBL282TzZvnRG
-	 lH3QuHKePlXfDMc2kVy3rrSrI2XBQIwNYYRqBbPdtQLs2zAF7Ft7bJhuZjGHp18oNDw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793725660;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ZInQYbUxcW7DtenoLG5Di5mlTcEFYHlYTealy8i6jec=;
+	b=GrEgt/8j/lJazopgONV1k3pzLCuce+pBTSFLb8D9+R1Lzm4otkst39fbfqq/RnpB0GVs
+	 FeDkwlHvmsn0PcmeKFiWGIN2mpDZF+buldxkqNmR/yPl9w8aJUXtbBZajid4GjZs8zu8q
+	 ABLmRqUp2jREj0KPDYZlflHiJ1iXDtg33/JJKYfwML9z6Q9uNir6vq5wO7oiZjbqJG4KC
+	 SqjIqIdg/1Wt1jB/WDWC1FSAjD2NZUP9h/JHEh6w415bC8+O/3z6Qpqjm1mHzHg4Iy+K2
+	 SRYuLtQlMzUH1go4eH3r4vIYIQu25+AtrSrcnUVNM1+vOcFN7woDW/hPOrVonDaTKUg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EhZFB+Zl;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="CRYm/p6I";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B449C606D80E;
-	Tue,  3 Nov 2026 17:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46619606A330;
+	Tue,  3 Nov 2026 17:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EhZFB+Zl
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622E21F00A18;
-	Tue,  3 Nov 2026 17:03:39 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CRYm/p6I
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED901F000C1;
+	Tue,  3 Nov 2026 17:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793725419;
-	bh=JiCDgwVCg16WXZ6ncpwAPeYjziheuaMGPWgI1mJbVCI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=EhZFB+ZlAZtEexaZ41u1BcOpHkR1LAdk7bMgqtYKjQiltXJ9NbZ1XzsPDmv+JfU1A
-	 lns0XvpIVuzH0NREp4WNbpMZgie5FnOhCpSjwwloyatn1o87BDwwcyPaS4yOmWSrjK
-	 +kiRuKEfDNAh6OdqqhPTooHYmDUXoAP6eW9U2BZWE2enWRH9vSBzeUBgePRW1dsbO6
-	 hR3VLXiMHofRUoORbnmuYbuNxUiAMF67+/G++8nFc5dU/pOYW2+ZGdndEkHdljQMB6
-	 HTx9MxgfL+mHDApsQ0xdNW/HgbxWz1B5bP1ipi9v4o+qOClGAOdTdI9kx2NwSiyAd0
-	 neVLM+S4YUcrA==
-Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
-	by traversing.sirena.org.uk (Postfix) with ESMTP id 7CF4A255728F;
-	Tue, 03 Nov 2026 17:03:37 +0000 (GMT)
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org
-In-Reply-To: <68e28df174c8524bef54cb437e568afcb8a82e1e.1792834312.git.christophe.jaillet@wanadoo.fr>
-References: <68e28df174c8524bef54cb437e568afcb8a82e1e.1792834312.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v3] ASoC: qcom: qdsp6: Add an error handling path in
- q6usb_component_probe()
-Message-Id: <179366030216.2186205.6039386182230232762.b4-ty@b4>
-Date: Mon, 02 Nov 2026 22:58:22 +0000
+	s=k20260515; t=1793725659;
+	bh=ZInQYbUxcW7DtenoLG5Di5mlTcEFYHlYTealy8i6jec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=CRYm/p6ICZSxky9n/VQiT9ftqP0Xz98pTyJeInVCT1/uq8LOHegw/996L7obhOZCZ
+	 KYah+S3oETUHs0AXYH3sdrtxI7OjqMW511MPhJB/1OkMOutdbAGJ/Dx5lIM7ljqA9d
+	 tspmkeuvKOZeyN2SFMJDUxRcw141O60DY/zM84f7ttM1OiYxpiqU3XZO4jYZU1xXjM
+	 gv6IGs07YCcPEgcxv9Z3AVEwatTD2iWNAqdrxTlKdcMRDd7MQlAb+/KFH9NXccX7E/
+	 tc1oj8QhxIZv9DgZDNshINWa9fNHRZ/x3ouufFbPljjSd8u71ANmnztteHSHWWxeX9
+	 o/Usjq3CtbrgA==
+Date: Tue, 3 Nov 2026 09:07:37 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: John Garry <john.garry@linux.dev>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@arm.com>, Leo Yan <leo.yan@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+	linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf cs-etm: Fix spelling mistake "should't" ->
+ "shouldn't"
+Message-ID: <auoU2bRDQkQkXJNF@z2>
+References: <20261028183137.537812-1-colin.i.king@gmail.com>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -68,46 +69,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1168; i=broonie@kernel.org;
- h=from:subject:message-id; bh=qrYCBIgcfstxVxCGu//w28qjj1a4OidLvGoGVX2VXUc=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLJeCb/ktORIdw9vKVr0weVm6pTahbXHvVKX8LmeEmE3N
- Tl7UlGso5SFQYyLQVZMkSUui/tlfcnrNXwHF7bBzGFlAhnCwMUpABOJbWX4Z3/nkK/oihdT/ocd
- FPe7drb6l2R4kXVPQUHWhoy1Lgaz7zH8U73zRUCFPcv62/r7EUnrT7tKr11t5fXOflfwIcU9Iur
- PeQA=
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261028183137.537812-1-colin.i.king@gmail.com>
 
-On Sat, 24 Oct 2026 11:32:09 +0200, Christophe JAILLET wrote:
-> ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
+On Wed, Oct 28, 2026 at 06:31:37PM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a pr_err error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to
+Applied to perf-tools-next, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
+Best regards
+Namhyung
 
-Thanks!
-
-[1/1] ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
-      https://git.kernel.org/broonie/sound/c/789a11cc2f98
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+>  tools/perf/util/cs-etm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index bdcf94813129..65bce2450549 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -434,7 +434,7 @@ static int cs_etm__map_unformatted_trace_ids(struct cs_etm_auxtrace *etm)
+>  			continue;
+>  
+>  		if (!intlist__empty(etmq->traceid_list)) {
+> -			pr_err("CS_ETM: Unformatted queue should't have trace ID\n");
+> +			pr_err("CS_ETM: Unformatted queue shouldn't have trace ID\n");
+>  			return -EINVAL;
+>  		}
+>  
+> -- 
+> 2.55.0
+> 
