@@ -1,63 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.190
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794093977;
-	b=rQRadCE5dTXV8ACun+j15w6qH0P0sCgJCQnayE8pPZ2tjulBvUM+9VtmRekMtxk68bF3
-	 3Mxgj69DgjziVmcXaTWuhF/t3Zzwh4dPW8sYMIkC9QgxFLGgDaal/O8GctMC4q65UEfPT
-	 XALPo2P5CgU3miriEcyuFERgK9fUWKggLjATdfq3JSd6axNjUQmTFWed2xIg+5YS6tiXn
-	 8BhwgsyVOJ7uOGLN8oN/eT6DJlbJTspNocMr3QItewDon4f5n/SgUXPiTmBSGjKIkPLfK
-	 LFI+bsC7c4vrY7oSk1PYZPm+OaUUmDKgGO77lbkdDe3POlqTy2si/PIGfRlo5vugdAw==
+	t=1794158654;
+	b=m+UBDCqwCor6Hh2WCv92qHp2O/ZAzlnVAHRrZdcyruxzG7O1RtApAEjLEas/TFqi71Ci
+	 9zAN3X1U3V8FI7jzrbnZBIn9r5BPWdlUL6mwuFfsQmg3gKEzkC0u4lCBfwzZC/f+4WZxJ
+	 ggcnlZOuP7Pa+iIfr7XZgtU07pJ08U4w2oBHssp9WKGG1aVBfYoWcSYN481Pxl3doVIQh
+	 WtFXuwf1twVNSbqSYU1VhkffyarwTqdfk7eAZ4b2wFl+IjOk7AYR/ywBaSrEqp0uYRsAB
+	 bjADzYcZ/Ijtbe8QchNIzEpwi21av8AM11qonYjWx4+Mh5SbOPtZMckubuScWZzXbVw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794093977;
-	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:Date:From:To:CC:Subject:
-	 In-Reply-To:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=/q9SNtsLpOQFFz2oKvKluMnW2OJakwogm3d9thiIdhU=;
-	b=f8Y6VEFmWBDfO/dJytKfSjt2Pu/H6JRcsGNrQ+hQbZsZ9qhyqsteQ5ux9XLPeIk5v+N7
-	 4yNuu63R1LBUybsQaeeCSSH+enlcorphlymYwMsBWV4YkwlJHIk9KQ2w4XOL17EvdceAv
-	 rgGVXpt1AiG+qPxHxnfLrmdYZAgPY+IMCH7vmf9xUGRnxXRSJzqX5mq7DooyUySuXl19x
-	 3Id1Vy9Lgh2+tGqnMknQIr7qc/n6dLE9kNAVVhAxZQcDKX8CD/rPwUVZlW4RHmRUFdsa5
-	 YFQqhJ8Mr6PIoAKqWw2+FeKK++q8KFNpSWmD8l0bJC/Qxe3SPR8nmyYj4gfxB/R6N0w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794158654;
+	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
+	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:In-Reply-To:References:
+	 Date:X-OQ-MSGID:Content-Type:Content-Transfer-Encoding:MIME-Version;
+	bh=HbNpAbrZVEZQTlmCEV2LYqZfmhBEuxDyUHjVFrUu/Dw=;
+	b=ZfALoIpSRVAuyuHIiRprGByb19LKEC1FmNWD0hkyRNmOTDyRfzeU6ROp/4CFL1OFP9ya
+	 YNkAkUX6/Daal8jBGsK7FFaxyP3tOr/YIu9U9pJE60zh6UwtQHHUVxI1q7C4gz6i0svRk
+	 djGoAZfZQ1BzUbPMKy+SsavupYyVHi8lTHggA2hUyPdZcjmu+qBZRe214yZANuwvJ5sAM
+	 dPyoftbTidJNM/Gw/GNhUOXgSn9C3L7kL4yqhFCkUUGaQpIhsNei87owbNmDRvKLl4d50
+	 BFVF+K9qCkh3HFYbJuclKsOUzAvHSsN4ZIfA3s5SIa+7/+B5Ix8/6T7GrYoeh6LYTvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mainlining.org;
-	spf=pass smtp.mailfrom=mainlining.org;
-	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=AOeIJYOR;
-	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=YQYnhD9X;
-	arc=none smtp.remote-ip=5.75.144.95
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=MR9U6oZx;
+	arc=none smtp.remote-ip=203.205.221.190
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76068606A326;
-	Sat,  7 Nov 2026 23:26:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 76068606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEADD606A33E;
+	Sun,  8 Nov 2026 17:24:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEADD606A33E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=AOeIJYOR;
-	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=YQYnhD9X
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1794093932; bh=/q9SNtsLpOQFFz2oKvKluMn
-	W2OJakwogm3d9thiIdhU=; b=AOeIJYORBXfowH3BYcw0naI77CLWquvoZFQy+B97Xs9BTdcmeB
-	kn0HDLjlC+x9fySko8qeENCGroixRrX6+DvQFHyoMfzqM0xzWtM648jPvF0W3EhB+FTxlS5Zeqt
-	xIaupZRM5JBgv/zifM3qgo7ims4/fSemqUVpGzXf1P8EzzCpPqu1202NrfEzPtNaHD/OyluDSxA
-	Ie9Kp39HOm03d1pFdGnRT0k0wHXAb8HnMazH4RiRCGFheADlR/0G7jo9n9plEb+J+8hxj4IPA/V
-	pg6wcFVAZ+k65F2OadUZxBZSTwN+nYBUSPbaDkA4M3xCpId/Ky/+0KLw8iY0RLZPilQ==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1794093932; bh=/q9SNtsLpOQFFz2oKvKluMn
-	W2OJakwogm3d9thiIdhU=; b=YQYnhD9XSRkPIZs20QDd0PSg961IAgz5OcIKM7q3xRFJ8kmgkM
-	SzFk2tvwwr2XJKOxvk0eA/XtL4AqMAYq8rBQ==;
-Date: Sat, 07 Nov 2026 23:25:32 +0000
-From: Bradley Morgan <brads@mainlining.org>
-To: christophe.jaillet@wanadoo.fr
-CC: boqun@kernel.org, dave@stgolabs.net, frederic@kernel.org,
- jiangshanlai@gmail.com, joelagnelf@nvidia.com, josh@joshtriplett.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- mathieu.desnoyers@efficios.com, neeraj.upadhyay@kernel.org,
- paulmck@kernel.org, qiang.zhang@linux.dev, rcu@vger.kernel.org,
- rostedt@goodmis.org, urezki@gmail.com
-Subject: Re: [PATCH] rcuscale: Constify struct rcu_scale_ops
-In-Reply-To: <3f546f8e102ef271e7d5ac6d8b6a1f44d0fb20cb.1794085327.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <B33D74A6-E196-45F4-AA77-32B4FDCD0817@mainlining.org>
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=MR9U6oZx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1794158645; bh=HbNpAbrZVEZQTlmCEV2LYqZfmhBEuxDyUHjVFrUu/Dw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=MR9U6oZx6DgD50LJX+pBj+h2vxoP4KD6JyvS48TlLtKqYMyEQnieoTzhy6Dfpf6RY
+	 oe+OIqLytOOmkqO8KmVuqMzYce58iHCn6A8jh0emO3skA+Y5tNFYz9+U3HcGO/IOFV
+	 ZYIqRGWgbKBLT2vG37EN3paHTCQmocNk6SgBIXOQ=
+Received: from [127.0.1.1] ([5.195.0.150])
+	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
+	id 5F906C5D; Mon, 09 Nov 2026 01:23:57 +0800
+X-QQ-mid: xmsmtpt1794158641tzukiaruw
+Message-ID: <tencent_A1BF4495D1F5E54524907BBA2A4ED480FC08@qq.com>
+X-QQ-XMAILINFO: NQJsl5QovJ//diN/Mrg6brYvtP6sEdsD1yFOwDkqqSRL/drc/dnK8D7SLPoCcc
+	 2/QWI5q1buzhzfLlCn9m90dyi5SBT5N7Ws1U8tCwG8XKZJ1amKZprNexE1TTvvyl1jR0cflLc6nf
+	 7gj4432lrkVFkjTXfSdxvoC5yrYuHXW0JvUWs813mUoBodgk6a33cvmNeGJrHS/EwE347tTKlXSi
+	 27fXEQ2tCwCLSq9mEO/H2LQmxCwBGJ0RSd8mqOadHc5neu6VeIFm0MLqVCUkyPvbQxWK5J7WuEnM
+	 nvBQvWCyQNj2vgxuyIvhjz7dev6Muwj+aa8ZMJaAJ9uI2QyaDvEe8dKxk7xJjroDphqK3io/Nr+r
+	 k0jD8bN7Qv3yVOgmQt6zBgDmCFevr77tiSYTzimWTaxI8wnFoG06dr7nKHhy7iNTLOhVkQvudDz/
+	 hLUwbbavm6BRzdYUaDMhb6KVZzV5EQGaW1WxuqyCy5p7ZswPvHjH7Scv40qL2xThO3ND7aQmd+N+
+	 J6ais06FoCePQOpbQ92v9LpwHstJAnOh6MbWzH2aA/Kepp7X3oSjSXC7V/3YlkqJlWY3MvIQbbWU
+	 NgYjLi3fDfr0UUUpZHeDmYbi/mmVVp5XbLqhKrqvrIrS9M8SKj7sA74aPzdV2R5ximA+M0tPjl6n
+	 jHCozvAAEoijsWwdVzfk5QaxK8sPier0nczUGA49UEaDiAPh59qTxeiA9ct1+gz5jU7TXiUQOnDi
+	 hIZwGIQ9NTu7FlyIUZQAVerLWAQOo/ZERADw+rkw6o1/iH+CnuuyVaQTvCsjPVVVosuLHo9uaPI2
+	 0vUCtdcfbSmQDu7JT5UIa6aR9AqDu2xtGtheKnMcnOxLX5SKHQ2EERc0A8tGP6nnaGEcAYLCOJr5
+	 /QUQIO6tzBiFQy9rDYKCeWZSO8qg4tjdYA2c68S7y1WpxEf1vxtGk3mEGtxPsyJAOOktiUErJaSZ
+	 Zk3CFeuvEnhqDk49wYG/E3ihW9F51idglGPvdXO4mPqzR0eCvdtpJX+uUBeHM040mFsIfmREotxe
+	 QLEU+9jVhzGtckxvE+n2qmjFdgL5CQcsVN78RlRMcl2AxDVGntNENdLvqVW8k=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+From: Jiawen Liu <1298662399@qq.com>
+To: Andreas Kemnade <andreas@kemnade.info>, Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
+In-Reply-To: <20260820154323.0a7c7929@kemnade.info>
+References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com> <20260820154323.0a7c7929@kemnade.info>
+Date: Sun, 08 Nov 2026 21:22:12 +0400
+X-OQ-MSGID: <179415853265.5.12140574398809517213@qq.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -67,134 +78,17 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8bit
 
-On 7 November 2026 21:02:25 GMT, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->'struct rcu_scale_ops' is not modified in this driver.
->
->Constifying these structures moves some data to a read-only section, so
->increases overall security, especially when the structure holds some
->function pointers.
->
->On a x86_64, with allmodconfig:
->Before:
->======
->   text	   data	    bss	    dec	    hex	filename
->  45585	  24946	   2816	  73347	  11e83	kernel/rcu/rcuscale.o
->
->After:
->=====
->   text	   data	    bss	    dec	    hex	filename
->  46545	  23986	   2816	  73347	  11e83	kernel/rcu/rcuscale.o
->
+Hi Andreas, Markus,
 
-Well, thanks. so you just consted rcu_scale_ops()? Uhh, well, this makes
-enough sense to be feasible
+Thanks for looking into this. I don't have evidence that the debounce clock
+in an existing configuration has a prepare operation that can fail, so my
+original description should not imply an observed failure.
 
-Reviewed-by: Bradley Morgan
-<brads@mainlining.org>
+I'll check the clock providers and the devm_clk_get_prepared() option before
+deciding whether an update is warranted, including whether a stable tag
+would be appropriate.
 
-But how is this worth it? Why doesn't this work now? how will this make it
-better? Those are my questions. 
+Thanks,
+Jiawen
 
-Well, I'm shrugging, but my tag would stand here, because it won't break
-anything in particular.
-
->Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->---
->Compile tested only.
->---
-> kernel/rcu/rcuscale.c | 18 +++++++++---------
-> 1 file changed, 9 insertions(+), 9 deletions(-)
->
->diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
->index 1097ec15879c..522f7bc2e693 100644
->--- a/kernel/rcu/rcuscale.c
->+++ b/kernel/rcu/rcuscale.c
->@@ -159,7 +159,7 @@ struct rcu_scale_ops {
-> 	const char *name;
-> };
-> 
->-static struct rcu_scale_ops *cur_ops;
->+static const struct rcu_scale_ops *cur_ops;
-> 
-> /*
->  * Definitions for rcu scalability testing.
->@@ -185,7 +185,7 @@ static void rcu_sync_scale_init(void)
-> {
-> }
-> 
->-static struct rcu_scale_ops rcu_ops = {
->+static const struct rcu_scale_ops rcu_ops = {
-> 	.ptype		= RCU_FLAVOR,
-> 	.init		= rcu_sync_scale_init,
-> 	.readlock	= rcu_scale_read_lock,
->@@ -247,7 +247,7 @@ static void srcu_scale_synchronize_expedited(void)
-> 	synchronize_srcu_expedited(srcu_ctlp);
-> }
-> 
->-static struct rcu_scale_ops srcu_ops = {
->+static const struct rcu_scale_ops srcu_ops = {
-> 	.ptype		= SRCU_FLAVOR,
-> 	.init		= rcu_sync_scale_init,
-> 	.readlock	= srcu_scale_read_lock,
->@@ -276,7 +276,7 @@ static void srcu_sync_scale_cleanup(void)
-> 	cleanup_srcu_struct(srcu_ctlp);
-> }
-> 
->-static struct rcu_scale_ops srcud_ops = {
->+static const struct rcu_scale_ops srcud_ops = {
-> 	.ptype		= SRCU_FLAVOR,
-> 	.init		= srcu_sync_scale_init,
-> 	.cleanup	= srcu_sync_scale_cleanup,
->@@ -313,7 +313,7 @@ static void rcu_tasks_scale_stats(void)
-> 	rcu_tasks_torture_stats_print(scale_type, SCALE_FLAG);
-> }
-> 
->-static struct rcu_scale_ops tasks_ops = {
->+static const struct rcu_scale_ops tasks_ops = {
-> 	.ptype		= RCU_TASKS_FLAVOR,
-> 	.init		= rcu_sync_scale_init,
-> 	.readlock	= tasks_scale_read_lock,
->@@ -357,7 +357,7 @@ static void rcu_tasks_rude_scale_stats(void)
-> 	rcu_tasks_rude_torture_stats_print(scale_type, SCALE_FLAG);
-> }
-> 
->-static struct rcu_scale_ops tasks_rude_ops = {
->+static const struct rcu_scale_ops tasks_rude_ops = {
-> 	.ptype		= RCU_TASKS_RUDE_FLAVOR,
-> 	.init		= rcu_sync_scale_init,
-> 	.readlock	= tasks_rude_scale_read_lock,
->@@ -396,7 +396,7 @@ static void tasks_trace_scale_read_unlock(int idx)
-> 	rcu_read_unlock_trace();
-> }
-> 
->-static struct rcu_scale_ops tasks_tracing_ops = {
->+static const struct rcu_scale_ops tasks_tracing_ops = {
-> 	.ptype		= RCU_TASKS_FLAVOR,
-> 	.init		= rcu_sync_scale_init,
-> 	.readlock	= tasks_trace_scale_read_lock,
->@@ -693,7 +693,7 @@ rcu_scale_writer(void *arg)
-> }
-> 
-> static void
->-rcu_scale_print_module_parms(struct rcu_scale_ops *cur_ops, const char *tag)
->+rcu_scale_print_module_parms(const struct rcu_scale_ops *cur_ops, const char *tag)
-> {
-> 	pr_alert("%s" SCALE_FLAG
-> 		 "--- %s: gp_async=%d gp_async_max=%d gp_exp=%d holdoff=%d minruntime=%d nreaders=%d nwriters=%d nexp=%d exp_interval=%d writer_holdoff=%d writer_holdoff_jiffies=%d verbose=%d shutdown_secs=%d\n",
->@@ -1109,7 +1109,7 @@ rcu_scale_init(void)
-> 	int firsterr = 0;
-> 	long i;
-> 	long j;
->-	static struct rcu_scale_ops *scale_ops[] = {
->+	static const struct rcu_scale_ops *scale_ops[] = {
-> 		&rcu_ops, &srcu_ops, &srcud_ops, TASKS_OPS TASKS_RUDE_OPS TASKS_TRACING_OPS
-> 	};
-> 
->
-
---- Thanks!
