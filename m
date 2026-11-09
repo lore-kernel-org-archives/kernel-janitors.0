@@ -1,67 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794249857;
-	b=TgXNA6I4Z9jQB1J5hL7xDtbM4z/ObArXzpZ3FgMdTOYlcu3uClIxdWNUQuq25GGW+iOH
-	 riHUzASKD7AQYieOlF/SJeAVp7S+S2g70ti4+uqOl9tBKy5ykZJb/pdY4d8cT6gOCGDUV
-	 YqUg6Fwo6yiZHPPF2stleEJZR2gLu2bOF8uKAtuH1vq2HgqV7luh0Wb0zO+dRM05sfNx9
-	 gTYy01lsQ3ZrpAULTM67XcmxH/MpyA+Cj+LAYqqdNiKYoAfiyKG1DQYzwd4CTnmFEFGwv
-	 xmWGDFp21KZHS8Trylx6NcbNkDO7kRvEPAi9oqE/1+36siQvvGlCB5QodZ2J3kJYbrg==
+	t=1794253745;
+	b=MZkvgBNICVI5BU7OjC/XAd5WkeQmNiaiZKkbZb2m7/d7tbN9TkXIIXUZzfoKP1c83+mC
+	 4u9kbz4b5+WF+d5g+tB8ct1R+iuK+czhBiAqQwvxihWwdnoJuxdFk5x9N+0vJqQxPmoh9
+	 LJShKO/9VlAFYj2i6xsZACObcvbK8dQZkbCxHNgVxK2n8kAy4v2q+3MIsQb3J/0YJCaLm
+	 Mno29zctuzbDv5VRTXuMKzu1R6+4OFFHP/map416n0auGdek1QwqYTgcjtpY2Z2pqt3KP
+	 pBWbHb3vJoTgwQF0/cNSJ/VtNlPJl5+EY+uFJNhJ2YJEaiUl+M8fE1njYH9CmoWfB3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794249857;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 Reply-To:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=nQXypYppoi0DRmP6r7VK69Yjx+zAm4GuIfrhfhMyqDg=;
-	b=DlNamKGV+npeQa4V1qD//srLzMY7VFyTO4FvEyjKkyptv3Fss4Q8Rf85NghDYQTjXvef
-	 HA1puR2F6tFzX/Shv8KS/gRLw2dGKR0tO5zk4o3pmaVXxPsTOc/nPOKJDWDvmxcvp8uqm
-	 x9GSk/B68oDOXN8z7hrSjqv0wS7RmNG8t5GCOkKhXHY3LXxOZmNXe1EhZa+8L7D7G2buq
-	 1JAACjohx0QoaV99qCOOlssptAF/eaNEdLj60hCdTQwOvxCNPmbajFP6ettcz/zH42bA1
-	 MKzwiJEM87n4h5oz02ByKbORsP0tBwljH39p+MackgsveJjysv/UBr3uCqv458Sr4JQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794253745;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=ba2Q7AJDVOznKzIVSG4WADmv5TxkLP7hX7pgseAgvN0=;
+	b=jmFHrrLzg9tFKIIv/un+BbH5unfwBrjrBsN+mSFeef4GcWPPPjukfQbETED7umIqc4i4
+	 ukiHABFdPNv9FnxITBzFy26mqb+RhpPQHJWidFyCOvEm1h8WefH5f4RSf7TIsbbSYdfpm
+	 5LQonmi1f8njNpaBcwjeMQFQ45neeI5fjyMs8dWPb0OrPHSt9aKpeWWPRzc1DDxRtHGOw
+	 uBfBNsFW40JJLnMNj8Oha8I88+uLBoBCH2PnuTtGb6WljKpHDsvda2dk6X5LX/XSijXuD
+	 FnN8jvEUht+bxPjka93lonQI3DZgUsk6FM0/5hdkjDlftqliw2WAuhJpq5+vrSotouA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U0XFKKFe;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=cryspen.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB8E606A325;
-	Mon,  9 Nov 2026 18:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U0XFKKFe
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 101F31F0089F;
-	Mon,  9 Nov 2026 18:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794249857;
-	bh=nQXypYppoi0DRmP6r7VK69Yjx+zAm4GuIfrhfhMyqDg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
-	b=U0XFKKFeUe36mqjmeD4889LDgMRQG/sZy86/2O4Ca7Z/IIC2zntARbkrQxuW71OQr
-	 yJZdhTuhrgAd1Ug/Gr+mDzlQV3sQM2SuBKLVI9KnHer1JZA47NvEy9DJHFWjKU/F/f
-	 YzvlmF64/m83QgGV+XmSdVoO4r7nSfqZImCUkL4rthncDtNULsek1R29fhCMQUBJWT
-	 sRPIeYNiZYRYqm8I/+6cADFCI7TQyOXec0VqDFnMlcx51/nq/hW1vJBzZ7axgP+Mvc
-	 LZHDy97mI3R6M2cMgG5dOw5+gWeFlAX7r8tbRUB+RvJtgwulVBzEk3MoonMwfqCXEr
-	 aauOecnhSayOA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C442FCE0CC1; Mon,  9 Nov 2026 10:44:16 -0800 (PST)
-Date: Mon, 9 Nov 2026 10:44:16 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Boqun Feng <boqun@kernel.org>, Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH] rcuscale: Constify struct rcu_scale_ops
-Message-ID: <730e60cb-30fd-43a3-8152-543b4ba5878e@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <3f546f8e102ef271e7d5ac6d8b6a1f44d0fb20cb.1794085327.git.christophe.jaillet@wanadoo.fr>
- <20261108230623.GA3148953@joelbox>
- <2727df26-9f09-48c9-90b5-2d1416c3b2b1@wanadoo.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0AE606A335
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Nov 2026 19:49:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A0AE606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryspen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a3517554f7so13513445e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 09 Nov 2026 11:49:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794253743; x=1794858543;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ba2Q7AJDVOznKzIVSG4WADmv5TxkLP7hX7pgseAgvN0=;
+        b=vQw9NSOp7wBdwZ6jCnQ542gEaHRammOrnjCAlxUHNBtAMB19gqOAwjdmtzQe18M5q8
+         Wj93yEV3at1l0+NvTzKfE0rXmn2kavciiOGAXEuDC03VGOHLZOQNcUDjBrWcWaX7C1pj
+         lhDiYbvi3i3+NaBgJaqpdIcXZ19lyCn6o1+8jzPIUQrCXMpwUNkuI5jNcPC8hpnKKvKB
+         CKWrIHEKr2/PgK22u1biPCbcNhb9uJeYiIL8/PgacKmhfCiaq/JLPvJYtj823gnAlzs0
+         CdMQ6unJiaA9L0yznnRejW5zNwuznF/FwUWRki7lI72VlfJlWXjeT2iU9n1Vx537/zVa
+         0thw==
+X-Forwarded-Encrypted: i=1; AL+hErH4EonL/XbEObpx0OjWP+1gNpv/r9hk4yBI1NnRiZl5caoOQ8UgSMogLDm1bBREiOADLZGfyPILcyALMKkoUUM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/x1+xsqpMkBMcgCscC4SV+OTjcN6NBGMGxZhQaSout/4H27gic
+	PRhDBQzTbhUnV7V8MyN684DK/I95rstXWBQVoggJQcf1MCOPGOExRMQ9
+X-Gm-Gg: AYBFou1dSB7bEclCDF8aQcYHU+234NzQ3r1NUDoHRU19vr5ejb53xa6E3Lx25n3MH8N
+	Ox8/Fyy61CPd0E1vMcJO3XD5vdZhCDJO8XI8RLzJnQp8tvOQ4hGKxd3cEDvEXTc+gRqEGgYWKUo
+	qZBMiRMdPATg7xbfCl2/t7E9t7BI8MoY/T6FHsVG6Nb+ZS9PS7IFqy7wxpQkHX1COfMBRQWRgZX
+	ZkKQjVf6Tsp5HM4v6Hr64U3mT5bdyKNCn1oPjjtX58fjHGVCYHw2qEzCKm2GFVpjKxebLypLgW2
+	Osm7q77OoJaP8duF3eWN6cBBMYIEHRSeJRxjqHFHaQNoxz5vRJC6UNASfBmh78dO6ZZiMBeyC1K
+	4fSSeRVuqZlDPyPo9E14NuHNf2MXL88M0XU/WjUxQMVsZgurpmhyQME+KHe5TxMYeRP4ETLpXuS
+	FbTsxq3NU7N8t8S7aAm53Z4j2qBaRWbTMLICiI2ZQUymjP+Aw9mH2yiLzHA2hbiupwt51n6tuFn
+	9mSjfJJFTxxNDSWVtzaAjF5gxTd3i1cZXNXZC42NAvmfR04agYko1qC3PPFVSXBgtGekYsl5eJr
+	gd46Zg1wqoy7ofkamlFZ1dxU63GmdTLDJ3hWxsoXKZ5F9lwk4NMt0Wa2BKeiXrAB6R0+xyyeQpN
+	cuJQSe891/bclMWww/fH4h5uYUi5mxab072CQEOtiXCDvkuUGnaDAQ+I0wOmuvK0=
+X-Received: by 2002:a05:600c:1d29:b0:4a1:f7f4:7cf1 with SMTP id 5b1f17b1804b1-4ba023376d4mr4246085e9.11.1794253742529;
+        Mon, 09 Nov 2026 11:49:02 -0800 (PST)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba02300988sm6618615e9.0.2026.11.09.11.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2026 11:49:01 -0800 (PST)
+Date: Mon, 9 Nov 2026 22:48:58 +0300
+From: Dan Carpenter <dan@cryspen.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Dan Carpenter <error27@gmail.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] keys/trusted/tpm2: rename "bool" to "boolean"
+Message-ID: <avIjqp3n29DKkpPp@stanley.mountain>
+References: <avFcjHwnh9mrOEnz@stanley.mountain>
+ <avHelQ1nxsDVcQkZ@kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -71,64 +90,22 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2727df26-9f09-48c9-90b5-2d1416c3b2b1@wanadoo.fr>
+In-Reply-To: <avHelQ1nxsDVcQkZ@kernel.org>
 
-On Mon, Nov 09, 2026 at 06:32:15PM +0100, Christophe JAILLET wrote:
-> Le 09/11/2026 à 00:06, Joel Fernandes a écrit :
-> > On Sat, Nov 07, 2026 at 10:02:25PM +0100, Christophe JAILLET wrote:
-> > > 'struct rcu_scale_ops' is not modified in this driver.
-> > > 
-> > > Constifying these structures moves some data to a read-only section, so
-> > > increases overall security, especially when the structure holds some
-> > > function pointers.
-> > > 
-> > > On a x86_64, with allmodconfig:
-> > > Before:
-> > > ======
-> > >     text	   data	    bss	    dec	    hex	filename
-> > >    45585	  24946	   2816	  73347	  11e83	kernel/rcu/rcuscale.o
-> > > 
-> > > After:
-> > > =====
-> > >     text	   data	    bss	    dec	    hex	filename
-> > >    46545	  23986	   2816	  73347	  11e83	kernel/rcu/rcuscale.o
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > Compile tested only.
-> > 
-> > rcuscale is a test kernel module, is it worth adding boilerplate for
-> > non-production code sighting security reasons?
+On Mon, Nov 09, 2026 at 04:54:13PM +0200, Jarkko Sakkinen wrote:
 > 
-> Oups, now I better understand Bradley Morgan comments.
-> 
-> I didn't notice it was a test module.
-> My patch makes no more sense, as it is not hardening runtime, so feel free
-> to just drop it.
-> 
-> Sorry for the noise and not seeing it by myself.
+> Are we migrating to C23? I've not followed this too closely.
 
-Although the header comment does say "Read-Copy Update module-based
-scalability-test facility", maybe there is something that should be
-done to more clearly mark code that is not to be used in production.
-And maybe to inform the LLM review bots of this.
+Google AI says that we will adopt C23 next year or the year after.
+I argued that it would be would be after 2030 but AI said, "No, there
+is too much juicy stuff in C23 for kernel developers to wait so long."
 
-But this is bigger than just RCU.
+I don't have a pressing need for this patch to be merged.  I was
+just playing with some compiler related tools noticed this.  It's
+the only place in the kernel which uses "bool" as a variable name.
 
-Thoughts?
+regards,
+dan carpenter
 
-							Thanx, Paul
-
-> CJ
-> 
-> > 
-> > Do you mind runtime testing it too if you still feel we should do it (and
-> > provide reasons why)?
-> > 
-> > thanks,
-> > 
-> > Joel Fernandes
-> > 
