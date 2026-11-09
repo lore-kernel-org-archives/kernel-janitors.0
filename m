@@ -1,96 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794202771;
-	b=FmQ2ZcmCBl5xXnBp71qHqKM8x6XqAPnBekFQJplhjco2RPKtafUxMEunjXe/P+N5MMvs
-	 Wo10lGGtAVFqozW2HNH18mkIuhg0WVr1MENSErsKlRNpwuIK3Wf3f8vQoAcy3WGzoDLRJ
-	 Os7cu4LKa4irk8OBos9Gq+UcaRA7chA8h7p9D22xQnga+ptkPJ8fbWNMIxM58eTH76Got
-	 MQNLgIH8VNAA8KGEXTwkQbZfjGMDyHWWtcN0rbo6qW+1ZB5/qZW/XEtT7mbyUPLwCxGfm
-	 vDHnjMn8f5qgRdHri8kjZRJdGt4F7zNi/i2/3DTDmlU+CYxnOdOBVGgbNOqQXOsfdJA==
+	t=1794203244;
+	b=MAJVap3hspr/lXnBl6jdJz6QoqqebMeq7R2uSr1aAknJ35JLdx66e9khRdfmjIvLoWvw
+	 YqigiT52s33YreH8Bl21ta4agwbiMnjRjmrD7w+QAHtl7haQvNTNca/yWzpI4TKH5njiD
+	 ekY/LOoupOWvfvjwe02NRx/Fv2Jz9ES4UZy2g+FePeZUP4qiUCmzwr+bcuEpQMqImeNNU
+	 GMXTIZYslRSZqVzbBY9IGElYQpXE1fJdk6Dfy9G4eFp7a+b1YkIpiyC80K02u6GSTqWzt
+	 hR81M1UOdinjRHpZrFLMfprcsiQ+f6Ncs80s/sO8fYWkGDVYIrD3b1GPdfOgn68wF7w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794202771;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794203244;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:X-Mailer;
-	bh=4uU3D93eNb0dcAsvNYKSr00RkTcidb/i2o2hNB/WLWc=;
-	b=GPLx+DqHXqpIBcjTeTC+QUHFpA8yMFGDwjN7Trb+woCwSzYDPPK5rcDqf3x/AK+c8trJ
-	 w/E0P9ibLNH0rRwFnJHfB2nv2PYHh1ltRT/GVgxoao/Eyy0cJO8uFN8CNpweB1Kywe4Pa
-	 Sgf45U/aOhsj7muWWNA1XhoBEtksDpwJ1v1XjLjUsOLwcYfZGvUx1Xm3OpP4LxFAX3MYR
-	 KEx3d+AqwpGkzGIekKY93sk2E6lbV5m8Wrm9LdNwQLlpVg0ZSWR++MOLya0UirWxMXiHH
-	 Q9uOs1uETMfjJrtmUt8PiEg26RMGX89rKYrBDPKJn/kbWY6ICoitcEG9exPLzg2Lh5Q==
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=byaI0cUQu2T0+QBNSGRsOncWnFfV4y3lh2H71TsBHYg=;
+	b=MAO2m46zi3iwgcbZ/ImCkr8nINqN5ivep0krVshNTxyXT8rhkUAIqdj7k9lkKMx3xLmA
+	 dRw8vggKGOttvs4igtcrftulxabb7Sc/VoSfnWWRhezsR4bwufuBFpgPkrbtKcqEQMf7t
+	 l0XswnhnAKbNZin/REQMOd3UXKfDhxA1jkHFyqXBgIKiN1sJCdioJF0O51XQFMDxa3+Zx
+	 Qwwtn3YbOPJxHLv+9Q3VK6yiNRijayvGn+VC75qdjLmbGjPR330ts5pngI6s3NHiKTx3A
+	 4zh4ljHjxuSL1qLOM1uvsQrc+sakfeihpMY0akUiKs/ps8n3JTg9rVLAD9NiAsYjc8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="m/c396Cw";
-	arc=none smtp.remote-ip=209.85.221.48
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=06dYORPp;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88974606A332
-	for <kernel-janitors@vger.kernel.org>; Mon,  9 Nov 2026 05:39:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88974606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A625C606A323
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Nov 2026 05:47:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A625C606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m/c396Cw
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-490d59c3edaso315587f8f.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 08 Nov 2026 21:39:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=06dYORPp
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a3517554f7so5104235e9.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 08 Nov 2026 21:47:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794202769; x=1794807569; darn=vger.kernel.org;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4uU3D93eNb0dcAsvNYKSr00RkTcidb/i2o2hNB/WLWc=;
-        b=m/c396CwshKMa2EHH+DQktTUWKdT+G4FYhJZRO1ZyIRIhcH4JLYWrzEMYp+ItdlBIA
-         TfrpaAz5zE0hxf52AhEiwplZI2VXfKYLCOe+FYHpU03rM56D8UVCIbC4EkcKucUXujME
-         UqLm9dyYq2Pd28HnP+Gy67SC8ArUdRCZcomkUowXHVNoiFIICmBTIVdlsiscdGA64vyO
-         RBLD8ILK91ZHqy91P5VTxFDBpvH+IqxaQ1CA0lQRBHmprYuUvpkUhVStr1VvYNw7G1dZ
-         nYRFBFec5K4S/6FdpKhkVPUYrgzt6s8D/Fsckxa/yVxaOe5ssdJEt9lk6iqQknhDSoKJ
-         IOMg==
+        d=gmail.com; s=20260707; t=1794203242; x=1794808042; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=byaI0cUQu2T0+QBNSGRsOncWnFfV4y3lh2H71TsBHYg=;
+        b=06dYORPpzojU2j2eWqVP4SeEMOaYCTvlFbcfvSI2ITWvvxv1I/yXkxZQXoZ4VWAZxj
+         xkkiVGsuZiE3KkukRPUwYlYbmaSWqi9S0WH7ucuIMsRY42DNbFP+E/+uFpUSNHOertRC
+         oDq/DdqmYyTDvpZk0nnlrk2u5wIPKiDJlcBm7CcF1wTPtXqJpef16AQpu9tMIXBUcO53
+         TdN/QbM5CWzBaCSV/FMJWYYYxpVLbmvzcdL0hS94Ho8X0hLUNMGNl/31Rq1yWBqvuLcM
+         Mq7llBlAclB0TuNmx+QE4BRFloNgcdoAARTfIZM05QBOZyDBJOUWZzCZ5j5FXKqkZ7Gl
+         Wz6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794202769; x=1794807569;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4uU3D93eNb0dcAsvNYKSr00RkTcidb/i2o2hNB/WLWc=;
-        b=RpbDSuXjiVXOBKHJLRARuveOMSJXVkCrN0cxXZkr4ntQdNCQqVOD1WHfbdl5+1julV
-         g8k9W9GZvOe+gwKz4mc5lY8SrJ1ZvdIPKkdaW6IAg9lGtTGnJ/Q71Y/NGrC2CbiRnuYL
-         aBYBolDZ5W6tvZMz3B/UxpD0BZ6fQyRWcwomsqA8jqPqexwCFqQcYh+l8dNz+IPV4SJj
-         eEFSgw/h1E0evgnWx6ltPpOGrbLZC8kJqGkQhHC3JHvb91G+yb5RdqrWZfQVjjm4gAh/
-         vLUmZ5TC5bqLpy8yFf3PQolESsPJwFH3g+YOdEYn8HM7jsHu4uL3UbVrKs5Z6Gb+ojvr
-         sK5A==
-X-Forwarded-Encrypted: i=1; AL+hErHoe8xRtyaITgWlEwMqU2cbs9H6MssYqRCnhN6gyS8eP4wBIUEr3r3OVwGzeHh75tfSomU11cM0QI+KnVhfzKQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8H/AnmW/YpRbIdynyS3ASkmIqpmGYWmJnmcvup2+VRb2c/ntyc
-	Vvb2nMLw4urPizlqTI2ObPwlcHIdk3JzMtZkPh4+hW57QvAg30BY6r2y
-X-Gm-Gg: AYBFou3MZnLBFuUcOcI4ptEotldeRGk56BvHU5PIL4fCamK9VSsqzbS4wnh7xbwp7mF
-	9CU+7wwFTfL37Xi+PQN3dD5lQ1K8qbqBi0dVK2x3N+rMr2YY58+EOd+LbBLDq0Pa2fLZI4Q1YcY
-	b4q0OkxAu5o5Sy8twps/LUSWQ0vbyTrynmFoNL3LFbLRMjZZ2YqZHokeA4lY4peIxxoE2vFiCLx
-	sLysKctH0EXmxHqSyTx1H/Y4UDSGv4CiklKJhFIrzMTqhOG3LzUmhioFP7Haq2UD0QC930du+Hn
-	RUGFDXcWI8ooODW6qTAYf6twXoC2u8PkqHGbAJ4SzSSllicnoS9EU6BSnh4avCZBexMg8aSpx9s
-	NrjP+PMRZbIehXfj2rhJVe4SxBPSGDKQyXrrzJi38X/ShtQUXOyugUPMBCdFpcwQ2zA4h7MbkF0
-	bXDGxbTtXRnxJqBDMhz0g4l2YCNFswGXb9OQ8Q2M8OQV75t0nvIgvEN3y8PzuhmPAybjoKjlQ1a
-	G/Jn0XGlq6GDNqhkn4ZzdS4VjWAEHq/HLyR68IIGxFFx32faxH4wfra7UQ9Ve5UpfJH2xINDX6E
-	aDy9fau4zO5r7T1XpjUyUK/1Hbw/JODkr8BYbScM3tVQzvZbDEGQzDmC9NzUIJsIt0VVtRlHs8q
-	Hrq2pA+2yqQK3nFLquLtm3IKKc2xcF6zGX8uUf2b4V4aHL3BBiD37TS5HY6Jw98Io/A==
-X-Received: by 2002:a05:6000:250a:b0:48e:d40:a87c with SMTP id ffacd0b85a97d-49423997d63mr12864728f8f.16.1794202768807;
-        Sun, 08 Nov 2026 21:39:28 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794203242; x=1794808042;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=byaI0cUQu2T0+QBNSGRsOncWnFfV4y3lh2H71TsBHYg=;
+        b=lXt7yItgjDOoTSazrwSab3oFWrI27NXQdlQpTqz9ie353KY65TLiTMsc+aQLfQYkVh
+         iz1Rh5UqI/ZVYX/BMNj266x3lqcEAsn6NXqdlYgC0Cf6SeuCgimCw15JbRnoays9GK/N
+         cJXt1BeI1vaDRIy8tn6/yjXMopFszET5dVUUCaI/Av73x0pCkmeAVsxj0EGAK0ftZuaH
+         X6oN8OVw7U0jOIyr9U6S62KS24TpTnw6VWec/EvKjuWjg68Mc5AYLXdYaPydM/ucUpEy
+         EG7jsVVkiykRrYH7F3vGxGJafTtoNuwmLsysdotP2pkYOOSl0KqCUdDy8ySS9EXJIkEy
+         P0oA==
+X-Forwarded-Encrypted: i=1; AL+hErG/FyiPGzp3EDBQe7A5DOteKAUGqWynkxA/6d1jNOEWbWv3Enw7YRGWar8JSURbHLKgWQV2WLv3cV8o37YTGiQ=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9dgeVv4vdw5t8jagBq4gEQ1rxRyvwL7msTgTy36AJmAXmugF/f
+	k15bcPAt1tkiBXtT2Dh5CdHnBXi4xVAfwV1llx2D+2H4QDScBNLIFMHV
+X-Gm-Gg: AYBFou3Ow5PSpeLpuocRI+320HaLVE2QAcIoV7dY/UhOXs/vCmyX+BIJsBWfFn3k2aK
+	iS3E6Bgjkt35/SdW8Lio/PshLJHVLvfXgoNJ9THaP/XU/7K42Num6OCUv1WblVWJ/b/gTugiLm+
+	aqfGXWkVe+TOLplo0CB5xWxdod7Xa6HbU54k9zAjxBq4U02yG1j5yBLzhwugMYKXoXpBibeARg3
+	y1JQHj0JWVyR8KObwhTGAB+ugPgjcknyJottHNZD/YEYqrjk3FA23bZs/qW2zld7/ji/DBRWEcT
+	LxgIfVzXXgBubXHWsbaKL17IMfiG/HY5gHMOU8wSvxKoVos1bKkPE+kG5Y46OrKh9HHzZW41a6C
+	X0uoqQ4vpHJ7vi/XV9H9R3gZ699zULoXAJScLr8YAFfPqax3yR9WOBjlzdjtBpOuOK9EBYiSF20
+	K8veRakcnnwBE8akAJhcY+viom1WTZ9N9p+ViCJRzqGN0BvEuRLLn1NxuhTFgJP+RQSfsEYn6aQ
+	hzMbNt3BIIu9eNf/TsRtz2IyVbrqtv+IE1+cfR/cKkHfejyAwgyX1ZrGQdojDAJCWaL3CxcqMzl
+	zw4HlR62uwU2M6euuMQ7Nl5nRIFe7M87VHu9yNFKmEnVgesrkenmxbPal7mYmXTudEXITD98KQG
+	xta18hgHz8SRdJhVTY/faAVwV6vMX6rv1ur6nPfjhPNlm6aDQ/3wpEhJuSO5MDu9tW2AzwyfBuf
+	gI4dgEvvVYJ8E=
+X-Received: by 2002:a05:600c:83c4:b0:4a2:a9:ed87 with SMTP id 5b1f17b1804b1-4b963c6a8ebmr57095265e9.19.1794203241970;
+        Sun, 08 Nov 2026 21:47:21 -0800 (PST)
 Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4967a70a35dsm4750189f8f.9.2026.11.08.21.39.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b79501bdedsm130008445e9.3.2026.11.08.21.47.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Nov 2026 21:39:27 -0800 (PST)
-Date: Mon, 9 Nov 2026 08:39:24 +0300
+        Sun, 08 Nov 2026 21:47:21 -0800 (PST)
+Date: Mon, 9 Nov 2026 08:47:17 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] keys/trusted/tpm2: rename "bool" to "boolean"
-Message-ID: <avFcjHwnh9mrOEnz@stanley.mountain>
+To: Jiawen Liu <1298662399@qq.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	kernel-janitors@vger.kernel.org,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-omap@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
+Message-ID: <avFeZWgJgID5XA43@stanley.mountain>
+References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
+ <20260820154323.0a7c7929@kemnade.info>
+ <tencent_A1BF4495D1F5E54524907BBA2A4ED480FC08@qq.com>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -102,37 +109,12 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <tencent_A1BF4495D1F5E54524907BBA2A4ED480FC08@qq.com>
 
-In C23, "bool" is a keyword so rename this array from bool[] to boolean[]
-to avoid a conflict.
+Andreas is the expert in this context, not Markus.  His suggestion to
+use devm_clk_get_prepared() was a good idea.  Add a Fixes tag but a
+CC to stable is not required.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 30188a0ec676..2d6cc53539c8 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -59,13 +59,13 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 			       asn1_oid_len(tpm2key_oid));
- 
- 	if (private->blobauth_len == 0) {
--		unsigned char bool[3], *w = bool;
-+		unsigned char boolean[3], *w = boolean;
- 		/* tag 0 is emptyAuth */
--		w = asn1_encode_boolean(w, w + sizeof(bool), true);
-+		w = asn1_encode_boolean(w, w + sizeof(boolean), true);
- 		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
- 			return PTR_ERR(w);
- 
--		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
-+		work = asn1_encode_tag(work, end_work, 0, boolean, w - boolean);
- 	}
- 
- 	/*
--- 
-2.53.0
+regards,
+dan carpenter
 
