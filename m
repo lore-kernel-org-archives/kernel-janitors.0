@@ -1,87 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794231736;
-	b=pq0BrHxDTE6BJVvyFVza94Mt27X28Hsz2AAWPbb0PUfTkxxcYnmB/fQ1ifo3OlcDFfV1
-	 7Y9tmuH5O4gBx4ESNbvOO+Hj9gv+kwRAtg4CEtKInJGY5ZK6s1IsKsEe7xxlsBAdu9c8Z
-	 5ayOpodSQXQ46AKMli7ur4/kTW34cdilScDD6MemBpukAoVrvPuXJy5SedQE2SQrsMKxE
-	 vqFirV7pu7FYFQ4JNJYSwQJkB1MHOg2q2Nt7xaD4TJEwoK/H13zZ9mk/Bog1GdlwTP9UK
-	 CZcGJhk3j+hq4JEhgpc+xGQhKKwcGTnshMGacDg1QrXX83I0nAX9NCjRw8juYHcvSMA==
+	t=1794236057;
+	b=oWYRg8UUkac9Pg6yh2u5kRfyHGS5g5usNohl60THlyVPgPJPL/cLnN90FwdhbeaDOILm
+	 e7/fNkexzttqgNPK4bK9nYfRfnmk0n+afCNWGL2y4gmfsX2Fm13esvkRiK6TKjksULR2i
+	 atwy1w0AmA5MEVo361YOYQSqQlVtTuGOFIRkwirv9N/4isPY8tvbYR21GMCET/glgCosI
+	 a8lHtgvw+g83nw00OeraA7ECf5H+PT46pPOikcT+m5O5Kmxarwmjeh7nKUdzhJwR+YYao
+	 oWlllHQu1r6VtPp9Dq1QARKhdFLy74KUy7vXvwzrxkvUQi+xzfQx22zSE1tU6RqXsMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794231736;
-	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
-	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=6phmPy2H01NAYhb3b/eLkioYVIAsUw/1Hbadvh+hcTs=;
-	b=QKYeiAAYH6aDMJN3lSR0yhqWqqfBs/6yvSAFvEb+CWT6kiusBhgFMGsTW/AFn5OKY1mi
-	 568AnmjlZm5zI8YTxGw/BdU5XrbQXDL9NqugEGTGZOoCpYHiHkkbAriVeiCH0Yo2MhNnD
-	 yNjWj5CxIUXxKc7sHrpQZwiCos9e9kcyGLBBE2JJNXyHj+bFCm7M9MP4WxADBfDKD+YDV
-	 0ihNDI/9efozHWABViYhAJFmpWrwcir4zjpdmN2At+2PBrIfLlGf68OTQSDQTnIym65VP
-	 3W95W+vnkEHLY0zs3kZGwUpEsYm3a62jhBHwzot3WhdgkUBgUzoAeKySRrbG64xTb+A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794236057;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=XmnGczbXYjhMau5pClTNznbB6TrB8qkoC+tW5+pwPRU=;
+	b=hN7/cDWoUkz3pGRgPRLHNZG0zgqvzAY+FpT6aYW4PbLl4OOgombCnZWS24mB5iBKJwEQ
+	 d/j4lKcm8nSWkNMnGf05lSTMoMnJm57QYi/dZZBTUglQLnqHEy8JiSdffZ4jR3Avj4OD9
+	 VHn0Z0EXj9nPxjF9VbcTQQvLLBRS6oeSkIytC1/Q3kkxd5qMHagsdFPgIkdYKkmlUs916
+	 MZSbpiHr37ELzQPagpMaHo3jRhdBfvo9eD5VtA2Nmt2showpXIU+CbIF48pk6I6lLeDBx
+	 0nr5+jT1ysX6hA3ck5hEmYUy5BFhq7cJaK9kT4xd/w0lL3v2XOGFp89zmodNetB1VdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=iNcSm4+s;
-	arc=none smtp.remote-ip=203.205.221.173
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="e/G+5l+c";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74AB606A31C
-	for <kernel-janitors@vger.kernel.org>; Mon,  9 Nov 2026 13:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C74AB606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 776AD606A31C;
+	Mon,  9 Nov 2026 14:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=iNcSm4+s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1794231730; bh=6phmPy2H01NAYhb3b/eLkioYVIAsUw/1Hbadvh+hcTs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iNcSm4+sTfMocQ7xCp7xvf3R21N0a5dDU00w8eiV2tqDRN2t6fBbCWnF+EtjybQDz
-	 HuKl0u6CiihHthURon2de62IcvN0AjiWP9fMM1IQZQThX19QIdAe8IQvVljkAxg31M
-	 zASNmMWBWQk50EvVgPFqtzy4LNa7/YDPULbtTrIM=
-Received: from ws006419.mbzu.ae ([5.195.0.150])
-	by newxmesmtplogicsvrszb51-1.qq.com (NewEsmtp) with SMTP
-	id A853DE44; Mon, 09 Nov 2026 21:42:05 +0800
-X-QQ-mid: xmsmtpt1794231725tjlhvo5oq
-Message-ID: <tencent_D8A4B6EE90931660EB6F586543FD58110E06@qq.com>
-X-QQ-XMAILINFO: NmRjDopJZVxOJnbfz4QUXrvG0eDdAQuvE5D4lCij5ZdC0bzR12Gg8CyXRQhg3M
-	 wR9W6D3N+uwnDAQfoA3tvl5+3NJawpyvsXzl/79zfn0m/dozThPPakjLbib+4RFTkW7S0F9JHbNN
-	 iscj/4zjRoIMUPtl97nO83y+XOoNymZJmjny/opBSKHKOHXSRv7FGWVa49nf700CDTtL1dyn8sdf
-	 a6GfddiGsaWOLK+KR9FcEs/9PrMhyZlBWf51Ef+Q+1ju5vPm7NpPdGZ6FxaAYRSoYthy3YyqzGm5
-	 xTahxRtMv2YYewaX/Xa4MsRYJikD1iq/20Ck94DmWC+tx61/YkLHPwE47+i5aX95VKdRym9QQlaz
-	 iSIOWnWQjO/lSWM/tgnhFBOZTtRoRgQw1iy6AlYP4LN3N4f1Ffl3jMaYZEyTg1uXaCdiaYYD2Nyy
-	 +ublPmTXGoo7OB5nYiJxgi5+7xzKYTyVFpOzRJhkFsi6w36X3Ov8vGrG515nwun+VnI3ezvrE5W4
-	 I103PVx2LfnIq9CK99XHAoZiceygHKcohrVKiU632zoeZt9iIdA54DuyH3EECyAo2zFZlrubRM0j
-	 u5SX5SGbOdPlV09uuFkwqgQfLBxeIgn+Rw3bbJhzMt5fG+EEPyG7fEPeddmRrZKgbj8fGcvCxBG0
-	 v6bj5wN0XNZIAUbPZQxXDvwrRqFzue6AWadlzrSzNyMT/tl9FOzLKuVSWsbd5WbztZDC5Qx9CWjJ
-	 GJ3AFIZ+VSr79nr3vnXz1TdH8YDMW8bx5e23HD/EIO8ljldGpexO2g4SUGeSN+NbYF6MibCCy+ZE
-	 EFKZqbMY0yWvIl6VGdX+VBqzbXX4RkXCEBGayKrJRGZjcIOJw/h/e9V+bDbhRv7y5hxM2lsjf6Tx
-	 EVgcQo1BzDzPW0D9t7+brToj12XUa5I95iPlQBlRwYqJilw1r1WTrBfO00EBF8sYPwLgQPelVg+R
-	 JQG0iMOQys/u8Bk6yo1JOI1CkWp4WUvgJ5iWnLsWwNG+uLvXBPY3I3WeqKzGODU816bgI/7ccqz6
-	 T/R0ZYwu4V+Mdf6/zIcx+XH3SeRIlYIamrwe8zZxl7iwB+eyDcgBxsB4NCSu8/1e1ybzHtCw==
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
-From: Jiawen Liu <1298662399@qq.com>
-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Dan Carpenter <error27@gmail.com>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	kernel-janitors@vger.kernel.org,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jiawen Liu <1298662399@qq.com>
-Subject: [PATCH v2] gpio: omap: handle debounce clock preparation failure
-Date: Mon,  9 Nov 2026 17:42:04 +0400
-X-OQ-MSGID: <20261109134204.2087852-1-1298662399@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
-References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e/G+5l+c
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 81CCA1F008A1;
+	Mon,  9 Nov 2026 14:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794236057;
+	bh=XmnGczbXYjhMau5pClTNznbB6TrB8qkoC+tW5+pwPRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=e/G+5l+ctv3J4J0FYrueBwuIfte2OJnEDjqerU6oHlHphbKsGleKpF5f2yCGRMLCJ
+	 EZmGlYwMicZdysQOLmP1xdGaIJ/ZBUYvS4P/UnhJJl/HHPTyXrXvhj4bCIjuDPYHQy
+	 hgyBRWR2T5Ms/cCS02V9zHPZF5kUyTEhXSZBZNY+DQCfIp/lHfkWJAGx9GcBtT1OC9
+	 +UqwoHW6MAObHfPNtuA2PqOSarpRfsuepvFba9LTL1pZykIYfx1C9BR9aEPVMYKenZ
+	 g0461zjxGf7VXLRduVUY1OdqLqht0w1pA3k/u6P+pSPNoM+SycpkGMGG5sTKCZHXlR
+	 GXFRDyFNbFBJQ==
+Date: Mon, 9 Nov 2026 16:54:13 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Dan Carpenter <error27@gmail.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] keys/trusted/tpm2: rename "bool" to "boolean"
+Message-ID: <avHelQ1nxsDVcQkZ@kernel.org>
+References: <avFcjHwnh9mrOEnz@stanley.mountain>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -91,81 +62,44 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avFcjHwnh9mrOEnz@stanley.mountain>
 
-omap_gpio_probe() ignores the return value of clk_prepare() for the
-debounce clock. If preparation fails, the driver still treats debounce as
-available and may use or unprepare a clock that was not prepared.
+On Mon, Nov 09, 2026 at 08:39:24AM +0300, Dan Carpenter wrote:
+> In C23, "bool" is a keyword so rename this array from bool[] to boolean[]
+> to avoid a conflict.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 30188a0ec676..2d6cc53539c8 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -59,13 +59,13 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  			       asn1_oid_len(tpm2key_oid));
+>  
+>  	if (private->blobauth_len == 0) {
+> -		unsigned char bool[3], *w = bool;
+> +		unsigned char boolean[3], *w = boolean;
+>  		/* tag 0 is emptyAuth */
+> -		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+> +		w = asn1_encode_boolean(w, w + sizeof(boolean), true);
+>  		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
+>  			return PTR_ERR(w);
+>  
+> -		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+> +		work = asn1_encode_tag(work, end_work, 0, boolean, w - boolean);
+>  	}
+>  
+>  	/*
+> -- 
+> 2.53.0
+> 
 
-Use devm_clk_get_prepared() and disable debounce if the clock cannot be
-obtained or prepared. This keeps the existing behavior for clock lookup
-failures. Remove both manual clk_unprepare() calls because the managed
-clock is released on probe failure and device removal.
+Are we migrating to C23? I've not followed this too closely.
 
-An earlier managed-clock conversion was dropped after a reported boot
-failure. A follow-up removing the two manual unprepare calls was reported
-to restore boot. This change also removes those calls.
-Built gpio-omap.o with ARM multi_v7_defconfig and Clang 19; the current
-patch has not been tested on OMAP hardware.
-
-The original report was generated using BMC-Agent; source review and
-maintainer feedback informed this revision.
-
-Fixes: 5d9452e7c52a ("gpio: omap: fix clk_prepare/unprepare usage")
-Suggested-by: Andreas Kemnade <andreas@kemnade.info>
-Link: https://lore.kernel.org/r/tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com
-Link: https://lkml.rescloud.iu.edu/hypermail/linux/kernel/2412.2/00414.html
-Signed-off-by: Jiawen Liu <1298662399@qq.com>
----
-Changes in v2:
-- Use devm_clk_get_prepared() and remove both manual unprepare calls.
-- Disable debounce on prepare failure, retaining clock-get failure behavior.
-- Add the Fixes tag and describe the earlier managed-clock attempt.
-
-Built with ARCH=arm, LLVM=-19, multi_v7_defconfig, W=1 and
-CONFIG_GPIO_OMAP=y. No OMAP hardware test or current reproducer is available.
-
- drivers/gpio/gpio-omap.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index a9734b2a1..314bbb48e 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1446,13 +1446,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	if (bank->dbck_flag) {
--		bank->dbck = devm_clk_get(dev, "dbclk");
-+		bank->dbck = devm_clk_get_prepared(dev, "dbclk");
- 		if (IS_ERR(bank->dbck)) {
- 			dev_err(dev,
--				"Could not get gpio dbck. Disable debounce\n");
-+				"Could not get or prepare gpio dbck. Disable debounce\n");
- 			bank->dbck_flag = false;
--		} else {
--			clk_prepare(bank->dbck);
- 		}
- 	}
- 
-@@ -1470,8 +1468,6 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	if (ret) {
- 		pm_runtime_put_sync(dev);
- 		pm_runtime_disable(dev);
--		if (bank->dbck_flag)
--			clk_unprepare(bank->dbck);
- 		return ret;
- 	}
- 
-@@ -1492,8 +1488,6 @@ static void omap_gpio_remove(struct platform_device *pdev)
- 	cpu_pm_unregister_notifier(&bank->nb);
- 	gpiochip_remove(&bank->chip);
- 	pm_runtime_disable(&pdev->dev);
--	if (bank->dbck_flag)
--		clk_unprepare(bank->dbck);
- }
- 
- static int omap_gpio_runtime_suspend(struct device *dev)
--- 
-2.34.1
-
+Br, Jarkko
