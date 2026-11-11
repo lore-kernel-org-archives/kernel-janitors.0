@@ -1,94 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=34.2.82.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794402939;
-	b=iJyJ3p+6LhqHNOaWC6S36GLnmJMT0GoigPp4dDwhskKIk6QOesfL3PhmZ49+IJxso8fJ
-	 AuMhRCR08NlJQo3iucWrd8kuK3x73cH9bkB88Xc66FQ5x442iK4IttsAoe6jbeQ/YBx3a
-	 6ymkQXPzn3JAon17In37Mm7tLilgoFxFxCM0YfnNI7XEYUMtsqIU9mKL7Xg3YmYm6gYiT
-	 XgEkJSuKySO+tmWM6x48uuXpadXIWT2uuoeTzpcvvO8w2x1vx5UlcJdpu6hjQZVUqVkmF
-	 q69P4sT1ytqdMv9UWO1rzy5Hv7+lE+ybNiFYBVM9bBdtD7frRlMtxQdfP9AJU5MCc0Q==
+	t=1794404768;
+	b=BA+JGL3dyuaBg0oPiYiw4aS7/FTF2mBlKe8fDd62071r/nVDfZI2kI4wqEwbU52w2sFK
+	 y9Wzr2mI6cHVwDYqOVdMnU8KOmg62OShOcQr5cn509AZbuX1V0dmwM4LtsRhufBaLjdDs
+	 +M+19OspSO069cDL8Es1Z3aeum4r9//Ud/+dYi0Hw3HUs00XvsLYdrhB/rQ/RmT0QvNUJ
+	 3ygiiPxU+NYnZqGTEeyExDwZ1Ryml+vKDvzDH1dpVGFLAPGzg3xJdUv08Gd/zW3VN07Az
+	 uWEwZhM729+KENLRCbqA40PWKRoZS291DNb3aGONYEmp7ITRVM5HB9hPaP2LzfOIV/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794402939;
-	h=DMARC-Filter:DKIM-Signature:X-SONIC-DKIM-SIGN:X-YMail-OSG:X-Sonic-MF:
-	 X-Sonic-ID:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=un6Cg/JaWBewh3OO+4QpLueZbnB1h/rfN4CCfZyiO8g=;
-	b=Rt0QAAArag9lEEsZk0qo23XC3U5IXTopj7C0orHHXs2se5kxHAQDqukGsXBU4wpSAgDU
-	 lAE9CqVuI12njmfO+M3uyZpuK5gXhr7cgzD1XLMRpGKEOYvr9vkWBK8uKaa9YuLUdmd1G
-	 iyLqe3+Dtx00gv2BPk5uZQ6lpxvNxyu0bPSDrtMk/GdjCrF7xG2VCZeSMd9jV429dMWbM
-	 MltXMMlfmFWKktGkzrFoEBHIgJ6uo9pI1yMbxx+qe8X/e5FcAyg41E6ac9H84mzeRXPaX
-	 AYgThQVu4Ex/Eivze8b452Hi4obPfKUJgDQzQEq8jBavYr7CYbSL9J+MwPSK9c81iag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794404768;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=gU5SfropLbeuhhZVQHKyKXg+TDGqXO/o10GMjJa5hHQ=;
+	b=isqYzrEZ6EOV7KlQzBTnqofrzgverAckzpkOI09Psdzt8oYXWBVfnSOQGbE6beKY34TI
+	 Rs2C/+STWcFaaPPVqAtJtIABKdeCsSXUW6WodVEedvPJ0Ior3Da1kRfP67o6oef0bUWEK
+	 azCdGiafuAg9lAwXdCiB2sDpYvNAcyyiehQNtoK5CMe2rehrNuQRPMHBApR3jnKPFauo2
+	 xyD9qdL7LtD6Je/BeGdPTWh88/+x6dGFufg0G1/jA4ppqn88WK8Vj8GK+GwCrXOXwxZdX
+	 CvJb/Rv3KOjKAYJEOxc/i0kfkeplAxUWLEXiteJHX1wXdcjftJlKkiEMNOkaZvvfKPA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=yahoo.pl;
-	spf=pass smtp.mailfrom=yahoo.pl;
-	dkim=pass header.d=yahoo.pl header.i=@yahoo.pl header.a=rsa-sha256 header.s=s2048 header.b=hhgjCw6K;
-	arc=none smtp.remote-ip=34.2.82.16
-Received: from sonic.asd.mail.yahoo.com (sonic-euwe1-0017.asd.mail.yahoo.com [34.2.82.16])
+	dmarc=fail header.from=pereq.eu;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F1D606A330
-	for <kernel-janitors@vger.kernel.org>; Wed, 11 Nov 2026 13:15:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 81F1D606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.pl
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=yahoo.pl header.i=@yahoo.pl header.a=rsa-sha256 header.s=s2048 header.b=hhgjCw6K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.pl; s=s2048; t=1794402936; bh=un6Cg/JaWBewh3OO+4QpLueZbnB1h/rfN4CCfZyiO8g=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=hhgjCw6KxbR8KjROpxupQ5Q1PhUsWmSU7FEKxL102ymVCgfYm+cXvvpbBQEPcqMSIHrTwYBRx5bsXlLcp32NF+tefUOxSfHJGVkDyF/bUFrOr5Xi+U1+7dBPTfIJho3u4wQc8Ot8soUC3jGiujUXJuJQNbq461NaUsI1wnb7n2wIpsv/ydDOfir55ABz2j0ARwcBY9ErzlakEH5tKwHTWFRByyKIpIkBqv6lPMomFu6T5FWtE9X8mmD9y7z149hAha5Re0+Lndx98/CAAfyOwLBjNTBijs5nqhQ7nKaOrEjOQhEdTyfYlf7KNwcA/E8m8e9pWEbt7xP7zw3BF3GCJw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1794402936; bh=Uced0Nr1LSWqajptznLpqSgTpzBcUKA+4a9I6wILcg4=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=S51C+icI/ApKiDgo9Am5BeLUgJC+if24zeAK/LjvUi5uYlMQOx6A+i4McKHioy2QOJvyn+x35BDor1ES8VsbRu+bzw+oCtAgzx/VRALYCwJUp1YyRodpyuoFHXDZDzG2CcoSO/BR1dR5rY97qb53zZ7TCbI6WMuMSYuuWy5L07I8VIo7WSFSpPzqulICo/0k5+fgujP2s8NqMi9KkjJQfKH8uCQ6Rnt2kyzLwXu4vPBQJmuGBypNPcMJMD1MMNkvQBr6EpLbOIztCUeBOLH7OJLeGPn7xBlhobRSqR843Dfdf/1gEcBwarIS3dYwnw93tOJbpXYYKV1D91tO7R/iLw==
-X-YMail-OSG: d2ZOL8IVM1l3ymETAry4SqG0L2rtmc.Jn9Q5.0Htt3Xv7qxRYRnYDYBeUftyJb2
- 11JIOPF0JNr6FIFnohbwoZgkvr00pDB9pEDOA47Wh7IwRa54Ow_.J6Hk.IGiKGUv3wqxgWjGy0Sm
- 3TTN.77JCISO5_RUMXcSsNr8X9m79rsN4JsZPxrbYULUruzePtHfU9wo02785RmxIfvuP4AFVzSR
- zrgM3qky7sv3Capmdtq.bHMPK5Tr1KST3Xhkk.bxRORPICMSaxKPMVL5QOtx69p56OISa0pgVhIQ
- yMY78GifGVEr5iDz8NBCezil0ebZdL3WtKHSjYP1VPZXpapWBph4.tIxzJdQW1gbJMELVAu9BPVp
- ouDFMzpTtjV.I6Bj5qnYRRs7S6doh47Iuq0s0y2lKYHIuoWdPFuUyyex5RK_T6wproDSlJUkxVHX
- kCC3whYWD1a8FfQ1nC0q8GX1XYrAEGDHRYcN9vBFR4j7inQRPydfCUo8J6Hz_rwISLQaqKWIoDC_
- 1kF.TIbDptGc0lGZaUOwIuUHd8exm45hAlJ0uf3dYV720owHKGZTUvQI1FQBxEmwVQ4wqsJoJ1_R
- 169hd.Fc2bOCAk96KtIBFAbJK0dzl7S8K5jOHcgMJX9wpFUHx4T7IQoP7xc.LKt5Cnw805UAKtx6
- dpE0atMGupqxwdhIrRsuTBUOsrLKOipD.LtrroSShDs5qVSe4hdPley4G2AUBiybczey_Nlo9Avj
- RwJPct1o09wQy01e0GXoPDMAsiQOTCGZbpCkKyNsBzfG41hE2OmMx34ljhYL3iLcaExMkTY4Vjpv
- 51rzenWwTrknQolQBudWzasGjm16cQWqKxOXgInoBPByKQOoxRiXfukU5lyny0MKRM1V6SvT4rXa
- W6ZYT63snNU..3dJLm5OhPOlbYj_Ly21J8Simi.MpOrTm.VjI3q7dHnoz2amlIDIzZHs6Utk6scX
- HvpB30kf6S2Jxiy3lWYX67XrqzJ3rSoKTgGSTa5MCwE6u24zX0ObJG_hCaA35yAibs7OpkxNTh.g
- zlDoUmzJlbW4biA5bPuZfVN2_vwuTVYA5_65zKwuQpnRFjWK31vKWWW2Uk8ES9rkKTwnmAZ0YBq9
- RxxnwkTby_nsVEoKTmrD.ZKdEhyZNAybVVSz9eSIiGYDvLiZ2zfdaG1Bee_C_OXhq7OE9G_m.d.U
- oCawIFICWOb6rXZ3Gk04DyrmYfVcnEWdu4KsayaYKZzJ8pxTwqXSr06mpZIAlMiQGXmK.USpv_Dt
- 3uocnze6gdWiMKZPzeAPe0bJvBM69Hu7FDwGvS.K_WRWeuDVZ5uMNWk4KVugNmMNmMJpFrtUEXjX
- RAf1J_GfvcL_B_Og2ZuZWrobQCDC645qRqTNoEXU21RkExFhj7kE73FHKuXEpZqdxqQ4sXLVTKha
- RM0lU3AxesYl7ZHFR8Du_CQl0oIaHAfuZWB05hmnLJGx4fg7SX3V8X893K2RJJ12mkpug6SsiRM0
- 1Nm87olfNLmf0RKQsPEX.PzJOWPAsMvvaLfSfndQYoxTRsg4SWlpbpcdrK7HwPzNmXZxoWphWzbY
- Xu2G6OnGCn7DWbNuaHTuvdisbbXlUnl58utE.gTSMTrACSVvFJDdIF7GWdOPdlI7P0AZT5BuunOb
- EP.2o_yAwmhKvDlJ0wNkhzqoGNpyKkTSIiu54rIyPXtTSC9sTVwx7XeVZXRNx_fjx8cSrGmqxsmf
- P64F1DBzfQ753tz6nNo.aEm7H_U4HdMo6ZiaGU4FZTjTz.emhyuC8NHSer_xkHr9XbmEpBW9DsAC
- Yy2vSlO7WAnxsMm_tgCuXV4NQuaaF14EJGBibq23x756HvsYrSB.2ydOoaSdMN7US344_jZOj7gR
- IBBn63PmHQ30bTpeqD4qujBvLTHp3B2IzZe401rSrg5ksvdKgkVlZLziP1M8bKTtKZvbq9DQhNA3
- cuvi6clY6pXh97miL5u.jSJXEdGiU595l2bqmv1G2z4sk638jIPBVqANKhZ.deTTG6lRVI0O7fGV
- jVpqBdu7NyDF9xwnJMZmmXgxmNB8YM9RIFMY-
-X-Sonic-MF: <tomasz.unger@yahoo.pl>
-X-Sonic-ID: a082e9e7-3626-4fd6-aad3-de587b5863c9
-Received: from sonic.gate.mail.ne1.yahoo.com by mail-asdoutdeli-p-cin-euwe1-prod-sonicconsumer-svc-102 with HTTP; Wed, 11 Nov 2026 13:15:36 +0000
-Received: from dip74.lsn.ir2.yahoo.com ([87.248.99.83])
-          by hello (SMTP) with SMTP ID 93c53469449c8fb958d76cf31038daa8;
-          Wed, 11 Nov 2026 13:15:31 +0000 (UTC)
-From: Tomasz Unger <tomasz.unger@yahoo.pl>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88FF606A327
+	for <kernel-janitors@vger.kernel.org>; Wed, 11 Nov 2026 13:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D88FF606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=pereq.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48dee593f18so2409874f8f.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Nov 2026 05:46:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794404766; x=1795009566;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=gU5SfropLbeuhhZVQHKyKXg+TDGqXO/o10GMjJa5hHQ=;
+        b=KMwdOIexLQRw2YCQFkRQ9qhbSdEkTKY9P2iBgVJsJ/iMEj0wNXPqjuHEwxwbkAzEp5
+         bqqm8nF3FC1X1LVzdwnOJXye3DvZtaCgZP8L/qdWBdWP/djQrSiYRYXvP79P4rrM4fY8
+         Cv9dUw0Y1ry0fY3KaTo3w8E4xpr6UgHR+Ae+1EboKD/jOgFe1HL3shIIrwTOwuoMbqBN
+         dUUY06+CFFhEYuzSZSRb6TroQefQhdb6XspXb/gmaZmH0AJQfEIDF8IcwwQbfM6pNC+V
+         B2jVPiL06hb9fd++G4yhes/UK4hocbj4JZSPMOB56aONR0lNevWVK9899Dm1tYWyKP3u
+         r8JQ==
+X-Forwarded-Encrypted: i=1; AL+hErEUuqN8kVKlkQLkb09k8v8ax11XeTZa4YCZcfBLYWEbo043HlH79qttJBIjjsQDv5JGLx2HxxUH8vUReiNk5I0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+tDu3rGwisTY81hcvjEFVRR1HAHeXFyOuH0LvsG55VFjJoOEMh
+	9Pm+zEuWOjR2RBzFJ7JFNM3dUgVGaN7fEdU8guiByzNjAHg/3JFVJo4f
+X-Gm-Gg: AYBFou3F85XTmrNrQI6Cm6Grzx4kC2ujD7tznCb1Pn2CmCmUM4eoIVMbbDLqoDzJZ1H
+	4jC5cxyXsS761x43FEsLNnrcia5jxzVNsnI614zTz2pVjWD2CgkPSDFwqVfzFxwYPFoRrEFX/9g
+	d4BzDPnnRuEk/Qm5612tWys7NzjTZiA0FEDgq4tIyAtKugy+x/XTbrUuIGYudkInk6Ynudj0KUQ
+	W/o8IZBLS4/UAq3dv1wE5vrapvGI12ovRj9P+3uUJZie2NH3/ommcb+YaQTvFPnIHqQefurjMm8
+	m0jC6EEpBiyoCdFYxXkcvflXtAxT5K/p/hdzHBaTmatIk0gSIHvmJmNYGwOQSVRRgbc+GuSkkdm
+	fgsCFDXqfkKAgHfDSmOHTPwm9ghGepLKTzFgefpsbfblqsSB9eWZA1ePENI4xkjUsBiQ285phfj
+	3sPKIJPZNrRik8muibJEa4pX64pObPln2a2HOnldriXBFg0+h/Bl5zWOiwnLauS9kO9kDVi3mVg
+	wk81HqTiWdvJkAHQ83k191iNIbub5X5OVE1RIyM8mwA99KJlM4Z3Kdhrso6zIeKYSzLrzH1Mnpl
+	4wTE2EbmZJU+Rw4DEWOuoehqAaWe4iwrJ2wDXwGgs1YDygBObwx7q52xc4ECb0VKBVfwJZb8d4C
+	Yu8IYKeJLjh70ic3OZG11AgU2jCOSKDvhGBB/u2K7h2y3QmDiqjwv89iRQE4R
+X-Received: by 2002:a05:6000:3107:b0:48d:f3f8:f910 with SMTP id ffacd0b85a97d-499c96002fcmr5471214f8f.34.1794404765741;
+        Wed, 11 Nov 2026 05:46:05 -0800 (PST)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-498366c30b1sm11189059f8f.46.2026.11.11.05.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 05:46:05 -0800 (PST)
+Date: Wed, 11 Nov 2026 16:45:57 +0300
+From: Dan Carpenter <dan@pereq.eu>
+To: Tomasz Unger <tomasz.unger@yahoo.pl>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
 	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
 	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/vc4: release firmware on error paths in vc4_hvs_bind()
-Date: Wed, 11 Nov 2026 14:15:28 +0100
-Message-ID: <20261111131528.316472-1-tomasz.unger@yahoo.pl>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <ee4989e2-f55e-4d09-8a0d-306b78b9c9d0@stanley.mountain>
+Subject: Re: [PATCH v2] drm/vc4: release firmware on error paths in
+ vc4_hvs_bind()
+Message-ID: <avRxlbgy9mtT1rR6@stanley.mountain>
 References: <ee4989e2-f55e-4d09-8a0d-306b78b9c9d0@stanley.mountain>
+ <20261111131528.316472-1-tomasz.unger@yahoo.pl>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -98,55 +92,24 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261111131528.316472-1-tomasz.unger@yahoo.pl>
 
-On Thu, Apr 03, 2025 at 03:14:33PM +0300, Dan Carpenter wrote:
-> There was a bug where we should have called rpi_firmware_put(firmware)
-> if devm_clk_get() failed.  Really, it's better and more readable to
-> move all the firmware code together so that we can release it one
-> time.
->
-> Fixes: 2fa4ef5fb943 ("drm/vc4: hvs: Create hw_init function")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Wed, Nov 11, 2026 at 02:15:28PM +0100, Tomasz Unger wrote:
+> So without the patch every failed bind leaks one reference, and with the
+> patch the reference is dropped.
+> 
+> Tested-by: Tomasz Unger <tomasz.unger@yahoo.pl>
+> 
+> One note about the Fixes tag: 2fa4ef5fb943 only moved this code around.
+> As far as I can tell, the rpi_firmware_get() before devm_clk_get()
+> without a put on the error path was introduced by commit 2a001ca00ad5
+> ("drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection code"), which went
+> into v6.2.
 
-Hi Dan,
+Huh.  Wow.  Thanks.  I'll resend the patch with the correct Fixes tag.
 
-It looks like this patch was never applied: the leak is still there in
-v7.4-rc1. The patch still applies on top of v7.4-rc1 (with an offset), so
-I gave it a test on a Raspberry Pi 4 Model B Rev 1.5 (arm64 defconfig).
+regards,
+dan carpenter
 
-Normal path: with and without the patch vc4 binds the HVS and the other
-components in the same way, the core clock is acquired by fe400000.hvs
-and dmesg shows the same messages in both cases.
-
-Error path: to reach it I forced the core clock lookup to fail with a
-test-only change (hvs->core_clk = ERR_PTR(-ENODEV) right after the
-devm_clk_get() call) and traced rpi_firmware_get()/rpi_firmware_put()
-with the function tracer while re-binding the vc4-drm driver.
-
-Without the patch:
-
-  rpi_firmware_get <-vc4_drm_bind
-  rpi_firmware_put <-vc4_drm_bind
-  rpi_firmware_get <-vc4_hvs_bind
-
-With the patch:
-
-  rpi_firmware_get <-vc4_drm_bind
-  rpi_firmware_put <-vc4_drm_bind
-  rpi_firmware_get <-vc4_hvs_bind
-  rpi_firmware_put <-vc4_hvs_bind
-
-So without the patch every failed bind leaks one reference, and with the
-patch the reference is dropped.
-
-Tested-by: Tomasz Unger <tomasz.unger@yahoo.pl>
-
-One note about the Fixes tag: 2fa4ef5fb943 only moved this code around.
-As far as I can tell, the rpi_firmware_get() before devm_clk_get()
-without a put on the error path was introduced by commit 2a001ca00ad5
-("drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection code"), which went
-into v6.2.
-
-Thanks,
-Tomasz
