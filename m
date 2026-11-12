@@ -1,90 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794435691;
-	b=GYxYkwFxupkIrSEToi+ToqQbVewQU0PmOXhf7BBuEo01zf90GY/5DuTti1dFW5tVE9b3
-	 McpmmnSNt2qAGkyrGNdzYCQJj6owAyz4ID81eRcClOw6VDNVw4HZZ1YVCzVkgHHblPJHD
-	 YJWjy3IB9sIXzKVjHz8jPKTF5H/iN2eUXjALYa6H56dWWz5UVOfAoLG9Oc7IRnH1FKM1L
-	 aLrcuofjFNvDIcsnPpzXpEqC9xmM1BqG5aiTNs2P5/Rph0ywvhsOV3CkxPElc0Kr4ArRJ
-	 PC/SSX9PLDc6DL2jffceo4vYS10XKwr7zjxoGj+Zf44xD2/Eaqyt3NWotbP7vUoSy0g==
+	t=1794500492;
+	b=kbZWtZWpIxCAWk67LCyTP8wwS3WZ7jX2CjB0u6A/meWtPR57oMm+BRiXZbgqXL1/c0BS
+	 66WvH3KK5lPQldDB+sc8qQDLcgiC+2Dc/mxX6FE/sfpI2kLQnr+AIhxRwDCVBQYglB7Dr
+	 LWAo/bpAYgko0JPi3AtYdN9UrJLeGDj271eSoqCggXiDkeDLdnmjbT8lwZYY9J3ggJCZ9
+	 8HJBQOnLsT4qMVDRbJOsy6XBGPY7lbh4EE5RCxmRwxdMfCzK0AqgNSvFtcjRAobq8bjrP
+	 oblonSOIf7/XBWSe6hWLpRyiuE+4Kf6NJmM7JtRPBGPFaESAWgkploXANjAyicTFhoQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794435691;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794500492;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=TmtKdF1AWiRH6We9YcRb8zDEzdlOz4E493C6LB5k0/I=;
-	b=5OoD1KHO9y2vsHqxDR3bVPmaVkleDail75+GB8t2HyicGPbL0aXfZ6flm852IiJd0oE5
-	 asCmVcZibD8q/AmsjeIZZ65OR9Hkx4On8Ew39Pe3iJrUl9q4gyIZvVK1gP+jBuFka5OHX
-	 oG4dkvGY8ChIdyKm2WXzI4kJ0z5Wg8t4zR+DfnhcOl4+Ea/Z6qLgtmXbWxYeyzOXX2T+j
-	 3gyr7sIcrOOQXbO/dqPml85qtNk+pQdC9HORkrhGCUZJLePOMy3/gDsGgIzqrHMKjYrNr
-	 9iAgk7AMuLBOQ7+9QXzrDWB4xe6RKbLrW0LXQgGoNaFlOx0Qhh5z5Qv1rUQH60Jyw+A==
+	bh=+tpnmaCejDTdKprdiXgHKHQFYAbbd0rQZxDc9JTWdcM=;
+	b=pHvYQyzIR4yTM36Up7rRS6PUzRH51HagN/emLJJ6UmiIw8QsbFU6AOJdGJlkT8QFQid5
+	 BZwykEmOQL70s5So7iFg7lGsnu1l4tAZVXzZBwzvz4CXgQgYqR6Aa/uknlQpzZ6s2EiB/
+	 EaAWn3+T6bLx9Cc20SppFFVNct5Q5wu6hS7ANRFNmSI7KwnSQLLzIxsXE0Jlzbu/MaQC0
+	 rX5x3mu+0/xgX9i4B0vnNLd9b9tAtcaz2Y+jY7/pg+EQYzbes4BfcgaBaP/xCSam6+AZt
+	 KS6JxBzcLxKW1eWAJ/xgXjWR0PlaO1AJISr+Ac4AS8Fx3zV5FF6xefSJjsv4rhaHf8Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GAhkWesh;
-	arc=none smtp.remote-ip=209.85.128.54
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fUaEIJii;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887B9606A327
-	for <kernel-janitors@vger.kernel.org>; Wed, 11 Nov 2026 22:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 887B9606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4F8606A321
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Nov 2026 16:21:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EA4F8606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GAhkWesh
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a549cd7fd2so2888855e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Nov 2026 14:21:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fUaEIJii
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so44125485e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Nov 2026 08:21:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794435690; x=1795040490; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794500490; x=1795105290; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=TmtKdF1AWiRH6We9YcRb8zDEzdlOz4E493C6LB5k0/I=;
-        b=GAhkWeshmXeULO0RrMSF/TEbMI1rd1Dbu9ohLHmmwmxzRDiTMT2sMZNOQ0a/2G4tSa
-         H43L05tjDvA1Bxxt1FR0x7e35oZYwRvJ1bPbenazsGlsk6ItPwLVNWaA8oLMlpAkjEMS
-         N1eitSPCAEted5vZEUqrFL1vZplEM9l6Qz1nDytE6InIAI6DDiR7kdkNiqHS3v5905vR
-         Aj2onbDH/JimL5zPsjwpBGJkuAdihvFqTbdkbnw57v9zXPy5MYzjSmc9abLm6CNH+Ri5
-         ol5v1SfAiMPfJRhlzhf4IPiRSgTD4nrdqYu0lLd92MoaB+d6cjc14Q7V5WsmiC9hHrTP
-         qOew==
+        bh=+tpnmaCejDTdKprdiXgHKHQFYAbbd0rQZxDc9JTWdcM=;
+        b=fUaEIJiiAGmcdBn9M/kKtwCuasEsy0nWg6aZVSLNqsB7WuQGhzpIJdAdS45l7ftUzD
+         WbK5mgH5y0uoZxWjthqUTVOvAGej498I8EHUdncorOahv8YR36loJHbTenULqmB9GEXc
+         MlYVkzDWvQhbvPDymGsn1bRSOj9oE17NUuRYZLioxDU6VNKblOXu3hVXAAbgLRsoeAYH
+         gO9xGf6h2iF+Xww5RO++JhUPpVGHcnUsdOLacut4A8knHXMNkO8UKhVG0c8JuZsf4ctd
+         9bTjI4jiwkLpBbcCQX0IPYTkdWuWmOBU8v67D3nbVklhOLCRa2fPQ6QD9Oe9P6rfdPdI
+         eh9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794435690; x=1795040490;
+        d=1e100.net; s=20260707; t=1794500490; x=1795105290;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=TmtKdF1AWiRH6We9YcRb8zDEzdlOz4E493C6LB5k0/I=;
-        b=sTu2znB+e6YjS5DMBgQGlMEFoSAXsEENkc45OjpoHDHSWDIoJ+XHG3/aF5SSVLlYkM
-         p5DJLkY12pOCY8PQI+rUbeBaf/arpWeGfVWQHPjt+JWDW5Q8+9RJIEF75knDXtdgtsaJ
-         29RTej0QmDUODl36d0/RjRgY1rjRIsOV30NOh0ZEMyzT01/C82rqCKRRKEAVpu1gRNm5
-         xep3ZwEtCL4XqaBgy6Gjz5CKURBwqPM4RQr/CNTet4BnS9++fCi0TBfnU1LbkeYoVNYR
-         BUs1NUQb+yiNKTrQlfh+wr/1W68G21FWo9POi+DmPHXG5vt0zXFZfJKo1jAviJVpJbFC
-         6rpw==
-X-Gm-Message-State: APuU4Z+LbSmmykxkuCGrbVQUXvz9Dw6XkqboKcxf0jSC3A++Sl6fMsWn
-	kpB9GilQpMqsjH9oj9oqqSDI5v/kG6N0cW6+bu055QUsYOcpEaCMiskZ
-X-Gm-Gg: AYBFou1Gn5BGZGtaEwmV3icNiSJ+nfXs1HyLfsHTZ5L+B83wZsF6JsliKwdWA5Umi/F
-	NmCP8fWTEjQYHn1QZgZrJH/tdhU3ZkehN0/UP04GsLeDMMrFI8YoM+Gs3n5V26x+qlZggmJYH3C
-	gbdIVHnXuokn5TAenXdTQtiKUUkqXbksYfQMu6g5viZHwXlPSozFsZWysVJQOqWbUTEw/+dBsPK
-	KBVFWuKshOXSmw6Cz9lOBFP2pY5HvUw7Lw4ruHy2Xapa239mIi/QMxgDbO9kzJCmdBXwGhOJNRr
-	fk/CSnAX7WyBHw/iS6ZXdpIF9vxNzb9RSuC4HYm82xUaP3+WHaFXLbrBG7QQ2/bk/SgrgNqSffp
-	cYZhoCi7PEbIcpfOWOMpdK/lGQyWl7yoTX9PHFTmbI7JNp0yoc976vtLYRTendvbKSXtCIWWJ2X
-	fi+omuZ5Vj26iIfnLuSF/tEwlP4Lh4uQ6SRhO3pOd+dTYMygN/1WZWPgpcQKvw4aqI2+BYz11XW
-	sXdLD3FX0T/AxGDL2lPYhjBldV1UrRMr/rGUO3sN7dzoKrzrjEPGeqX7hCDdT71vJJsjQXtKE3C
-	b3k4ckbTpZIWCEo4x6LgVMvnX3F6YVubR5XnoFbbkSV8pifZ
-X-Received: by 2002:a05:600c:c0cf:b0:4ba:4928:8aec with SMTP id 5b1f17b1804b1-4bb4e283f7dmr11079755e9.9.1794435689714;
-        Wed, 11 Nov 2026 14:21:29 -0800 (PST)
+        bh=+tpnmaCejDTdKprdiXgHKHQFYAbbd0rQZxDc9JTWdcM=;
+        b=j2oo6LVvc87lid+P0gWrC9DdG/cbi5cF2s2iQbg+4T93xz9iJragjPIrQ80ER/kMwR
+         eFqE9oi1+00Vg2boQh+vVW2Xnjbud5cbToimxSJYR3w4wcWwNUk7QKhjIZErATnaa69h
+         QnicLxjBP0T0GcmyrrOsHqTur7WLxMrlQRhxl9BLhykTWA2OHIOTyZyphMnt/beuccoJ
+         PZ3/5umI2yUTQukg3EGw/fKnzKrzesvTPNsDyjBGQaoA/mHdZkGnzzMBylmaMDuec28v
+         UQftFSZo2IUKV/YCunyjM3EdNfUm3HE7uU2tsK4gpgnmAGzkq4M6dNZAsZLGAG1hjcoG
+         lSZA==
+X-Gm-Message-State: APuU4Z9jAFbYhSzX5CrAvlxOFof4P2bo2eha+X19BR+T7kLrqtZdzoGi
+	+od2K3ztzfJRg08A3Rf0Rf3a/TGCdSh0yXFxfWF0Ox8zd7GePUAQ7RZl
+X-Gm-Gg: AYBFou2FuyB2OwZ2lC4xAfs7j9VF+27rev+GJ90eQJ8eLFvLplu6XGOrkViZ4RZR5Wz
+	n6xqJJEvcYCeobQaLr9oAttotjhmW6zuUEGZMlUo8j+vjfR2hIxn6rh7BOu+y8DwoGMrGKohqR1
+	iXnh6YlBHtOJs/f1gBuZjHpq5An2IHbJvPT+ZpGbPUo/PgsegX1X/XPiXAU8Uwvcer4aqFeJy0C
+	ULuGjHS/u6dqts03nQ5CtLZ3WzGWXPbpUyK+LneGwZzUbfDpDl5n4c7/XiPN+hYK4F3+KfoMGO/
+	HStrabSzUo1szf8VlORzR5BuWhksusqPvGazQB/4tcQJO/LHY66MWLEwcxBGcJ+BaEOl8pN8O+5
+	o76KXktdEkME1mbfdTvfG5P8AHLtsi/24pE4S0R1TdZf087zra3ASff54NZObVg//nfRWrp1f5m
+	o0Mj/8IIIID2f0AbieHzxcSw85PHUKEFBFVoONP5Rk0A53t6tGHqO3S4FVunjEMhrl9UziLbseK
+	Ber5C2mBUsLZ3trmpLcdFzVCtA/YLsyLLQPxm/5LTI6XcWrP2XGXF4Z5/w1ph0eON/ncT8UYjhZ
+	0w6XqiTiB38WH5IY22FTFoY2z/U=
+X-Received: by 2002:a05:600c:8b21:b0:4b1:32c8:27db with SMTP id 5b1f17b1804b1-4ba093b9e0emr115495835e9.22.1794500490185;
+        Thu, 12 Nov 2026 08:21:30 -0800 (PST)
 Received: from localhost ([5.83.201.131])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba08e35e44sm78893405e9.1.2026.11.11.14.21.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba0951f237sm97155965e9.4.2026.11.12.08.21.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 14:21:27 -0800 (PST)
+        Thu, 12 Nov 2026 08:21:28 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] power: supply: Kconfig: Fix two spelling mistakes
-Date: Wed, 11 Nov 2026 22:21:24 +0000
-Message-ID: <20261111222124.1035303-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/bridge: tc358767:  make read-only array ext_div static const
+Date: Thu, 12 Nov 2026 16:21:27 +0000
+Message-ID: <20261112162127.1592210-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.55.0
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -98,35 +109,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are a couple of spelling mistakes in the Kconfig text, fix them.
+Don't populate the read-only array ext_div on the stack
+at run time, instead make it static const
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/power/supply/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 16d0a38b41b7..1ab617326791 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -246,7 +246,7 @@ config BATTERY_S2MU005
- 	select REGMAP_I2C
- 	help
- 	  Say Y to enable support for the Samsung S2MU005 PMIC integrated
--	  fuel gauge, which works indepenently of the PMIC battery charger
-+	  fuel gauge, which works independently of the PMIC battery charger
- 	  counterpart, and reports battery metrics.
- 
- 	  This driver, if built as a module, will be called s2mu005-fuel-gauge.
-@@ -463,7 +463,7 @@ config BATTERY_MAX17042
- 	  MAX17042 is fuel-gauge systems for lithium-ion (Li+) batteries
- 	  in handheld and portable equipment. The MAX17042 is configured
- 	  to operate with a single lithium cell. MAX8997 and MAX8966 are
--	  multi-function devices that include fuel gauages that are compatible
-+	  multi-function devices that include fuel gauges that are compatible
- 	  with MAX17042.
- 	  Supported devices: max8966, max8997, max17042, max17047, max17050,
- 	  max17055, max77693, max77849.
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index f61c619fb305..3735e8db9e82 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -593,12 +593,12 @@ static int tc_pllupdate(struct tc_data *tc, unsigned int pllctrl)
+ static int tc_pxl_pll_calc(struct tc_data *tc, u32 refclk, u32 pixelclock,
+ 			   int *out_best_pixelclock, u32 *out_pxl_pllparam)
+ {
++	static const int ext_div[] = { 1, 2, 3, 5, 7 };
+ 	int i_pre, best_pre = 1;
+ 	int i_post, best_post = 1;
+ 	int div, best_div = 1;
+ 	int mul, best_mul = 1;
+ 	int delta, best_delta;
+-	int ext_div[] = {1, 2, 3, 5, 7};
+ 	int clk_min, clk_max;
+ 	int best_pixelclock = 0;
+ 	int vco_hi = 0;
 -- 
 2.55.0
 
