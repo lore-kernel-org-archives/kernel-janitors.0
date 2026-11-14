@@ -1,66 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.17.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794654771;
-	b=A0X9h1QlB5QZ4H64pP6eURxuSH77ZDNVy7C4DDvM0u5O/dar8LFAb0wlMKlMDHC3wkdW
-	 PRYqm+NjcMVdV+AZDj6qyjvf3b5p5nqkYMAgpZB6koAyg3Mf8HKjnkFc3xNirBHuK7q4Q
-	 3KoRSUvVnVDrxUgqdrWmg3RjBbwiHelh+vW7HkynzCL3vew2S4yroUrzGXc+NGF1GjKcR
-	 5/dqthCkOPsc0qjG4SeovAZMyUsb8tvJzGFaNbzEx2RcqSq+/dgErwQFetQ8qY500UNTH
-	 4E1RSWi5CVBuVtHhyPux7SBWPJwsj+mkuyxGiNUEEPmQ+IbH4jgObzvjMlIkicu+9/w==
+	t=1794673748;
+	b=aXuvRNK3q0NJAmhyzJv7408G5uASXGcok15GmI1OrSNUfx3YHOgi0wjt+4zgCpwUCxkw
+	 JR+WEh4qaPTiAAmvdMt9xutD3THv76T2Aya5wfIrworY2lNi0lVC0udEE2Gg/lxuEwSQ/
+	 sCZn9uj01pemI2HuQoY8AUbUTAGxHUMLcDidUi5+WOlTP1P2/4AMdlIkOS5U5kEX1PEnc
+	 rNOxmRvWC07jSD+W5Zor8Y2ENlGKxcABqkKckqmUBdNaXgFuxAO/8NYh5vODRoOtLA9KX
+	 HDO1of6m0Ub0rU0+SBErWoZVqJjtJKGHr14QG6WeTDUf/Mwlj42ZwFhZrfItPJk/pxw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794654771;
-	h=DMARC-Filter:Received:DKIM-Signature:X-ME-Helo:X-ME-Auth:X-ME-Date:
-	 X-ME-IP:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=jtRTlOwAW6qNluT+0hJWliZd5nsJOll/aiURD2BGJf8=;
-	b=GcTNBU64G8IsAJs/BrFxmebmyjGj9niBQMEmgtzJj94qnPWntm84Fk5rxcqNV7ahiGQ5
-	 DodvS8Any8A+MOTpreApzBzGPWYWvECNlk4FJwTnEANqjQnQihCN49eZrxNhxGkSSofKD
-	 9KiBoXtj7QWdHYG/C9myM6dj7guPOQ3HJgs6T7CfBfbdl7b3UxE8q7qTqLnLwkLEgzHRe
-	 5SuNz+EMNZ1G4LhzUnBoX7v+9+yK1gjJ3nBcj+HICfTJCPtw7DOr7mpE8CwmjUkZIEN9q
-	 zcr6WHOv+8ttLww6xQMZNmW/DXGhgJst486E1t9jYWDEs6P2P27dFpnl/ySsXZpij9w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794673748;
+	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
+	 X-UI-Sender-Class:Received:Message-ID:Date:MIME-Version:User-Agent:To:
+	 Content-Language:Cc:From:Subject:Content-Type:
+	 Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
+	bh=AcPZdHRdSNsPahoZF47dsbH78l7FWuZxfz//QqM7BiE=;
+	b=2Pi/J1mzm63vGSGQKJWgwDmTk9jMS3ydqmzMjUlV/E78Zev13/Db3AZ5dIJQODfYj2ee
+	 rEJxATD27aNztc4ziJ2z7JIUPqsrliXZs6wDimQTV4R3KFoSmusm8GWxhwm5q3kf+62Oi
+	 p2ycGmgQSYealmLxFpWDHoS4xSNru+8C1B14L6e7Cb5Iue2yF17Fw95L8u88VFjOkyAyD
+	 V0IGehDPYNR5TWqWUCCFFwHthOIPPSyByTS3RIvMuLGwQbqjMigfITUwogTnkOqF4ePun
+	 DVnMaKVV39sajRFCPNiDi0e+2TODInTMO5qbikGXc/eyblXQyl5ZaoY910CkUklNovQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=wanadoo.fr;
-	spf=pass smtp.mailfrom=wanadoo.fr;
-	dkim=pass header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=I2QsGSha;
-	arc=none smtp.remote-ip=80.12.242.74
-Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=web.de;
+	spf=pass smtp.mailfrom=web.de;
+	dkim=pass header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=bBafYCOL;
+	arc=none smtp.remote-ip=212.227.17.11
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7FD606A8AD
-	for <kernel-janitors@vger.kernel.org>; Sat, 14 Nov 2026 11:12:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0C7FD606A8AD
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE09F606A327
+	for <kernel-janitors@vger.kernel.org>; Sat, 14 Nov 2026 16:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE09F606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=I2QsGSha
-Received: from 2a01cb1007850b0026fbaefb6cd2db0e.ipv6.abo.wanadoo.fr
- ([IPv6:2a01:cb10:785:b00:26fb:aefb:6cd2:db0e])
-	by smtp.orange.fr with ESMTPSA
-	id SBgQxWi1kXusXSBgQx6wwL; Sat, 14 Nov 2026 12:12:37 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1794654757;
-	bh=jtRTlOwAW6qNluT+0hJWliZd5nsJOll/aiURD2BGJf8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=I2QsGSha4kfIsucYzbyWjniAnLLrINRobtIK8GtM+aGCddFpSyGQzBzldSqdlyqru
-	 0DmXsgjQVi/T5UFekVkRfRHMdzVfagNxeVYvEl1FNLg27DcqfgVBcb5K3ysV+w40gO
-	 tvqUyAwQFhKtiC21fSP4nqiil/oXldtgonrQW5a9ehw4h2IagZ2s5KWSrs31XytVDs
-	 +8tFqHKd7cyC/ijF+jagV0PQlA9HyEvldQbEohcGHAmKahFL8Um9qr6rhjuksEEkc8
-	 ry+aEF8uhalAmCJ/850TTkQ2pnbACwKoCdAswapSh/YRTT6R3UUcCoG9U/zHf4CouY
-	 lZHApi0pBbvhQ==
-X-ME-Helo: 2a01cb1007850b0026fbaefb6cd2db0e.ipv6.abo.wanadoo.fr
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Nov 2026 12:12:37 +0100
-X-ME-IP: 2a01:cb10:785:b00:26fb:aefb:6cd2:db0e
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Matt Porter <mporter@kernel.crashing.org>,
-	Alexandre Bounine <alex.bou9@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] rapidio: Constify struct rio_switch_ops
-Date: Sat, 14 Nov 2026 12:12:24 +0100
-Message-ID: <c98fdb4e3dddd0e45adbfb71cb41d1a64582708d.1794654717.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (2048-bit key, unprotected) header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=bBafYCOL
+DKIM2-Signature:  i=1; m=1; t=1794673740;
+ mf=PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4=;
+ rt=PGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc+;
+ d=web.de;
+ s=s29768273:rsa-sha256:G8nJq1imGoXkMZBW4stbdrsIW+V5
+   RFaa0LF7iP7KpwE/5xurecXEbnE0+psjG/ZFJt8Pn/62QmaHDmfjNx5ZuJO1EUBt4nGwdp4rOYH
+   5MI3EDQbOuHEOz/xZEhbO9KUDsKGGgizaIUVL3ULBEfTjo7ABwGXyz9LhsKV0Zmta+xKUqek4FR
+   NdAb5sjx+OHzXhfoUyX6rFg3gQ6kz1KD4NPVvjeRHkSacfyIw6JHrrLaOw0UzntRPSl2S4yEDQa
+   uQY4adiqHwYvyhuUdM0FdnaQykD7/AdKJOIu4KOCQyGTZniKejfNgzKDw3HKRSCXzdVLu4Um/68
+   5Pn5iidhtDFWRQ==;
+Message-Instance:  m=1;
+ h=sha256:
+   LmZJPrMpy+1Cb3iUbcjNwR52GKcJtrcYdk/mcngl/nU=:
+   PDy4DKtgXQr5TwZ4DuYRHtSIuKhXnqHzeanv1sSzNBc=,
+  sha512:
+   qlMBq08OZ4oYBm3K0p2TnZDUgY5iO/Vb+sHZiwh3Yyvto2Z92Bu7HQxdFf1TXTViTl9dJBeaf4JoVPWix/QGMg==:
+   x4vAremxFZ9qbjCjk0gISaOW+iyt5r9vFTdeGjVlfoqTPzYa85LQuC2UMUnSoFJ953Vdb3J/QnnTBxv2FlarZQ==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1794673705; x=1795278505; i=markus.elfring@web.de;
+	bh=AcPZdHRdSNsPahoZF47dsbH78l7FWuZxfz//QqM7BiE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bBafYCOLWc7Ht3/Ds6IebAlG70CcFwcoqu1ghf8A0+B4ofAmmhAiXYzyO3838mUy
+	 wgG/MaFqvFsW73gSg62CVqqXYeWxUjD16JWdbwabUReK6NwjF5EM7aHZSnMywUsEA
+	 YyaaMYMq50e1aq8SITJ2kXJEkXeTpCIuw6Z85KQj93UZ6M1iAZB1FRtvDbEmvtrCl
+	 vaUO9bM9b+y2+CJ3STVThuasSoATHeakDMxryFyqIfWr+0nMwGoLEcndRMG8q0l6e
+	 bhM/J9rf0ueFr/uiMvFrh50b25G0HFQMWFD1s2zAZut+/fuh1cqXE4Jsl+n74n2M/
+	 4JlufIjQyPcmBsajog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdwNg-1wua1X0ab0-00aMcG; Sat, 14
+ Nov 2026 17:28:25 +0100
+Message-ID: <bbbc7228-cf98-437d-b240-ad29ee7fb4ac@web.de>
+Date: Sat, 14 Nov 2026 17:28:19 +0100
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -70,119 +79,186 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-aspeed@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Billy Tsai <billy_tsai@aspeedtech.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
+ <linux@roeck-us.net>, Joel Stanley <joel@jms.id.au>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Ryan Chen
+ <ryan_chen@aspeedtech.com>, Tan Siewert <tan.siewert@9elements.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Felix Gu <ustc.gu@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] hwmon: (aspeed-g6-pwm-tach) Use
+ devm_reset_control_get_exclusive_deasserted() in aspeed_pwm_tach_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1pT97BuWi454FNKaCo2ZE4Bc56WgZ5gBMlF9gSjUzfe+zn4fDt/
+ e2A7Xxvn5powU/en6gXeySeZEG2NmB/g42UDu6jUE+nVYsLteujMe5ET5ETNJkp/BVu9ZD/
+ Vb9etjAtlILvUP/cD70xF+ZnU/a0NQYUXwHv8+kJJ6RQbZixWqKZriVLDhNZYyg42elOiiy
+ BmpyAO3RXbYTSEYgnZkIQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uAtSn12W8Po=;Sk064MOoP4g3u8dTl3sxBouLnU0
+ 0RRkSvX0uc5RUCvGEYzMQqN3klbCUCry43WMWue1s6TZapfjF8aP3NcNeQopdRJ7RR1TT37hd
+ QUOicFUtixGA5PMfVdWgNwCZp5iYRqjK0wpK5AuWvn5gj05zQvxof/v0BRcbs/E7mmsTC1i5L
+ I0v0oM8R6fmUH0VDqlgPGEQOTVEE5UwnFkdh18HEqPv8jeHYrdJM8KupwFrAX7DSHoB+nvgaD
+ LgnVM6oHVnQ+QQrB1jg/4++BRnaHqwzK7uSkF+pS0XMTXcvQ/oqUYJ+851fJ/VnDiQ1gsoAb/
+ gGAYEpNc+e71BEod8mRD5mmtVZrMuGVwdaWRFDgsw+3QTzRZJ3UKeGu+N6AjLG53XiXXUDlJx
+ UKfBh2ZOSq/cLBFV8V9R7DBd5FwP/MBPSoQGXQ8RvISW4t6fS7jOtzl1A9X1oT4RygNoMIo02
+ /mt0BgX17HC4H4wjR/aamnT32DkrxrJCVkDmFuOlTGvdaDsZCMoFLf/fFRHWEs8NUlOptmS8T
+ W2lk4rVZsSeA8J+euyp9I1Hf6oGV5VHmLUzkHH7hfbbqZv5OrW94JxpwKFrtMnTgAEMde/Ew+
+ a9LbACLUKyQIUuwnVc0Vshf5vrrfxCNuGC+ySM8iu0lsEcM8nB464YILFxi2FGX/ihDebedI1
+ 52dmRqPsDWp/ErInGdWpaIgYjEktTQcUif6qQ+WwBYhscVees6PPG1Hc8oURUwnb6SdMBgbIm
+ 2h4tMcgQJrsiD83BqUiL6XIDAvzUr9DpXAo/bybi4gycLTuAMhVGYNuVgO8gVd1H2qklvUl5S
+ 1fS3Kg7rh9/GxRja8DEkYpis+ES3VdLmDMAAA/uGr/Dh061KmSAGn7NOBJ9vbVU1m4cVDXeqE
+ LEThe9eSfcUUpsWzdYv0bTPoWPSzPFF5PT+ZjHQNW2FFZdb36KNAV2VSmc3lbAxiOlJiG4imI
+ ZJILQEgLUrMA35/C6XapNt+ns/1VzlpmPPHL8fzB6BYv75f27db5Twupd86iAhc5xrr4fSvcm
+ qXOYc0A3c86ivPUF0Uzr+hGIYnLZs9rJHw6oLGebOdq0udnJZVkje+GEYLKXAdY6Sov5B0pwj
+ j4HkchUi44NtckLREA1PVmwL//0NFXeb2OSTbPAefeeohNypVMLA8YN2qNKswiChMrx951HaQ
+ N8gtnCpFjiOFLkQLdQ3+kguI9bnjdztRUjAG3m6Vy1jrSTlrtojVrplZBjKnVEDfj8fgz/nQ1
+ BmZiiKS9aZLiydBtm4/xm71TBopodWEPAelJY+43wcHekpgQwBUGrtMveJNZslKTnop/MlfOC
+ BcH4JnEgCu9Ty771lwx3VFNJ+8HEe0MBSIIAnyXkzxETGFds8sTFqlgBeUY67XHU+K6oEGEqr
+ hfIpA3xmnXwQPoPIXMGnvIwiANobalN7OUbbF4IwV6KzZbwQVkFG0uCHNFXO8iFTenZvm3EBr
+ ZKXhDEOSOoGPsKPY9FsAWD7uk9BCrCd0aKPAwotyFv5/SpNWUUGg7pia7tH7igRRzYWrcwIMF
+ cqkGmzdnKXLqsvthxyTX+XCdGoh86PDmaFUADXvD9S5AP4HNe0elja5V+ldhk0hGIH/c/N+uW
+ aTwzLyaMcAzlSt8RLEYgVZhPCyFQ1o7ckX1en1zSEgqf8cRSpy/Gsng6o9s6BedlPXo+glmBN
+ h35IvcSyJdEiewNXZa4CBFl61xYA2nrztfRdVrLiTPuyRwrlAz06cTxck8z6ENedvCtK0Wamp
+ rvAKhhtqwlALfsk64CyvNcQOj7vwfbKRtPNRy35m4b3iTCFcuy3FDLJ8cgXgdBSYMGXPGhuC1
+ gYMuQP9cMN3K34Leymu6mKjIOyw5uw6pEtJpxpMRd/t02PZx4CA7A+IpWx3jgGOvgReRF5kPO
+ eca2ikqB5SmALSSqllabWqDzql8fQSgcE3PILRtjDlKcYyO/3NYcunb1XGGDh8K3AFpKFkHLY
+ LJq0MiDpye4XL0fr8FlkedNtnGi8mdOnhaAq59P1wvqKbxxvrJGGtLpJwfl3RXfGbQ+SgzOsK
+ uVUQfoDlyhMen9N9MSsIf3By/O6xVOJU37VMyu56vHgmrPXY98Zr1DkH59yoA/OZRAK/rJAla
+ sAlhKErlR5l4+zKBTsQyb33YET2HNRG9IXcrlx68U3tphEduDIjkowuONkdQDw1SAYunNDyl/
+ T5JqGL1KKWgLZQFpBI7AfpRyAvF8eaIjNLm/eRfrROh0RW7P63Lx8pbSCuVp6xCE2Cs6pndlc
+ jWSQCj7VhDspFOogFvDEyNInZAJn8Ou8oELmbrIi7OeMEDI0pX8IN3OxFlVkpP9+Ycr4j2b2J
+ doy3JykHlF8hPkc8nw2X4vsNCz1V9NnlujlXNVJYG+viFV1itrci9WcVPw6r2anj1YdN1LvfA
+ 3Mnlj3mV08jLIzr+2I4EqtVt+4+DwZD2GCj5uJCc+tPhYPWt3Qw/W3T7EYMoUiHBWWULug0uB
+ omRYGHO873QmolnVuLdWCm4vORcZSkKVTcabVUl0RgCqRAED2Vn0jnYrRe00iYy1x7k6uOHUF
+ ThfkNG1RuK2V2cIMTM8B5L3cUFA0MHBnf7g3rsOgff+1NBtBXknF6PVli0Pl+kPQmBUm42NM/
+ 48CI8mbuvq37buammjiq22z6zqGTMC05JY3Ya36LCNV6BiB5H1zlWxalD+6ogotyORVEhIS/Y
+ kNmzliTblG7I4KHHvjt14iAGq2dEZ5ENIk+ujb07VTZvX8eyAFOqDn6bIPOD6ew6Ufda6NTmg
+ HzMmy/KWbgUY3Rj9367fCDLC2+0Nv57a+4g25LCSHrnbKxucbSaT/vz6krfDXhd06ARJ3LpVl
+ hKSuKqUr/CMTZz4Cvncvn6TNTZQ7xDzw6GfyCay7mxMB1oKIUtcvOhSiDFRaE40RZ8nEXrcU3
+ oBTdr/aIooy3I/Q6sMFYTMQChOqzQw5jnkgv/bcidgwhXB3KIfr82thWC9nOMmdVch3VGZ6NJ
+ GkxtBrbr7BoR+jZjhnSlV+sm3cuUJ8AnRwc6LsALrVU2DZOC+X1i1G+eY/qiAH4Ox8WdnlO6q
+ z9jKW4Z2VY2deFhHE4GJ6DrJ9ie+g8Ttltl2dvgxpdl0n2/jTYCbZSzKHrTBDymhd9HLDpL6M
+ oTs11V/ICJvoNG0OgcYmELKXU18F9VMPdVeGKeBqLdArJKnx3hJw34ixG9xn8q2qRKU/5bJ2h
+ lV8C37Rq3oY2Tgw2zyy3LB6v9fBHKOme/Vutq9cbNBczcsmz3oBxzflwq/t5oW8NyE2Od72R3
+ Iw7u/z0OyyxtCyReNeKpJHNpekvWKMe1EN/28GJ4KcV2DSVeCvlSSvgmQlKDS5B7I5EuNpLcC
+ y7KFoxru9/81hISPoibQD/F9sLbh4cgqUPQt6PRKoG5lyqjYffUmFoTnv+nU3jAEePWcwP0xy
+ ElPFsiX8ym8J1qB7WXroFsePQiRBEAOXauv6Lov+2820EfNvUTUCMEC0fQOKvRBYy3MGrQopD
+ 3hwec2z2CMiChm8y2/lbwOuGdrFv6JmBtzVS9BTuXH/05xckKkzJP4bxVBfKuVWXEZno5kQDf
+ X28FLPukRx61CKfjzV1ApakfOjHFtdy2UZLxxXG38r5VbwlkiLFVx9mf46xzOlZFr8ZnrW3Mn
+ Rv4fIB4NXvXSriV8acdKPlhN2evZq3D1+a3nm7deYyBOE/XU4krB1mqY4vXoXdmolBAz810jD
+ P+jVDFQpEGTe64bezaezpRwFZ20oWxGytdHF1XvqW7qEeVVjE0yrIRxKyoX99MmKuECg0nYTA
+ 4YIoxspkkKtbK3P/mPMTuPN3HgoW1/WXXlk0LmHugMWo+AfdUxqZfq6iwszE12/HTGNTXnT7Y
+ StH4GNmxUNi1bi/7A5JqfDE0sbxcqEeScZKB84EuNp/BlpvugWP+jZkMrSijHdfoKKIVNMKLS
+ YJSf14NOhx/lBRZUI9MgSTJbHpu+Iq9XbBfcU725P9kBkomSLZ82a7hA4vDbNMyResgl6DyiY
+ XqMhlw5hhGLfBQGFv7bdomUDvDgq/K3JZ3Tpn6Gj0d0gq01uLIEwNxn5WVYjnM2kVAmCliOgn
+ 6Bfif+rwagdaCVW9EbNMhGRrnZI3c8UHYbmJghEOa+vYblVWldteKY+TQLdr2C53j/LGbmBKR
+ C7jEw4I++qjJd7TD1sBmZlUJ1U/HFzIq4o4K7rph5Wn0cu3wFtGbkfpz0PyJhjH3xLbOcBFgH
+ zRM+IJWJ69QvC+QgoDtxdbjWC85Y54bEBbzwJDyH2AVAJwl7g1T1RrZuofTDPEPfgryO8xDvE
+ JX04biXNqWpvaoa0fc/bTCby1+nKneO0sgrMK038gihx38870PECa+jkNRcrjCwFuwWFbgfq2
+ bEAerSXjmHkVQgSFWIieY/ZrPLb06GJR5UJxaFPFaoMLW6w5yof0PYeNm2ABoJJH/c8703sYR
+ DG6Yjc505TL5VT1juo0kNhySQmsLzxuXm5qzlF5W9pTxzsQl2xS0MFBl/+eaU9hEvX3eeCl4W
+ 6RDLahIS7ShOPrB/D60aJqz4KDsE83rHZ4ixtRVs+pKm/Hzwjm4uGUafvaGeREwgO5IjFzGxO
+ EkuzgdrRkfbFpIK4lqjvzOYQ2tOLT5bawPm5T/GNK5hbIamJ3wI5/+jy/vrue0m18xJ2lWGli
+ 7uHVVIOdMo6D+GI8Mw0o0CUDQhu0tZyj7rFsrazZxZa99l4qsqzKWK+tH1O06z1dFCplDXju/
+ AA3YLMu8y6QjvgsSevXBPKcd2dEyIMDsGFHZ0o55JUri3DbstCnOUM3XY021330Zeuep8uAV1
+ qFQ122qFf5/C4molK1EhU+yHSsgdztBHSmNGjRlq2BERnyXrwPtvIgNDvP7WNy7erpwPyxL0r
+ uwH97SvZURFRkOC6bp4jVHM8vuRb6Aa2VT83O8yFQA8y8eJAfcqQbWOwFtke8ZsYae3JhfKo/
+ fdphqHckTAhp9oY4Y5Sm2m/Ss7oA+u3NXThjsO0VEMjJAeo8etiROsh9RVMwewMHDbwtnKzfX
+ u5d9n5SUdPfgPAaNz0Vpl9TQaI0jYqG5Sh8tgSWfq592kf0wQDtajfFhgcMmLHszREbYL9P8o
+ YMojEzd97INZuhYHJ05a+M6Wdm60ZzcwN+oDga1kv/rc8+ySPgGxiYEF7PyAJuaTIk+5G0Ov1
+ QVmT7YGGPXTO8KjXUrfwwrSZT8efroHKXE668/iZf5uHyfb3KusKfBFTbkzhxlkFDt/onQeuz
+ O3RFVCFzP83Zhe1JBsCuGwOC9Mtw/4LQ3RHxEWGrHxSEihbOKJJ8bZPUgRNigiEYTyjCvMS06
+ /vadFWmP7ViIfT/mdKtlt0BasxIcaoUoctyY9up9Kk8Q1BxYviK4Ch0DEG05MCwa1pmix/OmI
+ gYPtLCj/AegPl55OXYFqGdoMdHRO6vwOoB+DvLLK4hG+MSKZYwKVT/vNq+kNij40wLOKTybs5
+ F1iVHn0dJ9xm5mzzqkFLHzwxJfKNRHy/eJ5KIamF/jSeZMPV8p2ybd66FHA4XYk+IU0iLQLwZ
+ MoFvaFjQi/8IaFSQ9VvdA7jv3EvrOEacLG19ey4v7UNQsvWTSnwQbNxzGxzsh4KAlrv0f+Uvg
+ tvvZ3NwgidRhggJuv+3VR09+a8kWnxnxYN/MM2p+Hoh8ok27wMYLxZtdi01duUJr41L5OG/9d
+ ilN7NFLsz2igFoFa7/WTy9u0t4YA6/b8cQr97qcErXgmchOVDyCmWK0c+g2rZQ9P3ih3N1eUj
+ be3nw5gnStCDOrJmc7iVM947b9nHFI5gEYe5As7aQO21rveF0N5JWxF1udEsbyPd5hkanWOzM
+ BMy9e5W59Y0PxZKXG4I/OfuMC5ZnAdWxxXS7ZY/t3nXrbALQlRGDnSelKZOSWHZYOAVK4Myu1
+ 3E4lkrF84lJiJDmX1YKCyoVCZjTzKpSWdUSwo0ebK9SiPkvbWvhwS0rSiZSvch7c9dpzAL5TP
+ sMoARDr0Ygtf63s4yAAoQrtDb74nZPuo1T+bELhk7GuVopTGokWjayBExcBmQtwU9VuUB1XeY
+ F0/C5pJS7ON/7/NgxjvpDzwnkRhxyeX7z0IbcddcAh1Qp0fYHUhliJEvZScM/J3K5tFIN6C7e
+ p/866VjRfi6b0sKWmlz7Pzkxu+yZuIyjGTop6W5tWmFSv6YF+OpNcc6ULgcFCkXF40FozWMBr
+ mnXFNEGgzlj9C517calOBBykYfj+2n4oEBaeAGQ14GMOpYJa4YdKAc3VyTlU2kFbHKvrJSoBP
+ OQxukk0i0oNuzMe1OJqdaqiLhNFY2GZUG7PKJNBJSSWkKRBm0D2NFgM/M4SeHU7rdjvyyre/8
+ /KyeIhQ6WIywq/Rw+0se0ErzKiln52vaimpWzkbrfVrtZLzJDTnUxaRmfSRhG0/jg12mx0LRF
+ 0avP0cVcFMJN7XX2AJVtvCy0fYT1a9l2d0Y6CG/P278Sx6nOtmpAUcm+a7YNTbjMdEr6LF744
+ cvivO8YBhY+6/2Rxq8oQP36SOu2SgZlVXN4FU96b2JkZOJLuGhF7tWAM7I3RhPX7dQ74GLvBg
+ V88MtVLfnAiIrJgarCV2b3bmAxfGMN8Le1lnA4lxyTQjHl7D7uCdDT1CVF7Xx5nq39nTGkOo+
+ DYXOiN3vFSg8aNcRuLB4szzHwk1pCzAt3kFX6/wN+K4XSG7lHnQzJiZy8Vve8XvG7W8BjwIaH
+ +irCeVPk46RaqvHzQUp9cMNSLP/3yhD4wpysd0Va9tUcj4AY18kCUcaAihwP5keTEtg7uZ/RH
+ Di5XpgThu/Nefqlu87/VQ3tv0+ytNffXxUH75UtDQPDLPFwS+UAlrhWFgMCTCvRzI7BqwfT+/
+ O4D11r/xYVFNFCJGuqrtKLKVlgG5y2Z5RMLrZ7LEk/1OTSks/0EEwEdmDXGDWV5XlBNokLQzg
+ HEMHk9K/kZxV+NiZOVWlR0joc11HbjfywbEc35zcXJdkKtUtDk6W5dIC5ybu8vWmvAPkUSamF
+ KOiPpniqF+zZnmQNTfbhkK1h3m9vCHjmlmfSowIu/vI0IZY0myE6I60cKnmVi9C+WnJkbqMd5
+ 8YfZ4XPDjpfqzgBblpkgqAx4BS9uqe+mikhznoEhD3yxDlRFGc2wCxLEZ5wH
 
-'struct rio_switch_ops' is not modified in these drivers.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2026 17:11:34 +0100
 
-Constifying these structures moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+Use devm_reset_control_get_exclusive_deasserted() to replace the
+explicit reset acquisition, deassertion, and cleanup action registered
+with devm_add_action_or_reset().
+Simplify reset handling and remove the custom reset assertion callback
+while preserving reset assertion during cleanup.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   6365	   1512	      0	   7877	   1ec5	drivers/rapidio/switches/idtcps.o
+The source code was transformed by using the Coccinelle software.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6461	   1416	      0	   7877	   1ec5	drivers/rapidio/switches/idtcps.o
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/hwmon/aspeed-g6-pwm-tach.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/rapidio/rio.c               | 6 +++---
- drivers/rapidio/switches/idt_gen2.c | 2 +-
- drivers/rapidio/switches/idt_gen3.c | 2 +-
- drivers/rapidio/switches/idtcps.c   | 2 +-
- include/linux/rio.h                 | 2 +-
- 5 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
-index f45e58b0971f..7df739276a45 100644
---- a/drivers/rapidio/rio.c
-+++ b/drivers/rapidio/rio.c
-@@ -1615,7 +1615,7 @@ int rio_route_add_entry(struct rio_dev *rdev,
- 			u16 table, u16 route_destid, u8 route_port, int lock)
- {
- 	int rc = -EINVAL;
--	struct rio_switch_ops *ops = rdev->rswitch->ops;
-+	const struct rio_switch_ops *ops = rdev->rswitch->ops;
- 
- 	if (lock) {
- 		rc = rio_lock_device(rdev->net->hport, rdev->destid,
-@@ -1668,7 +1668,7 @@ int rio_route_get_entry(struct rio_dev *rdev, u16 table,
- 			u16 route_destid, u8 *route_port, int lock)
- {
- 	int rc = -EINVAL;
--	struct rio_switch_ops *ops = rdev->rswitch->ops;
-+	const struct rio_switch_ops *ops = rdev->rswitch->ops;
- 
- 	if (lock) {
- 		rc = rio_lock_device(rdev->net->hport, rdev->destid,
-@@ -1716,7 +1716,7 @@ EXPORT_SYMBOL_GPL(rio_route_get_entry);
- int rio_route_clr_table(struct rio_dev *rdev, u16 table, int lock)
- {
- 	int rc = -EINVAL;
--	struct rio_switch_ops *ops = rdev->rswitch->ops;
-+	const struct rio_switch_ops *ops = rdev->rswitch->ops;
- 
- 	if (lock) {
- 		rc = rio_lock_device(rdev->net->hport, rdev->destid,
-diff --git a/drivers/rapidio/switches/idt_gen2.c b/drivers/rapidio/switches/idt_gen2.c
-index 8a89bba17d39..b1b58a4a94bf 100644
---- a/drivers/rapidio/switches/idt_gen2.c
-+++ b/drivers/rapidio/switches/idt_gen2.c
-@@ -402,7 +402,7 @@ static int idtg2_sysfs(struct rio_dev *rdev, bool create)
- 	return err;
- }
- 
--static struct rio_switch_ops idtg2_switch_ops = {
-+static const struct rio_switch_ops idtg2_switch_ops = {
- 	.owner = THIS_MODULE,
- 	.add_entry = idtg2_route_add_entry,
- 	.get_entry = idtg2_route_get_entry,
-diff --git a/drivers/rapidio/switches/idt_gen3.c b/drivers/rapidio/switches/idt_gen3.c
-index d7537e62119e..25d9c710cb49 100644
---- a/drivers/rapidio/switches/idt_gen3.c
-+++ b/drivers/rapidio/switches/idt_gen3.c
-@@ -258,7 +258,7 @@ idtg3_em_handler(struct rio_dev *rdev, u8 pnum)
+diff --git a/drivers/hwmon/aspeed-g6-pwm-tach.c b/drivers/hwmon/aspeed-g6-=
+pwm-tach.c
+index f07c9a036b69..a26a0d48dde7 100644
+=2D-- a/drivers/hwmon/aspeed-g6-pwm-tach.c
++++ b/drivers/hwmon/aspeed-g6-pwm-tach.c
+@@ -448,13 +448,6 @@ static int aspeed_create_fan_monitor(struct device *d=
+ev,
  	return 0;
  }
- 
--static struct rio_switch_ops idtg3_switch_ops = {
-+static const struct rio_switch_ops idtg3_switch_ops = {
- 	.owner = THIS_MODULE,
- 	.add_entry = idtg3_route_add_entry,
- 	.get_entry = idtg3_route_get_entry,
-diff --git a/drivers/rapidio/switches/idtcps.c b/drivers/rapidio/switches/idtcps.c
-index c825728eb0ee..ee34b7cd41dc 100644
---- a/drivers/rapidio/switches/idtcps.c
-+++ b/drivers/rapidio/switches/idtcps.c
-@@ -115,7 +115,7 @@ idtcps_get_domain(struct rio_mport *mport, u16 destid, u8 hopcount,
- 	return 0;
- }
- 
--static struct rio_switch_ops idtcps_switch_ops = {
-+static const struct rio_switch_ops idtcps_switch_ops = {
- 	.owner = THIS_MODULE,
- 	.add_entry = idtcps_route_add_entry,
- 	.get_entry = idtcps_route_get_entry,
-diff --git a/include/linux/rio.h b/include/linux/rio.h
-index f42379775ce8..b7c10f3ef275 100644
---- a/include/linux/rio.h
-+++ b/include/linux/rio.h
-@@ -98,7 +98,7 @@ struct rio_switch {
- 	struct list_head node;
- 	u8 *route_table;
- 	u32 port_ok;
--	struct rio_switch_ops *ops;
-+	const struct rio_switch_ops *ops;
- 	spinlock_t lock;
- 	struct rio_dev *nextdev[];
- };
--- 
+=20
+-static void aspeed_pwm_tach_reset_assert(void *data)
+-{
+-	struct reset_control *rst =3D data;
+-
+-	reset_control_assert(rst);
+-}
+-
+ static int aspeed_pwm_tach_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev =3D &pdev->dev, *hwmon;
+@@ -475,19 +468,10 @@ static int aspeed_pwm_tach_probe(struct platform_dev=
+ice *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(priv->clk),
+ 				     "Couldn't get clock\n");
+ 	priv->clk_rate =3D clk_get_rate(priv->clk);
+-	priv->reset =3D devm_reset_control_get_exclusive(dev, NULL);
++	priv->reset =3D devm_reset_control_get_exclusive_deasserted(dev, NULL);
+ 	if (IS_ERR(priv->reset))
+ 		return dev_err_probe(dev, PTR_ERR(priv->reset),
+-				     "Couldn't get reset control\n");
+-
+-	ret =3D reset_control_deassert(priv->reset);
+-	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Couldn't deassert reset control\n");
+-	ret =3D devm_add_action_or_reset(dev, aspeed_pwm_tach_reset_assert,
+-				       priv->reset);
+-	if (ret)
+-		return ret;
++				     "failed to get and deassert reset\n");
+=20
+ 	chip =3D devm_pwmchip_alloc(dev, PWM_ASPEED_NR_PWMS, 0);
+ 	if (IS_ERR(chip))
+=2D-=20
 2.56.0
 
