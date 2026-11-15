@@ -1,108 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794676756;
-	b=4JhGjZ7DtrnAhdrY3f4AFeqXgbSpSWURedkIYsU1/EFHhSF4tnkxAXTdeRczdnHqs+SV
-	 WaSW6Cd4t7szXb4hl5Im1ehY1A6kTZRXocr1UllWhChG9/mdHzMH0XLiVRXLSgTeXcaQb
-	 Vclm4VIXJKZFNBIw5HMj9RKrt3geClzLcZFiZJtA0b5Zcx0urdfhJ/RsNGf6PRwBf1d3U
-	 5L7fVSi/HFMYEP3cMsexXjoFqom5uN0pcHJqMrhQZxJS5CQPfUKCWxI8D9XcBr062BSf4
-	 csET/rfCa+oX7Ij55HwSuDUvMlub4jVgyp4j6c7GxhuGzbz6WnxGpyONuZjPuh8jVcg==
+	t=1794704979;
+	b=14TSXLyHfuF88MMEAYKXqts1Y0Ij7WOuFAKtpUDHjBy46C0Lt46ZW/uTQ58QM/3KZgfz
+	 Ee7U5ghQp7IimVm1u96s5otPM+yoW/HH+F5tgFNlhUpi8WsWpdk4y8ADP4epKhVz1uJQP
+	 2BUxNrQmRYw9d7d+sMnALsmdp/c4Sd0QMpW6FE1S85ia1G6+FNpimhZYKQtZd0UeIQ1aY
+	 eWqaRIqDRDLgFaa4OW1G1KJwJIJ0g4LUSiVwsdcByaD3XXhTorV/EnFMr4GlwKnysxGts
+	 H7s7nY/+t74/XSODLZYoHDfHcOdo8YkpS0V3Ej9nrRiQ3DlJv/+4Wzsz5tgz32HnBxw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794676756;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=YTwcRMSWQ/WwFbflIYFwTeimqUcsUNTJOHfLHF8Dqo0=;
-	b=CfwzDe4J6Nk6EYLoul85JR8cxkyvKq8PNt3yaDVbhDCYETcMidjTwRZu8wPb4g/AswBL
-	 Ee1F8fZCO+43WtVBvlzE0f98kmdUeFPC3399HVadnDzsrDXnn9jg7wQMtEJ15vLXft8aC
-	 ZRgcNDO14WM+ojNh8aY2By4zC5o+jKNQNV2xzX0OBVTTqOx3ng9OiDQsO/t+ezmzvWOAA
-	 mCJXD6/x/CwUP+5RZgWx/feK8EdmCi2qWgI9KYi9atrw00KiXV97MxAxv8XzEwss1yU7m
-	 k4wc+ZEYuFyE+F7Vn71Ac6eq5T2b61dSbMhFyt8Xx1l4T98pIRgCE3DHCt/4ZNFAQiA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794704979;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=svpEi0HS4YJE5nsDpTP/KMKZMCJ2JXKCnWaboHf80CY=;
+	b=WeSUukEIy/aDG9F4RupTgouVY03KshWdB1yPSA3ClFdIImBqBCeyEILxAPsf/5pBLquL
+	 3Mn18EXrfaVY4JE0NPSarQ+Ios4ZtzXu58979TuDV5gR/JS2EPpOaQjkqOiO8nb/wHLVx
+	 X1fvrilxcNRx6umWn3MgL9CSDQcQZ4WQzVkrVieyTdrm7INw0TRSMS172y0GKDVbz82ms
+	 rosUZjq2trrk3SW+E6AnuMZbe6VuMNNeHzG/F3XfhYA3c++n8T0KE2Vv7An3fjrpRSdoU
+	 IqgevuiyYvrpizo1XBbX7HWafR0TEy0O4T5TJ+t0Mzs3iAhV+6Z5g0RhYxknn+E7nDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vHw3eyv7;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jY1GzaeP;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216B4606A32D
-	for <kernel-janitors@vger.kernel.org>; Sat, 14 Nov 2026 17:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 216B4606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B23606A329;
+	Sun, 15 Nov 2026 01:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vHw3eyv7
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so12654345e9.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 14 Nov 2026 09:19:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794676754; x=1795281554; darn=vger.kernel.org;
-        h=content-type:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=YTwcRMSWQ/WwFbflIYFwTeimqUcsUNTJOHfLHF8Dqo0=;
-        b=vHw3eyv7tVnu7ujo/f014gkgAnXfEOQX+ah3pcWkkUpbq6/tPFuCYxNQdUyvHdFjHq
-         2anngKr5UUeaxV7xvlr5ZsZMq6lwaam/S4Bwe7WVITK02XSKNI9U1r14CG3Iojp3n3fL
-         1DQY2rBZzTay3cOVSvPXlmNOlufTR6Mc7AuAw8vJEgmJU01qccyWgckLhFY9He1MQxRM
-         zdcnv7adqnSQQYqNCWVXdfQPYYCVW1rLdOp61m7NbeiOZPBpyAFu+jRBRNk2Gjx//FB0
-         u8hsxePhaRe8UACcS0A6UkPbM/uCRbu8JTOBFmSca6ZflsfRhZTUAblYhES7tIEww7zi
-         iuqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794676754; x=1795281554;
-        h=content-type:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=YTwcRMSWQ/WwFbflIYFwTeimqUcsUNTJOHfLHF8Dqo0=;
-        b=s4a/IqLiFGjDDJrIXUdapjItDg0mrFIq+NDbU2wZJTApxMVUG5JLXoz8T1vWFKyBYq
-         SwfeD+tSg3deHU0iOhFVFfeURCwQGWz+YBkPaCO783HvHztgCpBNZspXUYszg3Zl6Z1L
-         EkWI7q/EHHvt1uPeDAQySSmAVpLOnvy+tSYKa6Ri4HXySF6533jFd8TlzAdfu99KNvD2
-         8Kmtain1jHBcIy1vEQNVQ8rLZOKMDCYIiS9FWbGCdXFIJ2nWh6dx748Ol/V3WLx1L9O/
-         X94W2z6LSYrFbPCzELz4go3GEhgo1z3aZ4qSpAJnsB+PNqkqpJEiBZ1fY6r2XQzDoCYr
-         GyBg==
-X-Forwarded-Encrypted: i=1; AL+hErFsMK/N3A7nrN0P3JYCYiplyGWBwtgspiDIEzetpDktWgGY1bvXbOJ7wvtMDxYE7pGhMcjxrXXN+3rfweDEW1U=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+ADZmuRguqqhmWgfPh8kuiOd6nSQoVF/LQ89fLhd1LnEnOHiVG
-	711A9xF573dGZGUV9xZczpBbQ/MzN/B4EV7Ltn0276mcv7CNRCZLHpeI
-X-Gm-Gg: AYBFou1KLtIbXSsAX+wsfnvLneZIm/z5T6BYNWhPyFoDnypne2HnSUEmXoYzvcU4H9p
-	7peXRATgrYCBTUsFdky7mIAGWW4llS8q79+eBWDdPhRLc8CVHzNJrBSn0X0wDrleUl3HarjL/zl
-	Q/1Mb0RJCoJzUMVifk8a7IdHETB80N4V96/xog4mXcUOKSjPmVyyB5sAetdjKeee58r2CWqy664
-	+zC+uruDQxuFoqhKA6EWl3EJ4YEYAG6f8tVumYlvFdqsdrUGK6OD6iqm7tK/Lim79DdKZPbHMrL
-	6ji0eSXuTz529ukoBSrUBF1r/S6Q+ni1x+bhWFLk0a2MbgQ/Ww0vpBVv2UygCOE6ygNePlNHTpS
-	dDPNTBcB+DkcZy9J+Hrw7H63NcdgQLVS23VagoYRCo78lCWUaJEYu3BSSIlnZjEdr085Lv0eg8F
-	cc3ZT8CohH+8NS85AYrKl9k/pzP8xrdRf1pt3A0VK0ph7XD9xR+zTwxpFdhmA8y8L+kvavJccSV
-	G/Nd/obaOaB+F7rzSQONV9oy82Dur33XD6GnRU+otLYmA70maMp1P7DAgq7qwY0fMCbHZn80c6t
-	Fo/1EWAVNL52eVSaXsylLnwoxJLFowftsdEIKe35ulHW3P4+uBFUcmTXNXWuixSTUL4qJRT+GCq
-	//U9T5yTTQ/xE5Q4ydwLMY6BIE1QvgUoNkMIg3OBcJalndXVekp5guje1WZ4kTvBHr20Zpp0gQG
-	7ssbM8U4qDGsuyBYQSBXYobhV/X0XgBAPP2gW7dltCy6deVrYoenKE72kE8393o0kMtque/9Mc6
-	h0AqiL57tHxx3JOn8zmAl2Kqg==
-X-Received: by 2002:a05:600c:5395:b0:49f:ce78:356d with SMTP id 5b1f17b1804b1-4bb55abba24mr132258135e9.30.1794676754290;
-        Sat, 14 Nov 2026 09:19:14 -0800 (PST)
-Received: from jernej-laptop.localnet ([2a00:ee2:6a02:9300:bb69:6bcf:1b11:e85b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c8d286480sm20031827f8f.7.2026.11.14.09.19.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Nov 2026 09:19:13 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: linux-sunxi@lists.linux.dev, linux-iio@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jY1GzaeP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F1A1F000C4;
+	Sun, 15 Nov 2026 01:09:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794704979;
+	bh=svpEi0HS4YJE5nsDpTP/KMKZMCJ2JXKCnWaboHf80CY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=jY1GzaePZizjRqOefyBJ4GMGCqY+2fpjShHHPX0sIyevABUK30EnshdqUzrfapr8q
+	 wVTaJkwOmPy64OpeuZ3Rh/RZxfJ4D2ONn4I9ZV/bZH21r8ke9wkYNiMOSjga8LDS8X
+	 sq3T/3kNQ4RblY/Z2d3Pav7Krc9kKg3SqihdeqeF545UJkFsOjwDT78MpAj6Y0iJn1
+	 MKdaXbN8dEOp/b0CsnD1N8IajZRafzBLIQDLq27CVGa38HTHAM8MNYrbx8VF8AakTd
+	 zboUasZ78TtdUgQ9CldzfwtFPRGG+F60gm0YMCR81gp35WFlAFfK2ENr3NVgHe/nce
+	 ulQqa95ahGgNg==
+Date: Sun, 15 Nov 2026 01:09:31 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+Cc: linux-sunxi@lists.linux.dev, linux-iio@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, Andy Shevchenko <andy@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chen-Yu Tsai <wens@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>,
- Michal Piekos <michal.piekos@mmpsystems.pl>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Samuel Holland <samuel@sholland.org>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Felix Gu <ustc.gu@gmail.com>
-Subject:
- Re: [PATCH] iio: adc: sun20i-gpadc: Use
+ Bjorn Helgaas <bhelgaas@google.com>, Chen-Yu Tsai <wens@kernel.org>, David
+ Lechner <dlechner@baylibre.com>, Giorgi Tchankvetadze
+ <giorgitchankvetadze1997@gmail.com>, Michal Piekos
+ <michal.piekos@mmpsystems.pl>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Samuel Holland
+ <samuel@sholland.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, Markus Elfring <Markus.Elfring@web.de>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Felix
+ Gu <ustc.gu@gmail.com>
+Subject: Re: [PATCH] iio: adc: sun20i-gpadc: Use
  devm_reset_control_get_exclusive_deasserted() in sun20i_gpadc_probe()
-Date: Sat, 14 Nov 2026 18:19:12 +0100
-Message-ID: <lGotwwBTRaeZcOCAphaQBQ@gmail.com>
-In-Reply-To: <368d548f-2b86-4da5-857a-6ee9473a8d0e@web.de>
+Message-ID: <20261115010931.6c3fc69f@jic23-hlaptop>
+In-Reply-To: <lGotwwBTRaeZcOCAphaQBQ@gmail.com>
 References: <368d548f-2b86-4da5-857a-6ee9473a8d0e@web.de>
+	<lGotwwBTRaeZcOCAphaQBQ@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -112,78 +70,89 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Dne sobota, 14. november 2026 ob 18:08:10 Srednjeevropski standardni =C4=8D=
-as je Markus Elfring napisal(a):
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Nov 2026 17:55:16 +0100
+On Sat, 14 Nov 2026 18:19:12 +0100
+Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
+
+> Dne sobota, 14. november 2026 ob 18:08:10 Srednjeevropski standardni =C4=
+=8Das je Markus Elfring napisal(a):
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sat, 14 Nov 2026 17:55:16 +0100
+> >=20
+> > Use devm_reset_control_get_exclusive_deasserted() to replace the
+> > explicit reset acquisition, deassertion, and cleanup action registered
+> > with devm_add_action_or_reset().
+> > Simplify reset handling and remove the custom reset assertion callback
+> > while preserving reset assertion during cleanup.
+> >=20
+> > The source code was transformed by using the Coccinelle software.
+> >=20
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net> =20
 >=20
-> Use devm_reset_control_get_exclusive_deasserted() to replace the
-> explicit reset acquisition, deassertion, and cleanup action registered
-> with devm_add_action_or_reset().
-> Simplify reset handling and remove the custom reset assertion callback
-> while preserving reset assertion during cleanup.
+> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 >=20
-> The source code was transformed by using the Coccinelle software.
+Like for like swap as far as I can tell, so applied to the testing
+branch of iio.git
+
+Thanks,
+
+Jonathan
+
+> Best regards,
+> Jernej
 >=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
-
-> ---
->  drivers/iio/adc/sun20i-gpadc-iio.c | 20 +++-----------------
->  1 file changed, 3 insertions(+), 17 deletions(-)
+> > ---
+> >  drivers/iio/adc/sun20i-gpadc-iio.c | 20 +++-----------------
+> >  1 file changed, 3 insertions(+), 17 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/sun20i-gpadc-iio.c b/drivers/iio/adc/sun20=
+i-gpadc-iio.c
+> > index baa7661db13b..070d061572c6 100644
+> > --- a/drivers/iio/adc/sun20i-gpadc-iio.c
+> > +++ b/drivers/iio/adc/sun20i-gpadc-iio.c
+> > @@ -157,13 +157,6 @@ static const struct iio_info sun20i_gpadc_iio_info=
+ =3D {
+> >  	.fwnode_xlate =3D sun20i_gpadc_fwnode_xlate,
+> >  };
+> > =20
+> > -static void sun20i_gpadc_reset_assert(void *data)
+> > -{
+> > -	struct reset_control *rst =3D data;
+> > -
+> > -	reset_control_assert(rst);
+> > -}
+> > -
+> >  static const struct iio_chan_spec sun20i_gpadc_chan_template =3D {
+> >  	.type =3D IIO_VOLTAGE,
+> >  	.indexed =3D 1,
+> > @@ -225,17 +218,10 @@ static int sun20i_gpadc_probe(struct platform_dev=
+ice *pdev)
+> >  	if (ret =3D=3D 0)
+> >  		return dev_err_probe(dev, -ENODEV, "needs at least one clocks\n");
+> > =20
+> > -	rst =3D devm_reset_control_get_exclusive(dev, NULL);
+> > +	rst =3D devm_reset_control_get_exclusive_deasserted(dev, NULL);
+> >  	if (IS_ERR(rst))
+> > -		return dev_err_probe(dev, PTR_ERR(rst), "failed to get reset control=
+\n");
+> > -
+> > -	ret =3D reset_control_deassert(rst);
+> > -	if (ret)
+> > -		return dev_err_probe(dev, ret, "failed to deassert reset\n");
+> > -
+> > -	ret =3D devm_add_action_or_reset(dev, sun20i_gpadc_reset_assert, rst);
+> > -	if (ret)
+> > -		return ret;
+> > +		return dev_err_probe(dev, PTR_ERR(rst),
+> > +				     "failed to get and deassert reset\n");
+> > =20
+> >  	irq =3D platform_get_irq(pdev, 0);
+> >  	if (irq < 0)
+> >  =20
 >=20
-> diff --git a/drivers/iio/adc/sun20i-gpadc-iio.c b/drivers/iio/adc/sun20i-=
-gpadc-iio.c
-> index baa7661db13b..070d061572c6 100644
-> --- a/drivers/iio/adc/sun20i-gpadc-iio.c
-> +++ b/drivers/iio/adc/sun20i-gpadc-iio.c
-> @@ -157,13 +157,6 @@ static const struct iio_info sun20i_gpadc_iio_info =
-=3D {
->  	.fwnode_xlate =3D sun20i_gpadc_fwnode_xlate,
->  };
-> =20
-> -static void sun20i_gpadc_reset_assert(void *data)
-> -{
-> -	struct reset_control *rst =3D data;
-> -
-> -	reset_control_assert(rst);
-> -}
-> -
->  static const struct iio_chan_spec sun20i_gpadc_chan_template =3D {
->  	.type =3D IIO_VOLTAGE,
->  	.indexed =3D 1,
-> @@ -225,17 +218,10 @@ static int sun20i_gpadc_probe(struct platform_devic=
-e *pdev)
->  	if (ret =3D=3D 0)
->  		return dev_err_probe(dev, -ENODEV, "needs at least one clocks\n");
-> =20
-> -	rst =3D devm_reset_control_get_exclusive(dev, NULL);
-> +	rst =3D devm_reset_control_get_exclusive_deasserted(dev, NULL);
->  	if (IS_ERR(rst))
-> -		return dev_err_probe(dev, PTR_ERR(rst), "failed to get reset control\n=
-");
-> -
-> -	ret =3D reset_control_deassert(rst);
-> -	if (ret)
-> -		return dev_err_probe(dev, ret, "failed to deassert reset\n");
-> -
-> -	ret =3D devm_add_action_or_reset(dev, sun20i_gpadc_reset_assert, rst);
-> -	if (ret)
-> -		return ret;
-> +		return dev_err_probe(dev, PTR_ERR(rst),
-> +				     "failed to get and deassert reset\n");
-> =20
->  	irq =3D platform_get_irq(pdev, 0);
->  	if (irq < 0)
 >=20
-
-
-
+>=20
+>=20
 
