@@ -1,94 +1,117 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794826837;
-	b=qq3f5MJgrJMgFAh40FanS6FbiP/rQW/oKqKUG3Iw5H5dLeKM8rKC3u9ywI020p0pUbYR
-	 HdXo2Y5vdI9+xlunpJvK8u0Qh8oGRjFltmJ3LHmycc32+cKr1kxr34BBvsFQciVaTVM3R
-	 j+VZrivP2hsulhDbTcKRjn/KqJfLl6+MafeprPU+mU/TcBXqzvYdZEeLsKRawg7GxQLON
-	 rlM4Y+pH7npGoqY1TsyC5DU01E1AxR5wzB3GYN7+ToZ024uWX3dZiucXzXTefFYGLyfDH
-	 pnkWxk29WciBSXPmyJ5zEyVasEidpW9dCJC4IihIeMXMxMWnr4KPfxiIBVB1EPRMIag==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794826837;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=aJM0dawyH8gXbWmqX0nGo7HUQ8+upl7nxWuHmU22MH8=;
-	b=A4z4gfoWnyPcqRofcFbqERUNlsFJGWnxO6T6KP0468A1Q4GC2cigz7GULcrqkpbXfkT0
-	 EsSHeztOWHxoAtFF5+QofrJVj6q6fa4jcvM5oduwqGW2auswPsH0NEjQOCVLuaJi1eIZr
-	 Ae1J6aXj02dJBwo8juCZEzjlOr7FzxYQNeGc1SYbVLkFl8YWKcV9Cda13SWeZt6BJ8/xS
-	 GLTCeV1lG40OTk6f6e+5EeCSc8fgD3IIgmUas2oif4PgLK4ph/p+uzVI0Z5n/LV4zRCJ2
-	 GUAfVZ1D6eAtP+Wsq0ff5isKkkMJm2IBkbd5JIFwHMwf9gLVPKoZk5odfbVi1SByt9Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b="NY9/si+Y";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.98
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794892464;
+	b=ZWayieTwl4jXYata5lDWkpsA0VdY+3GGrJtodPJ5tZuUHbGkCDI2DZxOSBP5NjuOUXcH
+	 OO321NLTX98G/bUq88SYYyd3rzkZne6A7iFnwTXHqxHIhTkvKuKJ/VyMCrvh+Ck5p2hc+
+	 YoVBcCM6IVi6jyFTBtGuOpfoKxZQ22zsKk+DcmuaYQJzl8mqHC8ypOnFAubx2Ed30U4R0
+	 K47OzJaU2nID+l4DKGZx3MvuHVUPWdtrLIOmfkltJhOdyFCaMVvDFARs+1DamC8rFyaBD
+	 9jc44heMbZpGxQcLMGuZUFt/OL5uKrOjvq8I6A3zu3/acJRaDaVUpNYPizVlIdcl6DA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794892464;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:X-Relaying-Domain:
+	 X-CFilter-Loop:Received:DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Received:X-Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding:X-DetectorID-Processed;
+	bh=SCfz1f0OOAQVJN2xpcPcFGbJPw3mdu0gWKPmT7oxwLI=;
+	b=3wTH3uH9TTjT09DeDhBAItzfxIa8UrqbNfKJdYvrp8HnFTyBlF8kMlaBy1uiGFsPKBFz
+	 KTOr6SpSvTor7jom4GVA+VbpkofSlVoJbCHnIfX6lwtqQCOFw1t6jmjjSm/F28UeOPH5A
+	 pxYuqTAW2ld7WdehdUPClvuq4r4T0qHb4F9u8eADmRymf4QAhuHO3vhmDhQ+JcovhmQ5b
+	 9HLgAs8dNKN2o+lMPCHh9GVIYfadxGMZUMk5s8pDjfRBri361q1c4eYq4Ah3RBR76JTxC
+	 xVy4URMKJn5jZAYgIDl0KRDXFFDlas0WTR135AzYJWwJhDCnwaBtleuM/fhr3Cizv0Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=broadcom.com;
+	spf=fail smtp.mailfrom=broadcom.com;
+	dkim=pass header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=QRtwsQ0P;
+	arc=none smtp.remote-ip=209.85.216.98
+Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com [209.85.216.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6D0606A323;
-	Mon, 16 Nov 2026 11:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E6D0606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F4606A323
+	for <kernel-janitors@vger.kernel.org>; Tue, 17 Nov 2026 05:14:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 656F4606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=NY9/si+Y
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 64BE82001E8;
-	Mon, 16 Nov 2026 12:00:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794826832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aJM0dawyH8gXbWmqX0nGo7HUQ8+upl7nxWuHmU22MH8=;
-	b=NY9/si+YW84m+SS5J42fHf5A73xFx/MS++ISlMVs/Lmy84ooe4ApSUZeHakT61dxlJs7mM
-	0yoYDEteEAFt29328JOeis8SVgQkzh+tvl9uc8WUxX7JRPVDQ+hQ8VSUTfdCxEH0u87Nex
-	otO10oTjG2j5YhzMbQ/MOlCaIfJadzxiAPzPtYPc8n4OKsM4MiJI3ENmUH+VkKLlyXa7gz
-	xfmg7hVf8ijp014JSRExXacJX8XnpfGVpGoOZxIRIk8n/08Tidchzt1Xz8R7b1swO1pSlT
-	SDxhDAOClBHo2heTAWwennxo3khY3exT9p/VpkL8u75hfG3LOPY64VWuqefBYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794826832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aJM0dawyH8gXbWmqX0nGo7HUQ8+upl7nxWuHmU22MH8=;
-	b=BpsYkN0qtdfxnjyNg0TugXXbCP0r18Y2MTiFvJQ8bzJ/gw0J2NVBu2X1NoOxGVd8qPgsxj
-	ibKMkFfhU29tax2fbPe4PzW/UbjZdYIdEH7cVMDuZ9S+1TBeTLataNXn0sqb4j0w0HoY1P
-	VFm0Lf//UPvGoG3CfTIlTPFqhCSr19L2xJqmBUd0181CimoJr/UdPIiBQRYs9tnt5paQAl
-	ibiH0jn8aQTt5UCb3oNaYQFm78D8+QAPL/eS+fVpGr+3olICBRsSwabA575BZzWZXJkuBB
-	xNNzN6FrpqVZpQgzb8kR1VBWY+4g8m2ZhTB7N1IRntIkmwNIKXfawwWRSt+9Tg==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794826832; a=rsa-sha256;
-	cv=none;
-	b=UxgYkZY4wxVdPW+p/h6wNa0wjVq9umd2QZCZv8vk2kdpWbJ7FYICcKYVx7AwmkD8P69tih
-	SNzftfgQF1tyKan4mPdS+7KsB3T9Hc4JulJ/aPfaPE1aUlwqeP3SAy5ukgomcdka2Tk9/F
-	CuX0/c7S2botvYurBUK39Z4fSI5ZqeG1vKAXeJmMHQviBYapzmYLPMTXkMkufj/+W0f7eg
-	2mseE8l66fgG39F+I4MKtczsIGCBCpWrWJTfWImzJ2PiOdk08nwsvk0sgFNsBXUw4qPmJ+
-	ajxmmQSpVq/eu8dSve8qDT0kIes//7CEPOGlMcfL0S/+Wb3feydjz5ccsLiLlg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <1b6620f4c2cbed3124e5521f18585132d2e8dca2.camel@pengutronix.de>
-Subject: Re: [PATCH] hwmon: (aspeed-g6-pwm-tach) Use
- devm_reset_control_get_exclusive_deasserted() in aspeed_pwm_tach_probe()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Markus Elfring <Markus.Elfring@web.de>, linux-aspeed@lists.ozlabs.org, 
-	linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrew
- Jeffery <andrew@codeconstruct.com.au>, Billy Tsai
- <billy_tsai@aspeedtech.com>,  =?ISO-8859-1?Q?G=FCnter_R=F6ck?=	
- <linux@roeck-us.net>, Joel Stanley <joel@jms.id.au>, Ryan Chen	
- <ryan_chen@aspeedtech.com>, Tan Siewert <tan.siewert@9elements.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
- Felix Gu <ustc.gu@gmail.com>
-Date: Mon, 16 Nov 2026 12:00:32 +0100
-In-Reply-To: <bbbc7228-cf98-437d-b240-ad29ee7fb4ac@web.de>
-References: <bbbc7228-cf98-437d-b240-ad29ee7fb4ac@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=QRtwsQ0P
+Received: by mail-pj1-f98.google.com with SMTP id 98e67ed59e1d1-3b3a914e4c8so477071a91.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Nov 2026 21:14:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794892464; x=1795497264;
+        h=content-transfer-encoding:mime-version:content-type:references
+         :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=SCfz1f0OOAQVJN2xpcPcFGbJPw3mdu0gWKPmT7oxwLI=;
+        b=wcmfhBiTEczG61UpKcap5pwZXVdb0onb47TC5pzP8QcODOmw5sowPckSVxXt3hh+96
+         9vNvMz4FVGk3ZsaOfEUrkN6Lthi90YVwXDW79/e+eEWVpQOk0Lc5IEruLKKfwa5oG5bF
+         ZiX1aYgXdLCl0myuBo+cJcLndYglVftPJZ9rWzmutS2122i/qeWC65a497c0jtJQlV2p
+         EG7sbXnpRzESJpRQWs2IQLc88HTfNkK9nA7aSNLcBPrhrOs9KH5jguJpxjai+RaCtfSz
+         RsSfe2AIrJy1pLrmdm04vOWhkf+D5o2YhEYhvm5w+FeY6keMw1acDFaJZQkfcDKOAi2H
+         H+dg==
+X-Forwarded-Encrypted: i=1; AL+hErFP/Z4QysnOqOM02zfx+2LlhyE4v7SyHzSNhnkyFE6nQQAWBxOj+UcJF22bv6HVIyciI5m5LTCcLwodOWFti3Y=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/LU2UedYzX95P+wXZN15Sk2SOkQHsdBmxgHroYpiv5bJ99i5VH
+	xnlqcb5X1up2449a1zBXKkwUhkSquP74Fto60rS8TDHQieJtt8B1NsTz5MMUIB4FSCIYjyrG3Rl
+	OEbegKrGP2IqH4Uty8DkO+lUTKKp107yPR49kcuy0VW4rZdc8v2uuXRxag2JWlr3QYDtVKVAfIy
+	dcvnSV0l7SvvvEaAI9t4xQqIO7/YFAduIYiT7K12BH7BwLyNDJUr1gxls36wsHV0N0CczgwtWHT
+	e/c43wXhntTACGvZczo
+X-Gm-Gg: AZFdTZfw4gBj+o0R5rT1hhMx89vbnyLzokguJIvZnAMWdOOAgV/2jzWwYaw7nM3oddE
+	pGZp+ObX64MmM5B/XhfZVXIlCgV08Ti6mqPXoVXzpoiAw9aMP7161Thg5yEmSlNClapyjdPBtQq
+	UdcgZGyb6YqkGdrB0ERPnXeI3gxlQFJx+e6Nep8FNCeLlQVJRaMLI65bQHioPWiB9X/P6T4e/j2
+	o6M7n3a6f26VSiHbJUksAV6sD3hq8oO83Wk6P7IOwbDf4gRwPoMGYS2nuTkxkQb8o3QvI+CSSSF
+	8Ug/rZckQH63u+eF/Y04m7odJrN9m9u7GVcbNekwVU86Ait0NScfIRtXMIeFlKITr7eRjbrk4y5
+	q9UIvaQnSffxMLANnOnlMDyQ0qrPcKiW3kPk9XFaOu88elwbtysizPetZScvLyjlhVE/2BIMPWA
+	dr7xUHzqcJpEp7C4EHR7R3m0VknkQXpcel
+X-Received: by 2002:a17:90a:e7c9:b0:3b0:ce1d:3398 with SMTP id 98e67ed59e1d1-3b1b09f3b5bmr13537811a91.18.1794892463574;
+        Mon, 16 Nov 2026 21:14:23 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-28.dlp.protect.broadcom.com. [144.49.247.28])
+        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-3b1b25d9ba7sm4178968a91.1.2026.11.16.21.14.22
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Nov 2026 21:14:23 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-cd652c0385bso2859568a12.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Nov 2026 21:14:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1794892461; x=1795497261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:content-type:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=SCfz1f0OOAQVJN2xpcPcFGbJPw3mdu0gWKPmT7oxwLI=;
+        b=QRtwsQ0PNhn6ZQMGqA7GKqCG7kLtVXrZkQTiLFXykfug891axJZYWxFAN7bP88R13J
+         wcdL0wDBq3X924XD9DkIfomoRLF6tlUWfS1OiFNY8raFSsgmu0Q6AUTqsnWv8v0hS1ow
+         DiXTbHPIx2/VJJNYcCOdmdq2kpRzamnO517E8=
+X-Forwarded-Encrypted: i=1; AL+hErFzSt5ARtJrKpF8wENotHeAAfegDkgUfCuUt9gUOVpLnQp5QjvR4pOirWxvEAOHKQyNEilF8GK8tk41XGPgpT4=@vger.kernel.org
+X-Received: by 2002:a17:90b:3d87:b0:3b0:a831:5acc with SMTP id 98e67ed59e1d1-3b1b0a3a056mr11554923a91.42.1794892461620;
+        Mon, 16 Nov 2026 21:14:21 -0800 (PST)
+X-Received: by 2002:a17:90b:3d87:b0:3b0:a831:5acc with SMTP id 98e67ed59e1d1-3b1b0a3a056mr11554911a91.42.1794892461137;
+        Mon, 16 Nov 2026 21:14:21 -0800 (PST)
+Received: from vertex.localdomain (pool-173-49-113-140.phlapa.fios.verizon.net. [173.49.113.140])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2efd7a586d0sm7827675ad.47.2026.11.16.21.14.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 21:14:18 -0800 (PST)
+From: Zack Rusin <zack.rusin@broadcom.com>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Martin Krastev <martin.krastev@broadcom.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] drm/vmwgfx: Fix NULL vs error pointer bug in vmw_prime_import_sg_table()
+Date: Tue, 17 Nov 2026 00:14:16 -0500
+Message-ID: <179487959553.2515856.10912427542043749089@broadcom.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <akPFZ-e9usvsYgf_@stanley.mountain>
+References: <akPFZ-e9usvsYgf_@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -98,26 +121,9 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Sa, 2026-11-14 at 17:28 +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Nov 2026 17:11:34 +0100
->=20
-> Use devm_reset_control_get_exclusive_deasserted() to replace the
-> explicit reset acquisition, deassertion, and cleanup action registered
-> with devm_add_action_or_reset().
-> Simplify reset handling and remove the custom reset assertion callback
-> while preserving reset assertion during cleanup.
->=20
-> The source code was transformed by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Thank you. Applied to drm-misc-fixes.
 
-It looks like the reset_control doesn't have to be stored in
-aspeed_pwm_tach_data, it could be a local variable. That is a
-preexisting issue though.
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-regards
-Philipp
+z
