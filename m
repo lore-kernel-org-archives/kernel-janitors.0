@@ -1,79 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.243.120.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795109774;
-	b=rqtXcamH7l0UGAWDQl5/3xyGpLpdPY0UEn6rIiAUDbHsLF5+ADVNE5DQbTK5anjf9IBi
-	 IGGZAHGYqxUTIHhiNOsV+BUSE4IBE128No4EOb6ScVd7uacHGDTZ+Zw36EU2CwohhTxST
-	 NpQscLXKnvXcH2WQOMbXaVQ8VLbV8Ou1MBaLmCljLEdF2LCS9/NwG43lrBQQKLfKSfDsq
-	 KpocQGvuGgyczmloa2CZnM0Bcuu8luT8ocGmWqwM7Lm9iGBd66QucmTlEKoqgV4D+SXTt
-	 F/uIUJWCuJmuVPXjce+cSrxJcTzOVEhtYKdT3pou0Wmadi4JDk9e5NewkOlNG2kqJ4A==
+	t=1795109796;
+	b=vSaTHyRMzzCjLX7dUGV2j+5rVagWyFK61v5cn2sokrTjXUiHlvRuZyGwH6N2iMwKClB7
+	 PE19l3nSyFS/nPIFUA30atR9DmowUHKJM7SrkeLWEdcVqd+LULMxSnECwxO5R3QSdH9lZ
+	 /b0PwQHlvXLmePGYFxLJ4lRkp4xfXOxAxRFYbwV+yAV04IxZXE9TvqQ71svecHF7gPkjv
+	 doBTamZZgWHOQ3J+yua0+ujO8iAyUAAZD990PnmYPfdBftaY+AMf8KVOs/dZ679LgHMR6
+	 awmmrXINK4hu/uFFKBa3LRRySP57t9zYXtjdTp4V/ie4Bpt9zze8oKXdsG3BvBLMs8g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795109774;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=7lPp38yQqapWLynzBVA4CU5EykvtBLNogGxWpp56dPo=;
-	b=xb3jzM/IbTbr/jqdj3UTFlEujchwnIiDcNh0xnh0SM0tNlx6rZLa+98M4sasvtiS1z4D
-	 Ybh4XUktPnU8im3Hys4KmJpEwLiNQ0549xxmwnCpObK7NgV1A9moDG9ETjz0nSSm4brMP
-	 t4xoRAL2nAM88YuJS+onsZlDmgG08r6Cd3V/Ppa594Tyo1Sltqce3I18/1sLn4xq4pdiH
-	 oxzjRLgGBsPN2KPWoed74eBzjpmAqP3EeiZbEO3HY9KiytmJo5jW6wqjDUJ2pi5eq2AEN
-	 wcv+og2V2Xa5SP/BBO1CU8Abrl1S/phSNfvi81nJ/cbl0VarDTjgniJYo/Btku9U92w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795109796;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-Id:In-Reply-To:References:X-Mailer:Mime-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Spam_score:X-Spam_bar;
+	bh=NlAzr7fWQr1U0Gulks6WKzHQMsNptqrzzhjevUlp8lI=;
+	b=LH5Kga2ggmn7Z83/R2oRAmXRtwQGMyFFiO0cl7jUDj2ReYkohTkiHtfeQnC96pH6jZow
+	 6KCGQ1bNkkDQkuUa/8JIGaEwOENex1JrZ2VmAujEmLAmmNyF+wADnmkMz2GUHqmYMHs0u
+	 KI68TdkHTXW3I84BIESNgyQ+NKz39zHTPaf2JsBXKOjKdQkCAAq5TNfcTdW7ArEvOYrzJ
+	 bvtE97LOy9cAif01qe64d2nV5iJ6eoQ48IBgFcM8L0xgSeg1kinrj3MYMVZ3crbNwa1E/
+	 IrQ+pWY7M6vECvp/FVFasq1pfEhqN3d72PREGfryinPlVx5tv/LvsNE4G/RHTi6QlCg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lcJ0pmwW;
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=hugovil.com;
+	spf=pass smtp.mailfrom=hugovil.com;
+	dkim=pass header.d=hugovil.com header.i=@hugovil.com header.a=rsa-sha256 header.s=default header.b=QxRzeFGH;
+	arc=none smtp.remote-ip=162.243.120.170
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAACB606A320;
-	Thu, 19 Nov 2026 17:36:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAACB606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4ED8606A320;
+	Thu, 19 Nov 2026 17:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4ED8606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lcJ0pmwW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795109774; x=1826645774;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=o3BRdW+dhH4bRD+XBAD22OyQPZBgW+FL4Lkn+B4t/XA=;
-  b=lcJ0pmwWV+rm9QbPhUTjNowq60hyYpadLatalTkCT5lcBWkBpCmcuzKE
-   2CyyXHIrMlyj7ZPMiE4/fKQ4GTkhLZdPCfPJQnuzeTsSG/EtkBgcvq8fu
-   v+lfWSRBaQbBbgPT7Gwfb+yhkWIC5avcIBCZcdRZjY3w9TEUUzHo2wi7P
-   7kWlMqyMHx2mCwGO+o6XQjGhn2FhEv7xQW23oKgReAhCDdZnu4skVzn6E
-   70eIvtjgYmkKJFB/vOlGddlnZjK2K9WgHjLYd9pEsvKm4ERTnpapwtMXi
-   +MaEHR44s5iaXVpg1blIo7JTxGR/OiNxrhMsl0tMtyeNXc0CrYhei4NCO
-   w==;
-X-CSE-ConnectionGUID: 1V6chUxAShC6voNCnd+EkQ==
-X-CSE-MsgGUID: TYmFrrw6STyxG5UhUCyVsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11971"; a="3869130"
-X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
-   d="scan'208";a="3869130"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2026 09:36:13 -0800
-X-CSE-ConnectionGUID: IBi2LnLRTb2Dbbhdws001Q==
-X-CSE-MsgGUID: AzJMLJM3R5W6DgJUYjiX8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
-   d="scan'208";a="10384610"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.61])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2026 09:36:11 -0800
-Date: Thu, 19 Nov 2026 19:36:08 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+	dkim=pass (1024-bit key, unprotected) header.d=hugovil.com header.i=@hugovil.com header.a=rsa-sha256 header.s=default header.b=QxRzeFGH
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=default; h=Content-Transfer-Encoding:Mime-Version:Message-Id:Subject:Cc:
+	To:From:Date:subject:date:message-id:reply-to;
+	bh=NlAzr7fWQr1U0Gulks6WKzHQMsNptqrzzhjevUlp8lI=; b=QxRzeFGH03QT8XbituAtp07GdR
+	x2pyhJNY+Mfpcyeyuk0PgNNbizhSHidnvGrImQ5y0sP/Z7bFjbZGhDp3ZdfZepZTFI6IKdEZdEGOi
+	v7eK9vWvsmv2gnBNTLjVI1skC9WNf5oqUCaVF63E00UoMNPtM7Is+M79yp1hBarhMLFk=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168] helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.98.2)
+	(envelope-from <hugo@hugovil.com>)
+	id 1xU63d-0000000030J-1iaR;
+	Thu, 19 Nov 2026 12:36:25 -0500
+Date: Thu, 19 Nov 2026 12:36:24 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, Frank Li <Frank.Li@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: dmaengine: dw: Use devm_clk_get_optional_enabled() in dw_probe()
-Message-ID: <av8ziPUCh4wZPyr6@ashevche-desk.local>
-References: <8e3534b7-ae64-4c1f-819d-0ba390737b84@web.de>
- <av8u_xgva8ORkzaC@ashevche-desk.local>
- <c5e756c6-2449-4079-a924-15a6bfdef848@web.de>
+Cc: linux-serial@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Jiri Slaby <jirislaby@kernel.org>, Joachim Knorr
+ <joachim.knorr@ziehl-abegg.de>, Luca Fresi <luca.fresi@bithiatec.com>,
+ Martin Fuzzey <martin.fuzzey@flowbird.group>, Paul Mbewe
+ <paultyson.mbewe@ziehl-abegg.de>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@baylibre.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] serial: sc16is7xx: Use devm_clk_get_optional_enabled()
+ in sc16is7xx_probe()
+Message-Id: <20261119123624.500417c134528c090661efe1@hugovil.com>
+In-Reply-To: <1333a82f-d074-487b-b3ad-c1a3496b312b@web.de>
+References: <1333a82f-d074-487b-b3ad-c1a3496b312b@web.de>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -82,34 +69,56 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c5e756c6-2449-4079-a924-15a6bfdef848@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam_score: -2.0
+X-Spam_bar: --
 
-On Thu, Nov 19, 2026 at 06:27:40PM +0100, Markus Elfring wrote:
-> >> Reuse existing functionality from devm_clk_get_optional_enabled()
-> >> instead of keeping duplicate source code.
-> >>
-> >> The source code was transformed by using the Coccinelle software.
-> > 
-> > Something is wrong with your tools or scripts. It now brings a regression.
-> Would you like to extend background information?
+Hi Markus,
 
-You are not the first year in this project, find the answer yourself.
-Hint: what devm_*() actually do and when?
+On Thu, 19 Nov 2026 18:12:33 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-> https://elixir.bootlin.com/linux/v7.4-rc1/source/include/linux/clk.h#L680-L699
-> …
->  * devm_clk_get_optional_enabled - devm_clk_get_optional() +
->  *                                 clk_prepare_enable()
-> …
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 19 Nov 2026 18:04:56 +0100
+> 
+> Reuse existing functionality from devm_clk_get_optional_enabled()
+> instead of keeping duplicate source code.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/tty/serial/sc16is7xx.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+> index dbf38825a78c..3af8ea93b34a 100644
+> --- a/drivers/tty/serial/sc16is7xx.c
+> +++ b/drivers/tty/serial/sc16is7xx.c
+> @@ -1605,14 +1605,10 @@ int sc16is7xx_probe(struct device *dev, const struct sc16is7xx_devtype *devtype,
+>  		dev_dbg(dev,
+>  			"No interrupt pin definition, falling back to polling mode\n");
+>  
+> -	s->clk = devm_clk_get_optional(dev, NULL);
+> +	s->clk = devm_clk_get_optional_enabled(dev, NULL);
+>  	if (IS_ERR(s->clk))
+>  		return PTR_ERR(s->clk);
+>  
+> -	ret = clk_prepare_enable(s->clk);
+> -	if (ret)
+> -		return ret;
+> -
+>  	freq = clk_get_rate(s->clk);
+>  	if (freq == 0) {
+>  		if (uartclk)
+
+Nak, your patch is incomplete and in fact just duplicates, in part,
+what Xiangwu's patch does:
+
+https://lore.kernel.org/all/20261113103855.2144-1-laixiangwu@cmss.chinamobile.com/
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Hugo Villeneuve
