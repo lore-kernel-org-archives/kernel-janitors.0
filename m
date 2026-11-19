@@ -1,77 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.15.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795092224;
-	b=nLeqQY6BQ04hJnwnGntt+WuV7C0jzQk335uYLvlNK+eR50aCkWlNVEYI5/LAZHBP5fOQ
-	 oI8TmYrEJq/UFBzWRYITCTgK2BMhhxHgj7AK8P632PgMABOGt0BJJ3ddwZouNahlTFomF
-	 jRYqINauoRZkq2yrcBkqxenDQoPVCr+hgsyi1rilZEA9xT7rqAZAdfFbo6l8iXr/DkOYF
-	 6qCUtRhEnhM+nYY809QEfrZzlMOqZ53app3XchDfSuK+i6Yz1xJxW8fxdIdnVDa5BeqCM
-	 IB989yRgJC/6Xw1Bieh47yl3wEPOTVhalQMFhxRUO6GPsp9RBijT5iIh4pFbQlskd0Q==
+	t=1795104445;
+	b=oqjEKjHE3cShE3jApBabCTk0SGSJjjUpuMmQ2ePxVrk8W6Ng+pYN0BJTXZqjN234f3LI
+	 Q7ifcuFaUaUex0nzPe2fzseuWdXko6r56lrfc9A/RidBenAMHNeC1vvY7++J11MFYSK6N
+	 wwRKQpqVATt4JOUDmIvyNaBwIBHHdlHgRasQU0nHMwA2RL3PhLkKPaM2VELaawOHDFP4h
+	 doW5U7gFIKCn+JFDjOye2E8zh+M5RT0F01mrRIjBW3etbiu46NxMrxiuVeukrvGxiCKlt
+	 Cy+5hIf6ZODC+SzAauMmXZYnafzzpQfm2Tya5C6KbZmOfsaTLb2vaBDqi0U1J/BCqkg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795092224;
-	h=Received:DKIM-Signature:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-SA-Exim-Connect-IP:X-SA-Exim-Rcpt-To:
-	 X-SA-Exim-Mail-From:X-SA-Exim-Scanned;
-	bh=4r5PB0DQkXh3u33w6JsWbjKrFhzV4eOWaVXY4U6YmfM=;
-	b=g5f5X2N+hQKfY7tqkrV/HUsHXXanMLWjnj+n5W9Aw5HQ5wFjH6ztoOubcQa/vcVSOsUM
-	 Q7pJEAXnz6VoZyIMUZbd3lf6RSBV7g0Bv2rPfvd8xM7MZmh/M+1ky6zm1paoM6BPwjugB
-	 T0i2rX/NHZk0mk0zJwDc78YzLnWGLQeTesRfNI8Ntf1emFPXB41kUNqEjRknGpF5xQUg9
-	 3ZQ/ZUgSrGOtjry8wFIPlDHFKFzYL7cobDxkp1SWaCn/bWgTvWg8Dps1fW0JYu485ZpxB
-	 aoCJ4cayJZr4oqz1gya1FhXGLwFSQDky72FMYdlenSKnzPcGrT3W2bS23cBmP8SrGBQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795104445;
+	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
+	 X-UI-Sender-Class:Received:Message-ID:Date:MIME-Version:User-Agent:To:
+	 Content-Language:Cc:From:Subject:Content-Type:
+	 Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
+	bh=/wnL1UvT/c5ilPHDxkdMnGwn3CKOu+6AonHzFxLDRf8=;
+	b=f9c7LBiHU+iWlnng4Wvh/sNx75hk/HgPrGL0KRhDuvdWI5HsKt4UCbRRBSFMzl8jbU5J
+	 BvnkYvC/uvpE6ejDCkxkjRDwoUr2f7ouGYaOi4XwmUIM+PaOzqRNQdPXgXmAddVg5xfz4
+	 eKva0dTR9n6V9G7vLgw8Hj3vYRPAljD9IOutuh3j3pcqV8od4vIPGzZ2c1bbFZft1AbS2
+	 Ji3H4hWEyDJigSvlmzmsjp+AUtocuMZC82Tg2UsfHkGgKXKAc7oenHmeDeiJn6m3Fh2dv
+	 6CRUUFW09qXg+68BrZISJcoFqm7tAs7IaHf4BJVq3P6RHT1cvRe4ynitTTqc5dAFbQw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HBRuEQyY;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=web.de;
+	spf=pass smtp.mailfrom=web.de;
+	dkim=pass header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=m9dBRZBQ;
+	arc=none smtp.remote-ip=212.227.15.4
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAC6606A320;
-	Thu, 19 Nov 2026 12:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9BA606A320
+	for <kernel-janitors@vger.kernel.org>; Thu, 19 Nov 2026 16:07:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9B9BA606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HBRuEQyY
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89BBD1F000C8;
-	Thu, 19 Nov 2026 12:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795092224;
-	bh=4r5PB0DQkXh3u33w6JsWbjKrFhzV4eOWaVXY4U6YmfM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=HBRuEQyYgb/ceb3U7Nk0J4WbPRthEECDLvswR6k5WI0mK1ju8s/lZFhZ5x1LPApkn
-	 1pjw7ihXQvxY7XjZ0w1EMc3S9a6YtcuY5ZeaPPDW0Gj4zYQdm7O91H0CuELeROco6y
-	 FK4MU95dsVf1k8EGF2AFD3J/kB9p33l5ia+AIB1c4B6Vl9ZtuuwEek4MJUqkOTGxUM
-	 j7V6GI559mffl2b8Z+pIfCQClnK1cvshCsSSyRft96ckG07J7kvsnnQrixm8XvJXvV
-	 vni4JQe5jEETDmfnSLttUQGHk9EgxxxjZgLBXfc0KNMkBE5tLjyW9Vq4mSnnJsHhhq
-	 66JJCzlr66Pfg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1xU1UM-00000000RvW-341d;
-	Thu, 19 Nov 2026 12:43:42 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: Dan Carpenter <dan@pereq.eu>
-Cc: Oliver Upton <oupton@kernel.org>,
-	Fuad Tabba <fuad.tabba@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Steffen Eiden <seiden@linux.ibm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Jintack Lim <jintack.lim@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Karthik Bhargavan <karthik@pereq.eu>,
-	=?UTF-8?q?Cl=C3=A9ment=20Blaudeau?= <clement@cryspen.com>
-Subject: Re: [PATCH] KVM: arm64: nv: Ignore TLBI IPAS2E1 above the IPA limit
-Date: Thu, 19 Nov 2026 12:43:32 +0000
-Message-ID: <179509215932.3938200.1655577673517610015.b4-ty@b4>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <av3FxJpUvpb_8qMC@stanley.mountain>
-References: <av3FxJpUvpb_8qMC@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=m9dBRZBQ
+DKIM2-Signature:  i=1; m=1; t=1795104442;
+ mf=PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4=;
+ rt=PGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc+;
+ d=web.de;
+ s=s29768273:rsa-sha256:qFnNElZryLbCOpqfdZbWiFqwor0S
+   0kXEq6WdgbbbZw/73/dJpkwijPCODt25ingK99Qb9mjLI/9aGtCuvNBbKOxbyYMq45FYYrGxPIm
+   CNRPvE+x/TdWqGCOd42ThWqblx75UrKfwyPImx6A7EUKMaqWP6zOiBI9DCeCxrloJ2cJtV6cUym
+   cgO/jvFrQZktHWNCQV96BzU0Dq0J9PH7bSE1UteTk/1t3xDLsBfRm2jkRBg44yHpS7N7ltuVeoN
+   l7Ga2qY8tMOHgmTlTAaLyzsZoJhvWH+rm8qC+V8EkNkGR5cBFgo0w5JxKykm+iCbLtce7zm/7GR
+   L9db83nKwjbv8A==;
+Message-Instance:  m=1;
+ h=sha256:
+   4NA5EgNuMb+sfTmVMn97B6jS1f2GOvLK+VCYIZwTgIY=:
+   evFYYfp8jgq91t3pw7ed/FtR++zjbtU9bCpzNYcqtA0=,
+  sha512:
+   m1AnSSDu9TUSvI3PV9OBwU9f5/C25Gz7yUK2PRq+u9E1ZiyMcN9xgSGMUIkZ+L+7z3OF4IJrQEp+r0FZM/SCpg==:
+   NsihE+x9Fh7+oMyjkaCmoxstIdWKgcZe1GiII7jSZlVG9O/u9v9pb+VedDyU1VLrcgbPB1dIqCZacnH1koRezA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1795104418; x=1795709218; i=markus.elfring@web.de;
+	bh=/wnL1UvT/c5ilPHDxkdMnGwn3CKOu+6AonHzFxLDRf8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=m9dBRZBQQnkL8eBrEMALbE6YqQDDqBPeI9ux0eJlM6Mc9jfh7uPyA4R834wGTcW3
+	 bh+Z87IwP0C3LuO1Ik3TRSZ90wF1VSDr/R0tJqZFp/SqMscQyp6OZFr23fF9NMtRO
+	 mNnC9Zj5kqieS6ivvsP85V78jol0DVq5gw2uCFDg4hNfkdG4sY0oPkXHiByRORuXj
+	 fQ7ZNBZ5KKPd912GMpFkL1A4RT391c6nWikeH2H/E+mK/nZC8PFHID+Gu+Q12PC9I
+	 9OAmaBIJMA7zIbyVmxagYACWFxvg+3nvZZ+okYnvvYKd+7nRUCVDVhilTaDBgGS/x
+	 6uXw2x28z0z/AhMbsQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNwfU-1x5v2o16wy-00RwKK; Thu, 19
+ Nov 2026 17:06:58 +0100
+Message-ID: <8e3534b7-ae64-4c1f-819d-0ba390737b84@web.de>
+Date: Thu, 19 Nov 2026 17:06:55 +0100
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -81,33 +79,161 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dan@pereq.eu, oupton@kernel.org, fuad.tabba@linux.dev, joey.gouly@arm.com, seiden@linux.ibm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, christoffer.dall@arm.com, jintack.lim@linaro.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, karthik@pereq.eu, clement@cryspen.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+User-Agent: Mozilla Thunderbird
+To: dmaengine@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Frank Li <Frank.Li@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Viresh Kumar <vireshk@kernel.org>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] dmaengine: dw: Use devm_clk_get_optional_enabled() in
+ dw_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nGfRIaTkoUhznl9N0C+yDgyzCWk1ZlbhmeG82LwP7r3GgfR9MHX
+ T17teyOACHi3eTkahXk46pNmPY4fHmWdOq7Axt3/9UucEQQ68fMDpOkCL5AjF6t6Cyt2h4m
+ 1iUZuA/RXQoA3L+lnl4l2IxURpCqJpSxUgNiZn6/etwPW7/uUzPCjVZYLgqbrrHNSAObdj3
+ i7gpWC2EHFFfxh6shudVQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TZ93wwrAqKs=;C5V3WgPAd8sxio2xP0Fsjpy5tO/
+ 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
 
-On Wed, 18 Nov 2026 18:35:32 +0300, Dan Carpenter wrote:
-> In theory, an L1 hypervisor could issue a TLBI IPAS2E1 for an IPA
-> above the host's IPA limit.  The s2_mmu_unmap_ipa() function would
-> pass it to kvm_stage2_unmap_range(), the page table walk would fail
-> with -ERANGE, and that would trigger the WARN_ON() in
-> kvm_vm_stage2_unmap_range():
-> 
-> 	WARN_ON(stage2_apply_range(mmu, start, start + size, fn, may_block));
-> 
-> [...]
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 19 Nov 2026 16:56:09 +0100
 
-Applied to fixes, thanks!
+Reuse existing functionality from devm_clk_get_optional_enabled()
+instead of keeping duplicate source code.
 
-[1/1] KVM: arm64: nv: Ignore TLBI IPAS2E1 above the IPA limit
-      commit: 5f9cc7dcda69ed881a3041ad992afaac2a39d687
+The source code was transformed by using the Coccinelle software.
 
-Cheers,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/dma/dw/platform.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-	M.
--- 
-Without deviation from the norm, progress is not possible.
-
+diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
+index 7e76391475ac..9bb3c2cd0857 100644
+=2D-- a/drivers/dma/dw/platform.c
++++ b/drivers/dma/dw/platform.c
+@@ -64,12 +64,9 @@ static int dw_probe(struct platform_device *pdev)
+=20
+ 	data->chip =3D chip;
+=20
+-	chip->clk =3D devm_clk_get_optional(chip->dev, "hclk");
++	chip->clk =3D devm_clk_get_optional_enabled(chip->dev, "hclk");
+ 	if (IS_ERR(chip->clk))
+ 		return PTR_ERR(chip->clk);
+-	ret =3D clk_prepare_enable(chip->clk);
+-	if (ret)
+-		return ret;
+=20
+ 	pm_runtime_enable(&pdev->dev);
+=20
+=2D-=20
+2.56.1
 
