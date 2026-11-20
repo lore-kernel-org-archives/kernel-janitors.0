@@ -1,60 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.15.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795194146;
-	b=yLcdPH/+BD1Ame52a+pJ7gssZb0w9ikdogVaIpyVLUaVIPAjJoGWMs5AO5UXRn6COTuO
-	 AM6VAyLGXGkHX8OHhJlOjcFIqPIiAmyY3USXOQ+OnaeApszSLcgupJpKXrs9YMQ2REFNa
-	 LE1etkMX3WBSz4o4WxYv/YbgUhS2PUCq49L0SigKQhPNsqYftNtbuQPy4ILo1PJYiHfas
-	 Qh8xbsNA8oSwao8YKwGfhA1JW9aU6Va+PUCJk2VDj1mn8z90x9C+RkhFhhb6YvziU++Ek
-	 yEtP9dlNDRvKSZ1mxJvp0vTvEGFuq4z2In9/Z5Y6jTkpvZjYCMpcoLxs+8WnR+Gk3rw==
+	t=1795194573;
+	b=Tiel9PWGboJNK73dt3yZULmweUmP9lJylYw/27x8SmlvzRMNaLEuePpNV0dRGaMpoNKq
+	 nWIrwXmFuN6LDPdr6PH9Vk5M90NyyrRVgOisx22JMywYA+X5xWmdfl5eXgREdLbezY4sI
+	 Obyz+aWdBJrospWmO+xFjJIyL4hDOHdNuFS03dnPCIjSdeTa0ncLcO0pNfF5/qsDMw4SF
+	 oRlKGLwI969o/SbS/W/r+i/Lawtuaya8DNeHTNZp5dcDphUEBNJbz3l6JfUReH+K/gOj7
+	 HLDQKsGCygAoTV2AlatuI8wg+u6K0zWw1xYSGCGyQupJ3CRDddUG5D8nrGXGG5w9HFA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795194146;
-	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
-	 In-Reply-To:References:X-sashiko-severity:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version;
-	bh=07oCIpupG8yXrr5ZuTvOZTkLRKl/h+AoSNLxt0pWwj0=;
-	b=RyUK4uuVeFW0WC/wvNxpxayPWuIzLkXqRq1sbJoOJJ5EG443XkTWAQs3N5Yaur3kNlo/
-	 4g3ACEBjSVjFzOJSaPdbL9YoEJBG2M1WYQFLddfk3ZKutOraR26nFiRXAV2iUjxg3gmrf
-	 3dpkeiGzA0agxPTVujQDDBNztI9JjTYrPj0sh/PaC3dL5HOq+VH09grxi+CBemn68N7eM
-	 YmHqjzEl4viM6anG1wmoh2OUSZW0Y3nXhG4yFQNJuSCa7QDrHUFodPPTAAtQ4OrE4Cjhs
-	 i3pF2Y7KUw19lFmfMV3bXLxLLskiwIlShhwk6+Q95pMN89306w550KHLsXFivgmGD9g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795194573;
+	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
+	 X-UI-Sender-Class:Received:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
+	 UI-OutboundReport;
+	bh=8utFTCAaOpnRDSdNopk/ScS1rYk40NreZ25aW+7v2O8=;
+	b=RxT/YCNkNdlyKlcx5gTOVQGP76LJqnKqnYAaUnzNwyOvtfjkH1sjhPWshJsMNUw7QY4w
+	 OFzS+Gg5HPGNHr7s04RzJBTaaxqd223LEWHpzY/ZJu0snY7/e4fmN47dDZNYnydM6xCow
+	 d9LZazekHsXMOMup2ocIuuoPXL5QuPazR3kyRtFixm9Y41Upz5Q9xyTbllZ1cI6v0MjMB
+	 sax0Ww3UWY79fGiTgp7lbsfi7QUfYCML7s6xtEOGu4daP/GuNqahhwnH95ZSy3TpAUPER
+	 NqGQKVF8pI8k26YnC6CsbVj6LbC18VB3Y4hMQUKegynJipwC3MFfM+7DfiAY76ni/DQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HhU2nCnc;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=web.de;
+	spf=pass smtp.mailfrom=web.de;
+	dkim=pass header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=oCCPok7w;
+	arc=none smtp.remote-ip=212.227.15.4
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E8260A2604;
-	Fri, 20 Nov 2026 17:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3536606A339
+	for <kernel-janitors@vger.kernel.org>; Fri, 20 Nov 2026 17:09:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3536606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HhU2nCnc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D0C1F000D3;
-	Fri, 20 Nov 2026 17:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795194146;
-	bh=07oCIpupG8yXrr5ZuTvOZTkLRKl/h+AoSNLxt0pWwj0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=HhU2nCnclb4BgjEXKtSq12SvngbuhmoO744/60NjdEYuY6yN676NC7wnVUTCgAMKr
-	 USsO/BxDUbjBLMqHbfDwQFjeuGsj9Whag05EOfTJdH5Wb8jS5q759QGoWCfGwM8y0W
-	 NiP6bYEAj88Cc6tv2o59kE8pI7hsKEC+mAYD5TCON3XACHP6yhNb2CgpuBuu7IINYH
-	 7ophms2SaqTXusCuHLGwurA5VBfV/ZElmV4lYsJTLCqXqk3YQd0gdYF1LGPOhBkX95
-	 9ifeHNtcU9aG3xTqmFvgHLVd6VvIrTBet9HtWoa3Wtuu5k0y9bNfCY9d69iz0fFLHI
-	 Z70b9OJIAMC1Q==
-Subject: Re: [PATCH net-next] net: dsa: bcm_sf2: Use
- devm_clk_get_optional_enabled() in bcm_sf2_sw_probe()
-From: netdev-bot+sashiko@kernel.org
-To: Markus.Elfring@web.de
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
- edumazet@kernel.org, florian.fainelli@broadcom.com, kuba@kernel.org,
- jonas.gorski@gmail.com, pabeni@redhat.com, olteanv@gmail.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Fri, 20 Nov 2026 17:02:25 +0000
-Message-ID: <179519414508.3136.7413624094290164260@kernel.org>
-In-Reply-To: <d772ca26-d7f4-4857-9278-628b87e2252e@web.de>
-References: <d772ca26-d7f4-4857-9278-628b87e2252e@web.de>
-X-sashiko-severity: High
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=oCCPok7w
+DKIM2-Signature:  i=1; m=1; t=1795194570;
+ mf=PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4=;
+ rt=PGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc+;
+ d=web.de;
+ s=s29768273:rsa-sha256:hgwbHnznM/lqVLbQS5AKngpV6jlo
+   KsIqD0LopmPFdEgTPJtuc5/WgIA9fBM3ByYmZ1GwcUOT7StnaMOmgE3iD5TEeGyIhsDtfe5ocEy
+   D3dNj+aiaXwEs4RN7CuQ18BHBEGFgvJEAQnt6bO8kNggwaiSF62+0M7G6a1pVHdXzg5lnTZ6/6K
+   eaGCrrmFSFA46Lry8szDqfwI5XGMmTBOCullViAqbzk4GjuqjNqzpnb4yLCKe3v6C714x4SIhLQ
+   HaXI98nz+Ex11Hq7wnuf6FEngOGjqROfi1/1ZGjdu19Dq5A24wM579rHL2ejcqhyQJx8zNBsNKQ
+   ZlTkiYaaGE2PYQ==;
+Message-Instance:  m=1;
+ h=sha256:
+   ITyGwfFXg3xQbIYvLGo6qsMX7twE/be3BW00g/6v6V4=:
+   8utFTCAaOpnRDSdNopk/ScS1rYk40NreZ25aW+7v2O8=,
+  sha512:
+   Plljspi92ODZgOzFVBClwQ4ZCpY7+HvEbpR5StWfEFMMtLQpLATgj5rOrC9X2VaNPD5wmOlc6PqAjS49pvSP1A==:
+   w8CEx7IGQ5/DXNP19z2nf6km3OwBmAOBHq+IgAZwXXGLNwSCj8koux3ldQfY4UPOg9Qfwr11Kl0Hd8WmX2zlwA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1795194562; x=1795799362; i=markus.elfring@web.de;
+	bh=8utFTCAaOpnRDSdNopk/ScS1rYk40NreZ25aW+7v2O8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=oCCPok7w8ahlBRz/CxxLZvsK2tb6UUN8c4icPKkUgRNDT6jWL5C0z3IMKWI4l9y+
+	 IYDtKGQKcZfF1oY6uHW7KQ4Yu5/4nuNz3M/PPH1MRW7S9bCmRL5YKzCYYs3Y9cyYh
+	 W02w8HjLIwF5U1geSbVUeKuTC39H5lxWZnp+na9LxipcTBNlFUZiSbLvjnTZmpuBE
+	 9yQW2wRmCk8lHWxWo8TlcIzdroyHWlKZyzgpxFsVZA8oEkHGKTOXCqOfB//WBgCxo
+	 lPd57iiO0SFjZhrG+/l3DTATER4tfziL4Ao7S3gY0vedrEVHZbOFuO11QufYJ7ONY
+	 aK8aFnO4QrpBIwX85g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MoeYH-1yJP0F0y3F-00qi1z; Fri, 20
+ Nov 2026 18:09:22 +0100
+Message-ID: <11ff2f72-d720-4d41-b24a-cb7432cfb50e@web.de>
+Date: Fri, 20 Nov 2026 18:09:20 +0100
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -64,128 +81,142 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] dmaengine: dw: Use devm_clk_get_optional_enabled() in
+ dw_probe()
+To: Frank Li <Frank.li@oss.nxp.com>, dmaengine@vger.kernel.org
+Cc: Frank Li <Frank.Li@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Serge Semin <fancer.lancer@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+ Viresh Kumar <vireshk@kernel.org>
+References: <4267a49d-89b0-4564-b22b-995de017f52b@web.de>
+ <awB3YOGuJO6nZAGx@SMW015318>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <awB3YOGuJO6nZAGx@SMW015318>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LCTP/a/EMUMn87OBzHBY+0sJJQ2ezI8DRnS9Z+eif3f02ry6iEc
+ EouvWYnfEeL/5VvXcl+wxqFghBXJeV0C90w+VMINRQ1+kfqOKlQTELu3uwdUCSpF7NznKZT
+ aPgeY3ldQSbBZvolftIP4qCt3K05O081T16OiY0lAEUUpVW/f/TOPTTotnayskv6WWMN6BU
+ LNGyrvJRzQYMul6haF2Cw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8VWZnnnWGoc=;BbH1kYwhOdpr6Ln2bmpQ+psfDMZ
+ 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
+ g==
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issue(s) to consider.
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Fri, 20 Nov 2026 14:23:13 +0100
+>=20
+> Any tools issue ? your patch look strange. Why this information at body
 
-Critical: 0 · High: 1 · Medium: 0 · Low: 1
+I am trying to provide some author information.
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
-
-- [High] The patch double-disables the switch clock.
-- [Low] The commit message calls the change pure de-duplication ("Reuse
-  existing functionality ... instead of keeping duplicate source code"),…
-
---
-
-net: dsa: bcm_sf2: Use devm_clk_get_optional_enabled() in bcm_sf2_sw_probe()
-
-This commit converts the "sw_switch" clock lookup in bcm_sf2_sw_probe()
-from devm_clk_get_optional() followed by clk_prepare_enable() to
-devm_clk_get_optional_enabled(). Coccinelle generated the change.
-
-> Reuse existing functionality from devm_clk_get_optional_enabled()
-> instead of keeping duplicate source code.
-
-[Severity: Low]
-This isn't a bug, but does this description match what the patch does?
-The conversion changes behaviour. It adds a devres-managed
-clk_disable_unprepare() for priv->clk and keeps the manual disables (see
-the comment on the diff below).
-
-In the patch as submitted, bcm_sf2_sw_remove() still tears down in the
-original order:
-
-drivers/net/dsa/bcm_sf2.c:bcm_sf2_sw_remove() {
-    ...
-	clk_disable_unprepare(priv->clk_mdiv);
-	clk_disable_unprepare(priv->clk);
-	if (priv->type == BCM7278_DEVICE_ID)
-		reset_control_assert(priv->rcdev);
-}
-
-So the ordering is unchanged for now. Once the manual priv->clk disables
-are dropped to fix the double-disable, devres would gate the sw_switch
-clock after clk_mdiv is disabled. On BCM7278 it would also gate it after
-reset_control_assert().
-
-Could a respin describe and justify that ordering change? Could it also
-explain why priv->clk_mdiv stays manually managed while priv->clk is
-converted?
-
-> diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-> index 1747a1f20c78e..011ce79392e8a 100644
-> --- a/drivers/net/dsa/bcm_sf2.c
-> +++ b/drivers/net/dsa/bcm_sf2.c
-> @@ -1467,14 +1467,10 @@ static int bcm_sf2_sw_probe(struct platform_device *pdev)
->  		base++;
->  	}
->  
-> -	priv->clk = devm_clk_get_optional(&pdev->dev, "sw_switch");
-> +	priv->clk = devm_clk_get_optional_enabled(&pdev->dev, "sw_switch");
->  	if (IS_ERR(priv->clk))
->  		return PTR_ERR(priv->clk);
->  
-> -	ret = clk_prepare_enable(priv->clk);
-> -	if (ret)
-> -		return ret;
-> -
-
-[Severity: High]
-Is the sw_switch clock now disabled and unprepared twice?
-
-devm_clk_get_optional_enabled() registers clk_disable_unprepare() as the
-devres exit action:
-
-drivers/clk/clk-devres.c:devm_clk_get_optional_enabled() {
-	return __devm_clk_get(dev, id, clk_get_optional,
-			      clk_prepare_enable, clk_disable_unprepare);
-}
-
-When devres is released, devm_clk_release() calls state->exit(state->clk).
-
-The patch removes only the explicit clk_prepare_enable(priv->clk). The
-explicit disable at the out_clk label is still there:
-
-drivers/net/dsa/bcm_sf2.c:bcm_sf2_sw_probe() {
-    ...
-out_clk:
-	clk_disable_unprepare(priv->clk);
-	return ret;
-}
-
-So is the one in bcm_sf2_sw_remove():
-
-	clk_disable_unprepare(priv->clk_mdiv);
-	clk_disable_unprepare(priv->clk);
-
-Every probe failure after the clock is acquired ends at out_clk. That
-includes -EPROBE_DEFER from devm_clk_get_optional("sw_switch_mdiv"), so it
-happens on every deferred probe retry. Unbind and module removal go
-through bcm_sf2_sw_remove().
-
-In both cases devres_release_all() runs afterwards and calls
-clk_disable_unprepare() a second time.
-
-When the sw_switch clock is present in DT, the second call would hit this
-check in clk_core_disable():
-
-	if (WARN(core->enable_count == 0, "%s already disabled\n", core->name))
-		return;
-
-It would also hit the matching "already unprepared" WARN in
-clk_core_unprepare().
-
-If the clk_core is shared with another consumer, would the extra call
-drop that consumer's enable/prepare reference instead and gate a clock it
-still uses?
-
-Should clk_disable_unprepare(priv->clk) be removed from both the out_clk
-path and bcm_sf2_sw_remove(), with the error labels adjusted to match?
-
--- 
-Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/d772ca26-d7f4-4857-9278-628b87e2252e%40web.de
+Regards,
+Markus
