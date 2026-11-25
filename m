@@ -1,72 +1,32 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795623088;
-	b=aLtdFttmrAtmlCcEaqI9ojzSwVDvNnE1llRpTb0s4FDMraiFCiHaUuJhk3dNqlggsO3b
-	 sYerflsw9v9aekeKSMx+X3l5HCh1SHDssf4wBke7C5QS4rGq2k+cM1/JtPMToaVGbNwVD
-	 Qyo0SZ2+xM0PFUKhOm54Ka70TNISlJW4GLBVs6GhwYLarV8Phjh6VyDN9v0FPk12MCPGc
-	 4wWqZXkhjSjoKBKyTXqP0/rUACECTov31TCOtN8BYipgmr7LvUwKmvVBQBqruti2GS++5
-	 Z6RvGvenv5rHn5PHpGC3m8lDDUqetNRFMto4hzUFAoBFAxQGkpLVthvxkf7x1Rmnkgg==
+	t=1795628902;
+	b=FOP6JQUu64kngxpWHrYpVWCpDkXMmv5C41sVzIMGuHCKiaNmMfusiWQBxlFRRlncEvSO
+	 n2reTZojEU95cN88upS+VSL99n+RrVaq4f9F9TsIUzeodWfhxUqmq+3XZKYlDjIsP7KQD
+	 pcqiaqeiE19W+eYRLGlNEsAbyC1i3HBeE85kkohQVvYMXPC9UgLDTFwPcYygCYUw9MyKE
+	 qKQqU9qY0YvYyCVRYvI08i8ApM+JOhmSdBZ9KMa+8slFx8eFIMFzVU60prGuR4plmLquy
+	 1Huz/I+jS44neoKSTAFnePi5VTVHZ8RAFs6mZnyiQlUw2qMkKJ2OMFe2gi5vGYPmtNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795623088;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
-	 In-Reply-To:References:Subject:Message-Id:Date:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Mailer:
-	 X-Last-TLS-Session-Version;
-	bh=shMr3VTsq3XeQkoO9Ln5izMtWpMU+7APEuFdjKZvMdY=;
-	b=BWTMCQYS21Tbmqo5ebiQo1Pn4V8oYokesekFnukCxAyBsbQjmIm5W5wG+yH6AZwkx+it
-	 CHhpO3i/GakS093Eqoe5BqJmFnWU8mcYtsIlflpXChCf/Dkx46N/3u3+8DP/1K6/WnACT
-	 jYXKfel2ThCRBq2HJdu6Li8gDGpfbAIeomPO1kiKG0fmQCe8XukixSO84CJFjCDPDb03a
-	 Jm1zKUagu206yGA2K4QazzuJmxqAdIfQ9hSqb8aQlOTGRnczOHxIhlYpIE+9A2VAN0g08
-	 jUDvelLVOk6EH5cnL9NRMo9pc+C7Fpm/t4dFvNNl1F8WO1B6EeoUwJTYxprsbPvzY8w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795628902;
+	h=Received:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:
+	 From:To:Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=0q0MLo3BGWILZ9gNyuQzc7su8itTZ84AHzV6dj/fCyc=;
+	b=v9Nwz1uJxrr4ADjESV5hr8nM9NPHFpIUxTrUgz/J1ZnK0fx9mFYl7i5OC0cTkx+HQaOO
+	 u967Z/HdZO7rgID9IBiBTW8YHh8rF835he/WMTFcHs7I49RIn9e4WJOeuIc/vEjpqw0uW
+	 +zZYsW9kh9hwtfY9ldsJrDqK6KFPykhg78J5p1EEPSzYqG5oMfsu0QFbBSp+nEf0e5ppp
+	 hQ/nu/YnM+DluBvgMfA4+zdHM68mvqCDxsrnkLhnF7HZbXk0Kwk3GzXW57Y6fqqslxKu1
+	 WV3oQ0RYYtl2zgVdOcUsA+kf85m8kG6w2poG1qLb8vdFeW1z9kOe1B3VQJG+EVZiL6Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=KyKHSlK5;
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8EF606A31E
-	for <kernel-janitors@vger.kernel.org>; Wed, 25 Nov 2026 16:11:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B8EF606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=KyKHSlK5
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 69D6B1A17F5;
-	Wed, 25 Nov 2026 16:11:24 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 345CE60480;
-	Wed, 25 Nov 2026 16:11:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 47C3A11E6ABF3;
-	Wed, 25 Nov 2026 17:11:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795623079; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=shMr3VTsq3XeQkoO9Ln5izMtWpMU+7APEuFdjKZvMdY=;
-	b=KyKHSlK5Ey6/akMaHN+c+uAv7NDQWG/yMqCI9oHkdzOeFbzRpfp9AX0SGw1K3164JB9OmD
-	SBOtdiMH+BGgUgF2ct0BEaPwEFVq/GAtFqSZs0LarGryqPr7NPXdYBiOv18ORWOyFNKDw/
-	rfUe1p8BMVELflNxh4NBO6aqhw2OzQ/wmafCV6jLdu1BO8GxEpYkJUDmGtPPEZ1uwFGMHn
-	iSAxv03Cb4YalrORtMHi0FOmZuAqIud4DNo5mZFLr+YVVHtkCT24lJ73yd0ymz+CCnaIjF
-	cR10/N5EuLjCMv+Ee288k3V7r1nHhACNaNtZpjOt8gJyJQTfe3yNYM412T5HWw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- dri-devel@lists.freedesktop.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261112162127.1592210-1-colin.i.king@gmail.com>
-References: <20261112162127.1592210-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] drm/bridge: tc358767: make read-only array
- ext_div static const
-Message-Id: <179562307394.731258.1793421800570057727.b4-ty@b4>
-Date: Wed, 25 Nov 2026 17:11:13 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EF2606A321;
+	Wed, 25 Nov 2026 17:48:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B6CA1F000D1;
+	Wed, 25 Nov 2026 17:48:15 +0000 (UTC)
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -77,24 +37,56 @@ List-Owner: <mailto:kernel-janitors+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] PCI: xilinx-nwl: Use devm_clk_get_enabled() in
+ nwl_pcie_probe()
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Hyun Kwon <hyun.kwon@xilinx.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>, 
+ Sean Anderson <sean.anderson@linux.dev>, 
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>, 
+ Florian Fainelli <f.fainelli@gmail.com>, Frank Li <Frank.Li@kernel.org>
+In-Reply-To: <f691bbaa-ddb5-45bf-8f85-fcf354a6af03@web.de>
+References: <f691bbaa-ddb5-45bf-8f85-fcf354a6af03@web.de>
+Date: Wed, 25 Nov 2026 23:18:10 +0530
+Message-Id: <179562889095.5580.5805178037943195830.b4-reply@b4>
 X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=613;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=oVmsAKPla0SSCmhlMgEfiLun7tvxgbJftIFjZnWKpuc=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrBx9frFFBxMMzmhhHbjIT7NtxqGHjr+aASXO3R
+ AwMZBOcjTmJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawcfXwAKCRBVnxHm/pHO
+ 9dFJB/9chrc9j0yGBvYPUiJSXKOl8+2fWGrELXUciCWoJN7XzWm2ov7aOCjqzGof6ExhKjFDXjd
+ RJIe2TsYOE3VBSxRi4fg7kveo3hepmJ8N5PldDkiPJJ3rhYzWw5wX9afZkrGkoK45Ro35TwAef2
+ DXJxBSpGL3wMdt+wR/wTA9V8c/yBCU4AawHFprtwcrZIoGv19uV/KgsbGhAPbJkGnauqp19JD9X
+ UfKMryv65/6uDeHRiExPLAEI4Ow33Xuovl2RykpvSrJ5LaVzEWpugw15cx9Jfu/V4b3L9QcQtTI
+ WNYzYlR4miKw8U8qBnsEW+QGFFeZqPdGC4nkORJH7zB281z3
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
+On 2026-11-22 20:52 +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Nov 2026 20:35:35 +0100
+> 
+> * Reuse existing functionality from devm_clk_get_enabled() instead of
+>   keeping duplicate source code.
+> 
+> * Omit a clk_disable_unprepare() call on an error handling path
+>   and in the implementation of the function “nwl_pcie_remove”.
+> 
+> * Delete the label “err_clk”.
+> 
 
-On Thu, 12 Nov 2026 16:21:27 +0000, Colin Ian King wrote:
-> Don't populate the read-only array ext_div on the stack
-> at run time, instead make it static const
+THis isn't how the commit message should be written. It should be contiguous,
+not bullet points and just say what the patches does and why it is needed.
 
-Applied, thanks!
-
-[1/1] drm/bridge: tc358767: make read-only array ext_div static const
-      commit: 632586bd82b0158a97c6eb6830375c1efda6e0f6
-
-Best regards,
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+- Mani
 
 
