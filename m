@@ -1,59 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.12.242.22
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795716791;
-	b=1NNHmLp4jJD/mPY27lMDCzSyhJ5/qXGYZ9DwrNSJErCEfhCThF7ju82fjnfgxz0seEL4
-	 h8fK/4u7anAPmDWXOAjoeALFZhtJAqyzvQ2vDLtFP0WRPVDELrX3aQ9ZvY9MQZUvZt+Tj
-	 1B3PrTlfbyCh9SBT2SZTYQM6/dNpBjRu1FxVVtDFNLa0Dr9kxK6JcP8ZV52I8B2VHOrWY
-	 mpKCw4pOOhTSNNpuqJqnOssQJ7jIPkSMlMeft1h0YFYgy5CvtV/QSC8l7Z+9l8ioFG8BJ
-	 2LOEvS67og3QEKOkDcOsvMh4m0TbLJfr6K9dyh7vTC+JxBSySNbr9H6nzXBiEkvDsIQ==
+	t=1795716863;
+	b=v1BcNtNRyrrkyEiNNthRKMKvtqFSTl40fY/uvFd38+qnDpvK+Cref6d+/fiqA6zrWaA2
+	 smhLmtnpM16Vvzrxfy/rKzhJ0ZNOkseu0R90COY48Rcrgva2NKH7jBVzLOD2eBtXHPnOt
+	 IRI5YnRErd6mZCk9Gu3NssW3t7H4GxGIx3tfNrpo401/EWIehCTHKOTIoKjW1g5zAnV75
+	 NyHz6IosWAA+k3ekHU4eRP/UGhZSwXEcbK/b1nI9ZBbKDaWQffn7G8l336NzQJRJw0nGy
+	 bQ2CzAa7RgYIMowVDI+2cHevTdsPSp4SC5QiodwJJCVM4ztaFmReyCrxULGlujlw5JA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795716791;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795716863;
 	h=DMARC-Filter:Received:DKIM-Signature:X-ME-Helo:X-ME-Auth:X-ME-Date:
 	 X-ME-IP:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
 	 References:From:Content-Language:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=b/qk5yDJ49DLmtIqdxLp9j4Cc6Uts3VlgsUbxxBQs/A=;
-	b=r9/mqEr5aqgXqPdzMizn1y1gGc9AeM945/dPJE3HoYYsF680fjAJaS2Xe0aycopGCMgO
-	 D9vzHgoB0ACwBt+0PeJhCSeBAqjp3AMXYBdZdErNH+lt4io0pk4H9vMNrLMTOFOufyswx
-	 GYSIcidkaWQnJ6ehp53Od+cw31shDyAoBi2v+Y5PBzDmFeJOU/xz92E+qZOsTqY7uOqH6
-	 TchZNQvs6lMLgcOBl+V1aBKeBQqzOKZ2kgTOevBR0TgCoN6itxedD0F6DSUvnoGz/fP2u
-	 nggqcNwZXWsGvNFKU/bQj/4G0CYYIqi203BfyTbv7YM6bhwVMYUNFz40q0vf7yYkCAg==
+	bh=kbN11L871pCe6lOyfxUYgKbNRnDIUmonmkFHXq4QE0E=;
+	b=AttaTpmNpGcF5JtlDNeXCFTLMh1zUfGBZOIlBMMZTficP788BMVwiw7kzBsyi3T6dTRQ
+	 nCXN1O+VBDQ0a/nNIHVA877bnHEmQyVlFuzq1oKilnFFpxU3zmwZyKQLcrJ7hmh3chrGx
+	 zBps/e6iWqhH2be2GpfPaIk0uh5Pa7lZW80r2583oW3DKB6nnWlw1kFNeP2FjyObLpqgc
+	 SmhFJG9m5dhDTXE5ZZyFPYv+Dr79r+6FuPae4LKdWYKjwCYZC7/pfRF5sH88AUKp5L6tu
+	 Zv5GYJNAr4yg5A2Ig7KJU8tF2bvJ7BNOnIXlWr9hTTo4/nnAMo0KUPeRqTfXaScQtXw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=wanadoo.fr;
 	spf=pass smtp.mailfrom=wanadoo.fr;
-	dkim=pass header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=afiUoUGZ;
-	arc=none smtp.remote-ip=80.12.242.18
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	dkim=pass header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=fpJGPPCU;
+	arc=none smtp.remote-ip=80.12.242.22
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF9B606A31C;
-	Thu, 26 Nov 2026 18:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2CF9B606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E766606A31C;
+	Thu, 26 Nov 2026 18:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E766606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=afiUoUGZ
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.a=rsa-sha256 header.s=t20230301 header.b=fpJGPPCU
 Received: from [IPV6:2a01:cb10:785:b00:9f13:a1ff:dc18:901b]
  ([IPv6:2a01:cb10:785:b00:9f13:a1ff:dc18:901b])
 	by smtp.orange.fr with ESMTPSA
-	id WdxrxjwdCny6VWdxrx2iWP; Thu, 26 Nov 2026 19:13:02 +0100
+	id Wdz1xQ8dhHbsgWdz1x5e38; Thu, 26 Nov 2026 19:14:15 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1795716782;
-	bh=b/qk5yDJ49DLmtIqdxLp9j4Cc6Uts3VlgsUbxxBQs/A=;
+	s=t20230301; t=1795716855;
+	bh=kbN11L871pCe6lOyfxUYgKbNRnDIUmonmkFHXq4QE0E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=afiUoUGZ7ZGWblj2GXXQ8XuqgoWqEegxdz/7yazsz8kY8QGrURLhC4PD9wE/WO4lJ
-	 anud2ozvFViRmfRZ6UUZPASUlYeAXYbfoMIph2B2Ol/neVn4ePLGy8GJK6yQBqlHci
-	 w7d9ViDKV36zayhKsxagDoOqzHnVeUqO6R+N6W63eeiHYaTMfkMemzeZ/S1yvydXun
-	 rgBxGJo2CkxgxNx9GwIYY4uh//3kvSlvFeop7GIhHu8V/uZErutfv7Y3ipd6Z7+T66
-	 X8qdZLzzecnV/S6Cg6k9NYJboZ5e1+x0cyaQkL5h+18YyOb6FBQq52e5DsLClFVFxC
-	 I//BUk7/Afy/A==
+	b=fpJGPPCUHVlLyPal9nCh70/eYtyiZDXrH7PcXM48YO54fAJt8UWb5m7kxSSJXsHNq
+	 jeT28DtcSE+RkATaF419q9euEvr6IbuNggUBklmAKzFclXkVV1uKvMVfRjnzzIDeTn
+	 FpGx33DyurGbe52TCvppf4zWnmnPVxq0cmQ/+uIdGsu0S85ESh5dgGac5JRvP+LbJE
+	 ftNrtrb03/gKAY0xFmIn1+c7MbxH6f6WlwPVApeGZ6IvA8AOb8AGVlpNPoxyn0ejIP
+	 CtJ5Cdv326AwyQQIo6OWi5tmQmJXgPoQpuaBYxugwwgbiIpNF+STxhFdRgBaC7AWic
+	 RBK2s26JCuGTw==
 X-ME-Helo: [IPV6:2a01:cb10:785:b00:9f13:a1ff:dc18:901b]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 26 Nov 2026 19:13:02 +0100
+X-ME-Date: Thu, 26 Nov 2026 19:14:15 +0100
 X-ME-IP: 2a01:cb10:785:b00:9f13:a1ff:dc18:901b
-Message-ID: <d9061bf1-2445-425e-a254-0b33dcf4db8f@wanadoo.fr>
-Date: Thu, 26 Nov 2026 19:12:58 +0100
+Message-ID: <554da672-05c1-43f7-a3ac-a24c6e4a570e@wanadoo.fr>
+Date: Thu, 26 Nov 2026 19:14:10 +0100
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Post: <mailto:kernel-janitors@vger.kernel.org>
@@ -78,35 +78,30 @@ References: <d293609b-c8cd-4993-a243-89c6d1ace4a0@web.de>
  <ac10d9ef-b193-487c-b4c1-6126aa770c6f@wanadoo.fr>
  <603d7ea7-5d7d-49c4-a01b-a7805e88c361@web.de>
  <9c26b213-aa58-4c27-99c7-926c6b4d5275@wanadoo.fr>
- <a526e002-c8fc-4935-95f9-5943cb557e99@web.de>
+ <d11b4708-02d9-4d53-bc5e-734fdb363d2b@web.de>
+ <f3de129e-bbee-470d-a1df-e867269522cc@wanadoo.fr>
+ <206466bf-7ed1-41eb-b74d-6f680ab449ea@web.de>
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Content-Language: en-US, fr-FR
-In-Reply-To: <a526e002-c8fc-4935-95f9-5943cb557e99@web.de>
+In-Reply-To: <206466bf-7ed1-41eb-b74d-6f680ab449ea@web.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 26/11/2026 à 17:15, Markus Elfring a écrit :
->> Your patch is related to bcm_enet_probe().
+Le 26/11/2026 à 18:36, Markus Elfring a écrit :
+>>>> Your patch is related to bcm_enet_probe().
+>>>>
+>>>> See L1754 and L1791. These 2 calls are related to 2 clk_disable_unprepare() calls in the error handling path and in the remove function.
+>>>>
+>>>> Why only update one place, and keep one clk_disable_unprepare()?
+>>>
+>>> The ungating of the item “priv->phy_clk” depends on special condition checks.
 >>
->> See L1754 and L1791. These 2 calls are related to 2 clk_disable_unprepare() calls in the error handling path and in the remove function.
->>
->> Why only update one place, and keep one clk_disable_unprepare()?
-> 
-> I got also the impression finally that implementation details would need
-> further clarifications and development considerations.
-> 
-> * Conditions are checked for the ungating of the item “priv->phy_clk”.
->    https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/net/ethernet/broadcom/bcm63xx_enet.c#L1789-L1800
-> 
-> * But a clk_disable_unprepare(priv->phy_clk) call is unconditionally performed
->    in the implementation of the function “bcm_enet_remove” so far.
->    https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/net/ethernet/broadcom/bcm63xx_enet.c#L1930
-> 
->    Is there a need to adjust the control flow any further?
+>> This does not answer the question.
+> Would you find further clarification approaches more helpful according to
+> unbalanced clk_disable_unprepare() calls?
 
-You kwow the answer, it used to be one of your favorite pattern, so why ask?
+This still does not answer the question.
 
-> 
 > 
 > Regards,
 > Markus
